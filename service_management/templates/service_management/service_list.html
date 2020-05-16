@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+
+{% block javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#service_table').DataTable({
+                "paging": false,
+                "info": false,
+                "responsive": true,
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Services</h1>
+    </div>
+    <table id="service_table" class="table table-striped display">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Location</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in service_list %}
+            <td>{{ service.title }}</td>
+            <td>{{ service.location }}</td>
+            <td><a class="btn btn-primary" href="{% url "service_management:service_detail" service.id %}"><span class="fa fa-eye"></span>Show</a></td>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

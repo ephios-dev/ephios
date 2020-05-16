@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load service_extras %}
+
+{% block title %}
+    {{ service.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Service: {{ service.title }}</h1>
+    </div>
+    <div>
+        {% for shift in service.shift_set.all %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Shift</h5>
+                    <div class="card-body container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <b>Date:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
+                                    <b>Meeting time:</b> {{ shift.meeting_time | date:"H:i" }} <br>
+                                    <b>Start time:</b> {{ shift.start_time | date:"H:i" }} <br>
+                                    <b>End time:</b> {{ shift.end_time | date:"H:i" }} <br>
+                                    <b>Minors allowed:</b> {{ shift.minors_allowed | yesno }} <br>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    {% for resource in shift.resources.all %}
+                                        <div class="list-group-item">
+                                            <h5>{{ resource.title }}</h5>
+                                            <ul>
+                                                {% for resource_position in resource.positions.all %}
+                                                    <li>{{ resource_position.title }}: {{ resource_position.participation_set | user_list }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
