@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "jep"
+version = "0.1.0"
+description = "JEP is a tool to manage shifts for medical services."
+authors = ["Julian Baumann <Julian.Baumann@johanniter.de>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+django = "^3.0.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
