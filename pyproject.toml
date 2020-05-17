@@ -9,6 +9,8 @@ license = "MIT"
 python = "^3.8"
 django = "^3.0.6"
 django-bootstrap4 = "^1.1.1"
+django-environ = "^0.4.5"
+mysqlclient = "^1.4.6"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

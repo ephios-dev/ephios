@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db.models import (
@@ -93,3 +95,16 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
+
+    @property
+    def is_minor(self):
+        current = datetime.now()
+        birthday_upcoming = (
+            current.month <= self.birth_date.month and current.day < self.birth_date.day
+        )
+        age = (
+            current.year - self.birth_date.year - 1
+            if birthday_upcoming
+            else current.year - self.birth_date.year
+        )
+        return age < 18

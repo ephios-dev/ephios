@@ -8,51 +8,111 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Participation',
+            name="Participation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('accepted', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("accepted", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Resource',
+            name="Resource",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
             ],
         ),
         migrations.CreateModel(
-            name='ResourcePosition',
+            name="ResourcePosition",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('amount', models.IntegerField()),
-                ('medical_qualification', models.IntegerField(choices=[(0, 'keine'), (1, 'Ersthelfer'), (2, 'Schulsanitäter'), (3, 'Sanitätshelfer'), (4, 'Rettungshelfer'), (5, 'Rettungssanitäter'), (6, 'Rettungsassistent'), (7, 'Notfallsanitäter'), (8, 'Notarzt')])),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("amount", models.IntegerField()),
+                (
+                    "medical_qualification",
+                    models.IntegerField(
+                        choices=[
+                            (0, "keine"),
+                            (1, "Ersthelfer"),
+                            (2, "Schulsanitäter"),
+                            (3, "Sanitätshelfer"),
+                            (4, "Rettungshelfer"),
+                            (5, "Rettungssanitäter"),
+                            (6, "Rettungsassistent"),
+                            (7, "Notfallsanitäter"),
+                            (8, "Notarzt"),
+                        ]
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Service',
+            name="Service",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('location', models.CharField(max_length=254)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("location", models.CharField(max_length=254)),
             ],
         ),
         migrations.CreateModel(
-            name='Shift',
+            name="Shift",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_time', models.DateTimeField()),
-                ('end_time', models.DateTimeField()),
-                ('minors_allowed', models.BooleanField()),
-                ('resources', models.ManyToManyField(to='service_management.Resource')),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_management.Service')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_time", models.DateTimeField()),
+                ("end_time", models.DateTimeField()),
+                ("minors_allowed", models.BooleanField()),
+                ("resources", models.ManyToManyField(to="service_management.Resource")),
+                (
+                    "service",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="service_management.Service",
+                    ),
+                ),
             ],
         ),
     ]

@@ -104,17 +104,19 @@ beautifulsoup4 = "*"
 
 [[package]]
 category = "main"
-description = "Table/data-grid framework for Django"
-name = "django-tables2"
+description = "Django-environ allows you to utilize 12factor inspired environment variables to configure your Django application."
+name = "django-environ"
 optional = false
 python-versions = "*"
-version = "2.3.1"
+version = "0.4.5"
 
-[package.dependencies]
-Django = ">=1.11"
-
-[package.extras]
-tablib = ["tablib"]
+[[package]]
+category = "main"
+description = "Python interface to MySQL"
+name = "mysqlclient"
+optional = false
+python-versions = "*"
+version = "1.4.6"
 
 [[package]]
 category = "dev"
@@ -173,7 +175,7 @@ python-versions = "*"
 version = "1.4.1"
 
 [metadata]
-content-hash = "8b5c0941fcc882466be6ae8d61573c4852a19bbaeb5c3f71f9fdda672411c2da"
+content-hash = "fb4a9c325e6558268ec19d2cb6cff34f71a7fd6d38914c4b59e07ebf8f2d7bef"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -210,9 +212,15 @@ django-bootstrap4 = [
     {file = "django-bootstrap4-1.1.1.tar.gz", hash = "sha256:39f97cbce85eb66f6d76be2029bae171bd3863d0c6932b1c2dae7f299c569b90"},
     {file = "django_bootstrap4-1.1.1-py3-none-any.whl", hash = "sha256:0fcd84f8414a58b43df0b331c00c8b2f1786ae28f75f419b4d33b06fca43e0d1"},
 ]
-django-tables2 = [
-    {file = "django-tables2-2.3.1.tar.gz", hash = "sha256:28da782f81f046c7d921246f43e7ba2df430cafe5a0e00a0f9dadef25a0e487d"},
-    {file = "django_tables2-2.3.1-py2.py3-none-any.whl", hash = "sha256:7e425ad51e22caf5470351981f0fcd4fd35d4cf2d4c3b76fa1b7bf56251778d1"},
+django-environ = [
+    {file = "django-environ-0.4.5.tar.gz", hash = "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde"},
+    {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
+]
+mysqlclient = [
+    {file = "mysqlclient-1.4.6-cp36-cp36m-win_amd64.whl", hash = "sha256:4c82187dd6ab3607150fbb1fa5ef4643118f3da122b8ba31c3149ddd9cf0cb39"},
+    {file = "mysqlclient-1.4.6-cp37-cp37m-win_amd64.whl", hash = "sha256:9e6080a7aee4cc6a06b58b59239f20f1d259c1d2fddf68ddeed242d2311c7087"},
+    {file = "mysqlclient-1.4.6-cp38-cp38-win_amd64.whl", hash = "sha256:f646f8d17d02be0872291f258cce3813497bc7888cd4712a577fd1e719b2f213"},
+    {file = "mysqlclient-1.4.6.tar.gz", hash = "sha256:f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16"},
 ]
 pathspec = [
     {file = "pathspec-0.8.0-py2.py3-none-any.whl", hash = "sha256:7d91249d21749788d07a2d0f94147accd8f845507400749ea19c1ec9054a12b0"},

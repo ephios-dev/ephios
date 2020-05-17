@@ -8,11 +8,12 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>Service: {{ service.title }}</h1>
+        <h1>Service: {{ service.title }} <small>({{ service.location }})</small></h1>
     </div>
+    <p>{{ service.description }}</p>
     <div>
         {% for shift in service.shift_set.all %}
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Shift</h5>
                     <div class="card-body container">
@@ -24,6 +25,12 @@
                                     <b>Start time:</b> {{ shift.start_time | date:"H:i" }} <br>
                                     <b>End time:</b> {{ shift.end_time | date:"H:i" }} <br>
                                     <b>Minors allowed:</b> {{ shift.minors_allowed | yesno }} <br>
+                                    {% with status=shift|shift_status:user %}
+                                        <b>Status:</b> {{ shift | shift_status:user | default_if_none:"-" }} <br>
+                                        {% if status is None %}
+                                            <a class="btn btn-primary" href="{% url "service_management:shift_register" shift.id %}">Register</a>
+                                        {% endif %}
+                                    {% endwith %}
                                 </p>
                             </div>
                             <div class="col-md-6">
@@ -33,7 +40,7 @@
                                             <h5>{{ resource.title }}</h5>
                                             <ul>
                                                 {% for resource_position in resource.positions.all %}
-                                                    <li>{{ resource_position.title }}: {{ resource_position.participation_set | user_list }}</li>
+                                                    <li>{{ resource_position.title }}: {{ resource_position | users_on_shift:shift }}</li>
                                                 {% endfor %}
                                             </ul>
                                         </div>
