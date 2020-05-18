@@ -40,6 +40,15 @@ class Service(Model):
     description = TextField(blank=True, null=True)
     location = CharField(max_length=254)
 
+    @property
+    def start_time(self):
+        return self.shift_set.order_by("start_time").first().start_time
+
+    @property
+    def end_time(self):
+        last_shift = self.shift_set.order_by("-start_time").first().start_time
+        return last_shift if last_shift.day > self.start_time.day else None
+
     def __str__(self):
         return self.title
 

@@ -25,6 +25,8 @@
         <tr>
             <th>Title</th>
             <th>Location</th>
+            <th>Date</th>
+            <th>until</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -32,6 +34,8 @@
         {% for service in service_list %}
             <td>{{ service.title }}</td>
             <td>{{ service.location }}</td>
+            <td>{{ service.start_time | date:"d.m.Y" }}</td>
+            <td>{{ service.end_time | date:"d.m.Y" }}</td>
             <td><a class="btn btn-primary" href="{% url "service_management:service_detail" service.id %}"><span class="fa fa-eye"></span>Show</a></td>
         {% endfor %}
         </tbody>
