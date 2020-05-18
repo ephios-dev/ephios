@@ -17,39 +17,48 @@
     <div class="row">
         <div class="col-md-12">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">JEP</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+                <a class="navbar-brand" href="/">JEP</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            {% with url_name=request.resolver_match.url_name %}
-                <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
-                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item {% if url_name == 'service_list' %}active{% endif %}">
-                    <a class="nav-link" href="{% url "service_management:service_list" %}">Services <span
-                            class="sr-only">(current)</span></a>
-                </li>
-            {% endwith %}
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ user.get_full_name }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url "logout" %}">Logout</a>
-                    </div>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    {% if user.is_authenticated %}
+                        <ul class="navbar-nav mr-auto">
+                            {% with url_name=request.resolver_match.url_name %}
+                                <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "service_management:index" %}">Home <span
+                                            class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item {% if url_name == 'service_list' %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "service_management:service_list" %}">Services
+                                        <span
+                                                class="sr-only">(current)</span></a>
+                                </li>
+                            {% endwith %}
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ user.get_full_name }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    {% if user.is_staff %}
+                                        <a class="dropdown-item" href="{% url "admin:index" %}">Administration</a>
+                                        <div class="dropdown-divider"></div>
+                                    {% endif %}
+                                    <a class="dropdown-item" href="{% url "password_change" %}">Change password</a>
+                                    <a class="dropdown-item" href="{% url "logout" %}">Logout</a>
+                                </div>
+                            </li>
+
+                        </ul>
+                    {% endif %}
+                </div>
+            </nav>
         </div>
     </div>
     <div class="row">

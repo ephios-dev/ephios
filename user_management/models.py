@@ -46,19 +46,20 @@ class UserManager(BaseUserManager):
 class Qualification(Model):
     title = CharField(max_length=254)
 
+    def __str__(self):
+        return self.title
+
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
-    QUALIFICATION_MEDICAL_NONE = 0
-    QUALIFICATION_MEDICAL_EH = 1
-    QUALIFICATION_MEDICAL_SSD = 2
-    QUALIFICATION_MEDICAL_SANH = 3
-    QUALIFICATION_MEDICAL_RH = 4
-    QUALIFICATION_MEDICAL_RS = 5
-    QUALIFICATION_MEDICAL_RA = 6
-    QUALIFICATION_MEDICAL_NFS = 7
-    QUALIFICATION_MEDICAL_NA = 8
+    QUALIFICATION_MEDICAL_EH = 0
+    QUALIFICATION_MEDICAL_SSD = 1
+    QUALIFICATION_MEDICAL_SANH = 2
+    QUALIFICATION_MEDICAL_RH = 3
+    QUALIFICATION_MEDICAL_RS = 4
+    QUALIFICATION_MEDICAL_RA = 5
+    QUALIFICATION_MEDICAL_NFS = 6
+    QUALIFICATION_MEDICAL_NA = 7
     QUALIFICATION_MEDICAL_OPTIONS = (
-        (QUALIFICATION_MEDICAL_NONE, "keine"),
         (QUALIFICATION_MEDICAL_EH, "Ersthelfer"),
         (QUALIFICATION_MEDICAL_SSD, "Schulsanitäter"),
         (QUALIFICATION_MEDICAL_SANH, "Sanitätshelfer"),
@@ -77,9 +78,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     birth_date = DateField()
     phone = IntegerField(null=True)
     medical_qualification = IntegerField(
-        choices=QUALIFICATION_MEDICAL_OPTIONS, default=QUALIFICATION_MEDICAL_NONE
+        choices=QUALIFICATION_MEDICAL_OPTIONS, blank=True, null=True
     )
-    qualifications = ManyToManyField(Qualification)
+    qualifications = ManyToManyField(Qualification, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [

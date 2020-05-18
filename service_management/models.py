@@ -51,6 +51,7 @@ class Service(Model):
 
 class Shift(Model):
     service = ForeignKey(Service, on_delete=models.CASCADE)
+    meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
     resources = ManyToManyField(Resource)
@@ -64,7 +65,7 @@ class Participation(Model):
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
     shift = ForeignKey(Shift, on_delete=models.CASCADE)
     resource_position = ForeignKey(
-        ResourcePosition, on_delete=models.CASCADE, blank=True
+        ResourcePosition, on_delete=models.CASCADE, blank=True, null=True
     )
     accepted = BooleanField(default=False)
 

@@ -9,10 +9,13 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     DeleteView,
-    RedirectView,
+    RedirectView, TemplateView,
 )
 
 from service_management.models import Service, Shift, Participation
+
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "service_management/home.html"
 
 
 class ListView(LoginRequiredMixin, ListView):
