@@ -29,11 +29,11 @@
                         <ul class="navbar-nav mr-auto">
                             {% with url_name=request.resolver_match.url_name %}
                                 <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "service_management:index" %}">Home <span
+                                    <a class="nav-link" href="{% url "event_management:index" %}">Home <span
                                             class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item {% if url_name == 'service_list' %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "service_management:service_list" %}">Services
+                                    <a class="nav-link" href="{% url "event_management:service_list" %}">Services
                                         <span
                                                 class="sr-only">(current)</span></a>
                                 </li>

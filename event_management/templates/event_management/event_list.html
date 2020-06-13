@@ -7,7 +7,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#service_table').DataTable({
+            $('#event_table').DataTable({
                 "paging": false,
                 "info": false,
                 "responsive": true,
@@ -18,9 +18,9 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>Services</h1>
+        <h1>Events</h1>
     </div>
-    <table id="service_table" class="table table-striped display">
+    <table id="event_table" class="table table-striped display">
         <thead>
         <tr>
             <th>Title</th>
@@ -31,12 +31,12 @@
         </tr>
         </thead>
         <tbody>
-        {% for service in service_list %}
-            <td>{{ service.title }}</td>
-            <td>{{ service.location }}</td>
-            <td>{{ service.start_time | date:"d.m.Y" }}</td>
-            <td>{{ service.end_time | date:"d.m.Y" }}</td>
-            <td><a class="btn btn-primary" href="{% url "service_management:service_detail" service.id %}"><span class="fa fa-eye"></span>Show</a></td>
+        {% for event in event_list %}
+            <td>{{ event.title }}</td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.start_time | date:"d.m.Y" }}</td>
+            <td>{{ event.end_time | date:"d.m.Y" }}</td>
+            <td><a class="btn btn-primary" href="{% url "event_management:service_detail" event.id %}"><span class="fa fa-eye"></span>Show</a></td>
         {% endfor %}
         </tbody>
     </table>

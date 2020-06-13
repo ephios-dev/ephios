@@ -1,7 +1,9 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.db import models
 from django.db.models import (
     EmailField,
     BooleanField,
@@ -9,7 +11,7 @@ from django.db.models import (
     DateField,
     IntegerField,
     Model,
-    ManyToManyField,
+    ManyToManyField, ForeignKey,
 )
 
 
@@ -43,33 +45,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class Qualification(Model):
-    title = CharField(max_length=254)
-
-    def __str__(self):
-        return self.title
-
-
 class UserProfile(AbstractBaseUser, PermissionsMixin):
-    QUALIFICATION_MEDICAL_EH = 0
-    QUALIFICATION_MEDICAL_SSD = 1
-    QUALIFICATION_MEDICAL_SANH = 2
-    QUALIFICATION_MEDICAL_RH = 3
-    QUALIFICATION_MEDICAL_RS = 4
-    QUALIFICATION_MEDICAL_RA = 5
-    QUALIFICATION_MEDICAL_NFS = 6
-    QUALIFICATION_MEDICAL_NA = 7
-    QUALIFICATION_MEDICAL_OPTIONS = (
-        (QUALIFICATION_MEDICAL_EH, "Ersthelfer"),
-        (QUALIFICATION_MEDICAL_SSD, "Schulsanitäter"),
-        (QUALIFICATION_MEDICAL_SANH, "Sanitätshelfer"),
-        (QUALIFICATION_MEDICAL_RH, "Rettungshelfer"),
-        (QUALIFICATION_MEDICAL_RS, "Rettungssanitäter"),
-        (QUALIFICATION_MEDICAL_RA, "Rettungsassistent"),
-        (QUALIFICATION_MEDICAL_NFS, "Notfallsanitäter"),
-        (QUALIFICATION_MEDICAL_NA, "Notarzt"),
-    )
-
     email = EmailField(unique=True, verbose_name="Email address")
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
@@ -77,10 +53,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     last_name = CharField(max_length=254, verbose_name="Last name")
     birth_date = DateField()
     phone = IntegerField(null=True)
-    medical_qualification = IntegerField(
-        choices=QUALIFICATION_MEDICAL_OPTIONS, blank=True, null=True
-    )
-    qualifications = ManyToManyField(Qualification, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
@@ -109,3 +81,21 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
             else current.year - self.birth_date.year
         )
         return age < 18
+
+
+class QualificationTrack(Model):
+    title = CharField(max_length=254)
+
+
+class Qualification(Model):
+    title = CharField(max_length=254)
+    track = ForeignKey(QualificationTrack, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+
+class QualificationGrant(Model):
+    qualification = ForeignKey(Qualification, on_delete=models.CASCADE)
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    expriation_date = DateField(blank=True, null=True)

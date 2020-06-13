@@ -1,8 +1,8 @@
 from django.urls import path
 
-from service_management import views
+from event_management import views
 
-app_name = "service_management"
+app_name = "event_management"
 urlpatterns = [
     path("", views.HomeView.as_view(), name="index"),
     path("services/", views.ListView.as_view(), name="service_list"),

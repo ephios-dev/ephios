@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bootstrap4",
     "user_management",
-    "service_management",
+    "event_management",
 ]
 
 MIDDLEWARE = [

@@ -23,8 +23,6 @@ class UserCreationForm(forms.ModelForm):
             "last_name",
             "birth_date",
             "phone",
-            "medical_qualification",
-            "qualifications",
         )
 
     def clean_password_validation(self):

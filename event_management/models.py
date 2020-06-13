@@ -15,30 +15,19 @@ from django.db.models import (
 from user_management.models import Qualification, UserProfile
 
 
-class ResourcePosition(Model):
+class EventType(Model):
     title = CharField(max_length=254)
-    amount = IntegerField()
-    medical_qualification = IntegerField(
-        choices=UserProfile.QUALIFICATION_MEDICAL_OPTIONS
-    )
-    qualification = ManyToManyField(Qualification, blank=True)
+    can_grant_qualification = BooleanField()
 
     def __str__(self):
         return self.title
 
 
-class Resource(Model):
-    title = CharField(max_length=254)
-    positions = ManyToManyField(ResourcePosition)
-
-    def __str__(self):
-        return self.title
-
-
-class Service(Model):
+class Event(Model):
     title = CharField(max_length=254)
     description = TextField(blank=True, null=True)
     location = CharField(max_length=254)
+    type = ForeignKey(EventType, on_delete=models.CASCADE)
 
     @property
     def start_time(self):
@@ -55,35 +44,40 @@ class Service(Model):
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("service_management:service_detail", args=[str(self.id)])
+        return reverse("event_management:service_detail", args=[str(self.id)])
+
+
+class EventSeries(Model):
+    events = ManyToManyField(Event)
 
 
 class Shift(Model):
-    service = ForeignKey(Service, on_delete=models.CASCADE)
+    service = ForeignKey(Event, on_delete=models.CASCADE)
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
-    resources = ManyToManyField(Resource)
     minors_allowed = BooleanField()
 
     def __str__(self):
         return f"{self.service.title} ({self.start_time}-{self.end_time})"
 
 
-class Participation(Model):
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    shift = ForeignKey(Shift, on_delete=models.CASCADE)
-    resource_position = ForeignKey(
-        ResourcePosition, on_delete=models.CASCADE, blank=True, null=True
+class AbstractParticipation(Model):
+    REQUESTED = 0
+    CONFIRMED = 1
+    REJECTED = 2
+    STATE_CHOICES = (
+        (REQUESTED, "requested"),
+        (CONFIRMED, "confirmed"),
+        (REJECTED, "rejected"),
     )
-    accepted = BooleanField(default=False)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "shift"], name="unique_shift_participation"
-            )
-        ]
+    shift = ForeignKey(Shift, on_delete=models.CASCADE)
+    state = IntegerField(choices=STATE_CHOICES, default=REQUESTED)
+
+
+class LocalParticipation(AbstractParticipation):
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.get_full_name()} @ {self.shift}"

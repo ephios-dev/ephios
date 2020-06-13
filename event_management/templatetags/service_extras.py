@@ -1,6 +1,6 @@
 from django import template
 
-from service_management.models import Participation
+from event_management.models import AbstractParticipation
 
 register = template.Library()
 
@@ -17,7 +17,7 @@ def user_list(resource_position, shift):
 
 @register.filter(name="shift_status")
 def shift_status(shift, user):
-    participation = Participation.objects.filter(user=user, shift=shift).first()
+    participation = AbstractParticipation.objects.filter(user=user, shift=shift).first()
     if participation:
         if participation.accepted:
             return "confirmed"

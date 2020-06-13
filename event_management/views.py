@@ -12,26 +12,27 @@ from django.views.generic import (
     RedirectView, TemplateView,
 )
 
-from service_management.models import Service, Shift, Participation
+from event_management.models import Event, Shift, AbstractParticipation, LocalParticipation
+
 
 class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = "service_management/home.html"
+    template_name = "event_management/home.html"
 
 
 class ListView(LoginRequiredMixin, ListView):
-    model = Service
+    model = Event
 
 
 class DetailView(LoginRequiredMixin, DetailView):
-    model = Service
+    model = Event
 
 
 class UpdateView(LoginRequiredMixin, UpdateView):
-    model = Service
+    model = Event
 
 
 class DeleteView(LoginRequiredMixin, DeleteView):
-    model = Service
+    model = Event
 
 
 class ShiftRegisterView(LoginRequiredMixin, RedirectView):
@@ -43,7 +44,7 @@ class ShiftRegisterView(LoginRequiredMixin, RedirectView):
             )
         else:
             try:
-                Participation(user=self.request.user, shift=shift).save()
+                LocalParticipation(user=self.request.user, shift=shift).save()
                 messages.success(
                     request=self.request,
                     message="Successfully registered for shift on {}".format(
@@ -56,5 +57,5 @@ class ShiftRegisterView(LoginRequiredMixin, RedirectView):
                     message="You already registered for this shift.",
                 )
         return reverse(
-            "service_management:service_detail", kwargs={"pk": shift.service.id}
+            "event_management:service_detail", kwargs={"pk": shift.service.id}
         )
