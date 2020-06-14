@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from event_management.models import (
-    Shift,
-    Event, EventType, LocalParticipation,
-)
+from event_management.models import Event, EventType, LocalParticipation, Shift
 
 admin.site.register(Shift)
 admin.site.register(Event)

@@ -21,7 +21,7 @@ class UserCreationForm(forms.ModelForm):
             "email",
             "first_name",
             "last_name",
-            "birth_date",
+            "date_of_birth",
             "phone",
         )
 
@@ -68,7 +68,7 @@ class UserChangeForm(forms.ModelForm):
             "password",
             "first_name",
             "last_name",
-            "birth_date",
+            "date_of_birth",
             "phone",
             "is_active",
             "is_staff",

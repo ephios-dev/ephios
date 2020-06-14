@@ -5,39 +5,40 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.db.models import (
-    EmailField,
     BooleanField,
     CharField,
     DateField,
+    EmailField,
+    ForeignKey,
     IntegerField,
+    ManyToManyField,
     Model,
-    ManyToManyField, ForeignKey,
 )
 
 
 class UserManager(BaseUserManager):
     def create_user(
-        self, email, first_name, last_name, birth_date, password=None,
+        self, email, first_name, last_name, date_of_birth, password=None,
     ):
         user = self.model(
             email=email,
             first_name=first_name,
             last_name=last_name,
-            birth_date=birth_date,
+            date_of_birth=date_of_birth,
         )
         user.set_password(password)
         user.save()
         return user
 
     def create_superuser(
-        self, email, first_name, last_name, birth_date, password=None,
+        self, email, first_name, last_name, date_of_birth, password=None,
     ):
         user = self.create_user(
             email=email,
             password=password,
             first_name=first_name,
             last_name=last_name,
-            birth_date=birth_date,
+            date_of_birth=date_of_birth,
         )
         user.is_superuser = True
         user.is_staff = True
@@ -51,14 +52,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     is_staff = BooleanField(default=False)
     first_name = CharField(max_length=254, verbose_name="First name")
     last_name = CharField(max_length=254, verbose_name="Last name")
-    birth_date = DateField()
-    phone = IntegerField(null=True)
+    date_of_birth = DateField()
+    phone = CharField(max_length=254, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
         "first_name",
         "last_name",
-        "birth_date",
+        "date_of_birth",
     ]
 
     objects = UserManager()
@@ -73,14 +74,24 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def is_minor(self):
         current = datetime.now()
         birthday_upcoming = (
-            current.month <= self.birth_date.month and current.day < self.birth_date.day
+            current.month <= self.date_of_birth.month
+            and current.day < self.date_of_birth.day
         )
         age = (
-            current.year - self.birth_date.year - 1
+            current.year - self.date_of_birth.year - 1
             if birthday_upcoming
-            else current.year - self.birth_date.year
+            else current.year - self.date_of_birth.year
         )
         return age < 18
+
+    def as_participator(self):
+        return LocalUserParticipator(
+            first_name=self.first_name,
+            last_name=self.last_name,
+            qualifications=[],  # TODO
+            date_of_birth=self.date_of_birth,
+            user=self,
+        )
 
 
 class QualificationTrack(Model):

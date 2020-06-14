@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from user_management.forms import UserChangeForm, UserCreationForm
-from user_management.models import UserProfile, Qualification
+from user_management.models import Qualification, UserProfile
 
 
 class UserAdmin(BaseUserAdmin):
@@ -15,7 +15,16 @@ class UserAdmin(BaseUserAdmin):
         (None, {"fields": ("email", "password")}),
         (
             "Personal info",
-            {"fields": ("first_name", "last_name", "birth_date", "phone", "medical_qualification", "qualifications",)},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "date_of_birth",
+                    "phone",
+                    "medical_qualification",
+                    "qualifications",
+                )
+            },
         ),
         ("Permissions", {"fields": ("is_staff", "is_superuser", "user_permissions")}),
     )
@@ -33,7 +42,7 @@ class UserAdmin(BaseUserAdmin):
                     "password_validation",
                     "first_name",
                     "last_name",
-                    "birth_date",
+                    "date_of_birth",
                     "phone",
                 ),
             },

@@ -1,18 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import (
-    Model,
+    BooleanField,
     CharField,
-    TextField,
+    DateTimeField,
     ForeignKey,
     IntegerField,
     ManyToManyField,
-    DateTimeField,
-    BooleanField,
+    Model,
     Q,
+    SlugField,
+    TextField,
 )
-
-from user_management.models import Qualification, UserProfile
+from jsonfallback.fields import FallbackJSONField
 
 
 class EventType(Model):
@@ -56,7 +56,17 @@ class Shift(Model):
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
-    minors_allowed = BooleanField()
+    signup_method_slug = SlugField()
+    signup_configuration = FallbackJSONField()
+
+    @property
+    def signup_method(self):
+        from event_management.signup import register_signup_method
+
+        for receiver, method in register_signup_method.send(None):
+            if method.slug == self.signup_method_slug:
+                return method(self)
+        raise ValueError(f"Signup Method '{self.signup_method_slug}' was not found.")
 
     def __str__(self):
         return f"{self.event.title} ({self.start_time}-{self.end_time})"

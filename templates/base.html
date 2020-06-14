@@ -32,8 +32,8 @@
                                     <a class="nav-link" href="{% url "event_management:index" %}">Home <span
                                             class="sr-only">(current)</span></a>
                                 </li>
-                                <li class="nav-item {% if url_name == 'service_list' %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "event_management:service_list" %}">Services
+                                <li class="nav-item {% if url_name == 'event_list' %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "event_management:event_list" %}">Events
                                         <span
                                                 class="sr-only">(current)</span></a>
                                 </li>

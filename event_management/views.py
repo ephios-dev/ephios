@@ -5,14 +5,21 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import (
-    ListView,
-    DetailView,
-    UpdateView,
     DeleteView,
-    RedirectView, TemplateView,
+    DetailView,
+    ListView,
+    RedirectView,
+    TemplateView,
+    UpdateView,
+    View,
 )
 
-from event_management.models import Event, Shift, AbstractParticipation, LocalParticipation
+from event_management.models import (
+    AbstractParticipation,
+    Event,
+    LocalParticipation,
+    Shift,
+)
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -35,7 +42,14 @@ class DeleteView(LoginRequiredMixin, DeleteView):
     model = Event
 
 
-class ShiftRegisterView(LoginRequiredMixin, RedirectView):
+# TODO rename to signup
+class ShiftRegisterView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        shift = get_object_or_404(Shift, id=self.kwargs["pk"])
+        return shift.signup_method.signup_view(request, *args, **kwargs)
+
+
+"""
     def get_redirect_url(self, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
         if self.request.user.is_minor and not shift.minors_allowed:
@@ -59,3 +73,4 @@ class ShiftRegisterView(LoginRequiredMixin, RedirectView):
         return reverse(
             "event_management:event_detail", kwargs={"pk": shift.event.id}
         )
+        """
