@@ -57,5 +57,5 @@ class ShiftRegisterView(LoginRequiredMixin, RedirectView):
                     message="You already registered for this shift.",
                 )
         return reverse(
-            "event_management:service_detail", kwargs={"pk": shift.service.id}
+            "event_management:event_detail", kwargs={"pk": shift.event.id}
         )

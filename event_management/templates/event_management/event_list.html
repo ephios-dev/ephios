@@ -36,7 +36,7 @@
             <td>{{ event.location }}</td>
             <td>{{ event.start_time | date:"d.m.Y" }}</td>
             <td>{{ event.end_time | date:"d.m.Y" }}</td>
-            <td><a class="btn btn-primary" href="{% url "event_management:service_detail" event.id %}"><span class="fa fa-eye"></span>Show</a></td>
+            <td><a class="btn btn-primary" href="{% url "event_management:event_detail" event.id %}"><span class="fa fa-eye"></span>Show</a></td>
         {% endfor %}
         </tbody>
     </table>

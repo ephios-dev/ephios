@@ -44,7 +44,7 @@ class Event(Model):
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("event_management:service_detail", args=[str(self.id)])
+        return reverse("event_management:event_detail", args=[str(self.id)])
 
 
 class EventSeries(Model):
@@ -52,14 +52,14 @@ class EventSeries(Model):
 
 
 class Shift(Model):
-    service = ForeignKey(Event, on_delete=models.CASCADE)
+    event = ForeignKey(Event, on_delete=models.CASCADE)
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
     minors_allowed = BooleanField()
 
     def __str__(self):
-        return f"{self.service.title} ({self.start_time}-{self.end_time})"
+        return f"{self.event.title} ({self.start_time}-{self.end_time})"
 
 
 class AbstractParticipation(Model):
