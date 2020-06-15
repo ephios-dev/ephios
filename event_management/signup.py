@@ -4,6 +4,7 @@ from datetime import date
 import django.dispatch
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
+from django.shortcuts import redirect
 
 from event_management.models import LocalParticipation
 
@@ -17,7 +18,7 @@ class AbstractParticipator:
     qualifications: list
     date_of_birth: date
 
-    def create_participation(self, shift):
+    def create_participation(self, shift)rg:
         raise NotImplementedError
 
 
@@ -44,16 +45,14 @@ class AbstractSignupMethod:
         )
 
     def create_participation(self, participator):
+        """Create and configure a participation object for the given participator."""
         # TODO check if its ok to create a participation and that there isn't one already. Throw a custom Errors.
         participator.create_participation(self.shift)
 
-    def signup_view(self, request, participation):
+    def signup_view(self, request, *args, **kwargs):
         self.create_participation(request.user.as_participator())
-        return reverse(
-            "event_management:event_detail", kwargs={"pk": self.shift.event.id}
-        )
+        return redirect("event_management:event_detail", pk=self.shift.event.pk)
 
-    # Action für den Anmeldeknopf (zum Index weiterleiten oder Formular zeigen) für den Helfer
     # Konfigurationsformular für den Verwalter
     # menschenlesbare Füllstandsangabe (z.B. 3/8, 3/, 0/8 (4 interessiert)) vlt irgendwie mit weiteren color-coded Status wie [“Egal”, Helfers needed", “genug Interesse”, “voll besetzt”]
 
