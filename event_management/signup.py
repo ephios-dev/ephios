@@ -18,7 +18,7 @@ class AbstractParticipator:
     qualifications: list
     date_of_birth: date
 
-    def create_participation(self, shift)rg:
+    def create_participation(self, shift):
         raise NotImplementedError
 
 
