@@ -85,9 +85,17 @@ class AbstractParticipation(Model):
     shift = ForeignKey(Shift, on_delete=models.CASCADE)
     state = IntegerField(choices=STATE_CHOICES, default=REQUESTED)
 
+    @property
+    def participator(self):
+        raise NotImplemented
+
 
 class LocalParticipation(AbstractParticipation):
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    @property
+    def participator(self):
+        return self.user.as_participator()
 
     def __str__(self):
         return f"{self.user.get_full_name()} @ {self.shift}"
