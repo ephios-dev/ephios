@@ -1,6 +1,6 @@
 from django import template
 
-from event_management.models import AbstractParticipation
+from django.utils.translation import gettext as _
 
 register = template.Library()
 
@@ -17,10 +17,12 @@ def user_list(resource_position, shift):
 
 @register.filter(name="shift_status")
 def shift_status(shift, user):
-    participation = AbstractParticipation.objects.filter(user=user, shift=shift).first()
+    participation = user.as_participator().participation_for(shift)
     if participation:
-        if participation.accepted:
-            return "confirmed"
-        else:
-            return "registered"
-    return None
+        return participation.get_state_display()
+    return "-"
+
+
+@register.filter(name="can_sign_up")
+def can_sign_up(shift, user):
+    return shift.signup_method.can_sign_up(user.as_participator())

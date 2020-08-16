@@ -2,13 +2,15 @@ from dataclasses import dataclass
 from datetime import date
 
 import django.dispatch
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 
 from event_management.models import LocalParticipation, AbstractParticipation
 
-register_signup_method = django.dispatch.Signal(providing_args=[])
+register_signup_methods = django.dispatch.Signal(providing_args=[])
 
 
 @dataclass
@@ -21,7 +23,9 @@ class AbstractParticipator:
     @property
     def age(self):
         today, born = date.today(), self.date_of_birth
-        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        return (
+            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        )
 
     def create_participation(self, shift):
         raise NotImplementedError
@@ -31,6 +35,7 @@ class AbstractParticipator:
         raise NotImplementedError
 
 
+@dataclass()
 class LocalUserParticipator(AbstractParticipator):
     user: get_user_model()
 
@@ -44,7 +49,7 @@ class LocalUserParticipator(AbstractParticipator):
             return None
 
 
-class SignupError(Excpetion):
+class SignupError(Exception):
     pass
 
 
@@ -64,7 +69,7 @@ class AbstractSignupMethod:
             return False
         return True
 
-    def check_signup(participator):
+    def check_signup(self, participator):
         self.check_no_existing_participation(participator)
         self.check_inside_signup_timeframe()
         self.check_participator_age(participator)
@@ -91,7 +96,15 @@ class AbstractSignupMethod:
         return participator.create_participation(self.shift)
 
     def signup_view(self, request, *args, **kwargs):
-        self.create_participation(request.user.as_participator())
+        try:
+            participation = self.create_participation(request.user.as_participator())
+            messages.success(
+                request,
+                _("Successfully signed up for shift %(shift_name)s.")
+                % {"shift_name": participation.shift},
+            )
+        except SignupError as e:
+            messages.error(request, e)
         return redirect("event_management:event_detail", pk=self.shift.event.pk)
 
     # Konfigurationsformular für den Verwalter
@@ -107,6 +120,7 @@ class AbstractSignupMethod:
 
 # these could be moved to a contrib module somewhere else
 
+
 class InstantConfirmationSignupMethod(AbstractSignupMethod):
     slug = "instant_confirmation"
     verbose_name = _("Instant Confirmation")
@@ -119,8 +133,6 @@ class InstantConfirmationSignupMethod(AbstractSignupMethod):
         return participation
 
 
-
-
-
-
-
+@receiver(register_signup_methods)
+def register_signup_method(sender, **kwargs):
+    return InstantConfirmationSignupMethod

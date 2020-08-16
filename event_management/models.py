@@ -61,9 +61,9 @@ class Shift(Model):
 
     @property
     def signup_method(self):
-        from event_management.signup import register_signup_method
+        from event_management.signup import register_signup_methods
 
-        for receiver, method in register_signup_method.send(None):
+        for receiver, method in register_signup_methods.send(None):
             if method.slug == self.signup_method_slug:
                 return method(self)
         raise ValueError(f"Signup Method '{self.signup_method_slug}' was not found.")

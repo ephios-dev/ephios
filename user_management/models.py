@@ -85,6 +85,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return age < 18
 
     def as_participator(self):
+        from event_management.signup import LocalUserParticipator
+
         return LocalUserParticipator(
             first_name=self.first_name,
             last_name=self.last_name,
