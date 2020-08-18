@@ -20,18 +20,13 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("password", models.CharField(max_length=128, verbose_name="password")),
                 (
                     "last_login",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="last login"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
                 ),
                 (
                     "is_superuser",
@@ -43,20 +38,12 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "email",
-                    models.EmailField(
-                        max_length=254, unique=True, verbose_name="Email address"
-                    ),
+                    models.EmailField(max_length=254, unique=True, verbose_name="Email address"),
                 ),
                 ("is_active", models.BooleanField(default=True)),
                 ("is_staff", models.BooleanField(default=False)),
-                (
-                    "first_name",
-                    models.CharField(max_length=254, verbose_name="First name"),
-                ),
-                (
-                    "last_name",
-                    models.CharField(max_length=254, verbose_name="Last name"),
-                ),
+                ("first_name", models.CharField(max_length=254, verbose_name="First name"),),
+                ("last_name", models.CharField(max_length=254, verbose_name="Last name"),),
                 ("date_of_birth", models.DateField()),
                 ("phone", models.CharField(max_length=254, null=True)),
                 (
@@ -90,10 +77,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("title", models.CharField(max_length=254)),
@@ -105,10 +89,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("title", models.CharField(max_length=254)),
@@ -120,10 +101,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("expriation_date", models.DateField(blank=True, null=True)),
@@ -137,8 +115,7 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
+                        on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],

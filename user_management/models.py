@@ -21,10 +21,7 @@ class UserManager(BaseUserManager):
         self, email, first_name, last_name, date_of_birth, password=None,
     ):
         user = self.model(
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            date_of_birth=date_of_birth,
+            email=email, first_name=first_name, last_name=last_name, date_of_birth=date_of_birth,
         )
         user.set_password(password)
         user.save()
@@ -74,8 +71,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def is_minor(self):
         current = datetime.now()
         birthday_upcoming = (
-            current.month <= self.date_of_birth.month
-            and current.day < self.date_of_birth.day
+            current.month <= self.date_of_birth.month and current.day < self.date_of_birth.day
         )
         age = (
             current.year - self.date_of_birth.year - 1

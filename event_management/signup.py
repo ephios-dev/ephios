@@ -23,9 +23,7 @@ class AbstractParticipator:
     @property
     def age(self):
         today, born = date.today(), self.date_of_birth
-        return (
-            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        )
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     def create_participation(self, shift):
         raise NotImplementedError
@@ -35,7 +33,7 @@ class AbstractParticipator:
         raise NotImplementedError
 
 
-@dataclass()
+@dataclass
 class LocalUserParticipator(AbstractParticipator):
     user: get_user_model()
 

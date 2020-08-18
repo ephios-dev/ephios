@@ -1,23 +1,16 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
-    RedirectView,
     TemplateView,
     UpdateView,
     View,
 )
 
 from event_management.models import (
-    AbstractParticipation,
     Event,
-    LocalParticipation,
     Shift,
 )
 
@@ -26,19 +19,19 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "event_management/home.html"
 
 
-class ListView(LoginRequiredMixin, ListView):
+class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
 
-class DetailView(LoginRequiredMixin, DetailView):
+class EventDetailView(LoginRequiredMixin, DetailView):
     model = Event
 
 
-class UpdateView(LoginRequiredMixin, UpdateView):
+class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
 
 
-class DeleteView(LoginRequiredMixin, DeleteView):
+class EventDeleteView(LoginRequiredMixin, DeleteView):
     model = Event
 
 

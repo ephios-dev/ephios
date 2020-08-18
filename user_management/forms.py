@@ -10,9 +10,7 @@ class UserCreationForm(forms.ModelForm):
     fields, plus a repeated password."""
 
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password_validation = forms.CharField(
-        label="Password confirmation", widget=forms.PasswordInput
-    )
+    password_validation = forms.CharField(label="Password confirmation", widget=forms.PasswordInput)
     field_order = ["email", "password", "password_validation"]
 
     class Meta:

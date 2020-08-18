@@ -18,17 +18,13 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 (
                     "state",
                     models.IntegerField(
-                        choices=[(0, "requested"), (1, "confirmed"), (2, "rejected")],
-                        default=0,
+                        choices=[(0, "requested"), (1, "confirmed"), (2, "rejected")], default=0,
                     ),
                 ),
             ],
@@ -39,10 +35,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("title", models.CharField(max_length=254)),
@@ -56,10 +49,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("title", models.CharField(max_length=254)),
@@ -89,10 +79,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("meeting_time", models.DateTimeField()),
@@ -103,8 +90,7 @@ class Migration(migrations.Migration):
                 (
                     "event",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="event_management.Event",
+                        on_delete=django.db.models.deletion.CASCADE, to="event_management.Event",
                     ),
                 ),
             ],
@@ -115,10 +101,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
                     ),
                 ),
                 ("events", models.ManyToManyField(to="event_management.Event")),
@@ -128,8 +111,7 @@ class Migration(migrations.Migration):
             model_name="event",
             name="type",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                to="event_management.EventType",
+                on_delete=django.db.models.deletion.CASCADE, to="event_management.EventType",
             ),
         ),
         migrations.AddField(
