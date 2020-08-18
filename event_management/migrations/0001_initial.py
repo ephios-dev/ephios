@@ -16,64 +16,126 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('location', models.CharField(max_length=254)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("location", models.CharField(max_length=254)),
             ],
         ),
         migrations.CreateModel(
-            name='EventSeries',
+            name="EventSeries",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='EventType',
+            name="EventType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('can_grant_qualification', models.BooleanField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("can_grant_qualification", models.BooleanField()),
             ],
         ),
         migrations.CreateModel(
-            name='Shift',
+            name="Shift",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('meeting_time', models.DateTimeField()),
-                ('start_time', models.DateTimeField()),
-                ('end_time', models.DateTimeField()),
-                ('signup_method_slug', models.SlugField()),
-                ('signup_configuration', jsonfallback.fields.FallbackJSONField()),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='event_management.Event')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("meeting_time", models.DateTimeField()),
+                ("start_time", models.DateTimeField()),
+                ("end_time", models.DateTimeField()),
+                ("signup_method_slug", models.SlugField()),
+                ("signup_configuration", jsonfallback.fields.FallbackJSONField()),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="event_management.Event"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='event',
-            name='series',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='event_management.EventSeries'),
+            model_name="event",
+            name="series",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="event_management.EventSeries",
+            ),
         ),
         migrations.AddField(
-            model_name='event',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='event_management.EventType'),
+            model_name="event",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="event_management.EventType"
+            ),
         ),
         migrations.CreateModel(
-            name='AbstractParticipation',
+            name="AbstractParticipation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('state', models.IntegerField(choices=[(0, 'requested'), (1, 'confirmed'), (2, 'rejected')], default=0)),
-                ('shift', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='event_management.Shift')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "state",
+                    models.IntegerField(
+                        choices=[(0, "requested"), (1, "confirmed"), (2, "rejected")], default=0
+                    ),
+                ),
+                (
+                    "shift",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="event_management.Shift"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='LocalParticipation',
+            name="LocalParticipation",
             fields=[
-                ('abstractparticipation_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='event_management.AbstractParticipation')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "abstractparticipation_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="event_management.AbstractParticipation",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
-            bases=('event_management.abstractparticipation',),
+            bases=("event_management.abstractparticipation",),
         ),
     ]
