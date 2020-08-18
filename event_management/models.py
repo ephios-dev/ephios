@@ -87,7 +87,7 @@ class AbstractParticipation(Model):
 
     @property
     def participator(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class LocalParticipation(AbstractParticipation):
