@@ -111,4 +111,4 @@ class Qualification(Model):
 class QualificationGrant(Model):
     qualification = ForeignKey(Qualification, on_delete=models.CASCADE)
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    expriation_date = DateField(blank=True, null=True)
+    expiration_date = DateField(blank=True, null=True)
