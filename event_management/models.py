@@ -23,11 +23,16 @@ class EventType(Model):
         return self.title
 
 
+class EventSeries(Model):
+    ...
+
+
 class Event(Model):
     title = CharField(max_length=254)
     description = TextField(blank=True, null=True)
     location = CharField(max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE)
+    series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
 
     @property
     def start_time(self):
@@ -45,10 +50,6 @@ class Event(Model):
         from django.urls import reverse
 
         return reverse("event_management:event_detail", args=[str(self.id)])
-
-
-class EventSeries(Model):
-    events = ManyToManyField(Event)
 
 
 class Shift(Model):
