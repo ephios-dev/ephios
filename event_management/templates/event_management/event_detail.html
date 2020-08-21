@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load event_extras %}
+
+{% block title %}
+    {{ event.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Event: {{ event.title }} <small>({{ event.location }})</small></h1>
+    </div>
+    <p>{{ event.description }}</p>
+    <div>
+        {% for shift in event.shift_set.all %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Shift</h5>
+                    <div class="card-body container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <b>Date:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
+                                    <b>Meeting time:</b> {{ shift.meeting_time | date:"H:i" }} <br>
+                                    <b>Start time:</b> {{ shift.start_time | date:"H:i" }} <br>
+                                    <b>End time:</b> {{ shift.end_time | date:"H:i" }} <br>
+                                    <b>Minors allowed:</b> {{ shift.minors_allowed | yesno }} <br>
+                                    <b>Status:</b> {{ shift|shift_status:request.user }} <br>
+                                    {% with can_sign_up=shift|can_sign_up:request.user %}
+                                        {% if can_sign_up %}
+                                            <a class="btn btn-primary"
+                                               href="{% url "event_management:shift_register" shift.id %}">Register</a>
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <div class="list-group-item">
+                                        <h5>TODO Section</h5>
+                                        <ul>
+                                            <li>TODO Position</li>
+                                        </ul>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

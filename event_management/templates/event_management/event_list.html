@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+
+{% block javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#event_table').DataTable({
+                "paging": false,
+                "info": false,
+                "responsive": true,
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Events</h1>
+    </div>
+    <table id="event_table" class="table table-striped display">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th>until</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in event_list %}
+            <td>{{ event.title }}</td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.start_time | date:"d.m.Y" }}</td>
+            <td>{{ event.end_time | date:"d.m.Y" }}</td>
+            <td><a class="btn btn-primary" href="{% url "event_management:event_detail" event.id %}"><span class="fa fa-eye"></span>Show</a></td>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
