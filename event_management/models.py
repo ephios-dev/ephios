@@ -24,7 +24,7 @@ class EventType(Model):
 
 
 class EventSeries(Model):
-    ...
+    pass
 
 
 class Event(Model):
