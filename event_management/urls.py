@@ -9,6 +9,6 @@ urlpatterns = [
     # path("<int:pk>/edit", views.UpdateView.as_view(), name="event_change"),
     # path("<int:pk>/delete", views.DeleteView.as_view(), name="event_delete"),
     path("events/<int:pk>/", views.EventDetailView.as_view(), name="event_detail"),
-    # path("add/", views.CreateView.as_view(), name="event_add"),
+    path("events/create/", views.EventCreateView.as_view(), name="event_create"),
     path("shifts/<int:pk>/register", views.ShiftRegisterView.as_view(), name="shift_register",),
 ]

@@ -1,5 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
+from django.forms import modelformset_factory, formset_factory
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -7,11 +10,16 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
     View,
+    CreateView,
 )
+from guardian.mixins import PermissionRequiredMixin
+from guardian.shortcuts import get_objects_for_user
 
+from event_management.forms import EventForm, ShiftFormSet
 from event_management.models import (
     Event,
     Shift,
+    EventType,
 )
 
 
@@ -22,17 +30,51 @@ class HomeView(LoginRequiredMixin, TemplateView):
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
+    def get_queryset(self):
+        return get_objects_for_user(self.request.user, "event_management.view_event")
 
-class EventDetailView(LoginRequiredMixin, DetailView):
+
+class EventDetailView(PermissionRequiredMixin, DetailView):
     model = Event
+    permission_required = "event_management.view_event"
 
 
-class EventUpdateView(LoginRequiredMixin, UpdateView):
+class EventUpdateView(PermissionRequiredMixin, UpdateView):
     model = Event
+    permission_required = "event_management.change_event"
 
 
-class EventDeleteView(LoginRequiredMixin, DeleteView):
+class EventCreateView(LoginRequiredMixin, View):
+    template_name = "event_management/event_form.html"
+    # permission_required = 'event_management.add_event'
+
+    def get(self, request, *args, **kwargs):
+        event_form = EventForm(user=request.user)
+        shift_formset = ShiftFormSet(queryset=Shift.objects.none())
+        return render(
+            request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}
+        )
+
+    def post(self, request, *args, **kwargs):
+        event_form = EventForm(request.POST, user=request.user)
+        shift_formset = ShiftFormSet(request.POST)
+        if event_form.is_valid() and shift_formset.is_valid():
+            event = event_form.save()
+            shifts = shift_formset.save(commit=False)
+            for shift in shifts:
+                shift.event = event
+                shift.signup_method_slug = "instant_confirmation"
+                shift.signup_configuration = ""
+                shift.save()
+            return HttpResponseRedirect(event.get_absolute_url())
+        return render(
+            request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}
+        )
+
+
+class EventDeleteView(PermissionRequiredMixin, DeleteView):
     model = Event
+    permission_required = "event_management.delete_event"
 
 
 # TODO rename to signup

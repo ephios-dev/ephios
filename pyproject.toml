@@ -13,6 +13,7 @@ django-environ = "^0.4.5"
 mysqlclient = "^1.4.6"
 django-jsonfallback = "^2.1.2"
 psycopg2 = "^2.8.5"
+django-guardian = "^2.3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
