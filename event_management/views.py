@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.forms import modelformset_factory, formset_factory
 from django.http import HttpResponseRedirect
@@ -12,7 +12,6 @@ from django.views.generic import (
     View,
     CreateView,
 )
-from guardian.mixins import PermissionRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 
 from event_management.forms import EventForm, ShiftFormSet
@@ -44,12 +43,12 @@ class EventUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "event_management.change_event"
 
 
-class EventCreateView(LoginRequiredMixin, View):
+class EventCreateView(PermissionRequiredMixin, View):
     template_name = "event_management/event_form.html"
-    # permission_required = 'event_management.add_event'
+    permission_required = "event_management.add_event"
 
     def get(self, request, *args, **kwargs):
-        event_form = EventForm(user=request.user)
+        event_form = EventForm(user=request.user, initial={"responsible_persons": request.user})
         shift_formset = ShiftFormSet(queryset=Shift.objects.none())
         return render(
             request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}

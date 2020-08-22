@@ -122,6 +122,7 @@ USE_TZ = True
 
 STATIC_URL = env.str("STATIC_URL")
 STATIC_ROOT = env.str("STATIC_ROOT")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 
 # Guardian configuration
