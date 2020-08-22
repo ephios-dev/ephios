@@ -33,13 +33,6 @@ class EventForm(ModelForm):
         model = Event
         fields = ["title", "description", "location", "type"]
 
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
-        super(EventForm, self).__init__(*args, **kwargs)
-        self.fields["visible_for"].queryset = get_objects_for_user(
-            self.user, "publish_event_for_group", klass=Group
-        )
-
     def save(self, commit=True):
         event = super(EventForm, self).save(commit)
         for group in self.cleaned_data["visible_for"]:

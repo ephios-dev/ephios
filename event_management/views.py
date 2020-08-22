@@ -1,6 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.forms import modelformset_factory, formset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import (
@@ -10,7 +9,6 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
     View,
-    CreateView,
 )
 from guardian.shortcuts import get_objects_for_user
 
@@ -18,7 +16,6 @@ from event_management.forms import EventForm, ShiftFormSet
 from event_management.models import (
     Event,
     Shift,
-    EventType,
 )
 
 
@@ -48,14 +45,20 @@ class EventCreateView(PermissionRequiredMixin, View):
     permission_required = "event_management.add_event"
 
     def get(self, request, *args, **kwargs):
-        event_form = EventForm(user=request.user, initial={"responsible_persons": request.user})
+        event_form = EventForm(initial={"responsible_persons": request.user})
+        event_form.fields["visible_for"].queryset = get_objects_for_user(
+            request.user, "publish_event_for_group", klass=Group
+        )
         shift_formset = ShiftFormSet(queryset=Shift.objects.none())
         return render(
             request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}
         )
 
     def post(self, request, *args, **kwargs):
-        event_form = EventForm(request.POST, user=request.user)
+        event_form = EventForm(request.POST)
+        event_form.fields["visible_for"].queryset = get_objects_for_user(
+            request.user, "publish_event_for_group", klass=Group
+        )
         shift_formset = ShiftFormSet(request.POST)
         if event_form.is_valid() and shift_formset.is_valid():
             event = event_form.save()
