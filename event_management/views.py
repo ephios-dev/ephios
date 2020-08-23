@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -40,37 +40,40 @@ class EventUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "event_management.change_event"
 
 
-class EventCreateView(PermissionRequiredMixin, View):
+class EventCreateView(PermissionRequiredMixin, TemplateView):
     template_name = "event_management/event_form.html"
     permission_required = "event_management.add_event"
 
-    def get(self, request, *args, **kwargs):
-        event_form = EventForm(initial={"responsible_persons": request.user})
+    def get_event_form(self):
+        event_form = EventForm(
+            self.request.POST or None, initial={"responsible_persons": self.request.user}
+        )
         event_form.fields["visible_for"].queryset = get_objects_for_user(
-            request.user, "publish_event_for_group", klass=Group
+            self.request.user, "publish_event_for_group", klass=Group
         )
-        shift_formset = ShiftFormSet(queryset=Shift.objects.none())
-        return render(
-            request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}
-        )
+        return event_form
+
+    def get_shift_formset(self):
+        return ShiftFormSet(self.request.POST or None, queryset=Shift.objects.none())
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault("event_form", self.get_event_form())
+        kwargs.setdefault("shift_formset", self.get_shift_formset())
+        return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
-        event_form = EventForm(request.POST)
-        event_form.fields["visible_for"].queryset = get_objects_for_user(
-            request.user, "publish_event_for_group", klass=Group
-        )
-        shift_formset = ShiftFormSet(request.POST)
+        event_form = self.get_event_form()
+        shift_formset = self.get_shift_formset()
         if event_form.is_valid() and shift_formset.is_valid():
             event = event_form.save()
             shifts = shift_formset.save(commit=False)
             for shift in shifts:
                 shift.event = event
-                shift.signup_method_slug = "instant_confirmation"
                 shift.signup_configuration = ""
                 shift.save()
-            return HttpResponseRedirect(event.get_absolute_url())
-        return render(
-            request, self.template_name, {"event_form": event_form, "shift_formset": shift_formset}
+            return redirect(event.get_absolute_url())
+        return self.render_to_response(
+            self.get_context_data(event_form=event_form, shift_formset=shift_formset)
         )
 
 
