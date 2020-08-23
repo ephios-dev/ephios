@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap4",
+    "guardian",
     "user_management",
     "event_management",
 ]
@@ -93,6 +94,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+)
+
 AUTH_USER_MODEL = "user_management.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 
@@ -116,3 +122,9 @@ USE_TZ = True
 
 STATIC_URL = env.str("STATIC_URL")
 STATIC_ROOT = env.str("STATIC_ROOT")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
+
+# Guardian configuration
+ANONYMOUS_USER_NAME = None
+GUARDIAN_MONKEY_PATCH = False

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import guardian.mixins
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -10,8 +11,6 @@ from django.db.models import (
     DateField,
     EmailField,
     ForeignKey,
-    IntegerField,
-    ManyToManyField,
     Model,
 )
 
@@ -43,7 +42,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class UserProfile(AbstractBaseUser, PermissionsMixin):
+class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUserMixin):
     email = EmailField(unique=True, verbose_name="Email address")
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)

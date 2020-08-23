@@ -1,5 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -8,7 +10,9 @@ from django.views.generic import (
     UpdateView,
     View,
 )
+from guardian.shortcuts import get_objects_for_user
 
+from event_management.forms import EventForm, ShiftFormSet
 from event_management.models import (
     Event,
     Shift,
@@ -22,17 +26,60 @@ class HomeView(LoginRequiredMixin, TemplateView):
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
+    def get_queryset(self):
+        return get_objects_for_user(self.request.user, "event_management.view_event")
 
-class EventDetailView(LoginRequiredMixin, DetailView):
+
+class EventDetailView(PermissionRequiredMixin, DetailView):
     model = Event
+    permission_required = "event_management.view_event"
 
 
-class EventUpdateView(LoginRequiredMixin, UpdateView):
+class EventUpdateView(PermissionRequiredMixin, UpdateView):
     model = Event
+    permission_required = "event_management.change_event"
 
 
-class EventDeleteView(LoginRequiredMixin, DeleteView):
+class EventCreateView(PermissionRequiredMixin, TemplateView):
+    template_name = "event_management/event_form.html"
+    permission_required = "event_management.add_event"
+
+    def get_event_form(self):
+        event_form = EventForm(
+            self.request.POST or None, initial={"responsible_persons": self.request.user}
+        )
+        event_form.fields["visible_for"].queryset = get_objects_for_user(
+            self.request.user, "publish_event_for_group", klass=Group
+        )
+        return event_form
+
+    def get_shift_formset(self):
+        return ShiftFormSet(self.request.POST or None, queryset=Shift.objects.none())
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault("event_form", self.get_event_form())
+        kwargs.setdefault("shift_formset", self.get_shift_formset())
+        return super().get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        event_form = self.get_event_form()
+        shift_formset = self.get_shift_formset()
+        if event_form.is_valid() and shift_formset.is_valid():
+            event = event_form.save()
+            shifts = shift_formset.save(commit=False)
+            for shift in shifts:
+                shift.event = event
+                shift.signup_configuration = ""
+                shift.save()
+            return redirect(event.get_absolute_url())
+        return self.render_to_response(
+            self.get_context_data(event_form=event_form, shift_formset=shift_formset)
+        )
+
+
+class EventDeleteView(PermissionRequiredMixin, DeleteView):
     model = Event
+    permission_required = "event_management.delete_event"
 
 
 # TODO rename to signup

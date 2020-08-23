@@ -128,6 +128,17 @@ version = "0.4.5"
 
 [[package]]
 category = "main"
+description = "Implementation of per object permissions for Django."
+name = "django-guardian"
+optional = false
+python-versions = ">=3.5"
+version = "2.3.0"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
+category = "main"
 description = "JSONField from django.contrib.postgres, but with a fallback to TextField"
 name = "django-jsonfallback"
 optional = false
@@ -298,7 +309,7 @@ docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sp
 testing = ["coverage (>=5)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "pytest-xdist (>=1.31.0)", "packaging (>=20.0)", "xonsh (>=0.9.16)"]
 
 [metadata]
-content-hash = "b99f46e8460dfef9309cd826b99ad1c7ff2bde81f9b24423bfd7241e08fef86c"
+content-hash = "96f12d85dc6d566e6984f3f1e0b3febc26e1b8e95dde416e54c13bac7eaff00a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -346,6 +357,10 @@ django-bootstrap4 = [
 django-environ = [
     {file = "django-environ-0.4.5.tar.gz", hash = "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde"},
     {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
+]
+django-guardian = [
+    {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},
+    {file = "django_guardian-2.3.0-py3-none-any.whl", hash = "sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8"},
 ]
 django-jsonfallback = [
     {file = "django-jsonfallback-2.1.2.tar.gz", hash = "sha256:0132c655e422e382a8a6b0d11319f5655e25fa6eb225ad10c0a05584c5fa1a0e"},
