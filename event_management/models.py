@@ -47,12 +47,13 @@ class Event(Model):
 
     @property
     def start_time(self):
-        return self.shift_set.order_by("start_time").first().start_time
+        if (first_shift := self.shift_set.order_by("start_time").first()) is not None:
+            return first_shift.start_time
 
     @property
     def end_time(self):
-        last_shift = self.shift_set.order_by("-start_time").first().start_time
-        return last_shift if last_shift.day > self.start_time.day else None
+        if (last_shift := self.shift_set.order_by("end_time").last()) is not None:
+            return last_shift.end_time
 
     def __str__(self):
         return self.title

@@ -13,7 +13,7 @@
     {% if inactive_events %}
         {% for event in inactive_events %}
             {% url "event_management:event_detail" event.pk as event_url%}
-            {% bootstrap_alert "You have an unsaved event ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event_url|add:"'>View</a>" %}
+            {% bootstrap_alert "You have an unsaved event ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event_url|add:"'>View</a>"|safe %}
         {% endfor %}
     {% endif %}
     <form method="post" class="form">

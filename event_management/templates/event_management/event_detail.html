@@ -11,7 +11,7 @@
     </div>
     {% if not event.active %}
         {% url "event_management:event_activate" event.pk as activate_url %}
-        {% bootstrap_alert "This event has not been saved! If you are done editing the event, you can save it. <a class='btn btn-light' href='"|add:activate_url|add:"'>Save</a>" "warning" %}
+        {% bootstrap_alert "This event has not been saved! If you are done editing the event, you can save it. <a class='btn btn-light' href='"|add:activate_url|add:"'>Save</a>"|safe "warning" %}
     {% endif %}
     <p>{{ event.description }}</p>
     <div>
