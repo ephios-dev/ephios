@@ -145,13 +145,8 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
 class ShiftConfigurationFormView(View):
     def get(self, request, *args, **kwargs):
         from event_management.signup import signup_method_from_slug
-
         signup_method = signup_method_from_slug(self.kwargs.get("slug"))
-        form = signup_method.get_configuration_form()
-        template = Template(
-            template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
-        ).render(Context({"form": form}))
-        return HttpResponse(template)
+        return signup_method.render_configuration_form(*args, **kwargs)
 
 
 class ShiftUpdateView(PermissionRequiredMixin, UpdateView):

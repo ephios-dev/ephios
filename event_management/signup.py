@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.forms import Form, IntegerField, DateField, CharField
+from django.http import HttpResponse
+from django.template import Template, Context
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 
@@ -126,6 +128,13 @@ class AbstractSignupMethod:
 
     def get_configuration_form(self, *args, **kwargs):
         return AbstractSignupConfigurationForm(*args, **kwargs)
+
+    def render_configuration_form(self, *args, **kwargs):
+        form = self.get_configuration_form(*args, **kwargs)
+        template = Template(
+            template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
+        ).render(Context({"form": form}))
+        return HttpResponse(template)
 
     # menschenlesbare Füllstandsangabe (z.B. 3/8, 3/, 0/8 (4 interessiert)) vlt irgendwie mit weiteren color-coded Status wie [“Egal”, Helfers needed", “genug Interesse”, “voll besetzt”]
 
