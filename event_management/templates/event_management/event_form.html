@@ -7,15 +7,15 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-        <h1>Create new event</h1>
-    </div>
     {% if inactive_events %}
         {% for event in inactive_events %}
-            {% url "event_management:event_detail" event.pk as event_url%}
+            {% url "event_management:event_detail" event.pk as event_url %}
             {% bootstrap_alert "You have an unsaved event ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event_url|add:"'>View</a>"|safe %}
         {% endfor %}
     {% endif %}
+    <div class="page-header">
+        <h1>Create new event</h1>
+    </div>
     <form method="post" class="form">
         {% csrf_token %}
         {% bootstrap_form form %}

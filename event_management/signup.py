@@ -89,9 +89,14 @@ class AbstractSignupMethod:
         return True
 
     def check_signup(self, participator):
+        self.check_event_is_active()
         self.check_no_existing_participation(participator)
         self.check_inside_signup_timeframe()
         self.check_participator_age(participator)
+
+    def check_event_is_active(self):
+        if not self.shift.event.active:
+            raise SignupError("The event is not active, you cannot sign up for it.")
 
     def check_no_existing_participation(self, participator):
         if participator.participation_for(self.shift):

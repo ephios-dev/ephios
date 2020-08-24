@@ -83,7 +83,7 @@ class EventActivateView(PermissionRequiredMixin, RedirectView):
         event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
         event.active = True
         event.save()
-        success(self.request, _("The event has been activated."))
+        success(self.request, _(f"The event {event.title} has been saved."))
         return event.get_absolute_url()
 
 
@@ -134,7 +134,7 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
             else:
                 event.active = True
                 event.save()
-                success(self.request, f"Event {event.title} successfully created!")
+                success(self.request, f"The event {event.title} has been saved.")
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(
@@ -145,8 +145,9 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
 class ShiftConfigurationFormView(View):
     def get(self, request, *args, **kwargs):
         from event_management.signup import signup_method_from_slug
+
         signup_method = signup_method_from_slug(self.kwargs.get("slug"))
-        return signup_method.render_configuration_form(*args, **kwargs)
+        return signup_method.render_configuration_form()
 
 
 class ShiftUpdateView(PermissionRequiredMixin, UpdateView):
