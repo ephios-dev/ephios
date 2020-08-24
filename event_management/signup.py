@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from datetime import date
 
@@ -5,12 +6,22 @@ import django.dispatch
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
+from django.forms import Form, IntegerField, DateField, CharField
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 
 from event_management.models import LocalParticipation, AbstractParticipation
+from jep.utils import serialize_date
+from jep.widgets import CustomDateInput
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
+
+
+def signup_method_from_slug(slug, shift=None):
+    for receiver, method in register_signup_methods.send(None):
+        if method.slug == slug:
+            return method(shift)
+    raise ValueError(f"Signup Method '{slug}' was not found.")
 
 
 @dataclass
@@ -49,6 +60,14 @@ class LocalUserParticipator(AbstractParticipator):
 
 class SignupError(Exception):
     pass
+
+
+class AbstractSignupConfigurationForm(Form):
+    minimum_age = IntegerField(initial=16)
+    signup_until = DateField(required=False, widget=CustomDateInput())
+
+    def get_configuration(self):
+        return json.dumps(self.cleaned_data, default=serialize_date)
 
 
 class AbstractSignupMethod:
@@ -105,7 +124,9 @@ class AbstractSignupMethod:
             messages.error(request, e)
         return redirect("event_management:event_detail", pk=self.shift.event.pk)
 
-    # Konfigurationsformular für den Verwalter
+    def get_configuration_form(self, *args, **kwargs):
+        return AbstractSignupConfigurationForm(*args, **kwargs)
+
     # menschenlesbare Füllstandsangabe (z.B. 3/8, 3/, 0/8 (4 interessiert)) vlt irgendwie mit weiteren color-coded Status wie [“Egal”, Helfers needed", “genug Interesse”, “voll besetzt”]
 
     # HTML-Darstellung der Helfer (defaults to an unorderd list of Helfers)

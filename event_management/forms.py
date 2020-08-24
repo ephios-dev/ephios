@@ -46,6 +46,8 @@ class ShiftForm(ModelForm):
     start_time = TimeField(widget=CustomTimeInput)
     end_time = TimeField(widget=CustomTimeInput)
 
+    field_order = ["date", "meeting_time", "start_time", "end_time", "signup_method_slug"]
+
     class Meta:
         model = Shift
         fields = ["signup_method_slug"]

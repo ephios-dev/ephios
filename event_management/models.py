@@ -11,8 +11,15 @@ from django.db.models import (
     Q,
     SlugField,
     TextField,
+    Manager,
 )
 from jsonfallback.fields import FallbackJSONField
+from django.utils.translation import gettext as _
+
+
+class ActiveManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(active=True)
 
 
 class EventType(Model):
@@ -33,6 +40,10 @@ class Event(Model):
     location = CharField(max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE)
     series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
+    active = BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = Manager()
 
     @property
     def start_time(self):
@@ -57,17 +68,14 @@ class Shift(Model):
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
-    signup_method_slug = SlugField()
+    signup_method_slug = SlugField(verbose_name=_("Signup method"))
     signup_configuration = FallbackJSONField()
 
     @property
     def signup_method(self):
-        from event_management.signup import register_signup_methods
+        from event_management.signup import signup_method_from_slug
 
-        for receiver, method in register_signup_methods.send(None):
-            if method.slug == self.signup_method_slug:
-                return method(self)
-        raise ValueError(f"Signup Method '{self.signup_method_slug}' was not found.")
+        return signup_method_from_slug(self.signup_method_slug, self)
 
     def __str__(self):
         return f"{self.event.title} ({self.start_time}-{self.end_time})"

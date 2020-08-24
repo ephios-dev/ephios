@@ -1,0 +1,12 @@
+<div class="card mb-2">
+    <div class="card-body">
+        <h5 class="card-subtitle mb-2 text-muted">Shift</h5>
+        <p class="card-text">
+            Date: {{ shift.start_time | date:"d.m.Y" }} <br>
+            Meeting time: {{ shift.meeting_time | date:"H:i" }} <br>
+            Start time: {{ shift.start_time | date:"H:i" }} <br>
+            End time: {{ shift.end_time | date:"H:i" }} <br>
+            Signup method: {{ shift.signup_method.verbose_name }}
+        </p>
+    </div>
+</div>
