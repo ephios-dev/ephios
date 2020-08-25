@@ -11,19 +11,6 @@ from django.db import migrations
 # * when we introduce custom models
 
 
-def create_initial_permissions(apps, schema_editor):
-    from django.contrib.auth.models import Group, Permission
-    from django.contrib.contenttypes.models import ContentType
-
-    group_content_type = ContentType.objects.get_for_model(Group)
-    permission = Permission(
-        name="Publish event for group",
-        codename="publish_event_for_group",
-        content_type=group_content_type,
-    )
-    permission.save()
-
-
 def create_initial_objects(apps, schema_editor):
     from django.contrib.auth.models import Group
     from user_management.models import UserProfile
@@ -48,14 +35,11 @@ def create_initial_objects(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    initial = True
 
     dependencies = [
-        ("user_management", "0001_initial"),
-        ("guardian", "0001_initial"),
+        ("user_management", "0002_initial_permissions"),
     ]
 
     operations = [
-        migrations.RunPython(create_initial_permissions, migrations.RunPython.noop),
         migrations.RunPython(create_initial_objects, migrations.RunPython.noop),
     ]
