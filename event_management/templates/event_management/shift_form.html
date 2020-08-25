@@ -8,7 +8,11 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>Create new shift for event</h1>
+        {% if object %}
+            <h1>Edit shift</h1>
+        {% else %}
+            <h1>Create new shift for event</h1>
+        {% endif %}
     </div>
     <div class="row">
         <div class="col-md-9">
@@ -20,9 +24,16 @@
                 </div>
 
                 {% buttons %}
-                    <a role="button" class="btn btn-danger" href="{% url "event_management:event_delete" event.pk %}">Discard
-                        event</a>
-                    <button type="submit" class="btn btn-primary float-right ml-1">Save event</button>
+                    {% if object or event.active%}
+                        <a role="button" class="btn btn-secondary"
+                           href="{% url "event_management:event_detail" event.pk %}">Back</a>
+                        <button type="submit" class="btn btn-primary float-right ml-1">Save</button>
+                    {% else %}
+                        <a role="button" class="btn btn-danger"
+                           href="{% url "event_management:event_delete" event.pk %}">Discard
+                            event</a>
+                        <button type="submit" class="btn btn-primary float-right ml-1">Save event</button>
+                    {% endif %}
                     <button type="submit" name="addAnother" class="btn btn-secondary float-right">Add another shift
                     </button>
                 {% endbuttons %}
