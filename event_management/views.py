@@ -106,7 +106,6 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         event = self.get_event()
         kwargs.setdefault("event", event)
-        kwargs.setdefault("shifts", event.shift_set.all())
         kwargs.setdefault("form", self.get_shift_form())
         return super().get_context_data(**kwargs)
 
@@ -138,7 +137,10 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(
-                self.get_context_data(form=form, configuration_form=configuration_form)
+                self.get_context_data(
+                    form=form,
+                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                )
             )
 
 
@@ -147,7 +149,7 @@ class ShiftConfigurationFormView(View):
         from event_management.signup import signup_method_from_slug
 
         signup_method = signup_method_from_slug(self.kwargs.get("slug"))
-        return signup_method.render_configuration_form()
+        return HttpResponse(signup_method.render_configuration_form())
 
 
 class ShiftUpdateView(PermissionRequiredMixin, UpdateView):

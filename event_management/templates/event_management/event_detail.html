@@ -7,7 +7,7 @@
 
 {% block content %}
     {% if not event.active %}
-        {% if event.shift_set.all %}
+        {% if event.shifts.all %}
             {% url "event_management:event_activate" event.pk as activate_url %}
             {% bootstrap_alert "This event has not been saved! If you are done editing the event, you can save it. <a class='btn btn-light' href='"|add:activate_url|add:"'>Save</a>"|safe "warning" %}
         {% else %}
@@ -19,8 +19,8 @@
     </div>
     <p>{{ event.description }}</p>
     <div>
-        {% for shift in event.shift_set.all %}
-            {% include "event_management/shift_box_big.html" with shift=shift %}
+        {% for shift in event.shifts.all %}
+            {% include "event_management/fragments/shift_box_big.html" with shift=shift %}
         {% endfor %}
     </div>
 {% endblock %}

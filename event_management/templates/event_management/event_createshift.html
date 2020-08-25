@@ -16,9 +16,7 @@
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <div id="configuration_form">
-                    {% if configuration_form %}
-                        {% bootstrap_form configuration_form %}
-                    {% endif %}
+                    {{ configuration_form }}
                 </div>
 
                 {% buttons %}
@@ -40,8 +38,8 @@
                     </p>
                 </div>
             </div>
-            {% for shift in shifts %}
-                {% include "event_management/shift_box_small.html" with shift=shift %}
+            {% for shift in event.shifts.all %}
+                {% include "event_management/fragments/shift_box_small.html" with shift=shift %}
             {% endfor %}
         </div>
     </div>

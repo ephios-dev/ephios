@@ -47,12 +47,12 @@ class Event(Model):
 
     @property
     def start_time(self):
-        if (first_shift := self.shift_set.order_by("start_time").first()) is not None:
+        if (first_shift := self.shifts.order_by("start_time").first()) is not None:
             return first_shift.start_time
 
     @property
     def end_time(self):
-        if (last_shift := self.shift_set.order_by("end_time").last()) is not None:
+        if (last_shift := self.shifts.order_by("end_time").last()) is not None:
             return last_shift.end_time
 
     def __str__(self):
@@ -65,7 +65,7 @@ class Event(Model):
 
 
 class Shift(Model):
-    event = ForeignKey(Event, on_delete=models.CASCADE)
+    event = ForeignKey(Event, on_delete=models.CASCADE, related_name="shifts")
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
