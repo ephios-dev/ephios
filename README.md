@@ -12,6 +12,6 @@ To set up a development version of jep on your local machine, you need to execut
 5. Create env file with `cp .env.example .env`
 6. Migrate the database with `python manage.py migrate`
 8. Start the development server with `python manage.py runserver`
-9. Open yout web browser, visit `http://localhost:8000` and log in with the default credentials (user `admin@localhost` and password `admin`)
+9. Open your web browser, visit `http://localhost:8000` and log in with the default credentials (user `admin@localhost` and password `admin`)
 
-Before commiting, make sure to lint your changes with `black .`. You can also check the [IDE integration](https://github.com/psf/black#editor-integration) or install a pre-commit hook with `pre-commit install` (recommended). You also need to to test the code with `python manage.py test`.
+Before committing, make sure to lint your changes with `black .`. You can also check the [IDE integration](https://github.com/psf/black#editor-integration) or install a pre-commit hook with `pre-commit install` (recommended). You also need to to test the code with `python manage.py test`.
