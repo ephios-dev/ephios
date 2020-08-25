@@ -11,8 +11,15 @@ from django.db.models import (
     Q,
     SlugField,
     TextField,
+    Manager,
 )
 from jsonfallback.fields import FallbackJSONField
+from django.utils.translation import gettext as _
+
+
+class ActiveManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(active=True)
 
 
 class EventType(Model):
@@ -33,15 +40,20 @@ class Event(Model):
     location = CharField(max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE)
     series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
+    active = BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = Manager()
 
     @property
     def start_time(self):
-        return self.shift_set.order_by("start_time").first().start_time
+        if (first_shift := self.shifts.order_by("start_time").first()) is not None:
+            return first_shift.start_time
 
     @property
     def end_time(self):
-        last_shift = self.shift_set.order_by("-start_time").first().start_time
-        return last_shift if last_shift.day > self.start_time.day else None
+        if (last_shift := self.shifts.order_by("end_time").last()) is not None:
+            return last_shift.end_time
 
     def __str__(self):
         return self.title
@@ -53,21 +65,18 @@ class Event(Model):
 
 
 class Shift(Model):
-    event = ForeignKey(Event, on_delete=models.CASCADE)
+    event = ForeignKey(Event, on_delete=models.CASCADE, related_name="shifts")
     meeting_time = DateTimeField()
     start_time = DateTimeField()
     end_time = DateTimeField()
-    signup_method_slug = SlugField()
+    signup_method_slug = SlugField(verbose_name=_("Signup method"))
     signup_configuration = FallbackJSONField()
 
     @property
     def signup_method(self):
-        from event_management.signup import register_signup_methods
+        from event_management.signup import signup_method_from_slug
 
-        for receiver, method in register_signup_methods.send(None):
-            if method.slug == self.signup_method_slug:
-                return method(self)
-        raise ValueError(f"Signup Method '{self.signup_method_slug}' was not found.")
+        return signup_method_from_slug(self.signup_method_slug, self)
 
     def __str__(self):
         return f"{self.event.title} ({self.start_time}-{self.end_time})"

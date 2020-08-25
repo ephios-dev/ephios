@@ -1,7 +1,12 @@
+import guardian.mixins
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.messages import success
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.template import Template, Context
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -9,14 +14,17 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
     View,
+    CreateView,
+    RedirectView,
 )
 from guardian.shortcuts import get_objects_for_user
 
-from event_management.forms import EventForm, ShiftFormSet
+from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
     Shift,
 )
+from django.utils.translation import gettext as _
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -30,9 +38,15 @@ class EventListView(LoginRequiredMixin, ListView):
         return get_objects_for_user(self.request.user, "event_management.view_event")
 
 
-class EventDetailView(PermissionRequiredMixin, DetailView):
+class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
     model = Event
     permission_required = "event_management.view_event"
+
+    def get_queryset(self):
+        if self.request.user.has_perm("event_management.add_event"):
+            return Event.all_objects
+        else:
+            return Event.objects
 
 
 class EventUpdateView(PermissionRequiredMixin, UpdateView):
@@ -40,11 +54,11 @@ class EventUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "event_management.change_event"
 
 
-class EventCreateView(PermissionRequiredMixin, TemplateView):
+class EventCreateView(PermissionRequiredMixin, CreateView):
     template_name = "event_management/event_form.html"
     permission_required = "event_management.add_event"
 
-    def get_event_form(self):
+    def get_form(self, form_class=None):
         event_form = EventForm(
             self.request.POST or None, initial={"responsible_persons": self.request.user}
         )
@@ -53,33 +67,95 @@ class EventCreateView(PermissionRequiredMixin, TemplateView):
         )
         return event_form
 
-    def get_shift_formset(self):
-        return ShiftFormSet(self.request.POST or None, queryset=Shift.objects.none())
-
     def get_context_data(self, **kwargs):
-        kwargs.setdefault("event_form", self.get_event_form())
-        kwargs.setdefault("shift_formset", self.get_shift_formset())
+        inactive_events = Event.all_objects.filter(active=False)
+        kwargs.setdefault("inactive_events", inactive_events)
         return super().get_context_data(**kwargs)
 
-    def post(self, request, *args, **kwargs):
-        event_form = self.get_event_form()
-        shift_formset = self.get_shift_formset()
-        if event_form.is_valid() and shift_formset.is_valid():
-            event = event_form.save()
-            shifts = shift_formset.save(commit=False)
-            for shift in shifts:
-                shift.event = event
-                shift.signup_configuration = ""
-                shift.save()
-            return redirect(event.get_absolute_url())
-        return self.render_to_response(
-            self.get_context_data(event_form=event_form, shift_formset=shift_formset)
-        )
+    def get_success_url(self):
+        return reverse("event_management:event_createshift", kwargs={"pk": self.object.pk})
+
+
+class EventActivateView(PermissionRequiredMixin, RedirectView):
+    permission_required = "event_management.add_event"
+
+    def get_redirect_url(self, *args, **kwargs):
+        event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
+        event.active = True
+        event.save()
+        success(self.request, _(f"The event {event.title} has been saved."))
+        return event.get_absolute_url()
 
 
 class EventDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Event
+    queryset = Event.all_objects
     permission_required = "event_management.delete_event"
+    success_url = reverse_lazy("event_management:event_list")
+
+
+class ShiftCreateView(PermissionRequiredMixin, TemplateView):
+    permission_required = "event_management.add_event"
+    template_name = "event_management/event_createshift.html"
+
+    def get_event(self):
+        return get_object_or_404(Event.all_objects, pk=self.kwargs.get("pk"))
+
+    def get_shift_form(self):
+        return ShiftForm(self.request.POST or None)
+
+    def get_context_data(self, **kwargs):
+        event = self.get_event()
+        kwargs.setdefault("event", event)
+        kwargs.setdefault("form", self.get_shift_form())
+        return super().get_context_data(**kwargs)
+
+    def post(self, *args, **kwargs):
+        form = self.get_shift_form()
+        try:
+            from event_management.signup import signup_method_from_slug
+
+            signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
+            configuration_form = signup_method.get_configuration_form(self.request.POST)
+        except ValueError as e:
+            raise ValidationError(e)
+        if form.is_valid() and configuration_form.is_valid():
+            shift = form.save(commit=False)
+            event = self.get_event()
+            shift.event = event
+            shift.signup_configuration = configuration_form.get_configuration()
+            shift.save()
+            if "addAnother" in self.request.POST:
+                return redirect(
+                    reverse(
+                        "event_management:event_createshift", kwargs={"pk": self.kwargs.get("pk")}
+                    )
+                )
+            else:
+                event.active = True
+                event.save()
+                success(self.request, f"The event {event.title} has been saved.")
+                return redirect(event.get_absolute_url())
+        else:
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
+                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                )
+            )
+
+
+class ShiftConfigurationFormView(View):
+    def get(self, request, *args, **kwargs):
+        from event_management.signup import signup_method_from_slug
+
+        signup_method = signup_method_from_slug(self.kwargs.get("slug"))
+        return HttpResponse(signup_method.render_configuration_form())
+
+
+class ShiftUpdateView(PermissionRequiredMixin, UpdateView):
+    form_class = ShiftForm
+    permission_required = "event_management.add_event"
+    template_name = "event_management/event_createshift.html"
 
 
 # TODO rename to signup

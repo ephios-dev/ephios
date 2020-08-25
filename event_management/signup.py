@@ -1,16 +1,28 @@
+import json
 from dataclasses import dataclass
 from datetime import date
 
 import django.dispatch
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.serializers.json import DjangoJSONEncoder
 from django.dispatch import receiver
+from django.forms import Form, IntegerField, DateField
+from django.template import Template, Context
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 
 from event_management.models import LocalParticipation, AbstractParticipation
+from jep.widgets import CustomDateInput
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
+
+
+def signup_method_from_slug(slug, shift=None):
+    for receiver, method in register_signup_methods.send(None):
+        if method.slug == slug:
+            return method(shift)
+    raise ValueError(f"Signup Method '{slug}' was not found.")
 
 
 @dataclass
@@ -51,6 +63,14 @@ class SignupError(Exception):
     pass
 
 
+class AbstractSignupConfigurationForm(Form):
+    minimum_age = IntegerField(initial=16)
+    signup_until = DateField(required=False, widget=CustomDateInput())
+
+    def get_configuration(self):
+        return json.dumps(self.cleaned_data, cls=DjangoJSONEncoder)
+
+
 class AbstractSignupMethod:
     slug = "abstract"
     verbose_name = "abstract"
@@ -68,9 +88,14 @@ class AbstractSignupMethod:
         return True
 
     def check_signup(self, participator):
+        self.check_event_is_active()
         self.check_no_existing_participation(participator)
         self.check_inside_signup_timeframe()
         self.check_participator_age(participator)
+
+    def check_event_is_active(self):
+        if not self.shift.event.active:
+            raise SignupError("The event is not active, you cannot sign up for it.")
 
     def check_no_existing_participation(self, participator):
         if participator.participation_for(self.shift):
@@ -105,7 +130,16 @@ class AbstractSignupMethod:
             messages.error(request, e)
         return redirect("event_management:event_detail", pk=self.shift.event.pk)
 
-    # Konfigurationsformular für den Verwalter
+    def get_configuration_form(self, *args, **kwargs):
+        return AbstractSignupConfigurationForm(*args, **kwargs)
+
+    def render_configuration_form(self, form=None, *args, **kwargs):
+        form = form or self.get_configuration_form(*args, **kwargs)
+        template = Template(
+            template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
+        ).render(Context({"form": form}))
+        return template
+
     # menschenlesbare Füllstandsangabe (z.B. 3/8, 3/, 0/8 (4 interessiert)) vlt irgendwie mit weiteren color-coded Status wie [“Egal”, Helfers needed", “genug Interesse”, “voll besetzt”]
 
     # HTML-Darstellung der Helfer (defaults to an unorderd list of Helfers)
