@@ -5,15 +5,14 @@ from datetime import date
 import django.dispatch
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.serializers.json import DjangoJSONEncoder
 from django.dispatch import receiver
-from django.forms import Form, IntegerField, DateField, CharField
-from django.http import HttpResponse
+from django.forms import Form, IntegerField, DateField
 from django.template import Template, Context
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 
 from event_management.models import LocalParticipation, AbstractParticipation
-from jep.utils import serialize_date
 from jep.widgets import CustomDateInput
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
@@ -69,7 +68,7 @@ class AbstractSignupConfigurationForm(Form):
     signup_until = DateField(required=False, widget=CustomDateInput())
 
     def get_configuration(self):
-        return json.dumps(self.cleaned_data, default=serialize_date)
+        return json.dumps(self.cleaned_data, cls=DjangoJSONEncoder)
 
 
 class AbstractSignupMethod:
