@@ -1,15 +1,13 @@
 import json
 
 import guardian.mixins
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.messages import success, error
 from django.core.exceptions import ValidationError
-from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.template import Template, Context
 from django.urls import reverse, reverse_lazy
 from django.utils.timezone import get_default_timezone
 from django.views.generic import (
@@ -33,7 +31,6 @@ from event_management.models import (
 from django.utils.translation import gettext as _
 
 from jep.permissions import get_groups_with_perms
-from user_management.models import UserProfile
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -58,9 +55,11 @@ class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
             return Event.objects
 
 
-class EventUpdateView(PermissionRequiredMixin, UpdateView):
+class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
     model = Event
     permission_required = "event_management.change_event"
+    raise_exception = True
+    accept_global_perms = True
 
     def get_form(self, form_class=None):
         visible_queryset = get_objects_for_user(
@@ -112,7 +111,7 @@ class EventActivateView(PermissionRequiredMixin, RedirectView):
         event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
         event.active = True
         event.save()
-        success(self.request, _(f"The event {event.title} has been saved."))
+        messages.success(self.request, _(f"The event {event.title} has been saved."))
         return event.get_absolute_url()
 
 
@@ -162,7 +161,7 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
             else:
                 event.active = True
                 event.save()
-                success(self.request, f"The event {event.title} has been saved.")
+                messages.success(self.request, f"The event {event.title} has been saved.")
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(
@@ -181,10 +180,15 @@ class ShiftConfigurationFormView(View):
         return HttpResponse(signup_method.render_configuration_form())
 
 
-class ShiftUpdateView(PermissionRequiredMixin, TemplateView, SingleObjectMixin):
+class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, SingleObjectMixin):
     model = Shift
     template_name = "event_management/shift_form.html"
     permission_required = "event_management.change_event"
+    raise_exception = True
+    accept_global_perms = True
+
+    def get_permission_object(self):
+        return self.get_object().event
 
     def get_shift_form(self):
         return ShiftForm(
@@ -229,7 +233,7 @@ class ShiftUpdateView(PermissionRequiredMixin, TemplateView, SingleObjectMixin):
                     reverse("event_management:event_createshift", kwargs={"pk": shift.event.pk})
                 )
             else:
-                success(self.request, f"The shift has been saved.")
+                messages.success(self.request, f"The shift has been saved.")
                 return redirect(self.object.event.get_absolute_url())
         else:
             return self.render_to_response(
@@ -247,13 +251,13 @@ class ShiftDeleteView(PermissionRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.event.shifts.count() == 1:
-            error(self.request, "You cannot delete the last shift!")
+            messages.error(self.request, "You cannot delete the last shift!")
             return redirect(self.object.event.get_absolute_url())
         else:
             return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        success(self.request, "The shift has been deleted.")
+        messages.success(self.request, "The shift has been deleted.")
         return self.object.event.get_absolute_url()
 
 
@@ -262,30 +266,3 @@ class ShiftRegisterView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
         return shift.signup_method.signup_view(request, *args, **kwargs)
-
-
-"""
-    def get_redirect_url(self, *args, **kwargs):
-        shift = get_object_or_404(Shift, id=self.kwargs["pk"])
-        if self.request.user.is_minor and not shift.minors_allowed:
-            messages.error(
-                request=self.request, message="Minors are not allowed for this shift."
-            )
-        else:
-            try:
-                LocalParticipation(user=self.request.user, shift=shift).save()
-                messages.success(
-                    request=self.request,
-                    message="Successfully registered for shift on {}".format(
-                        shift.start_time
-                    ),
-                )
-            except IntegrityError as e:
-                messages.error(
-                    request=self.request,
-                    message="You already registered for this shift.",
-                )
-        return reverse(
-            "event_management:event_detail", kwargs={"pk": shift.event.id}
-        )
-        """
