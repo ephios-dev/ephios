@@ -24,13 +24,14 @@
                 </div>
 
                 {% buttons %}
-                    {% if object or event.active %}
+                    {% if object and event.active %}
                         <a role="button" class="btn btn-secondary"
                            href="{% url "event_management:event_detail" event.pk %}">
                             <span class="fas fa-arrow-left"></span> Back to event
                         </a>
                         {% if object and object.event.shifts.count > 1 %}
-                            <a role="button" class="btn btn-danger" href="{% url "event_management:shift_delete" object.pk %}"><span
+                            <a role="button" class="btn btn-danger"
+                               href="{% url "event_management:shift_delete" object.pk %}"><span
                                     class="fas fa-trash-alt"></span> Delete</a>
                         {% endif %}
                         <button type="submit" class="btn btn-primary float-right ml-1">
@@ -53,7 +54,11 @@
         <div class="col-md-3">
             <div class="card mb-2">
                 <div class="card-body">
-                    <h5 class="card-title">{{ event.title }}</h5>
+                    <h5 class="card-title">
+                        {{ event.title }}
+                        <small class="float-right"><a href="{% url "event_management:event_edit" event.pk %}"><span
+                                class="fas fa-edit"></span> Edit</a></small>
+                    </h5>
                     <p class="card-text">
                         Event type: {{ event.type }}<br>
                         Location: {{ event.location }}
@@ -63,6 +68,13 @@
             {% for shift in event.shifts.all %}
                 {% include "event_management/fragments/shift_box_small.html" with shift=shift editing_shift=object can_change=perms.event_management.change_event %}
             {% endfor %}
+            {% if not object %}
+                <div class="card mb-2 border-info">
+                    <div class="card-body">
+                        <h5 class="card-subtitle mb-2 text-muted">Shift</h5>
+                        <p class="card-text">You are currently adding this shift</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 

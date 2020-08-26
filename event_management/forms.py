@@ -44,19 +44,24 @@ class EventForm(ModelForm):
                 self.initial["responsible_groups"]
             ):
                 assign_perm("change_event", group, event)
+                assign_perm("view_event", group, event)
             for group in self.initial["responsible_groups"].difference(
                 self.cleaned_data["responsible_groups"]
             ):
                 remove_perm("change_event", group, event)
+                if group not in self.cleaned_data["visible_for"]:
+                    remove_perm("view_event", group, event)
         if "responsible_persons" in self.changed_data:
             for user in self.cleaned_data["responsible_persons"].difference(
                 self.initial["responsible_persons"]
             ):
                 assign_perm("change_event", user, event)
+                assign_perm("view_event", user, event)
             for user in self.initial["responsible_persons"].difference(
                 self.cleaned_data["responsible_persons"]
             ):
                 remove_perm("change_event", user, event)
+                remove_perm("view_event", user, event)
         return event
 
 

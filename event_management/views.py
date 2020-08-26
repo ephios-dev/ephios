@@ -57,6 +57,7 @@ class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
 
 class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
     model = Event
+    queryset = Event.all_objects
     permission_required = "event_management.change_event"
     raise_exception = True
     accept_global_perms = True
