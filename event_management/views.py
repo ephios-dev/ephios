@@ -1,10 +1,12 @@
 import json
 
 import guardian.mixins
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages import success
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template import Template, Context
@@ -30,6 +32,7 @@ from event_management.models import (
 from django.utils.translation import gettext as _
 
 from jep.permissions import get_groups_with_perms
+from user_management.models import UserProfile
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -82,7 +85,10 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         event_form = EventForm(
-            self.request.POST or None, initial={"responsible_persons": self.request.user}
+            self.request.POST or None,
+            initial={
+                "responsible_persons": get_user_model().objects.filter(pk=self.request.user.pk)
+            },
         )
         event_form.fields["visible_for"].queryset = get_objects_for_user(
             self.request.user, "publish_event_for_group", klass=Group
