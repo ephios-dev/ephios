@@ -90,6 +90,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             user=self,
         )
 
+    def get_shifts(self, with_participation_state_in):
+        from event_management.models import Shift
+
+        shift_ids = self.localparticipation_set.filter(
+            state__in=with_participation_state_in
+        ).values_list("shift", flat=True)
+        return Shift.objects.filter(pk__in=shift_ids)
+
 
 class QualificationTrack(Model):
     title = CharField(max_length=254)
