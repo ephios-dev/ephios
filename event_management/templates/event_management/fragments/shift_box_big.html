@@ -5,8 +5,12 @@
         <h5 class="card-title">Shift
             {% if can_change %}
                 <small class="float-right">
-                    <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span> Edit</a>
-                    <a href="#"><span class="fas fa-trash-alt"></span> Delete</a>
+                    <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
+                        Edit</a>
+                    {% if shift.event.shifts.count > 1 %}
+                        <a href="{% url "event_management:shift_delete" shift.pk %}"><span
+                                class="fas fa-trash-alt"></span> Delete</a>
+                    {% endif %}
                 </small>
             {% endif %}
         </h5>

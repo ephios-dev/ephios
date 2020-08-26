@@ -4,13 +4,14 @@ import guardian.mixins
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.messages import success
+from django.contrib.messages import success, error
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template import Template, Context
 from django.urls import reverse, reverse_lazy
+from django.utils.timezone import get_default_timezone
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -189,12 +190,17 @@ class ShiftUpdateView(PermissionRequiredMixin, TemplateView, SingleObjectMixin):
         return ShiftForm(
             self.request.POST or None,
             instance=self.object,
-            initial={"date": self.object.meeting_time.date()},
+            initial={
+                "date": self.object.meeting_time.date(),
+                "meeting_time": self.object.meeting_time.astimezone(get_default_timezone()).time(),
+                "start_time": self.object.start_time.astimezone(get_default_timezone()).time(),
+                "end_time": self.object.end_time.astimezone(get_default_timezone()).time(),
+            },
         )
 
     def get_configuration_form(self):
         return self.object.signup_method.render_configuration_form(
-            self.request.POST or None, initial=json.loads(self.object.signup_configuration)
+            data=self.request.POST or None, initial=json.loads(self.object.signup_configuration)
         )
 
     def get_context_data(self, **kwargs):
@@ -220,9 +226,7 @@ class ShiftUpdateView(PermissionRequiredMixin, TemplateView, SingleObjectMixin):
             shift.save()
             if "addAnother" in self.request.POST:
                 return redirect(
-                    reverse(
-                        "event_management:event_createshift", kwargs={"pk": self.kwargs.get("pk")}
-                    )
+                    reverse("event_management:event_createshift", kwargs={"pk": shift.event.pk})
                 )
             else:
                 success(self.request, f"The shift has been saved.")
@@ -234,6 +238,23 @@ class ShiftUpdateView(PermissionRequiredMixin, TemplateView, SingleObjectMixin):
                     configuration_form=signup_method.render_configuration_form(configuration_form),
                 )
             )
+
+
+class ShiftDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "event_management.change_event"
+    model = Shift
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.event.shifts.count() == 1:
+            error(self.request, "You cannot delete the last shift!")
+            return redirect(self.object.event.get_absolute_url())
+        else:
+            return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        success(self.request, "The shift has been deleted.")
+        return self.object.event.get_absolute_url()
 
 
 # TODO rename to signup
