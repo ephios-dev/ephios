@@ -5,9 +5,9 @@ JEP is a tool to manage shifts for medical services.
 ## Development setup
 
 To set up a development version of jep on your local machine, you need to execute the following steps:
-1. Set up Python >=3.8 and a virtualenv for the project
-2. Install poetry (if not already installed): `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python`
-3. Check out repository and cd to it
+1. Check out repository and cd to it
+2. Set up a virtualenv for the project with Python >=3.8 and activate it
+3. Install poetry (if not already installed): `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python`
 4. Install dependencies with `poetry install`
 5. Create env file with `cp .env.example .env`
 6. Migrate the database with `python manage.py migrate`
