@@ -20,6 +20,6 @@ urlpatterns = [
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
     ),
-    path("events/ics", EventFeed()),
-    path("user/<int:pk>/ics", user_event_feed_view),
+    path("calendar", EventFeed(), name="event_feed"),
+    path("calendar/<str:calendar_token>", user_event_feed_view, name="user_event_feed"),
 ]

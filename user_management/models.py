@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime
 
 import guardian.mixins
@@ -50,6 +51,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     last_name = CharField(max_length=254, verbose_name="Last name")
     date_of_birth = DateField()
     phone = CharField(max_length=254, null=True)
+    calendar_token = CharField(max_length=254, default=secrets.token_urlsafe)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
