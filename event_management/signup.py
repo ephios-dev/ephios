@@ -102,12 +102,12 @@ class AbstractSignupMethod:
         if participation is not None:
             if participation.state == AbstractParticipation.REQUESTED:
                 raise SignupError(
-                    _("You have already requested your participation for this shift.")
+                    _(f"You have already requested your participation for shift {self.shift}.")
                 )
             elif participation.state == AbstractParticipation.CONFIRMED:
-                raise SignupError(_("You are already signed up for this shift."))
+                raise SignupError(_(f"You are already signed up for shift {self.shift}."))
             elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
-                raise SignupError(_("You are rejected from this shift."))
+                raise SignupError(_(f"You are rejected from shift {self.shift}."))
             elif participation.state == AbstractParticipation.USER_DECLINED:
                 participation.state = AbstractParticipation.REQUESTED
 
