@@ -89,17 +89,25 @@ class AbstractSignupMethod:
 
     def check_signup(self, participator):
         self.check_event_is_active()
-        self.check_no_existing_participation(participator)
+        self.check_participation_state(participator)
         self.check_inside_signup_timeframe()
         self.check_participator_age(participator)
 
     def check_event_is_active(self):
         if not self.shift.event.active:
-            raise SignupError("The event is not active, you cannot sign up for it.")
+            raise SignupError(_("The event is not active, you cannot sign up for it."))
 
-    def check_no_existing_participation(self, participator):
-        if participator.participation_for(self.shift):
-            raise SignupError(_("You are already signed up for this shift."))
+    def check_participation_state(self, participator):
+        participation = participator.participation_for(self.shift)
+        if participation is not None:
+            if participation.state == AbstractParticipation.REQUESTED:
+                raise SignupError(_("You have already requested your participation for this shift."))
+            elif participation.state == AbstractParticipation.CONFIRMED:
+                raise SignupError(_("You are already signed up for this shift."))
+            elif participation.state == AbstractParticipation.RESPONSIBLEREJECTED:
+                raise SignupError(_("You are rejected from this shift."))
+            elif participation.state == AbstractParticipation.USERDECLINED:
+                participation.state = AbstractParticipation.REQUESTED
 
     def check_inside_signup_timeframe(self):
         ...  # TODO
@@ -123,8 +131,7 @@ class AbstractSignupMethod:
             participation = self.create_participation(request.user.as_participator())
             messages.success(
                 request,
-                _("Successfully signed up for shift %(shift_name)s.")
-                % {"shift_name": participation.shift},
+                _(f"You have successfully signed up for shift {participation.shift}."),
             )
         except SignupError as e:
             messages.error(request, e)
@@ -159,7 +166,8 @@ class InstantConfirmationSignupMethod(AbstractSignupMethod):
     description = _("""This method instantly confirms a signup.""")
 
     def create_participation(self, participator):
-        participation = super().create_participation(participator)
+        if (participation := participator.participation_for(self.shift)) is None:
+            participation = super().create_participation(participator)
         participation.state = AbstractParticipation.CONFIRMED
         participation.save()
         return participation
