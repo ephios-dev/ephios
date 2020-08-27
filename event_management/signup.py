@@ -101,7 +101,9 @@ class AbstractSignupMethod:
         participation = participator.participation_for(self.shift)
         if participation is not None:
             if participation.state == AbstractParticipation.REQUESTED:
-                raise SignupError(_("You have already requested your participation for this shift."))
+                raise SignupError(
+                    _("You have already requested your participation for this shift.")
+                )
             elif participation.state == AbstractParticipation.CONFIRMED:
                 raise SignupError(_("You are already signed up for this shift."))
             elif participation.state == AbstractParticipation.RESPONSIBLEREJECTED:
@@ -130,8 +132,7 @@ class AbstractSignupMethod:
         try:
             participation = self.create_participation(request.user.as_participator())
             messages.success(
-                request,
-                _(f"You have successfully signed up for shift {participation.shift}."),
+                request, _(f"You have successfully signed up for shift {participation.shift}."),
             )
         except SignupError as e:
             messages.error(request, e)

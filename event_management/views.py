@@ -23,7 +23,8 @@ from guardian.shortcuts import get_objects_for_user
 from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
-    Shift, AbstractParticipation,
+    Shift,
+    AbstractParticipation,
 )
 from django.utils.translation import gettext as _
 
@@ -196,11 +197,10 @@ class ShiftRegisterView(LoginRequiredMixin, View):
 class ShiftRejectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
-        participation = shift.signup_method.create_participation(self.request.user.as_participator())
+        participation = shift.signup_method.create_participation(
+            self.request.user.as_participator()
+        )
         participation.state = AbstractParticipation.USERDECLINED
         participation.save()
-        messages.info(
-            self.request,
-            _(f"You have declined a participation for shift {shift}.")
-        )
+        messages.info(self.request, _(f"You have declined a participation for shift {shift}."))
         return shift.event.get_absolute_url()
