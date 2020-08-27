@@ -200,7 +200,7 @@ class ShiftRejectView(RedirectView):
         participation = shift.signup_method.create_participation(
             self.request.user.as_participator()
         )
-        participation.state = AbstractParticipation.USERDECLINED
+        participation.state = AbstractParticipation.USER_DECLINED
         participation.save()
         messages.info(self.request, _(f"You have declined a participation for shift {shift}."))
         return shift.event.get_absolute_url()

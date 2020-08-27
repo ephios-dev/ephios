@@ -85,13 +85,13 @@ class Shift(Model):
 class AbstractParticipation(Model):
     REQUESTED = 0
     CONFIRMED = 1
-    USERDECLINED = 2
-    RESPONSIBLEREJECTED = 3
+    USER_DECLINED = 2
+    RESPONSIBLE_REJECTED = 3
     STATE_CHOICES = (
         (REQUESTED, "requested"),
         (CONFIRMED, "confirmed"),
-        (USERDECLINED, "declined by user"),
-        (RESPONSIBLEREJECTED, "rejected by responsible"),
+        (USER_DECLINED, "declined by user"),
+        (RESPONSIBLE_REJECTED, "rejected by responsible"),
     )
 
     shift = ForeignKey(Shift, on_delete=models.CASCADE)

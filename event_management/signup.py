@@ -106,9 +106,9 @@ class AbstractSignupMethod:
                 )
             elif participation.state == AbstractParticipation.CONFIRMED:
                 raise SignupError(_("You are already signed up for this shift."))
-            elif participation.state == AbstractParticipation.RESPONSIBLEREJECTED:
+            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
                 raise SignupError(_("You are rejected from this shift."))
-            elif participation.state == AbstractParticipation.USERDECLINED:
+            elif participation.state == AbstractParticipation.USER_DECLINED:
                 participation.state = AbstractParticipation.REQUESTED
 
     def check_inside_signup_timeframe(self):
