@@ -31,6 +31,12 @@
                                        href="{% url "event_management:shift_register" shift.id %}">Register</a>
                                 {% endif %}
                             {% endwith %}
+                            {% with can_user_decline=shift|can_user_decline:request.user %}
+                                {% if can_user_decline %}
+                                    <a class="btn btn-danger"
+                                       href="{% url "event_management:shift_user_decline" shift.id %}">Decline</a>
+                                {% endif %}
+                            {% endwith %}
                         {% endif %}
                     </p>
                 </div>

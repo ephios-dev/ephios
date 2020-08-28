@@ -27,9 +27,11 @@ from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
     Shift,
+    AbstractParticipation,
 )
 from django.utils.translation import gettext as _
 
+from event_management.signup import SignupError, DeclineError
 from jep.permissions import get_groups_with_perms
 
 
@@ -267,3 +269,9 @@ class ShiftRegisterView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
         return shift.signup_method.signup_view(request, *args, **kwargs)
+
+
+class ShiftDeclineView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        shift = get_object_or_404(Shift, id=self.kwargs["pk"])
+        return shift.signup_method.decline_view(self.request)
