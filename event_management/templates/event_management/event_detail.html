@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load bootstrap4 %}
 
 {% block title %}
@@ -10,24 +11,27 @@
         {% if not event.active %}
             {% if event.shifts.all %}
                 {% url "event_management:event_activate" event.pk as activate_url %}
-                {% bootstrap_alert "This event has not been saved! If you are done editing the event, you can save it. <a class='btn btn-light' href='"|add:activate_url|add:"'>Save</a>"|safe "warning" %}
+                {% trans "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
+                {% trans "Save" as save_trans %}
+                {% bootstrap_alert not_active_error|add:" <a class='btn btn-light' href='"|add:activate_url|add:"'>"|add:save_trans|add:"</a>"|safe "warning" %}
             {% else %}
-                {% bootstrap_alert "This event has not been saved! Please add a shift to save this event." "danger" %}
+                {% trans "This event has not been saved! Please add a shift to save this event." as no_shift_error %}
+                {% bootstrap_alert no_shift_error "danger" %}
             {% endif %}
         {% endif %}
         <div class="page-header">
-            <h1>Event: {{ event.title }} <small>({{ event.location }})</small>
+            <h1>{% trans "Event" %}: {{ event.title }} <small>({{ event.location }})</small>
                 {% if can_change %}
                     <div class="float-right">
                         <a role="button" class="btn btn-primary"
                            href="{% url "event_management:event_edit" event.pk %}">
                             <span class="fas fa-edit"></span>
-                            Edit event
+                            {% trans "Edit event" %}
                         </a>
                         <a role="button" class="btn btn-danger"
                            href="{% url "event_management:event_delete" event.pk %}">
                             <span class="fas fa-trash-alt"></span>
-                            Delete event
+                            {% trans "Delete event" %}
                         </a>
                     </div>
                 {% endif %}
@@ -42,7 +46,7 @@
         {% if can_change %}
             <a role="button" class="btn btn-secondary" href="{% url "event_management:event_createshift" event.pk %}">
                 <span class="fas fa-plus"></span>
-                Add another shift
+                {% trans "Add another shift" %}
             </a>
         {% endif %}
     {% endwith %}

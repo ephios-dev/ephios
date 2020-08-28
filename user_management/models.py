@@ -13,6 +13,7 @@ from django.db.models import (
     ForeignKey,
     Model,
 )
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -43,13 +44,13 @@ class UserManager(BaseUserManager):
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUserMixin):
-    email = EmailField(unique=True, verbose_name="Email address")
+    email = EmailField(_("email address"), unique=True)
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
-    first_name = CharField(max_length=254, verbose_name="First name")
-    last_name = CharField(max_length=254, verbose_name="Last name")
-    date_of_birth = DateField()
-    phone = CharField(max_length=254, null=True)
+    first_name = CharField(_("first name"), max_length=254)
+    last_name = CharField(_("last name"), max_length=254)
+    date_of_birth = DateField(_("date of birth"))
+    phone = CharField(_("phone number"), max_length=254, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
@@ -59,6 +60,10 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     ]
 
     objects = UserManager()
+
+    class Meta:
+        verbose_name = _("user profile")
+        verbose_name_plural = _("user profiles")
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -92,18 +97,30 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
 
 
 class QualificationTrack(Model):
-    title = CharField(max_length=254)
+    title = CharField(_("title"), max_length=254)
+
+    class Meta:
+        verbose_name = _("qualification track")
+        verbose_name_plural = _("qualification tracks")
 
 
 class Qualification(Model):
-    title = CharField(max_length=254)
-    track = ForeignKey(QualificationTrack, on_delete=models.CASCADE)
+    title = CharField(_("title"), max_length=254)
+    track = ForeignKey(
+        QualificationTrack, on_delete=models.CASCADE, verbose_name=_("qualification track")
+    )
+
+    class Meta:
+        verbose_name = _("qualification")
+        verbose_name_plural = _("qualifications")
 
     def __str__(self):
         return self.title
 
 
 class QualificationGrant(Model):
-    qualification = ForeignKey(Qualification, on_delete=models.CASCADE)
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    expiration_date = DateField(blank=True, null=True)
+    qualification = ForeignKey(
+        Qualification, on_delete=models.CASCADE, verbose_name=_("qualification")
+    )
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
+    expiration_date = DateField(_("expiration date"), blank=True, null=True)

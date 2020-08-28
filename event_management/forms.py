@@ -17,6 +17,7 @@ from event_management.models import Event, Shift
 from event_management.signup import register_signup_methods
 from jep.widgets import CustomDateInput, CustomTimeInput
 from user_management.models import UserProfile
+from django.utils.translation import gettext as _
 
 
 class EventForm(ModelForm):
@@ -99,5 +100,5 @@ class ShiftForm(ModelForm):
         if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
             cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
         if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
-            raise ValidationError("Meeting time must not be after start time!")
+            raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data
