@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bootstrap4",
     "guardian",
+    "jep",
     "user_management",
     "event_management",
 ]

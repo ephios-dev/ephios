@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -45,7 +44,7 @@ class Migration(migrations.Migration):
                 ("first_name", models.CharField(max_length=254, verbose_name="First name")),
                 ("last_name", models.CharField(max_length=254, verbose_name="Last name")),
                 ("date_of_birth", models.DateField()),
-                ("phone", models.CharField(max_length=254, null=True)),
+                ("phone", models.CharField(max_length=254, null=True, blank=True)),
                 (
                     "groups",
                     models.ManyToManyField(
