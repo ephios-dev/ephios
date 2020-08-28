@@ -1,30 +1,28 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
     <h1 class="page-header">
-        Profile
+        {% trans "Profile" %}
     </h1>
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">Your data</h5>
             <p class="card-text">
-                First name: {{ userprofile.first_name }} <br>
-                Last name: {{ userprofile.last_name }} <br>
-                E-Mail address: {{ userprofile.email }} <br>
-                Date of birth: {{ userprofile.date_of_birth }} <br>
-                Phone number: {{ userprofile.phone }} <br>
+                {% trans "First name" %}: {{ userprofile.first_name }} <br>
+                {% trans "Last name" %}: {{ userprofile.last_name }} <br>
+                {% trans "E-Mail address" %}: {{ userprofile.email }} <br>
+                {% trans "Date of birth" %}: {{ userprofile.date_of_birth }} <br>
+                {% trans "Phone number" %}: {{ userprofile.phone }} <br>
             </p>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Calendar feed</h5>
+            <h5 class="card-title">{% trans "Calendar feed" %}</h5>
             <p class="card-text">
-                You can subscribe to a calendar containing all events that you participate in. Most calendars
-                (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar.
-                To activate this, you need to copy the address of the following link and subscribe to the URL. <br> <br>
-
-                <a href="{% url "event_management:user_event_feed" userprofile.calendar_token %}">Your calendar</a>
+                {% trans "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %} <br> <br>
+                <a href="{% url "event_management:user_event_feed" userprofile.calendar_token %}">{% trans "Your calendar" %}</a>
             </p>
         </div>
     </div>
