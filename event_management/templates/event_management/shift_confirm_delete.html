@@ -12,8 +12,8 @@
     </div>
 
     <form method="post">{% csrf_token %}
-        <p>Are you sure you want to delete the event "{{ object }}"?</p>
-        <a role="button" class="btn btn-secondary" href="{% url "event_management:event_detail" object.pk %}">Back</a>
+        <p>Are you sure you want to delete the shift "{{ shift }}"?</p>
+        <a role="button" class="btn btn-secondary" href="{% url "event_management:event_detail" shift.event.pk %}">Back</a>
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
 

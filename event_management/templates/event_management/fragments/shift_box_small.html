@@ -1,6 +1,17 @@
-<div class="card mb-2">
+<div class="card mb-2 {% if shift == editing_shift %}border-info{% endif %}">
     <div class="card-body">
-        <h5 class="card-subtitle mb-2 text-muted">Shift</h5>
+        <h5 class="card-subtitle mb-2 text-muted">
+            Shift
+            {% if can_change and not shift == editing_shift %}
+                <small class="float-right">
+                    <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
+                        Edit</a>
+                    {% if shift.event.shifts.count > 1 %}
+                        <a href="{% url "event_management:shift_delete" shift.pk %}"><span
+                                class="fas fa-trash-alt"></span> Delete</a>
+                    {% endif %}            </small>
+            {% endif %}
+        </h5>
         <p class="card-text">
             Date: {{ shift.start_time | date:"d.m.Y" }} <br>
             Meeting time: {{ shift.meeting_time | date:"H:i" }} <br>
