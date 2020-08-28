@@ -2,10 +2,8 @@
 from django.db import migrations
 
 
-# This does not use historical models, but the current version of Group and Permission
-# It might break if these models change in the future, which will only happen
-# * on Django Version upgrade
-# * when we introduce custom models
+# This does not use historical models, but the current version of Permission
+# It might break if models change in the future.
 
 
 def create_initial_permissions(apps, schema_editor):
@@ -21,7 +19,6 @@ def create_initial_permissions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user_management", "0001_initial"),
         ("guardian", "0001_initial"),
