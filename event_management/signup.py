@@ -133,7 +133,9 @@ class AbstractSignupMethod:
         ...
         minimum_age = 16
         if participator.age < minimum_age:
-            raise SignupError(_("You are too young. The minimum age is %."))
+            raise SignupError(
+                _("You are too young. The minimum age is {age}.".format(age=minimum_age))
+            )
 
     def can_user_decline(self, participator):
         if participation := participator.participation_for(self.shift):

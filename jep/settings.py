@@ -76,6 +76,8 @@ TEMPLATES = [
     },
 ]
 
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
+
 WSGI_APPLICATION = "jep.wsgi.application"
 
 

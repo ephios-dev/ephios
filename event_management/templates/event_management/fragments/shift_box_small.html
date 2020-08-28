@@ -6,14 +6,13 @@
             {% trans "Shift" %}
             {% if can_change and not shift == editing_shift %}
                 <small class="float-right">
-                    <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
-                        {% trans "Edit" %}</a>
+                    <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>{% trans "Edit" %}</a><br>
                     {% if shift.event.shifts.count > 1 %}
                         <a href="{% url "event_management:shift_delete" shift.pk %}"><span
-                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
+                                class="fas fa-trash-alt"></span>  {% trans "Delete" %}</a>
                     {% endif %}            </small>
             {% endif %}
-        </h5>
+        </h5><br>
         <p class="card-text">
             <b>{% trans "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
             <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
