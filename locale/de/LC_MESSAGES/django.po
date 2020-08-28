@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-29 00:35+0200\n"
+"POT-Creation-Date: 2020-08-29 01:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\event_management\forms.py:24
+msgid "Visible for"
+msgstr "Sichtbar für"
+
+#: .\event_management\forms.py:24
+msgid "Select groups which the event shall be visible for."
+msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
+
+#: .\event_management\forms.py:26
+msgid "Responsible persons"
+msgstr "Verantwortliche Personen"
+
+#: .\event_management\forms.py:28
+msgid "Responsible groups"
+msgstr "Verantwortliche Gruppen"
 
 #: .\event_management\forms.py:103
 msgid "Meeting time must not be after start time!"
@@ -168,8 +184,6 @@ msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 #: .\event_management\templates\event_management\event_confirm_delete.html:7
 #: .\event_management\templates\event_management\event_confirm_delete.html:12
 #: .\event_management\templates\event_management\event_detail.html:34
-#: .\event_management\templates\event_management\shift_confirm_delete.html:7
-#: .\event_management\templates\event_management\shift_confirm_delete.html:12
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -189,7 +203,6 @@ msgstr "Zurück"
 #: .\event_management\templates\event_management\fragments\shift_box_small.html:12
 #: .\event_management\templates\event_management\shift_confirm_delete.html:18
 #: .\event_management\templates\event_management\shift_form.html:36
-#: .\venv\Lib\site-packages\django\forms\formsets.py:391
 msgid "Delete"
 msgstr "Löschen"
 
@@ -326,7 +339,14 @@ msgstr "Anmeldeverfahren"
 
 #: .\event_management\templates\event_management\home.html:6
 msgid "Welcome to JEP!"
-msgstr ""
+msgstr "Willkommen bei JEP!"
+
+#: .\event_management\templates\event_management\shift_confirm_delete.html:7
+#: .\event_management\templates\event_management\shift_confirm_delete.html:12
+#, fuzzy
+#| msgid "Delete event"
+msgid "Delete shift"
+msgstr "Veranstaltung löschen"
 
 #: .\event_management\templates\event_management\shift_confirm_delete.html:16
 #, python-format
