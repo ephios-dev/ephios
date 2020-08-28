@@ -32,7 +32,4 @@ def can_sign_up(shift, user):
 
 @register.filter(name="can_user_decline")
 def can_user_decline(shift, user):
-    if participation := user.as_participator().participation_for(shift):
-        return participation.state == AbstractParticipation.REQUESTED
-    else:
-        return True
+    return shift.signup_method.can_user_decline(user.as_participator())

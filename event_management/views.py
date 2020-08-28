@@ -28,7 +28,7 @@ from event_management.models import (
 )
 from django.utils.translation import gettext as _
 
-from event_management.signup import SignupError
+from event_management.signup import SignupError, DeclineError
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -196,31 +196,7 @@ class ShiftRegisterView(LoginRequiredMixin, View):
         """
 
 
-class DeclineError(Exception):
-    pass
-
-
 class ShiftDeclineView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
-        try:
-            self.check_participation_state(shift)
-        except DeclineError as e:
-            messages.error(self.request, e)
-        else:
-            participator = self.request.user.as_participator()
-            participation = shift.signup_method.create_participation(participator)
-            participation.state = AbstractParticipation.USER_DECLINED
-            participation.save()
-            messages.info(self.request, _(f"You have declined a participation for shift {shift}."))
-        return shift.event.get_absolute_url()
-
-    def check_participation_state(self, shift):
-        participation = self.request.user.as_participator().participation_for(shift)
-        if participation is not None:
-            if participation.state == AbstractParticipation.CONFIRMED:
-                raise DeclineError(_(f"You are bindingly signed up for shift {shift}."))
-            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
-                raise DeclineError(_(f"You are rejected from shift {shift}."))
-            elif participation.state == AbstractParticipation.USER_DECLINED:
-                raise DeclineError(_(f"You have already declined participating in shift {shift}."))
+        return shift.signup_method.decline_view(self.request)
