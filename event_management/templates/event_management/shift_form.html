@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    Create new shift for event
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if object %}
+            <h1>Edit shift</h1>
+        {% else %}
+            <h1>Create new shift for event</h1>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <form method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div id="configuration_form">
+                    {{ configuration_form }}
+                </div>
+
+                {% buttons %}
+                    {% if object and event.active %}
+                        <a role="button" class="btn btn-secondary"
+                           href="{% url "event_management:event_detail" event.pk %}">
+                            <span class="fas fa-arrow-left"></span> Back to event
+                        </a>
+                        {% if object and object.event.shifts.count > 1 %}
+                            <a role="button" class="btn btn-danger"
+                               href="{% url "event_management:shift_delete" object.pk %}"><span
+                                    class="fas fa-trash-alt"></span> Delete</a>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary float-right ml-1">
+                            <span class="fas fa-save"></span> Save
+                        </button>
+                    {% else %}
+                        <a role="button" class="btn btn-danger"
+                           href="{% url "event_management:event_delete" event.pk %}">Discard
+                            event</a>
+                        <button type="submit" class="btn btn-primary float-right ml-1">
+                            <span class="fas fa-save"></span> Save event
+                        </button>
+                    {% endif %}
+                    <button type="submit" name="addAnother" class="btn btn-secondary float-right">
+                        <span class="fas fa-plus"></span> Add another shift
+                    </button>
+                {% endbuttons %}
+            </form>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ event.title }}
+                        <small class="float-right"><a href="{% url "event_management:event_edit" event.pk %}"><span
+                                class="fas fa-edit"></span> Edit</a></small>
+                    </h5>
+                    <p class="card-text">
+                        Event type: {{ event.type }}<br>
+                        Location: {{ event.location }}
+                    </p>
+                </div>
+            </div>
+            {% for shift in event.shifts.all %}
+                {% include "event_management/fragments/shift_box_small.html" with shift=shift editing_shift=object can_change=perms.event_management.change_event %}
+            {% endfor %}
+            {% if not object %}
+                <div class="card mb-2 border-info">
+                    <div class="card-body">
+                        <h5 class="card-subtitle mb-2 text-muted">Shift</h5>
+                        <p class="card-text">You are currently adding this shift</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function isEmpty(el) {
+            return !$.trim(el.html())
+        }
+
+        $('select[name="signup_method_slug"]').on('change', function () {
+            $.ajax({
+                url: '{% url "event_management:signupmethod_configurationform" "slug" %}'.replace("slug", this.value),
+                type: 'GET',
+
+                success: function (data) {
+                    $('#configuration_form').html(data);
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            if (isEmpty($('#configuration_form'))) {
+                $('select[name="signup_method_slug"]').trigger("change")
+            }
+        });
+    </script>
+
+{% endblock %}
