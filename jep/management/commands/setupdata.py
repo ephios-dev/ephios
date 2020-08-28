@@ -101,4 +101,6 @@ class Command(BaseCommand):
                 self.stdout.write("Aborting...")
                 return
 
-        self.datasets[options["dataset_identifier"]].create_objects(*args, **options)
+        identifier = options["dataset_identifier"]
+        self.datasets[identifier].create_objects(*args, **options)
+        self.stdout.write(self.style.SUCCESS("Done."))
