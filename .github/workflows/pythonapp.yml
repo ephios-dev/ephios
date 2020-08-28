@@ -25,4 +25,4 @@ jobs:
     - name: Test apps
       run: |
         cp .env.example .env
-        $HOME/.poetry/bin/poetry run python manage.py test jep event_management user_management
+        $HOME/.poetry/bin/poetry run pytest
