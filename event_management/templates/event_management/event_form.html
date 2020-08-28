@@ -10,6 +10,10 @@
         {% endif %}
 {% endblock %}
 
+{% block css %}
+{{ form.media.css }}
+{% endblock %}
+
 {% block content %}
     {% if inactive_events %}
         {% for event in inactive_events %}
@@ -39,4 +43,5 @@
 
         {% endbuttons %}
     </form>
+    {{ form.media.js }}
 {% endblock %}
