@@ -50,7 +50,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     first_name = CharField(max_length=254, verbose_name="First name")
     last_name = CharField(max_length=254, verbose_name="Last name")
     date_of_birth = DateField()
-    phone = CharField(max_length=254, null=True)
+    phone = CharField(max_length=254, null=True, blank=True)
     calendar_token = CharField(max_length=254, default=secrets.token_urlsafe)
 
     USERNAME_FIELD = "email"
