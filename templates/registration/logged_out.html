@@ -3,7 +3,7 @@
 {% load bootstrap4%}
 
 {% block content %}
-    {% trans "Logged out succesfully." %} <br>
+    {% trans "Logged out successfully." %} <br>
     {% url "login" as login_url %}
     {% trans "Back to login" as back_message %}
     {% bootstrap_button content=back_message href=login_url %}
