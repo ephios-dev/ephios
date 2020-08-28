@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
 from django.db import migrations
+from django.utils.translation import gettext as _
 
 
 # This does not use historical models, but the current version of Group and Permission
@@ -12,34 +13,24 @@ from django.db import migrations
 
 
 def create_initial_objects(apps, schema_editor):
-    from django.contrib.auth.models import Group
-    from user_management.models import UserProfile
-    from guardian.shortcuts import assign_perm
-
+    UserProfile = apps.get_model("user_management", "UserProfile")
     user = UserProfile(
         email="admin@localhost",
         first_name="Admin",
         last_name="Localhost",
         date_of_birth=datetime(year=1970, month=1, day=1),
     )
-
     user.is_staff = True
     user.is_superuser = True
     user.password = make_password("admin")
     user.save()
 
-    helfer = Group.objects.create(name="Helfer")
-    helfer.user_set.add(user)
-    helfer.save()
-    assign_perm("publish_event_for_group", helfer, helfer)
-
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user_management", "0002_initial_permissions"),
     ]
 
     operations = [
-        migrations.RunPython(create_initial_objects, migrations.RunPython.noop),
+        migrations.RunPython(create_initial_objects),
     ]

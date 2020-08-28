@@ -13,12 +13,11 @@ def create_initial_permissions(apps, schema_editor):
     from django.contrib.contenttypes.models import ContentType
 
     group_content_type = ContentType.objects.get_for_model(Group)
-    permission = Permission(
+    Permission.objects.create(
         name="Publish event for group",
         codename="publish_event_for_group",
         content_type=group_content_type,
     )
-    permission.save()
 
 
 class Migration(migrations.Migration):
@@ -29,5 +28,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_initial_permissions, migrations.RunPython.noop),
+        migrations.RunPython(create_initial_permissions),
     ]
