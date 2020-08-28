@@ -11,6 +11,7 @@ To set up a development version of jep on your local machine, you need to execut
 4. Install dependencies with `poetry install`
 5. Create env file with `cp .env.example .env`
 6. Migrate the database with `python manage.py migrate`
+7. Load data for testing with `python manage.py setupdata debug`
 8. Start the development server with `python manage.py runserver`
 9. Open your web browser, visit `http://localhost:8000` and log in with the default credentials (user `admin@localhost` and password `admin`)
 
