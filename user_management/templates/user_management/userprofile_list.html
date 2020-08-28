@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#userprofile_table').DataTable({
+                "paging": false,
+                "info": false,
+                "responsive": true,
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% trans "User Profiles" %}</h1>
+    </div>
+    <table id="userprofile_table" class="table table-striped display">
+        <thead>
+        <tr>
+            <th style="width: 15%">{% trans "Last name" %}</th>
+            <th style="width: 15%">{% trans "First name" %}</th>
+            <th style="width: 30%">{% trans "Email address" %}</th>
+            <th style="width: 20%">{% trans "Information" %}</th>
+            <th style="width: 20%">{% trans "Actions" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for userprofile in userprofile_list %}
+            <tr>
+                <td>{{ userprofile.last_name }}</td>
+                <td>{{ userprofile.first_name }}</td>
+                <td>{{ userprofile.email }}</td>
+                <td>{% include "user_management/userprofile_badges.html" with userprofile=userprofile %}</td>
+                <td><i>Buttons to be inserted</i></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
