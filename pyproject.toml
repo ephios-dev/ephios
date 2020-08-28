@@ -19,6 +19,7 @@ django-ical = "^1.7.1"
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
 pre-commit = "^2.6.0"
+django-debug-toolbar = "^2.2"
 
 [tool.black]
 line-length = 100

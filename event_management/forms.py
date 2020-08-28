@@ -10,7 +10,8 @@ from django.forms import (
     DateField,
     TimeField,
 )
-from guardian.shortcuts import assign_perm
+from django.utils.timezone import get_default_timezone, make_aware
+from guardian.shortcuts import assign_perm, remove_perm
 
 from event_management.models import Event, Shift
 from event_management.signup import register_signup_methods
@@ -30,18 +31,42 @@ class EventForm(ModelForm):
         fields = ["title", "description", "location", "type"]
 
     def save(self, commit=True):
-        event = super(EventForm, self).save(commit)
-        for group in self.cleaned_data["visible_for"]:
-            assign_perm("view_event", group, event)
-        for group in self.cleaned_data["responsible_groups"]:
-            assign_perm("change_event", group, event)
-        for user in self.cleaned_data["responsible_persons"]:
-            assign_perm("change_event", user, event)
+        event = super().save(commit)
+        if "visible_for" in self.changed_data:
+            for group in self.cleaned_data["visible_for"]:
+                assign_perm("view_event", group, event)
+            for group in self.fields["visible_for"].queryset.difference(
+                self.cleaned_data["visible_for"]
+            ):
+                remove_perm("view_event", group, event)
+        if "responsible_groups" in self.changed_data:
+            for group in self.cleaned_data["responsible_groups"].difference(
+                self.initial["responsible_groups"]
+            ):
+                assign_perm("change_event", group, event)
+                assign_perm("view_event", group, event)
+            for group in self.initial["responsible_groups"].difference(
+                self.cleaned_data["responsible_groups"]
+            ):
+                remove_perm("change_event", group, event)
+                if group not in self.cleaned_data["visible_for"]:
+                    remove_perm("view_event", group, event)
+        if "responsible_persons" in self.changed_data:
+            for user in self.cleaned_data["responsible_persons"].difference(
+                self.initial["responsible_persons"]
+            ):
+                assign_perm("change_event", user, event)
+                assign_perm("view_event", user, event)
+            for user in self.initial["responsible_persons"].difference(
+                self.cleaned_data["responsible_persons"]
+            ):
+                remove_perm("change_event", user, event)
+                remove_perm("view_event", user, event)
         return event
 
 
 class ShiftForm(ModelForm):
-    date = DateField(widget=CustomDateInput)
+    date = DateField(widget=CustomDateInput(format="%Y-%m-%d"))
     meeting_time = TimeField(widget=CustomTimeInput)
     start_time = TimeField(widget=CustomTimeInput)
     end_time = TimeField(widget=CustomTimeInput)
@@ -50,7 +75,7 @@ class ShiftForm(ModelForm):
 
     class Meta:
         model = Shift
-        fields = ["signup_method_slug"]
+        fields = ["meeting_time", "start_time", "end_time", "signup_method_slug"]
         widgets = {
             "signup_method_slug": Select(
                 choices=(
@@ -62,24 +87,17 @@ class ShiftForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(ShiftForm, self).clean()
+        cleaned_data["meeting_time"] = make_aware(
+            datetime.combine(cleaned_data["date"], cleaned_data["meeting_time"])
+        )
+        cleaned_data["start_time"] = make_aware(
+            datetime.combine(cleaned_data["date"], cleaned_data["start_time"])
+        )
+        cleaned_data["end_time"] = make_aware(
+            datetime.combine(self.cleaned_data["date"], cleaned_data["end_time"])
+        )
+        if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
+            cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
         if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
             raise ValidationError("Meeting time must not be after start time!")
         return cleaned_data
-
-    def save(self, commit=True):
-        shift = super().save(commit)
-        shift.meeting_time = datetime.combine(
-            self.cleaned_data["date"], self.cleaned_data["meeting_time"]
-        )
-        shift.start_time = datetime.combine(
-            self.cleaned_data["date"], self.cleaned_data["start_time"]
-        )
-        if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
-            end_date = self.cleaned_data["date"] + timedelta(days=1)
-        else:
-            end_date = self.cleaned_data["date"]
-        shift.end_time = datetime.combine(end_date, self.cleaned_data["end_time"])
-        return shift.save() if commit else shift
-
-
-ShiftFormSet = modelformset_factory(Shift, form=ShiftForm,)

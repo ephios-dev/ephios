@@ -2,6 +2,8 @@ from django import template
 
 from django.utils.translation import gettext as _
 
+from event_management.models import AbstractParticipation
+
 register = template.Library()
 
 
@@ -26,3 +28,8 @@ def shift_status(shift, user):
 @register.filter(name="can_sign_up")
 def can_sign_up(shift, user):
     return shift.signup_method.can_sign_up(user.as_participator())
+
+
+@register.filter(name="can_user_decline")
+def can_user_decline(shift, user):
+    return shift.signup_method.can_user_decline(user.as_participator())

@@ -3,7 +3,11 @@
 {% load static %}
 
 {% block title %}
-    Create new event
+    {% if event %}
+            Edit event
+        {% else %}
+            Create new event
+        {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -14,15 +18,25 @@
         {% endfor %}
     {% endif %}
     <div class="page-header">
-        <h1>Create new event</h1>
+        {% if event %}
+            <h1>Edit event</h1>
+        {% else %}
+            <h1>Create new event</h1>
+        {% endif %}
     </div>
     <form method="post" class="form">
         {% csrf_token %}
         {% bootstrap_form form %}
 
         {% buttons %}
-            <a role="button" class="btn btn-secondary" href="{% url "event_management:event_list" %}">Cancel</a>
-            <button type="submit" class="btn btn-primary float-right">Next</button>
+            {% if event %}
+                <a role="button" class="btn btn-secondary" href="{% url "event_management:event_detail" event.pk%}">Back</a>
+                <button type="submit" class="btn btn-primary float-right">Save</button>
+            {% else %}
+                <a role="button" class="btn btn-secondary" href="{% url "event_management:event_list" %}">Cancel</a>
+                <button type="submit" class="btn btn-primary float-right">Next</button>
+            {% endif %}
+
         {% endbuttons %}
     </form>
 {% endblock %}

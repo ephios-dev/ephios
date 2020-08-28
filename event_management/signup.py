@@ -63,6 +63,10 @@ class SignupError(Exception):
     pass
 
 
+class DeclineError(Exception):
+    pass
+
+
 class AbstractSignupConfigurationForm(Form):
     minimum_age = IntegerField(initial=16)
     signup_until = DateField(required=False, widget=CustomDateInput())
@@ -89,17 +93,27 @@ class AbstractSignupMethod:
 
     def check_signup(self, participator):
         self.check_event_is_active()
-        self.check_no_existing_participation(participator)
+        self.check_participation_state_for_signup(participator)
         self.check_inside_signup_timeframe()
         self.check_participator_age(participator)
 
     def check_event_is_active(self):
         if not self.shift.event.active:
-            raise SignupError("The event is not active, you cannot sign up for it.")
+            raise SignupError(_("The event is not active, you cannot sign up for it."))
 
-    def check_no_existing_participation(self, participator):
-        if participator.participation_for(self.shift):
-            raise SignupError(_("You are already signed up for this shift."))
+    def check_participation_state_for_signup(self, participator):
+        participation = participator.participation_for(self.shift)
+        if participation is not None:
+            if participation.state == AbstractParticipation.REQUESTED:
+                raise SignupError(
+                    _(f"You have already requested your participation for shift {self.shift}.")
+                )
+            elif participation.state == AbstractParticipation.CONFIRMED:
+                raise SignupError(_(f"You are already signed up for shift {self.shift}."))
+            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+                raise SignupError(_(f"You are rejected from shift {self.shift}."))
+            elif participation.state == AbstractParticipation.USER_DECLINED:
+                participation.state = AbstractParticipation.REQUESTED
 
     def check_inside_signup_timeframe(self):
         ...  # TODO
@@ -113,6 +127,24 @@ class AbstractSignupMethod:
         if participator.age < minimum_age:
             raise SignupError(_(f"Too young. The minimum age is {minimum_age}."))
 
+    def can_user_decline(self, participator):
+        if participation := participator.participation_for(self.shift):
+            return participation.state == AbstractParticipation.REQUESTED
+        else:
+            return True
+
+    def check_participation_state_for_decline(self, participator):
+        participation = participator.participation_for(self.shift)
+        if participation is not None:
+            if participation.state == AbstractParticipation.CONFIRMED:
+                raise DeclineError(_(f"You are bindingly signed up for shift {self.shift}."))
+            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+                raise DeclineError(_(f"You are rejected from shift {self.shift}."))
+            elif participation.state == AbstractParticipation.USER_DECLINED:
+                raise DeclineError(
+                    _(f"You have already declined participating in shift {self.shift}.")
+                )
+
     def create_participation(self, participator):
         """Create and configure a participation object for the given participator."""
         self.check_signup(participator)
@@ -122,13 +154,24 @@ class AbstractSignupMethod:
         try:
             participation = self.create_participation(request.user.as_participator())
             messages.success(
-                request,
-                _("Successfully signed up for shift %(shift_name)s.")
-                % {"shift_name": participation.shift},
+                request, _(f"You have successfully signed up for shift {participation.shift}."),
             )
         except SignupError as e:
             messages.error(request, e)
         return redirect("event_management:event_detail", pk=self.shift.event.pk)
+
+    def decline_view(self, request):
+        participator = request.user.as_participator()
+        try:
+            self.check_participation_state_for_decline(participator)
+        except DeclineError as e:
+            messages.error(request, e)
+        else:
+            participation = self.create_participation(participator)
+            participation.state = AbstractParticipation.USER_DECLINED
+            participation.save()
+            messages.info(request, _(f"You have declined a participation for shift {self.shift}."))
+        return self.shift.event.get_absolute_url()
 
     def get_configuration_form(self, *args, **kwargs):
         return AbstractSignupConfigurationForm(*args, **kwargs)
@@ -159,7 +202,8 @@ class InstantConfirmationSignupMethod(AbstractSignupMethod):
     description = _("""This method instantly confirms a signup.""")
 
     def create_participation(self, participator):
-        participation = super().create_participation(participator)
+        if (participation := participator.participation_for(self.shift)) is None:
+            participation = super().create_participation(participator)
         participation.state = AbstractParticipation.CONFIRMED
         participation.save()
         return participation
