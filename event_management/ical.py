@@ -5,6 +5,7 @@ from guardian.shortcuts import get_users_with_perms
 from icalendar import vCalAddress
 
 from event_management.models import Shift, AbstractParticipation
+from jep.settings import SITE_URL
 
 
 class EventFeed(ICalFeed):
@@ -34,7 +35,7 @@ class EventFeed(ICalFeed):
         return item.event.location
 
     def item_guid(self, item):
-        return f"{item.pk}@jep"
+        return f"{item.pk}@{SITE_URL}"
 
     def item_organizer(self, item):
         user = get_users_with_perms(item.event, only_with_perms_in=["change_event"]).first()
