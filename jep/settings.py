@@ -22,6 +22,7 @@ environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+SITE_URL = env.str("SITE_URL")
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True

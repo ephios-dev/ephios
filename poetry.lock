@@ -151,6 +151,19 @@ Django = ">=2.2"
 
 [[package]]
 category = "main"
+description = "iCal feeds for Django based on Django's syndication feed framework."
+name = "django-ical"
+optional = false
+python-versions = "*"
+version = "1.7.1"
+
+[package.dependencies]
+Django = ">=1.11"
+django-recurrence = ">=1.10.0"
+icalendar = ">=4.0.3"
+
+[[package]]
+category = "main"
 description = "JSONField from django.contrib.postgres, but with a fallback to TextField"
 name = "django-jsonfallback"
 optional = false
@@ -172,12 +185,37 @@ version = "3.6.0"
 Django = ">=2.0"
 
 [[package]]
+category = "main"
+description = "Django utility wrapping dateutil.rrule"
+name = "django-recurrence"
+optional = false
+python-versions = "*"
+version = "1.10.3"
+
+[package.dependencies]
+Django = "*"
+python-dateutil = "*"
+pytz = "*"
+
+[[package]]
 category = "dev"
 description = "A platform independent file lock."
 name = "filelock"
 optional = false
 python-versions = "*"
 version = "3.0.12"
+
+[[package]]
+category = "main"
+description = "iCalendar parser/generator"
+name = "icalendar"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "4.0.6"
+
+[package.dependencies]
+python-dateutil = "*"
+pytz = "*"
 
 [[package]]
 category = "dev"
@@ -240,6 +278,17 @@ version = "2.8.5"
 
 [[package]]
 category = "main"
+description = "Extensions to the standard Python datetime module"
+name = "python-dateutil"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+version = "2.8.1"
+
+[package.dependencies]
+six = ">=1.5"
+
+[[package]]
+category = "main"
 description = "World timezone definitions, modern and historical"
 name = "pytz"
 optional = false
@@ -263,7 +312,7 @@ python-versions = "*"
 version = "2020.5.14"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -321,7 +370,7 @@ docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sp
 testing = ["coverage (>=5)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "pytest-xdist (>=1.31.0)", "packaging (>=20.0)", "xonsh (>=0.9.16)"]
 
 [metadata]
-content-hash = "6f33d57d6ab9b9ffac6d4284b4c1fc05c87be34428029ae4f1e1aed13e9208e2"
+content-hash = "96f12d85dc6d566e6984f3f1e0b3febc26e1b8e95dde416e54c13bac7eaff00a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -378,6 +427,10 @@ django-guardian = [
     {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},
     {file = "django_guardian-2.3.0-py3-none-any.whl", hash = "sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8"},
 ]
+django-ical = [
+    {file = "django-ical-1.7.1.tar.gz", hash = "sha256:645344dda9611ca77dc3609f53b6e751bd89cc7d01f77adf1fd72838992b5579"},
+    {file = "django_ical-1.7.1-py2.py3-none-any.whl", hash = "sha256:42bb51020f935342fe78f0202346a0775777811a4bdbc1c9c32bb8ec068d2f95"},
+]
 django-jsonfallback = [
     {file = "django-jsonfallback-2.1.2.tar.gz", hash = "sha256:0132c655e422e382a8a6b0d11319f5655e25fa6eb225ad10c0a05584c5fa1a0e"},
     {file = "django_jsonfallback-2.1.2-py3-none-any.whl", hash = "sha256:ab17e6d854924b419a6bec7d98ca01f30e043c63ee560f6eaa7f5ab73324e85b"},
@@ -386,9 +439,17 @@ django-mysql = [
     {file = "django-mysql-3.6.0.tar.gz", hash = "sha256:ceba459b67edf3d42cc39d1655efbe9d9da374fe28b2a8f04c2c0fe24c30f8dc"},
     {file = "django_mysql-3.6.0-py3-none-any.whl", hash = "sha256:856cf268fffd75694565ad427c907f96a1f3eec7d6a9b3f15c15ce05f9694b61"},
 ]
+django-recurrence = [
+    {file = "django-recurrence-1.10.3.tar.gz", hash = "sha256:715f681f6af029ff3a8d73c7b1460abd8cbc5d5a5001efcb127032e84d9cb963"},
+    {file = "django_recurrence-1.10.3-py3-none-any.whl", hash = "sha256:9053b44b78b7fbfe3530673edfdd6d2f562105f8a192bc6a4b906a3df4f95f59"},
+]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
+]
+icalendar = [
+    {file = "icalendar-4.0.6-py2.py3-none-any.whl", hash = "sha256:2f400b37353160af259019938e4397bf823f06a67ce9c50a58b95eb563720f00"},
+    {file = "icalendar-4.0.6.tar.gz", hash = "sha256:7e6fe7232622abe32d8f54d0936ffcd5a9087198a4c2f1ec1803a7dd9fdd979f"},
 ]
 identify = [
     {file = "identify-1.4.28-py2.py3-none-any.whl", hash = "sha256:69c4769f085badafd0e04b1763e847258cbbf6d898e8678ebffc91abdb86f6c6"},
@@ -425,6 +486,10 @@ psycopg2 = [
     {file = "psycopg2-2.8.5-cp38-cp38-win32.whl", hash = "sha256:2327bf42c1744a434ed8ed0bbaa9168cac7ee5a22a9001f6fc85c33b8a4a14b7"},
     {file = "psycopg2-2.8.5-cp38-cp38-win_amd64.whl", hash = "sha256:132efc7ee46a763e68a815f4d26223d9c679953cd190f1f218187cb60decf535"},
     {file = "psycopg2-2.8.5.tar.gz", hash = "sha256:f7d46240f7a1ae1dd95aab38bd74f7428d46531f69219954266d669da60c0818"},
+]
+python-dateutil = [
+    {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
+    {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
 pytz = [
     {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
