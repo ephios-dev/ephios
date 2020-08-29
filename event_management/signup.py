@@ -22,7 +22,7 @@ def signup_method_from_slug(slug, shift=None):
     for receiver, method in register_signup_methods.send(None):
         if method.slug == slug:
             return method(shift)
-    raise ValueError(_("Signup Method '{slug}' was not found.".format(slug=slug)))
+    raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
 @dataclass
@@ -106,19 +106,17 @@ class AbstractSignupMethod:
         if participation is not None:
             if participation.state == AbstractParticipation.REQUESTED:
                 raise SignupError(
-                    _(
-                        "You have already requested your participation for shift {shift}".format(
-                            shift=self.shift
-                        )
+                    _("You have already requested your participation for shift {shift}").format(
+                        shift=self.shift
                     )
                 )
             elif participation.state == AbstractParticipation.CONFIRMED:
                 raise SignupError(
-                    _("You are already signed up for shift {shift}".format(shift=self.shift))
+                    _("You are already signed up for shift {shift}").format(shift=self.shift)
                 )
             elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
                 raise SignupError(
-                    _("You are rejected from shift {shift}.".format(shift=self.shift))
+                    _("You are rejected from shift {shift}.").format(shift=self.shift)
                 )
             elif participation.state == AbstractParticipation.USER_DECLINED:
                 participation.state = AbstractParticipation.REQUESTED
@@ -134,7 +132,7 @@ class AbstractSignupMethod:
         minimum_age = 16
         if participator.age < minimum_age:
             raise SignupError(
-                _("You are too young. The minimum age is {age}.".format(age=minimum_age))
+                _("You are too young. The minimum age is {age}.").format(age=minimum_age)
             )
 
     def can_user_decline(self, participator):
@@ -148,18 +146,16 @@ class AbstractSignupMethod:
         if participation is not None:
             if participation.state == AbstractParticipation.CONFIRMED:
                 raise DeclineError(
-                    _("You are bindingly signed up for shift {shift}.".format(shift=self.shift))
+                    _("You are bindingly signed up for shift {shift}.").format(shift=self.shift)
                 )
             elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
                 raise DeclineError(
-                    _("You are rejected from shift {shift}.".format(shift=self.shift))
+                    _("You are rejected from shift {shift}.").format(shift=self.shift)
                 )
             elif participation.state == AbstractParticipation.USER_DECLINED:
                 raise DeclineError(
-                    _(
-                        "You have already declined participating in shift {shift}.".format(
-                            shift=self.shift
-                        )
+                    _("You have already declined participating in shift {shift}.").format(
+                        shift=self.shift
                     )
                 )
 
@@ -173,10 +169,8 @@ class AbstractSignupMethod:
             participation = self.create_participation(request.user.as_participator())
             messages.success(
                 request,
-                _(
-                    "You have successfully signed up for shift {shift}.".format(
-                        shift=participation.shift
-                    )
+                _("You have successfully signed up for shift {shift}.").format(
+                    shift=participation.shift
                 ),
             )
         except SignupError as e:
@@ -195,7 +189,7 @@ class AbstractSignupMethod:
             participation.save()
             messages.info(
                 request,
-                _("You have declined a participation for shift {shift}.".format(shift=self.shift)),
+                _("You have declined a participation for shift {shift}.").format(shift=self.shift),
             )
         return self.shift.event.get_absolute_url()
 

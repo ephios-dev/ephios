@@ -21,11 +21,17 @@ from django.utils.translation import gettext as _
 
 
 class EventForm(ModelForm):
-    visible_for = ModelMultipleChoiceField(queryset=Group.objects.none(), label=_("Visible for"), help_text=_("Select groups which the event shall be visible for."))
+    visible_for = ModelMultipleChoiceField(
+        queryset=Group.objects.none(),
+        label=_("Visible for"),
+        help_text=_("Select groups which the event shall be visible for."),
+    )
     responsible_persons = ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(), required=False, label=_("Responsible persons")
     )
-    responsible_groups = ModelMultipleChoiceField(queryset=Group.objects.all(), required=False, label=_("Responsible groups"))
+    responsible_groups = ModelMultipleChoiceField(
+        queryset=Group.objects.all(), required=False, label=_("Responsible groups")
+    )
 
     class Meta:
         model = Event
