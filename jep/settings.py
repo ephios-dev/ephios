@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap4",
+    "django_extensions",
     "guardian",
     "jep",
     "user_management",
     "event_management",
+    "contrib.__init__",
 ]
 
 MIDDLEWARE = [

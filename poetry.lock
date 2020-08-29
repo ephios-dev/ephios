@@ -157,6 +157,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "django-extensions"
+version = "3.0.5"
+description = "Extensions for Django"
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "django-guardian"
 version = "2.3.0"
 description = "Implementation of per object permissions for Django."
@@ -536,7 +544,7 @@ WebOb = ">=1.2"
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "eae6e7d27f44cd79964103e69c33d5c341cf8e130d5f9232f4f78ae9c92faf0b"
+content-hash = "aa75e89c942e15478c84517fab2b52066a75cf55db465b334f8e42c56db21579"
 
 [metadata.files]
 appdirs = [
@@ -595,6 +603,10 @@ django-debug-toolbar = [
 django-environ = [
     {file = "django-environ-0.4.5.tar.gz", hash = "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde"},
     {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
+]
+django-extensions = [
+    {file = "django-extensions-3.0.5.tar.gz", hash = "sha256:6306175ae8c78c18ea7aff794f5fa3a47de7d128666e6668bd40596895da7f84"},
+    {file = "django_extensions-3.0.5-py2.py3-none-any.whl", hash = "sha256:40d4b7aec7bbe66dda8704fbfaf2e1b7e04ec4aea6b10dcbd78d8af7c37bfddb"},
 ]
 django-guardian = [
     {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},

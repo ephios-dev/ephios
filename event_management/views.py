@@ -170,7 +170,9 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
             return self.render_to_response(
                 self.get_context_data(
                     form=form,
-                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                    configuration_form=signup_method.render_configuration_form(
+                        form=configuration_form
+                    ),
                 )
             )
 
@@ -206,9 +208,7 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
         )
 
     def get_configuration_form(self):
-        return self.object.signup_method.render_configuration_form(
-            data=self.request.POST or None, initial=json.loads(self.object.signup_configuration)
-        )
+        return self.object.signup_method.render_configuration_form(data=self.request.POST or None)
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
@@ -242,7 +242,9 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
             return self.render_to_response(
                 self.get_context_data(
                     form=form,
-                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                    configuration_form=signup_method.render_configuration_form(
+                        form=configuration_form
+                    ),
                 )
             )
 

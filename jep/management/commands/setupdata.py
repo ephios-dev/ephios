@@ -1,12 +1,23 @@
+import json
+import uuid
 from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
+from django.utils.timezone import make_aware
 from guardian.shortcuts import assign_perm
+from django.core.serializers.json import DjangoJSONEncoder
 
 from django.utils.translation import gettext as _
 
-from user_management.models import UserProfile
+from event_management.models import EventType, Event, Shift
+from user_management.models import (
+    UserProfile,
+    QualificationCategory,
+    Qualification,
+    QualificationGrant,
+)
 
 AVAILABLE_DATASET_CLASSES = []
 
@@ -56,7 +67,7 @@ class AdminUserDataset(AbstractDataset):
 @register_dataset
 class DebugDataset(AdminUserDataset):
     identifier = "debug"
-    action = "Create a planner and volunteers group and add the superuser to it."
+    action = "Create a planner and volunteers group and add the superuser and another user to it. Add an event and a few qualifications."
 
     def create_objects(self, *args, **options):
         super().create_objects(*args, **options)
@@ -73,6 +84,61 @@ class DebugDataset(AdminUserDataset):
         assign_perm("publish_event_for_group", planners, volunteers)
         assign_perm("event_management.add_event", planners)
         assign_perm("event_management.delete_event", planners)
+
+        service_type = EventType.objects.create(title=_("Service"), can_grant_qualification=False)
+        EventType.objects.create(title=_("Training"), can_grant_qualification=True)
+
+        user = UserProfile(
+            email="user@localhost",
+            first_name="User",
+            last_name="Localhost",
+            date_of_birth=datetime(year=1970, month=1, day=1),
+        )
+        user.password = make_password("user")
+        user.save()
+        volunteers.user_set.add(user)
+
+        medical_category = QualificationCategory.objects.create(
+            title=_("Medical"), uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
+        )
+
+        rs = Qualification.objects.create(
+            category=medical_category,
+            title="Rettungssanitäter",
+            abbreviation="RS",
+            uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
+        )
+
+        nfs = Qualification.objects.create(
+            category=medical_category,
+            title="Notfallsanitäter",
+            abbreviation="NFS",
+            uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
+        )
+        nfs.included_qualifications.add(rs)
+
+        QualificationGrant.objects.create(user=user, qualification=nfs)
+        QualificationGrant.objects.create(user=self.admin_user, qualification=rs)
+
+        event = Event.objects.create(
+            title=_("Concert Medical Service"),
+            description=_("Your contact is Lisa Example. Her Phone number is 012345678910"),
+            type=service_type,
+            location="Town Square Gardens",
+            active=True,
+        )
+
+        Shift.objects.create(
+            event=event,
+            meeting_time=make_aware(datetime(2023, 6, 30, 15, 30)),
+            start_time=make_aware(datetime(2023, 6, 30, 16, 0)),
+            end_time=make_aware(datetime(2023, 7, 1, 1, 0)),
+            signup_method_slug="instant_confirmation",
+            signup_configuration=json.dumps(
+                dict(minimum_age=18, signup_until=make_aware(datetime(2023, 6, 29, 8, 0)),),
+                cls=DjangoJSONEncoder,
+            ),
+        )
 
 
 class Command(BaseCommand):
@@ -102,5 +168,6 @@ class Command(BaseCommand):
                 return
 
         identifier = options["dataset_identifier"]
-        self.datasets[identifier].create_objects(*args, **options)
+        with transaction.atomic():
+            self.datasets[identifier].create_objects(*args, **options)
         self.stdout.write(self.style.SUCCESS("Done."))

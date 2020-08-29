@@ -13,7 +13,10 @@ from django.db.models import (
     EmailField,
     ForeignKey,
     Model,
+    Exists,
+    OuterRef,
 )
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -92,6 +95,16 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             user=self,
         )
 
+    @property
+    def qualifications(self):
+        return Qualification.objects.annotate(
+            active_grant=Exists(
+                QualificationGrant.objects.filter(
+                    user__eq=self, expires__lt=timezone.now(), qualification=OuterRef("pk")
+                )
+            )
+        ).filter(active_grant=True)
+
     def get_shifts(self, with_participation_state_in):
         from event_management.models import Shift
 
@@ -101,19 +114,44 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         return Shift.objects.filter(pk__in=shift_ids)
 
 
-class QualificationTrack(Model):
+class QualificationCategory(Model):
+    uuid = models.UUIDField(unique=True)
     title = CharField(max_length=254)
 
 
 class Qualification(Model):
+    uuid = models.UUIDField(unique=True)
     title = CharField(max_length=254)
-    track = ForeignKey(QualificationTrack, on_delete=models.CASCADE)
+    abbreviation = CharField(max_length=254)
+    category = ForeignKey(
+        QualificationCategory, on_delete=models.CASCADE, related_name="qualifications"
+    )
+    included_qualifications = models.ManyToManyField(
+        "self", related_name="included_in_set", symmetrical=False
+    )
+
+    def includes(self, other):
+        # FIXME make this faster by using a cache or something
+        if self == other:
+            return True
+        return any(
+            included_qualification.includes(other)
+            for included_qualification in self.included_qualifications.all()
+        )
+
+    def __eq__(self, other):
+        return self.uuid == other.uuid
+
+    def __hash__(self):
+        return hash(self.uuid)
 
     def __str__(self):
         return self.title
 
 
 class QualificationGrant(Model):
-    qualification = ForeignKey(Qualification, on_delete=models.CASCADE)
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    expiration_date = DateField(blank=True, null=True)
+    qualification = ForeignKey(Qualification, on_delete=models.CASCADE, related_name="grants")
+    user = ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="qualification_grants"
+    )
+    expires = models.DateTimeField(blank=True, null=True)

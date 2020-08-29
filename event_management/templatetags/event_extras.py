@@ -30,6 +30,11 @@ def can_sign_up(shift, user):
     return shift.signup_method.can_sign_up(user.as_participator())
 
 
+@register.filter(name="signup_errors")
+def signup_errors(shift, user):
+    return shift.signup_method.get_signup_errors(user.as_participator())
+
+
 @register.filter(name="can_user_decline")
 def can_user_decline(shift, user):
     return shift.signup_method.can_user_decline(user.as_participator())
