@@ -575,7 +575,10 @@ msgid ""
 "in. Most calendars (e.g. Google Calendar) offer this feature. This allows "
 "you to see all events in your personal calendar. To activate this, you need "
 "to copy the address of the following link and subscribe to the URL."
-msgstr ""
+msgstr "Sie können einen Kalender abonnieren, der alle Veranstaltungen enthält, an denen Sie teilnehmen. "
+"Die meisten Kalender (z.B. Google Calendar) bieten diese Funktion. Dadurch können Sie alle Ereignisse in Ihrem "
+"persönlichen Kalender sehen. Um dies zu aktivieren, müssen Sie die Adresse des folgenden Links kopieren "
+"und den Kalender mit dieser URL abonnieren."
 
 #: user_management/templates/user_management/userprofile_detail.html:25
 msgid "Your calendar"
