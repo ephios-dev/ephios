@@ -1,15 +1,16 @@
 {% load event_extras %}
+{% load i18n %}
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5 class="card-title">Shift
+        <h5 class="card-title">{% trans "Shift" %}
             {% if can_change %}
                 <small class="float-right">
                     <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
-                        Edit</a>
+                        {% trans "Edit" %}</a>
                     {% if shift.event.shifts.count > 1 %}
                         <a href="{% url "event_management:shift_delete" shift.pk %}"><span
-                                class="fas fa-trash-alt"></span> Delete</a>
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
                     {% endif %}
                 </small>
             {% endif %}
@@ -18,23 +19,22 @@
             <div class="row">
                 <div class="col-md-6">
                     <p>
-                        <b>Date:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
-                        <b>Meeting time:</b> {{ shift.meeting_time | date:"H:i" }} <br>
-                        <b>Start time:</b> {{ shift.start_time | date:"H:i" }} <br>
-                        <b>End time:</b> {{ shift.end_time | date:"H:i" }} <br>
-                        <b>Minors allowed:</b> {{ shift.minors_allowed | yesno }} <br>
-                        {% if event.active and not without_controls%}
-                            <b>Status:</b> {{ shift|shift_status:request.user }} <br>
+                        <b>{% trans "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
+                        <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
+                        <b>{% trans "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
+                        <b>{% trans "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
+                        {% if event.active and not without_controls %}
+                            <b>{% trans "Status" %}:</b> {{ shift|shift_status:request.user }} <br>
                             {% with can_sign_up=shift|can_sign_up:request.user %}
                                 {% if can_sign_up %}
                                     <a class="btn btn-primary"
-                                       href="{% url "event_management:shift_register" shift.id %}">Register</a>
+                                       href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
                                 {% endif %}
                             {% endwith %}
                             {% with can_user_decline=shift|can_user_decline:request.user %}
                                 {% if can_user_decline %}
                                     <a class="btn btn-danger"
-                                       href="{% url "event_management:shift_user_decline" shift.id %}">Decline</a>
+                                       href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
                                 {% endif %}
                             {% endwith %}
                         {% endif %}
