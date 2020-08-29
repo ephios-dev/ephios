@@ -1,6 +1,7 @@
 from django.urls import path
 
 from event_management import views
+from event_management.ical import EventFeed, UserEventFeed, user_event_feed_view
 from event_management.views import ShiftConfigurationFormView
 
 app_name = "event_management"
@@ -24,4 +25,6 @@ urlpatterns = [
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
     ),
+    path("calendar", EventFeed(), name="event_feed"),
+    path("calendar/<str:calendar_token>", user_event_feed_view, name="user_event_feed"),
 ]
