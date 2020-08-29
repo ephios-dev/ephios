@@ -14,7 +14,7 @@ from django.db.models import (
     Manager,
 )
 from jsonfallback.fields import FallbackJSONField
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class ActiveManager(Manager):
@@ -23,8 +23,12 @@ class ActiveManager(Manager):
 
 
 class EventType(Model):
-    title = CharField(max_length=254)
-    can_grant_qualification = BooleanField()
+    title = CharField(_("title"), max_length=254)
+    can_grant_qualification = BooleanField(_("can grant qualification"))
+
+    class Meta:
+        verbose_name = _("event type")
+        verbose_name_plural = _("event types")
 
     def __str__(self):
         return self.title
@@ -35,15 +39,19 @@ class EventSeries(Model):
 
 
 class Event(Model):
-    title = CharField(max_length=254)
-    description = TextField(blank=True, null=True)
-    location = CharField(max_length=254)
-    type = ForeignKey(EventType, on_delete=models.CASCADE)
+    title = CharField(_("title"), max_length=254)
+    description = TextField(_("description"), blank=True, null=True)
+    location = CharField(_("location"), max_length=254)
+    type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
     series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
     active = BooleanField(default=False)
 
     objects = ActiveManager()
     all_objects = Manager()
+
+    class Meta:
+        verbose_name = _("event")
+        verbose_name_plural = _("events")
 
     @property
     def start_time(self):
@@ -65,12 +73,18 @@ class Event(Model):
 
 
 class Shift(Model):
-    event = ForeignKey(Event, on_delete=models.CASCADE, related_name="shifts")
-    meeting_time = DateTimeField()
-    start_time = DateTimeField()
-    end_time = DateTimeField()
-    signup_method_slug = SlugField(verbose_name=_("Signup method"))
+    event = ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
+    )
+    meeting_time = DateTimeField(_("meeting time"))
+    start_time = DateTimeField(_("start time"))
+    end_time = DateTimeField(_("end time"))
+    signup_method_slug = SlugField(_("signup method"))
     signup_configuration = FallbackJSONField()
+
+    class Meta:
+        verbose_name = _("shift")
+        verbose_name_plural = _("shifts")
 
     @property
     def signup_method(self):
@@ -88,14 +102,14 @@ class AbstractParticipation(Model):
     USER_DECLINED = 2
     RESPONSIBLE_REJECTED = 3
     STATE_CHOICES = (
-        (REQUESTED, "requested"),
-        (CONFIRMED, "confirmed"),
-        (USER_DECLINED, "declined by user"),
-        (RESPONSIBLE_REJECTED, "rejected by responsible"),
+        (REQUESTED, _("requested")),
+        (CONFIRMED, _("confirmed")),
+        (USER_DECLINED, _("declined by user")),
+        (RESPONSIBLE_REJECTED, _("rejected by responsible")),
     )
 
-    shift = ForeignKey(Shift, on_delete=models.CASCADE)
-    state = IntegerField(choices=STATE_CHOICES, default=REQUESTED)
+    shift = ForeignKey(Shift, on_delete=models.CASCADE, verbose_name=_("shift"))
+    state = IntegerField(_("state"), choices=STATE_CHOICES, default=REQUESTED)
 
     @property
     def participator(self):

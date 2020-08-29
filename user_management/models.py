@@ -17,6 +17,7 @@ from django.db.models import (
     OuterRef,
 )
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -47,14 +48,14 @@ class UserManager(BaseUserManager):
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUserMixin):
-    email = EmailField(unique=True, verbose_name="Email address")
+    email = EmailField(_("email address"), unique=True)
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
-    first_name = CharField(max_length=254, verbose_name="First name")
-    last_name = CharField(max_length=254, verbose_name="Last name")
-    date_of_birth = DateField()
-    phone = CharField(max_length=254, null=True, blank=True)
-    calendar_token = CharField(max_length=254, default=secrets.token_urlsafe)
+    first_name = CharField(_("first name"), max_length=254)
+    last_name = CharField(_("last name"), max_length=254)
+    date_of_birth = DateField(_("date of birth"))
+    phone = CharField(_("phone number"), max_length=254, null=True)
+    calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
@@ -64,6 +65,10 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     ]
 
     objects = UserManager()
+
+    class Meta:
+        verbose_name = _("user profile")
+        verbose_name_plural = _("user profiles")
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -116,28 +121,26 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
 
 class QualificationCategory(Model):
     uuid = models.UUIDField(unique=True)
-    title = CharField(max_length=254)
+    title = CharField(_("title"), max_length=254)
+
+    class Meta:
+        verbose_name = _("qualification track")
+        verbose_name_plural = _("qualification tracks")
 
 
 class Qualification(Model):
     uuid = models.UUIDField(unique=True)
-    title = CharField(max_length=254)
+    title = CharField(_("title"), max_length=254)
     abbreviation = CharField(max_length=254)
     category = ForeignKey(
-        QualificationCategory, on_delete=models.CASCADE, related_name="qualifications"
+        QualificationCategory,
+        on_delete=models.CASCADE,
+        related_name="qualifications",
+        verbose_name=_("category"),
     )
     included_qualifications = models.ManyToManyField(
         "self", related_name="included_in_set", symmetrical=False
     )
-
-    def includes(self, other):
-        # FIXME make this faster by using a cache or something
-        if self == other:
-            return True
-        return any(
-            included_qualification.includes(other)
-            for included_qualification in self.included_qualifications.all()
-        )
 
     def __eq__(self, other):
         return self.uuid == other.uuid
@@ -145,13 +148,17 @@ class Qualification(Model):
     def __hash__(self):
         return hash(self.uuid)
 
+    class Meta:
+        verbose_name = _("qualification")
+        verbose_name_plural = _("qualifications")
+
     def __str__(self):
         return self.title
 
 
 class QualificationGrant(Model):
-    qualification = ForeignKey(Qualification, on_delete=models.CASCADE, related_name="grants")
-    user = ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name="qualification_grants"
+    qualification = ForeignKey(
+        Qualification, on_delete=models.CASCADE, verbose_name=_("qualification")
     )
-    expires = models.DateTimeField(blank=True, null=True)
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
+    expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
