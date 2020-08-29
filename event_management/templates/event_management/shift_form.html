@@ -1,17 +1,18 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load bootstrap4 %}
 {% load static %}
 
 {% block title %}
-    Create new shift for event
+    {% trans "Create new shift for event" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
         {% if object %}
-            <h1>Edit shift</h1>
+            <h1>{% trans "Edit shift" %}</h1>
         {% else %}
-            <h1>Create new shift for event</h1>
+            <h1>{% trans "Create new shift for event" %}</h1>
         {% endif %}
     </div>
     <div class="row">
@@ -27,26 +28,25 @@
                     {% if object and event.active %}
                         <a role="button" class="btn btn-secondary"
                            href="{% url "event_management:event_detail" event.pk %}">
-                            <span class="fas fa-arrow-left"></span> Back to event
+                            <span class="fas fa-arrow-left"></span> {% trans "Back to event" %}
                         </a>
                         {% if object and object.event.shifts.count > 1 %}
                             <a role="button" class="btn btn-danger"
                                href="{% url "event_management:shift_delete" object.pk %}"><span
-                                    class="fas fa-trash-alt"></span> Delete</a>
+                                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
                         {% endif %}
                         <button type="submit" class="btn btn-primary float-right ml-1">
-                            <span class="fas fa-save"></span> Save
+                            <span class="fas fa-save"></span> {% trans "Save" %}
                         </button>
                     {% else %}
                         <a role="button" class="btn btn-danger"
-                           href="{% url "event_management:event_delete" event.pk %}">Discard
-                            event</a>
+                           href="{% url "event_management:event_delete" event.pk %}">{% trans "Discard event" %}</a>
                         <button type="submit" class="btn btn-primary float-right ml-1">
-                            <span class="fas fa-save"></span> Save event
+                            <span class="fas fa-save"></span> {% trans "Save event" %}
                         </button>
                     {% endif %}
                     <button type="submit" name="addAnother" class="btn btn-secondary float-right">
-                        <span class="fas fa-plus"></span> Add another shift
+                        <span class="fas fa-plus"></span> {% trans "Add another shift" %}
                     </button>
                 {% endbuttons %}
             </form>
@@ -57,11 +57,11 @@
                     <h5 class="card-title">
                         {{ event.title }}
                         <small class="float-right"><a href="{% url "event_management:event_edit" event.pk %}"><span
-                                class="fas fa-edit"></span> Edit</a></small>
+                                class="fas fa-edit"></span> {% trans "Edit" %}</a></small>
                     </h5>
                     <p class="card-text">
-                        Event type: {{ event.type }}<br>
-                        Location: {{ event.location }}
+                        {% trans "Event type" %}: {{ event.type }}<br>
+                        {% trans "Location" %}: {{ event.location }}
                     </p>
                 </div>
             </div>
@@ -71,8 +71,8 @@
             {% if not object %}
                 <div class="card mb-2 border-info">
                     <div class="card-body">
-                        <h5 class="card-subtitle mb-2 text-muted">Shift</h5>
-                        <p class="card-text">You are currently adding this shift</p>
+                        <h5 class="card-subtitle mb-2 text-muted">{% trans "Shift" %}</h5>
+                        <p class="card-text">{% trans "You are currently adding this shift" %}</p>
                 </div>
             {% endif %}
         </div>
