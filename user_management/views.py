@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 
@@ -10,8 +10,9 @@ class ProfileView(LoginRequiredMixin, DetailView):
         return self.request.user
 
 
-class UserProfileListView(ListView):
+class UserProfileListView(PermissionRequiredMixin, ListView):
     model = UserProfile
+    permission_required = "user.view_user"
 
     def get_queryset(self):
         return UserProfile.objects.all()
