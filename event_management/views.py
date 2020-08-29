@@ -117,7 +117,9 @@ class EventActivateView(PermissionRequiredMixin, RedirectView):
         event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
         event.active = True
         event.save()
-        messages.success(self.request, _(f"The event {event.title} has been saved."))
+        messages.success(
+            self.request, _("The event {title} has been saved.".format(title=event.title))
+        )
         return event.get_absolute_url()
 
 
@@ -167,7 +169,9 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
             else:
                 event.active = True
                 event.save()
-                messages.success(self.request, f"The event {event.title} has been saved.")
+                messages.success(
+                    self.request, _("The event {title} has been saved.".format(title=event.title))
+                )
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(
@@ -239,7 +243,9 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
                     reverse("event_management:event_createshift", kwargs={"pk": shift.event.pk})
                 )
             else:
-                messages.success(self.request, f"The shift has been saved.")
+                messages.success(
+                    self.request, _("The shift {shift} has been saved.".format(shift=shift))
+                )
                 return redirect(self.object.event.get_absolute_url())
         else:
             return self.render_to_response(
@@ -257,13 +263,13 @@ class ShiftDeleteView(PermissionRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.event.shifts.count() == 1:
-            messages.error(self.request, "You cannot delete the last shift!")
+            messages.error(self.request, _("You cannot delete the last shift!"))
             return redirect(self.object.event.get_absolute_url())
         else:
             return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        messages.success(self.request, "The shift has been deleted.")
+        messages.success(self.request, _("The shift has been deleted."))
         return self.object.event.get_absolute_url()
 
 

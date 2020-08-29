@@ -21,6 +21,7 @@ from jep import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("select2/", include("django_select2.urls")),
     path("", include("event_management.urls")),
     path("", include("user_management.urls")),
 ]
