@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime
 
 import guardian.mixins
@@ -49,7 +50,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     first_name = CharField(max_length=254, verbose_name="First name")
     last_name = CharField(max_length=254, verbose_name="Last name")
     date_of_birth = DateField()
-    phone = CharField(max_length=254, null=True)
+    phone = CharField(max_length=254, null=True, blank=True)
+    calendar_token = CharField(max_length=254, default=secrets.token_urlsafe)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
@@ -89,6 +91,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             date_of_birth=self.date_of_birth,
             user=self,
         )
+
+    def get_shifts(self, with_participation_state_in):
+        from event_management.models import Shift
+
+        shift_ids = self.localparticipation_set.filter(
+            state__in=with_participation_state_in
+        ).values_list("shift", flat=True)
+        return Shift.objects.filter(pk__in=shift_ids)
 
 
 class QualificationTrack(Model):
