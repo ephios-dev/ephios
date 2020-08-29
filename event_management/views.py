@@ -23,6 +23,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
+from event_management import mail
 from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
@@ -112,9 +113,11 @@ class EventActivateView(PermissionRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
-        event.active = True
-        event.save()
-        messages.success(self.request, _(f"The event {event.title} has been saved."))
+        if not event.active:
+            event.active = True
+            event.save()
+            messages.success(self.request, _(f"The event {event.title} has been saved."))
+            mail.new_event(event)
         return event.get_absolute_url()
 
 
