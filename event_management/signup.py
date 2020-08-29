@@ -55,12 +55,13 @@ class AbstractParticipator:
         raise NotImplementedError
 
     def collect_all_qualifications(self):
+        """We collect using breath first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
         current = self.qualifications
         while current:
-            next = current.values("included_qualifications")
-            all_qualifications.union(next)
-            current = next
+            next = Qualification.objects.filter(included_by__in=current).distinct()
+            current = next - all_qualifications
+            all_qualifications |= set(next)
         return all_qualifications
 
     def has_qualifications(self, qualifications):
@@ -102,10 +103,14 @@ class AbstractSignupMethod:
 
     def __init__(self, shift):
         self.shift = shift
-        config_dict = json.loads(
-            shift.signup_configuration if shift is not None else "{}", cls=CustomJSONDecoder
+        self.configuration = Namespace(
+            **{name: config["default"] for name, config in self.get_configuration_fields().items()}
         )
-        self.configuration = Namespace(**config_dict)
+        if shift is not None:
+            for key, value in json.loads(
+                shift.signup_configuration if shift is not None else "{}", cls=CustomJSONDecoder
+            ).items():
+                setattr(self.configuration, key, value)
 
     def can_sign_up(self, participator):
         return not self.get_signup_errors(participator)
@@ -221,18 +226,19 @@ class AbstractSignupMethod:
 
     def get_configuration_fields(self):
         return {
-            "minimum_age": forms.IntegerField(required=False, initial=16),
-            "signup_until": forms.SplitDateTimeField(
-                required=False
-            ),  # , widget=CustomSplitDateTimeWidget())
+            "minimum_age": {"formfield": forms.IntegerField(required=False), "default": 16},
+            "signup_until": {
+                "formfield": forms.SplitDateTimeField(required=False),
+                "default": None,
+            },
         }
 
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
         form = ConfigurationForm(*args, **kwargs)
-        for name, field in self.get_configuration_fields().items():
-            form.fields[name] = field
+        for name, config in self.get_configuration_fields().items():
+            form.fields[name] = config["formfield"]
         return form
 
     def render_configuration_form(self, form=None, *args, **kwargs):

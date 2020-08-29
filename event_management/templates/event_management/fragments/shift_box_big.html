@@ -29,11 +29,20 @@
                                 {% if can_sign_up %}
                                     <a class="btn btn-primary"
                                        href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
+                                {% else %}
+                                    <button type="button" class="btn btn-primary" disabled
+                                            data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                        <ul>
+                                            {% for error in shift|signup_errors:request.user %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    ">{% trans "Register" %}</button>
                                 {% endif %}
                             {% endwith %}
                             {% with can_user_decline=shift|can_user_decline:request.user %}
                                 {% if can_user_decline %}
-                                    <a class="btn btn-danger"
+                                    <a class="btn btn-outline-danger"
                                        href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
                                 {% endif %}
                             {% endwith %}

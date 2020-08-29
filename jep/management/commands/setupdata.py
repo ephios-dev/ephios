@@ -128,6 +128,10 @@ class DebugDataset(AdminUserDataset):
             active=True,
         )
 
+        assign_perm("event_management.change_event", planners)
+        assign_perm("event_management.view_event", planners)
+        assign_perm("event_management.view_event", volunteers)
+
         Shift.objects.create(
             event=event,
             meeting_time=make_aware(datetime(2023, 6, 30, 15, 30)),

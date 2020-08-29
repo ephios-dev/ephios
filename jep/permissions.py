@@ -1,3 +1,4 @@
+import guardian.mixins
 from django.contrib.auth.models import Permission, Group
 from guardian.ctypes import get_content_type
 from guardian.utils import get_group_obj_perms_model
@@ -25,3 +26,10 @@ def get_groups_with_perms(obj, only_with_perms_in):
         {"%s__permission_id__in" % group_rel_name: permission_ids,}
     )
     return Group.objects.filter(**group_filters).distinct()
+
+
+class CustomPermissionRequiredMixin(guardian.mixins.PermissionRequiredMixin):
+    raise_exception = True
+    accept_global_perms = True
+
+    # FIXME redirect non logged in users and raise Permission for others

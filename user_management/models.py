@@ -15,6 +15,7 @@ from django.db.models import (
     Model,
     Exists,
     OuterRef,
+    Q,
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -95,7 +96,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         return LocalUserParticipator(
             first_name=self.first_name,
             last_name=self.last_name,
-            qualifications=[],  # TODO
+            qualifications=self.qualifications,
             date_of_birth=self.date_of_birth,
             user=self,
         )
@@ -104,8 +105,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     def qualifications(self):
         return Qualification.objects.annotate(
             active_grant=Exists(
-                QualificationGrant.objects.filter(
-                    user__eq=self, expires__lt=timezone.now(), qualification=OuterRef("pk")
+                QualificationGrant.objects.filter(user=self, qualification=OuterRef("pk")).filter(
+                    Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
                 )
             )
         ).filter(active_grant=True)
@@ -139,7 +140,7 @@ class Qualification(Model):
         verbose_name=_("category"),
     )
     included_qualifications = models.ManyToManyField(
-        "self", related_name="included_in_set", symmetrical=False
+        "self", related_name="included_by", symmetrical=False
     )
 
     def __eq__(self, other):
@@ -162,3 +163,6 @@ class QualificationGrant(Model):
     )
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.qualification!s}, {self.user!s}"
