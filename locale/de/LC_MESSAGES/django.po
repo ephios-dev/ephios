@@ -416,8 +416,6 @@ msgstr "Administration"
 
 #: templates/base.html:57
 #: user_management/templates/user_management/userprofile_detail.html:6
-#, fuzzy
-#| msgid "user profile"
 msgid "Profile"
 msgstr "Benutzerprofil"
 
@@ -548,32 +546,22 @@ msgid "expiration date"
 msgstr "Ablaufdatum"
 
 #: user_management/templates/user_management/userprofile_detail.html:12
-#, fuzzy
-#| msgid "first name"
 msgid "First name"
 msgstr "Vorname"
 
 #: user_management/templates/user_management/userprofile_detail.html:13
-#, fuzzy
-#| msgid "last name"
 msgid "Last name"
 msgstr "Nachname"
 
 #: user_management/templates/user_management/userprofile_detail.html:14
-#, fuzzy
-#| msgid "email address"
 msgid "E-Mail address"
 msgstr "E-Mail-Adresse"
 
 #: user_management/templates/user_management/userprofile_detail.html:15
-#, fuzzy
-#| msgid "date of birth"
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
 #: user_management/templates/user_management/userprofile_detail.html:16
-#, fuzzy
-#| msgid "phone number"
 msgid "Phone number"
 msgstr "Telefonnummer"
 
