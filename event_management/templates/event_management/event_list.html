@@ -7,14 +7,17 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script>
+        {% get_current_language as current_language %}
         $(document).ready(function () {
             $('#event_table').DataTable({
                 "paging": false,
                 "info": false,
                 "responsive": true,
-                "language": {
-                    "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/German.json"
-                },
+                {% if current_language == "de-de" %}
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/German.json"
+                    },
+                {% endif %}
             });
         });
     </script>
@@ -26,7 +29,7 @@
     </div>
     {% if perms.event_management.add_event %}
         <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
-                        class="fa fa-plus"></span> {% trans "Add event" %}</a>
+                class="fa fa-plus"></span> {% trans "Add event" %}</a>
     {% endif %}
     <table id="event_table" class="table table-striped display">
         <thead>
