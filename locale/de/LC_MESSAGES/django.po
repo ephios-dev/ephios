@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-29 01:56+0200\n"
+"POT-Creation-Date: 2020-08-29 02:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
 #: event_management/models.py:26 event_management/models.py:42
-#: user_management/models.py:100 user_management/models.py:108
+#: user_management/models.py:110 user_management/models.py:118
 msgid "title"
 msgstr "Titel"
 
@@ -398,6 +398,14 @@ msgstr "Sie können die letzte Schicht nicht löschen!"
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
+#: jep/management/commands/setupdata.py:65
+msgid "Volunteers"
+msgstr "Helfer"
+
+#: jep/management/commands/setupdata.py:69
+msgid "Planners"
+msgstr "Planer"
+
 #: templates/base.html:36
 msgid "Home"
 msgstr "Startseite"
@@ -406,11 +414,18 @@ msgstr "Startseite"
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/base.html:57 templates/registration/password_change_form.html:6
+#: templates/base.html:57
+#: user_management/templates/user_management/userprofile_detail.html:6
+#, fuzzy
+#| msgid "user profile"
+msgid "Profile"
+msgstr "Benutzerprofil"
+
+#: templates/base.html:58 templates/registration/password_change_form.html:6
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: templates/base.html:58
+#: templates/base.html:59
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -480,50 +495,100 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: user_management/models.py:47
+#: user_management/models.py:48
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: user_management/models.py:50
+#: user_management/models.py:51
 msgid "first name"
 msgstr "Vorname"
 
-#: user_management/models.py:51
+#: user_management/models.py:52
 msgid "last name"
 msgstr "Nachname"
 
-#: user_management/models.py:52
+#: user_management/models.py:53
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: user_management/models.py:53
+#: user_management/models.py:54
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: user_management/models.py:65 user_management/models.py:125
+#: user_management/models.py:55
+msgid "calendar token"
+msgstr "Kalender-Token"
+
+#: user_management/models.py:67 user_management/models.py:135
 msgid "user profile"
 msgstr "Benutzerprofil"
 
-#: user_management/models.py:66
+#: user_management/models.py:68
 msgid "user profiles"
 msgstr "Benutzerprofile"
 
-#: user_management/models.py:103 user_management/models.py:110
+#: user_management/models.py:113 user_management/models.py:120
 msgid "qualification track"
 msgstr "Qualifikationskategorie"
 
-#: user_management/models.py:104
+#: user_management/models.py:114
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
-#: user_management/models.py:114 user_management/models.py:123
+#: user_management/models.py:124 user_management/models.py:133
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: user_management/models.py:115
+#: user_management/models.py:125
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: user_management/models.py:126
+#: user_management/models.py:136
 msgid "expiration date"
 msgstr "Ablaufdatum"
+
+#: user_management/templates/user_management/userprofile_detail.html:12
+#, fuzzy
+#| msgid "first name"
+msgid "First name"
+msgstr "Vorname"
+
+#: user_management/templates/user_management/userprofile_detail.html:13
+#, fuzzy
+#| msgid "last name"
+msgid "Last name"
+msgstr "Nachname"
+
+#: user_management/templates/user_management/userprofile_detail.html:14
+#, fuzzy
+#| msgid "email address"
+msgid "E-Mail address"
+msgstr "E-Mail-Adresse"
+
+#: user_management/templates/user_management/userprofile_detail.html:15
+#, fuzzy
+#| msgid "date of birth"
+msgid "Date of birth"
+msgstr "Geburtsdatum"
+
+#: user_management/templates/user_management/userprofile_detail.html:16
+#, fuzzy
+#| msgid "phone number"
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: user_management/templates/user_management/userprofile_detail.html:22
+msgid "Calendar feed"
+msgstr "Kalender"
+
+#: user_management/templates/user_management/userprofile_detail.html:24
+msgid ""
+"You can subscribe to a calendar containing all events that you participate "
+"in. Most calendars (e.g. Google Calendar) offer this feature. This allows "
+"you to see all events in your personal calendar. To activate this, you need "
+"to copy the address of the following link and subscribe to the URL."
+msgstr ""
+
+#: user_management/templates/user_management/userprofile_detail.html:25
+msgid "Your calendar"
+msgstr "Ihr Kalender"
