@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, CreateView
 
 from user_management.models import UserProfile
 
@@ -16,3 +16,17 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         return UserProfile.objects.all()
+
+
+class UserProfileCreateView(PermissionRequiredMixin, CreateView):
+    template_name = "user_management/userprofile_form.html"
+    permission_required = "user_management.add_user"
+
+    def get_form(self, form_class=None):
+        pass
+
+    def get_context_data(self, **kwargs):
+        pass
+
+    def get_success_url(self):
+        pass
