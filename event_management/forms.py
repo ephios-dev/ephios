@@ -18,18 +18,28 @@ from event_management.models import Event, Shift
 from event_management.signup import register_signup_methods
 from jep.widgets import CustomDateInput, CustomTimeInput
 from user_management.models import UserProfile
+from django.utils.translation import gettext as _
 from user_management.widgets import MultiUserProfileWidget
 
 
 class EventForm(ModelForm):
     visible_for = ModelMultipleChoiceField(
-        queryset=Group.objects.none(), widget=Select2MultipleWidget
+        queryset=Group.objects.none(),
+        label=_("Visible for"),
+        help_text=_("Select groups which the event shall be visible for."),
+        widget=Select2MultipleWidget,
     )
     responsible_persons = ModelMultipleChoiceField(
-        queryset=UserProfile.objects.all(), required=False, widget=MultiUserProfileWidget
+        queryset=UserProfile.objects.all(),
+        required=False,
+        label=_("Responsible persons"),
+        widget=MultiUserProfileWidget,
     )
     responsible_groups = ModelMultipleChoiceField(
-        queryset=Group.objects.all(), required=False, widget=Select2MultipleWidget
+        queryset=Group.objects.all(),
+        required=False,
+        label=_("Responsible groups"),
+        widget=Select2MultipleWidget,
     )
 
     class Meta:
@@ -105,5 +115,5 @@ class ShiftForm(ModelForm):
         if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
             cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
         if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
-            raise ValidationError("Meeting time must not be after start time!")
+            raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data
