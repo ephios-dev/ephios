@@ -211,6 +211,17 @@ python-versions = ">=3.5"
 Django = ">=2.0"
 
 [[package]]
+name = "django-polymorphic"
+version = "3.0.0"
+description = "Seamless polymorphic inheritance for Django models"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=2.1"
+
+[[package]]
 name = "django-recurrence"
 version = "1.10.3"
 description = "Django utility wrapping dateutil.rrule"
@@ -544,7 +555,7 @@ WebOb = ">=1.2"
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "aa75e89c942e15478c84517fab2b52066a75cf55db465b334f8e42c56db21579"
+content-hash = "25922868539bd5e383229fef850735bf757336689020146c476017110ebb6fa3"
 
 [metadata.files]
 appdirs = [
@@ -623,6 +634,10 @@ django-jsonfallback = [
 django-mysql = [
     {file = "django-mysql-3.6.0.tar.gz", hash = "sha256:ceba459b67edf3d42cc39d1655efbe9d9da374fe28b2a8f04c2c0fe24c30f8dc"},
     {file = "django_mysql-3.6.0-py3-none-any.whl", hash = "sha256:856cf268fffd75694565ad427c907f96a1f3eec7d6a9b3f15c15ce05f9694b61"},
+]
+django-polymorphic = [
+    {file = "django-polymorphic-3.0.0.tar.gz", hash = "sha256:9d886f19f031d26bb1391c055ed9be06fb226a04a4cec1842b372c58873b3caa"},
+    {file = "django_polymorphic-3.0.0-py2.py3-none-any.whl", hash = "sha256:73b75eb44ea302bd32820f8661e469509d245ce7f7ff09cd2ad149e5c42034ff"},
 ]
 django-recurrence = [
     {file = "django-recurrence-1.10.3.tar.gz", hash = "sha256:715f681f6af029ff3a8d73c7b1460abd8cbc5d5a5001efcb127032e84d9cb963"},

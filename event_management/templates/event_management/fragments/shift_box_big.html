@@ -3,7 +3,9 @@
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5 class="card-title">{% trans "Shift" %}
+        <h5 class="card-title">
+            <span class="fa fa-calendar-alt"></span>
+            {{ shift.get_start_end_time_display }}
             {% if can_change %}
                 <small class="float-right">
                     <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
@@ -17,47 +19,49 @@
         </h5>
         <div class="card-body container">
             <div class="row">
-                <div class="col-md-6">
-                    <p>
-                        <b>{% trans "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
-                        <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
-                        <b>{% trans "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
-                        <b>{% trans "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
+                <div class="col-lg-4">
+                    <dl>
+                        <dt>{% trans "Meeting time" %}</dt>
+                        <dd> {{ shift.meeting_time | time }}</dd>
+                        {% for label, value in shift.signup_method.get_signup_info.items %}
+                            <dt>{{ label }}</dt>
+                            <dd> {{ value }}</dd>
+                        {% endfor %}
                         {% if event.active %}
-                            <b>{% trans "Status" %}:</b> {{ shift|shift_status:request.user }} <br>
-                            {% with can_sign_up=shift|can_sign_up:request.user %}
-                                {% if can_sign_up %}
-                                    <a class="btn btn-primary"
-                                       href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
-                                {% else %}
-                                    <button type="button" class="btn btn-primary" disabled
-                                            data-toggle="tooltip" data-html="true" data-placement="bottom" title="
-                                        <ul>
+                            <dt>{{ shift|shift_status:request.user }}</dt>
+                            <dd>
+                                {% with can_sign_up=shift|can_sign_up:request.user %}
+                                    {% if can_sign_up %}
+                                        <a class="btn btn-outline-success"
+                                           href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
+                                    {% else %}
+                                        <button type="button" class="btn btn-outline-success" disabled
+                                                data-toggle="tooltip" data-html="true" data-placement="bottom" title="
                                             {% for error in shift|signup_errors:request.user %}
-                                                <li>{{ error }}</li>
+                                                <p>{{ error.message }}</p>
                                             {% endfor %}
-                                        </ul>
                                     ">{% trans "Register" %}</button>
-                                {% endif %}
-                            {% endwith %}
-                            {% with can_user_decline=shift|can_user_decline:request.user %}
-                                {% if can_user_decline %}
-                                    <a class="btn btn-outline-danger"
-                                       href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
-                                {% endif %}
-                            {% endwith %}
+                                    {% endif %}
+                                {% endwith %}
+                                {% with can_user_decline=shift|can_user_decline:request.user %}
+                                    {% if can_user_decline %}
+                                        <a class="btn btn-outline-danger"
+                                           href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
+                                    {% else %}
+                                        <button type="button" class="btn btn-outline-danger" disabled
+                                                data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                            {% for error in shift|decline_errors:request.user %}
+                                                <p>{{ error.message }}</p>
+                                            {% endfor %}
+                                    ">{% trans "Decline" %}</button>
+                                    {% endif %}
+                                {% endwith %}
+                            </dd>
                         {% endif %}
-                    </p>
+                    </dl>
                 </div>
-                <div class="col-md-6">
-                    <ul class="list-group">
-                        <div class="list-group-item">
-                            <h5>TODO Section</h5>
-                            <ul>
-                                <li>TODO Position</li>
-                            </ul>
-                        </div>
-                    </ul>
+                <div class="col-lg-8">
+                    {{ shift.signup_method.render_shift_state }}
                 </div>
             </div>
         </div>
