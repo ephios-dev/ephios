@@ -1,8 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
+from django.forms import ModelForm, ModelMultipleChoiceField, BooleanField, SelectMultiple
+from guardian.shortcuts import assign_perm, remove_perm
 
 from user_management.models import UserProfile
+from django.utils.translation import gettext as _
 
 
 class UserCreationForm(forms.ModelForm):
@@ -77,3 +81,41 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
+
+class GroupForm(ModelForm):
+    publish_event_for_group = ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        help_text=_("Choose groups that this group can make events visible for."),
+    )
+    can_add_event = BooleanField(required=False)
+    users = ModelMultipleChoiceField(queryset=UserProfile.objects.all())
+
+    field_order = ["name", "users", "can_add_event", "publish_event_for_group"]
+
+    class Meta:
+        model = Group
+        fields = ["name"]
+
+    def save(self, commit=True):
+        group = super().save(commit)
+
+        group.user_set.set(self.cleaned_data["users"])
+
+        if self.cleaned_data["can_add_event"]:
+            assign_perm("event_management.add_event", group)
+            assign_perm("event_management.delete_event", group)
+        else:
+            remove_perm("event_management.add_event", group)
+            assign_perm("event_management.delete_event", group)
+
+        if "publish_event_for_group" in self.changed_data:
+            for target_group in self.cleaned_data["publish_event_for_group"].difference(
+                self.initial["publish_event_for_group"]
+            ):
+                assign_perm("publish_event_for_group", group, target_group)
+            for target_group in self.initial["publish_event_for_group"].difference(
+                self.cleaned_data["publish_event_for_group"]
+            ):
+                remove_perm("publish_event_for_group", group, target_group)

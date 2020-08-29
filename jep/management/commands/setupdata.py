@@ -70,9 +70,21 @@ class DebugDataset(AdminUserDataset):
         planners.user_set.add(self.admin_user)
         planners.save()
 
+        managers = Group.objects.create(name=_("Managers"))
+        managers.user_set.add(self.admin_user)
+        managers.save()
+
         assign_perm("publish_event_for_group", planners, volunteers)
         assign_perm("event_management.add_event", planners)
         assign_perm("event_management.delete_event", planners)
+        assign_perm("user_management.view_userprofile", managers)
+        assign_perm("user_management.add_userprofile", managers)
+        assign_perm("user_management.change_userprofile", managers)
+        assign_perm("user_management.delete_userprofile", managers)
+        assign_perm("auth.view_group", managers)
+        assign_perm("auth.add_group", managers)
+        assign_perm("auth.change_group", managers)
+        assign_perm("auth.delete_group", managers)
 
 
 class Command(BaseCommand):
