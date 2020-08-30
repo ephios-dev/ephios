@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-30 19:38+0200\n"
+"POT-Creation-Date: 2020-08-30 19:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -562,7 +562,9 @@ msgstr "Passwort zurücksetzen"
 
 #: user_management/forms.py:93
 msgid "Choose groups that this group can make events visible for."
-msgstr "Wählen Sie Gruppen, für die die diese Gruppe Veranstaltungen sichtbar machen darf."
+msgstr ""
+"Wählen Sie Gruppen, für die die diese Gruppe Veranstaltungen sichtbar machen "
+"darf."
 
 #: user_management/models.py:48
 msgid "email address"
@@ -701,10 +703,6 @@ msgstr "E-Mail-Adresse"
 msgid "Information"
 msgstr "Information"
 
-#: user_management/views.py:49
-msgid "Group successfully created."
-msgstr "Gruppe erfolgreich erstellt"
-
 #: user_management/utils.py:13
 #, python-brace-format
 msgid ""
@@ -717,3 +715,7 @@ msgstr ""
 #: user_management/utils.py:17
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
+
+#: user_management/views.py:49
+msgid "Group successfully created."
+msgstr "Gruppe erfolgreich erstellt"
