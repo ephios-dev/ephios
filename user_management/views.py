@@ -2,10 +2,17 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    UpdateView,
+    CreateView,
+    DeleteView,
+    TemplateView,
+)
 from guardian.shortcuts import get_users_with_perms, get_objects_for_group
 
-from user_management.forms import GroupForm
+from user_management.forms import GroupForm, UserProfileForm
 from django.utils.translation import gettext as _
 
 from user_management.models import UserProfile
@@ -28,7 +35,7 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
     template_name = "user_management/userprofile_form.html"
     permission_required = "user_management.add_userprofile"
     model = UserProfile
-    fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
+    form_class = UserProfileForm
 
     def get_success_url(self):
         messages.success(self.request, _("User added successfully."))

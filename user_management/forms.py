@@ -2,10 +2,17 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-from django.forms import ModelForm, ModelMultipleChoiceField, BooleanField, SelectMultiple
+from django.forms import (
+    ModelForm,
+    ModelMultipleChoiceField,
+    BooleanField,
+    SelectMultiple,
+    DateField,
+)
 from django_select2.forms import Select2MultipleWidget
 from guardian.shortcuts import assign_perm, remove_perm
 
+from jep.widgets import CustomDateInput
 from user_management.models import UserProfile
 from django.utils.translation import gettext as _
 
@@ -127,3 +134,10 @@ class GroupForm(ModelForm):
             remove_perm("event_management.delete_event", group)
             for target_group in Group.objects.all():
                 remove_perm("publish_event_for_group", group, target_group)
+
+
+class UserProfileForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
+        widgets = {"date_of_birth": CustomDateInput(format="%Y-%m-%d")}

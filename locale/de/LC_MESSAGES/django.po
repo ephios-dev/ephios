@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-30 22:14+0200\n"
+"POT-Creation-Date: 2020-08-31 00:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -522,11 +522,11 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: user_management/forms.py:38
+#: user_management/forms.py:39
 msgid "Passwords don't match"
 msgstr "Die Passwörter stimmen nicht überein."
 
-#: user_management/forms.py:93
+#: user_management/forms.py:94
 msgid "Choose groups that this group can make events visible for."
 msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
 
