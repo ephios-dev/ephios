@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-30 21:52+0200\n"
+"POT-Creation-Date: 2020-08-30 22:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,7 +203,7 @@ msgstr "Zurück"
 #: event_management/templates/event_management/fragments/shift_box_big.html:13
 #: event_management/templates/event_management/fragments/shift_box_small.html:12
 #: event_management/templates/event_management/shift_confirm_delete.html:18
-#: event_management/templates/event_management/shift_form.html:36
+#: event_management/templates/event_management/shift_form.html:40
 #: user_management/templates/user_management/group_confirm_delete.html:18
 #: user_management/templates/user_management/group_list.html:53
 msgid "Delete"
@@ -219,7 +219,7 @@ msgstr ""
 
 #: event_management/templates/event_management/event_detail.html:15
 #: event_management/templates/event_management/event_form.html:41
-#: event_management/templates/event_management/shift_form.html:39
+#: event_management/templates/event_management/shift_form.html:43
 #: user_management/templates/user_management/group_form.html:33
 #: user_management/templates/user_management/userprofile_form.html:24
 msgid "Save"
@@ -238,7 +238,7 @@ msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
 #: event_management/templates/event_management/event_detail.html:49
-#: event_management/templates/event_management/shift_form.html:49
+#: event_management/templates/event_management/shift_form.html:53
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
@@ -280,7 +280,7 @@ msgid "Title"
 msgstr "Titel"
 
 #: event_management/templates/event_management/event_list.html:25
-#: event_management/templates/event_management/shift_form.html:64
+#: event_management/templates/event_management/shift_form.html:68
 msgid "Location"
 msgstr "Ort"
 
@@ -306,13 +306,13 @@ msgstr "Anzeigen"
 
 #: event_management/templates/event_management/fragments/shift_box_big.html:6
 #: event_management/templates/event_management/fragments/shift_box_small.html:6
-#: event_management/templates/event_management/shift_form.html:74
+#: event_management/templates/event_management/shift_form.html:78
 msgid "Shift"
 msgstr "Schicht"
 
 #: event_management/templates/event_management/fragments/shift_box_big.html:10
 #: event_management/templates/event_management/fragments/shift_box_small.html:9
-#: event_management/templates/event_management/shift_form.html:60
+#: event_management/templates/event_management/shift_form.html:64
 #: user_management/templates/user_management/group_list.html:51
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -367,32 +367,33 @@ msgstr "Schicht löschen"
 msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
 msgstr "Möchten Sie die Schicht \"%(shift)s\" wirklich löschen?"
 
-#: event_management/templates/event_management/shift_form.html:7
-#: event_management/templates/event_management/shift_form.html:15
-msgid "Create new shift for event"
-msgstr "Schicht hinzufügen"
-
-#: event_management/templates/event_management/shift_form.html:13
+#: event_management/templates/event_management/shift_form.html:8
+#: event_management/templates/event_management/shift_form.html:17
 msgid "Edit shift"
 msgstr "Schicht bearbeiten"
 
-#: event_management/templates/event_management/shift_form.html:31
+#: event_management/templates/event_management/shift_form.html:10
+#: event_management/templates/event_management/shift_form.html:19
+msgid "Create new shift for event"
+msgstr "Schicht hinzufügen"
+
+#: event_management/templates/event_management/shift_form.html:35
 msgid "Back to event"
 msgstr "Zurück zur Veranstaltung"
 
-#: event_management/templates/event_management/shift_form.html:43
+#: event_management/templates/event_management/shift_form.html:47
 msgid "Discard event"
 msgstr "Veranstaltung verwerfen"
 
-#: event_management/templates/event_management/shift_form.html:45
+#: event_management/templates/event_management/shift_form.html:49
 msgid "Save event"
 msgstr "Veranstaltung speichern"
 
-#: event_management/templates/event_management/shift_form.html:63
+#: event_management/templates/event_management/shift_form.html:67
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: event_management/templates/event_management/shift_form.html:75
+#: event_management/templates/event_management/shift_form.html:79
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
@@ -617,6 +618,10 @@ msgstr "Minderjährig"
 msgid "Inactive"
 msgstr "Inaktiv"
 
+#: user_management/templates/user_management/userprofile_detail.html:10
+msgid "Your data"
+msgstr "Persönliche Daten"
+
 #: user_management/templates/user_management/userprofile_detail.html:12
 #: user_management/templates/user_management/userprofile_list.html:25
 msgid "First name"
@@ -681,6 +686,10 @@ msgstr "E-Mail-Adresse"
 msgid "Information"
 msgstr "Information"
 
-#: user_management/views.py:59
+#: user_management/views.py:34
+msgid "User added successfully."
+msgstr "Benutzer erfolgreich hinzugefügt"
+
+#: user_management/views.py:60
 msgid "Group created successfully."
 msgstr "Gruppe erfolgreich erstellt"

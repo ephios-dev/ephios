@@ -18,7 +18,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
 class UserProfileListView(PermissionRequiredMixin, ListView):
     model = UserProfile
-    permission_required = "user.view_user"
+    permission_required = "user_management.view_userprofile"
 
     def get_queryset(self):
         return UserProfile.objects.all()
@@ -26,11 +26,12 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
 
 class UserProfileCreateView(PermissionRequiredMixin, CreateView):
     template_name = "user_management/userprofile_form.html"
-    permission_required = "user.add_user"
-    queryset = UserProfile.objects.all()
+    permission_required = "user_management.add_userprofile"
+    model = UserProfile
     fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
 
     def get_success_url(self):
+        messages.success(self.request, _("User added successfully."))
         return reverse("user_management:user_list")
 
 
