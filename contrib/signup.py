@@ -1,6 +1,7 @@
 from django import forms
 from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2MultipleWidget
 
 from event_management.models import AbstractParticipation
 from event_management.signup import (
@@ -42,7 +43,7 @@ class SimpleQualificationsRequiredSignupMethod(AbstractSignupMethod):
                 "formfield": forms.ModelMultipleChoiceField(
                     label=_("Required Qualifications"),
                     queryset=Qualification.objects.all(),
-                    widget=forms.CheckboxSelectMultiple,
+                    widget=Select2MultipleWidget,
                 ),
                 "default": [],
                 "publish_with_label": _("Erforderliche Qualifikation"),

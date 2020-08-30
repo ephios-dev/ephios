@@ -210,7 +210,7 @@ class AbstractSignupMethod:
                 )
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, error)
+                messages.error(request, _("Signup failed: ") + str(error))
         return redirect(self.shift.event.get_absolute_url())
 
     def get_decline_errors(self, participator):
@@ -241,12 +241,12 @@ class AbstractSignupMethod:
         try:
             with transaction.atomic():
                 self.perform_decline(request.user.as_participator())
-                messages.success(
+                messages.info(
                     request, _("You have successfully declined {shift}.").format(shift=self.shift)
                 )
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, error)
+                messages.error(request, _("Declining failed: ") + str(error))
         return redirect(self.shift.event.get_absolute_url())
 
     def get_configuration_fields(self):
