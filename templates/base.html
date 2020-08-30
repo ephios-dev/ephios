@@ -35,14 +35,30 @@
                         <ul class="navbar-nav mr-auto">
                             {% with url_name=request.resolver_match.url_name %}
                                 <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %} <span
-                                            class="sr-only">(current)</span></a>
-                                </li>
-                                <li class="nav-item {% if url_name == 'event_list' %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "event_management:event_list" %}">{% trans "Events" %}
+                                    <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %}
                                         <span
                                                 class="sr-only">(current)</span></a>
                                 </li>
+                                <li class="nav-item {% if url_name == 'event_list' %}active{% endif %}">
+                                    <a class="nav-link"
+                                       href="{% url "event_management:event_list" %}">{% trans "Events" %}
+                                        <span
+                                                class="sr-only">(current)</span></a>
+                                </li>
+                                {% if perms.user_management.view_user %}
+                                <li class="nav-item {% if url_name == "user_list" %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "user_management:user_list" %}">{% trans "Users" %}
+                                        <span
+                                                class="sr-only">(current)</span></a>
+                                </li>
+                                {% endif %}
+                                {% if perms.auth.view_group %}
+                                    <li class="nav-item {% if url_name == 'planners' %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "user_management:group_list" %}">{% trans "Groups" %}
+                                        </a>
+                                    </li>
+                                {% endif %}
                             {% endwith %}
                         </ul>
                         <ul class="navbar-nav ml-auto">
@@ -53,11 +69,14 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     {% if user.is_staff %}
-                                        <a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Administration" %}</a>
+                                        <a class="dropdown-item"
+                                           href="{% url "admin:index" %}">{% trans "Administration" %}</a>
                                         <div class="dropdown-divider"></div>
                                     {% endif %}
-                                    <a class="dropdown-item" href="{% url "user_management:profile" %}">{% trans "Profile" %}</a>
-                                    <a class="dropdown-item" href="{% url "password_change" %}">{% trans "Change password" %}</a>
+                                    <a class="dropdown-item"
+                                       href="{% url "user_management:profile" %}">{% trans "Profile" %}</a>
+                                    <a class="dropdown-item"
+                                       href="{% url "password_change" %}">{% trans "Change password" %}</a>
                                     <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
                                 </div>
                             </li>

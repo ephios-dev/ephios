@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block javascript %}
+    {% include "event_management/fragments/datatable.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% trans "Users" %}</h1>
+    </div>
+        <table id="userprofile_table" class="table table-striped display datatable">
+            <thead>
+            <tr>
+                <th>{% trans "Last name" %}</th>
+                <th>{% trans "First name" %}</th>
+                <th>{% trans "Email address" %}</th>
+                <th>{% trans "Information" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for userprofile in userprofile_list %}
+                <tr>
+                    <td>{{ userprofile.last_name }}</td>
+                    <td>{{ userprofile.first_name }}</td>
+                    <td>{{ userprofile.email }}</td>
+                    <td>{% include "user_management/userprofile_badges.html" with userprofile=userprofile %}</td>
+                    <td><i>Buttons to be inserted</i></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}
