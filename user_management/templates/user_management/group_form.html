@@ -5,6 +5,10 @@
 {% block title %}
 {% endblock %}
 
+{% block css %}
+{{ form.media.css }}
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
         {% if group %}
@@ -38,4 +42,5 @@
             });
         });
     </script>
+    {{ form.media.js }}
 {% endblock %}

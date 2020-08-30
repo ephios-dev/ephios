@@ -3,10 +3,13 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
 from django.forms import ModelForm, ModelMultipleChoiceField, BooleanField, SelectMultiple
+from django_select2.forms import Select2MultipleWidget
 from guardian.shortcuts import assign_perm, remove_perm
 
 from user_management.models import UserProfile
 from django.utils.translation import gettext as _
+
+from user_management.widgets import MultiUserProfileWidget
 
 
 class UserCreationForm(forms.ModelForm):
@@ -88,9 +91,12 @@ class GroupForm(ModelForm):
         queryset=Group.objects.all(),
         required=False,
         help_text=_("Choose groups that this group can make events visible for."),
+        widget=Select2MultipleWidget,
     )
     can_add_event = BooleanField(required=False)
-    users = ModelMultipleChoiceField(queryset=UserProfile.objects.all())
+    users = ModelMultipleChoiceField(
+        queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
+    )
 
     field_order = ["name", "users", "can_add_event", "publish_event_for_group"]
 
