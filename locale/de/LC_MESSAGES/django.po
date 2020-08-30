@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-29 22:46+0200\n"
+"POT-Creation-Date: 2020-08-30 01:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,6 +229,7 @@ msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 #: event_management/templates/event_management/event_confirm_delete.html:17
 #: event_management/templates/event_management/event_form.html:36
 #: event_management/templates/event_management/shift_confirm_delete.html:17
+#: user_management/templates/user_management/group_confirm_delete.html:17
 msgid "Back"
 msgstr "Zurück"
 
@@ -237,6 +238,8 @@ msgstr "Zurück"
 #: event_management/templates/event_management/fragments/shift_box_small.html:12
 #: event_management/templates/event_management/shift_confirm_delete.html:18
 #: event_management/templates/event_management/shift_form.html:36
+#: user_management/templates/user_management/group_confirm_delete.html:18
+#: user_management/templates/user_management/group_list.html:53
 msgid "Delete"
 msgstr "Löschen"
 
@@ -251,6 +254,7 @@ msgstr ""
 #: event_management/templates/event_management/event_detail.html:15
 #: event_management/templates/event_management/event_form.html:37
 #: event_management/templates/event_management/shift_form.html:39
+#: user_management/templates/user_management/group_form.html:24
 msgid "Save"
 msgstr "Speichern"
 
@@ -285,6 +289,7 @@ msgid "View"
 msgstr "Anzeigen"
 
 #: event_management/templates/event_management/event_form.html:39
+#: user_management/templates/user_management/group_form.html:23
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -321,6 +326,7 @@ msgid "until"
 msgstr "bis"
 
 #: event_management/templates/event_management/event_list.html:41
+#: user_management/templates/user_management/group_list.html:42
 msgid "Action"
 msgstr "Aktion"
 
@@ -337,6 +343,7 @@ msgstr "Schicht"
 #: event_management/templates/event_management/fragments/shift_box_big.html:10
 #: event_management/templates/event_management/fragments/shift_box_small.html:9
 #: event_management/templates/event_management/shift_form.html:60
+#: user_management/templates/user_management/group_list.html:51
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -444,24 +451,34 @@ msgstr "Helfer"
 msgid "Planners"
 msgstr "Planer"
 
+#: jep/management/commands/setupdata.py:73
+msgid "Managers"
+msgstr "Manager"
+
 #: templates/base.html:36
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/base.html:54
+#: templates/base.html:49
+#: user_management/templates/user_management/group_list.html:6
+#: user_management/templates/user_management/group_list.html:32
+msgid "Groups"
+msgstr "Gruppen"
+
+#: templates/base.html:64
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/base.html:57
+#: templates/base.html:68
 #: user_management/templates/user_management/userprofile_detail.html:6
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: templates/base.html:58 templates/registration/password_change_form.html:6
+#: templates/base.html:70 templates/registration/password_change_form.html:6
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: templates/base.html:59
+#: templates/base.html:71
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -531,6 +548,12 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
+#: user_management/forms.py:90
+#, fuzzy
+#| msgid "Select groups which the event shall be visible for."
+msgid "Choose groups that this group can make events visible for."
+msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
+
 #: user_management/models.py:48
 msgid "email address"
 msgstr "E-Mail-Adresse"
@@ -582,6 +605,37 @@ msgstr "Qualifikationen"
 #: user_management/models.py:136
 msgid "expiration date"
 msgstr "Ablaufdatum"
+
+#: user_management/templates/user_management/group_confirm_delete.html:7
+#: user_management/templates/user_management/group_confirm_delete.html:12
+#, fuzzy
+#| msgid "Delete"
+msgid "Delete group"
+msgstr "Löschen"
+
+#: user_management/templates/user_management/group_confirm_delete.html:16
+#, fuzzy, python-format
+#| msgid "Are you sure you want to delete the event \"%(object)s\"?"
+msgid "Are you sure you want to delete the group \"%(group)s\"?"
+msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
+
+#: user_management/templates/user_management/group_form.html:11
+msgid "Edit group"
+msgstr "Gruppe bearbeiten"
+
+#: user_management/templates/user_management/group_form.html:13
+#, fuzzy
+#| msgid "Create new event"
+msgid "Create new group"
+msgstr "Neue Veranstaltung anlegen"
+
+#: user_management/templates/user_management/group_list.html:36
+msgid "Add group"
+msgstr "Gruppe hinzufügen"
+
+#: user_management/templates/user_management/group_list.html:41
+msgid "Name"
+msgstr "Name"
 
 #: user_management/templates/user_management/userprofile_detail.html:12
 msgid "First name"
@@ -636,3 +690,9 @@ msgstr ""
 #: user_management/utils.py:17
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
+
+#: user_management/views.py:41
+#, fuzzy
+#| msgid "Password successfully reset"
+msgid "Group succesfully created."
+msgstr "Passwort erfolgreich zurückgesetzt"
