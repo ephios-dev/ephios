@@ -9,6 +9,7 @@ from django.forms import (
     Select,
     DateField,
     TimeField,
+    Form,
 )
 from django.utils.timezone import get_default_timezone, make_aware
 from django_select2.forms import Select2Widget, Select2MultipleWidget
@@ -79,6 +80,10 @@ class EventForm(ModelForm):
                 remove_perm("change_event", user, event)
                 remove_perm("view_event", user, event)
         return event
+
+
+class EventActivationForm(Form):
+    pass
 
 
 class ShiftForm(ModelForm):
