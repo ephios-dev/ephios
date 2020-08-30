@@ -8,8 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-30 18:52+0200\n"
-"POT-Creation-Date: 2020-08-30 18:18+0200\n"
+"POT-Creation-Date: 2020-08-30 19:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,23 +18,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: event_management/forms.py:28
+#: event_management/forms.py:29
 msgid "Visible for"
 msgstr "Sichtbar für"
 
-#: event_management/forms.py:29
+#: event_management/forms.py:30
 msgid "Select groups which the event shall be visible for."
 msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
 
-#: event_management/forms.py:35
+#: event_management/forms.py:36
 msgid "Responsible persons"
 msgstr "Verantwortliche Personen"
 
-#: event_management/forms.py:41
+#: event_management/forms.py:42
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
-#: event_management/forms.py:118
+#: event_management/forms.py:123
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
@@ -224,7 +223,7 @@ msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 
 #: event_management/templates/event_management/event_confirm_delete.html:7
 #: event_management/templates/event_management/event_confirm_delete.html:12
-#: event_management/templates/event_management/event_detail.html:34
+#: event_management/templates/event_management/event_detail.html:36
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -250,7 +249,7 @@ msgstr "Zurück"
 msgid "Delete"
 msgstr "Löschen"
 
-#: event_management/templates/event_management/event_detail.html:14
+#: event_management/templates/event_management/event_detail.html:13
 msgid ""
 "This event has not been saved! If you are done editing the event, you can "
 "save it."
@@ -258,26 +257,26 @@ msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Wenn Sie mit dem "
 "Bearbeiten der Veranstaltung fertig sind, können Sie sie speichern."
 
-#: event_management/templates/event_management/event_detail.html:15
+#: event_management/templates/event_management/event_detail.html:14
 #: event_management/templates/event_management/event_form.html:41
 #: event_management/templates/event_management/shift_form.html:39
 #: user_management/templates/user_management/group_form.html:28
 msgid "Save"
 msgstr "Speichern"
 
-#: event_management/templates/event_management/event_detail.html:18
+#: event_management/templates/event_management/event_detail.html:20
 msgid "This event has not been saved! Please add a shift to save this event."
 msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
 "Schicht hinzu, um sie zu speichern."
 
-#: event_management/templates/event_management/event_detail.html:29
+#: event_management/templates/event_management/event_detail.html:31
 #: event_management/templates/event_management/event_form.html:8
 #: event_management/templates/event_management/event_form.html:29
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: event_management/templates/event_management/event_detail.html:49
+#: event_management/templates/event_management/event_detail.html:51
 #: event_management/templates/event_management/shift_form.html:49
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
@@ -433,21 +432,21 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:121 event_management/views.py:173
+#: event_management/views.py:136 event_management/views.py:191
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:247
+#: event_management/views.py:265
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:266
+#: event_management/views.py:284
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:272
+#: event_management/views.py:290
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -563,7 +562,7 @@ msgstr "Passwort zurücksetzen"
 
 #: user_management/forms.py:93
 msgid "Choose groups that this group can make events visible for."
-msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
+msgstr "Wählen Sie Gruppen, für die die diese Gruppe Veranstaltungen sichtbar machen darf."
 
 #: user_management/models.py:48
 msgid "email address"
@@ -705,6 +704,7 @@ msgstr "Information"
 #: user_management/views.py:49
 msgid "Group successfully created."
 msgstr "Gruppe erfolgreich erstellt"
+
 #: user_management/utils.py:13
 #, python-brace-format
 msgid ""
@@ -717,9 +717,3 @@ msgstr ""
 #: user_management/utils.py:17
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
-
-#: user_management/views.py:41
-#, fuzzy
-#| msgid "Password successfully reset"
-msgid "Group succesfully created."
-msgstr "Passwort erfolgreich zurückgesetzt"
