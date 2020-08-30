@@ -3,6 +3,11 @@
 {% load bootstrap4 %}
 
 {% block title %}
+    {% if group %}
+        {% trans "Edit group" %}
+    {% else %}
+        {% trans "Create new group" %}
+    {% endif %}
 {% endblock %}
 
 {% block css %}

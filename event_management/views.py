@@ -27,11 +27,9 @@ from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
     Shift,
-    AbstractParticipation,
 )
 from django.utils.translation import gettext as _
 
-from event_management.signup import SignupError, DeclineError
 from jep.permissions import get_groups_with_perms
 
 

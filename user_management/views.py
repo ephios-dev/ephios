@@ -26,7 +26,7 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
 
 class UserProfileCreateView(PermissionRequiredMixin, CreateView):
     template_name = "user_management/userprofile_form.html"
-    permission_required = "user_management.add_user"
+    permission_required = "user.add_user"
     queryset = UserProfile.objects.all()
     fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
 

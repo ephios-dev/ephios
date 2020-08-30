@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load bootstrap4 %}
 
+{% block title %}
+    {% trans "Users" %}
+{% endblock %}
+
 {% block javascript %}
     {% include "event_management/fragments/datatable.html" %}
 {% endblock %}
