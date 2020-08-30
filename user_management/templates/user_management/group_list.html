@@ -47,9 +47,9 @@
             <tr>
                 <td>{{ group.name }}</td>
                 <td>
-                    <a class="btn btn-primary" href="{% url "user_management:group_edit" group.pk %}"><span
+                    <a class="btn btn-outline-primary btn-sm" href="{% url "user_management:group_edit" group.pk %}"><span
                             class="fa fa-edit"></span> {% trans "Edit" %}</a>
-                    <a class="btn btn-danger" href="{% url "user_management:group_delete" group.pk %}"><span
+                    <a class="btn btn-outline-danger btn-sm" href="{% url "user_management:group_delete" group.pk %}"><span
                             class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
                 </td>
             </tr>
