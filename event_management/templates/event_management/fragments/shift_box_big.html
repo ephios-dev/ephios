@@ -23,7 +23,7 @@
                         <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
                         <b>{% trans "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
                         <b>{% trans "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
-                        {% if event.active %}
+                        {% if event.active and not without_controls %}
                             <b>{% trans "Status" %}:</b> {{ shift|shift_status:request.user }} <br>
                             {% with can_sign_up=shift|can_sign_up:request.user %}
                                 {% if can_sign_up %}
