@@ -188,7 +188,7 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
                 event.active = True
                 event.save()
                 messages.success(
-                    self.request, _("The event {title} has been saved.".format(title=event.title))
+                    self.request, _("The event {title} has been saved.").format(title=event.title)
                 )
                 return redirect(event.get_absolute_url())
         else:
@@ -262,7 +262,7 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
                 )
             else:
                 messages.success(
-                    self.request, _("The shift {shift} has been saved.".format(shift=shift))
+                    self.request, _("The shift {shift} has been saved.").format(shift=shift)
                 )
                 return redirect(self.object.event.get_absolute_url())
         else:
