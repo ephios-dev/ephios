@@ -11,6 +11,7 @@ from django.forms import (
     TimeField,
 )
 from django.utils.timezone import get_default_timezone, make_aware
+from django_select2.forms import Select2Widget, Select2MultipleWidget
 from guardian.shortcuts import assign_perm, remove_perm
 
 from event_management import signup
@@ -19,6 +20,7 @@ from event_management.signup import register_signup_methods
 from jep.widgets import CustomDateInput, CustomTimeInput
 from user_management.models import UserProfile
 from django.utils.translation import gettext as _
+from user_management.widgets import MultiUserProfileWidget
 
 
 class EventForm(ModelForm):
@@ -26,12 +28,19 @@ class EventForm(ModelForm):
         queryset=Group.objects.none(),
         label=_("Visible for"),
         help_text=_("Select groups which the event shall be visible for."),
+        widget=Select2MultipleWidget,
     )
     responsible_persons = ModelMultipleChoiceField(
-        queryset=UserProfile.objects.all(), required=False, label=_("Responsible persons")
+        queryset=UserProfile.objects.all(),
+        required=False,
+        label=_("Responsible persons"),
+        widget=MultiUserProfileWidget,
     )
     responsible_groups = ModelMultipleChoiceField(
-        queryset=Group.objects.all(), required=False, label=_("Responsible groups")
+        queryset=Group.objects.all(),
+        required=False,
+        label=_("Responsible groups"),
+        widget=Select2MultipleWidget,
     )
 
     class Meta:

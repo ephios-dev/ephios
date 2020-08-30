@@ -82,15 +82,18 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "event_management.add_event"
 
     def get_form(self, form_class=None):
+        visible_for_queryset = get_objects_for_user(
+            self.request.user, "publish_event_for_group", klass=Group
+        )
         event_form = EventForm(
             self.request.POST or None,
             initial={
-                "responsible_persons": get_user_model().objects.filter(pk=self.request.user.pk)
+                "responsible_persons": get_user_model().objects.filter(pk=self.request.user.pk),
+                "responsible_groups": Group.objects.none(),
+                "visible_for": visible_for_queryset,
             },
         )
-        event_form.fields["visible_for"].queryset = get_objects_for_user(
-            self.request.user, "publish_event_for_group", klass=Group
-        )
+        event_form.fields["visible_for"].queryset = visible_for_queryset
         return event_form
 
     def get_context_data(self, **kwargs):

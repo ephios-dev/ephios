@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "bootstrap4",
     "django_extensions",
     "guardian",
+    "django_select2",
     "jep",
     "user_management",
     "event_management",
