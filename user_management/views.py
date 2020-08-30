@@ -56,7 +56,7 @@ class GroupCreateView(PermissionRequiredMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, _("Group succesfully created."))
+        messages.success(self.request, _("Group created successfully."))
         return reverse("user_management:group_list")
 
 

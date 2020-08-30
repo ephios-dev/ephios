@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-30 18:18+0200\n"
+"POT-Creation-Date: 2020-08-30 21:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,7 +220,8 @@ msgstr ""
 #: event_management/templates/event_management/event_detail.html:15
 #: event_management/templates/event_management/event_form.html:41
 #: event_management/templates/event_management/shift_form.html:39
-#: user_management/templates/user_management/group_form.html:28
+#: user_management/templates/user_management/group_form.html:33
+#: user_management/templates/user_management/userprofile_form.html:24
 msgid "Save"
 msgstr "Speichern"
 
@@ -255,7 +256,8 @@ msgid "View"
 msgstr "Anzeigen"
 
 #: event_management/templates/event_management/event_form.html:43
-#: user_management/templates/user_management/group_form.html:27
+#: user_management/templates/user_management/group_form.html:32
+#: user_management/templates/user_management/userprofile_form.html:23
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -263,41 +265,42 @@ msgstr "Abbrechen"
 msgid "Next"
 msgstr "Weiter"
 
-#: event_management/templates/event_management/event_list.html:11
+#: event_management/templates/event_management/event_list.html:6
+#: event_management/templates/event_management/event_list.html:15
 #: templates/base.html:43
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: event_management/templates/event_management/event_list.html:15
+#: event_management/templates/event_management/event_list.html:19
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: event_management/templates/event_management/event_list.html:20
+#: event_management/templates/event_management/event_list.html:24
 msgid "Title"
 msgstr "Titel"
 
-#: event_management/templates/event_management/event_list.html:21
+#: event_management/templates/event_management/event_list.html:25
 #: event_management/templates/event_management/shift_form.html:64
 msgid "Location"
 msgstr "Ort"
 
-#: event_management/templates/event_management/event_list.html:22
+#: event_management/templates/event_management/event_list.html:26
 #: event_management/templates/event_management/fragments/shift_box_big.html:22
 #: event_management/templates/event_management/fragments/shift_box_small.html:17
 msgid "Date"
 msgstr "Datum"
 
-#: event_management/templates/event_management/event_list.html:23
+#: event_management/templates/event_management/event_list.html:27
 msgid "until"
 msgstr "bis"
 
-#: event_management/templates/event_management/event_list.html:24
+#: event_management/templates/event_management/event_list.html:28
 #: user_management/templates/user_management/group_list.html:42
-#: user_management/templates/user_management/userprofile_list.html:20
+#: user_management/templates/user_management/userprofile_list.html:28
 msgid "Action"
 msgstr "Aktion"
 
-#: event_management/templates/event_management/event_list.html:35
+#: event_management/templates/event_management/event_list.html:39
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -345,7 +348,12 @@ msgstr "Absagen"
 msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
-#: event_management/templates/event_management/home.html:6
+#: event_management/templates/event_management/home.html:5
+#: templates/base.html:37
+msgid "Home"
+msgstr "Startseite"
+
+#: event_management/templates/event_management/home.html:10
 msgid "Welcome to JEP!"
 msgstr "Willkommen bei JEP!"
 
@@ -388,21 +396,21 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:121 event_management/views.py:173
+#: event_management/views.py:119 event_management/views.py:171
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:247
+#: event_management/views.py:245
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:266
+#: event_management/views.py:264
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:272
+#: event_management/views.py:270
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -418,12 +426,9 @@ msgstr "Planer"
 msgid "Managers"
 msgstr "Manager"
 
-#: templates/base.html:37
-msgid "Home"
-msgstr "Startseite"
-
 #: templates/base.html:49
-#: user_management/templates/user_management/userprofile_list.html:11
+#: user_management/templates/user_management/userprofile_list.html:6
+#: user_management/templates/user_management/userprofile_list.html:15
 msgid "Users"
 msgstr "Benutzer"
 
@@ -516,6 +521,10 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
+#: user_management/forms.py:38
+msgid "Passwords don't match"
+msgstr "Die Passwörter stimmen nicht überein."
+
 #: user_management/forms.py:93
 msgid "Choose groups that this group can make events visible for."
 msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
@@ -582,11 +591,13 @@ msgstr "Gruppe löschen"
 msgid "Are you sure you want to delete the group \"%(group)s\"?"
 msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
 
-#: user_management/templates/user_management/group_form.html:15
+#: user_management/templates/user_management/group_form.html:7
+#: user_management/templates/user_management/group_form.html:20
 msgid "Edit group"
 msgstr "Gruppe bearbeiten"
 
-#: user_management/templates/user_management/group_form.html:17
+#: user_management/templates/user_management/group_form.html:9
+#: user_management/templates/user_management/group_form.html:22
 msgid "Create new group"
 msgstr "Neue Gruppe erstellen"
 
@@ -607,12 +618,12 @@ msgid "Inactive"
 msgstr "Inaktiv"
 
 #: user_management/templates/user_management/userprofile_detail.html:12
-#: user_management/templates/user_management/userprofile_list.html:17
+#: user_management/templates/user_management/userprofile_list.html:25
 msgid "First name"
 msgstr "Vorname"
 
 #: user_management/templates/user_management/userprofile_detail.html:13
-#: user_management/templates/user_management/userprofile_list.html:16
+#: user_management/templates/user_management/userprofile_list.html:24
 msgid "Last name"
 msgstr "Nachname"
 
@@ -649,14 +660,27 @@ msgstr ""
 msgid "Your calendar"
 msgstr "Ihr Kalender"
 
-#: user_management/templates/user_management/userprofile_list.html:18
+#: user_management/templates/user_management/userprofile_form.html:7
+#: user_management/templates/user_management/userprofile_form.html:15
+msgid "Add new user"
+msgstr "Neuen Benutzer anlegen"
+
+#: user_management/templates/user_management/userprofile_form.html:13
+msgid "Edit user"
+msgstr "Benutzer bearbeiten"
+
+#: user_management/templates/user_management/userprofile_list.html:19
+msgid "Add user"
+msgstr "Benutzer hinzufügen"
+
+#: user_management/templates/user_management/userprofile_list.html:26
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: user_management/templates/user_management/userprofile_list.html:19
+#: user_management/templates/user_management/userprofile_list.html:27
 msgid "Information"
 msgstr "Information"
 
-#: user_management/views.py:49
-msgid "Group successfully created."
+#: user_management/views.py:59
+msgid "Group created successfully."
 msgstr "Gruppe erfolgreich erstellt"
