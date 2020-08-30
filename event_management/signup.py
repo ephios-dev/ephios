@@ -254,12 +254,12 @@ class AbstractSignupMethod:
             "minimum_age": {
                 "formfield": forms.IntegerField(required=False),
                 "default": 16,
-                "show_users_with_label": _("Minimum age"),
+                "publish_with_label": _("Minimum age"),
             },
             "signup_until": {
                 "formfield": forms.SplitDateTimeField(required=False),
                 "default": None,
-                "show_users_with_label": _("Signup until"),
+                "publish_with_label": _("Signup until"),
                 "format": functools.partial(formats.date_format, format="SHORT_DATETIME_FORMAT"),
             },
         }
@@ -272,7 +272,7 @@ class AbstractSignupMethod:
         return {
             label: field.get("format", str)(value)
             for key, field in fields.items()
-            if (label := field.get("show_users_with_label", False))
+            if (label := field.get("publish_with_label", False))
             and (value := getattr(self.configuration, key))
         }
 

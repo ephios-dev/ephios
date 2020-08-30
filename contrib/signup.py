@@ -45,7 +45,7 @@ class SimpleQualificationsRequiredSignupMethod(AbstractSignupMethod):
                     widget=forms.CheckboxSelectMultiple,
                 ),
                 "default": [],
-                "show_users_with_label": _("Erforderliche Qualifikation"),
+                "publish_with_label": _("Erforderliche Qualifikation"),
                 "format": lambda ids: ", ".join(
                     Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
                 ),
@@ -78,7 +78,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             "maximum_number_of_participants": {
                 "formfield": forms.IntegerField(min_value=1, required=False),
                 "default": None,
-                "show_users_with_label": _("Maximum number of participants"),
+                "publish_with_label": _("Maximum number of participants"),
             },
         }
 

@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "jep",
     "user_management",
     "event_management",
-    "contrib.__init__",
+    "contrib",
 ]
 
 MIDDLEWARE = [
