@@ -20,9 +20,6 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "user.view_user"
 
-    def get_queryset(self):
-        return UserProfile.objects.all()
-
 
 class GroupListView(PermissionRequiredMixin, ListView):
     model = Group

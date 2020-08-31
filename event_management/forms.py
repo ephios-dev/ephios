@@ -14,6 +14,7 @@ from django.utils.timezone import get_default_timezone, make_aware
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 from guardian.shortcuts import assign_perm, remove_perm
 
+from event_management import signup
 from event_management.models import Event, Shift
 from event_management.signup import register_signup_methods
 from jep.widgets import CustomDateInput, CustomTimeInput
@@ -92,14 +93,12 @@ class ShiftForm(ModelForm):
     class Meta:
         model = Shift
         fields = ["meeting_time", "start_time", "end_time", "signup_method_slug"]
-        widgets = {
-            "signup_method_slug": Select(
-                choices=(
-                    (method.slug, method.verbose_name)
-                    for receiver, method in register_signup_methods.send(None)
-                )
-            )
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["signup_method_slug"].widget = Select(
+            choices=((method.slug, method.verbose_name) for method in signup.all_signup_methods())
+        )
 
     def clean(self):
         cleaned_data = super(ShiftForm, self).clean()
