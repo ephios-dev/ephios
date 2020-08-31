@@ -12,10 +12,14 @@
     <link rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
     <link href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css" type="text/css" media="screen" rel="stylesheet">
     {% block css %}{% endblock %}
 </head>
 <body>
 {% bootstrap_javascript jquery="full" %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
+<script type="text/javascript" src="/static/django_select2/django_select2.js"></script>
+<script src="{% static "js/main.js" %}"></script>
 {% block javascript %}{% endblock %}
 
 <div class="container mb-3">
@@ -45,11 +49,12 @@
                                                 class="sr-only">(current)</span></a>
                                 </li>
                                 {% if perms.user_management.view_user %}
-                                <li class="nav-item {% if url_name == "user_list" %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "user_management:user_list" %}">{% trans "Users" %}
-                                        <span
-                                                class="sr-only">(current)</span></a>
-                                </li>
+                                    <li class="nav-item {% if url_name == "user_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "user_management:user_list" %}">{% trans "Users" %}
+                                            <span
+                                                    class="sr-only">(current)</span></a>
+                                    </li>
                                 {% endif %}
                                 {% if perms.auth.view_group %}
                                     <li class="nav-item {% if url_name == 'planners' %}active{% endif %}">

@@ -13,7 +13,11 @@ from django.db.models import (
     EmailField,
     ForeignKey,
     Model,
+    Exists,
+    OuterRef,
+    Q,
 )
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -92,10 +96,20 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         return LocalUserParticipator(
             first_name=self.first_name,
             last_name=self.last_name,
-            qualifications=[],  # TODO
+            qualifications=self.qualifications,
             date_of_birth=self.date_of_birth,
             user=self,
         )
+
+    @property
+    def qualifications(self):
+        return Qualification.objects.annotate(
+            active_grant=Exists(
+                QualificationGrant.objects.filter(user=self, qualification=OuterRef("pk")).filter(
+                    Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
+                )
+            )
+        ).filter(active_grant=True)
 
     def get_shifts(self, with_participation_state_in):
         from event_management.models import Shift
@@ -106,7 +120,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         return Shift.objects.filter(pk__in=shift_ids)
 
 
-class QualificationTrack(Model):
+class QualificationCategory(Model):
+    uuid = models.UUIDField(unique=True)
     title = CharField(_("title"), max_length=254)
 
     class Meta:
@@ -115,10 +130,24 @@ class QualificationTrack(Model):
 
 
 class Qualification(Model):
+    uuid = models.UUIDField(unique=True)
     title = CharField(_("title"), max_length=254)
-    track = ForeignKey(
-        QualificationTrack, on_delete=models.CASCADE, verbose_name=_("qualification track")
+    abbreviation = CharField(max_length=254)
+    category = ForeignKey(
+        QualificationCategory,
+        on_delete=models.CASCADE,
+        related_name="qualifications",
+        verbose_name=_("category"),
     )
+    included_qualifications = models.ManyToManyField(
+        "self", related_name="included_by", symmetrical=False
+    )
+
+    def __eq__(self, other):
+        return self.uuid == other.uuid
+
+    def __hash__(self):
+        return hash(self.uuid)
 
     class Meta:
         verbose_name = _("qualification")
@@ -133,4 +162,7 @@ class QualificationGrant(Model):
         Qualification, on_delete=models.CASCADE, verbose_name=_("qualification")
     )
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
-    expiration_date = DateField(_("expiration date"), blank=True, null=True)
+    expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.qualification!s}, {self.user!s}"
