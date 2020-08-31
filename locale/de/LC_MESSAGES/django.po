@@ -563,7 +563,7 @@ msgstr "Passwort zurücksetzen"
 #: user_management/forms.py:93
 msgid "Choose groups that this group can make events visible for."
 msgstr ""
-"Wählen Sie Gruppen, für die die diese Gruppe Veranstaltungen sichtbar machen "
+"Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
 
 #: user_management/models.py:48
