@@ -39,16 +39,19 @@ if not DEBUG:
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "polymorphic",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap4",
+    "django_extensions",
     "guardian",
     "django_select2",
     "jep",
     "user_management",
     "event_management",
+    "contrib",
 ]
 
 MIDDLEWARE = [
