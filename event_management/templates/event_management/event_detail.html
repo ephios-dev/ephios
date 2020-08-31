@@ -21,23 +21,24 @@
                 {% bootstrap_alert no_shift_error "danger" %}
             {% endif %}
         {% endif %}
-        <div class="page-header">
-            <h1>{{ event.type }}: {{ event.title }} <small>({{ event.location }})</small>
-                {% if can_change %}
-                    <div class="float-right">
-                        <a role="button" class="btn btn-primary"
-                           href="{% url "event_management:event_edit" event.pk %}">
-                            <span class="fas fa-edit"></span>
-                            {% trans "Edit event" %}
-                        </a>
-                        <a role="button" class="btn btn-danger"
-                           href="{% url "event_management:event_delete" event.pk %}">
-                            <span class="fas fa-trash-alt"></span>
-                            {% trans "Delete event" %}
-                        </a>
-                    </div>
-                {% endif %}
+        <div class="page-header clearfix">
+            <h1>
+                {{ event.type }}: {{ event.title }} <small>({{ event.location }})</small>
             </h1>
+            {% if can_change %}
+                <div class="float-right">
+                    <a role="button" class="btn btn-primary"
+                       href="{% url "event_management:event_edit" event.pk %}">
+                        <span class="fas fa-edit"></span>
+                        {% trans "Edit event" %}
+                    </a>
+                    <a role="button" class="btn btn-danger"
+                       href="{% url "event_management:event_delete" event.pk %}">
+                        <span class="fas fa-trash-alt"></span>
+                        {% trans "Delete event" %}
+                    </a>
+                </div>
+            {% endif %}
         </div>
         <p>{{ event.description }}</p>
         <div>

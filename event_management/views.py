@@ -1,6 +1,5 @@
 import json
 
-import guardian.mixins
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -32,6 +31,7 @@ from event_management.models import (
 )
 from django.utils.translation import gettext as _
 
+from jep.permissions import get_groups_with_perms, CustomPermissionRequiredMixin
 from jep.permissions import get_groups_with_perms
 
 
@@ -46,7 +46,7 @@ class EventListView(LoginRequiredMixin, ListView):
         return get_objects_for_user(self.request.user, "event_management.view_event")
 
 
-class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
+class EventDetailView(CustomPermissionRequiredMixin, DetailView):
     model = Event
     permission_required = "event_management.view_event"
 
@@ -57,12 +57,10 @@ class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
             return Event.objects
 
 
-class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
+class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Event
     queryset = Event.all_objects
     permission_required = "event_management.change_event"
-    raise_exception = True
-    accept_global_perms = True
 
     def get_form(self, form_class=None):
         visible_queryset = get_objects_for_user(
@@ -110,7 +108,7 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
         return reverse("event_management:event_createshift", kwargs={"pk": self.object.pk})
 
 
-class EventActivateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMixin, View):
+class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.add_event"
     queryset = Event.all_objects
 
@@ -186,7 +184,9 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
             return self.render_to_response(
                 self.get_context_data(
                     form=form,
-                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                    configuration_form=signup_method.render_configuration_form(
+                        form=configuration_form
+                    ),
                 )
             )
 
@@ -199,12 +199,10 @@ class ShiftConfigurationFormView(View):
         return HttpResponse(signup_method.render_configuration_form())
 
 
-class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, SingleObjectMixin):
+class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     template_name = "event_management/shift_form.html"
     permission_required = "event_management.change_event"
-    raise_exception = True
-    accept_global_perms = True
 
     def get_permission_object(self):
         return self.get_object().event
@@ -222,9 +220,7 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
         )
 
     def get_configuration_form(self):
-        return self.object.signup_method.render_configuration_form(
-            data=self.request.POST or None, initial=json.loads(self.object.signup_configuration)
-        )
+        return self.object.signup_method.render_configuration_form(data=self.request.POST or None)
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
@@ -260,7 +256,9 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, TemplateView, Sin
             return self.render_to_response(
                 self.get_context_data(
                     form=form,
-                    configuration_form=signup_method.render_configuration_form(configuration_form),
+                    configuration_form=signup_method.render_configuration_form(
+                        form=configuration_form
+                    ),
                 )
             )
 
@@ -282,14 +280,19 @@ class ShiftDeleteView(PermissionRequiredMixin, DeleteView):
         return self.object.event.get_absolute_url()
 
 
-# TODO rename to signup
-class ShiftRegisterView(LoginRequiredMixin, View):
+class ShiftSignupView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
+    permission_required = "event_management.view_event"
+    model = Shift
+
+    def get_permission_object(self):
+        return self.get_object().event
+
     def get(self, request, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
         return shift.signup_method.signup_view(request, *args, **kwargs)
 
 
-class ShiftDeclineView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
+class ShiftDeclineView(View):
+    def get(self, *args, **kwargs):
         shift = get_object_or_404(Shift, id=self.kwargs["pk"])
         return shift.signup_method.decline_view(self.request)
