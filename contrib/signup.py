@@ -46,7 +46,7 @@ class SimpleQualificationsRequiredSignupMethod(AbstractSignupMethod):
                     widget=Select2MultipleWidget,
                 ),
                 "default": [],
-                "publish_with_label": _("Erforderliche Qualifikation"),
+                "publish_with_label": _("Required Qualification"),
                 "format": lambda ids: ", ".join(
                     Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
                 ),

@@ -35,12 +35,16 @@
                                         <a class="btn btn-outline-success"
                                            href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
                                     {% else %}
-                                        <button type="button" class="btn btn-outline-success" disabled
-                                                data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                        <span class="d-inline-block" tabindex="0"
+                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
                                             {% for error in shift|signup_errors:request.user %}
                                                 <p>{{ error.message }}</p>
                                             {% endfor %}
-                                    ">{% trans "Register" %}</button>
+                                            ">
+                                            <button type="button" class="btn btn-outline-success"
+                                                    style="pointer-events: none;"
+                                                    disabled>{% trans "Register" %}</button>
+                                        </span>
                                     {% endif %}
                                 {% endwith %}
                                 {% with can_user_decline=shift|can_user_decline:request.user %}
@@ -48,12 +52,16 @@
                                         <a class="btn btn-outline-danger"
                                            href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
                                     {% else %}
-                                        <button type="button" class="btn btn-outline-danger" disabled
-                                                data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                        <span class="d-inline-block" tabindex="0"
+                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
                                             {% for error in shift|decline_errors:request.user %}
                                                 <p>{{ error.message }}</p>
                                             {% endfor %}
-                                    ">{% trans "Decline" %}</button>
+                                            ">
+                                            <button type="button" class="btn btn-outline-danger"
+                                                    style="pointer-events: none;"
+                                                    disabled>{% trans "Decline" %}</button>
+                                        </span>
                                     {% endif %}
                                 {% endwith %}
                             </dd>

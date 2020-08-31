@@ -102,7 +102,7 @@ class Shift(Model):
         tz = pytz.timezone(settings.TIME_ZONE)
         start_time = self.start_time.astimezone(tz)
         return (
-            f"{start_time.strftime('%A')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}, "
+            f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}, "
             + f"{formats.time_format(start_time)} - {formats.time_format(self.end_time.astimezone(tz))}"
         )
 
