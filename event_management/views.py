@@ -58,12 +58,6 @@ class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
         else:
             return Event.objects
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if not self.object.active and self.request.user.has_perm("event_management.add_event"):
-            context["activation_form"] = EventActivationForm()
-        return context
-
 
 class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
     model = Event
@@ -124,8 +118,7 @@ class EventActivateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMix
 
     def post(self, request, *args, **kwargs):
         event = self.get_object()
-        form = EventActivationForm(request.POST or None)
-        if not event.active and form.is_valid():
+        if not event.active:
             try:
                 with transaction.atomic():
                     event.active = True

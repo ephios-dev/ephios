@@ -82,10 +82,6 @@ class EventForm(ModelForm):
         return event
 
 
-class EventActivationForm(Form):
-    pass
-
-
 class ShiftForm(ModelForm):
     date = DateField(widget=CustomDateInput(format="%Y-%m-%d"))
     meeting_time = TimeField(widget=CustomTimeInput)
