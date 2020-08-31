@@ -25,15 +25,13 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
 from event_management import mail
-from event_management.forms import EventForm, ShiftForm, EventActivationForm
+from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
     Shift,
-    AbstractParticipation,
 )
 from django.utils.translation import gettext as _
 
-from event_management.signup import SignupError, DeclineError
 from jep.permissions import get_groups_with_perms
 
 
