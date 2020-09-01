@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -22,6 +23,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
+from event_management import mail
 from event_management.forms import EventForm, ShiftForm
 from event_management.models import (
     Event,
@@ -30,6 +32,7 @@ from event_management.models import (
 from django.utils.translation import gettext as _
 
 from jep.permissions import get_groups_with_perms, CustomPermissionRequiredMixin
+from jep.permissions import get_groups_with_perms
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -49,14 +52,14 @@ class EventDetailView(CustomPermissionRequiredMixin, DetailView):
 
     def get_queryset(self):
         if self.request.user.has_perm("event_management.add_event"):
-            return Event.all_objects
+            return Event.all_objects.all()
         else:
-            return Event.objects
+            return Event.objects.all()
 
 
 class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Event
-    queryset = Event.all_objects
+    queryset = Event.all_objects.all()
     permission_required = "event_management.change_event"
 
     def get_form(self, form_class=None):
@@ -105,21 +108,30 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
         return reverse("event_management:event_createshift", kwargs={"pk": self.object.pk})
 
 
-class EventActivateView(PermissionRequiredMixin, RedirectView):
+class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.add_event"
+    queryset = Event.all_objects.all()
 
-    def get_redirect_url(self, *args, **kwargs):
-        event = get_object_or_404(Event.all_objects, pk=kwargs["pk"])
-        event.active = True
-        event.save()
-        messages.success(
-            self.request, _("The event {title} has been saved.".format(title=event.title))
-        )
-        return event.get_absolute_url()
+    def post(self, request, *args, **kwargs):
+        event = self.get_object()
+        if not event.active:
+            try:
+                with transaction.atomic():
+                    event.active = True
+                    event.full_clean()
+                    event.save()
+                    messages.success(
+                        self.request,
+                        _("The event {title} has been saved.").format(title=event.title),
+                    )
+                    mail.new_event(event)
+            except ValidationError as e:
+                messages.error(request, e)
+        return redirect(reverse("event_management:event_detail", kwargs={"pk": event.pk}))
 
 
 class EventDeleteView(PermissionRequiredMixin, DeleteView):
-    queryset = Event.all_objects
+    queryset = Event.all_objects.all()
     permission_required = "event_management.delete_event"
     success_url = reverse_lazy("event_management:event_list")
 
