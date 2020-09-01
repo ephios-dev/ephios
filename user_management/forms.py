@@ -137,7 +137,14 @@ class GroupForm(ModelForm):
 
 
 class UserProfileForm(ModelForm):
+    groups = ModelMultipleChoiceField(queryset=Group.objects.all(), widget=Select2MultipleWidget)
+
     class Meta:
         model = UserProfile
         fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
         widgets = {"date_of_birth": CustomDateInput(format="%Y-%m-%d")}
+
+    def save(self, commit=True):
+        userprofile = super().save(commit)
+
+        userprofile.groups.set(self.cleaned_data["groups"])
