@@ -118,8 +118,8 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
             try:
                 with transaction.atomic():
                     event.active = True
-                    event.save()
                     event.full_clean()
+                    event.save()
                     messages.success(
                         self.request,
                         _("The event {title} has been saved.").format(title=event.title),
