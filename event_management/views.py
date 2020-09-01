@@ -52,14 +52,14 @@ class EventDetailView(CustomPermissionRequiredMixin, DetailView):
 
     def get_queryset(self):
         if self.request.user.has_perm("event_management.add_event"):
-            return Event.all_objects
+            return Event.all_objects.all()
         else:
-            return Event.objects
+            return Event.objects.all()
 
 
 class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Event
-    queryset = Event.all_objects
+    queryset = Event.all_objects.all()
     permission_required = "event_management.change_event"
 
     def get_form(self, form_class=None):
@@ -110,7 +110,7 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
 
 class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.add_event"
-    queryset = Event.all_objects
+    queryset = Event.all_objects.all()
 
     def post(self, request, *args, **kwargs):
         event = self.get_object()
@@ -131,7 +131,7 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
 
 
 class EventDeleteView(PermissionRequiredMixin, DeleteView):
-    queryset = Event.all_objects
+    queryset = Event.all_objects.all()
     permission_required = "event_management.delete_event"
     success_url = reverse_lazy("event_management:event_list")
 
