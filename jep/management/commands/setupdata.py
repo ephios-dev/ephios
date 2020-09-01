@@ -133,8 +133,8 @@ class DebugDataset(AdminUserDataset):
         QualificationGrant.objects.create(user=self.admin_user, qualification=rs)
 
         event = Event.objects.create(
-            title=_("Concert Medical Service"),
-            description=_("Your contact is Lisa Example. Her Phone number is 012345678910"),
+            title="Concert Medical Service",
+            description="Your contact is Lisa Example. Her Phone number is 012345678910",
             type=service_type,
             location="Town Square Gardens",
             active=True,
