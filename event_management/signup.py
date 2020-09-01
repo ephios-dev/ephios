@@ -14,13 +14,15 @@ from django.dispatch import receiver
 from django import forms
 from django.template import Template, Context
 from django.utils import timezone, dateparse, formats
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from django.db.models import QuerySet
+from django.views import View
 
 from contrib.json import CustomJSONDecoder, CustomJSONEncoder
-from event_management.models import LocalParticipation, AbstractParticipation
+from event_management.models import LocalParticipation, AbstractParticipation, Shift
 from user_management.models import Qualification
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
@@ -101,7 +103,64 @@ class ConfigurationForm(forms.Form):
         return json.dumps(self.cleaned_data, cls=CustomJSONEncoder)
 
 
-class AbstractSignupMethod:
+def check_event_is_active(method, participator):
+    if not method.shift.event.active:
+        return ParticipationError(_("The event is not active."))
+
+
+def check_participation_state_for_signup(method, participator):
+    participation = participator.participation_for(method.shift)
+    if participation is not None:
+        if participation.state == AbstractParticipation.REQUESTED:
+            return ParticipationError(
+                _("You have already requested your participation for {shift}").format(
+                    shift=method.shift
+                )
+            )
+        elif participation.state == AbstractParticipation.CONFIRMED:
+            return ParticipationError(
+                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
+            )
+        elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+            return ParticipationError(
+                _("You are rejected from {shift}.").format(shift=method.shift)
+            )
+
+
+def check_participation_state_for_decline(method, participator):
+    participation = participator.participation_for(method.shift)
+    if participation is not None:
+        if participation.state == AbstractParticipation.CONFIRMED:
+            return ParticipationError(
+                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
+            )
+        elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+            return ParticipationError(
+                _("You are rejected from {shift}.").format(shift=method.shift)
+            )
+        elif participation.state == AbstractParticipation.USER_DECLINED:
+            return ParticipationError(
+                _("You have already declined participating in {shift}.").format(shift=method.shift)
+            )
+
+
+def check_inside_signup_timeframe(method, participator):
+    last_time = method.shift.end_time
+    if method.configuration.signup_until is not None:
+        last_time = min(last_time, method.configuration.signup_until)
+    if timezone.now() > last_time:
+        return ParticipationError(_("The signup period is over."))
+
+
+def check_participator_age(method, participator):
+    minimum_age = method.configuration.minimum_age
+    if minimum_age is not None and participator.age < minimum_age:
+        return ParticipationError(
+            _("You are too young. The minimum age is {age}.").format(age=minimum_age)
+        )
+
+
+class BaseSignupMethod:
     slug = "abstract"
     verbose_name = "abstract"
     description = """"""
@@ -118,136 +177,71 @@ class AbstractSignupMethod:
             ).items():
                 setattr(self.configuration, key, value)
 
-    def can_sign_up(self, participator):
-        return not self.get_signup_errors(participator)
+    @property
+    def signup_view_class(self):
+        return BaseSignupView
+
+    @cached_property
+    def signup_view(self):
+        return self.signup_view_class.as_view(method=self, shift=self.shift)
+
+    @property
+    def signup_checkers(self):
+        return [
+            check_event_is_active,
+            check_participation_state_for_signup,
+            check_inside_signup_timeframe,
+            check_participator_age,
+        ]
+
+    @property
+    def decline_checkers(self):
+        return [
+            check_event_is_active,
+            check_participation_state_for_decline,
+            check_inside_signup_timeframe,
+            check_participator_age,
+        ]
 
     def get_signup_errors(self, participator) -> List[ParticipationError]:
         return [
             error
-            for error in (
-                self.check_event_is_active(),
-                self.check_participation_state_for_signup(participator),
-                self.check_inside_signup_timeframe(),
-                self.check_participator_age(participator),
-            )
-            if error is not None
+            for checker in self.signup_checkers
+            if (error := checker(self, participator)) is not None
         ]
 
-    def check_event_is_active(self):
-        if not self.shift.event.active:
-            return ParticipationError(_("The event is not active."))
+    def get_decline_errors(self, participator):
+        return [
+            error
+            for checker in self.decline_checkers
+            if (error := checker(self, participator)) is not None
+        ]
 
-    def check_participation_state_for_signup(self, participator):
-        participation = participator.participation_for(self.shift)
-        if participation is not None:
-            if participation.state == AbstractParticipation.REQUESTED:
-                return ParticipationError(
-                    _("You have already requested your participation for {shift}").format(
-                        shift=self.shift
-                    )
-                )
-            elif participation.state == AbstractParticipation.CONFIRMED:
-                return ParticipationError(
-                    _("You are bindingly signed up for {shift}.").format(shift=self.shift)
-                )
-            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
-                return ParticipationError(
-                    _("You are rejected from {shift}.").format(shift=self.shift)
-                )
+    def can_decline(self, participator):
+        return not self.get_decline_errors(participator)
 
-    def check_participation_state_for_decline(self, participator):
-        participation = participator.participation_for(self.shift)
-        if participation is not None:
-            if participation.state == AbstractParticipation.CONFIRMED:
-                return ParticipationError(
-                    _("You are bindingly signed up for {shift}.").format(shift=self.shift)
-                )
-            elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
-                return ParticipationError(
-                    _("You are rejected from {shift}.").format(shift=self.shift)
-                )
-            elif participation.state == AbstractParticipation.USER_DECLINED:
-                return ParticipationError(
-                    _("You have already declined participating in {shift}.").format(
-                        shift=self.shift
-                    )
-                )
-
-    def check_inside_signup_timeframe(self):
-        if (
-            self.configuration.signup_until is not None
-            and timezone.now() > self.configuration.signup_until
-        ):
-            return ParticipationError(_("The signup period is over."))
-
-    def check_participator_age(self, participator):
-        minimum_age = self.configuration.minimum_age
-        if minimum_age is not None and participator.age < minimum_age:
-            return ParticipationError(
-                _("You are too young. The minimum age is {age}.").format(age=minimum_age)
-            )
+    def can_sign_up(self, participator):
+        return not self.get_signup_errors(participator)
 
     def get_participation_for(self, participator):
         return participator.participation_for(self.shift) or participator.create_participation(
             self.shift
         )
 
-    def perform_signup(self, participator: AbstractParticipator):
-        """Create and configure a participation object for the given participator."""
+    def perform_signup(self, participator: AbstractParticipator, **kwargs):
+        """Create and configure a participation object for the given participator. `kwargs` may contain further instructions from a e.g. a form."""
         if errors := self.get_signup_errors(participator):
             raise ParticipationError(errors)
         return self.get_participation_for(participator)
 
-    def signup_view(self, request, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                self.perform_signup(request.user.as_participator())
-                messages.success(
-                    request,
-                    _("You have successfully signed up for shift {shift}.").format(
-                        shift=self.shift
-                    ),
-                )
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, _("Signup failed: ") + str(error))
-        return redirect(self.shift.event.get_absolute_url())
-
-    def get_decline_errors(self, participator):
-        return [
-            error
-            for error in (
-                self.check_event_is_active(),
-                self.check_participation_state_for_decline(participator),
-                self.check_inside_signup_timeframe(),
-                self.check_participator_age(participator),
-            )
-            if error is not None
-        ]
-
-    def can_decline(self, participator):
-        return not self.get_decline_errors(participator)
-
-    def perform_decline(self, participator):
-        """Create and configure a declining participation object for the given participator."""
+    def perform_decline(self, participator, **kwargs):
+        """Create and configure a declining participation object for the given participator. `kwargs` may contain further instructions from a e.g. a form."""
         if errors := self.get_decline_errors(participator):
             raise ParticipationError(errors)
         participation = self.get_participation_for(participator)
         participation.state = AbstractParticipation.USER_DECLINED
         participation.save()
         return participation
-
-    def decline_view(self, request):
-        try:
-            with transaction.atomic():
-                self.perform_decline(request.user.as_participator())
-                messages.info(
-                    request, _("You have successfully declined {shift}.").format(shift=self.shift)
-                )
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, _("Declining failed: ") + str(error))
-        return redirect(self.shift.event.get_absolute_url())
 
     def get_configuration_fields(self):
         return {
@@ -302,3 +296,49 @@ class AbstractSignupMethod:
 
     # HTML-Darstellung der Helfer (defaults to an unorderd list of Helfers)
     # Helferlisten-PDF-content (defautls to an unorderd list of Helfers)
+
+
+class BaseSignupView(View):
+    shift: Shift = ...
+    method: BaseSignupMethod = ...
+
+    def dispatch(self, request, *args, **kwargs):
+        if (choice := request.POST.get("signup_choice")) is not None:
+            if choice == "sign_up":
+                return self.signup_pressed(request, *args, **kwargs)
+            elif choice == "decline":
+                return self.decline_pressed(request, *args, **kwargs)
+            else:
+                raise ValueError(
+                    _("'{choice}' is not a valid signup action.").format(choice=choice)
+                )
+        return super().dispatch(request, *args, **kwargs)
+
+    def signup_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_signup(request.user.as_participator())
+                messages.success(
+                    request,
+                    _("You have successfully signed up for shift {shift}.").format(
+                        shift=self.shift
+                    ),
+                )
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, _("Signing up failed: ") + str(error))
+        finally:
+            return redirect(self.shift.event.get_absolute_url())
+
+    def decline_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_decline(request.user.as_participator())
+                messages.info(
+                    request, _("You have successfully declined {shift}.").format(shift=self.shift)
+                )
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, _("Declining failed: ") + str(error))
+        finally:
+            return redirect(self.shift.event.get_absolute_url())

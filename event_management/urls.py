@@ -18,9 +18,6 @@ urlpatterns = [
     path("shifts/<int:pk>/edit/", views.ShiftUpdateView.as_view(), name="shift_edit",),
     path("shifts/<int:pk>/delete/", views.ShiftDeleteView.as_view(), name="shift_delete",),
     path(
-        "shifts/<int:pk>/user_decline/", views.ShiftDeclineView.as_view(), name="shift_user_decline"
-    ),
-    path(
         "signup_methods/<slug:slug>/configuration_form/",
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
