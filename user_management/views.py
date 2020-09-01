@@ -2,14 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from django.views.generic import (
-    DetailView,
-    ListView,
-    UpdateView,
-    CreateView,
-    DeleteView,
-    TemplateView,
-)
+from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
 from guardian.shortcuts import get_users_with_perms, get_objects_for_group
 
 from user_management.forms import GroupForm, UserProfileForm

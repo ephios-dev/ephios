@@ -21,11 +21,11 @@
     <table id="event_table" class="table table-striped display datatable">
         <thead>
         <tr>
-            <th>{% trans "Title" %}</th>
-            <th>{% trans "Location" %}</th>
-            <th>{% trans "Date" %}</th>
-            <th>{% trans "until" %}</th>
-            <th>{% trans "Action" %}</th>
+            <th data-priority="2">{% trans "Title" %}</th>
+            <th data-priority="5">{% trans "Location" %}</th>
+            <th data-priority="3">{% trans "Date" %}</th>
+            <th data-priority="4">{% trans "until" %}</th>
+            <th data-priority="1">{% trans "Action" %}</th>
         </tr>
         </thead>
         <tbody>
@@ -36,7 +36,7 @@
                 <td>{{ event.start_time | date:"d.m.Y" }}</td>
                 <td>{{ event.end_time | date:"d.m.Y" }}</td>
                 <td><a class="btn btn-primary" href="{% url "event_management:event_detail" event.id %}"><span
-                        class="fa fa-eye"></span> {% trans "Show" %}</a></td>
+                        class="fa fa-eye"></span> <span class="d-none d-md-inline">{% trans "Show" %}</span></a></td>
             </tr>
         {% endfor %}
         </tbody>

@@ -1,3 +1,4 @@
+import pytz
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import (
@@ -13,8 +14,13 @@ from django.db.models import (
     TextField,
     Manager,
 )
+from polymorphic.models import PolymorphicModel
+from django.utils import dateformat, formats
 from jsonfallback.fields import FallbackJSONField
 from django.utils.translation import gettext_lazy as _
+
+from jep import settings
+from user_management.models import UserProfile
 
 
 class ActiveManager(Manager):
@@ -92,11 +98,31 @@ class Shift(Model):
 
         return signup_method_from_slug(self.signup_method_slug, self)
 
+    def get_start_end_time_display(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+        start_time = self.start_time.astimezone(tz)
+        return (
+            f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}, "
+            + f"{formats.time_format(start_time)} - {formats.time_format(self.end_time.astimezone(tz))}"
+        )
+
+    def get_participations(self, with_state_in=None):
+        with_state_in = with_state_in or [AbstractParticipation.CONFIRMED]
+        return AbstractParticipation.objects.filter(state__in=with_state_in, shift=self)
+
+    def get_participators(self):
+        yield from (
+            participation.participator
+            for participation in self.get_participations(
+                with_state_in=[AbstractParticipation.CONFIRMED]
+            )
+        )
+
     def __str__(self):
-        return f"{self.event.title} ({self.start_time}-{self.end_time})"
+        return f"{self.event.title} ({self.get_start_end_time_display()})"
 
 
-class AbstractParticipation(Model):
+class AbstractParticipation(PolymorphicModel):
     REQUESTED = 0
     CONFIRMED = 1
     USER_DECLINED = 2
@@ -117,7 +143,7 @@ class AbstractParticipation(Model):
 
 
 class LocalParticipation(AbstractParticipation):
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     @property
     def participator(self):

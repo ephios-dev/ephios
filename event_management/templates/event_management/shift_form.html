@@ -81,7 +81,6 @@
             {% endif %}
         </div>
     </div>
-
     <script type="text/javascript">
         function isEmpty(el) {
             return !$.trim(el.html())
@@ -94,6 +93,7 @@
 
                 success: function (data) {
                     $('#configuration_form').html(data);
+                    $('.django-select2').djangoSelect2();
                 }
             });
         });

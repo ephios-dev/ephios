@@ -10,10 +10,6 @@
     {% endif %}
 {% endblock %}
 
-{% block css %}
-    {{ form.media.css }}
-{% endblock %}
-
 {% block content %}
     <div class="page-header">
         {% if group %}
@@ -38,19 +34,16 @@
 
 {% block javascript %}
     <script type="text/javascript">
-
-        function toggleVisibility(event) {
-            if ($(this).is(":checked"))
-                $(".publish-select").slideDown();
-            else
-                $(".publish-select").slideUp();
-        }
-
         $(document).ready(function () {
-            let can_add = $("#id_can_add_event")
-            can_add.click(toggleVisibility);
-            toggleVisibility();
+            $("#id_can_add_event").click(function (event) {
+                if ($(this).is(":checked"))
+                    $(".publish-select").slideDown();
+                else
+                    $(".publish-select").slideUp();
+            });
+            if (!$("#id_can_add_event").is(":checked")) {
+                $(".publish-select").slideUp();
+            }
         });
     </script>
-    {{ form.media.js }}
 {% endblock %}

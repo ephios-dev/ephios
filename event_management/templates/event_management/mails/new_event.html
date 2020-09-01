@@ -1,0 +1,12 @@
+{% extends "email_base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{{ event.type }} {% trans "added" %}: {{ event.title }}</h1>
+    <div>
+    <a href="{{ site_url }}{% url "event_management:event_detail" event.pk %}">{% trans "View" %}</a>
+    </div>
+    {% for shift in event.shifts.all %}
+        {% include "event_management/fragments/shift_box_big.html" with shift=shift without_controls=True %}
+    {% endfor %}
+{% endblock %}

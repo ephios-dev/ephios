@@ -18,25 +18,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: event_management/forms.py:28
+#: event_management/forms.py:29
 msgid "Visible for"
 msgstr "Sichtbar für"
 
-#: event_management/forms.py:29
+#: event_management/forms.py:30
 msgid "Select groups which the event shall be visible for."
 msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
 
-#: event_management/forms.py:35
+#: event_management/forms.py:36
 msgid "Responsible persons"
 msgstr "Verantwortliche Personen"
 
-#: event_management/forms.py:41
+#: event_management/forms.py:42
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
-#: event_management/forms.py:118
+#: event_management/forms.py:123
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
+
+#: event_management/mail.py:25
+#, python-brace-format
+msgid "New {type}: {title}"
+msgstr "{type}: {title}"
+
+#: event_management/mail.py:27
+#, python-brace-format
+msgid ""
+"A new {type} ({title}) has been added. \n"
+" You can view it here: {link}"
+msgstr ""
+"{type} {title} wurde angelegt. Sie können die Veranstaltung hier ansehen: "
+"{link}"
+
+#: event_management/mail.py:50
+#, python-brace-format
+msgid ""
+"The status for your participation for the shift {shift} has changed. It is "
+"now {status}."
+msgstr ""
+"Der Status Ihrer Teilnahme für die Schicht {shift} hat sich geändert. Die "
+"Teilnahme ist nun {status}."
+
+#: event_management/mail.py:55
+msgid "Your participation state changed"
+msgstr "Der Status Ihrer Teilnahme hat sich geändert"
+
+#: event_management/mail.py:65
+msgid "Participation was changed for your event"
+msgstr "Teilnahme an Ihrer Veranstaltung geändert"
+
+#: event_management/mail.py:67
+#, python-brace-format
+msgid ""
+"The participation of {user} for the shift {shift} was changed. The status is "
+"now {status}"
+msgstr ""
+"Die Teilnahme von {user} an der Schicht {shift} wurde geändert. Der Status "
+"ist jetzt {status}."
 
 #: event_management/models.py:26 event_management/models.py:42
 #: user_management/models.py:110 user_management/models.py:118
@@ -183,7 +223,7 @@ msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 
 #: event_management/templates/event_management/event_confirm_delete.html:7
 #: event_management/templates/event_management/event_confirm_delete.html:12
-#: event_management/templates/event_management/event_detail.html:34
+#: event_management/templates/event_management/event_detail.html:36
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -209,7 +249,7 @@ msgstr "Zurück"
 msgid "Delete"
 msgstr "Löschen"
 
-#: event_management/templates/event_management/event_detail.html:14
+#: event_management/templates/event_management/event_detail.html:13
 msgid ""
 "This event has not been saved! If you are done editing the event, you can "
 "save it."
@@ -217,7 +257,7 @@ msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Wenn Sie mit dem "
 "Bearbeiten der Veranstaltung fertig sind, können Sie sie speichern."
 
-#: event_management/templates/event_management/event_detail.html:15
+#: event_management/templates/event_management/event_detail.html:14
 #: event_management/templates/event_management/event_form.html:41
 #: event_management/templates/event_management/shift_form.html:43
 #: user_management/templates/user_management/group_form.html:33
@@ -225,20 +265,20 @@ msgstr ""
 msgid "Save"
 msgstr "Speichern"
 
-#: event_management/templates/event_management/event_detail.html:18
+#: event_management/templates/event_management/event_detail.html:20
 msgid "This event has not been saved! Please add a shift to save this event."
 msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
 "Schicht hinzu, um sie zu speichern."
 
-#: event_management/templates/event_management/event_detail.html:29
+#: event_management/templates/event_management/event_detail.html:31
 #: event_management/templates/event_management/event_form.html:8
 #: event_management/templates/event_management/event_form.html:29
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: event_management/templates/event_management/event_detail.html:49
-#: event_management/templates/event_management/shift_form.html:53
+#: event_management/templates/event_management/event_detail.html:51
+#: event_management/templates/event_management/shift_form.html:49
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
@@ -357,6 +397,10 @@ msgstr "Startseite"
 msgid "Welcome to JEP!"
 msgstr "Willkommen bei JEP!"
 
+#: event_management/templates/event_management/mails/new_event.html:5
+msgid "added"
+msgstr "hinzugefügt"
+
 #: event_management/templates/event_management/shift_confirm_delete.html:7
 #: event_management/templates/event_management/shift_confirm_delete.html:12
 msgid "Delete shift"
@@ -397,21 +441,21 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:119 event_management/views.py:171
+#: event_management/views.py:136 event_management/views.py:191
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:245
+#: event_management/views.py:265
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:264
+#: event_management/views.py:284
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:270
+#: event_management/views.py:290
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -528,7 +572,9 @@ msgstr "Die Passwörter stimmen nicht überein."
 
 #: user_management/forms.py:94
 msgid "Choose groups that this group can make events visible for."
-msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
+msgstr ""
+"Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
+"darf."
 
 #: user_management/models.py:48
 msgid "email address"
@@ -686,6 +732,21 @@ msgstr "E-Mail-Adresse"
 msgid "Information"
 msgstr "Information"
 
+#: user_management/utils.py:13
+#, python-brace-format
+msgid ""
+"Your password for {site} has been changed. If you didn't request this "
+"change, contact an administrator immediately."
+msgstr ""
+"Ihr Passwort für {site} wurde geändert. Wenn Sie diese Änderung nicht "
+"veranlasst haben, kontaktieren Sie umgehend einen Administrator."
+
+#: user_management/utils.py:17
+msgid "Your password has been changed"
+msgstr "Ihr Passwort wurde geändert"
+
+#: user_management/views.py:49
+msgid "Group successfully created."
 #: user_management/views.py:34
 msgid "User added successfully."
 msgstr "Benutzer erfolgreich hinzugefügt"
