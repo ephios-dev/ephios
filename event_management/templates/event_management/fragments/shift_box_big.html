@@ -27,7 +27,7 @@
                             <dt>{{ label }}</dt>
                             <dd> {{ value }}</dd>
                         {% endfor %}
-                        {% if event.active %}
+                        {% if event.active and not without_controls %}
                             <dt>{{ shift|shift_status:request.user }}</dt>
                             <dd>
                                 {% with can_sign_up=shift|can_sign_up:request.user %}
