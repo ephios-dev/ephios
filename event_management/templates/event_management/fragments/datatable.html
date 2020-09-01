@@ -16,6 +16,9 @@
                         "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/German.json"
                     },
                 {% endif %}
+            {% if order_column and order_direction %}
+                "order": [[ {{ order_column }}, "{{ order_direction }}" ]]
+            {% endif %}
             });
         });
     </script>
