@@ -263,11 +263,9 @@ class BaseSignupMethod:
             },
             "user_can_decline_confirmed": {
                 "formfield": forms.BooleanField(
-                    label=_("Self-decline"),
+                    label=_("Confirmed users can decline by themselves"),
                     required=False,
-                    help_text=_(
-                        "If enabled, confirmed users can decline by themselves if the signup timeframe hasn't ended."
-                    ),
+                    help_text=_("only if the signup timeframe has not ended"),
                 ),
                 "default": False,
                 "publish_with_label": _("Can decline after confirmation"),
@@ -332,9 +330,7 @@ class BaseSignupView(View):
                 self.method.perform_signup(request.user.as_participator())
                 messages.success(
                     request,
-                    _("You have successfully signed up for shift {shift}.").format(
-                        shift=self.shift
-                    ),
+                    _("You have successfully signed up for {shift}.").format(shift=self.shift),
                 )
         except ParticipationError as errors:
             for error in errors:
