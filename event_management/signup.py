@@ -10,11 +10,10 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.dispatch import receiver
 from django import forms
 from django.template import Template, Context
 from django.template.defaultfilters import yesno
-from django.utils import timezone, dateparse, formats
+from django.utils import timezone, formats
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
@@ -168,7 +167,13 @@ class BaseSignupMethod:
     slug = "abstract"
     verbose_name = "abstract"
     description = """"""
+
+    # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
+    signup_success_message = _("You have successfully signed up for {shift}.")
+    signup_error_message = _("Signing up failed: {error}")
+    decline_success_message = _("You have successfully declined {shift}.")
+    decline_error_message = _("Declining failed: {error}")
 
     def __init__(self, shift):
         self.shift = shift
@@ -285,7 +290,7 @@ class BaseSignupMethod:
             and (value := getattr(self.configuration, key))
         }
 
-    def render_shift_state(self):
+    def render_shift_state(self, request):
         """
         Render html that will be shown in the shift info box.
         Use it to inform about the current state of the shift and participations.
@@ -329,12 +334,11 @@ class BaseSignupView(View):
             with transaction.atomic():
                 self.method.perform_signup(request.user.as_participator())
                 messages.success(
-                    request,
-                    _("You have successfully signed up for {shift}.").format(shift=self.shift),
+                    request, self.method.signup_success_message.format(shift=self.shift),
                 )
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, _("Signing up failed: ") + str(error))
+                messages.error(request, self.method.signup_error_message.format(error=error))
         finally:
             return redirect(self.shift.event.get_absolute_url())
 
@@ -342,11 +346,9 @@ class BaseSignupView(View):
         try:
             with transaction.atomic():
                 self.method.perform_decline(request.user.as_participator())
-                messages.info(
-                    request, _("You have successfully declined {shift}.").format(shift=self.shift)
-                )
+                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, _("Declining failed: ") + str(error))
+                messages.error(request, self.method.decline_error_message.format(error=error))
         finally:
             return redirect(self.shift.event.get_absolute_url())

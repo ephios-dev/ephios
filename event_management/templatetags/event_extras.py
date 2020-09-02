@@ -27,6 +27,11 @@ def can_sign_up(shift, user):
     return shift.signup_method.can_sign_up(user.as_participator())
 
 
+@register.filter(name="render_shift_state")
+def can_sign_up(shift, request):
+    return shift.signup_method.render_shift_state(request)
+
+
 @register.filter(name="signup_errors")
 def signup_errors(shift, user):
     return shift.signup_method.get_signup_errors(user.as_participator())

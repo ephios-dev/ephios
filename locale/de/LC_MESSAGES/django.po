@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-02 23:14+0200\n"
+"POT-Creation-Date: 2020-09-02 23:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,31 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: contrib/signup.py:30
+#: contrib/signup/confirm.py:18
+msgid "Request and confirm"
+msgstr "Anfragen und bestätigen"
+
+#: contrib/signup/confirm.py:19
+#| msgid "requested"
+msgid "Request"
+msgstr "Anfragen"
+
+#: contrib/signup/confirm.py:20
+msgid ""
+"This method lets people request participation. Responsibles can then confirm "
+"the participation."
+msgstr ""
+
+#: contrib/signup/instant.py:30
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
-#: contrib/signup.py:37
+#: contrib/signup/instant.py:37
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: contrib/signup.py:43
+#: contrib/signup/instant.py:43
 msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
 
-#: contrib/signup.py:53
+#: contrib/signup/instant.py:53
 msgid "Instant Confirmation"
 msgstr "Direkte Bestätigung"
 
-#: contrib/signup.py:54
+#: contrib/signup/instant.py:54
 msgid "This method instantly confirms a signup."
 msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 
-#: contrib/signup.py:67
+#: contrib/signup/instant.py:67
 msgid "The maximum number of participants is reached."
 msgstr "Die Maximalzahl an Teilnehmenden ist erreicht."
 
-#: contrib/signup.py:75
+#: contrib/signup/instant.py:75
 msgid "Maximum number of participants"
 msgstr "Maximalanzahl Teilnehmende"
 
@@ -169,7 +184,7 @@ msgstr "Schicht"
 
 #: event_management/models.py:132
 msgid "requested"
-msgstr "angemeldet"
+msgstr "angefragt"
 
 #: event_management/models.py:133
 msgid "confirmed"
@@ -199,7 +214,7 @@ msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 #: event_management/signup.py:117
 #, python-brace-format
 msgid "You have already requested your participation for {shift}"
-msgstr "Sie haben sich bereits eine Teilnahme für {shift} angefragt."
+msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt."
 
 #: event_management/signup.py:123
 #, python-brace-format
@@ -243,45 +258,37 @@ msgid "Signup until"
 msgstr "Anmelden bis"
 
 #: event_management/signup.py:266
-#| msgid ""
-#| "If enabled, confirmed users can decline by themselves if the signup "
-#| "timeframe hasn't ended."
 msgid "Confirmed users can decline by themselves"
-msgstr ""
-"Bestätigte Nutzer können selbstständig absagen."
+msgstr "Bestätigte Nutzer können selbstständig absagen."
 
-#: event_management/signup.py:269
-#| msgid ""
-#| "If enabled, confirmed users can decline by themselves if the signup "
-#| "timeframe hasn't ended."
+#: event_management/signup.py:268
 msgid "only if the signup timeframe has not ended"
-msgstr ""
-"nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
+msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: event_management/signup.py:273
+#: event_management/signup.py:271
 msgid "Can decline after confirmation"
 msgstr "Kann nach Bestätigung absagen"
 
-#: event_management/signup.py:325
+#: event_management/signup.py:323
 #, python-brace-format
 msgid "'{choice}' is not a valid signup action."
 msgstr "'{choice}' ist keine gültige Anmeldeaktion."
 
-#: event_management/signup.py:335
+#: event_management/signup.py:333
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: event_management/signup.py:339
+#: event_management/signup.py:337
 msgid "Signing up failed: "
 msgstr "Anmeldung fehlgeschlagen: "
 
-#: event_management/signup.py:348
+#: event_management/signup.py:346
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: event_management/signup.py:352
+#: event_management/signup.py:350
 msgid "Declining failed: "
 msgstr "Absagen fehlgeschlagen: "
 
