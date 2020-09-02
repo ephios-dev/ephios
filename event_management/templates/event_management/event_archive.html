@@ -3,17 +3,13 @@
 {% load bootstrap4 %}
 
 {% block javascript %}
-    {% include "event_management/fragments/datatable.html" with order_column=2 order_direction="asc" %}
+    {% include "event_management/fragments/datatable.html" with order_column=2 order_direction="desc" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Events" %}</h1>
+        <h1>{% trans "Past events" %}</h1>
     </div>
-    {% if perms.event_management.add_event %}
-        <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
-                class="fa fa-plus"></span> {% trans "Add event" %}</a>
-    {% endif %}
     <table id="event_table" class="table table-striped display datatable">
         <thead>
         <tr>

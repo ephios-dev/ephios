@@ -59,6 +59,7 @@ class Event(Model):
     class Meta:
         verbose_name = _("event")
         verbose_name_plural = _("events")
+        permissions = [("view_past_event", _("Can view events in the past"))]
 
     @property
     def start_time(self):

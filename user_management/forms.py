@@ -93,12 +93,19 @@ class GroupForm(ModelForm):
         help_text=_("Choose groups that this group can make events visible for."),
         widget=Select2MultipleWidget,
     )
+    can_view_past_event = BooleanField(required=False, label=_("Can view past events"))
     can_add_event = BooleanField(required=False)
     users = ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
 
-    field_order = ["name", "users", "can_add_event", "publish_event_for_group"]
+    field_order = [
+        "name",
+        "users",
+        "can_view_past_event",
+        "can_add_event",
+        "publish_event_for_group",
+    ]
 
     class Meta:
         model = Group
@@ -108,6 +115,11 @@ class GroupForm(ModelForm):
         group = super().save(commit)
 
         group.user_set.set(self.cleaned_data["users"])
+
+        if self.cleaned_data["can_view_past_event"]:
+            assign_perm("event_management.view_past_event", group)
+        else:
+            remove_perm("event_management.view_past_event", group)
 
         if self.cleaned_data["can_add_event"]:
             assign_perm("event_management.add_event", group)
