@@ -14,6 +14,7 @@ from django.db.models import (
     TextField,
     Manager,
 )
+from django.utils.functional import cached_property
 from polymorphic.models import PolymorphicModel
 from django.utils import dateformat, formats
 from jsonfallback.fields import FallbackJSONField
@@ -93,7 +94,7 @@ class Shift(Model):
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")
 
-    @property
+    @cached_property
     def signup_method(self):
         from event_management.signup import signup_method_from_slug
 
