@@ -1,6 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from django.core import mail
+from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
 from guardian.shortcuts import get_users_with_perms, get_objects_for_group
@@ -33,6 +37,28 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         messages.success(self.request, _("User added successfully."))
         return reverse("user_management:user_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        userprofile = self.object
+        self.send_mail(userprofile)
+        return response
+
+    def send_mail(self, userprofile):
+        messages = []
+        subject = _("Welcome to JEP!")
+        text_content = _(
+            "You're receiving this email because you have to set a password for your user account at JEP.\n"
+            "Please go to the following page and choose a new password: {reset_link}\n"
+            "Your username is your email address: {email}\n"
+            "Thanks for using our site!"
+        ).format(reset_link=reset_link, email=userprofile.email)
+        html_content = render_to_string("registration/password_reset_email.html", {})
+        message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
+
+        mail.get_connection().send_messages(messages)
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
