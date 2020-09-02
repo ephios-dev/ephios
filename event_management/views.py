@@ -280,19 +280,15 @@ class ShiftDeleteView(PermissionRequiredMixin, DeleteView):
         return self.object.event.get_absolute_url()
 
 
-class ShiftSignupView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
-    permission_required = "event_management.view_event"
+class SignupMethodViewMixin(SingleObjectMixin):
     model = Shift
+
+    def dispatch(self, request, *args, **kwargs):
+        return self.get_object().signup_method.signup_view(request, *args, **kwargs)
+
+
+class ShiftSignupView(CustomPermissionRequiredMixin, SignupMethodViewMixin, View):
+    permission_required = "event_management.view_event"
 
     def get_permission_object(self):
         return self.get_object().event
-
-    def get(self, request, *args, **kwargs):
-        shift = get_object_or_404(Shift, id=self.kwargs["pk"])
-        return shift.signup_method.signup_view(request, *args, **kwargs)
-
-
-class ShiftDeclineView(View):
-    def get(self, *args, **kwargs):
-        shift = get_object_or_404(Shift, id=self.kwargs["pk"])
-        return shift.signup_method.decline_view(self.request)
