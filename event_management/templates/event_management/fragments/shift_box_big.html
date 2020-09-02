@@ -28,7 +28,7 @@
                             <dd> {{ value }}</dd>
                         {% endfor %}
                         {% if event.active and not without_controls %}
-                            <form method="POST" class="form" action="{% url "event_management:shift_register" shift.pk %}">
+                            <form method="POST" class="form" action="{% url "event_management:shift_action" shift.pk %}">
                                 {% csrf_token %}
                                 <dt>{{ shift|shift_status:request.user }}</dt>
                                 <dd>
@@ -45,7 +45,7 @@
                                                     {% if not can_sign_up %}
                                                     style="pointer-events: none;" disabled
                                                     {% endif %}>
-                                                {% trans "Register" %}
+                                                {{ shift.signup_method.registration_button_text }}
                                             </button>
                                         </span>
                                     {% endwith %}

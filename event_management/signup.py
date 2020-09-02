@@ -13,6 +13,7 @@ from django.db import transaction
 from django.dispatch import receiver
 from django import forms
 from django.template import Template, Context
+from django.template.defaultfilters import yesno
 from django.utils import timezone, dateparse, formats
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -40,7 +41,7 @@ def signup_method_from_slug(slug, shift=None):
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
-@dataclass
+@dataclass(frozen=True)
 class AbstractParticipator:
     first_name: str
     last_name: str
@@ -80,7 +81,7 @@ class AbstractParticipator:
         return set(qualifications) <= self.collect_all_qualifications()
 
 
-@dataclass
+@dataclass(frozen=True)
 class LocalUserParticipator(AbstractParticipator):
     user: get_user_model()
 
@@ -119,7 +120,7 @@ def check_participation_state_for_signup(method, participator):
             )
         elif participation.state == AbstractParticipation.CONFIRMED:
             return ParticipationError(
-                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
+                _("You are already signed up for {shift}.").format(shift=method.shift)
             )
         elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
             return ParticipationError(
@@ -130,7 +131,10 @@ def check_participation_state_for_signup(method, participator):
 def check_participation_state_for_decline(method, participator):
     participation = participator.participation_for(method.shift)
     if participation is not None:
-        if participation.state == AbstractParticipation.CONFIRMED:
+        if (
+            participation.state == AbstractParticipation.CONFIRMED
+            and not method.configuration.user_can_decline_confirmed
+        ):
             return ParticipationError(
                 _("You are bindingly signed up for {shift}.").format(shift=method.shift)
             )
@@ -200,9 +204,9 @@ class BaseSignupMethod:
             check_event_is_active,
             check_participation_state_for_decline,
             check_inside_signup_timeframe,
-            check_participator_age,
         ]
 
+    @functools.lru_cache()
     def get_signup_errors(self, participator) -> List[ParticipationError]:
         return [
             error
@@ -210,6 +214,7 @@ class BaseSignupMethod:
             if (error := checker(self, participator)) is not None
         ]
 
+    @functools.lru_cache()
     def get_decline_errors(self, participator):
         return [
             error
@@ -256,6 +261,18 @@ class BaseSignupMethod:
                 "publish_with_label": _("Signup until"),
                 "format": functools.partial(formats.date_format, format="SHORT_DATETIME_FORMAT"),
             },
+            "user_can_decline_confirmed": {
+                "formfield": forms.BooleanField(
+                    label=_("Self-decline"),
+                    required=False,
+                    help_text=_(
+                        "If enabled, confirmed users can decline by themselves if the signup timeframe hasn't ended."
+                    ),
+                ),
+                "default": False,
+                "publish_with_label": _("Can decline after confirmation"),
+                "format": yesno,
+            },
         }
 
     def get_signup_info(self):
@@ -291,11 +308,6 @@ class BaseSignupMethod:
             template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
         ).render(Context({"form": form}))
         return template
-
-    # menschenlesbare Füllstandsangabe (z.B. 3/8, 3/, 0/8 (4 interessiert)) vlt irgendwie mit weiteren color-coded Status wie [“Egal”, Helfers needed", “genug Interesse”, “voll besetzt”]
-
-    # HTML-Darstellung der Helfer (defaults to an unorderd list of Helfers)
-    # Helferlisten-PDF-content (defautls to an unorderd list of Helfers)
 
 
 class BaseSignupView(View):

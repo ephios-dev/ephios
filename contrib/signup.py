@@ -20,20 +20,13 @@ class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):
                 pk__in=self.configuration.required_qualification_ids
             )
 
-    def get_signup_errors(self, participator):
-        errors = super().get_signup_errors(participator)
-        if (error := self.check_qualification(participator)) is not None:
-            errors.append(error)
-        return errors
+    @property
+    def signup_checkers(self):
+        return super().signup_checkers + [self.check_qualification]
 
-    def get_decline_errors(self, participator):
-        errors = super().get_decline_errors(participator)
-        if (error := self.check_qualification(participator)) is not None:
-            errors.append(error)
-        return errors
-
-    def check_qualification(self, participator):
-        if not participator.has_qualifications(self.configuration.required_qualifications):
+    @staticmethod
+    def check_qualification(method, participator):
+        if not participator.has_qualifications(method.configuration.required_qualifications):
             return ParticipationError(_("You are not qualified."))
 
     def get_configuration_fields(self):
@@ -60,18 +53,17 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
     verbose_name = _("Instant Confirmation")
     description = _("""This method instantly confirms a signup.""")
 
-    def get_signup_errors(self, participator):
-        errors = super().get_signup_errors(participator)
-        if (error := self.check_maximum_number_of_participants()) is not None:
-            errors.append(error)
-        return errors
+    @property
+    def signup_checkers(self):
+        return super().signup_checkers + [self.check_maximum_number_of_participants]
 
-    def check_maximum_number_of_participants(self):
-        if self.configuration.maximum_number_of_participants is not None:
+    @staticmethod
+    def check_maximum_number_of_participants(method, participator):
+        if method.configuration.maximum_number_of_participants is not None:
             current_count = AbstractParticipation.objects.filter(
-                shift=self.shift, state=AbstractParticipation.CONFIRMED
+                shift=method.shift, state=AbstractParticipation.CONFIRMED
             ).count()
-            if current_count >= self.configuration.maximum_number_of_participants:
+            if current_count >= method.configuration.maximum_number_of_participants:
                 return ParticipationError(_("The maximum number of participants is reached."))
 
     def get_configuration_fields(self):
