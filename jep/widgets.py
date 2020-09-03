@@ -22,12 +22,12 @@ class CustomSplitDateTimeWidget(MultiWidget):
     supports_microseconds = False
     # template_name = "django/forms/widgets/splitdatetime.html"
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         widgets = (
-            CustomDateInput(),
+            CustomDateInput(format="%Y-%m-%d"),
             CustomTimeInput(),
         )
-        super().__init__(widgets)
+        super().__init__(widgets, *args, **kwargs)
 
     def decompress(self, value):
         if value:
