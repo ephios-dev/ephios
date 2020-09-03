@@ -1,7 +1,7 @@
 import functools
 import json
 from argparse import Namespace
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from typing import List
 
@@ -44,7 +44,7 @@ def signup_method_from_slug(slug, shift=None):
 class AbstractParticipator:
     first_name: str
     last_name: str
-    qualifications: QuerySet
+    qualifications: QuerySet = field(hash=False)
     date_of_birth: date
 
     @property

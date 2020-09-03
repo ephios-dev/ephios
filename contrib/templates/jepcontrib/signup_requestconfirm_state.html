@@ -32,7 +32,8 @@
     </div>
 </div>
 
-
+{% if disposition_url %}
 <div class="row float-right">
-    <a href="#" class="btn btn-outline-info"><span class="fas fa-hand-point-right"></span> {% trans "Disposition" %}</a>
+    <a href="{{ disposition_url }}" class="btn btn-outline-info"><span class="fas fa-hand-point-right"></span> {% trans "Disposition" %}</a>
 </div>
+{% endif %}

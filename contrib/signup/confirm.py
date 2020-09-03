@@ -1,16 +1,59 @@
+from bootstrap4.widgets import RadioSelectButtonGroup
 from django import forms
 from django.template.loader import get_template
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import FormView, TemplateView
+from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import Select2MultipleWidget
 
 from contrib.signup.instant import SimpleQualificationsRequiredSignupMethod
-from event_management.models import AbstractParticipation
+from event_management.models import AbstractParticipation, Shift
 from event_management.signup import (
     BaseSignupMethod,
     register_signup_methods,
     ParticipationError,
+    BaseSignupView,
+    AbstractParticipator,
 )
+from jep.permissions import CustomPermissionRequiredMixin
 from user_management.models import Qualification
+
+
+class RequestConfirmView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    model = Shift
+    permission_required = "event_management.change_event"
+    template_name = "jepcontrib/signup_requestconfirm_disposition.html"
+
+    def get_permission_object(self):
+        self.object: Shift = self.get_object()
+        return self.object.event
+
+    def _get_participations_by_hash(self):
+        for participation in self.object.get_participations(
+            with_state_in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
+        ):
+            yield str(hash(participation.participator)), participation
+
+    def get_form(self, form_class=None):
+        form = forms.Form(self.request.POST or None)
+        for key, participation in self._get_participations_by_hash():
+            form.fields[key] = forms.ChoiceField(
+                label=f"{participation.participator!s}: ⁣",
+                choices=AbstractParticipation.STATE_CHOICES,
+                widget=RadioSelectButtonGroup,
+                initial=participation.state,
+            )
+        return form
+
+    def form_valid(self, form):
+        for key, participation in self._get_participations_by_hash():
+            participation.state = form.cleaned_data[key]
+            participation.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.event.get_absolute_url()
 
 
 class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
@@ -38,6 +81,13 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
                 "confirmed_participators": (
                     p.participator
                     for p in participations.filter(state=AbstractParticipation.CONFIRMED)
+                ),
+                "disposition_url": (
+                    reverse(
+                        "contrib:shift_disposition_requestconfirm", kwargs=dict(pk=self.shift.pk)
+                    )
+                    if request.user.has_perm("event_management.change_event", obj=self.shift)
+                    else None
                 ),
             }
         )
