@@ -24,6 +24,7 @@ from django.views import View
 
 from contrib.json import CustomJSONDecoder, CustomJSONEncoder
 from event_management.models import LocalParticipation, AbstractParticipation, Shift
+from jep.widgets import CustomSplitDateTimeWidget
 from user_management.models import Qualification
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
@@ -256,7 +257,9 @@ class BaseSignupMethod:
                 "publish_with_label": _("Minimum age"),
             },
             "signup_until": {
-                "formfield": forms.SplitDateTimeField(required=False),
+                "formfield": forms.SplitDateTimeField(
+                    required=False, widget=CustomSplitDateTimeWidget
+                ),
                 "default": None,
                 "publish_with_label": _("Signup until"),
                 "format": functools.partial(formats.date_format, format="SHORT_DATETIME_FORMAT"),
