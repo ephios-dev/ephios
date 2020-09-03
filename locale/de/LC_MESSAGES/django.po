@@ -32,19 +32,19 @@ msgstr "Erforderliche Qualifikation"
 
 #: contrib/signup.py:53
 msgid "Instant Confirmation"
-msgstr "Direkte Bestätigung"
+msgstr "Sofortige Bestätigung"
 
 #: contrib/signup.py:54
 msgid "This method instantly confirms a signup."
-msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
+msgstr "Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie angefordert wurde."
 
 #: contrib/signup.py:67
 msgid "The maximum number of participants is reached."
-msgstr "Die Maximalzahl an Teilnehmenden ist erreicht."
+msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
 #: contrib/signup.py:75
 msgid "Maximum number of participants"
-msgstr "Maximalanzahl Teilnehmende"
+msgstr "Maximale Anzahl Teilnehmende"
 
 #: contrib/templates/jepcontrib/signup_instant_state.html:4
 msgid "Signed up"
@@ -73,7 +73,7 @@ msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 #: event_management/mail.py:25
 #, python-brace-format
 msgid "New {type}: {title}"
-msgstr "{type}: {title}"
+msgstr "{type} hinzugefügt: {title}"
 
 #: event_management/mail.py:27
 #, python-brace-format
@@ -81,7 +81,7 @@ msgid ""
 "A new {type} ({title}) has been added. \n"
 " You can view it here: {link}"
 msgstr ""
-"{type} {title} wurde angelegt. Sie können die Veranstaltung hier ansehen: "
+"{type} {title} wurde hinzugefügt. Sie können die Veranstaltung hier ansehen: "
 "{link}"
 
 #: event_management/mail.py:50
