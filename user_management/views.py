@@ -105,6 +105,9 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["initial"] = {
             "users": self.object.user_set.all(),
+            "can_view_past_event": self.object.permissions.filter(
+                codename="view_past_event"
+            ).exists(),
             "can_add_event": self.object.permissions.filter(codename="add_event").exists(),
             "publish_event_for_group": get_objects_for_group(
                 self.object, "publish_event_for_group", klass=Group

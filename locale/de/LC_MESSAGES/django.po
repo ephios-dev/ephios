@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-02 00:02+0200\n"
+"POT-Creation-Date: 2020-09-02 23:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,33 +18,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: contrib/signup.py:37
+#: contrib/signup.py:30
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
-#: contrib/signup.py:44
+#: contrib/signup.py:37
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: contrib/signup.py:49
+#: contrib/signup.py:43
 msgid "Required Qualification"
-msgstr "Erforderliche Qualifikationen"
+msgstr "Erforderliche Qualifikation"
 
-#: contrib/signup.py:59
+#: contrib/signup.py:53
 msgid "Instant Confirmation"
 msgstr "Direkte Bestätigung"
 
-#: contrib/signup.py:60
+#: contrib/signup.py:54
 msgid "This method instantly confirms a signup."
 msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 
-#: contrib/signup.py:74
+#: contrib/signup.py:67
 msgid "The maximum number of participants is reached."
-msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
+msgstr "Die Maximalzahl an Teilnehmenden ist erreicht."
 
-#: contrib/signup.py:82
+#: contrib/signup.py:75
 msgid "Maximum number of participants"
-msgstr "Maximale Teilnehmendenzahl"
+msgstr "Maximalanzahl Teilnehmende"
 
 #: contrib/templates/jepcontrib/signup_instant_state.html:4
 msgid "Signed up"
@@ -110,88 +110,103 @@ msgstr ""
 "Die Teilnahme von {user} an der Schicht {shift} wurde geändert. Der Status "
 "ist jetzt {status}."
 
-#: event_management/models.py:32 event_management/models.py:48
+#: event_management/models.py:33 event_management/models.py:49
 #: user_management/models.py:125 user_management/models.py:134
 msgid "title"
 msgstr "Titel"
 
-#: event_management/models.py:33
+#: event_management/models.py:34
 msgid "can grant qualification"
 msgstr "Kann Qualifikation gewähren"
 
-#: event_management/models.py:36 event_management/models.py:51
+#: event_management/models.py:37 event_management/models.py:52
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
-#: event_management/models.py:37
+#: event_management/models.py:38
 msgid "event types"
 msgstr "Veranstaltungstypen"
 
-#: event_management/models.py:49
+#: event_management/models.py:50
 msgid "description"
 msgstr "Beschreibung"
 
-#: event_management/models.py:50
+#: event_management/models.py:51
 msgid "location"
 msgstr "Ort"
 
-#: event_management/models.py:59
+#: event_management/models.py:60
 msgid "event"
 msgstr "Veranstaltung"
 
-#: event_management/models.py:60
+#: event_management/models.py:61
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: event_management/models.py:83 event_management/models.py:93
+#: event_management/models.py:84 event_management/models.py:94
 msgid "shifts"
 msgstr "Schichten"
 
-#: event_management/models.py:85
+#: event_management/models.py:86
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: event_management/models.py:86
+#: event_management/models.py:87
 msgid "start time"
 msgstr "Beginn"
 
-#: event_management/models.py:87
+#: event_management/models.py:88
 msgid "end time"
 msgstr "Ende"
 
-#: event_management/models.py:88
+#: event_management/models.py:89
 msgid "signup method"
 msgstr "Anmeldeverfahren"
 
-#: event_management/models.py:92 event_management/models.py:137
+#: event_management/models.py:93 event_management/models.py:138
 msgid "shift"
 msgstr "Schicht"
 
-#: event_management/models.py:131
+#: event_management/models.py:132
 msgid "requested"
 msgstr "angemeldet"
 
-#: event_management/models.py:132
+#: event_management/models.py:133
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: event_management/models.py:133
+#: event_management/models.py:134
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: event_management/models.py:134
+#: event_management/models.py:135
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: event_management/models.py:138
+#: event_management/models.py:139
 msgid "state"
 msgstr "Status"
 
-#: event_management/signup.py:38
+#: event_management/signup.py:41
 #, python-brace-format
 msgid "Signup Method '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
+#: event_management/signup.py:109
+msgid "The event is not active."
+msgstr "Die Veranstaltung {title} ist nicht aktiviert."
+
+#: event_management/signup.py:117
+#, python-brace-format
+msgid "You have already requested your participation for {shift}"
+msgstr "Sie haben sich bereits eine Teilnahme für {shift} angefragt."
+
+#: event_management/signup.py:123
+#, python-brace-format
+msgid "You are already signed up for {shift}."
+msgstr "Sie sind bereits für {shift} eingeteilt."
+
+#: event_management/signup.py:127 event_management/signup.py:143
 #: event_management/signup.py:108
 msgid "Sign up"
 msgstr "Anmelden"
@@ -202,13 +217,23 @@ msgstr "Die Veranstaltung ist nicht aktiv."
 
 #: event_management/signup.py:145
 #, python-brace-format
+msgid "You are rejected from {shift}."
+msgstr "Sie wurden für {shift} abgelehnt."
+
+#: event_management/signup.py:145
+#, python-brace-format
 msgid "You have already requested your participation for {shift}"
 msgstr "Sie haben sich bereits für {shift} angemeldet."
 
-#: event_management/signup.py:151 event_management/signup.py:163
+#: event_management/signup.py:139
 #, python-brace-format
 msgid "You are bindingly signed up for {shift}."
 msgstr "Sie sind verbindlich für {shift} eingeteilt."
+
+#: event_management/signup.py:147
+#, python-brace-format
+msgid "You have already declined participating in {shift}."
+msgstr "Sie haben bereits für {shift} abgesagt."
 
 #: event_management/signup.py:155 event_management/signup.py:167
 #, python-brace-format
@@ -220,32 +245,69 @@ msgstr "Sie wurden für {shift} abgelehnt."
 msgid "You have already declined participating in {shift}."
 msgstr "Sie haben bereits für {shift} abgesagt."
 
-#: event_management/signup.py:181
+#: event_management/signup.py:156
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: event_management/signup.py:187
+#: event_management/signup.py:163
 #, python-brace-format
 msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
-#: event_management/signup.py:207
-#, python-brace-format
-msgid "You have successfully signed up for shift {shift}."
-msgstr "Sie haben sich erfolgreich für die Schicht {shift} angemeldet."
+#: event_management/signup.py:171
+msgid "Sign up"
+msgstr "Anmelden"
 
-#: event_management/signup.py:213
-msgid "Signup failed: "
+#: event_management/signup.py:256
+msgid "Minimum age"
+msgstr "Mindestalter"
+
+#: event_management/signup.py:261
+msgid "Signup until"
+msgstr "Anmelden bis"
+
+#: event_management/signup.py:266
+#| msgid ""
+#| "If enabled, confirmed users can decline by themselves if the signup "
+#| "timeframe hasn't ended."
+msgid "Confirmed users can decline by themselves"
+msgstr ""
+"Bestätigte Nutzer können selbstständig absagen."
+
+#: event_management/signup.py:269
+#| msgid ""
+#| "If enabled, confirmed users can decline by themselves if the signup "
+#| "timeframe hasn't ended."
+msgid "only if the signup timeframe has not ended"
+msgstr ""
+"nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
+
+#: event_management/signup.py:273
+msgid "Can decline after confirmation"
+msgstr "Kann nach Bestätigung absagen"
+
+#: event_management/signup.py:325
+#, python-brace-format
+msgid "'{choice}' is not a valid signup action."
+msgstr "'{choice}' ist keine gültige Anmeldeaktion."
+
+#: event_management/signup.py:335
+#, python-brace-format
+msgid "You have successfully signed up for {shift}."
+msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
+
+#: event_management/signup.py:339
+msgid "Signing up failed: "
 msgstr "Anmeldung fehlgeschlagen: "
 
-#: event_management/signup.py:245
+#: event_management/signup.py:348
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: event_management/signup.py:249
+#: event_management/signup.py:352
 msgid "Declining failed: "
-msgstr "Absage fehlgeschlagen: "
+msgstr "Absagen fehlgeschlagen: "
 
 #: event_management/signup.py:257
 msgid "Minimum age"
@@ -277,7 +339,7 @@ msgstr "Zurück"
 #: event_management/templates/event_management/fragments/shift_box_big.html:15
 #: event_management/templates/event_management/fragments/shift_box_small.html:12
 #: event_management/templates/event_management/shift_confirm_delete.html:18
-#: event_management/templates/event_management/shift_form.html:40
+#: event_management/templates/event_management/shift_form.html:36
 #: user_management/templates/user_management/group_confirm_delete.html:18
 #: user_management/templates/user_management/group_list.html:53
 msgid "Delete"
@@ -293,9 +355,8 @@ msgstr ""
 
 #: event_management/templates/event_management/event_detail.html:14
 #: event_management/templates/event_management/event_form.html:37
-#: event_management/templates/event_management/shift_form.html:43
-#: user_management/templates/user_management/group_form.html:29
-#: user_management/templates/user_management/userprofile_form.html:24
+#: event_management/templates/event_management/shift_form.html:39
+#: user_management/templates/user_management/group_form.html:24
 msgid "Save"
 msgstr "Speichern"
 
@@ -312,7 +373,7 @@ msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
 #: event_management/templates/event_management/event_detail.html:52
-#: event_management/templates/event_management/shift_form.html:53
+#: event_management/templates/event_management/shift_form.html:49
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
@@ -331,8 +392,7 @@ msgid "View"
 msgstr "Anzeigen"
 
 #: event_management/templates/event_management/event_form.html:39
-#: user_management/templates/user_management/group_form.html:28
-#: user_management/templates/user_management/userprofile_form.html:23
+#: user_management/templates/user_management/group_form.html:23
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -340,47 +400,46 @@ msgstr "Abbrechen"
 msgid "Next"
 msgstr "Weiter"
 
-#: event_management/templates/event_management/event_list.html:6
-#: event_management/templates/event_management/event_list.html:15
+#: event_management/templates/event_management/event_list.html:11
 #: templates/base.html:48
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: event_management/templates/event_management/event_list.html:19
+#: event_management/templates/event_management/event_list.html:15
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: event_management/templates/event_management/event_list.html:24
+#: event_management/templates/event_management/event_list.html:20
 msgid "Title"
 msgstr "Titel"
 
-#: event_management/templates/event_management/event_list.html:25
-#: event_management/templates/event_management/shift_form.html:68
+#: event_management/templates/event_management/event_list.html:21
+#: event_management/templates/event_management/shift_form.html:64
 msgid "Location"
 msgstr "Ort"
 
-#: event_management/templates/event_management/event_list.html:26
+#: event_management/templates/event_management/event_list.html:22
 #: event_management/templates/event_management/fragments/shift_box_small.html:17
 msgid "Date"
 msgstr "Datum"
 
-#: event_management/templates/event_management/event_list.html:27
+#: event_management/templates/event_management/event_list.html:23
 msgid "until"
 msgstr "bis"
 
-#: event_management/templates/event_management/event_list.html:28
+#: event_management/templates/event_management/event_list.html:24
 #: user_management/templates/user_management/group_list.html:42
-#: user_management/templates/user_management/userprofile_list.html:28
+#: user_management/templates/user_management/userprofile_list.html:20
 msgid "Action"
 msgstr "Aktion"
 
-#: event_management/templates/event_management/event_list.html:39
+#: event_management/templates/event_management/event_list.html:35
 msgid "Show"
 msgstr "Anzeigen"
 
 #: event_management/templates/event_management/fragments/shift_box_big.html:12
 #: event_management/templates/event_management/fragments/shift_box_small.html:9
-#: event_management/templates/event_management/shift_form.html:64
+#: event_management/templates/event_management/shift_form.html:60
 #: user_management/templates/user_management/group_list.html:51
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -390,20 +449,19 @@ msgstr "Bearbeiten"
 msgid "Meeting time"
 msgstr "Treffpunkt"
 
-#: event_management/templates/event_management/fragments/shift_box_big.html:36
-#: event_management/templates/event_management/fragments/shift_box_big.html:46
-msgid "Register"
-msgstr "Anmelden"
-
-#: event_management/templates/event_management/fragments/shift_box_big.html:53
-#: event_management/templates/event_management/fragments/shift_box_big.html:63
+#: event_management/templates/event_management/fragments/shift_box_big.html:65
 msgid "Decline"
 msgstr "Absagen"
 
 #: event_management/templates/event_management/fragments/shift_box_small.html:6
-#: event_management/templates/event_management/shift_form.html:78
+#: event_management/templates/event_management/shift_form.html:74
 msgid "Shift"
 msgstr "Schicht"
+
+#: event_management/templates/event_management/fragments/shift_box_big.html:36
+#: event_management/templates/event_management/fragments/shift_box_big.html:46
+msgid "Register"
+msgstr "Anmelden"
 
 #: event_management/templates/event_management/fragments/shift_box_small.html:19
 msgid "Start time"
@@ -440,8 +498,12 @@ msgstr "Schicht löschen"
 msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
 msgstr "Möchten Sie die Schicht \"%(shift)s\" wirklich löschen?"
 
-#: event_management/templates/event_management/shift_form.html:8
-#: event_management/templates/event_management/shift_form.html:17
+#: event_management/templates/event_management/shift_form.html:7
+#: event_management/templates/event_management/shift_form.html:15
+msgid "Create new shift for event"
+msgstr "Schicht hinzufügen"
+
+#: event_management/templates/event_management/shift_form.html:13
 msgid "Edit shift"
 msgstr "Schicht bearbeiten"
 
@@ -454,19 +516,19 @@ msgstr "Schicht hinzufügen"
 msgid "Back to event"
 msgstr "Zurück zur Veranstaltung"
 
-#: event_management/templates/event_management/shift_form.html:47
+#: event_management/templates/event_management/shift_form.html:43
 msgid "Discard event"
 msgstr "Veranstaltung verwerfen"
 
-#: event_management/templates/event_management/shift_form.html:49
+#: event_management/templates/event_management/shift_form.html:45
 msgid "Save event"
 msgstr "Veranstaltung speichern"
 
-#: event_management/templates/event_management/shift_form.html:67
+#: event_management/templates/event_management/shift_form.html:63
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: event_management/templates/event_management/shift_form.html:79
+#: event_management/templates/event_management/shift_form.html:75
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
@@ -512,9 +574,20 @@ msgstr "Ausbildung"
 msgid "Medical"
 msgstr "Medizinisch"
 
+#: jep/management/commands/setupdata.py:136
+msgid "Concert Medical Service"
+msgstr "Konzert Absicherung"
+
+#: jep/management/commands/setupdata.py:137
+msgid "Your contact is Lisa Example. Her Phone number is 012345678910"
+msgstr "Euer Kontakt ist Lisa Beispiel. Ihre Telefonnummer ist 012345678910"
+
+#: templates/base.html:42
+msgid "Home"
+msgstr "Startseite"
+
 #: templates/base.html:55
-#: user_management/templates/user_management/userprofile_list.html:6
-#: user_management/templates/user_management/userprofile_list.html:15
+#: user_management/templates/user_management/userprofile_list.html:11
 msgid "Users"
 msgstr "Benutzer"
 
@@ -683,13 +756,11 @@ msgstr "Gruppe löschen"
 msgid "Are you sure you want to delete the group \"%(group)s\"?"
 msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
 
-#: user_management/templates/user_management/group_form.html:7
-#: user_management/templates/user_management/group_form.html:16
+#: user_management/templates/user_management/group_form.html:11
 msgid "Edit group"
 msgstr "Gruppe bearbeiten"
 
-#: user_management/templates/user_management/group_form.html:9
-#: user_management/templates/user_management/group_form.html:18
+#: user_management/templates/user_management/group_form.html:13
 msgid "Create new group"
 msgstr "Neue Gruppe erstellen"
 
@@ -714,12 +785,12 @@ msgid "Your data"
 msgstr "Persönliche Daten"
 
 #: user_management/templates/user_management/userprofile_detail.html:12
-#: user_management/templates/user_management/userprofile_list.html:25
+#: user_management/templates/user_management/userprofile_list.html:17
 msgid "First name"
 msgstr "Vorname"
 
 #: user_management/templates/user_management/userprofile_detail.html:13
-#: user_management/templates/user_management/userprofile_list.html:24
+#: user_management/templates/user_management/userprofile_list.html:16
 msgid "Last name"
 msgstr "Nachname"
 
@@ -773,7 +844,7 @@ msgstr "Benutzer hinzufügen"
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: user_management/templates/user_management/userprofile_list.html:27
+#: user_management/templates/user_management/userprofile_list.html:19
 msgid "Information"
 msgstr "Information"
 

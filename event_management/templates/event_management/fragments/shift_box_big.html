@@ -28,43 +28,46 @@
                             <dd> {{ value }}</dd>
                         {% endfor %}
                         {% if event.active and not without_controls %}
-                            <dt>{{ shift|shift_status:request.user }}</dt>
-                            <dd>
-                                {% with can_sign_up=shift|can_sign_up:request.user %}
-                                    {% if can_sign_up %}
-                                        <a class="btn btn-outline-success"
-                                           href="{% url "event_management:shift_register" shift.id %}">{% trans "Register" %}</a>
-                                    {% else %}
+                            <form method="POST" class="form" action="{% url "event_management:shift_action" shift.pk %}">
+                                {% csrf_token %}
+                                <dt>{{ shift|shift_status:request.user }}</dt>
+                                <dd>
+                                    {% with can_sign_up=shift|can_sign_up:request.user %}
                                         <span class="d-inline-block" tabindex="0"
+                                                {% if not can_sign_up %}
                                               data-toggle="tooltip" data-html="true" data-placement="bottom" title="
-                                            {% for error in shift|signup_errors:request.user %}
-                                                <p>{{ error.message }}</p>
-                                            {% endfor %}
-                                            ">
-                                            <button type="button" class="btn btn-outline-success"
-                                                    style="pointer-events: none;"
-                                                    disabled>{% trans "Register" %}</button>
+                                                 {% for error in shift|signup_errors:request.user %}
+                                                     <p>{{ error.message }}</p>
+                                                 {% endfor %}"
+                                                {% endif %}>
+                                            <button type="submit" class="btn btn-outline-success"
+                                                    name="signup_choice" value="sign_up"
+                                                    {% if not can_sign_up %}
+                                                    style="pointer-events: none;" disabled
+                                                    {% endif %}>
+                                                {{ shift.signup_method.registration_button_text }}
+                                            </button>
                                         </span>
-                                    {% endif %}
-                                {% endwith %}
-                                {% with can_user_decline=shift|can_user_decline:request.user %}
-                                    {% if can_user_decline %}
-                                        <a class="btn btn-outline-danger"
-                                           href="{% url "event_management:shift_user_decline" shift.id %}">{% trans "Decline" %}</a>
-                                    {% else %}
+                                    {% endwith %}
+                                    {% with can_user_decline=shift|can_user_decline:request.user %}
                                         <span class="d-inline-block" tabindex="0"
+                                                {% if not can_user_decline %}
                                               data-toggle="tooltip" data-html="true" data-placement="bottom" title="
-                                            {% for error in shift|decline_errors:request.user %}
-                                                <p>{{ error.message }}</p>
-                                            {% endfor %}
-                                            ">
-                                            <button type="button" class="btn btn-outline-danger"
-                                                    style="pointer-events: none;"
-                                                    disabled>{% trans "Decline" %}</button>
+                                                 {% for error in shift|decline_errors:request.user %}
+                                                     <p>{{ error.message }}</p>
+                                                 {% endfor %}"
+                                                {% endif %}>
+                                            <button type="submit" class="btn btn-outline-danger"
+                                                    name="signup_choice" value="decline"
+                                                    {% if not can_user_decline %}
+                                                    style="pointer-events: none;" disabled
+                                                    {% endif %}>
+                                                {% trans "Decline" %}
+                                            </button>
                                         </span>
-                                    {% endif %}
-                                {% endwith %}
-                            </dd>
+                                    {% endwith %}
+                                </dd>
+                            </form>
                         {% endif %}
                     </dl>
                 </div>
