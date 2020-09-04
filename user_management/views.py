@@ -1,13 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
-from django.db import transaction
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
-from guardian.shortcuts import get_users_with_perms, get_objects_for_group
+from guardian.shortcuts import get_objects_for_group
 
 from user_management.forms import GroupForm, UserProfileForm
 from django.utils.translation import gettext as _
@@ -47,13 +49,19 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
     def send_mail(self, userprofile):
         messages = []
         subject = _("Welcome to JEP!")
+        uid = urlsafe_base64_encode(force_bytes(userprofile.id))
+        token = default_token_generator.make_token(userprofile)
+        reset_link = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
         text_content = _(
-            "You're receiving this email because you have to set a password for your user account at JEP.\n"
-            "Please go to the following page and choose a new password: {reset_link}\n"
+            "You're receiving this email because a new account has been created for you at JEP.\n"
+            "Please go to the following page and choose a password: {reset_link}\n"
             "Your username is your email address: {email}\n"
             "Thanks for using our site!"
         ).format(reset_link=reset_link, email=userprofile.email)
-        html_content = render_to_string("registration/password_reset_email.html", {})
+
+        html_content = render_to_string(
+            "registration/password_reset_email.html", {"uid": uid, "token": token}
+        )
         message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
         message.attach_alternative(html_content, "text/html")
         messages.append(message)
