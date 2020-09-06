@@ -146,5 +146,6 @@ class UserProfileForm(ModelForm):
 
     def save(self, commit=True):
         userprofile = super().save(commit)
-
         userprofile.groups.set(self.cleaned_data["groups"])
+        userprofile.save()
+        return userprofile

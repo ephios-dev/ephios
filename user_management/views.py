@@ -11,6 +11,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
 from guardian.shortcuts import get_objects_for_group
 
+from jep.settings import SITE_URL
 from user_management.forms import GroupForm, UserProfileForm
 from django.utils.translation import gettext as _
 
@@ -54,13 +55,14 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
         reset_link = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
         text_content = _(
             "You're receiving this email because a new account has been created for you at JEP.\n"
-            "Please go to the following page and choose a password: {reset_link}\n"
+            "Please go to the following page and choose a password: {url}{reset_link}\n"
             "Your username is your email address: {email}\n"
             "Thanks for using our site!"
-        ).format(reset_link=reset_link, email=userprofile.email)
+        ).format(url=SITE_URL, reset_link=reset_link, email=userprofile.email)
 
         html_content = render_to_string(
-            "registration/password_reset_email.html", {"uid": uid, "token": token}
+            "registration/password_reset_email.html",
+            {"uid": uid, "token": token, "site_url": SITE_URL},
         )
         message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
         message.attach_alternative(html_content, "text/html")
