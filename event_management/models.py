@@ -1,22 +1,19 @@
 import pytz
-from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, transaction
 from django.db.models import (
     BooleanField,
     CharField,
     DateTimeField,
     ForeignKey,
     IntegerField,
-    ManyToManyField,
     Model,
-    Q,
     SlugField,
     TextField,
     Manager,
 )
 from django.utils.functional import cached_property
 from polymorphic.models import PolymorphicModel
-from django.utils import dateformat, formats
+from django.utils import formats
 from jsonfallback.fields import FallbackJSONField
 from django.utils.translation import gettext_lazy as _
 
@@ -52,6 +49,7 @@ class Event(Model):
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
     series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
     active = BooleanField(default=False)
+    mail_updates = BooleanField(_("send updates via mail"), default=True)
 
     objects = ActiveManager()
     all_objects = Manager()
@@ -78,6 +76,17 @@ class Event(Model):
         from django.urls import reverse
 
         return reverse("event_management:event_detail", args=[str(self.id)])
+
+    def activate(self):
+        from event_management import mail
+
+        if not self.active:
+            with transaction.atomic():
+                self.active = True
+                self.full_clean()
+                self.save()
+                if self.mail_updates:
+                    mail.new_event(self)
 
 
 class Shift(Model):
