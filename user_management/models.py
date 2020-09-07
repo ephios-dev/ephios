@@ -128,6 +128,9 @@ class QualificationCategory(Model):
         verbose_name = _("qualification track")
         verbose_name_plural = _("qualification tracks")
 
+    def __str__(self):
+        return self.title
+
 
 class Qualification(Model):
     uuid = models.UUIDField(unique=True)
@@ -144,7 +147,7 @@ class Qualification(Model):
     )
 
     def __eq__(self, other):
-        return self.uuid == other.uuid
+        return self.uuid == other.uuid if other else False
 
     def __hash__(self):
         return hash(self.uuid)

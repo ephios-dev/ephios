@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from user_management.forms import UserChangeForm, UserCreationForm
-from user_management.models import Qualification, UserProfile
+from user_management.models import Qualification, UserProfile, QualificationGrant
 
 
 class UserAdmin(BaseUserAdmin):
@@ -43,3 +43,4 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(UserProfile, UserAdmin)
 admin.site.register(Qualification)
+admin.site.register(QualificationGrant)
