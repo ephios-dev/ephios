@@ -642,11 +642,11 @@ msgstr "Absenden"
 
 #: templates/registration/password_reset_complete.html:6
 msgid "Password set successfully"
-msgstr "Passwortrücksetzung erfolgreich"
+msgstr "Passwort erfolgreich festgelegt"
 
 #: templates/registration/password_reset_complete.html:7
 msgid "Your password has been set. You may go ahead and log in now."
-msgstr "Ihr Passwort wurde geändert. Sie können sich nun anmelden."
+msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
 
 #: templates/registration/password_reset_confirm.html:9
 msgid ""
