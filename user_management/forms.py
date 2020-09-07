@@ -23,8 +23,10 @@ class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
 
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password_validation = forms.CharField(label="Password confirmation", widget=forms.PasswordInput)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    password_validation = forms.CharField(
+        label=_("Password confirmation"), widget=forms.PasswordInput
+    )
     field_order = ["email", "password", "password_validation"]
 
     class Meta:
@@ -149,12 +151,28 @@ class GroupForm(ModelForm):
 
 
 class UserProfileForm(ModelForm):
-    groups = ModelMultipleChoiceField(queryset=Group.objects.all(), widget=Select2MultipleWidget)
+    groups = ModelMultipleChoiceField(
+        label=_("Groups"), queryset=Group.objects.all(), widget=Select2MultipleWidget
+    )
+
+    field_order = [
+        "email",
+        "first_name",
+        "last_name",
+        "date_of_birth",
+        "phone",
+        "groups",
+        "is_active",
+    ]
 
     class Meta:
         model = UserProfile
-        fields = ["email", "first_name", "last_name", "date_of_birth", "phone"]
+        fields = ["email", "first_name", "last_name", "date_of_birth", "phone", "is_active"]
         widgets = {"date_of_birth": CustomDateInput(format="%Y-%m-%d")}
+        help_texts = {
+            "is_active": _("Inactive users cannot log in and do not get any notifications.")
+        }
+        labels = {"is_active": _("Active user")}
 
     def save(self, commit=True):
         userprofile = super().save(commit)

@@ -4,7 +4,11 @@
 {% load static %}
 
 {% block title %}
-    {% trans "Add new user" %}
+    {% if userprofile %}
+        {% trans "Edit user" %}
+    {% else %}
+        {% trans "Add new user" %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
