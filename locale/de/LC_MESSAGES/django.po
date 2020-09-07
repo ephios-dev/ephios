@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-02 23:14+0200\n"
+"POT-Creation-Date: 2020-09-04 22:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,47 +143,51 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: event_management/models.py:84 event_management/models.py:94
+#: event_management/models.py:62
+msgid "Can view events in the past"
+msgstr "Kann vergangene Veranstaltungen sehen"
+
+#: event_management/models.py:85 event_management/models.py:95
 msgid "shifts"
 msgstr "Schichten"
 
-#: event_management/models.py:86
+#: event_management/models.py:87
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: event_management/models.py:87
+#: event_management/models.py:88
 msgid "start time"
 msgstr "Beginn"
 
-#: event_management/models.py:88
+#: event_management/models.py:89
 msgid "end time"
 msgstr "Ende"
 
-#: event_management/models.py:89
+#: event_management/models.py:90
 msgid "signup method"
 msgstr "Anmeldeverfahren"
 
-#: event_management/models.py:93 event_management/models.py:138
+#: event_management/models.py:94 event_management/models.py:139
 msgid "shift"
 msgstr "Schicht"
 
-#: event_management/models.py:132
+#: event_management/models.py:133
 msgid "requested"
 msgstr "angemeldet"
 
-#: event_management/models.py:133
+#: event_management/models.py:134
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: event_management/models.py:134
+#: event_management/models.py:135
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: event_management/models.py:135
+#: event_management/models.py:136
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: event_management/models.py:139
+#: event_management/models.py:140
 msgid "state"
 msgstr "Status"
 
@@ -267,47 +271,80 @@ msgid "Signup until"
 msgstr "Anmelden bis"
 
 #: event_management/signup.py:266
-#| msgid ""
-#| "If enabled, confirmed users can decline by themselves if the signup "
-#| "timeframe hasn't ended."
 msgid "Confirmed users can decline by themselves"
-msgstr ""
-"Bestätigte Nutzer können selbstständig absagen."
+msgstr "Bestätigte Nutzer können selbstständig absagen."
 
-#: event_management/signup.py:269
-#| msgid ""
-#| "If enabled, confirmed users can decline by themselves if the signup "
-#| "timeframe hasn't ended."
+#: event_management/signup.py:268
 msgid "only if the signup timeframe has not ended"
-msgstr ""
-"nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
+msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: event_management/signup.py:273
+#: event_management/signup.py:271
 msgid "Can decline after confirmation"
 msgstr "Kann nach Bestätigung absagen"
 
-#: event_management/signup.py:325
+#: event_management/signup.py:323
 #, python-brace-format
 msgid "'{choice}' is not a valid signup action."
 msgstr "'{choice}' ist keine gültige Anmeldeaktion."
 
-#: event_management/signup.py:335
+#: event_management/signup.py:333
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: event_management/signup.py:339
+#: event_management/signup.py:337
 msgid "Signing up failed: "
 msgstr "Anmeldung fehlgeschlagen: "
 
-#: event_management/signup.py:348
+#: event_management/signup.py:346
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: event_management/signup.py:352
+#: event_management/signup.py:350
 msgid "Declining failed: "
 msgstr "Absagen fehlgeschlagen: "
+
+#: event_management/templates/event_management/event_archive.html:11
+#: templates/base.html:55
+#, fuzzy
+#| msgid "events"
+msgid "Past events"
+msgstr "Veranstaltungen"
+
+#: event_management/templates/event_management/event_archive.html:16
+#: event_management/templates/event_management/event_list.html:20
+msgid "Title"
+msgstr "Titel"
+
+#: event_management/templates/event_management/event_archive.html:17
+#: event_management/templates/event_management/event_list.html:21
+#: event_management/templates/event_management/shift_form.html:64
+msgid "Location"
+msgstr "Ort"
+
+#: event_management/templates/event_management/event_archive.html:18
+#: event_management/templates/event_management/event_list.html:22
+#: event_management/templates/event_management/fragments/shift_box_small.html:17
+msgid "Date"
+msgstr "Datum"
+
+#: event_management/templates/event_management/event_archive.html:19
+#: event_management/templates/event_management/event_list.html:23
+msgid "until"
+msgstr "bis"
+
+#: event_management/templates/event_management/event_archive.html:20
+#: event_management/templates/event_management/event_list.html:24
+#: user_management/templates/user_management/group_list.html:42
+#: user_management/templates/user_management/userprofile_list.html:20
+msgid "Action"
+msgstr "Aktion"
+
+#: event_management/templates/event_management/event_archive.html:31
+#: event_management/templates/event_management/event_list.html:35
+msgid "Show"
+msgstr "Anzeigen"
 
 #: event_management/signup.py:257
 msgid "Minimum age"
@@ -409,34 +446,6 @@ msgstr "Veranstaltungen"
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: event_management/templates/event_management/event_list.html:20
-msgid "Title"
-msgstr "Titel"
-
-#: event_management/templates/event_management/event_list.html:21
-#: event_management/templates/event_management/shift_form.html:64
-msgid "Location"
-msgstr "Ort"
-
-#: event_management/templates/event_management/event_list.html:22
-#: event_management/templates/event_management/fragments/shift_box_small.html:17
-msgid "Date"
-msgstr "Datum"
-
-#: event_management/templates/event_management/event_list.html:23
-msgid "until"
-msgstr "bis"
-
-#: event_management/templates/event_management/event_list.html:24
-#: user_management/templates/user_management/group_list.html:42
-#: user_management/templates/user_management/userprofile_list.html:20
-msgid "Action"
-msgstr "Aktion"
-
-#: event_management/templates/event_management/event_list.html:35
-msgid "Show"
-msgstr "Anzeigen"
-
 #: event_management/templates/event_management/fragments/shift_box_big.html:12
 #: event_management/templates/event_management/fragments/shift_box_small.html:9
 #: event_management/templates/event_management/shift_form.html:60
@@ -532,21 +541,21 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:125 event_management/views.py:180
+#: event_management/views.py:128 event_management/views.py:193
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:252
+#: event_management/views.py:265
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:273
+#: event_management/views.py:286
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:279
+#: event_management/views.py:292
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -562,55 +571,71 @@ msgstr "Planer"
 msgid "Managers"
 msgstr "Manager"
 
-#: jep/management/commands/setupdata.py:100
+#: jep/management/commands/setupdata.py:101
 msgid "Service"
 msgstr "Dienst"
 
-#: jep/management/commands/setupdata.py:101
+#: jep/management/commands/setupdata.py:102
 msgid "Training"
 msgstr "Ausbildung"
 
-#: jep/management/commands/setupdata.py:114
+#: jep/management/commands/setupdata.py:115
 msgid "Medical"
 msgstr "Medizinisch"
 
-#: jep/management/commands/setupdata.py:136
+#: jep/management/commands/setupdata.py:137
 msgid "Concert Medical Service"
 msgstr "Konzert Absicherung"
 
-#: jep/management/commands/setupdata.py:137
+#: jep/management/commands/setupdata.py:138
 msgid "Your contact is Lisa Example. Her Phone number is 012345678910"
 msgstr "Euer Kontakt ist Lisa Beispiel. Ihre Telefonnummer ist 012345678910"
+
+#: templates/400.html:5 templates/400.html:9
+msgid "Bad request"
+msgstr "Fehlerhafte Anfrage"
+
+#: templates/403.html:5 templates/403.html:9
+msgid "Permission denied"
+msgstr "Zugriff verweigert"
+
+#: templates/404.html:5 templates/404.html:9
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+#: templates/500.html:5 templates/500.html:9
+msgid "Internal server error"
+msgstr "Serverfehler"
 
 #: templates/base.html:42
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/base.html:55
+#: templates/base.html:63
 #: user_management/templates/user_management/userprofile_list.html:11
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/base.html:63
+#: templates/base.html:71
 #: user_management/templates/user_management/group_list.html:6
 #: user_management/templates/user_management/group_list.html:32
 msgid "Groups"
 msgstr "Gruppen"
 
-#: templates/base.html:78
+#: templates/base.html:86
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/base.html:82
+#: templates/base.html:90
 #: user_management/templates/user_management/userprofile_detail.html:6
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: templates/base.html:84 templates/registration/password_change_form.html:6
+#: templates/base.html:92 templates/registration/password_change_form.html:6
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: templates/base.html:85
+#: templates/base.html:93
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -689,6 +714,10 @@ msgid "Choose groups that this group can make events visible for."
 msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
+
+#: user_management/forms.py:96
+msgid "Can view past events"
+msgstr "Kann vergangene Veranstaltungen sehen"
 
 #: user_management/models.py:52
 msgid "email address"

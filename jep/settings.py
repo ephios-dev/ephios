@@ -31,7 +31,9 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_SSL_REDIRECT = True
-    # SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_REFERRER_POLICY = "same-origin"
 
 
 # Application definition
@@ -136,6 +138,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
 vars().update(EMAIL_CONFIG)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = env.str("SERVER_EMAIL")
+ADMINS = env.list("ADMINS")
 
 
 # Guardian configuration
