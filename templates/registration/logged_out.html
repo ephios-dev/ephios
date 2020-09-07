@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load bootstrap4%}
 
+{% block title %}
+    {% trans "Logged out" %}
+{% endblock %}
+
 {% block content %}
     {% trans "Logged out successfully." %} <br>
     {% url "login" as login_url %}
