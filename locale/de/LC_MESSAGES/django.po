@@ -694,7 +694,7 @@ msgstr "Die Passwörter stimmen nicht überein."
 
 #: user_management/forms.py:100
 msgid "Can publish event for group"
-msgstr "Sichtbar machen für"
+msgstr "Darf Veranstaltungen sichtbar machen für"
 
 #: user_management/forms.py:103
 msgid "Choose groups that this group can make events visible for."
