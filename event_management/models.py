@@ -10,11 +10,11 @@ from django.db.models import (
     SlugField,
     TextField,
     Manager,
+    JSONField,
 )
 from django.utils.functional import cached_property
 from polymorphic.models import PolymorphicModel
 from django.utils import formats
-from jsonfallback.fields import FallbackJSONField
 from django.utils.translation import gettext_lazy as _
 
 from jep import settings
@@ -97,7 +97,7 @@ class Shift(Model):
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
     signup_method_slug = SlugField(_("signup method"))
-    signup_configuration = FallbackJSONField()
+    signup_configuration = JSONField()
 
     class Meta:
         verbose_name = _("shift")
