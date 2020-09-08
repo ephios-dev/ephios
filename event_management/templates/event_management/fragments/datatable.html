@@ -1,9 +1,7 @@
+{% load static %}
 {% load i18n %}
 {% block javascript %}
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="{% static "datatables/datatables.min.js" %}"></script>
     <script>
         {% get_current_language as current_language %}
         $(document).ready(function () {
@@ -13,7 +11,7 @@
                 "responsive": true,
                 {% if current_language == "de-de" %}
                     "language": {
-                        "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/German.json"
+                        "url": "{% static "datatables/german.json" %}"
                     },
                 {% endif %}
             {% if order_column and order_direction %}
