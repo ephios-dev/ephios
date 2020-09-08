@@ -23,7 +23,7 @@ def send_account_creation_info(userprofile):
     ).format(url=SITE_URL, reset_link=reset_link, email=userprofile.email)
 
     html_content = render_to_string(
-        "registration/new_account_email.html",
+        "user_management/new_account_email.html",
         {"uid": uid, "token": token, "site_url": SITE_URL, "email": userprofile.email,},
     )
     message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
