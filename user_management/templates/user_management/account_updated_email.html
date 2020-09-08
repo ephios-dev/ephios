@@ -1,0 +1,7 @@
+{% extends "email_base.html" %}
+{% load i18n %}
+{% block content %}
+    {% trans "You're receiving this email because your account at JEP has been updated." %}
+    {% trans "Log in and view your profile:" %} {{ site_url }}{{ url }}
+    {% trans "Your username is your email address:" %} {{ email }}
+{% endblock %}

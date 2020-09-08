@@ -43,6 +43,19 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
 class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
     model = UserProfile
     permission_required = "user.edit_user"
+    template_name = "user_management/userprofile_form.html"
+    form_class = UserProfileForm
+
+    def get_success_url(self):
+        messages.success(self.request, _("User updated successfully."))
+        return reverse("user_management:user_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        userprofile = self.object
+        if userprofile.is_active:
+            mail.send_account_update_info(userprofile)
+        return response
 
 
 class GroupListView(PermissionRequiredMixin, ListView):

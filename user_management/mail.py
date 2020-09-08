@@ -31,3 +31,24 @@ def send_account_creation_info(userprofile):
     messages.append(message)
 
     mail.get_connection().send_messages(messages)
+
+
+def send_account_update_info(userprofile):
+    messages = []
+    subject = _("JEP account updated")
+    url = reverse("user_management:profile")
+    text_content = _(
+        "You're receiving this email because your account at JEP has been updated.\n"
+        "Log in and view your profile: {site_url}{url}\n"
+        "Your username is your email address: {email}\n"
+    ).format(site_url=SITE_URL, url=url, email=userprofile.email)
+
+    html_content = render_to_string(
+        "user_management/account_updated_email.html",
+        {"site_url": SITE_URL, "url": url, "email": userprofile.email,},
+    )
+    message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
+    message.attach_alternative(html_content, "text/html")
+    messages.append(message)
+
+    mail.get_connection().send_messages(messages)
