@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfallback.fields
 
 
 class Migration(migrations.Migration):
@@ -66,7 +65,7 @@ class Migration(migrations.Migration):
                 ("start_time", models.DateTimeField()),
                 ("end_time", models.DateTimeField()),
                 ("signup_method_slug", models.SlugField()),
-                ("signup_configuration", jsonfallback.fields.FallbackJSONField()),
+                ("signup_configuration", models.JSONField()),
                 (
                     "event",
                     models.ForeignKey(
