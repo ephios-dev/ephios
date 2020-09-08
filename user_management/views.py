@@ -3,9 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
-from guardian.shortcuts import get_users_with_perms, get_objects_for_group
+from guardian.shortcuts import get_objects_for_group
 
-from user_management.forms import GroupForm
+from user_management import mail
+from user_management.forms import GroupForm, UserProfileForm
 from django.utils.translation import gettext as _
 
 from user_management.models import UserProfile
@@ -18,7 +19,25 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
 class UserProfileListView(PermissionRequiredMixin, ListView):
     model = UserProfile
-    permission_required = "user.view_user"
+    permission_required = "user_management.view_userprofile"
+
+
+class UserProfileCreateView(PermissionRequiredMixin, CreateView):
+    template_name = "user_management/userprofile_form.html"
+    permission_required = "user_management.add_userprofile"
+    model = UserProfile
+    form_class = UserProfileForm
+
+    def get_success_url(self):
+        messages.success(self.request, _("User added successfully."))
+        return reverse("user_management:user_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        userprofile = self.object
+        if userprofile.is_active:
+            mail.send_account_creation_info(userprofile)
+        return response
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -43,7 +62,7 @@ class GroupCreateView(PermissionRequiredMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, _("Group successfully created."))
+        messages.success(self.request, _("Group created successfully."))
         return reverse("user_management:group_list")
 
 
