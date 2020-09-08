@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime
 
 import guardian.mixins
+import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -121,16 +122,19 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
 
 
 class QualificationCategory(Model):
-    uuid = models.UUIDField(unique=True)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
 
     class Meta:
         verbose_name = _("qualification track")
         verbose_name_plural = _("qualification tracks")
 
+    def __str__(self):
+        return self.title
+
 
 class Qualification(Model):
-    uuid = models.UUIDField(unique=True)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
     abbreviation = CharField(max_length=254)
     category = ForeignKey(
@@ -144,7 +148,7 @@ class Qualification(Model):
     )
 
     def __eq__(self, other):
-        return self.uuid == other.uuid
+        return self.uuid == other.uuid if other else False
 
     def __hash__(self):
         return hash(self.uuid)
