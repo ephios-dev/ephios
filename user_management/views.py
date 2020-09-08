@@ -21,6 +21,11 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
     permission_required = "user.view_user"
 
 
+class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
+    model = UserProfile
+    permission_required = "user.edit_user"
+
+
 class GroupListView(PermissionRequiredMixin, ListView):
     model = Group
     permission_required = "auth.view_group"
