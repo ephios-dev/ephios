@@ -149,6 +149,7 @@ GUARDIAN_MONKEY_PATCH = False
 
 
 # django-select2
+# Prevent django-select from loading the select2 resources as we want to serve them locally
 SELECT2_JS = ""
 SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""

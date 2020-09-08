@@ -97,7 +97,7 @@ class Shift(Model):
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
     signup_method_slug = SlugField(_("signup method"))
-    signup_configuration = JSONField()
+    signup_configuration = JSONField(default=dict)
 
     class Meta:
         verbose_name = _("shift")
