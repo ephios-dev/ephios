@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load bootstrap4 %}
 
+{% block title %}
+    {% trans "Past events" %}
+{% endblock %}
+
 {% block javascript %}
     {% include "event_management/fragments/datatable.html" with order_column=2 order_direction="desc" %}
 {% endblock %}

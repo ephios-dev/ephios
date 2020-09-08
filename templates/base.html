@@ -32,12 +32,12 @@
                     {% if user.is_authenticated %}
                         <ul class="navbar-nav mr-auto">
                             {% with url_name=request.resolver_match.url_name %}
-                                <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
+                                <li class="nav-item {% if url_name == "index" %}active{% endif %}">
                                     <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %}
                                         <span
                                                 class="sr-only">(current)</span></a>
                                 </li>
-                                <li class="nav-item {% if url_name == 'event_list' %}active{% endif %}">
+                                <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
                                     <a class="nav-link"
                                        href="{% url "event_management:event_list" %}">{% trans "Events" %}
                                         <span
@@ -60,7 +60,7 @@
                                     </li>
                                 {% endif %}
                                 {% if perms.auth.view_group %}
-                                    <li class="nav-item {% if url_name == 'planners' %}active{% endif %}">
+                                    <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
                                         <a class="nav-link"
                                            href="{% url "user_management:group_list" %}">{% trans "Groups" %}
                                         </a>

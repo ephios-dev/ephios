@@ -2,10 +2,17 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-from django.forms import ModelForm, ModelMultipleChoiceField, BooleanField, SelectMultiple
+from django.forms import (
+    ModelForm,
+    ModelMultipleChoiceField,
+    BooleanField,
+    SelectMultiple,
+    DateField,
+)
 from django_select2.forms import Select2MultipleWidget
 from guardian.shortcuts import assign_perm, remove_perm
 
+from jep.widgets import CustomDateInput
 from user_management.models import UserProfile
 from django.utils.translation import gettext as _
 
@@ -16,8 +23,10 @@ class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
 
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password_validation = forms.CharField(label="Password confirmation", widget=forms.PasswordInput)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    password_validation = forms.CharField(
+        label=_("Password confirmation"), widget=forms.PasswordInput
+    )
     field_order = ["email", "password", "password_validation"]
 
     class Meta:
@@ -35,7 +44,7 @@ class UserCreationForm(forms.ModelForm):
         password = self.cleaned_data.get("password")
         password_validation = self.cleaned_data.get("password_validation")
         if password and password_validation and password != password_validation:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError(_("Passwords don't match"))
         return password_validation
 
     def _post_clean(self):
@@ -139,3 +148,34 @@ class GroupForm(ModelForm):
             remove_perm("event_management.delete_event", group)
             for target_group in Group.objects.all():
                 remove_perm("publish_event_for_group", group, target_group)
+
+
+class UserProfileForm(ModelForm):
+    groups = ModelMultipleChoiceField(
+        label=_("Groups"), queryset=Group.objects.all(), widget=Select2MultipleWidget
+    )
+
+    field_order = [
+        "email",
+        "first_name",
+        "last_name",
+        "date_of_birth",
+        "phone",
+        "groups",
+        "is_active",
+    ]
+
+    class Meta:
+        model = UserProfile
+        fields = ["email", "first_name", "last_name", "date_of_birth", "phone", "is_active"]
+        widgets = {"date_of_birth": CustomDateInput(format="%Y-%m-%d")}
+        help_texts = {
+            "is_active": _("Inactive users cannot log in and do not get any notifications.")
+        }
+        labels = {"is_active": _("Active user")}
+
+    def save(self, commit=True):
+        userprofile = super().save(commit)
+        userprofile.groups.set(self.cleaned_data["groups"])
+        userprofile.save()
+        return userprofile

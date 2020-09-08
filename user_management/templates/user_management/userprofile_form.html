@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    {% if userprofile %}
+        {% trans "Edit user" %}
+    {% else %}
+        {% trans "Add new user" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if userprofile %}
+            <h1>{% trans "Edit user" %}</h1>
+        {% else %}
+            <h1>{% trans "Add new user" %}</h1>
+        {% endif %}
+    </div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+
+        {% buttons %}
+            <a role="button" class="btn btn-secondary" href="{% url "user_management:user_list" %}">{% trans "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+        {% endbuttons %}
+    </form>
+{% endblock %}
