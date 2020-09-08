@@ -36,7 +36,7 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
         response = super().form_valid(form)
         userprofile = self.object
         if userprofile.is_active:
-            mail.send_account_creation_info(self, userprofile)
+            mail.send_account_creation_info(userprofile)
         return response
 
 
