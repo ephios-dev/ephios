@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from jep.settings import SITE_URL
 
 
-def send_mail(self, userprofile):
+def send_account_creation_info(self, userprofile):
     messages = []
     subject = _("Welcome to JEP!")
     uid = urlsafe_base64_encode(force_bytes(userprofile.id))
@@ -20,12 +20,17 @@ def send_mail(self, userprofile):
         "You're receiving this email because a new account has been created for you at JEP.\n"
         "Please go to the following page and choose a password: {url}{reset_link}\n"
         "Your username is your email address: {email}\n"
-        "Thanks for using our site!"
     ).format(url=SITE_URL, reset_link=reset_link, email=userprofile.email)
 
     html_content = render_to_string(
         "registration/password_reset_email.html",
-        {"uid": uid, "token": token, "site_url": SITE_URL},
+        {
+            "account_is_new": True,
+            "uid": uid,
+            "token": token,
+            "domain": SITE_URL,
+            "email": userprofile.email,
+        },
     )
     message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
     message.attach_alternative(html_content, "text/html")

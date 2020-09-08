@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-07 23:47+0200\n"
+"POT-Creation-Date: 2020-09-08 02:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -582,6 +582,7 @@ msgid "Administration"
 msgstr "Administration"
 
 #: templates/base.html:90
+#: user_management/templates/user_management/userprofile_detail.html:5
 #: user_management/templates/user_management/userprofile_detail.html:10
 msgid "Profile"
 msgstr "Benutzerprofil"
@@ -614,9 +615,6 @@ msgid "Login"
 msgstr "Anmelden"
 
 #: templates/registration/password_change_done.html:6
-msgid "Password changed"
-msgstr "Passwort geändert"
-
 #: templates/registration/password_change_done.html:10
 msgid "Password changed successfully"
 msgstr "Passwort erfolgreich geändert"
@@ -630,9 +628,6 @@ msgid "Submit"
 msgstr "Absenden"
 
 #: templates/registration/password_reset_complete.html:6
-msgid "Password set"
-msgstr "Passwort festgelegt"
-
 #: templates/registration/password_reset_complete.html:10
 msgid "Password set successfully"
 msgstr "Passwort erfolgreich festgelegt"
@@ -643,7 +638,7 @@ msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
 
 #: templates/registration/password_reset_confirm.html:7
 #: templates/registration/password_reset_confirm.html:19
-#: templates/registration/password_reset_email.html:6
+#: templates/registration/password_reset_email.html:9
 msgid "Set password"
 msgstr "Passwort setzen"
 
@@ -667,32 +662,27 @@ msgstr ""
 "er schon benutzt. Bitte fordern Sie einen neuen Link an."
 
 #: templates/registration/password_reset_done.html:6
-msgid "Password reset"
-msgstr "Passwort zurückgesetzt"
-
 #: templates/registration/password_reset_done.html:10
-msgid "Password successfully reset"
+msgid "Password reset successfully"
 msgstr "Passwort erfolgreich zurückgesetzt"
 
 #: templates/registration/password_reset_done.html:11
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#: templates/registration/password_reset_email.html:4
+#: templates/registration/password_reset_email.html:5
+msgid ""
+"You're receiving this email because a new account has been created for you "
+"at JEP."
+msgstr "Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil auf JEP angelegt wurde."
+
+#: templates/registration/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
 msgstr "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort:"
 
-#: templates/registration/password_reset_email.html:8
+#: templates/registration/password_reset_email.html:11
 msgid "Your username is your email address:"
 msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
-
-#: templates/registration/password_reset_email.html:10
-msgid "Thanks for using our site!"
-msgstr "Danke, dass Sie unsere Seite nutzen!"
-
-#: templates/registration/password_reset_email.html:12
-msgid "The JEP team"
-msgstr "Das JEP-Team"
 
 #: templates/registration/password_reset_form.html:6
 #: templates/registration/password_reset_form.html:10
@@ -739,14 +729,12 @@ msgid ""
 "at JEP.\n"
 "Please go to the following page and choose a password: {url}{reset_link}\n"
 "Your username is your email address: {email}\n"
-"Thanks for using our site!"
 msgstr ""
 "Sie erhalten diese E-Mail, weil ein neues Benutzerkonto für Sie auf JEP "
 "angelegt wurde.\n"
 "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort: {url}"
 "{reset_link}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
-"Danke, dass Sie unsere Seite nutzen!"
 
 #: user_management/models.py:52
 msgid "email address"
@@ -840,7 +828,6 @@ msgstr "Minderjährig"
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: user_management/templates/user_management/userprofile_detail.html:5
 #: user_management/templates/user_management/userprofile_detail.html:14
 msgid "Your data"
 msgstr "Persönliche Daten"
@@ -930,12 +917,3 @@ msgstr "Benutzer erfolgreich hinzugefügt"
 #: user_management/views.py:65
 msgid "Group created successfully."
 msgstr "Gruppe erfolgreich erstellt"
-
-#~ msgid "Register"
-#~ msgstr "Anmelden"
-
-#~ msgid "Concert Medical Service"
-#~ msgstr "Konzert Absicherung"
-
-#~ msgid "Your contact is Lisa Example. Her Phone number is 012345678910"
-#~ msgstr "Euer Kontakt ist Lisa Beispiel. Ihre Telefonnummer ist 012345678910"
