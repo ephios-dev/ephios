@@ -52,9 +52,9 @@
                                     </li>
                                 {% endif %}
                                 {% if perms.user_management.view_user %}
-                                    <li class="nav-item {% if url_name == "user_list" %}active{% endif %}">
+                                    <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
                                         <a class="nav-link"
-                                           href="{% url "user_management:user_list" %}">{% trans "Users" %}
+                                           href="{% url "user_management:userprofile_list" %}">{% trans "Users" %}
                                             <span
                                                     class="sr-only">(current)</span></a>
                                     </li>

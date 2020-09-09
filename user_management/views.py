@@ -30,7 +30,7 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, _("User added successfully."))
-        return reverse("user_management:user_list")
+        return reverse("user_management:userprofile_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -42,13 +42,13 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
 
 class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
     model = UserProfile
-    permission_required = "user.edit_user"
+    permission_required = "user_management.change_userprofile"
     template_name = "user_management/userprofile_form.html"
     form_class = UserProfileForm
 
     def get_success_url(self):
         messages.success(self.request, _("User updated successfully."))
-        return reverse("user_management:user_list")
+        return reverse("user_management:userprofile_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
