@@ -26,13 +26,3 @@ def get_groups_with_perms(obj, only_with_perms_in):
         {"%s__permission_id__in" % group_rel_name: permission_ids,}
     )
     return Group.objects.filter(**group_filters).distinct()
-
-
-class CustomPermissionRequiredMixin(guardian.mixins.PermissionRequiredMixin):
-    accept_global_perms = True
-
-    def on_permission_check_fail(self, request, response, obj=None):
-        if request.user.is_authenticated:
-            return response
-        else:
-            return redirect_to_login(self.request.get_full_path())
