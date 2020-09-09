@@ -8,20 +8,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>JEP - {% block title %} JEP {% endblock %}</title>
-    {% bootstrap_css %}
-    <link rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
-    <link rel="stylesheet" href="{% static "css/main.css" %}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
-    <link href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css" type="text/css" media="screen" rel="stylesheet">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "jep/css/main.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "datatables/datatables.min.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2.min.css" %}">
     {% block css %}{% endblock %}
 </head>
 <body>
-{% bootstrap_javascript jquery="full" %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
-<script type="text/javascript" src="/static/django_select2/django_select2.js"></script>
-<script src="{% static "js/main.js" %}"></script>
-{% block javascript %}{% endblock %}
 
 <div class="container mb-3">
     <div class="row">
@@ -38,12 +32,12 @@
                     {% if user.is_authenticated %}
                         <ul class="navbar-nav mr-auto">
                             {% with url_name=request.resolver_match.url_name %}
-                                <li class="nav-item {% if url_name == 'index' %}active{% endif %}">
+                                <li class="nav-item {% if url_name == "index" %}active{% endif %}">
                                     <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %}
                                         <span
                                                 class="sr-only">(current)</span></a>
                                 </li>
-                                <li class="nav-item {% if url_name == 'event_list' %}active{% endif %}">
+                                <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
                                     <a class="nav-link"
                                        href="{% url "event_management:event_list" %}">{% trans "Events" %}
                                         <span
@@ -66,7 +60,7 @@
                                     </li>
                                 {% endif %}
                                 {% if perms.auth.view_group %}
-                                    <li class="nav-item {% if url_name == 'planners' %}active{% endif %}">
+                                    <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
                                         <a class="nav-link"
                                            href="{% url "user_management:group_list" %}">{% trans "Groups" %}
                                         </a>
@@ -107,5 +101,11 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="{% static "jquery/js/jquery.min.js" %}"></script>
+<script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+<script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
+<script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
+<script type="text/javascript" src="{% static "jep/js/main.js" %}"></script>
+{% block javascript %}{% endblock %}
 </body>
 </html>

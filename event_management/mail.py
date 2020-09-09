@@ -15,7 +15,7 @@ from django.utils.translation import gettext as _
 def new_event(event):
     messages = []
     users = UserProfile.objects.filter(
-        groups__in=get_groups_with_perms(event, only_with_perms_in=["view_event"])
+        groups__in=get_groups_with_perms(event, only_with_perms_in=["view_event"]), is_active=True
     ).distinct()
     responsible_persons = get_users_with_perms(
         event, only_with_perms_in=["change_event"]
@@ -42,7 +42,7 @@ def new_event(event):
 @receiver(post_save, sender=LocalParticipation)
 def participation_state_changed(sender, **kwargs):
     instance = kwargs["instance"]
-    if instance.state != AbstractParticipation.USER_DECLINED:
+    if instance.state != AbstractParticipation.USER_DECLINED and instance.user.is_active:
         messages = []
 
         # send mail to the user that has been changed

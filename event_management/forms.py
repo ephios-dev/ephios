@@ -46,18 +46,19 @@ class EventForm(ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location", "type"]
+        fields = ["title", "description", "location", "type", "mail_updates"]
 
     def save(self, commit=True):
+        create = not self.instance.pk
         event = super().save(commit)
-        if "visible_for" in self.changed_data:
+        if "visible_for" in self.changed_data or create:
             for group in self.cleaned_data["visible_for"]:
                 assign_perm("view_event", group, event)
             for group in self.fields["visible_for"].queryset.difference(
                 self.cleaned_data["visible_for"]
             ):
                 remove_perm("view_event", group, event)
-        if "responsible_groups" in self.changed_data:
+        if "responsible_groups" in self.changed_data or create:
             for group in self.cleaned_data["responsible_groups"].difference(
                 self.initial["responsible_groups"]
             ):
@@ -69,7 +70,7 @@ class EventForm(ModelForm):
                 remove_perm("change_event", group, event)
                 if group not in self.cleaned_data["visible_for"]:
                     remove_perm("view_event", group, event)
-        if "responsible_persons" in self.changed_data:
+        if "responsible_persons" in self.changed_data or create:
             for user in self.cleaned_data["responsible_persons"].difference(
                 self.initial["responsible_persons"]
             ):

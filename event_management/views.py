@@ -126,19 +126,13 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
 
     def post(self, request, *args, **kwargs):
         event = self.get_object()
-        if not event.active:
-            try:
-                with transaction.atomic():
-                    event.active = True
-                    event.full_clean()
-                    event.save()
-                    messages.success(
-                        self.request,
-                        _("The event {title} has been saved.").format(title=event.title),
-                    )
-                    mail.new_event(event)
-            except ValidationError as e:
-                messages.error(request, e)
+        try:
+            event.activate()
+            messages.success(
+                request, _("The event {title} has been saved.").format(title=event.title),
+            )
+        except ValidationError as e:
+            messages.error(request, e)
         return redirect(reverse("event_management:event_detail", kwargs={"pk": event.pk}))
 
 
@@ -196,11 +190,14 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
                     )
                 )
             else:
-                event.active = True
-                event.save()
-                messages.success(
-                    self.request, _("The event {title} has been saved.").format(title=event.title)
-                )
+                try:
+                    event.activate()
+                    messages.success(
+                        self.request,
+                        _("The event {title} has been saved.").format(title=event.title),
+                    )
+                except ValidationError as e:
+                    messages.error(self.request, e)
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(
