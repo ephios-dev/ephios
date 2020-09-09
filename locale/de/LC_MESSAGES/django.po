@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-08 17:02+0200\n"
+"POT-Creation-Date: 2020-09-09 22:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,8 +147,8 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: event_management/models.py:60
-msgid "Can view events in the past"
+#: event_management/models.py:60 user_management/forms.py:105
+msgid "Can view past events"
 msgstr "Kann vergangene Veranstaltungen sehen"
 
 #: event_management/models.py:94 event_management/models.py:104
@@ -287,7 +287,7 @@ msgstr "Absagen fehlgeschlagen: "
 
 #: event_management/templates/event_management/event_archive.html:6
 #: event_management/templates/event_management/event_archive.html:15
-#: templates/base.html:55
+#: templates/base.html:49
 msgid "Past events"
 msgstr "Vergangene Veranstaltungen"
 
@@ -412,7 +412,7 @@ msgstr "Weiter"
 
 #: event_management/templates/event_management/event_list.html:6
 #: event_management/templates/event_management/event_list.html:15
-#: templates/base.html:48
+#: templates/base.html:42
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -454,7 +454,7 @@ msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
 #: event_management/templates/event_management/home.html:5
-#: templates/base.html:42
+#: templates/base.html:36
 msgid "Home"
 msgstr "Startseite"
 
@@ -507,21 +507,32 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:123 event_management/views.py:188
+#: event_management/views.py:87
+#, python-brace-format
+msgid ""
+"Select groups which the event shall be visible for. This event is also "
+"visible for <b>{groups}</b>, but you don't have the permission to change "
+"visibility for those groups."
+msgstr ""
+"Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll. Die "
+"Veranstaltung ist außerdem für <b>{groups}</b> sichtbar, aber Sie haben "
+"keine Berechtigung, die Sichtbarkeit für diese Gruppen zu ändern."
+
+#: event_management/views.py:132 event_management/views.py:197
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:262
+#: event_management/views.py:271
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:283
+#: event_management/views.py:292
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:289
+#: event_management/views.py:298
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -545,11 +556,11 @@ msgstr "Dienst"
 msgid "Training"
 msgstr "Ausbildung"
 
-#: jep/management/commands/setupdata.py:146
+#: jep/management/commands/setupdata.py:144
 msgid "Medical"
 msgstr "Medizinisch"
 
-#: jep/management/commands/setupdata.py:204
+#: jep/management/commands/setupdata.py:202
 msgid "License"
 msgstr "Führerschein"
 
@@ -569,34 +580,34 @@ msgstr "Seite nicht gefunden"
 msgid "Internal server error"
 msgstr "Serverfehler"
 
-#: templates/base.html:63 user_management/forms.py:109
+#: templates/base.html:57
 #: user_management/templates/user_management/userprofile_list.html:6
 #: user_management/templates/user_management/userprofile_list.html:15
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/base.html:71 user_management/forms.py:156
+#: templates/base.html:65 user_management/forms.py:155
 #: user_management/templates/user_management/group_list.html:6
 #: user_management/templates/user_management/group_list.html:32
 msgid "Groups"
 msgstr "Gruppen"
 
-#: templates/base.html:86
+#: templates/base.html:80
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/base.html:90
+#: templates/base.html:84
 #: user_management/templates/user_management/userprofile_detail.html:5
 #: user_management/templates/user_management/userprofile_detail.html:10
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: templates/base.html:92 templates/registration/password_change_form.html:6
+#: templates/base.html:86 templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:10
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: templates/base.html:93
+#: templates/base.html:87
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -702,6 +713,7 @@ msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
 
+#: user_management/forms.py:173
 #: user_management/forms.py:106
 msgid "Can view past events"
 msgstr "Darf vergangene Veranstaltungen sehen"
