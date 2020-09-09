@@ -31,7 +31,9 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_SSL_REDIRECT = True
-    # SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_REFERRER_POLICY = "same-origin"
 
 
 # Application definition
@@ -136,11 +138,21 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
 vars().update(EMAIL_CONFIG)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = env.str("SERVER_EMAIL")
+ADMINS = env.list("ADMINS")
 
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
+
+
+# django-select2
+# Prevent django-select from loading the select2 resources as we want to serve them locally
+SELECT2_JS = ""
+SELECT2_CSS = ""
+SELECT2_I18N_PATH = ""
 
 
 # django-debug-toolbar
