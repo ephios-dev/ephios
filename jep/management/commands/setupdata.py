@@ -119,9 +119,7 @@ class DebugDataset(AdminUserDataset):
             active=True,
         )
 
-        assign_perm("event_management.change_event", planners)
-        assign_perm("event_management.view_event", planners)
-        assign_perm("event_management.view_event", volunteers)
+        assign_perm("event_management.view_event", volunteers, event)
 
         Shift.objects.create(
             event=event,
