@@ -30,6 +30,7 @@ class EventForm(ModelForm):
         label=_("Visible for"),
         help_text=_("Select groups which the event shall be visible for."),
         widget=Select2MultipleWidget,
+        required=False,
     )
     responsible_persons = ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(),
