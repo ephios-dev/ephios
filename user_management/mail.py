@@ -39,7 +39,7 @@ def send_account_update_info(userprofile):
     url = reverse("user_management:profile")
     text_content = _(
         "You're receiving this email because your account at JEP has been updated.\n"
-        "Log in and view your profile: {site_url}{url}\n"
+        "You can see the changes in your profile: {site_url}{url}\n"
         "Your username is your email address: {email}\n"
     ).format(site_url=SITE_URL, url=url, email=userprofile.email)
 
