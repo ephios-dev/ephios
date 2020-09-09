@@ -1,11 +1,8 @@
 import guardian.mixins
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import Permission, Group
 from django.contrib.auth.views import redirect_to_login
 from guardian.ctypes import get_content_type
 from guardian.utils import get_group_obj_perms_model
-
-from jep import settings
 
 
 def get_groups_with_perms(obj, only_with_perms_in):
