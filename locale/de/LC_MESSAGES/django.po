@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-08 02:39+0200\n"
+"POT-Creation-Date: 2020-09-09 22:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,7 +111,7 @@ msgstr ""
 "ist jetzt {status}."
 
 #: event_management/models.py:30 event_management/models.py:46
-#: user_management/models.py:125 user_management/models.py:134
+#: user_management/models.py:126 user_management/models.py:138
 msgid "title"
 msgstr "Titel"
 
@@ -147,8 +147,8 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: event_management/models.py:60
-msgid "Can view events in the past"
+#: event_management/models.py:60 user_management/forms.py:105
+msgid "Can view past events"
 msgstr "Kann vergangene Veranstaltungen sehen"
 
 #: event_management/models.py:94 event_management/models.py:104
@@ -287,7 +287,7 @@ msgstr "Absagen fehlgeschlagen: "
 
 #: event_management/templates/event_management/event_archive.html:6
 #: event_management/templates/event_management/event_archive.html:15
-#: templates/base.html:55
+#: templates/base.html:49
 msgid "Past events"
 msgstr "Vergangene Veranstaltungen"
 
@@ -412,7 +412,7 @@ msgstr "Weiter"
 
 #: event_management/templates/event_management/event_list.html:6
 #: event_management/templates/event_management/event_list.html:15
-#: templates/base.html:48
+#: templates/base.html:42
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -454,7 +454,7 @@ msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
 #: event_management/templates/event_management/home.html:5
-#: templates/base.html:42
+#: templates/base.html:36
 msgid "Home"
 msgstr "Startseite"
 
@@ -507,21 +507,32 @@ msgstr "Veranstaltungstyp"
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: event_management/views.py:123 event_management/views.py:188
+#: event_management/views.py:87
+#, python-brace-format
+msgid ""
+"Select groups which the event shall be visible for. This event is also "
+"visible for <b>{groups}</b>, but you don't have the permission to change "
+"visibility for those groups."
+msgstr ""
+"Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll. Die "
+"Veranstaltung ist außerdem für <b>{groups}</b> sichtbar, aber Sie haben "
+"keine Berechtigung, die Sichtbarkeit für diese Gruppen zu ändern."
+
+#: event_management/views.py:132 event_management/views.py:197
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: event_management/views.py:262
+#: event_management/views.py:271
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: event_management/views.py:283
+#: event_management/views.py:292
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: event_management/views.py:289
+#: event_management/views.py:298
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -545,9 +556,13 @@ msgstr "Dienst"
 msgid "Training"
 msgstr "Ausbildung"
 
-#: jep/management/commands/setupdata.py:115
+#: jep/management/commands/setupdata.py:144
 msgid "Medical"
 msgstr "Medizinisch"
+
+#: jep/management/commands/setupdata.py:202
+msgid "License"
+msgstr "Führerschein"
 
 #: templates/400.html:5 templates/400.html:9
 msgid "Bad request"
@@ -565,34 +580,34 @@ msgstr "Seite nicht gefunden"
 msgid "Internal server error"
 msgstr "Serverfehler"
 
-#: templates/base.html:63
+#: templates/base.html:57
 #: user_management/templates/user_management/userprofile_list.html:6
 #: user_management/templates/user_management/userprofile_list.html:15
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/base.html:71 user_management/forms.py:155
+#: templates/base.html:65 user_management/forms.py:155
 #: user_management/templates/user_management/group_list.html:6
 #: user_management/templates/user_management/group_list.html:32
 msgid "Groups"
 msgstr "Gruppen"
 
-#: templates/base.html:86
+#: templates/base.html:80
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/base.html:90
+#: templates/base.html:84
 #: user_management/templates/user_management/userprofile_detail.html:5
 #: user_management/templates/user_management/userprofile_detail.html:10
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: templates/base.html:92 templates/registration/password_change_form.html:6
+#: templates/base.html:86 templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:10
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: templates/base.html:93
+#: templates/base.html:87
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -638,7 +653,7 @@ msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
 
 #: templates/registration/password_reset_confirm.html:7
 #: templates/registration/password_reset_confirm.html:19
-#: templates/registration/password_reset_email.html:9
+#: user_management/templates/user_management/new_account_email.html:7
 msgid "Set password"
 msgstr "Passwort setzen"
 
@@ -670,20 +685,6 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#: templates/registration/password_reset_email.html:5
-msgid ""
-"You're receiving this email because a new account has been created for you "
-"at JEP."
-msgstr "Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil auf JEP angelegt wurde."
-
-#: templates/registration/password_reset_email.html:7
-msgid "Please go to the following page and choose a new password:"
-msgstr "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort:"
-
-#: templates/registration/password_reset_email.html:11
-msgid "Your username is your email address:"
-msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
-
 #: templates/registration/password_reset_form.html:6
 #: templates/registration/password_reset_form.html:10
 #: templates/registration/password_reset_form.html:14
@@ -707,10 +708,6 @@ msgid "Choose groups that this group can make events visible for."
 msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
-
-#: user_management/forms.py:105
-msgid "Can view past events"
-msgstr "Kann vergangene Veranstaltungen sehen"
 
 #: user_management/forms.py:173
 msgid "Inactive users cannot log in and do not get any notifications."
@@ -736,59 +733,59 @@ msgstr ""
 "{reset_link}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
-#: user_management/models.py:52
+#: user_management/models.py:53
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: user_management/models.py:55
+#: user_management/models.py:56
 msgid "first name"
 msgstr "Vorname"
 
-#: user_management/models.py:56
+#: user_management/models.py:57
 msgid "last name"
 msgstr "Nachname"
 
-#: user_management/models.py:57
+#: user_management/models.py:58
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: user_management/models.py:58
+#: user_management/models.py:59
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: user_management/models.py:59
+#: user_management/models.py:60
 msgid "calendar token"
 msgstr "Kalender-Token"
 
-#: user_management/models.py:71 user_management/models.py:164
+#: user_management/models.py:72 user_management/models.py:168
 msgid "user profile"
 msgstr "Benutzerprofil"
 
-#: user_management/models.py:72
+#: user_management/models.py:73
 msgid "user profiles"
 msgstr "Benutzerprofile"
 
-#: user_management/models.py:128
+#: user_management/models.py:129
 msgid "qualification track"
 msgstr "Qualifikationskategorie"
 
-#: user_management/models.py:129
+#: user_management/models.py:130
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
-#: user_management/models.py:140
+#: user_management/models.py:144
 msgid "category"
 msgstr "Kategorie"
 
-#: user_management/models.py:153 user_management/models.py:162
+#: user_management/models.py:157 user_management/models.py:166
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: user_management/models.py:154
+#: user_management/models.py:158
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: user_management/models.py:165
+#: user_management/models.py:169
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
@@ -819,6 +816,22 @@ msgstr "Gruppe hinzufügen"
 #: user_management/templates/user_management/group_list.html:41
 msgid "Name"
 msgstr "Name"
+
+#: user_management/templates/user_management/new_account_email.html:4
+msgid ""
+"You're receiving this email because a new account has been created for you "
+"at JEP."
+msgstr ""
+"Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil auf JEP "
+"angelegt wurde."
+
+#: user_management/templates/user_management/new_account_email.html:5
+msgid "Please go to the following page and choose a new password:"
+msgstr "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort:"
+
+#: user_management/templates/user_management/new_account_email.html:9
+msgid "Your username is your email address:"
+msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
 
 #: user_management/templates/user_management/userprofile_badges.html:4
 msgid "Minor"
