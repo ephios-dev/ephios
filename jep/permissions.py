@@ -9,7 +9,6 @@ from jep import settings
 
 
 def get_groups_with_perms(obj, only_with_perms_in):
-
     ctype = get_content_type(obj)
     group_model = get_group_obj_perms_model(obj)
 
@@ -33,13 +32,10 @@ def get_groups_with_perms(obj, only_with_perms_in):
 
 
 class CustomPermissionRequiredMixin(guardian.mixins.PermissionRequiredMixin):
-    raise_exception = True
     accept_global_perms = True
 
     def on_permission_check_fail(self, request, response, obj=None):
         if request.user.is_authenticated:
             return response
         else:
-            return redirect_to_login(
-                self.request.get_full_path(), settings.LOGIN_URL, REDIRECT_FIELD_NAME
-            )
+            return redirect_to_login(self.request.get_full_path())
