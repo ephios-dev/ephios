@@ -1,0 +1,5 @@
+<div class="form-row">
+    {% spaceless %}{% for widget in widget.subwidgets %}
+        <div class="col"> {% include widget.template_name %} </div>
+    {% endfor %}{% endspaceless %}
+</div>
