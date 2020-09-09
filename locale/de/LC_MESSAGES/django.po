@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-09 22:39+0200\n"
+"POT-Creation-Date: 2020-09-09 23:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,9 +147,9 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: event_management/models.py:60 user_management/forms.py:105
+#: event_management/models.py:60 user_management/forms.py:106
 msgid "Can view past events"
-msgstr "Kann vergangene Veranstaltungen sehen"
+msgstr "Darf vergangene Veranstaltungen sehen"
 
 #: event_management/models.py:94 event_management/models.py:104
 msgid "shifts"
@@ -580,13 +580,13 @@ msgstr "Seite nicht gefunden"
 msgid "Internal server error"
 msgstr "Serverfehler"
 
-#: templates/base.html:57
+#: templates/base.html:57 user_management/forms.py:109
 #: user_management/templates/user_management/userprofile_list.html:6
 #: user_management/templates/user_management/userprofile_list.html:15
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/base.html:65 user_management/forms.py:155
+#: templates/base.html:65 user_management/forms.py:156
 #: user_management/templates/user_management/group_list.html:6
 #: user_management/templates/user_management/group_list.html:32
 msgid "Groups"
@@ -712,11 +712,6 @@ msgid "Choose groups that this group can make events visible for."
 msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
-
-#: user_management/forms.py:173
-#: user_management/forms.py:106
-msgid "Can view past events"
-msgstr "Darf vergangene Veranstaltungen sehen"
 
 #: user_management/forms.py:107
 msgid "Can add event"
