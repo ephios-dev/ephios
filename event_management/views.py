@@ -78,6 +78,7 @@ class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
         }
         event_form = EventForm(self.request.POST or None, instance=self.object, initial=initial)
         event_form.fields["visible_for"].queryset = visible_queryset
+        event_form.fields["visible_for"].disabled = not visible_queryset
         groups_without_perms = visible_initial.difference(visible_queryset)
         if groups_without_perms:
             event_form.fields["visible_for"].help_text = _(
