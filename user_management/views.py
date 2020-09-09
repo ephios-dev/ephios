@@ -57,6 +57,13 @@ class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
             mail.send_account_update_info(userprofile)
         return response
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["initial"] = {
+            "groups": self.object.groups.all(),
+        }
+        return kwargs
+
 
 class GroupListView(PermissionRequiredMixin, ListView):
     model = Group
@@ -105,6 +112,7 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         return kwargs
 
     def get_success_url(self):
+        messages.success(self.request, _("Group updated successfully."))
         return reverse("user_management:group_list")
 
 

@@ -35,7 +35,10 @@
                 <td>{{ userprofile.first_name }}</td>
                 <td>{{ userprofile.email }}</td>
                 <td>{% include "user_management/userprofile_badges.html" with userprofile=userprofile %}</td>
-                <td><i>Buttons to be inserted</i></td>
+                <td>
+                    <a class="btn btn-outline-primary btn-sm" href="{% url "user_management:user_edit" userprofile.pk %}"><span
+                            class="fa fa-edit"></span> {% trans "Edit" %}</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
