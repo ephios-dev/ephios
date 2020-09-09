@@ -30,7 +30,7 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, _("User added successfully."))
-        return reverse("user_management:user_list")
+        return reverse("user_management:userprofile_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -38,6 +38,31 @@ class UserProfileCreateView(PermissionRequiredMixin, CreateView):
         if userprofile.is_active:
             mail.send_account_creation_info(userprofile)
         return response
+
+
+class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
+    model = UserProfile
+    permission_required = "user_management.change_userprofile"
+    template_name = "user_management/userprofile_form.html"
+    form_class = UserProfileForm
+
+    def get_success_url(self):
+        messages.success(self.request, _("User updated successfully."))
+        return reverse("user_management:userprofile_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        userprofile = self.object
+        if userprofile.is_active:
+            mail.send_account_update_info(userprofile)
+        return response
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["initial"] = {
+            "groups": self.object.groups.all(),
+        }
+        return kwargs
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -87,6 +112,7 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         return kwargs
 
     def get_success_url(self):
+        messages.success(self.request, _("Group updated successfully."))
         return reverse("user_management:group_list")
 
 

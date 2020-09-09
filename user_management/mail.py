@@ -11,7 +11,6 @@ from jep.settings import SITE_URL
 
 
 def send_account_creation_info(userprofile):
-    messages = []
     subject = _("Welcome to JEP!")
     uid = urlsafe_base64_encode(force_bytes(userprofile.id))
     token = default_token_generator.make_token(userprofile)
@@ -24,10 +23,26 @@ def send_account_creation_info(userprofile):
 
     html_content = render_to_string(
         "user_management/new_account_email.html",
-        {"uid": uid, "token": token, "site_url": SITE_URL, "email": userprofile.email,},
+        {"uid": uid, "token": token, "site_url": SITE_URL, "email": userprofile.email},
     )
     message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
     message.attach_alternative(html_content, "text/html")
-    messages.append(message)
+    message.send()
 
-    mail.get_connection().send_messages(messages)
+
+def send_account_update_info(userprofile):
+    subject = _("JEP account updated")
+    url = reverse("user_management:profile")
+    text_content = _(
+        "You're receiving this email because your account at JEP has been updated.\n"
+        "You can see the changes in your profile: {site_url}{url}\n"
+        "Your username is your email address: {email}\n"
+    ).format(site_url=SITE_URL, url=url, email=userprofile.email)
+
+    html_content = render_to_string(
+        "user_management/account_updated_email.html",
+        {"site_url": SITE_URL, "url": url, "email": userprofile.email},
+    )
+    message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
+    message.attach_alternative(html_content, "text/html")
+    message.send()
