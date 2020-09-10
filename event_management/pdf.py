@@ -2,12 +2,11 @@ import io
 
 import pytz
 from django.http import FileResponse
-from django.shortcuts import get_object_or_404
 from django.utils import formats
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from guardian.mixins import PermissionRequiredMixin
-from reportlab.lib.pagesizes import A5, landscape, A4
+from reportlab.lib.pagesizes import A5, A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, Spacer
@@ -37,7 +36,7 @@ class BasePDFExporter:
         )
         p.build(story)
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=False, filename=f"{self.title}.pdf")
+        return FileResponse(buffer, as_attachment=True, filename=f"{self.title}.pdf")
 
     def get_story(self):
         return NotImplemented
