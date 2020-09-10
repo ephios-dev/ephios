@@ -62,7 +62,6 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
         participations = self.shift.get_participations(
             with_state_in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
         )
-        bool(participations)  # evaluate queryset
         return get_template("jepcontrib/signup_requestconfirm_state.html").render(
             {
                 "shift": self.shift,
