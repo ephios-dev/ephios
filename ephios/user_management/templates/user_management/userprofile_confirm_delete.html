@@ -13,7 +13,7 @@
     </div>
 
     <form method="post">{% csrf_token %}
-        <p>{% blocktranslate with name=userprofile.get_full_name%}
+        <p>{% blocktranslate with name=userprofile.get_full_name %}
             Are you sure you want to delete the user {{ name }} ({{ userprofile }})?
         {% endblocktranslate %}</p>
         <a role="button" class="btn btn-secondary" href="{% url "user_management:userprofile_list" %}">{% translate "Back" %}</a>
