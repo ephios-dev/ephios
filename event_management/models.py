@@ -118,7 +118,7 @@ class Shift(Model):
         )
 
     def get_participations(self, with_state_in=None):
-        with_state_in = with_state_in or [AbstractParticipation.CONFIRMED]
+        with_state_in = with_state_in or {AbstractParticipation.CONFIRMED}
         return AbstractParticipation.objects.filter(state__in=with_state_in, shift=self)
 
     def get_participators(self):

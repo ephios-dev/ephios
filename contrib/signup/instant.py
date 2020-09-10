@@ -76,7 +76,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             },
         }
 
-    def render_shift_state(self):
+    def render_shift_state(self, request):
         return get_template("jepcontrib/signup_instant_state.html").render({"shift": self.shift})
 
     def perform_signup(self, participator, **kwargs):

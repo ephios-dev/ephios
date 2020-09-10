@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-09 23:22+0200\n"
+"POT-Creation-Date: 2020-09-02 23:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,31 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: contrib/signup.py:30
+#: contrib/signup/confirm.py:18
+msgid "Request and confirm"
+msgstr "Anfragen und bestätigen"
+
+#: contrib/signup/confirm.py:19
+#| msgid "requested"
+msgid "Request"
+msgstr "Anfragen"
+
+#: contrib/signup/confirm.py:20
+msgid ""
+"This method lets people request participation. Responsibles can then confirm "
+"the participation."
+msgstr ""
+
+#: contrib/signup/instant.py:30
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
-#: contrib/signup.py:37
+#: contrib/signup/instant.py:37
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: contrib/signup.py:43
+#: contrib/signup/instant.py:43
 msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
 
-#: contrib/signup.py:53
+#: contrib/signup/instant.py:53
 msgid "Instant Confirmation"
 msgstr "Direkte Bestätigung"
 
-#: contrib/signup.py:54
+#: contrib/signup/instant.py:54
 msgid "This method instantly confirms a signup."
 msgstr "Dieses Anmeldeverfahren bestätigt alle Anmeldungen direkt."
 
-#: contrib/signup.py:67
+#: contrib/signup/instant.py:67
 msgid "The maximum number of participants is reached."
 msgstr "Die Maximalzahl an Teilnehmenden ist erreicht."
 
-#: contrib/signup.py:75
+#: contrib/signup/instant.py:75
 msgid "Maximum number of participants"
 msgstr "Maximalanzahl Teilnehmende"
 
@@ -177,7 +192,7 @@ msgstr "Schicht"
 
 #: event_management/models.py:142
 msgid "requested"
-msgstr "angemeldet"
+msgstr "angefragt"
 
 #: event_management/models.py:143
 msgid "confirmed"
@@ -207,7 +222,7 @@ msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 #: event_management/signup.py:117
 #, python-brace-format
 msgid "You have already requested your participation for {shift}"
-msgstr "Sie haben sich bereits eine Teilnahme für {shift} angefragt."
+msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt."
 
 #: event_management/signup.py:123
 #, python-brace-format

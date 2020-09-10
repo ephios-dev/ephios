@@ -24,6 +24,7 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
     path("", include("event_management.urls")),
     path("", include("user_management.urls")),
+    path("", include("contrib.urls")),
 ]
 
 if settings.DEBUG:
