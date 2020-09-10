@@ -28,7 +28,8 @@
                             <dd> {{ value }}</dd>
                         {% endfor %}
                         {% if event.active and not without_controls %}
-                            <form method="POST" class="form" action="{% url "event_management:shift_action" shift.pk %}">
+                            <form method="POST" class="form"
+                                  action="{% url "event_management:shift_action" shift.pk %}">
                                 {% csrf_token %}
                                 <dt>{{ shift|shift_status:request.user }}</dt>
                                 <dd>
@@ -72,7 +73,9 @@
                     </dl>
                 </div>
                 <div class="col-lg-8">
-                    {{ shift|render_shift_state:request }}
+                    {% if not without_controls %}
+                        {{ shift|render_shift_state:request }}
+                    {% endif %}
                 </div>
             </div>
         </div>
