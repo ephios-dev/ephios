@@ -28,7 +28,7 @@ def can_sign_up(shift, user):
 
 
 @register.filter(name="render_shift_state")
-def can_sign_up(shift, request):
+def render_shift_state(shift, request):
     return shift.signup_method.render_shift_state(request)
 
 
