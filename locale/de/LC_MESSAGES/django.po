@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-09 23:13+0200\n"
+"POT-Creation-Date: 2020-09-09 23:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -424,6 +424,7 @@ msgstr "Veranstaltung hinzufügen"
 #: event_management/templates/event_management/fragments/shift_box_small.html:9
 #: event_management/templates/event_management/shift_form.html:64
 #: user_management/templates/user_management/group_list.html:51
+#: user_management/templates/user_management/userprofile_list.html:40
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -741,6 +742,22 @@ msgstr ""
 "{reset_link}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
+#: user_management/mail.py:38
+msgid "JEP account updated"
+msgstr "JEP-Benutzerkonto aktualisiert"
+
+#: user_management/mail.py:41
+#, python-brace-format
+msgid ""
+"You're receiving this email because your account at JEP has been updated.\n"
+"You can see the changes in your profile: {site_url}{url}\n"
+"Your username is your email address: {email}\n"
+msgstr ""
+"Sie erhalten diese E-Mail, weil Ihr Benutzerkonto auf JEP aktualisiert "
+"wurde.\n"
+"Sie können die Änderungen in Ihrem Benutzerprofil sehen: {site_url}{url}\n"
+"Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
+
 #: user_management/models.py:53
 msgid "email address"
 msgstr "E-Mail-Adresse"
@@ -797,6 +814,21 @@ msgstr "Qualifikationen"
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
+#: user_management/templates/user_management/account_updated_email.html:4
+msgid ""
+"You're receiving this email because your account at JEP has been updated."
+msgstr ""
+"Sie erhalten diese E-Mail, weil Ihr Benutzerkonto auf JEP aktualisiert wurde."
+
+#: user_management/templates/user_management/account_updated_email.html:5
+msgid "You can see the changes in your profile:"
+msgstr "Sie können die Änderungen in Ihrem Benutzerprofil sehen:"
+
+#: user_management/templates/user_management/account_updated_email.html:6
+#: user_management/templates/user_management/new_account_email.html:9
+msgid "Your username is your email address:"
+msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
+
 #: user_management/templates/user_management/group_confirm_delete.html:7
 #: user_management/templates/user_management/group_confirm_delete.html:12
 msgid "Delete group"
@@ -836,10 +868,6 @@ msgstr ""
 #: user_management/templates/user_management/new_account_email.html:5
 msgid "Please go to the following page and choose a new password:"
 msgstr "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort:"
-
-#: user_management/templates/user_management/new_account_email.html:9
-msgid "Your username is your email address:"
-msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
 
 #: user_management/templates/user_management/userprofile_badges.html:4
 msgid "Minor"
@@ -929,12 +957,20 @@ msgstr ""
 
 #: user_management/utils.py:17
 msgid "Your password has been changed"
-msgstr "Ihr Passwort wurde geändert"
+msgstr "Ihr Passwort wurde geändert."
 
 #: user_management/views.py:32
 msgid "User added successfully."
-msgstr "Benutzer erfolgreich hinzugefügt"
+msgstr "Benutzer erfolgreich hinzugefügt."
 
-#: user_management/views.py:65
+#: user_management/views.py:50
+msgid "User updated successfully."
+msgstr "Benutzer erfolgreich aktualisiert."
+
+#: user_management/views.py:90
 msgid "Group created successfully."
-msgstr "Gruppe erfolgreich erstellt"
+msgstr "Gruppe erfolgreich erstellt."
+
+#: user_management/views.py:115
+msgid "Group updated successfully."
+msgstr "Gruppe erfolgreich aktualisiert."
