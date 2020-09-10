@@ -6,7 +6,7 @@
         <h5 class="card-title">
             <span class="fa fa-calendar-alt"></span>
             {{ shift.get_start_end_time_display }}
-            {% if can_change %}
+            {% if not without_controls and "change_event" in event_perms %}
                 <small class="float-right">
                     <a href="{% url "event_management:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
                         {% trans "Edit" %}</a>

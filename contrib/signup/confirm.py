@@ -5,24 +5,16 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from django_select2.forms import Select2MultipleWidget
 
 from contrib.signup.instant import SimpleQualificationsRequiredSignupMethod
 from event_management.models import AbstractParticipation, Shift
-from event_management.signup import (
-    BaseSignupMethod,
-    register_signup_methods,
-    ParticipationError,
-    BaseSignupView,
-    AbstractParticipator,
-)
-from jep.permissions import CustomPermissionRequiredMixin
-from user_management.models import Qualification
+from guardian.mixins import PermissionRequiredMixin
 
 
-class RequestConfirmView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+class RequestConfirmView(PermissionRequiredMixin, SingleObjectMixin, FormView):
     model = Shift
     permission_required = "event_management.change_event"
+    accept_global_perms = True
     template_name = "jepcontrib/signup_requestconfirm_disposition.html"
 
     def get_permission_object(self):
