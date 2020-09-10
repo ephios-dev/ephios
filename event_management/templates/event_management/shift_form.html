@@ -4,7 +4,11 @@
 {% load static %}
 
 {% block title %}
-    {% trans "Create new shift for event" %}
+    {% if object %}
+        {% trans "Edit shift" %}
+    {% else %}
+        {% trans "Create new shift for event" %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}

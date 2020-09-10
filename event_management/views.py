@@ -69,8 +69,9 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
         visible_queryset = get_objects_for_user(
             self.request.user, "publish_event_for_group", klass=Group
         )
+        visible_initial = get_groups_with_perms(self.object, only_with_perms_in=["view_event"])
         initial = {
-            "visible_for": get_groups_with_perms(self.object, only_with_perms_in=["view_event"]),
+            "visible_for": visible_initial,
             "responsible_persons": get_users_with_perms(
                 self.object, only_with_perms_in=["change_event"], with_group_users=False
             ),
@@ -80,6 +81,15 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
         }
         event_form = EventForm(self.request.POST or None, instance=self.object, initial=initial)
         event_form.fields["visible_for"].queryset = visible_queryset
+        event_form.fields["visible_for"].disabled = not visible_queryset
+        groups_without_perms = visible_initial.difference(visible_queryset)
+        if groups_without_perms:
+            event_form.fields["visible_for"].help_text = _(
+                "Select groups which the event shall be visible for. "
+                "This event is also visible for <b>{groups}</b>, "
+                "but you don't have the permission to change visibility "
+                "for those groups."
+            ).format(groups=", ".join(groups_without_perms.values_list("name", flat=True)))
         return event_form
 
 
@@ -117,19 +127,13 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
 
     def post(self, request, *args, **kwargs):
         event = self.get_object()
-        if not event.active:
-            try:
-                with transaction.atomic():
-                    event.active = True
-                    event.full_clean()
-                    event.save()
-                    messages.success(
-                        self.request,
-                        _("The event {title} has been saved.").format(title=event.title),
-                    )
-                    mail.new_event(event)
-            except ValidationError as e:
-                messages.error(request, e)
+        try:
+            event.activate()
+            messages.success(
+                request, _("The event {title} has been saved.").format(title=event.title),
+            )
+        except ValidationError as e:
+            messages.error(request, e)
         return redirect(reverse("event_management:event_detail", kwargs={"pk": event.pk}))
 
 
@@ -187,11 +191,14 @@ class ShiftCreateView(PermissionRequiredMixin, TemplateView):
                     )
                 )
             else:
-                event.active = True
-                event.save()
-                messages.success(
-                    self.request, _("The event {title} has been saved.").format(title=event.title)
-                )
+                try:
+                    event.activate()
+                    messages.success(
+                        self.request,
+                        _("The event {title} has been saved.").format(title=event.title),
+                    )
+                except ValidationError as e:
+                    messages.error(self.request, e)
                 return redirect(event.get_absolute_url())
         else:
             return self.render_to_response(

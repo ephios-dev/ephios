@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Internal server error" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header"><h1>{% trans "Internal server error" %}</h1></div>
+    <p>{% trans "An error occurred while processing your request. The administrators have been informed about the error." %}</p>
+{% endblock %}

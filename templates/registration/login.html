@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load bootstrap4 %}
 
+{% block title %}
+    {% trans "Login" %}
+{% endblock %}
+
 {% block content %}
     {% trans "Login" as login_message %}
     <h2>{{ login_message }}</h2>
