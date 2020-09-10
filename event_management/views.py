@@ -284,6 +284,7 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMixin
 
 class ShiftDeleteView(guardian.mixins.PermissionRequiredMixin, DeleteView):
     permission_required = "event_management.change_event"
+    accept_global_perms = True
     model = Shift
 
     def delete(self, request, *args, **kwargs):
