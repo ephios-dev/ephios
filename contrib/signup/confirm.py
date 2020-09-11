@@ -77,7 +77,7 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
                     reverse(
                         "contrib:shift_disposition_requestconfirm", kwargs=dict(pk=self.shift.pk)
                     )
-                    if request.user.has_perm("event_management.change_event", obj=self.shift)
+                    if request.user.has_perm("event_management.change_event", obj=self.shift.event)
                     else None
                 ),
             }
