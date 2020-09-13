@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    {% trans "Disposition" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ shift }}</h1>
+    </div>
+
+    <form method="post" class="form">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="card border-warning mb-3">
+                    <div class="card-body" data-drop-to-state="{{ states.REQUESTED }}">
+                        <h5 class="card-title">{% trans "Requested" %}</h5>
+                        {% for form in formset %}
+                            {% if form.instance.state == states.REQUESTED %}
+                                {% include "jepcontrib/requestconfirm_signup/participant.html" %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card border-secondary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{% trans "Add new" %}</h5>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <div class="card border-danger mb-3">
+                    <div class="card-body" data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
+                        <h5 class="card-title">{% trans "Rejected" %}</h5>
+                        {% for form in formset %}
+                            {% if form.instance.state == states.RESPONSIBLE_REJECTED %}
+                                {% include "jepcontrib/requestconfirm_signup/participant.html" %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card border-danger mb-3">
+                    <div class="card-body" data-drop-to-state="{{ states.USER_DECLINED }}">
+                        <h5 class="card-title">{% trans "Declined" %}</h5>
+                        {% for form in formset %}
+                            {% if form.instance.state == states.USER_DECLINED %}
+                                {% include "jepcontrib/requestconfirm_signup/participant.html" %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-success h-100">
+                    <div class="card-body" data-drop-to-state="{{ states.CONFIRMED }}">
+                        <h5 class="card-title no-drag">{% trans "Confirmed" %}</h5>
+                        {% for form in formset %}
+                            {% if form.instance.state == states.CONFIRMED %}
+                                {% include "jepcontrib/requestconfirm_signup/participant.html" %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">{% trans "Save" %}</button>
+    </form>
+
+    <!--TODO try to use card columns/keep maximum size drop target -->
+    <!--TODO remove cdn, use minified version, no inline JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+    <script>
+        $(function () {
+            $("[data-drop-to-state]").each((index, el) => {
+                $(el).sortable({
+                    group: "participations",
+                    sort: false,
+                    draggable: ".draggable",
+                    animation: 150,
+                    easing: "cubic-bezier(1, 0, 0, 1)",
+                    onAdd: function (event) {
+                        const newState = $(event.target).data("drop-to-state");
+                        $(event.item).find(".state-input").val(newState);
+                    },
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

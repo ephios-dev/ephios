@@ -1,0 +1,14 @@
+{% load bootstrap4 %}
+<div class="draggable">
+    <div class="card text-white bg-dark mb-3" style="max-width: 16rem;">
+        <div class="card-body">
+            <h6 class="card-title mb-0">
+                <span class="fa fa-user"></span>
+                {{ form.instance.participant }}
+            </h6>
+            <div class="d-none">
+                {{ form }}
+            </div>
+        </div>
+    </div>
+</div>
