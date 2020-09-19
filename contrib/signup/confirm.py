@@ -45,7 +45,7 @@ class RequestConfirmDispositionView(PermissionRequiredMixin, SingleObjectMixin, 
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault("formset", self.get_formset())
-        kwargs.setdefault("states", AbstractParticipation)
+        kwargs.setdefault("states", AbstractParticipation.States)
         return super().get_context_data(**kwargs)
 
 
@@ -61,18 +61,21 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
 
     def render_shift_state(self, request):
         participations = self.shift.participations.filter(
-            state__in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
         )
         return get_template("jepcontrib/requestconfirm_signup/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participators": (
                     p.participant
-                    for p in participations.filter(state=AbstractParticipation.REQUESTED)
+                    for p in participations.filter(state=AbstractParticipation.States.REQUESTED)
                 ),
                 "confirmed_participators": (
                     p.participant
-                    for p in participations.filter(state=AbstractParticipation.CONFIRMED)
+                    for p in participations.filter(state=AbstractParticipation.States.CONFIRMED)
                 ),
                 "disposition_url": (
                     reverse(
@@ -86,6 +89,6 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
 
     def perform_signup(self, participator, **kwargs):
         participation = super().perform_signup(participator, **kwargs)
-        participation.state = AbstractParticipation.REQUESTED
+        participation.state = AbstractParticipation.States.REQUESTED
         participation.save()
         return participation

@@ -49,7 +49,9 @@ class UserEventFeed(EventFeed):
         self.user = user
 
     def items(self):
-        return self.user.get_shifts(with_participation_state_in=[AbstractParticipation.CONFIRMED])
+        return self.user.get_shifts(
+            with_participation_state_in=[AbstractParticipation.States.CONFIRMED]
+        )
 
 
 def user_event_feed_view(request, *args, **kwargs):

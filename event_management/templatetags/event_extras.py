@@ -13,10 +13,10 @@ def shift_status(shift, user):
     participation = user.as_participator().participation_for(shift)
     if participation is not None:
         color = {
-            AbstractParticipation.USER_DECLINED: "text-danger",
-            AbstractParticipation.RESPONSIBLE_REJECTED: "text-danger",
-            AbstractParticipation.REQUESTED: "text-warning",
-            AbstractParticipation.CONFIRMED: "text-success",
+            AbstractParticipation.States.USER_DECLINED: "text-danger",
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: "text-danger",
+            AbstractParticipation.States.REQUESTED: "text-warning",
+            AbstractParticipation.States.CONFIRMED: "text-success",
         }[participation.state]
         return mark_safe(f'<span class="{color}">{participation.get_state_display()}</span><br>')
     return ""

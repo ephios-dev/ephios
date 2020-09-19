@@ -112,17 +112,17 @@ def check_event_is_active(method, participator):
 def check_participation_state_for_signup(method, participator):
     participation = participator.participation_for(method.shift)
     if participation is not None:
-        if participation.state == AbstractParticipation.REQUESTED:
+        if participation.state == AbstractParticipation.States.REQUESTED:
             return ParticipationError(
                 _("You have already requested your participation for {shift}").format(
                     shift=method.shift
                 )
             )
-        elif participation.state == AbstractParticipation.CONFIRMED:
+        elif participation.state == AbstractParticipation.States.CONFIRMED:
             return ParticipationError(
                 _("You are already signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
@@ -132,17 +132,17 @@ def check_participation_state_for_decline(method, participator):
     participation = participator.participation_for(method.shift)
     if participation is not None:
         if (
-            participation.state == AbstractParticipation.CONFIRMED
+            participation.state == AbstractParticipation.States.CONFIRMED
             and not method.configuration.user_can_decline_confirmed
         ):
             return ParticipationError(
                 _("You are bindingly signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.RESPONSIBLE_REJECTED:
+        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.USER_DECLINED:
+        elif participation.state == AbstractParticipation.States.USER_DECLINED:
             return ParticipationError(
                 _("You have already declined participating in {shift}.").format(shift=method.shift)
             )
@@ -250,7 +250,7 @@ class BaseSignupMethod:
         if errors := self.get_decline_errors(participator):
             raise ParticipationError(errors)
         participation = self.get_participation_for(participator)
-        participation.state = AbstractParticipation.USER_DECLINED
+        participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
         return participation
 

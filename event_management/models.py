@@ -90,19 +90,14 @@ class Event(Model):
 
 
 class AbstractParticipation(PolymorphicModel):
-    REQUESTED = 0
-    CONFIRMED = 1
-    USER_DECLINED = 2
-    RESPONSIBLE_REJECTED = 3
-    STATE_CHOICES = (
-        (REQUESTED, _("requested")),
-        (CONFIRMED, _("confirmed")),
-        (USER_DECLINED, _("declined by user")),
-        (RESPONSIBLE_REJECTED, _("rejected by responsible")),
-    )
+    class States(models.IntegerChoices):
+        REQUESTED = 0, _("requested")
+        CONFIRMED = 1, _("confirmed")
+        USER_DECLINED = 2, _("declined by user")
+        RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
 
     shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
-    state = IntegerField(_("state"), choices=STATE_CHOICES, default=REQUESTED)
+    state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
 
     @property
     def participant(self):
@@ -141,7 +136,7 @@ class Shift(Model):
     def participations(self):
         return AbstractParticipation.objects.filter(shift=self)
 
-    def get_participants(self, with_state_in=frozenset({AbstractParticipation.CONFIRMED})):
+    def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         yield from (
             participation.participant
             for participation in self.participations.filter(state__in=with_state_in)

@@ -42,7 +42,7 @@ def new_event(event):
 @receiver(post_save, sender=LocalParticipation)
 def participation_state_changed(sender, **kwargs):
     instance = kwargs["instance"]
-    if instance.state != AbstractParticipation.USER_DECLINED and instance.user.is_active:
+    if instance.state != AbstractParticipation.States.USER_DECLINED and instance.user.is_active:
         messages = []
 
         # send mail to the user that has been changed
