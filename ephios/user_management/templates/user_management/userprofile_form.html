@@ -21,10 +21,72 @@
     </div>
     <form method="post" class="form">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {% bootstrap_form userprofile_form %}
+        {% load formset_tags %}
+
+        <div id="formset" data-formset-prefix="{{ qualification_formset.prefix }}">
+            {{ qualification_formset.management_form }}
+
+            <div data-formset-body>
+                <!-- New forms will be inserted in here -->
+                {% for form in qualification_formset %}
+                    <div class="card mb-3" data-formset-form>
+                        <div class="card-body clearfix">
+                            {{ form.id }}
+                            <button class="btn btn-link float-right pt-4" type="button" data-formset-delete-button><span
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                            <div class="form-row">
+                                <div class="col">
+                                    {% bootstrap_field form.qualification %}
+                                </div>
+                                <div class="col">
+                                    {% bootstrap_field form.expires %}
+                                </div>
+                            </div>
+                            <div class="d-none">{{ form.DELETE }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- The empty form template. By wrapping this in a <script> tag, the
+            __prefix__ placeholder can easily be replaced in both attributes and
+            any scripts -->
+            <script type="form-template" data-formset-empty-form>
+                {% escapescript %}
+                    <div class="card mb-3" data-formset-form>
+                        <div class="card-body">
+                            <button class="btn btn-link float-right pt-4" type="button" data-formset-delete-button><span
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                            <div class="form-row">
+                                <div class="col">
+                                    {% bootstrap_field qualification_formset.empty_form.qualification %}
+                                </div>
+                                <div class="col">
+                                    {% bootstrap_field qualification_formset.empty_form.expires %}
+                                </div>
+                            </div>
+                            <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
+                        </div>
+                    </div>
+                {% endescapescript %}
+            </script>
+
+            <!-- This button will add a new form when clicked -->
+            <input class="btn btn-secondary btn-block mb-2" type="button" value="{% translate "Add qualification" %}" data-formset-add>
+
+            <script>jQuery(function ($) {
+                $("#formset").formset({
+                    animateForms: true,
+                    reorderMode: 'dom',
+                });
+            });</script>
+
+        </div>
 
         {% buttons %}
-            <a role="button" class="btn btn-secondary" href="{% url "user_management:userprofile_list" %}">{% trans "Cancel" %}</a>
+            <a role="button" class="btn btn-secondary"
+               href="{% url "user_management:userprofile_list" %}">{% trans "Cancel" %}</a>
             <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
         {% endbuttons %}
     </form>

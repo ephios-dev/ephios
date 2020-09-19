@@ -173,3 +173,12 @@ class UserProfileForm(ModelForm):
         userprofile.groups.set(self.cleaned_data["groups"])
         userprofile.save()
         return userprofile
+
+
+QualificationGrantFormset = inlineformset_factory(
+    UserProfile,
+    QualificationGrant,
+    fields=["qualification", "expires"],
+    widgets={"qualification": Select2Widget, "expires": CustomDateInput(format="%Y-%m-%d")},
+    extra=0,
+)
