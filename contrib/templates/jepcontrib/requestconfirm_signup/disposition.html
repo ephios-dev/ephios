@@ -7,6 +7,10 @@
     {% translate "Disposition" %}
 {% endblock %}
 
+{% block javascript %}
+    <script type="text/javascript" src="{% static "sortablejs/Sortable.min.js" %}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
         <h1>{{ shift }}</h1>
@@ -19,7 +23,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card border-warning mb-3">
-                    <div class="card-body" data-drop-to-state="{{ states.REQUESTED }}">
+                    <div class="card-body">
                         <h5 class="card-title">{{ states.REQUESTED.label|capfirst }}</h5>
                         <ul class="list-group list-group-flush" data-drop-to-state="{{ states.REQUESTED }}">
                             {% for form in formset %}
@@ -78,15 +82,10 @@
 
         <button type="submit" class="btn btn-primary w-100">{% translate "Save" %}</button>
     </form>
-
-    <!--TODO try to use card columns/keep maximum size drop target -->
-    <!--TODO remove cdn, use minified version, no inline JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
     <script>
         $(function () {
-            $("[data-drop-to-state]").each((index, el) => {
-                $(el).sortable({
+            $("[data-drop-to-state]").each(function (index, elem) {
+                Sortable.create(elem, {
                     group: "participations",
                     sort: false,
                     draggable: ".draggable",
