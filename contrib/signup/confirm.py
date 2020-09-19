@@ -63,7 +63,7 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
         participations = self.shift.participations.filter(
             state__in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
         )
-        return get_template("jepcontrib/requestconfirm_signup/state.html").render(
+        return get_template("jepcontrib/requestconfirm_signup/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participators": (
