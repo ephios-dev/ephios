@@ -287,8 +287,11 @@ class ShiftDeleteView(guardian.mixins.PermissionRequiredMixin, DeleteView):
     accept_global_perms = True
     model = Shift
 
-    def delete(self, request, *args, **kwargs):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
         self.object = self.get_object()
+
+    def delete(self, request, *args, **kwargs):
         if self.object.event.shifts.count() == 1:
             messages.error(self.request, _("You cannot delete the last shift!"))
             return redirect(self.object.event.get_absolute_url())

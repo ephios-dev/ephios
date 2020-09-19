@@ -1,5 +1,6 @@
 from bootstrap4.widgets import RadioSelectButtonGroup
 from django import forms
+from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -10,42 +11,42 @@ from contrib.signup.instant import SimpleQualificationsRequiredSignupMethod
 from event_management.models import AbstractParticipation, Shift
 from guardian.mixins import PermissionRequiredMixin
 
+DispositionParticipationFormset = forms.modelformset_factory(
+    model=AbstractParticipation,
+    fields=["state"],
+    extra=0,
+    can_order=False,
+    can_delete=False,
+    widgets={"state": forms.HiddenInput(attrs={"class": "state-input"}),},
+)
 
-class RequestConfirmView(PermissionRequiredMixin, SingleObjectMixin, FormView):
+
+class RequestConfirmDispositionView(PermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     permission_required = "event_management.change_event"
     accept_global_perms = True
-    template_name = "jepcontrib/signup_requestconfirm_disposition.html"
+    template_name = "jepcontrib/requestconfirm_signup/disposition.html"
 
     def get_permission_object(self):
         self.object: Shift = self.get_object()
         return self.object.event
 
-    def _get_participations_by_hash(self):
-        for participation in self.object.get_participations(
-            with_state_in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
-        ):
-            yield str(hash(participation.participator)), participation
+    def get_formset(self):
+        return DispositionParticipationFormset(
+            self.request.POST or None, queryset=self.object.participations
+        )
 
-    def get_form(self, form_class=None):
-        form = forms.Form(self.request.POST or None)
-        for key, participation in self._get_participations_by_hash():
-            form.fields[key] = forms.ChoiceField(
-                label=f"{participation.participator!s}: ⁣",
-                choices=AbstractParticipation.STATE_CHOICES,
-                widget=RadioSelectButtonGroup,
-                initial=participation.state,
-            )
-        return form
+    def post(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        if formset.is_valid():
+            formset.save()
+            return redirect(self.object.event.get_absolute_url())
+        return self.get(request, *args, **kwargs, formset=formset)
 
-    def form_valid(self, form):
-        for key, participation in self._get_participations_by_hash():
-            participation.state = form.cleaned_data[key]
-            participation.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return self.object.event.get_absolute_url()
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault("formset", self.get_formset())
+        kwargs.setdefault("states", AbstractParticipation.States)
+        return super().get_context_data(**kwargs)
 
 
 class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
@@ -59,19 +60,22 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
     signup_error_message = _("Requesting a participation failed: {error}")
 
     def render_shift_state(self, request):
-        participations = self.shift.get_participations(
-            with_state_in={AbstractParticipation.REQUESTED, AbstractParticipation.CONFIRMED}
+        participations = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
         )
-        return get_template("jepcontrib/signup_requestconfirm_state.html").render(
+        return get_template("jepcontrib/requestconfirm_signup/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participators": (
-                    p.participator
-                    for p in participations.filter(state=AbstractParticipation.REQUESTED)
+                    p.participant
+                    for p in participations.filter(state=AbstractParticipation.States.REQUESTED)
                 ),
                 "confirmed_participators": (
-                    p.participator
-                    for p in participations.filter(state=AbstractParticipation.CONFIRMED)
+                    p.participant
+                    for p in participations.filter(state=AbstractParticipation.States.CONFIRMED)
                 ),
                 "disposition_url": (
                     reverse(
@@ -85,6 +89,6 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
 
     def perform_signup(self, participator, **kwargs):
         participation = super().perform_signup(participator, **kwargs)
-        participation.state = AbstractParticipation.REQUESTED
+        participation.state = AbstractParticipation.States.REQUESTED
         participation.save()
         return participation

@@ -12,7 +12,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, Spacer
 from django.utils.translation import gettext as _
 
-from event_management.models import Event
+from event_management.models import Event, AbstractParticipation
 from jep import settings
 
 
@@ -79,7 +79,7 @@ class SingleShiftEventExporter(BasePDFExporter):
 
         data = [
             [f"{participator.first_name} {participator.last_name}"]
-            for participator in shift.get_participators()
+            for participator in shift.get_participants()
         ]
         if data:
             story.append(Paragraph(_("Participants"), self.style["Heading2"]))
@@ -127,7 +127,7 @@ class MultipleShiftEventExporter(BasePDFExporter):
 
             data = [
                 [f"{participator.first_name} {participator.last_name}"]
-                for participator in shift.get_participators()
+                for participator in shift.get_participants()
             ]
             if data:
                 story.append(Paragraph(_("Participants"), self.style["Heading3"]))

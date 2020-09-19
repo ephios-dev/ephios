@@ -89,6 +89,21 @@ class Event(Model):
                     mail.new_event(self)
 
 
+class AbstractParticipation(PolymorphicModel):
+    class States(models.IntegerChoices):
+        REQUESTED = 0, _("requested")
+        CONFIRMED = 1, _("confirmed")
+        USER_DECLINED = 2, _("declined by user")
+        RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
+
+    shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
+    state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
+
+    @property
+    def participant(self):
+        raise NotImplementedError
+
+
 class Shift(Model):
     event = ForeignKey(
         Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
@@ -117,47 +132,25 @@ class Shift(Model):
             + f"{formats.time_format(start_time)} - {formats.time_format(self.end_time.astimezone(tz))}"
         )
 
-    def get_participations(self, with_state_in=None):
-        with_state_in = with_state_in or {AbstractParticipation.CONFIRMED}
-        return AbstractParticipation.objects.filter(state__in=with_state_in, shift=self)
+    @property
+    def participations(self):
+        return AbstractParticipation.objects.filter(shift=self)
 
-    def get_participators(self):
+    def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         yield from (
-            participation.participator
-            for participation in self.get_participations(
-                with_state_in=[AbstractParticipation.CONFIRMED]
-            )
+            participation.participant
+            for participation in self.participations.filter(state__in=with_state_in)
         )
 
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
 
 
-class AbstractParticipation(PolymorphicModel):
-    REQUESTED = 0
-    CONFIRMED = 1
-    USER_DECLINED = 2
-    RESPONSIBLE_REJECTED = 3
-    STATE_CHOICES = (
-        (REQUESTED, _("requested")),
-        (CONFIRMED, _("confirmed")),
-        (USER_DECLINED, _("declined by user")),
-        (RESPONSIBLE_REJECTED, _("rejected by responsible")),
-    )
-
-    shift = ForeignKey(Shift, on_delete=models.CASCADE, verbose_name=_("shift"))
-    state = IntegerField(_("state"), choices=STATE_CHOICES, default=REQUESTED)
-
-    @property
-    def participator(self):
-        raise NotImplementedError
-
-
 class LocalParticipation(AbstractParticipation):
     user = ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     @property
-    def participator(self):
+    def participant(self):
         return self.user.as_participator()
 
     def __str__(self):

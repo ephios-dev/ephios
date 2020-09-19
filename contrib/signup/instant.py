@@ -61,7 +61,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
     def check_maximum_number_of_participants(method, participator):
         if method.configuration.maximum_number_of_participants is not None:
             current_count = AbstractParticipation.objects.filter(
-                shift=method.shift, state=AbstractParticipation.CONFIRMED
+                shift=method.shift, state=AbstractParticipation.States.CONFIRMED
             ).count()
             if current_count >= method.configuration.maximum_number_of_participants:
                 return ParticipationError(_("The maximum number of participants is reached."))
@@ -81,6 +81,6 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
 
     def perform_signup(self, participator, **kwargs):
         participation = super().perform_signup(participator, **kwargs)
-        participation.state = AbstractParticipation.CONFIRMED
+        participation.state = AbstractParticipation.States.CONFIRMED
         participation.save()
         return participation
