@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap4",
-    "django_extensions",
     "guardian",
     "django_select2",
     "jep",
@@ -157,6 +156,7 @@ SELECT2_I18N_PATH = ""
 
 # django-debug-toolbar
 if DEBUG:
+    INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
     INTERNAL_IPS = env.str("INTERNAL_IPS")
