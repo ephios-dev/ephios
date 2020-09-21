@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "ephios.user_management",
     "ephios.event_management",
     "ephios.contrib",
+    "ephios.helpers",
 ]
 
 MIDDLEWARE = [

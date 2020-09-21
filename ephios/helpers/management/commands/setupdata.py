@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from guardian.shortcuts import assign_perm
 
 from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
-from event_management.models import Event, EventType, Shift
+from ephios.event_management.models import Event, EventType, Shift
 
 AVAILABLE_DATASET_CLASSES = []
 
