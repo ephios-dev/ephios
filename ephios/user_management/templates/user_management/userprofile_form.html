@@ -24,7 +24,7 @@
         {% bootstrap_form userprofile_form %}
         {% load formset_tags %}
 
-        <div id="formset" data-formset-prefix="{{ qualification_formset.prefix }}">
+        <div class="formset" data-formset data-formset-prefix="{{ qualification_formset.prefix }}">
             {{ qualification_formset.management_form }}
 
             <div data-formset-body>
@@ -74,14 +74,6 @@
 
             <!-- This button will add a new form when clicked -->
             <input class="btn btn-secondary btn-block mb-2" type="button" value="{% translate "Add qualification" %}" data-formset-add>
-
-            <script>jQuery(function ($) {
-                $("#formset").formset({
-                    animateForms: true,
-                    reorderMode: 'dom',
-                });
-            });</script>
-
         </div>
 
         {% buttons %}

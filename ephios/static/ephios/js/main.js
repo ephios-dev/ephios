@@ -1,8 +1,10 @@
-
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+    $('[data-toggle="tooltip"]').tooltip();
 
-$('#formset').on('formAdded', function(event) {
-    $(event.target).find("select").first().djangoSelect2()
-});
+    $("[data-formset]").formset({
+        animateForms: true,
+        reorderMode: 'dom',
+    }).on("formAdded", "div", function (event) {
+        $(event.target).find("select").first().djangoSelect2()
+    });
+})
