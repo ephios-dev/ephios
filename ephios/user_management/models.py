@@ -113,7 +113,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         ).filter(active_grant=True)
 
     def get_shifts(self, with_participation_state_in):
-        from event_management.models import Shift
+        from ephios.event_management.models import Shift
 
         shift_ids = self.localparticipation_set.filter(
             state__in=with_participation_state_in
