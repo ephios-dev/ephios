@@ -69,10 +69,13 @@ class SingleShiftEventExporter(BasePDFExporter):
                 ],
                 [_("Meeting time"), formats.time_format(shift.meeting_time.astimezone(tz))],
             ]
-            + [[key, value] for key, value in shift.signup_method.get_signup_info().items()]
+            + [
+                [Paragraph(key), Paragraph(value)]
+                for key, value in shift.signup_method.get_signup_info().items()
+            ]
             + [[_("Description"), Paragraph(self.event.description)]]
         )
-        table = Table(data, colWidths=[3.7 * cm, 9 * cm])
+        table = Table(data, colWidths=[5.7 * cm, 7 * cm])
         table.setStyle([("VALIGN", (0, -1), (-1, -1), "TOP")])
         story.append(table)
         story.append(Spacer(height=0.5 * cm, width=15 * cm))
@@ -122,7 +125,10 @@ class MultipleShiftEventExporter(BasePDFExporter):
             story.append(Paragraph(shift.get_start_end_time_display(), self.style["Heading2"]))
             data = [
                 [_("Meeting time"), formats.time_format(shift.meeting_time.astimezone(tz))],
-            ] + [[key, value] for key, value in shift.signup_method.get_signup_info().items()]
+            ] + [
+                [Paragraph(key), Paragraph(value)]
+                for key, value in shift.signup_method.get_signup_info().items()
+            ]
             story.append(Table(data, colWidths=[6 * cm, 13 * cm]))
 
             data = [

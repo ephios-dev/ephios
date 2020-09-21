@@ -78,7 +78,7 @@ class Event(Model):
         return reverse("event_management:event_detail", args=[str(self.id)])
 
     def activate(self):
-        from event_management import mail
+        from ephios.event_management import mail
 
         if not self.active:
             with transaction.atomic():
