@@ -4,11 +4,12 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, TemplateView
+from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_group
 
 from ephios.user_management import mail
-from ephios.user_management.forms import GroupForm, UserProfileForm
+from ephios.user_management.forms import GroupForm, UserProfileForm, QualificationGrantFormset
 from ephios.user_management.models import UserProfile
 
 

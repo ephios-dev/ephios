@@ -2,13 +2,13 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField
+from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField, inlineformset_factory
 from django.utils.translation import gettext as _
-from django_select2.forms import Select2MultipleWidget
+from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, remove_perm
 
 from ephios.helpers.widgets import CustomDateInput
-from ephios.user_management.models import UserProfile
+from ephios.user_management.models import UserProfile, QualificationGrant
 from ephios.user_management.widgets import MultiUserProfileWidget
 
 
