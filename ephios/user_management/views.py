@@ -22,29 +22,41 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
     permission_required = "user_management.view_userprofile"
 
 
-class UserProfileCreateView(PermissionRequiredMixin, CreateView):
+class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
     template_name = "user_management/userprofile_form.html"
     permission_required = "user_management.add_userprofile"
     model = UserProfile
-    form_class = UserProfileForm
 
-    def get_success_url(self):
-        messages.success(self.request, _("User added successfully."))
-        return reverse("user_management:userprofile_list")
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault("userprofile_form", UserProfileForm(self.request.POST or None))
+        kwargs.setdefault(
+            "qualification_formset", QualificationGrantFormset(self.request.POST or None)
+        )
+        return super().get_context_data(**kwargs)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        userprofile = self.object
-        if userprofile.is_active:
-            mail.send_account_creation_info(userprofile)
-        return response
+    def post(self, request, *args, **kwargs):
+        userprofile_form = UserProfileForm(self.request.POST)
+        qualification_formset = QualificationGrantFormset(self.request.POST)
+        if userprofile_form.is_valid() and qualification_formset.is_valid():
+            userprofile = userprofile_form.save()
+            qualification_formset.instance = userprofile
+            qualification_formset.save()
+            messages.success(self.request, _("User added successfully."))
+            if userprofile.is_active:
+                mail.send_account_creation_info(userprofile)
+            return redirect(reverse("user_management:userprofile_list"))
+        else:
+            return self.render_to_response(
+                self.get_context_data(
+                    userprofile_form=userprofile_form, qualification_formset=qualification_formset
+                )
+            )
 
 
 class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = UserProfile
     permission_required = "user_management.change_userprofile"
     template_name = "user_management/userprofile_form.html"
-    form_class = UserProfileForm
 
     def get_userprofile_form(self):
         return UserProfileForm(
