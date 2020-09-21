@@ -1,10 +1,10 @@
-![jep](https://github.com/jeriox/jep/workflows/jep/badge.svg)
-# jep
-JEP is a tool to manage shifts for medical services.
+![ephios](https://github.com/ephios-dev/ephios/workflows/ephios/badge.svg)
+# ephios
+ephios is a tool to manage shifts for medical services.
 
 ## Development setup
 
-To set up a development version of jep on your local machine, you need to execute the following steps:
+To set up a development version on your local machine, you need to execute the following steps:
 1. Check out repository and cd to it
 2. Set up a virtualenv for the project with Python >=3.8 and activate it
 3. Install poetry (if not already installed): `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python`

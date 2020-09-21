@@ -1,0 +1,13 @@
+{% load i18n %}
+<dl>
+    <dt>
+        {% trans "Signed up" %}
+    </dt>
+    <dd>
+        <ul>
+            {% for participant in shift.get_participants %}
+                <li>{{ participant }}</li>
+            {% endfor %}
+        </ul>
+    </dd>
+</dl>

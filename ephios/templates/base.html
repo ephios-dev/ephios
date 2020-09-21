@@ -1,0 +1,112 @@
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ephios - {% block title %} ephios {% endblock %}</title>
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "ephios/css/main.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "datatables/datatables.min.css" %}">
+    <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2.min.css" %}">
+    {% block css %}{% endblock %}
+</head>
+<!-- put jQuery here to ensure that it is loaded when other scripts run -->
+<script type="text/javascript" src="{% static "jquery/js/jquery.min.js" %}"></script>
+<body>
+
+<div class="container mb-3">
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/">ephios</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    {% if user.is_authenticated %}
+                        <ul class="navbar-nav mr-auto">
+                            {% with url_name=request.resolver_match.url_name %}
+                                <li class="nav-item {% if url_name == "index" %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %}
+                                        <span
+                                                class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
+                                    <a class="nav-link"
+                                       href="{% url "event_management:event_list" %}">{% trans "Events" %}
+                                        <span
+                                                class="sr-only">(current)</span></a>
+                                </li>
+                                {% if perms.event_management.view_past_event %}
+                                    <li class="nav-item {% if url_name == "event_list_past" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "event_management:event_list_past" %}">{% trans "Past events" %}
+                                            <span
+                                                    class="sr-only">(current)</span></a>
+                                    </li>
+                                {% endif %}
+                                {% if perms.user_management.view_user %}
+                                    <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "user_management:userprofile_list" %}">{% trans "Users" %}
+                                            <span
+                                                    class="sr-only">(current)</span></a>
+                                    </li>
+                                {% endif %}
+                                {% if perms.auth.view_group %}
+                                    <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "user_management:group_list" %}">{% trans "Groups" %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endwith %}
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ user.get_full_name }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    {% if user.is_staff %}
+                                        <a class="dropdown-item"
+                                           href="{% url "admin:index" %}">{% trans "Administration" %}</a>
+                                        <div class="dropdown-divider"></div>
+                                    {% endif %}
+                                    <a class="dropdown-item"
+                                       href="{% url "user_management:profile" %}">{% trans "Profile" %}</a>
+                                    <a class="dropdown-item"
+                                       href="{% url "password_change" %}">{% trans "Change password" %}</a>
+                                    <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
+                                </div>
+                            </li>
+
+                        </ul>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            {% bootstrap_messages %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+<script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
+<script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
+<script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
+{% block javascript %}{% endblock %}
+</body>
+</html>

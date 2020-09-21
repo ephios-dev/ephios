@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    {% translate "Disposition" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "sortablejs/Sortable.min.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ shift }}</h1>
+    </div>
+
+    <form method="post" class="form">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ states.REQUESTED.label|capfirst }}</h5>
+                        <ul class="list-group list-group-flush" data-drop-to-state="{{ states.REQUESTED }}">
+                            {% for form in formset %}
+                                {% if form.instance.state == states.REQUESTED %}
+                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <div class="card border-danger mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ states.RESPONSIBLE_REJECTED.label|capfirst }}</h5>
+                        <ul class="list-group list-group-flush" data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
+                            {% for form in formset %}
+                                {% if form.instance.state == states.RESPONSIBLE_REJECTED %}
+                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card border-danger mb-3 mb-lg-0">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ states.USER_DECLINED.label|capfirst }}</h5>
+                        <ul class="list-group list-group-flush" data-drop-to-state="{{ states.USER_DECLINED }}">
+
+                            {% for form in formset %}
+                                {% if form.instance.state == states.USER_DECLINED %}
+                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-success h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title no-drag">{{ states.CONFIRMED.label|capfirst }}</h5>
+                        <ul class="list-group list-group-flush flex-grow-1" data-drop-to-state="{{ states.CONFIRMED }}">
+                            {% for form in formset %}
+                                {% if form.instance.state == states.CONFIRMED %}
+                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">{% translate "Save" %}</button>
+    </form>
+    <script>
+        $(function () {
+            $("[data-drop-to-state]").each(function (index, elem) {
+                Sortable.create(elem, {
+                    group: "participations",
+                    sort: false,
+                    draggable: ".draggable",
+                    emptyInsertThreshold: 50,
+                    animation: 150,
+                    easing: "cubic-bezier(1, 0, 0, 1)",
+                    onAdd: function (event) {
+                        const newState = $(event.target).data("drop-to-state");
+                        $(event.item).find(".state-input").val(newState);
+                    },
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

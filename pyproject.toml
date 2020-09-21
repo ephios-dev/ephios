@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "jep"
+name = "ephios"
 version = "0.1.0"
-description = "JEP is a tool to manage shifts for medical services."
+description = "ephios is a tool to manage shifts for medical services."
 authors = ["Julian Baumann <Julian.Baumann@johanniter.de>"]
 license = "MIT"
 readme="README.md"
@@ -30,7 +30,7 @@ django-extensions = "^3.0.5"
 line-length = 100
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "jep.settings"
+DJANGO_SETTINGS_MODULE = "ephios.settings"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
