@@ -184,14 +184,11 @@ class QualificationGrantForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
+        instance = getattr(self, "instance", None)
         if instance and instance.pk:
-            self.fields['qualification'].disabled = True
+            self.fields["qualification"].disabled = True
 
 
 QualificationGrantFormset = inlineformset_factory(
-    UserProfile,
-    QualificationGrant,
-    form=QualificationGrantForm,
-    extra=0,
+    UserProfile, QualificationGrant, form=QualificationGrantForm, extra=0,
 )

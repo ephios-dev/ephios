@@ -32,17 +32,21 @@
                     <h3 class="card-title">{% translate "Qualifications" %}</h3>
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for form in qualification_formset %}
-                            <div class="list-group-item clearfix" data-formset-form>
+                            <div class="list-group-item" data-formset-form>
                                 {{ form.id }}
-                                <button class="btn btn-link float-right pt-4" type="button"
+                                <div class="form-row">
+                                    <div class="col-md-4">
+                                        {% bootstrap_field form.qualification layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4">
+                                        {% bootstrap_field form.expires layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-link" type="button"
                                         data-formset-delete-button><span
                                         class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
-                                <div class="form-row">
-                                    <div class="col">
-                                        {% bootstrap_field form.qualification %}
-                                    </div>
-                                    <div class="col">
-                                        {% bootstrap_field form.expires %}
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
