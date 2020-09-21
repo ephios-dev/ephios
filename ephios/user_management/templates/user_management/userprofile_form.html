@@ -31,7 +31,6 @@
                 <div class="card-body">
                     <h3 class="card-title">{% translate "Qualifications" %}</h3>
                     <ul class="list-group list-group-flush" data-formset-body>
-                        <!-- New forms will be inserted in here -->
                         {% for form in qualification_formset %}
                             <div class="list-group-item clearfix" data-formset-form>
                                 {{ form.id }}
@@ -50,16 +49,13 @@
                             </div>
                         {% endfor %}
                     </ul>
-                    <!-- This button will add a new form when clicked -->
+
                     <input class="btn btn-secondary mt-2" type="button"
                            value="{% translate "Add qualification" %}"
                            data-formset-add>
                 </div>
             </div>
 
-            <!-- The empty form template. By wrapping this in a <script> tag, the
-            __prefix__ placeholder can easily be replaced in both attributes and
-            any scripts -->
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
                     <div class="list-group-item clearfix" data-formset-form>

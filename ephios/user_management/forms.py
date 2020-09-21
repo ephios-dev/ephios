@@ -175,10 +175,23 @@ class UserProfileForm(ModelForm):
         return userprofile
 
 
+class QualificationGrantForm(ModelForm):
+    model = QualificationGrant
+
+    class Meta:
+        fields = ["qualification", "expires"]
+        widgets = {"qualification": Select2Widget, "expires": CustomDateInput(format="%Y-%m-%d")}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['qualification'].disabled = True
+
+
 QualificationGrantFormset = inlineformset_factory(
     UserProfile,
     QualificationGrant,
-    fields=["qualification", "expires"],
-    widgets={"qualification": Select2Widget, "expires": CustomDateInput(format="%Y-%m-%d")},
+    form=QualificationGrantForm,
     extra=0,
 )

@@ -45,7 +45,7 @@ class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         userprofile_form = UserProfileForm(self.request.POST)
         qualification_formset = QualificationGrantFormset(self.request.POST)
-        if userprofile_form.is_valid() and qualification_formset.is_valid():
+        if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
             userprofile = userprofile_form.save()
             qualification_formset.instance = userprofile
             qualification_formset.save()
@@ -86,7 +86,7 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
         self.object = self.get_object()
         userprofile_form = self.get_userprofile_form()
         qualification_formset = self.get_qualification_formset()
-        if userprofile_form.is_valid() and qualification_formset.is_valid():
+        if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
             userprofile = userprofile_form.save()
             qualification_formset.save()
             messages.success(self.request, _("User updated successfully."))
