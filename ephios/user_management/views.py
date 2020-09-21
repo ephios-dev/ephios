@@ -4,7 +4,14 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView, TemplateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+    TemplateView,
+)
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_group
 
