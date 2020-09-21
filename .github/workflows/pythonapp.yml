@@ -1,4 +1,4 @@
-name: jep
+name: ephios
 
 on: [push, pull_request]
 

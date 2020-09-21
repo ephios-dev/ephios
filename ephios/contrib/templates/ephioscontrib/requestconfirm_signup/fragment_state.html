@@ -1,0 +1,39 @@
+{% load i18n %}
+
+
+<div class="row">
+    <div class="col-lg-6">
+        <dl>
+            <dt>
+                {% trans "Requests" %}
+            </dt>
+            <dd>
+                <ul>
+                    {% for participant in requested_participants %}
+                        <li>{{ participant }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </div>
+    <div class="col-lg-6">
+        <dl>
+            <dt>
+                {% trans "Signed up" %}
+            </dt>
+            <dd>
+                <ul>
+                    {% for participant in confirmed_participants %}
+                        <li>{{ participant }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+{% if disposition_url %}
+<div class="row float-right">
+    <a href="{{ disposition_url }}" class="btn btn-outline-info"><span class="fas fa-hand-point-right"></span> {% trans "Disposition" %}</a>
+</div>
+{% endif %}
