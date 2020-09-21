@@ -5,6 +5,6 @@ $(function () {
         animateForms: true,
         reorderMode: 'dom',
     }).on("formAdded", "div", function (event) {
-        $(event.target).find("select").first().djangoSelect2()
+        $(event.target).find(".django-select2").first().djangoSelect2()
     });
 })

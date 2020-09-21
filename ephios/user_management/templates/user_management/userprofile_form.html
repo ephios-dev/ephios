@@ -45,8 +45,8 @@
                                     <div class="col-md-2"></div>
                                     <div class="col-md-1">
                                         <button class="btn btn-link" type="button"
-                                        data-formset-delete-button><span
-                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                                data-formset-delete-button><span
+                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
@@ -62,15 +62,20 @@
 
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
-                    <div class="list-group-item clearfix" data-formset-form>
-                        <button class="btn btn-link float-right pt-4" type="button" data-formset-delete-button><span
-                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                    <div class="list-group-item django-select2" data-formset-form>
                         <div class="form-row">
-                            <div class="col">
-                                {% bootstrap_field qualification_formset.empty_form.qualification %}
+                            <div class="col-md-4">
+                                {% bootstrap_field qualification_formset.empty_form.qualification layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
                             </div>
-                            <div class="col">
-                                {% bootstrap_field qualification_formset.empty_form.expires %}
+                            <div class="col-md-1"></div>
+                            <div class="col-md-4">
+                                {% bootstrap_field qualification_formset.empty_form.expires layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-1">
+                                <button class="btn btn-link" type="button"
+                                        data-formset-delete-button><span
+                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
                             </div>
                         </div>
                         <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
