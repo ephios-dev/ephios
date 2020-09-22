@@ -56,17 +56,15 @@ ALLOWED_ATTRIBUTES = {
     "div": ["class"],
     "p": ["class"],
     "span": ["class", "title"],
-    # Update doc/user/markdown.rst if you change this!
 }
 
 ALLOWED_PROTOCOLS = ["http", "https", "mailto", "tel"]
 
 
 def markdown_compile(source):
-    exts = ["markdown.extensions.sane_lists", "markdown.extensions.nl2br"]
+    extensions = ["markdown.extensions.sane_lists", "markdown.extensions.nl2br"]
     return bleach.clean(
-        markdown.markdown(source, extensions=exts),
-        strip=False,
+        markdown.markdown(source, extensions=extensions),
         tags=ALLOWED_TAGS,
         attributes=ALLOWED_ATTRIBUTES,
         protocols=ALLOWED_PROTOCOLS,

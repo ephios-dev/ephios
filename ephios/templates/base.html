@@ -102,6 +102,14 @@
             {% block content %}{% endblock %}
         </div>
     </div>
+    <footer class="footer text-center mt-auto py-3">
+        <small>
+            {% for label, url in footer.items %}
+                <a href="{{ url }}">{{ label }}</a> ·
+            {% endfor %}
+            <span class="text-muted">powered by <a href="https://ephios.de/" target="_blank">ephios</a></span>
+        </small>
+    </footer>
 </div>
 <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
 <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
