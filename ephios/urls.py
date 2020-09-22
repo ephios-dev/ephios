@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include("ephios.event_management.urls")),
     path("", include("ephios.user_management.urls")),
     path("", include("ephios.plugins.basesignup.urls")),
+    path("", include("ephios.plugins.pages.urls")),
 ]
 
 if settings.DEBUG:
