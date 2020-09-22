@@ -36,7 +36,12 @@
                                 {{ form.id }}
                                 <div class="form-row">
                                     <div class="col-md-4">
-                                        {% bootstrap_field form.qualification layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                                        <div class="form-group row">
+                                            <label for="{{ form.qualification.id_for_label }}" class="col-md-4 col-form-label">{{ form.qualification.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.qualification }}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-1"></div>
                                     <div class="col-md-4">

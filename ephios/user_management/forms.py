@@ -2,7 +2,13 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField, inlineformset_factory
+from django.forms import (
+    BooleanField,
+    ModelForm,
+    ModelMultipleChoiceField,
+    inlineformset_factory,
+    TextInput,
+)
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, remove_perm
@@ -187,6 +193,10 @@ class QualificationGrantForm(ModelForm):
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
             self.fields["qualification"].disabled = True
+            self.fields["qualification"].widget = TextInput(
+                attrs={"class": "form-control-plaintext"}
+            )
+            self.initial["qualification"] = instance.qualification.title
 
 
 QualificationGrantFormset = inlineformset_factory(
