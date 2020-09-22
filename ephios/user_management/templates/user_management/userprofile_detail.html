@@ -12,20 +12,43 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">{% trans "Your data" %}</h5>
-            <p class="card-text">
-                {% trans "First name" %}: {{ userprofile.first_name }} <br>
-                {% trans "Last name" %}: {{ userprofile.last_name }} <br>
-                {% trans "E-Mail address" %}: {{ userprofile.email }} <br>
-                {% trans "Date of birth" %}: {{ userprofile.date_of_birth }} <br>
-                {% trans "Phone number" %}: {{ userprofile.phone }} <br>
-            </p>
+            <dl class="row">
+                <dt class="col-lg-3">{% translate "First name" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.first_name }}</dd>
+                <dt class="col-lg-3">{% translate "Last name" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.last_name }}</dd>
+                <dt class="col-lg-3">{% translate "E-Mail address" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.email }}</dd>
+                <dt class="col-lg-3">{% translate "Date of birth" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.date_of_birth|default_if_none:"" }}</dd>
+                <dt class="col-lg-3">{% translate "Phone number" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.phone|default_if_none:"" }}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{% translate "Qualifications" %}</h5>
+            <ul>
+                {% for qualification in userprofile.qualifications %}
+                    <li>
+                        {{ qualification }}
+                        {% if qualification.expires is not None %}
+                            ({% translate "until" %} {{ qualification.expires|date }})
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <i>{% translate "You have not been assigned any qualificiations. " %}</i>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">{% trans "Calendar feed" %}</h5>
             <p class="card-text">
-                {% trans "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %} <br> <br>
+                {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
+                <br> <br>
                 <a href="{% url "event_management:user_event_feed" userprofile.calendar_token %}">{% trans "Your calendar" %}</a>
             </p>
         </div>

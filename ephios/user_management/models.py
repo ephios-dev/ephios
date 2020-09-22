@@ -17,6 +17,8 @@ from django.db.models import (
     Model,
     OuterRef,
     Q,
+    F,
+    Max,
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -105,12 +107,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     @property
     def qualifications(self):
         return Qualification.objects.annotate(
-            active_grant=Exists(
+            has_active_grant=Exists(
                 QualificationGrant.objects.filter(user=self, qualification=OuterRef("pk")).filter(
                     Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
                 )
-            )
-        ).filter(active_grant=True)
+            ),
+            expires=Max(F("grants__expires")),
+        ).filter(has_active_grant=True)
 
     def get_shifts(self, with_participation_state_in):
         from ephios.event_management.models import Shift
@@ -163,7 +166,10 @@ class Qualification(Model):
 
 class QualificationGrant(Model):
     qualification = ForeignKey(
-        Qualification, on_delete=models.CASCADE, verbose_name=_("qualification")
+        Qualification,
+        on_delete=models.CASCADE,
+        verbose_name=_("qualification"),
+        related_name="grants",
     )
     user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
