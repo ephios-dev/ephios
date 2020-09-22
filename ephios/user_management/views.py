@@ -1,13 +1,22 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+    TemplateView,
+)
+from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_group
 
 from ephios.user_management import mail
-from ephios.user_management.forms import GroupForm, UserProfileForm
+from ephios.user_management.forms import GroupForm, UserProfileForm, QualificationGrantFormset
 from ephios.user_management.models import UserProfile
 
 
@@ -21,47 +30,75 @@ class UserProfileListView(PermissionRequiredMixin, ListView):
     permission_required = "user_management.view_userprofile"
 
 
-class UserProfileCreateView(PermissionRequiredMixin, CreateView):
+class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
     template_name = "user_management/userprofile_form.html"
     permission_required = "user_management.add_userprofile"
     model = UserProfile
-    form_class = UserProfileForm
 
-    def get_success_url(self):
-        messages.success(self.request, _("User added successfully."))
-        return reverse("user_management:userprofile_list")
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault("userprofile_form", UserProfileForm(self.request.POST or None))
+        kwargs.setdefault(
+            "qualification_formset", QualificationGrantFormset(self.request.POST or None)
+        )
+        return super().get_context_data(**kwargs)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        userprofile = self.object
-        if userprofile.is_active:
-            mail.send_account_creation_info(userprofile)
-        return response
+    def post(self, request, *args, **kwargs):
+        userprofile_form = UserProfileForm(self.request.POST)
+        qualification_formset = QualificationGrantFormset(self.request.POST)
+        if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
+            userprofile = userprofile_form.save()
+            qualification_formset.instance = userprofile
+            qualification_formset.save()
+            messages.success(self.request, _("User added successfully."))
+            if userprofile.is_active:
+                mail.send_account_creation_info(userprofile)
+            return redirect(reverse("user_management:userprofile_list"))
+        else:
+            return self.render_to_response(
+                self.get_context_data(
+                    userprofile_form=userprofile_form, qualification_formset=qualification_formset
+                )
+            )
 
 
-class UserProfileUpdateView(PermissionRequiredMixin, UpdateView):
+class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = UserProfile
     permission_required = "user_management.change_userprofile"
     template_name = "user_management/userprofile_form.html"
-    form_class = UserProfileForm
 
-    def get_success_url(self):
-        messages.success(self.request, _("User updated successfully."))
-        return reverse("user_management:userprofile_list")
+    def get_userprofile_form(self):
+        return UserProfileForm(
+            self.request.POST or None,
+            initial={"groups": self.get_object().groups.all(),},
+            instance=self.object,
+        )
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        userprofile = self.object
-        if userprofile.is_active:
-            mail.send_account_update_info(userprofile)
-        return response
+    def get_qualification_formset(self):
+        return QualificationGrantFormset(self.request.POST or None, instance=self.object)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["initial"] = {
-            "groups": self.object.groups.all(),
-        }
-        return kwargs
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        kwargs.setdefault("userprofile_form", self.get_userprofile_form())
+        kwargs.setdefault("qualification_formset", self.get_qualification_formset())
+        return super().get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        userprofile_form = self.get_userprofile_form()
+        qualification_formset = self.get_qualification_formset()
+        if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
+            userprofile = userprofile_form.save()
+            qualification_formset.save()
+            messages.success(self.request, _("User updated successfully."))
+            if userprofile.is_active:
+                mail.send_account_update_info(userprofile)
+            return redirect(reverse("user_management:userprofile_list"))
+        else:
+            return self.render_to_response(
+                self.get_context_data(
+                    userprofile_form=userprofile_form, qualification_formset=qualification_formset
+                )
+            )
 
 
 class GroupListView(PermissionRequiredMixin, ListView):

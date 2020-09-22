@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "bootstrap4",
     "guardian",
     "django_select2",
+    "jquery",
+    "djangoformsetjs",
     "ephios.user_management",
     "ephios.event_management",
     "ephios.contrib",
