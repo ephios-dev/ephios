@@ -53,8 +53,9 @@ INSTALLED_APPS = [
     "djangoformsetjs",
     "ephios.user_management",
     "ephios.event_management",
-    "ephios.contrib",
     "ephios.helpers",
+    "ephios.plugins.basesignup",
+    "ephios.plugins.pages",
 ]
 
 MIDDLEWARE = [

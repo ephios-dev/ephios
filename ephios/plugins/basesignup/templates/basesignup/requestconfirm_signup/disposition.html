@@ -28,7 +28,7 @@
                         <ul class="list-group list-group-flush" data-drop-to-state="{{ states.REQUESTED }}">
                             {% for form in formset %}
                                 {% if form.instance.state == states.REQUESTED %}
-                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                    {% include "basesignup/requestconfirm_signup/fragment_participant.html" %}
                                 {% endif %}
                             {% endfor %}
                         </ul>
@@ -44,7 +44,7 @@
                         <ul class="list-group list-group-flush" data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
                             {% for form in formset %}
                                 {% if form.instance.state == states.RESPONSIBLE_REJECTED %}
-                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                    {% include "basesignup/requestconfirm_signup/fragment_participant.html" %}
                                 {% endif %}
                             {% endfor %}
                         </ul>
@@ -57,7 +57,7 @@
 
                             {% for form in formset %}
                                 {% if form.instance.state == states.USER_DECLINED %}
-                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                    {% include "basesignup/requestconfirm_signup/fragment_participant.html" %}
                                 {% endif %}
                             {% endfor %}
                         </ul>
@@ -71,7 +71,7 @@
                         <ul class="list-group list-group-flush flex-grow-1" data-drop-to-state="{{ states.CONFIRMED }}">
                             {% for form in formset %}
                                 {% if form.instance.state == states.CONFIRMED %}
-                                    {% include "ephioscontrib/requestconfirm_signup/fragment_participant.html" %}
+                                    {% include "basesignup/requestconfirm_signup/fragment_participant.html" %}
                                 {% endif %}
                             {% endfor %}
                         </ul>
