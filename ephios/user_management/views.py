@@ -9,14 +9,14 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
-    UpdateView,
     TemplateView,
+    UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_group
 
 from ephios.user_management import mail
-from ephios.user_management.forms import GroupForm, UserProfileForm, QualificationGrantFormset
+from ephios.user_management.forms import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.user_management.models import UserProfile
 
 

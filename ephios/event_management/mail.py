@@ -1,15 +1,13 @@
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
+from ephios.event_management.models import AbstractParticipation, LocalParticipation
 from ephios.helpers.permissions import get_groups_with_perms
 from ephios.settings import SITE_URL
 from ephios.user_management.models import UserProfile
-from ephios.event_management.models import AbstractParticipation, LocalParticipation
 
 
 def new_event(event):
@@ -39,36 +37,35 @@ def new_event(event):
     mail.get_connection().send_messages(messages)
 
 
-@receiver(post_save, sender=LocalParticipation)
-def participation_state_changed(sender, **kwargs):
-    instance = kwargs["instance"]
-    if instance.state != AbstractParticipation.States.USER_DECLINED and instance.user.is_active:
+def participation_state_changed(participation: AbstractParticipation):
+    if participation.state != AbstractParticipation.States.USER_DECLINED:
         messages = []
 
-        # send mail to the user that has been changed
-        text_content = _(
-            "The status for your participation for the shift {shift} has changed. It is now {status}."
-        ).format(shift=instance.shift, status=instance.get_state_display())
-        html_content = render_to_string("email_base.html", {"message_text": text_content})
-        message = EmailMultiAlternatives(
-            to=[instance.user.email],
-            subject=_("Your participation state changed"),
-            body=text_content,
-        )
-        message.attach_alternative(html_content, "text/html")
-        messages.append(message)
+        # send mail to the participant whose participation has been changed
+        if participation.participant.email is not None:
+            text_content = _(
+                "The status for your participation for {shift} has changed. It is now {status}."
+            ).format(shift=participation.shift, status=participation.get_state_display())
+            html_content = render_to_string("email_base.html", {"message_text": text_content})
+            message = EmailMultiAlternatives(
+                to=[participation.participant.email],
+                subject=_("Your participation state changed"),
+                body=text_content,
+            )
+            message.attach_alternative(html_content, "text/html")
+            messages.append(message)
 
         # send mail to responsible users
         responsible_persons = get_users_with_perms(
-            instance.shift.event, only_with_perms_in=["change_event"]
+            participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         subject = _("Participation was changed for your event")
         text_content = _(
-            "The participation of {user} for the shift {shift} was changed. The status is now {status}"
+            "The participation of {participant} for {shift} was changed. The status is now {status}"
         ).format(
-            user=instance.user.get_full_name(),
-            shift=instance.shift,
-            status=instance.get_state_display(),
+            participant=participation.participant,
+            shift=participation.shift,
+            status=participation.get_state_display(),
         )
         html_content = render_to_string("email_base.html", {"message_text": text_content})
         for user in responsible_persons:
