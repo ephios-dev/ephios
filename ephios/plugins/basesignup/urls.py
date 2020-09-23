@@ -1,8 +1,8 @@
 from django.urls import path
 
-from ephios.contrib.signup.confirm import RequestConfirmDispositionView
+from ephios.plugins.basesignup.signup.confirm import RequestConfirmDispositionView
 
-app_name = "contrib"
+app_name = "basesignup"
 urlpatterns = [
     path(
         "shifts/<int:pk>/disposition/requestconfirm",

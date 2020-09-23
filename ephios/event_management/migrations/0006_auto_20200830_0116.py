@@ -13,10 +13,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="abstractparticipation", options={"base_manager_name": "objects"},
+            name="abstractparticipation",
+            options={"base_manager_name": "objects"},
         ),
         migrations.AlterModelOptions(
-            name="localparticipation", options={"base_manager_name": "objects"},
+            name="localparticipation",
+            options={"base_manager_name": "objects"},
         ),
         migrations.AddField(
             model_name="abstractparticipation",

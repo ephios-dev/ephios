@@ -14,7 +14,9 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
             ).format(site=SITE_URL)
             html_content = render_to_string("email_base.html", {"message_text": text_content})
             message = EmailMultiAlternatives(
-                to=[user.email], subject=_("Your password has been changed"), body=text_content,
+                to=[user.email],
+                subject=_("Your password has been changed"),
+                body=text_content,
             )
             message.attach_alternative(html_content, "text/html")
             message.send()
