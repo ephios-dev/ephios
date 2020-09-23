@@ -44,7 +44,7 @@ def participation_state_changed(participation: AbstractParticipation):
         # send mail to the participant whose participation has been changed
         if participation.participant.email is not None:
             text_content = _(
-                "The status for your participation for the shift {shift} has changed. It is now {status}."
+                "The status for your participation for {shift} has changed. It is now {status}."
             ).format(shift=participation.shift, status=participation.get_state_display())
             html_content = render_to_string("email_base.html", {"message_text": text_content})
             message = EmailMultiAlternatives(
