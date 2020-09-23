@@ -3,7 +3,7 @@ import json
 from argparse import Namespace
 from dataclasses import dataclass, field
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 import django.dispatch
 from django import forms
@@ -46,6 +46,7 @@ class AbstractParticipant:
     last_name: str
     qualifications: QuerySet = field(hash=False)
     date_of_birth: date
+    email: Optional[str]  # if set to None, no notifications are sent
 
     @property
     def age(self):

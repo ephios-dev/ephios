@@ -37,25 +37,23 @@ def new_event(event):
     mail.get_connection().send_messages(messages)
 
 
-def participation_state_changed(participation: LocalParticipation):
-    if (
-        participation.state != AbstractParticipation.States.USER_DECLINED
-        and participation.user.is_active
-    ):
+def participation_state_changed(participation: AbstractParticipation):
+    if participation.state != AbstractParticipation.States.USER_DECLINED:
         messages = []
 
-        # send mail to the user that has been changed
-        text_content = _(
-            "The status for your participation for the shift {shift} has changed. It is now {status}."
-        ).format(shift=participation.shift, status=participation.get_state_display())
-        html_content = render_to_string("email_base.html", {"message_text": text_content})
-        message = EmailMultiAlternatives(
-            to=[participation.user.email],
-            subject=_("Your participation state changed"),
-            body=text_content,
-        )
-        message.attach_alternative(html_content, "text/html")
-        messages.append(message)
+        # send mail to the participant whose participation has been changed
+        if participation.participant.email is not None:
+            text_content = _(
+                "The status for your participation for the shift {shift} has changed. It is now {status}."
+            ).format(shift=participation.shift, status=participation.get_state_display())
+            html_content = render_to_string("email_base.html", {"message_text": text_content})
+            message = EmailMultiAlternatives(
+                to=[participation.participant.email],
+                subject=_("Your participation state changed"),
+                body=text_content,
+            )
+            message.attach_alternative(html_content, "text/html")
+            messages.append(message)
 
         # send mail to responsible users
         responsible_persons = get_users_with_perms(
@@ -63,9 +61,9 @@ def participation_state_changed(participation: LocalParticipation):
         ).distinct()
         subject = _("Participation was changed for your event")
         text_content = _(
-            "The participation of {user} for the shift {shift} was changed. The status is now {status}"
+            "The participation of {participant} for {shift} was changed. The status is now {status}"
         ).format(
-            user=participation.user.get_full_name(),
+            participant=participation.participant,
             shift=participation.shift,
             status=participation.get_state_display(),
         )

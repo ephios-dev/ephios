@@ -101,6 +101,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             last_name=self.last_name,
             qualifications=self.qualifications,
             date_of_birth=self.date_of_birth,
+            email=self.email if self.is_active else None,
             user=self,
         )
 

@@ -20,6 +20,11 @@ from polymorphic.models import PolymorphicModel
 from ephios import settings
 from ephios.user_management.models import UserProfile
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ephios.event_management.signup import AbstractParticipant
+
 
 class ActiveManager(Manager):
     def get_queryset(self):
@@ -100,8 +105,11 @@ class AbstractParticipation(PolymorphicModel):
     state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
 
     @property
-    def participant(self):
+    def participant(self) -> "AbstractParticipant":
         raise NotImplementedError
+
+    def __str__(self):
+        return f"{self.participant} @ {self.shift}"
 
 
 class Shift(Model):
@@ -152,6 +160,3 @@ class LocalParticipation(AbstractParticipation):
     @property
     def participant(self):
         return self.user.as_participant()
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} @ {self.shift}"
