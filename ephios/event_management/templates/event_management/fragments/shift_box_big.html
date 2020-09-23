@@ -42,21 +42,21 @@
                                                  {% endfor %}"
                                                 {% endif %}>
                                             <button type="submit" name="signup_choice" value="sign_up"
-                                                    class="btn btn-outline-success {% if not can_user_decline %}btn-disabled" disabled {% else %}"{% endif %}>
+                                                    {% if not can_sign_up %}class="btn btn-outline-success btn-disabled" disabled>{% else %}class="btn btn-outline-success btn-disabled">{% endif %}
                                                 {{ shift.signup_method.registration_button_text }}
                                             </button>
                                         </span>
                                     {% endwith %}
-                                    {% with can_user_decline=shift|can_user_decline:request.user %}
+                                    {% with can_decline=shift|can_decline:request.user %}
                                         <span class="d-inline-block" tabindex="0"
-                                                {% if not can_user_decline %}
+                                                {% if not can_decline %}
                                               data-toggle="tooltip" data-html="true" data-placement="bottom" title="
                                                  {% for error in shift|decline_errors:request.user %}
                                                      <p>{{ error.message }}</p>
                                                  {% endfor %}"
                                                 {% endif %}>
                                             <button type="submit" name="signup_choice" value="decline"
-                                                class="btn btn-outline-danger {% if not can_user_decline %}btn-disabled" disabled {% else %}"{% endif %}>
+                                                {% if not can_decline %}class="btn btn-outline-danger btn-disabled" disabled>{% else %}class="btn btn-outline-danger">{% endif %}
                                                 {% trans "Decline" %}
                                             </button>
                                         </span>
