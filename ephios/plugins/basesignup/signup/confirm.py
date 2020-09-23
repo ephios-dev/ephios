@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from guardian.mixins import PermissionRequiredMixin
 
-from ephios.contrib.signup.instant import SimpleQualificationsRequiredSignupMethod
+from ephios.plugins.basesignup.signup.instant import SimpleQualificationsRequiredSignupMethod
 from ephios.event_management.models import AbstractParticipation, Shift
 
 DispositionParticipationFormset = forms.modelformset_factory(
@@ -16,7 +16,9 @@ DispositionParticipationFormset = forms.modelformset_factory(
     extra=0,
     can_order=False,
     can_delete=False,
-    widgets={"state": forms.HiddenInput(attrs={"class": "state-input"}),},
+    widgets={
+        "state": forms.HiddenInput(attrs={"class": "state-input"}),
+    },
 )
 
 
@@ -24,7 +26,7 @@ class RequestConfirmDispositionView(PermissionRequiredMixin, SingleObjectMixin, 
     model = Shift
     permission_required = "event_management.change_event"
     accept_global_perms = True
-    template_name = "ephioscontrib/requestconfirm_signup/disposition.html"
+    template_name = "basesignup/requestconfirm_signup/disposition.html"
 
     def get_permission_object(self):
         self.object: Shift = self.get_object()
@@ -65,7 +67,7 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
                 AbstractParticipation.States.CONFIRMED,
             }
         )
-        return get_template("ephioscontrib/requestconfirm_signup/fragment_state.html").render(
+        return get_template("basesignup/requestconfirm_signup/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participants": (
@@ -78,7 +80,7 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
                 ),
                 "disposition_url": (
                     reverse(
-                        "contrib:shift_disposition_requestconfirm", kwargs=dict(pk=self.shift.pk)
+                        "basesignup:shift_disposition_requestconfirm", kwargs=dict(pk=self.shift.pk)
                     )
                     if request.user.has_perm("event_management.change_event", obj=self.shift.event)
                     else None

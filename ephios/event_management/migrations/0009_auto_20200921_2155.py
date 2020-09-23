@@ -19,6 +19,8 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterField(
-            model_name="shift", name="signup_configuration", field=models.JSONField(default=dict),
+            model_name="shift",
+            name="signup_configuration",
+            field=models.JSONField(default=dict),
         ),
     ]

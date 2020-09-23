@@ -73,7 +73,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
         }
 
     def render_shift_state(self, request):
-        return get_template("ephioscontrib/signup_instant_state.html").render({"shift": self.shift})
+        return get_template("basesignup/signup_instant_state.html").render({"shift": self.shift})
 
     def perform_signup(self, participant, **kwargs):
         participation = super().perform_signup(participant, **kwargs)

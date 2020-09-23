@@ -25,8 +25,14 @@ class Migration(migrations.Migration):
                 ("title", models.CharField(max_length=254)),
             ],
         ),
-        migrations.RemoveField(model_name="qualification", name="track",),
-        migrations.RemoveField(model_name="qualificationgrant", name="expiration_date",),
+        migrations.RemoveField(
+            model_name="qualification",
+            name="track",
+        ),
+        migrations.RemoveField(
+            model_name="qualificationgrant",
+            name="expiration_date",
+        ),
         migrations.AddField(
             model_name="qualification",
             name="included_qualifications",
@@ -63,7 +69,9 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
-        migrations.DeleteModel(name="QualificationTrack",),
+        migrations.DeleteModel(
+            name="QualificationTrack",
+        ),
         migrations.AddField(
             model_name="qualification",
             name="category",

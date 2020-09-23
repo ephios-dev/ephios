@@ -2,6 +2,27 @@
     width: 100% !important;
 }
 
+.container-main {
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-flow: column;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    height: 60px;
+    line-height: 60px;
+}
+
 .btn-disabled {
     pointer-events: none;
 }

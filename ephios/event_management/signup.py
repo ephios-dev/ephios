@@ -337,7 +337,8 @@ class BaseSignupView(View):
             with transaction.atomic():
                 self.method.perform_signup(request.user.as_participant())
                 messages.success(
-                    request, self.method.signup_success_message.format(shift=self.shift),
+                    request,
+                    self.method.signup_success_message.format(shift=self.shift),
                 )
         except ParticipationError as errors:
             for error in errors:

@@ -124,7 +124,8 @@ class EventActivateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMix
         try:
             event.activate()
             messages.success(
-                request, _("The event {title} has been saved.").format(title=event.title),
+                request,
+                _("The event {title} has been saved.").format(title=event.title),
             )
         except ValidationError as e:
             messages.error(request, e)

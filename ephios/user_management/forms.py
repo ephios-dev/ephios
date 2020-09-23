@@ -200,5 +200,8 @@ class QualificationGrantForm(ModelForm):
 
 
 QualificationGrantFormset = inlineformset_factory(
-    UserProfile, QualificationGrant, form=QualificationGrantForm, extra=0,
+    UserProfile,
+    QualificationGrant,
+    form=QualificationGrantForm,
+    extra=0,
 )
