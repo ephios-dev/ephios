@@ -1,13 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 {% load bootstrap4 %}
 
 {% block title %}
     {% trans "Users" %}
-{% endblock %}
-
-{% block javascript %}
-    {% include "event_management/fragments/datatable.html" %}
 {% endblock %}
 
 {% block content %}
@@ -25,7 +22,7 @@
             <th data-priority="2">{% trans "First name" %}</th>
             <th data-priority="4">{% trans "Email address" %}</th>
             <th data-priority="5">{% trans "Information" %}</th>
-            <th data-priority="1">{% trans "Action" %}</th>
+            <th data-priority="1" data-orderable="false">{% trans "Action" %}</th>
         </tr>
         </thead>
         <tbody>

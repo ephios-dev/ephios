@@ -22,3 +22,7 @@ footer {
     height: 60px;
     line-height: 60px;
 }
+
+.btn-disabled {
+    pointer-events: none;
+}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 {% load bootstrap4 %}
 
@@ -6,22 +7,18 @@
     {% trans "Past events" %}
 {% endblock %}
 
-{% block javascript %}
-    {% include "event_management/fragments/datatable.html" with order_column=2 order_direction="desc" %}
-{% endblock %}
-
 {% block content %}
     <div class="page-header">
         <h1>{% trans "Past events" %}</h1>
     </div>
-    <table id="event_table" class="table table-striped display datatable">
+    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;desc&quot; ]]">
         <thead>
         <tr>
             <th data-priority="2">{% trans "Title" %}</th>
             <th data-priority="5">{% trans "Location" %}</th>
             <th data-priority="3">{% trans "Date" %}</th>
             <th data-priority="4">{% trans "until" %}</th>
-            <th data-priority="1">{% trans "Action" %}</th>
+            <th data-priority="1" data-orderable="false">{% trans "Action" %}</th>
         </tr>
         </thead>
         <tbody>
