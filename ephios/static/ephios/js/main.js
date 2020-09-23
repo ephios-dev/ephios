@@ -8,6 +8,8 @@ $(document).ready(function () {
         $(event.target).find(".django-select2").first().djangoSelect2()
     });
 
+    const language = $("body").data("language")
+    const language_urls = {"de-de": ""}
     $(".datatable").DataTable({
         "paging": false,
         "info": false,

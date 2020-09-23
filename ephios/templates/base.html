@@ -17,7 +17,8 @@
 </head>
 <!-- put jQuery here to ensure that it is loaded when other scripts run -->
 <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
-<body>
+{% get_current_language as current_language %}
+<body data-language="{{ current_language }}">
 
 <div class="container mb-3">
     <div class="row">

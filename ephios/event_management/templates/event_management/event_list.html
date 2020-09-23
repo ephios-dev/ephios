@@ -15,8 +15,7 @@
         <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
                 class="fa fa-plus"></span> {% trans "Add event" %}</a>
     {% endif %}
-    {% get_current_language as current_language %}
-    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;asc&quot; ]]" {% if current_language == "de-de" %} data-language="{&quot;url&quot;: &quot;{% static "datatables/german.json" %}&quot;}" {% endif %}>
+    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;asc&quot; ]]">
         <thead>
         <tr>
             <th data-priority="2">{% trans "Title" %}</th>
