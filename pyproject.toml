@@ -2,9 +2,11 @@
 name = "ephios"
 version = "0.1.0"
 description = "ephios is a tool to manage shifts for medical services."
-authors = ["Julian Baumann <Julian.Baumann@johanniter.de>"]
+authors = ["Julian Baumann <julian@ephios.de>", "Felix Rindt <felix@ephios.de>"]
 license = "MIT"
-readme="README.md"
+readme = "README.md"
+homepage = "https://ephios.de"
+repository = "https://github.com/ephios-dev/ephios"
 
 [tool.poetry.dependencies]
 python = "^3.8"
