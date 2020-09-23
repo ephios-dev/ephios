@@ -18,7 +18,7 @@
 <!-- put jQuery here to ensure that it is loaded when other scripts run -->
 <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
 {% get_current_language as current_language %}
-<body data-language="{{ current_language }}">
+<body>
 
 <div class="container container-main">
     <header class="row mb-3">
@@ -121,7 +121,7 @@
 <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
 <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
 <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
-<script type="text/javascript" src="{% static "datatables/datatables.min.js" %}"></script>
+<script type="text/javascript" src="{% static "datatables/datatables.min.js" %}" id="datatables-script" data-datatables-translation-url="{{ datatables_translation_url }}"></script>
 <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
 {% block javascript %}{% endblock %}

@@ -15,8 +15,7 @@
         <a class="btn btn-secondary" href="{% url "user_management:group_add" %}"><span
                 class="fa fa-plus"></span> {% trans "Add group" %}</a>
     {% endif %}
-    {% get_current_language as current_language %}
-    <table id="event_table" class="table table-striped display datatable" {% if current_language == "de-de" %} data-language="{&quot;url&quot;: &quot;{% static "datatables/german.json" %}&quot;}" {% endif %}>
+    <table id="event_table" class="table table-striped display datatable">
         <thead>
         <tr>
             <th>{% trans "Name" %}</th>

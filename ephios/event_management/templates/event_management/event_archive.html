@@ -11,8 +11,7 @@
     <div class="page-header">
         <h1>{% trans "Past events" %}</h1>
     </div>
-    {% get_current_language as current_language %}
-    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;desc&quot; ]]" {% if current_language == "de-de" %} data-language="{&quot;url&quot;: &quot;{% static "datatables/german.json" %}&quot;}" {% endif %} >
+    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;desc&quot; ]]">
         <thead>
         <tr>
             <th data-priority="2">{% trans "Title" %}</th>
