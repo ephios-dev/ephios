@@ -69,7 +69,9 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
     def get_userprofile_form(self):
         return UserProfileForm(
             self.request.POST or None,
-            initial={"groups": self.get_object().groups.all(),},
+            initial={
+                "groups": self.get_object().groups.all(),
+            },
             instance=self.object,
         )
 

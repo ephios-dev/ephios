@@ -26,17 +26,30 @@ from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     def create_user(
-        self, email, first_name, last_name, date_of_birth, password=None,
+        self,
+        email,
+        first_name,
+        last_name,
+        date_of_birth,
+        password=None,
     ):
         user = self.model(
-            email=email, first_name=first_name, last_name=last_name, date_of_birth=date_of_birth,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth,
         )
         user.set_password(password)
         user.save()
         return user
 
     def create_superuser(
-        self, email, first_name, last_name, date_of_birth, password=None,
+        self,
+        email,
+        first_name,
+        last_name,
+        date_of_birth,
+        password=None,
     ):
         user = self.create_user(
             email=email,

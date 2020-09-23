@@ -122,7 +122,10 @@ class DebugDataset(AdminUserDataset):
             end_time=make_aware(datetime(2023, 7, 1, 1, 0)),
             signup_method_slug="instant_confirmation",
             signup_configuration=json.dumps(
-                dict(minimum_age=18, signup_until=make_aware(datetime(2023, 6, 29, 8, 0)),),
+                dict(
+                    minimum_age=18,
+                    signup_until=make_aware(datetime(2023, 6, 29, 8, 0)),
+                ),
                 cls=DjangoJSONEncoder,
             ),
         )
@@ -135,7 +138,8 @@ class QualificationDataset(AbstractDataset):
 
     def create_objects(self, *args, **options):
         medical_category = QualificationCategory.objects.create(
-            title=_("Medical"), uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
+            title=_("Medical"),
+            uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
         )
 
         eh = Qualification.objects.create(
@@ -193,7 +197,8 @@ class QualificationDataset(AbstractDataset):
         )
 
         driverslicense_category = QualificationCategory.objects.create(
-            title=_("License"), uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
+            title=_("License"),
+            uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
         )
 
         l = Qualification.objects.create(
