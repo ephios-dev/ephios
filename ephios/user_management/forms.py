@@ -135,12 +135,12 @@ class GroupForm(ModelForm):
             assign_perm("event_management.delete_event", group)
 
             if "publish_event_for_group" in self.changed_data:
-                for target_group in self.cleaned_data["publish_event_for_group"].difference(
-                    self.initial["publish_event_for_group"]
+                for target_group in self.cleaned_data["publish_event_for_group"].exlude(
+                    id__in=self.initial["publish_event_for_group"]
                 ):
                     assign_perm("publish_event_for_group", group, target_group)
-                for target_group in self.initial["publish_event_for_group"].difference(
-                    self.cleaned_data["publish_event_for_group"]
+                for target_group in self.initial["publish_event_for_group"].exclude(
+                    id__in=self.cleaned_data["publish_event_for_group"]
                 ):
                     remove_perm("publish_event_for_group", group, target_group)
         else:
