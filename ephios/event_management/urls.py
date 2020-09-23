@@ -16,9 +16,21 @@ urlpatterns = [
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
     path("events/create/", views.EventCreateView.as_view(), name="event_create"),
     path("events/past/", views.EventArchiveView.as_view(), name="event_list_past"),
-    path("shifts/<int:pk>/signup-action/", views.ShiftSignupView.as_view(), name="shift_action",),
-    path("shifts/<int:pk>/edit/", views.ShiftUpdateView.as_view(), name="shift_edit",),
-    path("shifts/<int:pk>/delete/", views.ShiftDeleteView.as_view(), name="shift_delete",),
+    path(
+        "shifts/<int:pk>/signup-action/",
+        views.ShiftSignupView.as_view(),
+        name="shift_action",
+    ),
+    path(
+        "shifts/<int:pk>/edit/",
+        views.ShiftUpdateView.as_view(),
+        name="shift_edit",
+    ),
+    path(
+        "shifts/<int:pk>/delete/",
+        views.ShiftDeleteView.as_view(),
+        name="shift_delete",
+    ),
     path(
         "signup_methods/<slug:slug>/configuration_form/",
         ShiftConfigurationFormView.as_view(),

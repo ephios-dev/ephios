@@ -21,6 +21,8 @@ def get_groups_with_perms(obj, only_with_perms_in):
         content_type=ctype, codename__in=only_with_perms_in
     ).values_list("id", flat=True)
     group_filters.update(
-        {"%s__permission_id__in" % group_rel_name: permission_ids,}
+        {
+            "%s__permission_id__in" % group_rel_name: permission_ids,
+        }
     )
     return Group.objects.filter(**group_filters).distinct()

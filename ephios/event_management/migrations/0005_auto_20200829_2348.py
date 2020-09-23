@@ -12,14 +12,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="event", options={"verbose_name": "event", "verbose_name_plural": "events"},
+            name="event",
+            options={"verbose_name": "event", "verbose_name_plural": "events"},
         ),
         migrations.AlterModelOptions(
             name="eventtype",
             options={"verbose_name": "event type", "verbose_name_plural": "event types"},
         ),
         migrations.AlterModelOptions(
-            name="shift", options={"verbose_name": "shift", "verbose_name_plural": "shifts"},
+            name="shift",
+            options={"verbose_name": "shift", "verbose_name_plural": "shifts"},
         ),
         migrations.AlterField(
             model_name="abstractparticipation",

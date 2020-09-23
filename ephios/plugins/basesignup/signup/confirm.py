@@ -16,7 +16,9 @@ DispositionParticipationFormset = forms.modelformset_factory(
     extra=0,
     can_order=False,
     can_delete=False,
-    widgets={"state": forms.HiddenInput(attrs={"class": "state-input"}),},
+    widgets={
+        "state": forms.HiddenInput(attrs={"class": "state-input"}),
+    },
 )
 
 
