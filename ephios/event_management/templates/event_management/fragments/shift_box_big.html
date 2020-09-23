@@ -42,7 +42,7 @@
                                                  {% endfor %}"
                                                 {% endif %}>
                                             <button type="submit" name="signup_choice" value="sign_up"
-                                                    {% if not can_sign_up %}class="btn btn-outline-success btn-disabled" disabled>{% else %}class="btn btn-outline-success btn-disabled">{% endif %}
+                                                    {% if can_sign_up %}class="btn btn-outline-success">{% else %}class="btn btn-outline-success btn-disabled" disabled>{% endif %}
                                                 {{ shift.signup_method.registration_button_text }}
                                             </button>
                                         </span>
@@ -56,7 +56,7 @@
                                                  {% endfor %}"
                                                 {% endif %}>
                                             <button type="submit" name="signup_choice" value="decline"
-                                                {% if not can_decline %}class="btn btn-outline-danger btn-disabled" disabled>{% else %}class="btn btn-outline-danger">{% endif %}
+                                                {% if can_decline %}class="btn btn-outline-danger">{% else %}class="btn btn-outline-danger btn-disabled" disabled>{% endif %}
                                                 {% trans "Decline" %}
                                             </button>
                                         </span>
