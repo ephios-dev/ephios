@@ -12,11 +12,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from email.utils import getaddresses
+
 import environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env()
+# for syntax see https://django-environ.readthedocs.io/en/latest/
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env.str("SECRET_KEY")
@@ -34,7 +37,6 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_REFERRER_POLICY = "same-origin"
-
 
 # Application definition
 
@@ -91,7 +93,6 @@ LOCALE_PATHS = (os.path.join(BASE_DIR, "ephios/locale"),)
 
 WSGI_APPLICATION = "ephios.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -123,7 +124,6 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = "user_management.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -137,7 +137,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
@@ -145,26 +144,22 @@ STATIC_URL = env.str("STATIC_URL")
 STATIC_ROOT = env.str("STATIC_ROOT")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 
-
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
 vars().update(EMAIL_CONFIG)
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = env.str("SERVER_EMAIL")
-ADMINS = env.list("ADMINS")
-
+ADMINS = getaddresses([env("ADMINS")])
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
-
 
 # django-select2
 # Prevent django-select from loading the select2 resources as we want to serve them locally
 SELECT2_JS = ""
 SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""
-
 
 # django-debug-toolbar
 if DEBUG:
