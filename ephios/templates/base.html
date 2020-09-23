@@ -19,8 +19,8 @@
 <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
 <body>
 
-<div class="container mb-3">
-    <div class="row">
+<div class="container container-main">
+    <header class="row mb-3">
         <div class="col-md-12">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <a class="navbar-brand" href="/">ephios</a>
@@ -95,20 +95,26 @@
                 </div>
             </nav>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 mt-3">
+    </header>
+    <main class="row">
+        <div class="col-md-12">
             {% bootstrap_messages %}
             {% block content %}{% endblock %}
         </div>
-    </div>
-    <footer class="footer text-center mt-auto py-3">
-        <small>
-            {% for label, url in footer.items %}
-                <a href="{{ url }}">{{ label }}</a> ·
-            {% endfor %}
-            <span class="text-muted">powered by <a href="https://ephios.de/" target="_blank">ephios</a></span>
-        </small>
+    </main>
+    <footer class="row  mt-auto">
+        <div class="col-md-12 text-center">
+            <small>
+                {% for label, url in footer.items %}
+                    <a href="{{ url }}">{{ label }}</a> ·
+                {% endfor %}
+                <span class="text-muted">
+                    {% blocktranslate with brand='<a href="https://ephios.de/" target="_blank">ephios</a>' %}
+                        powered by {{ brand }}
+                    {% endblocktranslate %}
+                </span>
+            </small>
+        </div>
     </footer>
 </div>
 <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>

@@ -7,7 +7,6 @@ from django.core.exceptions import PermissionDenied
 
 class PageView(DetailView):
     model = Page
-    accept_global_perms = True
     template_name = "pages/view_page.html"
 
     def setup(self, request, *args, **kwargs):
