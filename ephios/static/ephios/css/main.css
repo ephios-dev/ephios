@@ -2,13 +2,34 @@
     width: 100% !important;
 }
 
-footer {
-    height: 60px;
-    line-height: 60px;
+html, body {
+    /*
+    Get 100vh height, except on mobile chrome where the browser navbar covers part of the viewport m)
+    https://allthingssmitty.com/2020/05/11/css-fix-for-100vh-in-mobile-webkit/
+    Only works with height. This does not work for some mobile browsers.
+     */
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: -moz-available;
 }
 
 .container-main {
-    min-height: 100vh;
+    height: 100%;
     display: flex;
     flex-flow: column;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    height: 60px;
+    line-height: 60px;
 }
