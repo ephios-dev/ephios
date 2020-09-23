@@ -1,13 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 {% load bootstrap4 %}
 
 {% block title %}
     {% trans "Users" %}
-{% endblock %}
-
-{% block javascript %}
-    {% include "event_management/fragments/datatable.html" %}
 {% endblock %}
 
 {% block content %}
@@ -18,14 +15,15 @@
         <a class="btn btn-secondary" href="{% url "user_management:userprofile_create" %}"><span
                 class="fa fa-plus"></span> {% trans "Add user" %}</a>
     {% endif %}
-    <table id="userprofile_table" class="table table-striped display datatable">
+    {% get_current_language as current_language %}
+    <table id="userprofile_table" class="table table-striped display datatable" {% if current_language == "de-de" %} data-language="{&quot;url&quot;: &quot;{% static "datatables/german.json" %}&quot;}" {% endif %}>
         <thead>
         <tr>
             <th data-priority="3">{% trans "Last name" %}</th>
             <th data-priority="2">{% trans "First name" %}</th>
             <th data-priority="4">{% trans "Email address" %}</th>
             <th data-priority="5">{% trans "Information" %}</th>
-            <th data-priority="1">{% trans "Action" %}</th>
+            <th data-priority="1" data-orderable="false">{% trans "Action" %}</th>
         </tr>
         </thead>
         <tbody>

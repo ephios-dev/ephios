@@ -41,11 +41,8 @@
                                                      <p>{{ error.message }}</p>
                                                  {% endfor %}"
                                                 {% endif %}>
-                                            <button type="submit" class="btn btn-outline-success"
-                                                    name="signup_choice" value="sign_up"
-                                                    {% if not can_sign_up %}
-                                                    style="pointer-events: none;" disabled
-                                                    {% endif %}>
+                                            <button type="submit" name="signup_choice" value="sign_up"
+                                                    class="btn btn-outline-success {% if not can_user_decline %}btn-disabled" disabled {% else %}"{% endif %}>
                                                 {{ shift.signup_method.registration_button_text }}
                                             </button>
                                         </span>
@@ -58,11 +55,8 @@
                                                      <p>{{ error.message }}</p>
                                                  {% endfor %}"
                                                 {% endif %}>
-                                            <button type="submit" class="btn btn-outline-danger"
-                                                    name="signup_choice" value="decline"
-                                                    {% if not can_user_decline %}
-                                                    style="pointer-events: none;" disabled
-                                                    {% endif %}>
+                                            <button type="submit" name="signup_choice" value="decline"
+                                                class="btn btn-outline-danger {% if not can_user_decline %}btn-disabled" disabled {% else %}"{% endif %}>
                                                 {% trans "Decline" %}
                                             </button>
                                         </span>
