@@ -1,7 +1,5 @@
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
@@ -39,7 +37,6 @@ def new_event(event):
     mail.get_connection().send_messages(messages)
 
 
-@receiver(post_save, sender=LocalParticipation)
 def participation_state_changed(sender, **kwargs):
     instance = kwargs["instance"]
     if instance.state != AbstractParticipation.States.USER_DECLINED and instance.user.is_active:
