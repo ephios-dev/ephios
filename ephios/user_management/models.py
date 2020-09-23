@@ -13,12 +13,12 @@ from django.db.models import (
     DateField,
     EmailField,
     Exists,
+    F,
     ForeignKey,
+    Max,
     Model,
     OuterRef,
     Q,
-    F,
-    Max,
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _

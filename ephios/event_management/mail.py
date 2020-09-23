@@ -4,10 +4,10 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
+from ephios.event_management.models import AbstractParticipation, LocalParticipation
 from ephios.helpers.permissions import get_groups_with_perms
 from ephios.settings import SITE_URL
 from ephios.user_management.models import UserProfile
-from ephios.event_management.models import AbstractParticipation, LocalParticipation
 
 
 def new_event(event):
