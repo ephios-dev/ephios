@@ -18,6 +18,7 @@ django-polymorphic = "^3.0.0"
 django-select2 = "^7.4.2"
 reportlab = "^3.5.49"
 django-formset-js-improved = "^0.5.0"
+django-csp = "^3.7"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
