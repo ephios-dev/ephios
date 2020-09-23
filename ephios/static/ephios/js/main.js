@@ -13,4 +13,19 @@ $(document).ready(function () {
         "info": false,
         "responsive": true,
     });
+
+    $("[data-drop-to-state]").each(function (index, elem) {
+        Sortable.create(elem, {
+            group: "participations",
+            sort: false,
+            draggable: ".draggable",
+            emptyInsertThreshold: 50,
+            animation: 150,
+            easing: "cubic-bezier(1, 0, 0, 1)",
+            onAdd: function (event) {
+                const newState = $(event.target).data("drop-to-state");
+                $(event.item).find(".state-input").val(newState);
+            },
+        });
+    });
 })
