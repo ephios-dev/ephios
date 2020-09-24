@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
 from email.utils import getaddresses
 
 import environ
@@ -122,7 +121,7 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
-AUTH_USER_MODEL = "ephios.user_management.UserProfile"
+AUTH_USER_MODEL = "user_management.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 
 # Internationalization

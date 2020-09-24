@@ -1,16 +1,17 @@
+import importlib
+import subprocess
+
 from django.templatetags.static import static
 from django.utils.translation import get_language
 
 from ephios.extra.signals import footer_link
-
-import subprocess
 
 try:
     EPHIOS_VERSION = (
         subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
     )
 except (subprocess.CalledProcessError, FileNotFoundError):
-    EPHIOS_VERSION = None
+    EPHIOS_VERSION = f"v{importlib.metadata.version('ephios')}"
 
 
 def ephios_base_context(request):
