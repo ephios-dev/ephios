@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.db.models import Max
+from django.db.models import Max, Min
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -36,8 +36,14 @@ class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
     def get_queryset(self):
-        all_events = get_objects_for_user(self.request.user, "event_management.view_event")
-        return all_events.annotate(end=Max("shifts__end_time")).filter(end__gte=timezone.now())
+        return (
+            get_objects_for_user(self.request.user, "event_management.view_event")
+            .annotate(
+                start_time=Min("shifts__start_time"),
+                end_time=Max("shifts__end_time"),
+            )
+            .filter(end_time__gte=timezone.now())
+        )
 
 
 class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
@@ -144,8 +150,14 @@ class EventArchiveView(PermissionRequiredMixin, ListView):
     template_name = "event_management/event_archive.html"
 
     def get_queryset(self):
-        all_events = get_objects_for_user(self.request.user, "event_management.view_event")
-        return all_events.annotate(end=Max("shifts__end_time")).filter(end__lt=timezone.now())
+        return (
+            get_objects_for_user(self.request.user, "event_management.view_event")
+            .annotate(
+                start_time=Min("shifts__start_time"),
+                end_time=Max("shifts__end_time"),
+            )
+            .filter(end_time__lt=timezone.now())
+        )
 
 
 class ShiftCreateView(PermissionRequiredMixin, TemplateView):

@@ -110,7 +110,7 @@
                     <a href="{{ url }}">{{ label }}</a> ·
                 {% endfor %}
                 <span class="text-muted">
-                    {% blocktranslate with brand='<a href="https://ephios.de/" target="_blank">ephios</a>' %}
+                    {% blocktranslate with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
                         powered by {{ brand }}
                     {% endblocktranslate %}
                     <samp>{{ ephios_version|default_if_none:"" }}</samp>

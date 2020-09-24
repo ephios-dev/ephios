@@ -103,8 +103,8 @@ class MultipleShiftEventExporter(BasePDFExporter):
         ]
 
         tz = pytz.timezone(settings.TIME_ZONE)
-        start_time = self.event.start_time.astimezone(tz)
-        end_time = self.event.end_time.astimezone(tz)
+        start_time = self.event.get_start_time().astimezone(tz)
+        end_time = self.event.get_end_time().astimezone(tz)
         end_date = (
             f"- {formats.date_format(end_time, 'l')}, {formats.date_format(end_time, 'SHORT_DATE_FORMAT')}"
             if end_time.date() > start_time.date()
