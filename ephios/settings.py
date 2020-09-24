@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "user_management.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.user_management.utils.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -122,7 +122,7 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
-AUTH_USER_MODEL = "user_management.UserProfile"
+AUTH_USER_MODEL = "ephios.user_management.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 
 # Internationalization
