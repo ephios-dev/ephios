@@ -103,6 +103,16 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
             )
 
 
+class UserProfileDeleteView(PermissionRequiredMixin, DeleteView):
+    model = UserProfile
+    permission_required = "user_management.delete_userprofile"
+    template_name = "user_management/userprofile_confirm_delete.html"
+
+    def get_success_url(self):
+        messages.info(self.request, _("You deleted a user."))
+        return reverse("user_management:userprofile_list")
+
+
 class GroupListView(PermissionRequiredMixin, ListView):
     model = Group
     permission_required = "auth.view_group"
