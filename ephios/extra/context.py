@@ -11,6 +11,7 @@ try:
         subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
     )
 except (subprocess.CalledProcessError, FileNotFoundError):
+    # suggested in https://github.com/python-poetry/poetry/issues/273
     EPHIOS_VERSION = f"v{importlib.metadata.version('ephios')}"
 
 
