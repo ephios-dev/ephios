@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "djangoformsetjs",
     "ephios.user_management",
     "ephios.event_management",
-    "ephios.helpers",
+    "ephios.extra",
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
 ]
@@ -84,7 +84,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "ephios.helpers.context.ephios_base_context",
+                "ephios.extra.context.ephios_base_context",
             ],
         },
     },

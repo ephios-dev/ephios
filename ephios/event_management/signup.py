@@ -21,8 +21,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from ephios.event_management.models import AbstractParticipation, LocalParticipation, Shift
-from ephios.helpers.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.helpers.widgets import CustomSplitDateTimeWidget
+from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.extra.widgets import CustomSplitDateTimeWidget
 from ephios.user_management.models import Qualification
 
 register_signup_methods = django.dispatch.Signal(providing_args=[])
