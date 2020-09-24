@@ -3,6 +3,15 @@ from django.utils.translation import get_language
 
 from ephios.extra.signals import footer_link
 
+import subprocess
+
+try:
+    EPHIOS_VERSION = (
+        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
+    )
+except (subprocess.CalledProcessError, FileNotFoundError):
+    EPHIOS_VERSION = None
+
 
 def ephios_base_context(request):
     footer = {}
@@ -17,4 +26,5 @@ def ephios_base_context(request):
     return {
         "footer": footer,
         "datatables_translation_url": datatables_translation_url,
+        "ephios_version": EPHIOS_VERSION,
     }
