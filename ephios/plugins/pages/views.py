@@ -1,8 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from django.views.generic import DetailView
 
 from ephios.plugins.pages.models import Page
-
-from django.core.exceptions import PermissionDenied
 
 
 class PageView(DetailView):

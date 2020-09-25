@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytz
 from django.db import models, transaction
 from django.db.models import (
@@ -19,8 +21,6 @@ from polymorphic.models import PolymorphicModel
 
 from ephios import settings
 from ephios.user_management.models import UserProfile
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ephios.event_management.signup import AbstractParticipant
@@ -64,13 +64,11 @@ class Event(Model):
         verbose_name_plural = _("events")
         permissions = [("view_past_event", _("Can view past events"))]
 
-    @property
-    def start_time(self):
+    def get_start_time(self):
         if (first_shift := self.shifts.order_by("start_time").first()) is not None:
             return first_shift.start_time
 
-    @property
-    def end_time(self):
+    def get_end_time(self):
         if (last_shift := self.shifts.order_by("end_time").last()) is not None:
             return last_shift.end_time
 

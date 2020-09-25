@@ -10,7 +10,7 @@
 {% block content %}
     {% get_obj_perms request.user for event as "event_perms" %}
     {% if not event.active %}
-        {% if event.shifts.all %}
+        {% if event.shifts.exists %}
             {% trans "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
             {% trans "Save" as save_trans %}
             <form method='POST' class='form' action='{% url "event_management:event_activate" event.pk %}'>

@@ -7,8 +7,8 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from guardian.mixins import PermissionRequiredMixin
 
-from ephios.plugins.basesignup.signup.instant import SimpleQualificationsRequiredSignupMethod
 from ephios.event_management.models import AbstractParticipation, Shift
+from ephios.plugins.basesignup.signup.instant import SimpleQualificationsRequiredSignupMethod
 
 DispositionParticipationFormset = forms.modelformset_factory(
     model=AbstractParticipation,
