@@ -107,7 +107,10 @@ class AbstractParticipation(PolymorphicModel):
         raise NotImplementedError
 
     def __str__(self):
-        return f"{self.participant} @ {self.shift}"
+        try:
+            return f"{self.participant} @ {self.shift}"
+        except NotImplementedError:
+            return super().__str__()
 
 
 class Shift(Model):

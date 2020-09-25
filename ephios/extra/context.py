@@ -12,7 +12,7 @@ try:
     )
 except (subprocess.CalledProcessError, FileNotFoundError):
     # suggested in https://github.com/python-poetry/poetry/issues/273
-    EPHIOS_VERSION = f"v{importlib.metadata.version('ephios')}"
+    EPHIOS_VERSION = "v" + importlib.metadata.version("ephios")
 
 
 def ephios_base_context(request):
