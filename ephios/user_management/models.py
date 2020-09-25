@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
 import guardian.mixins
 from django.contrib.auth import get_user_model
@@ -94,17 +94,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         return self.first_name
 
     @property
+    def age(self):
+        today, born = date.today(), self.date_of_birth
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+    @property
     def is_minor(self):
-        current = datetime.now()
-        birthday_upcoming = (
-            current.month <= self.date_of_birth.month and current.day < self.date_of_birth.day
-        )
-        age = (
-            current.year - self.date_of_birth.year - 1
-            if birthday_upcoming
-            else current.year - self.date_of_birth.year
-        )
-        return age < 18
+        return self.age < 18
 
     def as_participant(self):
         from ephios.event_management.signup import LocalUserParticipant
