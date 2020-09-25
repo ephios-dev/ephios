@@ -4,36 +4,38 @@
 {% load bootstrap4 %}
 
 {% block title %}
-    {% trans "Events" %}
+    {% translate "Events" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Events" %}</h1>
+        <h1>{% translate "Events" %}</h1>
     </div>
     {% if perms.event_management.add_event %}
         <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
-                class="fa fa-plus"></span> {% trans "Add event" %}</a>
+                class="fa fa-plus"></span> {% translate "Add event" %}</a>
     {% endif %}
-    <table id="event_table" class="table table-striped display datatable" data-order="[[ 2, &quot;asc&quot; ]]">
+    <table id="event_table" class="table table-striped display datatable" data-order="[[ 3, &quot;asc&quot; ]]">
         <thead>
         <tr>
-            <th data-priority="2">{% trans "Title" %}</th>
-            <th data-priority="5">{% trans "Location" %}</th>
-            <th data-priority="3">{% trans "Date" %}</th>
-            <th data-priority="4">{% trans "until" %}</th>
-            <th data-priority="1" data-orderable="false">{% trans "Action" %}</th>
+            <th data-priority="4">{% translate "Type" %}</th>
+            <th data-priority="2">{% translate "Title" %}</th>
+            <th data-priority="6">{% translate "Location" %}</th>
+            <th data-priority="3">{% translate "Date" %}</th>
+            <th data-priority="5">{% translate "until" %}</th>
+            <th data-priority="1" data-orderable="false">{% translate "Action" %}</th>
         </tr>
         </thead>
         <tbody>
         {% for event in event_list %}
             <tr>
+                <td>{{ event.type }}</td>
                 <td>{{ event.title }}</td>
                 <td>{{ event.location }}</td>
                 <td>{{ event.start_time|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>{{ event.end_time|date:"SHORT_DATE_FORMAT" }}</td>
                 <td><a class="btn btn-primary" href="{% url "event_management:event_detail" event.id %}"><span
-                        class="fa fa-eye"></span> <span class="d-none d-md-inline">{% trans "Show" %}</span></a></td>
+                        class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "Show" %}</span></a></td>
             </tr>
         {% endfor %}
         </tbody>

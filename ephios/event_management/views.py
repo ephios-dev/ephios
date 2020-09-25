@@ -43,6 +43,7 @@ class EventListView(LoginRequiredMixin, ListView):
                 end_time=Max("shifts__end_time"),
             )
             .filter(end_time__gte=timezone.now())
+            .select_related("type")
         )
 
 
@@ -157,6 +158,7 @@ class EventArchiveView(PermissionRequiredMixin, ListView):
                 end_time=Max("shifts__end_time"),
             )
             .filter(end_time__lt=timezone.now())
+            .select_related("type")
         )
 
 
