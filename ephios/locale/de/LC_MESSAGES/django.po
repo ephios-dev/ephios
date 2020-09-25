@@ -719,7 +719,8 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-" powered by %(brand)s\n"
+"                        powered by %(brand)s\n"
+"                    "
 
 #: ephios/templates/registration/logged_out.html:6
 msgid "Logged out"
@@ -1007,7 +1008,8 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-" Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen? \n"
+"            Möchten Sie den Benutzer %(name)s "
+"(%(userprofile)s) wirklich löschen?"
 
 #: ephios/user_management/templates/user_management/userprofile_detail.html:14
 msgid "Your data"
