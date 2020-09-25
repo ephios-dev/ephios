@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-25 14:07+0200\n"
+"POT-Creation-Date: 2020-09-25 16:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,8 +75,8 @@ msgid ""
 "The participation of {participant} for {shift} was changed. The status is "
 "now {status}"
 msgstr ""
-"Die Teilnahme von {participant} an {shift} wurde geändert. Der Status ist jetzt "
-"{status}."
+"Die Teilnahme von {participant} an {shift} wurde geändert. Die Teilnahme ist "
+"nun {status}."
 
 #: ephios/event_management/models.py:35 ephios/event_management/models.py:51
 #: ephios/user_management/models.py:143 ephios/user_management/models.py:155
@@ -179,7 +179,7 @@ msgstr "Datum"
 
 #: ephios/event_management/pdf.py:67
 msgid "Time"
-msgstr ""
+msgstr "Zeit"
 
 #: ephios/event_management/pdf.py:70 ephios/event_management/pdf.py:127
 #: ephios/event_management/templates/event_management/fragments/shift_box_big.html:24
@@ -609,7 +609,7 @@ msgid "Instant Confirmation"
 msgstr "Direkte Bestätigung"
 
 #: ephios/plugins/basesignup/signup/instant.py:50
-msgid "This method instantly confirms a signup."
+msgid "This method instantly confirms every signup after it was requested."
 msgstr ""
 "Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie "
 "angefordert wurde."
@@ -717,7 +717,9 @@ msgid ""
 "\n"
 "                        powered by %(brand)s\n"
 "                    "
-msgstr "\n powered by %(brand)s\n"
+msgstr ""
+"\n"
+" powered by %(brand)s\n"
 
 #: ephios/templates/registration/logged_out.html:6
 msgid "Logged out"
@@ -1003,7 +1005,9 @@ msgid ""
 "            Are you sure you want to delete the user %(name)s "
 "(%(userprofile)s)?\n"
 "        "
-msgstr "\n Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen? \n"
+msgstr ""
+"\n"
+" Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen? \n"
 
 #: ephios/user_management/templates/user_management/userprofile_detail.html:14
 msgid "Your data"
