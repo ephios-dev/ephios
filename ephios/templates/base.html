@@ -54,7 +54,7 @@
                                                     class="sr-only">(current)</span></a>
                                     </li>
                                 {% endif %}
-                                {% if perms.user_management.view_user %}
+                                {% if perms.user_management.view_userprofile %}
                                     <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
                                         <a class="nav-link"
                                            href="{% url "user_management:userprofile_list" %}">{% trans "Users" %}
