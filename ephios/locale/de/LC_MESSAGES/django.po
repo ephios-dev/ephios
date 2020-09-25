@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-25 14:00+0200\n"
+"POT-Creation-Date: 2020-09-25 14:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -331,6 +331,7 @@ msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 #: ephios/event_management/templates/event_management/event_form.html:36
 #: ephios/event_management/templates/event_management/shift_confirm_delete.html:17
 #: ephios/user_management/templates/user_management/group_confirm_delete.html:17
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:19
 msgid "Back"
 msgstr "Zurück"
 
@@ -341,8 +342,11 @@ msgstr "Zurück"
 #: ephios/event_management/templates/event_management/shift_form.html:40
 #: ephios/user_management/templates/user_management/group_confirm_delete.html:18
 #: ephios/user_management/templates/user_management/group_list.html:33
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:20
 #: ephios/user_management/templates/user_management/userprofile_form.html:54
 #: ephios/user_management/templates/user_management/userprofile_form.html:83
+#: ephios/user_management/templates/user_management/userprofile_form.html:98
+#: ephios/user_management/templates/user_management/userprofile_list.html:40
 msgid "Delete"
 msgstr "Löschen"
 
@@ -359,7 +363,7 @@ msgstr ""
 #: ephios/event_management/templates/event_management/shift_form.html:43
 #: ephios/plugins/basesignup/templates/basesignup/requestconfirm_signup/disposition.html:83
 #: ephios/user_management/templates/user_management/group_form.html:30
-#: ephios/user_management/templates/user_management/userprofile_form.html:95
+#: ephios/user_management/templates/user_management/userprofile_form.html:100
 msgid "Save"
 msgstr "Speichern"
 
@@ -681,7 +685,7 @@ msgstr ""
 msgid "Users"
 msgstr "Benutzer"
 
-#: ephios/templates/base.html:68 ephios/user_management/forms.py:155
+#: ephios/templates/base.html:68 ephios/user_management/forms.py:157
 #: ephios/user_management/templates/user_management/group_list.html:7
 #: ephios/user_management/templates/user_management/group_list.html:12
 msgid "Groups"
@@ -826,13 +830,13 @@ msgstr ""
 msgid "Can add event"
 msgstr "Darf Veranstaltungen hinzufügen"
 
-#: ephios/user_management/forms.py:173
+#: ephios/user_management/forms.py:175
 msgid "Inactive users cannot log in and do not get any notifications."
 msgstr ""
 "Inaktive Benutzer können sich nicht anmelden und bekommen keine "
 "Benachrichtigungen."
 
-#: ephios/user_management/forms.py:175
+#: ephios/user_management/forms.py:177
 msgid "Active user"
 msgstr "Aktiver Benutzer"
 
@@ -987,6 +991,20 @@ msgstr "Minderjährig"
 msgid "Inactive"
 msgstr "Inaktiv"
 
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:7
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:12
+msgid "Delete user"
+msgstr "Benutzer löschen"
+
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:16
+#, python-format
+msgid ""
+"\n"
+"            Are you sure you want to delete the user %(name)s "
+"(%(userprofile)s)?\n"
+"        "
+msgstr "Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen?"
+
 #: ephios/user_management/templates/user_management/userprofile_detail.html:14
 msgid "Your data"
 msgstr "Persönliche Daten"
@@ -1082,18 +1100,32 @@ msgstr ""
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert."
 
-#: ephios/user_management/views.py:52
-msgid "User added successfully."
-msgstr "Benutzer erfolgreich hinzugefügt."
+#: ephios/user_management/views.py:54
+#, python-brace-format
+msgid "User {name} ({user}) added successfully."
+msgstr "Benutzer {name} ({user}) erfolgreich hinzugefügt."
 
-#: ephios/user_management/views.py:94
-msgid "User updated successfully."
-msgstr "Benutzer erfolgreich aktualisiert."
+#: ephios/user_management/views.py:101
+#, python-brace-format
+msgid "User {name} ({user}) updated successfully."
+msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 
-#: ephios/user_management/views.py:128
-msgid "Group created successfully."
-msgstr "Gruppe erfolgreich erstellt."
+#: ephios/user_management/views.py:124
+#, python-brace-format
+msgid "The user {name} ({user}) was deleted."
+msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
-#: ephios/user_management/views.py:153
-msgid "Group updated successfully."
-msgstr "Gruppe erfolgreich aktualisiert."
+#: ephios/user_management/views.py:154
+#, python-brace-format
+msgid "Group \"{group}\" created successfully."
+msgstr "Gruppe \"{group}\" erfolgreich erstellt."
+
+#: ephios/user_management/views.py:181
+#, python-brace-format
+msgid "Group \"{group}\" updated successfully."
+msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
+
+#: ephios/user_management/views.py:192
+#, python-brace-format
+msgid "The group \"{group}\" was deleted."
+msgstr "Gruppe \"{group}\" wurde gelöscht."
