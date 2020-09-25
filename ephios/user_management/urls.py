@@ -20,6 +20,11 @@ urlpatterns = [
         name="userprofile_edit",
     ),
     path(
+        "users/<int:pk>/delete",
+        views.UserProfileDeleteView.as_view(),
+        name="userprofile_delete",
+    ),
+    path(
         "users/create/",
         views.UserProfileCreateView.as_view(),
         name="userprofile_create",

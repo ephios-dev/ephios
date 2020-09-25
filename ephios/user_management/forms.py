@@ -149,6 +149,8 @@ class GroupForm(ModelForm):
             for target_group in Group.objects.all():
                 remove_perm("publish_event_for_group", group, target_group)
 
+        return group
+
 
 class UserProfileForm(ModelForm):
     groups = ModelMultipleChoiceField(

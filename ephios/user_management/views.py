@@ -49,7 +49,12 @@ class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
             userprofile = userprofile_form.save()
             qualification_formset.instance = userprofile
             qualification_formset.save()
-            messages.success(self.request, _("User added successfully."))
+            messages.success(
+                self.request,
+                _("User {name} ({user}) added successfully.").format(
+                    name=userprofile.get_full_name(), user=userprofile
+                ),
+            )
             if userprofile.is_active:
                 mail.send_account_creation_info(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
@@ -91,7 +96,12 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
         if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
             userprofile = userprofile_form.save()
             qualification_formset.save()
-            messages.success(self.request, _("User updated successfully."))
+            messages.success(
+                self.request,
+                _("User {name} ({user}) updated successfully.").format(
+                    name=self.object.get_full_name(), user=self.object
+                ),
+            )
             if userprofile.is_active:
                 mail.send_account_update_info(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
@@ -101,6 +111,21 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
                     userprofile_form=userprofile_form, qualification_formset=qualification_formset
                 )
             )
+
+
+class UserProfileDeleteView(PermissionRequiredMixin, DeleteView):
+    model = UserProfile
+    permission_required = "user_management.delete_userprofile"
+    template_name = "user_management/userprofile_confirm_delete.html"
+
+    def get_success_url(self):
+        messages.info(
+            self.request,
+            _("The user {name} ({user}) was deleted.").format(
+                name=self.object.get_full_name(), user=self.object
+            ),
+        )
+        return reverse("user_management:userprofile_list")
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -125,7 +150,9 @@ class GroupCreateView(PermissionRequiredMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, _("Group created successfully."))
+        messages.success(
+            self.request, _('Group "{group}" created successfully.').format(group=self.object)
+        )
         return reverse("user_management:group_list")
 
 
@@ -150,7 +177,9 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, _("Group updated successfully."))
+        messages.success(
+            self.request, _('Group "{group}" updated successfully.').format(group=self.object)
+        )
         return reverse("user_management:group_list")
 
 
@@ -160,4 +189,5 @@ class GroupDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "user_management/group_confirm_delete.html"
 
     def get_success_url(self):
+        messages.info(self.request, _('The group "{group}" was deleted.').format(group=self.object))
         return reverse("user_management:group_list")
