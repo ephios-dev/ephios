@@ -113,6 +113,7 @@
                     {% blocktranslate with brand='<a href="https://ephios.de/" target="_blank">ephios</a>' %}
                         powered by {{ brand }}
                     {% endblocktranslate %}
+                    <samp>{{ ephios_version|default_if_none:"" }}</samp>
                 </span>
             </small>
         </div>
@@ -121,7 +122,8 @@
 <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
 <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
 <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
-<script type="text/javascript" src="{% static "datatables/datatables.min.js" %}" id="datatables-script" data-datatables-translation-url="{{ datatables_translation_url }}"></script>
+<script type="text/javascript" src="{% static "datatables/datatables.min.js" %}" id="datatables-script"
+        data-datatables-translation-url="{{ datatables_translation_url }}"></script>
 <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
 {% block javascript %}{% endblock %}

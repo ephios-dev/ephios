@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytz
 from django.db import models, transaction
 from django.db.models import (
@@ -19,8 +21,6 @@ from polymorphic.models import PolymorphicModel
 
 from ephios import settings
 from ephios.user_management.models import UserProfile
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ephios.event_management.signup import AbstractParticipant
