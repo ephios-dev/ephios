@@ -47,7 +47,7 @@ class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):
 class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
     slug = "instant_confirmation"
     verbose_name = _("Instant Confirmation")
-    description = _("""This method instantly confirms a signup.""")
+    description = _("""This method instantly confirms every signup after it was requested.""")
 
     @property
     def signup_checkers(self):
