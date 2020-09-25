@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.urls import reverse
 
-from ephios.helpers.signals import footer_link
+from ephios.extra.signals import footer_link
 from ephios.plugins.pages.models import Page
 
 

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
 from email.utils import getaddresses
 
 import environ
@@ -55,7 +54,7 @@ INSTALLED_APPS = [
     "djangoformsetjs",
     "ephios.user_management",
     "ephios.event_management",
-    "ephios.helpers",
+    "ephios.extra",
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
 ]
@@ -84,7 +83,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "ephios.helpers.context.ephios_base_context",
+                "ephios.extra.context.ephios_base_context",
             ],
         },
     },
@@ -107,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "user_management.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.user_management.utils.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -168,3 +167,9 @@ if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
     INTERNAL_IPS = env.str("INTERNAL_IPS")
+
+# django-csp
+# Bootstrap requires embedded SVG files loaded via a data URI. This is not ideal, but will only be fixed in
+# bootstrap v5 or v6. See https://github.com/twbs/bootstrap/issues/25394 for details on the problem and
+# https://security.stackexchange.com/a/167244 on why allowing data: is considered okay
+CSP_IMG_SRC = ("'self'", "data:")

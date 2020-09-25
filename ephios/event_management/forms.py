@@ -10,7 +10,7 @@ from guardian.shortcuts import assign_perm, remove_perm
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift
-from ephios.helpers.widgets import CustomDateInput, CustomTimeInput
+from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
 from ephios.user_management.widgets import MultiUserProfileWidget
 
@@ -95,18 +95,19 @@ class ShiftForm(ModelForm):
         )
 
     def clean(self):
-        cleaned_data = super(ShiftForm, self).clean()
-        cleaned_data["meeting_time"] = make_aware(
-            datetime.combine(cleaned_data["date"], cleaned_data["meeting_time"])
-        )
-        cleaned_data["start_time"] = make_aware(
-            datetime.combine(cleaned_data["date"], cleaned_data["start_time"])
-        )
-        cleaned_data["end_time"] = make_aware(
-            datetime.combine(self.cleaned_data["date"], cleaned_data["end_time"])
-        )
-        if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
-            cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
-        if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
-            raise ValidationError(_("Meeting time must not be after start time!"))
+        cleaned_data = super().clean()
+        if {"date", "meeting_time", "start_time", "end_time"} <= set(cleaned_data.keys()):
+            cleaned_data["meeting_time"] = make_aware(
+                datetime.combine(cleaned_data["date"], cleaned_data["meeting_time"])
+            )
+            cleaned_data["start_time"] = make_aware(
+                datetime.combine(cleaned_data["date"], cleaned_data["start_time"])
+            )
+            cleaned_data["end_time"] = make_aware(
+                datetime.combine(self.cleaned_data["date"], cleaned_data["end_time"])
+            )
+            if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
+                cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
+            if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
+                raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data

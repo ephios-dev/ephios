@@ -1,8 +1,8 @@
 from django.dispatch import receiver
 
+from ephios.event_management.signup import register_signup_methods
 from ephios.plugins.basesignup.signup.confirm import RequestConfirmSignupMethod
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
-from ephios.event_management.signup import register_signup_methods
 
 
 @receiver(
