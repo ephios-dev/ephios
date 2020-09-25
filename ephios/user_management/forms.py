@@ -12,7 +12,6 @@ from django.forms import (
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, remove_perm
-from guardian.utils import get_group_obj_perms_model
 
 from ephios.extra.widgets import CustomDateInput
 from ephios.user_management.models import QualificationGrant, UserProfile
@@ -187,11 +186,10 @@ class QualificationGrantForm(ModelForm):
         super().__init__(*args, **kwargs)
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
+            # Hide the field and simply display the qualification name in the template
             self.fields["qualification"].disabled = True
-            self.fields["qualification"].widget = TextInput(
-                attrs={"class": "form-control-plaintext"}
-            )
-            self.initial["qualification"] = instance.qualification.title
+            self.fields["qualification"].widget = forms.HiddenInput()
+            self.fields["qualification"].title = instance.qualification.title
 
 
 QualificationGrantFormset = inlineformset_factory(

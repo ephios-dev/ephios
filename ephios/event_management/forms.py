@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select, TimeField
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
@@ -55,16 +56,23 @@ class EventForm(ModelForm):
         ):
             remove_perm("view_event", group, event)
             remove_perm("change_event", group, event)
-        for group in get_users_with_perms(event, only_with_perms_in=["view_event", "change_event"]):
-            remove_perm("view_event", group, event)
-            remove_perm("change_event", group, event)
+        for user in get_users_with_perms(event, only_with_perms_in=["view_event", "change_event"]):
+            remove_perm("view_event", user, event)
+            remove_perm("change_event", user, event)
 
         # assign designated permissions
-        assign_perm("view_event", self.cleaned_data["visible_for"], event)
+        assign_perm(
+            "view_event",
+            Group.objects.filter(
+                Q(id__in=self.cleaned_data["visible_for"])
+                | Q(id__in=self.cleaned_data["responsible_groups"])
+            ),
+            event,
+        )
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
-        assign_perm("view_event", self.cleaned_data["responsible_groups"], event)
-        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
         assign_perm("view_event", self.cleaned_data["responsible_persons"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
+
         return event
 
 
