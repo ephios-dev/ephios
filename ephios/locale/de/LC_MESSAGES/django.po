@@ -41,7 +41,7 @@ msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 #: ephios/event_management/mail.py:23
 #, python-brace-format
 msgid "New {type}: {title}"
-msgstr "{type}: {title}"
+msgstr "{type} hinzugefügt: {title}"
 
 #: ephios/event_management/mail.py:25
 #, python-brace-format
@@ -49,7 +49,7 @@ msgid ""
 "A new {type} ({title}) has been added. \n"
 " You can view it here: {link}"
 msgstr ""
-"{type} {title} wurde angelegt. Sie können die Veranstaltung hier ansehen: "
+"{type} {title} wurde hinzugefügt. Sie können die Veranstaltung hier ansehen: "
 "{link}"
 
 #: ephios/event_management/mail.py:47
@@ -612,11 +612,11 @@ msgstr ""
 
 #: ephios/plugins/basesignup/signup/instant.py:63
 msgid "The maximum number of participants is reached."
-msgstr "Die Maximalzahl an Teilnehmenden ist erreicht."
+msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
 #: ephios/plugins/basesignup/signup/instant.py:71
 msgid "Maximum number of participants"
-msgstr "Maximalanzahl Teilnehmende"
+msgstr "Maximale Anzahl Teilnehmende"
 
 #: ephios/plugins/basesignup/templates/basesignup/requestconfirm_signup/disposition.html:7
 #: ephios/plugins/basesignup/templates/basesignup/requestconfirm_signup/fragment_state.html:37
