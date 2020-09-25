@@ -717,7 +717,7 @@ msgid ""
 "\n"
 "                        powered by %(brand)s\n"
 "                    "
-msgstr "betrieben von %(brand)s\n"
+msgstr "powered by %(brand)s\n"
 
 #: ephios/templates/registration/logged_out.html:6
 msgid "Logged out"
