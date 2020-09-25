@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-25 13:47+0200\n"
+"POT-Creation-Date: 2020-09-25 14:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,12 +53,13 @@ msgstr ""
 "{link}"
 
 #: ephios/event_management/mail.py:47
+#, python-brace-format
 msgid ""
 "The status for your participation for {shift} has changed. It is now "
 "{status}."
 msgstr ""
-"Der Status Ihrer Teilnahme für {shift} hat sich geändert. Die "
-"Teilnahme ist nun {status}."
+"Der Status Ihrer Teilnahme für {shift} hat sich geändert. Die Teilnahme ist "
+"nun {status}."
 
 #: ephios/event_management/mail.py:52
 msgid "Your participation state changed"
@@ -69,12 +70,13 @@ msgid "Participation was changed for your event"
 msgstr "Teilnahme an Ihrer Veranstaltung geändert"
 
 #: ephios/event_management/mail.py:64
+#, python-brace-format
 msgid ""
 "The participation of {participant} for {shift} was changed. The status is "
 "now {status}"
 msgstr ""
-"Die Teilnahme von {user} an {shift} wurde geändert. Der Status "
-"ist jetzt {status}."
+"Die Teilnahme von {user} an {shift} wurde geändert. Der Status ist jetzt "
+"{status}."
 
 #: ephios/event_management/models.py:35 ephios/event_management/models.py:51
 #: ephios/user_management/models.py:143 ephios/user_management/models.py:155
@@ -246,6 +248,7 @@ msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
 #: ephios/event_management/signup.py:175
+#, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
@@ -255,6 +258,7 @@ msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
 #: ephios/event_management/signup.py:177
+#, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
 
@@ -567,14 +571,15 @@ msgid ""
 "This method lets people request participation. Responsibles can then confirm "
 "the participation."
 msgstr ""
-"Dieses Anmeldeverfahren lässt Helfende eine Teilnahme anfragen. Verantwortliche Personen "
-"können die Teilnahme dann bestätigen."
+"Dieses Anmeldeverfahren lässt Helfende eine Teilnahme anfragen. "
+"Verantwortliche Personen können die Teilnahme dann bestätigen."
 
 #: ephios/plugins/basesignup/signup/confirm.py:59
 msgid "Request"
 msgstr "Anfragen"
 
 #: ephios/plugins/basesignup/signup/confirm.py:60
+#, python-brace-format
 msgid "You have successfully requested a participation for {shift}."
 msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
 
@@ -601,7 +606,9 @@ msgstr "Direkte Bestätigung"
 
 #: ephios/plugins/basesignup/signup/instant.py:50
 msgid "This method instantly confirms a signup."
-msgstr "Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie angefordert wurde."
+msgstr ""
+"Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie "
+"angefordert wurde."
 
 #: ephios/plugins/basesignup/signup/instant.py:63
 msgid "The maximum number of participants is reached."
@@ -665,8 +672,8 @@ msgid ""
 "An error occurred while processing your request. The administrators have "
 "been informed about the error."
 msgstr ""
-"Beim Bearbeiten Ihrer Anfrage ist ein Fehler aufgetreten. Die Administratoren "
-"wurden über den Fehler informiert."
+"Beim Bearbeiten Ihrer Anfrage ist ein Fehler aufgetreten. Die "
+"Administratoren wurden über den Fehler informiert."
 
 #: ephios/templates/base.html:60 ephios/user_management/forms.py:108
 #: ephios/user_management/templates/user_management/userprofile_list.html:7
@@ -830,6 +837,7 @@ msgid "Active user"
 msgstr "Aktiver Benutzer"
 
 #: ephios/user_management/mail.py:18
+#, python-brace-format
 msgid ""
 "You're receiving this email because a new account has been created for you "
 "at ephios.\n"
@@ -847,6 +855,7 @@ msgid "ephios account updated"
 msgstr "ephios-Benutzerkonto aktualisiert"
 
 #: ephios/user_management/mail.py:36
+#, python-brace-format
 msgid ""
 "You're receiving this email because your account at ephios has been "
 "updated.\n"
@@ -918,7 +927,8 @@ msgstr "Ablaufdatum"
 msgid ""
 "You're receiving this email because your account at ephios has been updated."
 msgstr ""
-"Sie erhalten diese E-Mail, weil Ihr Benutzerkonto in ephios aktualisiert wurde."
+"Sie erhalten diese E-Mail, weil Ihr Benutzerkonto in ephios aktualisiert "
+"wurde."
 
 #: ephios/user_management/templates/user_management/account_updated_email.html:5
 msgid "You can see the changes in your profile:"
