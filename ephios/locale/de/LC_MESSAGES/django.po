@@ -75,7 +75,7 @@ msgid ""
 "The participation of {participant} for {shift} was changed. The status is "
 "now {status}"
 msgstr ""
-"Die Teilnahme von {user} an {shift} wurde geändert. Der Status ist jetzt "
+"Die Teilnahme von {participant} an {shift} wurde geändert. Der Status ist jetzt "
 "{status}."
 
 #: ephios/event_management/models.py:35 ephios/event_management/models.py:51
@@ -717,7 +717,7 @@ msgid ""
 "\n"
 "                        powered by %(brand)s\n"
 "                    "
-msgstr "powered by %(brand)s\n"
+msgstr "\n powered by %(brand)s\n"
 
 #: ephios/templates/registration/logged_out.html:6
 msgid "Logged out"
@@ -1003,7 +1003,7 @@ msgid ""
 "            Are you sure you want to delete the user %(name)s "
 "(%(userprofile)s)?\n"
 "        "
-msgstr "Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen?"
+msgstr "\n Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen? \n"
 
 #: ephios/user_management/templates/user_management/userprofile_detail.html:14
 msgid "Your data"
