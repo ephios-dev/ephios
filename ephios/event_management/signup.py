@@ -86,7 +86,7 @@ class LocalUserParticipant(AbstractParticipant):
     user: get_user_model()
 
     def create_participation(self, shift):
-        return LocalParticipation.objects.create(shift=shift, user=self.user)
+        return LocalParticipation(shift=shift, user=self.user)
 
     def participation_for(self, shift):
         try:
@@ -240,7 +240,10 @@ class BaseSignupMethod:
         )
 
     def perform_signup(self, participant: AbstractParticipant, **kwargs):
-        """Create and configure a participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
+        """
+        Configure a participation object for the given participant according to the method's configuration.
+        `kwargs` may contain further instructions from a e.g. a form.
+        """
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
         return self.get_participation_for(participant)
