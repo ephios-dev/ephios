@@ -12,6 +12,7 @@ from django.forms import (
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, remove_perm
+from guardian.utils import get_group_obj_perms_model
 
 from ephios.extra.widgets import CustomDateInput
 from ephios.user_management.models import QualificationGrant, UserProfile
@@ -130,24 +131,16 @@ class GroupForm(ModelForm):
         else:
             remove_perm("event_management.view_past_event", group)
 
+        remove_perm("publish_event_for_group", group, Group.objects.all())
         if self.cleaned_data["can_add_event"]:
             assign_perm("event_management.add_event", group)
             assign_perm("event_management.delete_event", group)
-
-            if "publish_event_for_group" in self.changed_data:
-                for target_group in self.cleaned_data["publish_event_for_group"].exclude(
-                    id__in=self.initial["publish_event_for_group"]
-                ):
-                    assign_perm("publish_event_for_group", group, target_group)
-                for target_group in self.initial["publish_event_for_group"].exclude(
-                    id__in=self.cleaned_data["publish_event_for_group"]
-                ):
-                    remove_perm("publish_event_for_group", group, target_group)
+            assign_perm(
+                "publish_event_for_group", group, self.cleaned_data["publish_event_for_group"]
+            )
         else:
             remove_perm("event_management.add_event", group)
             remove_perm("event_management.delete_event", group)
-            for target_group in Group.objects.all():
-                remove_perm("publish_event_for_group", group, target_group)
 
         return group
 

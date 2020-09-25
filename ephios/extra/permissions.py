@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Group, Permission
 from guardian.ctypes import get_content_type
-from guardian.utils import get_group_obj_perms_model, get_user_obj_perms_model
+from guardian.utils import get_group_obj_perms_model
 
 
 class CustomPermissionRequiredMixin(PermissionRequiredMixin):

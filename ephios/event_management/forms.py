@@ -9,11 +9,8 @@ from django_select2.forms import Select2MultipleWidget
 from guardian.shortcuts import (
     assign_perm,
     remove_perm,
-    UserObjectPermission,
-    GroupObjectPermission,
     get_users_with_perms,
 )
-from guardian.utils import get_user_obj_perms_model, get_group_obj_perms_model
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift
@@ -63,14 +60,11 @@ class EventForm(ModelForm):
             remove_perm("change_event", group, event)
 
         # assign designated permissions
-        for group in self.cleaned_data["visible_for"]:
-            assign_perm("view_event", group, event)
-        for group in self.cleaned_data["responsible_groups"]:
-            assign_perm("change_event", group, event)
-            assign_perm("view_event", group, event)
-        for user in self.cleaned_data["responsible_persons"]:
-            assign_perm("change_event", user, event)
-            assign_perm("view_event", user, event)
+        assign_perm("view_event", self.cleaned_data["visible_for"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
+        assign_perm("view_event", self.cleaned_data["responsible_groups"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
+        assign_perm("view_event", self.cleaned_data["responsible_persons"], event)
         return event
 
 
