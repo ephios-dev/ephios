@@ -1,7 +1,6 @@
-import guardian.mixins
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Max, Min
@@ -25,7 +24,7 @@ from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
 from ephios.event_management.forms import EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
-from ephios.extra.permissions import get_groups_with_perms
+from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -47,7 +46,7 @@ class EventListView(LoginRequiredMixin, ListView):
         )
 
 
-class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
+class EventDetailView(CustomPermissionRequiredMixin, DetailView):
     model = Event
     permission_required = "event_management.view_event"
     accept_global_perms = True
@@ -59,7 +58,7 @@ class EventDetailView(guardian.mixins.PermissionRequiredMixin, DetailView):
             return Event.objects.all()
 
 
-class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
+class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
     permission_required = "event_management.change_event"
@@ -93,7 +92,7 @@ class EventUpdateView(guardian.mixins.PermissionRequiredMixin, UpdateView):
         return event_form
 
 
-class EventCreateView(PermissionRequiredMixin, CreateView):
+class EventCreateView(CustomPermissionRequiredMixin, CreateView):
     template_name = "event_management/event_form.html"
     permission_required = "event_management.add_event"
 
@@ -121,7 +120,7 @@ class EventCreateView(PermissionRequiredMixin, CreateView):
         return reverse("event_management:event_createshift", kwargs={"pk": self.object.pk})
 
 
-class EventActivateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMixin, View):
+class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.add_event"
     accept_global_perms = True
     queryset = Event.all_objects.all()
@@ -139,13 +138,13 @@ class EventActivateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMix
         return redirect(reverse("event_management:event_detail", kwargs={"pk": event.pk}))
 
 
-class EventDeleteView(PermissionRequiredMixin, DeleteView):
+class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     queryset = Event.all_objects.all()
     permission_required = "event_management.delete_event"
     success_url = reverse_lazy("event_management:event_list")
 
 
-class EventArchiveView(PermissionRequiredMixin, ListView):
+class EventArchiveView(CustomPermissionRequiredMixin, ListView):
     permission_required = "event_management.view_past_event"
     model = Event
     template_name = "event_management/event_archive.html"
@@ -162,7 +161,7 @@ class EventArchiveView(PermissionRequiredMixin, ListView):
         )
 
 
-class ShiftCreateView(PermissionRequiredMixin, TemplateView):
+class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
     permission_required = "event_management.add_event"
     template_name = "event_management/shift_form.html"
 
@@ -228,7 +227,7 @@ class ShiftConfigurationFormView(View):
         return HttpResponse(signup_method.render_configuration_form())
 
 
-class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     template_name = "event_management/shift_form.html"
     permission_required = "event_management.change_event"
@@ -293,7 +292,7 @@ class ShiftUpdateView(guardian.mixins.PermissionRequiredMixin, SingleObjectMixin
             )
 
 
-class ShiftDeleteView(guardian.mixins.PermissionRequiredMixin, DeleteView):
+class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
     permission_required = "event_management.change_event"
     accept_global_perms = True
     model = Shift
@@ -324,7 +323,7 @@ class SignupMethodViewMixin(SingleObjectMixin):
         return self.get_object().signup_method.signup_view(request, *args, **kwargs)
 
 
-class ShiftSignupView(guardian.mixins.PermissionRequiredMixin, SignupMethodViewMixin, View):
+class ShiftSignupView(CustomPermissionRequiredMixin, SignupMethodViewMixin, View):
     permission_required = "event_management.view_event"
     accept_global_perms = True
 
