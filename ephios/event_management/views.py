@@ -49,7 +49,6 @@ class EventListView(LoginRequiredMixin, ListView):
 class EventDetailView(CustomPermissionRequiredMixin, DetailView):
     model = Event
     permission_required = "event_management.view_event"
-    accept_global_perms = True
 
     def get_queryset(self):
         if self.request.user.has_perm("event_management.add_event"):
@@ -62,7 +61,6 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
     permission_required = "event_management.change_event"
-    accept_global_perms = True
 
     def get_form(self, form_class=None):
         visible_queryset = get_objects_for_user(
@@ -122,7 +120,6 @@ class EventCreateView(CustomPermissionRequiredMixin, CreateView):
 
 class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.add_event"
-    accept_global_perms = True
     queryset = Event.all_objects.all()
 
     def post(self, request, *args, **kwargs):
@@ -231,7 +228,6 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
     model = Shift
     template_name = "event_management/shift_form.html"
     permission_required = "event_management.change_event"
-    accept_global_perms = True
 
     def get_permission_object(self):
         return self.get_object().event
@@ -294,7 +290,6 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
 
 class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
     permission_required = "event_management.change_event"
-    accept_global_perms = True
     model = Shift
 
     def setup(self, request, *args, **kwargs):
@@ -325,7 +320,6 @@ class SignupMethodViewMixin(SingleObjectMixin):
 
 class ShiftSignupView(CustomPermissionRequiredMixin, SignupMethodViewMixin, View):
     permission_required = "event_management.view_event"
-    accept_global_perms = True
 
     def get_permission_object(self):
         return self.get_object().event

@@ -144,7 +144,6 @@ class MultipleShiftEventExporter(BasePDFExporter):
 
 class EventDetailPDFView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.view_event"
-    accept_global_perms = True
     model = Event
 
     def get(self, request, *args, **kwargs):

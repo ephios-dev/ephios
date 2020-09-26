@@ -25,7 +25,6 @@ DispositionParticipationFormset = forms.modelformset_factory(
 class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     permission_required = "event_management.change_event"
-    accept_global_perms = True
     template_name = "basesignup/requestconfirm_signup/disposition.html"
 
     def get_permission_object(self):
