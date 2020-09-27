@@ -629,7 +629,6 @@ msgid "Disposition"
 msgstr "Disposition"
 
 #: ephios/plugins/basesignup/templates/basesignup/requestconfirm_signup/fragment_state.html:8
-#, fuzzy
 #| msgid "Request"
 msgid "Requests"
 msgstr "Anfragen"

@@ -40,6 +40,9 @@
                                             <label for="{{ form.qualification.id_for_label }}" class="col-md-4 col-form-label">{{ form.qualification.label }}</label>
                                             <div class="col-md-8">
                                                 {{ form.qualification }}
+                                                {% if form.fields.qualification.disabled %}
+                                                    <span class="form-control-plaintext">{{ form.fields.qualification.title }}</span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

@@ -130,24 +130,16 @@ class GroupForm(ModelForm):
         else:
             remove_perm("event_management.view_past_event", group)
 
+        remove_perm("publish_event_for_group", group, Group.objects.all())
         if self.cleaned_data["can_add_event"]:
             assign_perm("event_management.add_event", group)
             assign_perm("event_management.delete_event", group)
-
-            if "publish_event_for_group" in self.changed_data:
-                for target_group in self.cleaned_data["publish_event_for_group"].exclude(
-                    id__in=self.initial["publish_event_for_group"]
-                ):
-                    assign_perm("publish_event_for_group", group, target_group)
-                for target_group in self.initial["publish_event_for_group"].exclude(
-                    id__in=self.cleaned_data["publish_event_for_group"]
-                ):
-                    remove_perm("publish_event_for_group", group, target_group)
+            assign_perm(
+                "publish_event_for_group", group, self.cleaned_data["publish_event_for_group"]
+            )
         else:
             remove_perm("event_management.add_event", group)
             remove_perm("event_management.delete_event", group)
-            for target_group in Group.objects.all():
-                remove_perm("publish_event_for_group", group, target_group)
 
         return group
 
@@ -194,11 +186,10 @@ class QualificationGrantForm(ModelForm):
         super().__init__(*args, **kwargs)
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
+            # Hide the field and simply display the qualification name in the template
             self.fields["qualification"].disabled = True
-            self.fields["qualification"].widget = TextInput(
-                attrs={"class": "form-control-plaintext"}
-            )
-            self.initial["qualification"] = instance.qualification.title
+            self.fields["qualification"].widget = forms.HiddenInput()
+            self.fields["qualification"].title = instance.qualification.title
 
 
 QualificationGrantFormset = inlineformset_factory(
