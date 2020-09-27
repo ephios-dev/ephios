@@ -71,12 +71,14 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
 class EventCreateView(CustomPermissionRequiredMixin, CreateView):
     template_name = "event_management/event_form.html"
     permission_required = "event_management.add_event"
+    accept_object_perms = False
 
     def get_form(self, form_class=None):
         return EventForm(
             data=self.request.POST or None,
+            user=self.request.user,
             initial={
-                "responsible_persons": get_user_model().objects.filter(pk=self.request.user.pk),
+                "responsible_users": get_user_model().objects.filter(pk=self.request.user.pk),
                 "responsible_groups": Group.objects.none(),
                 "visible_for": get_objects_for_user(
                     self.request.user, "publish_event_for_group", klass=Group
@@ -134,18 +136,21 @@ class EventArchiveView(CustomPermissionRequiredMixin, ListView):
 
 
 class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
-    permission_required = "event_management.add_event"
+    permission_required = "event_management.change_event"
     template_name = "event_management/shift_form.html"
 
-    def get_event(self):
-        return get_object_or_404(Event.all_objects, pk=self.kwargs.get("pk"))
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.event = get_object_or_404(Event.all_objects, pk=self.kwargs.get("pk"))
+
+    def get_permission_object(self):
+        return self.event
 
     def get_shift_form(self):
         return ShiftForm(self.request.POST or None)
 
     def get_context_data(self, **kwargs):
-        event = self.get_event()
-        kwargs.setdefault("event", event)
+        kwargs.setdefault("event", self.event)
         kwargs.setdefault("form", self.get_shift_form())
         return super().get_context_data(**kwargs)
 
@@ -160,9 +165,8 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             raise ValidationError(e)
         if form.is_valid() and configuration_form.is_valid():
             shift = form.save(commit=False)
-            event = self.get_event()
-            shift.event = event
-            shift.signup_configuration = configuration_form.get_configuration()
+            shift.event = self.event
+            shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
             if "addAnother" in self.request.POST:
                 return redirect(
@@ -172,14 +176,14 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
                 )
             else:
                 try:
-                    event.activate()
+                    self.event.activate()
                     messages.success(
                         self.request,
-                        _("The event {title} has been saved.").format(title=event.title),
+                        _("The event {title} has been saved.").format(title=self.event.title),
                     )
                 except ValidationError as e:
                     messages.error(self.request, e)
-                return redirect(event.get_absolute_url())
+                return redirect(self.event.get_absolute_url())
         else:
             return self.render_to_response(
                 self.get_context_data(
@@ -241,7 +245,7 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
             raise ValidationError(e)
         if form.is_valid() and configuration_form.is_valid():
             shift = form.save(commit=False)
-            shift.signup_configuration = configuration_form.get_configuration()
+            shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
             if "addAnother" in self.request.POST:
                 return redirect(

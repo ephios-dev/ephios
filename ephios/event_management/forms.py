@@ -30,7 +30,7 @@ class EventForm(ModelForm):
         widget=Select2MultipleWidget,
         required=False,
     )
-    responsible_persons = ModelMultipleChoiceField(
+    responsible_users = ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(),
         required=False,
         label=_("Responsible persons"),
@@ -107,8 +107,8 @@ class EventForm(ModelForm):
             event,
         )
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
-        assign_perm("view_event", self.cleaned_data["responsible_persons"], event)
-        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
+        assign_perm("view_event", self.cleaned_data["responsible_users"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_users"], event)
 
         return event
 
