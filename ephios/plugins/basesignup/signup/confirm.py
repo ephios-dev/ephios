@@ -37,6 +37,7 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
         )
 
     def post(self, request, *args, **kwargs):
+        self.object: Shift = self.get_object()
         formset = self.get_formset()
         if formset.is_valid():
             formset.save()
@@ -44,6 +45,7 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
         return self.get(request, *args, **kwargs, formset=formset)
 
     def get_context_data(self, **kwargs):
+        self.object: Shift = self.get_object()
         kwargs.setdefault("formset", self.get_formset())
         kwargs.setdefault("states", AbstractParticipation.States)
         return super().get_context_data(**kwargs)
