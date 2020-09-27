@@ -36,6 +36,10 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
             self.request.POST or None, queryset=self.object.participations
         )
 
+    def get(self, request, *args, **kwargs):
+        self.object: Shift = self.get_object()
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         self.object: Shift = self.get_object()
         formset = self.get_formset()
@@ -45,7 +49,6 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
         return self.get(request, *args, **kwargs, formset=formset)
 
     def get_context_data(self, **kwargs):
-        self.object: Shift = self.get_object()
         kwargs.setdefault("formset", self.get_formset())
         kwargs.setdefault("states", AbstractParticipation.States)
         return super().get_context_data(**kwargs)
