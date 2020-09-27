@@ -5,9 +5,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from guardian.mixins import PermissionRequiredMixin
 
 from ephios.event_management.models import AbstractParticipation, Shift
+from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.plugins.basesignup.signup.instant import SimpleQualificationsRequiredSignupMethod
 
 DispositionParticipationFormset = forms.modelformset_factory(
@@ -22,10 +22,9 @@ DispositionParticipationFormset = forms.modelformset_factory(
 )
 
 
-class RequestConfirmDispositionView(PermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     permission_required = "event_management.change_event"
-    accept_global_perms = True
     template_name = "basesignup/requestconfirm_signup/disposition.html"
 
     def get_permission_object(self):

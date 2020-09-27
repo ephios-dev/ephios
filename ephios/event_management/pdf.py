@@ -6,7 +6,6 @@ from django.utils import formats
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
-from guardian.mixins import PermissionRequiredMixin
 from reportlab.lib.pagesizes import A4, A5
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
@@ -14,6 +13,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table
 
 from ephios import settings
 from ephios.event_management.models import Event
+from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
 class BasePDFExporter:
@@ -142,9 +142,8 @@ class MultipleShiftEventExporter(BasePDFExporter):
         return story
 
 
-class EventDetailPDFView(PermissionRequiredMixin, SingleObjectMixin, View):
+class EventDetailPDFView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     permission_required = "event_management.view_event"
-    accept_global_perms = True
     model = Event
 
     def get(self, request, *args, **kwargs):

@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -15,6 +15,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_group
 
+from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.user_management import mail
 from ephios.user_management.forms import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.user_management.models import UserProfile
@@ -25,12 +26,12 @@ class ProfileView(LoginRequiredMixin, DetailView):
         return self.request.user
 
 
-class UserProfileListView(PermissionRequiredMixin, ListView):
+class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "user_management.view_userprofile"
 
 
-class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
+class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
     template_name = "user_management/userprofile_form.html"
     permission_required = "user_management.add_userprofile"
     model = UserProfile
@@ -66,7 +67,7 @@ class UserProfileCreateView(PermissionRequiredMixin, TemplateView):
             )
 
 
-class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = UserProfile
     permission_required = "user_management.change_userprofile"
     template_name = "user_management/userprofile_form.html"
@@ -113,7 +114,7 @@ class UserProfileUpdateView(PermissionRequiredMixin, SingleObjectMixin, Template
             )
 
 
-class UserProfileDeleteView(PermissionRequiredMixin, DeleteView):
+class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = UserProfile
     permission_required = "user_management.delete_userprofile"
     template_name = "user_management/userprofile_confirm_delete.html"
@@ -128,13 +129,13 @@ class UserProfileDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse("user_management:userprofile_list")
 
 
-class GroupListView(PermissionRequiredMixin, ListView):
+class GroupListView(CustomPermissionRequiredMixin, ListView):
     model = Group
     permission_required = "auth.view_group"
     template_name = "user_management/group_list.html"
 
 
-class GroupCreateView(PermissionRequiredMixin, CreateView):
+class GroupCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Group
     permission_required = "auth.add_group"
     template_name = "user_management/group_form.html"
@@ -156,7 +157,7 @@ class GroupCreateView(PermissionRequiredMixin, CreateView):
         return reverse("user_management:group_list")
 
 
-class GroupUpdateView(PermissionRequiredMixin, UpdateView):
+class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Group
     permission_required = "auth.change_group"
     template_name = "user_management/group_form.html"
@@ -183,7 +184,7 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse("user_management:group_list")
 
 
-class GroupDeleteView(PermissionRequiredMixin, DeleteView):
+class GroupDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = Group
     permission_required = "auth.delete_group"
     template_name = "user_management/group_confirm_delete.html"
