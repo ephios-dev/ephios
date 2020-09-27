@@ -63,31 +63,9 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "event_management.change_event"
 
     def get_form(self, form_class=None):
-        visible_queryset = get_objects_for_user(
-            self.request.user, "publish_event_for_group", klass=Group
+        return EventForm(
+            data=self.request.POST or None, user=self.request.user, instance=self.object
         )
-        visible_initial = get_groups_with_perms(self.object, only_with_perms_in=["view_event"])
-        initial = {
-            "visible_for": visible_initial,
-            "responsible_persons": get_users_with_perms(
-                self.object, only_with_perms_in=["change_event"], with_group_users=False
-            ),
-            "responsible_groups": get_groups_with_perms(
-                self.object, only_with_perms_in=["change_event"]
-            ),
-        }
-        event_form = EventForm(self.request.POST or None, instance=self.object, initial=initial)
-        event_form.fields["visible_for"].queryset = visible_queryset
-        event_form.fields["visible_for"].disabled = not visible_queryset
-        groups_without_perms = visible_initial.exclude(id__in=visible_queryset)
-        if groups_without_perms:
-            event_form.fields["visible_for"].help_text = _(
-                "Select groups which the event shall be visible for. "
-                "This event is also visible for <b>{groups}</b>, "
-                "but you don't have the permission to change visibility "
-                "for those groups."
-            ).format(groups=", ".join(groups_without_perms.values_list("name", flat=True)))
-        return event_form
 
 
 class EventCreateView(CustomPermissionRequiredMixin, CreateView):
@@ -95,19 +73,16 @@ class EventCreateView(CustomPermissionRequiredMixin, CreateView):
     permission_required = "event_management.add_event"
 
     def get_form(self, form_class=None):
-        visible_for_queryset = get_objects_for_user(
-            self.request.user, "publish_event_for_group", klass=Group
-        )
-        event_form = EventForm(
-            self.request.POST or None,
+        return EventForm(
+            data=self.request.POST or None,
             initial={
                 "responsible_persons": get_user_model().objects.filter(pk=self.request.user.pk),
                 "responsible_groups": Group.objects.none(),
-                "visible_for": visible_for_queryset,
+                "visible_for": get_objects_for_user(
+                    self.request.user, "publish_event_for_group", klass=Group
+                ),
             },
         )
-        event_form.fields["visible_for"].queryset = visible_for_queryset
-        return event_form
 
     def get_context_data(self, **kwargs):
         inactive_events = Event.all_objects.filter(active=False)
