@@ -56,7 +56,7 @@ class AbstractParticipant:
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-    def create_participation(self, shift):
+    def new_participation(self, shift):
         raise NotImplementedError
 
     def participation_for(self, shift):
@@ -85,7 +85,7 @@ class AbstractParticipant:
 class LocalUserParticipant(AbstractParticipant):
     user: get_user_model()
 
-    def create_participation(self, shift):
+    def new_participation(self, shift):
         return LocalParticipation(shift=shift, user=self.user)
 
     def participation_for(self, shift):
@@ -235,7 +235,7 @@ class BaseSignupMethod:
         return not self.get_signup_errors(participant)
 
     def get_participation_for(self, participant):
-        return participant.participation_for(self.shift) or participant.create_participation(
+        return participant.participation_for(self.shift) or participant.new_participation(
             self.shift
         )
 
