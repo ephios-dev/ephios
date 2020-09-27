@@ -2,14 +2,20 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select, TimeField
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
-from guardian.shortcuts import assign_perm, remove_perm
+from guardian.shortcuts import (
+    assign_perm,
+    remove_perm,
+    get_users_with_perms,
+)
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift
+from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
 from ephios.user_management.widgets import MultiUserProfileWidget
@@ -41,38 +47,32 @@ class EventForm(ModelForm):
         fields = ["title", "description", "location", "type", "mail_updates"]
 
     def save(self, commit=True):
-        create = not self.instance.pk
         event = super().save(commit)
-        if "visible_for" in self.changed_data or create:
-            for group in self.cleaned_data["visible_for"]:
-                assign_perm("view_event", group, event)
-            for group in self.fields["visible_for"].queryset.exclude(
-                id__in=self.cleaned_data["visible_for"]
-            ):
-                remove_perm("view_event", group, event)
-        if "responsible_groups" in self.changed_data or create:
-            for group in self.cleaned_data["responsible_groups"].exclude(
-                id__in=self.initial["responsible_groups"]
-            ):
-                assign_perm("change_event", group, event)
-                assign_perm("view_event", group, event)
-            for group in self.initial["responsible_groups"].exclude(
-                id__in=self.cleaned_data["responsible_groups"]
-            ):
-                remove_perm("change_event", group, event)
-                if group not in self.cleaned_data["visible_for"]:
-                    remove_perm("view_event", group, event)
-        if "responsible_persons" in self.changed_data or create:
-            for user in self.cleaned_data["responsible_persons"].exclude(
-                id__in=self.initial["responsible_persons"]
-            ):
-                assign_perm("change_event", user, event)
-                assign_perm("view_event", user, event)
-            for user in self.initial["responsible_persons"].exclude(
-                id__in=self.cleaned_data["responsible_persons"]
-            ):
-                remove_perm("change_event", user, event)
-                remove_perm("view_event", user, event)
+
+        # delete existing permissions
+        # (better implement https://github.com/django-guardian/django-guardian/issues/654)
+        for group in get_groups_with_perms(
+            event, only_with_perms_in=["view_event", "change_event"]
+        ):
+            remove_perm("view_event", group, event)
+            remove_perm("change_event", group, event)
+        for user in get_users_with_perms(event, only_with_perms_in=["view_event", "change_event"]):
+            remove_perm("view_event", user, event)
+            remove_perm("change_event", user, event)
+
+        # assign designated permissions
+        assign_perm(
+            "view_event",
+            Group.objects.filter(
+                Q(id__in=self.cleaned_data["visible_for"])
+                | Q(id__in=self.cleaned_data["responsible_groups"])
+            ),
+            event,
+        )
+        assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
+        assign_perm("view_event", self.cleaned_data["responsible_persons"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
+
         return event
 
 
