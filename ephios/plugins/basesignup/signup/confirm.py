@@ -36,7 +36,12 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
             self.request.POST or None, queryset=self.object.participations
         )
 
+    def get(self, request, *args, **kwargs):
+        self.object: Shift = self.get_object()
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
+        self.object: Shift = self.get_object()
         formset = self.get_formset()
         if formset.is_valid():
             formset.save()
