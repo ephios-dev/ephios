@@ -52,7 +52,7 @@ class EventForm(ModelForm):
         can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
 
         if (event := kwargs.get("instance", None)) is not None:
-            responsible_persons = get_users_with_perms(
+            responsible_users = get_users_with_perms(
                 event, only_with_perms_in=["change_event"], with_group_users=False
             )
             responsible_groups = get_groups_with_perms(event, only_with_perms_in=["change_event"])
@@ -60,15 +60,15 @@ class EventForm(ModelForm):
                 id__in=responsible_groups
             )
 
-            self.locked_visible_for_groups = visible_for.exclude(id__in=can_publish_for_groups)
+            self.locked_visible_for_groups = set(visible_for.exclude(id__in=can_publish_for_groups))
             kwargs["initial"] = {
                 "visible_for": visible_for.filter(id__in=can_publish_for_groups),
-                "responsible_persons": responsible_persons,
+                "responsible_users": responsible_users,
                 "responsible_groups": responsible_groups,
                 **kwargs.get("initial", {}),
             }
         else:
-            self.locked_visible_for_groups = Group.objects.none()
+            self.locked_visible_for_groups = set()
 
         super().__init__(**kwargs)
 
@@ -102,7 +102,7 @@ class EventForm(ModelForm):
             Group.objects.filter(
                 Q(id__in=self.cleaned_data["visible_for"])
                 | Q(id__in=self.cleaned_data["responsible_groups"])
-                | Q(id__in=self.locked_visible_for_groups)
+                | Q(id__in=(g.id for g in self.locked_visible_for_groups))
             ),
             event,
         )

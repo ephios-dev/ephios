@@ -20,7 +20,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     event_form["mail_updates"] = True
     event_form["visible_for"] = [volunteers.id]
     event_form["responsible_groups"] = [planners.id]
-    event_form["responsible_users"] = [planner.id]
+    # event_form["responsible_users"] is prefilled with planner
     shift_form = event_form.submit().follow().form
     shift_form["date"] = date.today()
     shift_form["meeting_time"] = time(9, 0)
