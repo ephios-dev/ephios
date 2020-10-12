@@ -11,6 +11,7 @@ from guardian.shortcuts import (
     assign_perm,
     remove_perm,
     get_users_with_perms,
+    get_objects_for_user,
 )
 
 from ephios.event_management import signup
@@ -29,7 +30,7 @@ class EventForm(ModelForm):
         widget=Select2MultipleWidget,
         required=False,
     )
-    responsible_persons = ModelMultipleChoiceField(
+    responsible_users = ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(),
         required=False,
         label=_("Responsible persons"),
@@ -45,6 +46,41 @@ class EventForm(ModelForm):
     class Meta:
         model = Event
         fields = ["title", "description", "location", "type", "mail_updates"]
+
+    def __init__(self, **kwargs):
+        user = kwargs.pop("user")
+        can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
+
+        if (event := kwargs.get("instance", None)) is not None:
+            responsible_users = get_users_with_perms(
+                event, only_with_perms_in=["change_event"], with_group_users=False
+            )
+            responsible_groups = get_groups_with_perms(event, only_with_perms_in=["change_event"])
+            visible_for = get_groups_with_perms(event, only_with_perms_in=["view_event"]).exclude(
+                id__in=responsible_groups
+            )
+
+            self.locked_visible_for_groups = set(visible_for.exclude(id__in=can_publish_for_groups))
+            kwargs["initial"] = {
+                "visible_for": visible_for.filter(id__in=can_publish_for_groups),
+                "responsible_users": responsible_users,
+                "responsible_groups": responsible_groups,
+                **kwargs.get("initial", {}),
+            }
+        else:
+            self.locked_visible_for_groups = set()
+
+        super().__init__(**kwargs)
+
+        self.fields["visible_for"].queryset = can_publish_for_groups
+        self.fields["visible_for"].disabled = not can_publish_for_groups
+        if self.locked_visible_for_groups:
+            self.fields["visible_for"].help_text = _(
+                "Select groups which the event shall be visible for. "
+                "This event is also visible for <b>{groups}</b>, "
+                "but you don't have the permission to change visibility "
+                "for those groups."
+            ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
 
     def save(self, commit=True):
         event = super().save(commit)
@@ -66,12 +102,13 @@ class EventForm(ModelForm):
             Group.objects.filter(
                 Q(id__in=self.cleaned_data["visible_for"])
                 | Q(id__in=self.cleaned_data["responsible_groups"])
+                | Q(id__in=(g.id for g in self.locked_visible_for_groups))
             ),
             event,
         )
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
-        assign_perm("view_event", self.cleaned_data["responsible_persons"], event)
-        assign_perm("change_event", self.cleaned_data["responsible_persons"], event)
+        assign_perm("view_event", self.cleaned_data["responsible_users"], event)
+        assign_perm("change_event", self.cleaned_data["responsible_users"], event)
 
         return event
 

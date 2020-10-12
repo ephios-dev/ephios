@@ -21,7 +21,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from ephios.event_management.models import AbstractParticipation, LocalParticipation, Shift
-from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 from ephios.user_management.models import Qualification
 
@@ -100,8 +99,7 @@ class ParticipationError(ValidationError):
 
 
 class ConfigurationForm(forms.Form):
-    def get_configuration(self):
-        return json.dumps(self.cleaned_data, cls=CustomJSONEncoder)
+    pass
 
 
 def check_event_is_active(method, participant):
@@ -182,9 +180,7 @@ class BaseSignupMethod:
             **{name: config["default"] for name, config in self.get_configuration_fields().items()}
         )
         if shift is not None:
-            for key, value in json.loads(
-                shift.signup_configuration if shift is not None else "{}", cls=CustomJSONDecoder
-            ).items():
+            for key, value in shift.signup_configuration.items():
                 setattr(self.configuration, key, value)
 
     @property
