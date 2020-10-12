@@ -14,6 +14,7 @@ class CustomPermissionRequiredMixin(PermissionRequiredMixin):
     """
 
     accept_global_perms = True
+    accept_object_perms = True
 
     def get_permission_object(self):
         if hasattr(self, "permission_object"):
@@ -25,7 +26,7 @@ class CustomPermissionRequiredMixin(PermissionRequiredMixin):
         perms = self.get_permission_required()
         if self.accept_global_perms and all(user.has_perm(perm) for perm in perms):
             return True
-        if (obj := self.get_permission_object()) is None:
+        if not self.accept_object_perms or (obj := self.get_permission_object()) is None:
             return False
         return all(user.has_perm(perm, obj) for perm in perms)
 

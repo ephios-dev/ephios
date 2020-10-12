@@ -157,7 +157,7 @@ class Qualification(Model):
         verbose_name=_("category"),
     )
     included_qualifications = models.ManyToManyField(
-        "self", related_name="included_by", symmetrical=False
+        "self", related_name="included_by", symmetrical=False, blank=True
     )
 
     def __eq__(self, other):
