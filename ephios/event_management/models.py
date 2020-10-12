@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 
 from ephios import settings
+from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.user_management.models import UserProfile
 
 if TYPE_CHECKING:
@@ -121,7 +122,9 @@ class Shift(Model):
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
     signup_method_slug = SlugField(_("signup method"))
-    signup_configuration = JSONField(default=dict)
+    signup_configuration = JSONField(
+        default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )
 
     class Meta:
         verbose_name = _("shift")

@@ -15,10 +15,8 @@ def new_event(event):
     users = UserProfile.objects.filter(
         groups__in=get_groups_with_perms(event, only_with_perms_in=["view_event"]), is_active=True
     ).distinct()
-    responsible_persons = get_users_with_perms(
-        event, only_with_perms_in=["change_event"]
-    ).distinct()
-    responsible_persons_mails = list(responsible_persons.values_list("email", flat=True))
+    responsible_users = get_users_with_perms(event, only_with_perms_in=["change_event"]).distinct()
+    responsible_persons_mails = list(responsible_users.values_list("email", flat=True))
 
     subject = _("New {type}: {title}").format(type=event.type, title=event.title)
     text_content = _(
@@ -56,7 +54,7 @@ def participation_state_changed(participation: AbstractParticipation):
             messages.append(message)
 
         # send mail to responsible users
-        responsible_persons = get_users_with_perms(
+        responsible_users = get_users_with_perms(
             participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         subject = _("Participation was changed for your event")
@@ -68,7 +66,7 @@ def participation_state_changed(participation: AbstractParticipation):
             status=participation.get_state_display(),
         )
         html_content = render_to_string("email_base.html", {"message_text": text_content})
-        for user in responsible_persons:
+        for user in responsible_users:
             message = EmailMultiAlternatives(to=[user.email], subject=subject, body=text_content)
             message.attach_alternative(html_content, "text/html")
             messages.append(message)
