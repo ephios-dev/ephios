@@ -121,12 +121,9 @@ class DebugDataset(AdminUserDataset):
             start_time=make_aware(datetime(2023, 6, 30, 16, 0)),
             end_time=make_aware(datetime(2023, 7, 1, 1, 0)),
             signup_method_slug="instant_confirmation",
-            signup_configuration=json.dumps(
-                dict(
-                    minimum_age=18,
-                    signup_until=make_aware(datetime(2023, 6, 29, 8, 0)),
-                ),
-                cls=DjangoJSONEncoder,
+            signup_configuration=dict(
+                minimum_age=18,
+                signup_until=make_aware(datetime(2023, 6, 29, 8, 0)),
             ),
         )
 
