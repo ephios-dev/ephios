@@ -27,5 +27,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp .env.example .env
-        $HOME/.poetry/bin/poetry run coverage run -m pytest tests/
+        $HOME/.poetry/bin/poetry run coverage run --source=ephios -m pytest tests/
         $HOME/.poetry/bin/poetry run coveralls

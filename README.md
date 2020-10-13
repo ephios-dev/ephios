@@ -1,4 +1,5 @@
 ![ephios](https://github.com/ephios-dev/ephios/workflows/ephios/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/ephios-dev/ephios/badge.svg?branch=main)](https://coveralls.io/github/ephios-dev/ephios?branch=main)
 # ephios
 ephios is a tool to manage shifts for medical services.
 
