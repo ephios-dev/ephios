@@ -23,6 +23,8 @@ jobs:
         source $HOME/.poetry/env
         $HOME/.poetry/bin/poetry run black --check .
     - name: Test apps
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp .env.example .env
         $HOME/.poetry/bin/poetry run coverage run -m pytest tests/
