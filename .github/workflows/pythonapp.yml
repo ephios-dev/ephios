@@ -25,4 +25,5 @@ jobs:
     - name: Test apps
       run: |
         cp .env.example .env
-        $HOME/.poetry/bin/poetry run pytest
+        $HOME/.poetry/bin/poetry run coverage run -m pytest tests/
+        coveralls
