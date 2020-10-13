@@ -26,4 +26,4 @@ jobs:
       run: |
         cp .env.example .env
         $HOME/.poetry/bin/poetry run coverage run -m pytest tests/
-        coveralls
+        $HOME/.poetry/bin/poetry run coveralls
