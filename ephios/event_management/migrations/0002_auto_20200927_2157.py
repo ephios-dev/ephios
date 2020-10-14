@@ -2,8 +2,8 @@
 import json
 
 from django.db import migrations, models
-import ephios.extra.json
 
+import ephios.extra.json
 from ephios.extra.json import CustomJSONDecoder
 
 

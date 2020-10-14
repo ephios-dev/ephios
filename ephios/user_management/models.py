@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import date, datetime
+from datetime import date
 
 import guardian.mixins
 from django.contrib.auth import get_user_model
@@ -12,14 +12,11 @@ from django.db.models import (
     CharField,
     DateField,
     EmailField,
-    Exists,
     F,
     ForeignKey,
     Max,
     Model,
-    OuterRef,
     Q,
-    Subquery,
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _

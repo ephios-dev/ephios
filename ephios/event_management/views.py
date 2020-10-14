@@ -20,11 +20,11 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.detail import SingleObjectMixin
-from guardian.shortcuts import get_objects_for_user, get_users_with_perms
+from guardian.shortcuts import get_objects_for_user
 
 from ephios.event_management.forms import EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
+from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
 class HomeView(LoginRequiredMixin, TemplateView):

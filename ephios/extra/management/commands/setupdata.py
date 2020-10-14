@@ -1,10 +1,8 @@
-import json
 import uuid
 from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
