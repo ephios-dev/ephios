@@ -6,7 +6,6 @@ from django.forms import (
     BooleanField,
     ModelForm,
     ModelMultipleChoiceField,
-    TextInput,
     inlineformset_factory,
 )
 from django.utils.translation import gettext as _
