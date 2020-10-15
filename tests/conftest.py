@@ -25,6 +25,17 @@ def superuser():
 
 
 @pytest.fixture
+def manager():
+    return UserProfile.objects.create(
+        first_name="Marie",
+        last_name="Hilfsboss",
+        email="marie@localhost",
+        date_of_birth=date(1975, 1, 1),
+        password="dummy",
+    )
+
+
+@pytest.fixture
 def planner():
     return UserProfile.objects.create(
         first_name="Luisa",
@@ -63,12 +74,13 @@ def service_event_type():
 
 
 @pytest.fixture
-def groups(superuser, planner, volunteer):
+def groups(superuser, manager, planner, volunteer):
     managers = Group.objects.create(name="Managers")
     planners = Group.objects.create(name="Planners")
     volunteers = Group.objects.create(name="Volunteers")
 
     managers.user_set.add(superuser)
+    managers.user_set.add(manager)
     planners.user_set.add(superuser, planner)
     volunteers.user_set.add(superuser, planner, volunteer)
 

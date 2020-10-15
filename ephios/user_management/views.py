@@ -138,6 +138,7 @@ class GroupListView(CustomPermissionRequiredMixin, ListView):
 class GroupCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Group
     permission_required = "auth.add_group"
+    accept_object_perms = False
     template_name = "user_management/group_form.html"
     form_class = GroupForm
 
