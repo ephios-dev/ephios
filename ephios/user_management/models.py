@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import date, datetime
+from datetime import date
 
 import guardian.mixins
 from django.contrib.auth import get_user_model
@@ -12,12 +12,10 @@ from django.db.models import (
     CharField,
     DateField,
     EmailField,
-    Exists,
     F,
     ForeignKey,
     Max,
     Model,
-    OuterRef,
     Q,
 )
 from django.utils import timezone
@@ -116,14 +114,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
 
     @property
     def qualifications(self):
-        return Qualification.objects.annotate(
-            has_active_grant=Exists(
-                QualificationGrant.objects.filter(user=self, qualification=OuterRef("pk")).filter(
-                    Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
-                )
-            ),
-            expires=Max(F("grants__expires")),
-        ).filter(has_active_grant=True)
+        return Qualification.objects.filter(
+            pk__in=self.qualification_grants.filter(
+                Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
+            ).values_list("qualification_id", flat=True)
+        ).annotate(
+            expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+        )
 
     def get_shifts(self, with_participation_state_in):
         from ephios.event_management.models import Shift
@@ -181,7 +178,12 @@ class QualificationGrant(Model):
         verbose_name=_("qualification"),
         related_name="grants",
     )
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("user profile"))
+    user = ForeignKey(
+        get_user_model(),
+        related_name="qualification_grants",
+        on_delete=models.CASCADE,
+        verbose_name=_("user profile"),
+    )
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
 
     def __str__(self):
