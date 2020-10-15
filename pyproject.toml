@@ -9,7 +9,7 @@ homepage = "https://ephios.de"
 repository = "https://github.com/ephios-dev/ephios"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 django = "^3.1"
 django-bootstrap4 = "^2.2.0"
 django-environ = "^0.4.5"
