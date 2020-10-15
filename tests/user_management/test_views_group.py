@@ -33,7 +33,6 @@ class TestGroupView:
         response = form.submit()
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
-        assert group.name == group_name
         assert list(group.user_set.all()) == [manager]
         assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
@@ -50,8 +49,7 @@ class TestGroupView:
         response = form.submit()
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
-        assert group.name == group_name
-        assert list(group.user_set.all()) == [manager]
+        assert set(group.user_set.all()) == {manager}
         assert group.permissions.filter(codename="view_past_event").exists()
         assert group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" in get_group_perms(
@@ -74,7 +72,7 @@ class TestGroupView:
         assert response.status_code == 302
         group.refresh_from_db()
         assert group.name == group_name
-        assert list(group.user_set.all()) == [manager]
+        assert set(group.user_set.all()) == {manager}
         assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" not in get_group_perms(
