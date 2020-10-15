@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 
 {% block title %}
@@ -49,8 +50,18 @@
             <p class="card-text">
                 {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
                 <br> <br>
-                <a href="{% url "event_management:user_event_feed" userprofile.calendar_token %}">{% trans "Your calendar" %}</a>
+            <div class="input-group mb-3">
+                <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url" value="{{ SITE_URL }}{% url "event_management:user_event_feed" userprofile.calendar_token %}" readonly>
+                <div class="input-group-append">
+                    <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button" data-clipboard-target="#calendar-url" data-trigger="manual" title="Copied!">{% translate "Copy" %}</button>
+                </div>
+            </div>
             </p>
         </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "clipboardjs/js/clipboard.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/userprofile.js" %}"></script>
 {% endblock %}
