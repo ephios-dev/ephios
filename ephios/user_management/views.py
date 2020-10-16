@@ -142,15 +142,6 @@ class GroupCreateView(CustomPermissionRequiredMixin, CreateView):
     template_name = "user_management/group_form.html"
     form_class = GroupForm
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["initial"] = {
-            "users": UserProfile.objects.none(),
-            "can_add_event": False,
-            "publish_event_for_group": Group.objects.none(),
-        }
-        return kwargs
-
     def get_success_url(self):
         messages.success(
             self.request, _('Group "{group}" created successfully.').format(group=self.object)
@@ -163,36 +154,6 @@ class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
     template_name = "user_management/group_form.html"
     form_class = GroupForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["initial"] = {
-            "users": self.object.user_set.all(),
-            "can_view_past_event": self.object.permissions.filter(
-                codename="view_past_event"
-            ).exists(),
-            "can_add_event": self.object.permissions.filter(codename="add_event").exists(),
-            "publish_event_for_group": get_objects_for_group(
-                self.object, "publish_event_for_group", klass=Group
-            ),
-            "can_manage_user": self.object.permissions.filter(
-                codename__in=[
-                    "add_userprofile",
-                    "change_userprofile",
-                    "delete_userprofile",
-                    "view_userprofile",
-                ]
-            ).exists(),
-            "can_manage_group": self.object.permissions.filter(
-                codename__in=[
-                    "add_group",
-                    "change_group",
-                    "delete_group",
-                    "view_group",
-                ]
-            ).exists(),
-        }
-        return kwargs
 
     def get_success_url(self):
         messages.success(

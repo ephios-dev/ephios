@@ -10,7 +10,7 @@ from django.forms import (
 )
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
-from guardian.shortcuts import assign_perm, remove_perm
+from guardian.shortcuts import assign_perm, remove_perm, get_objects_for_group
 
 from ephios.extra.widgets import CustomDateInput
 from ephios.user_management.models import QualificationGrant, UserProfile
@@ -130,6 +130,36 @@ class GroupForm(ModelForm):
     class Meta:
         model = Group
         fields = ["name"]
+
+    def __init__(self, **kwargs):
+        if (group := kwargs.get("instance", None)) is not None:
+            kwargs["initial"] = {
+                "users": group.user_set.all(),
+                "can_view_past_event": group.permissions.filter(
+                    codename="view_past_event"
+                ).exists(),
+                "can_add_event": group.permissions.filter(codename="add_event").exists(),
+                "publish_event_for_group": get_objects_for_group(
+                    group, "publish_event_for_group", klass=Group
+                ),
+                "can_manage_user": group.permissions.filter(
+                    codename__in=[
+                        "add_userprofile",
+                        "change_userprofile",
+                        "delete_userprofile",
+                        "view_userprofile",
+                    ]
+                ).exists(),
+                "can_manage_group": group.permissions.filter(
+                    codename__in=[
+                        "add_group",
+                        "change_group",
+                        "delete_group",
+                        "view_group",
+                    ]
+                ).exists(),
+            }
+        super().__init__(**kwargs)
 
     def save(self, commit=True):
         group = super().save(commit)
