@@ -19,7 +19,9 @@ class CustomPermissionRequiredMixin(PermissionRequiredMixin):
     def get_permission_object(self):
         if hasattr(self, "permission_object"):
             return self.permission_object
-        return self.get_object() if hasattr(self, "get_object") else getattr(self, "object", None)
+        if hasattr(self, "get_object") and (obj := self.get_object()) is not None:
+            return obj
+        return getattr(self, "object", None)
 
     def has_permission(self):
         user = self.request.user
