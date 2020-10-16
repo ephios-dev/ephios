@@ -1,4 +1,4 @@
-name: ephios
+name: tests
 
 on: [push, pull_request]
 
