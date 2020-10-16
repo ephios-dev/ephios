@@ -3,14 +3,11 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  build:
-
+  lint:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: 3.9
     - name: Install dependencies
@@ -18,12 +15,32 @@ jobs:
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
         source $HOME/.poetry/env
         poetry install
-
-    - name: Linting
+    - name: check format with black
       run: |
         source $HOME/.poetry/env
         $HOME/.poetry/bin/poetry run black --check .
+    - name: Lint with pylint
+      run: |
+        source $HOME/.poetry/env
         $HOME/.poetry/bin/poetry run pylint ephios
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.8, 3.9 ]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        source $HOME/.poetry/env
+        poetry install
 
     - name: Test apps
       env:
