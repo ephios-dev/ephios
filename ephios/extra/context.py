@@ -1,5 +1,4 @@
 import importlib
-import subprocess
 
 from django.templatetags.static import static
 from django.utils.translation import get_language
@@ -7,13 +6,8 @@ from django.utils.translation import get_language
 from ephios.extra.signals import footer_link
 from ephios.settings import SITE_URL
 
-try:
-    EPHIOS_VERSION = (
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
-    )
-except (subprocess.CalledProcessError, FileNotFoundError):
-    # suggested in https://github.com/python-poetry/poetry/issues/273
-    EPHIOS_VERSION = "v" + importlib.metadata.version("ephios")
+# suggested in https://github.com/python-poetry/poetry/issues/273
+EPHIOS_VERSION = "v" + importlib.metadata.version("ephios")
 
 
 def ephios_base_context(request):

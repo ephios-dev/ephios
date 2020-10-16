@@ -1,0 +1,65 @@
+name: staging
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install and build
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+          source $HOME/.poetry/env
+          poetry install
+          poetry build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ephios-dev-wheel
+          path: dist/ephios-*.whl
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/download-artifact@v2
+      id: download
+      with:
+        name: ephios-dev-wheel
+        path: wheel
+
+    - name: get path to rsynced wheel
+      id: wheel
+      run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
+
+    - name: rsync wheel
+      run: |
+        echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > .staging-key
+        chmod 0600 .staging-key
+        rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel staghios@despina.uberspace.de:~
+        rm .staging-key
+
+    - uses: actions/checkout@v2
+      with:
+        repository: 'ephios-dev/ephios-ansible'
+
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: deploy.yml
+        directory: ./uberspace/
+        key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
+        inventory: |
+          [servers]
+          despina.uberspace.de ansible_user=staghios domain=staging.ephios.de smtp_mailbox=noreply admin_email=admin@ephios.de
+        options: |
+          --extra-vars package_name="${{steps.wheel.outputs.path}}"
+          --verbose
