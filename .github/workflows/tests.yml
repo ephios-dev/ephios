@@ -18,10 +18,13 @@ jobs:
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
         source $HOME/.poetry/env
         poetry install
-    - name: Lint with black
+
+    - name: Linting
       run: |
         source $HOME/.poetry/env
         $HOME/.poetry/bin/poetry run black --check .
+        $HOME/.poetry/bin/poetry run pylint ephios
+
     - name: Test apps
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
