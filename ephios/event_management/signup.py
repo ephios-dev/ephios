@@ -103,7 +103,6 @@ class ConfigurationForm(forms.Form):
 def check_event_is_active(method, participant):
     if not method.shift.event.active:
         return ParticipationError(_("The event is not active."))
-    return None
 
 
 def check_participation_state_for_signup(method, participant):
@@ -123,7 +122,6 @@ def check_participation_state_for_signup(method, participant):
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
-    return None
 
 
 def check_participation_state_for_decline(method, participant):
@@ -144,7 +142,6 @@ def check_participation_state_for_decline(method, participant):
             return ParticipationError(
                 _("You have already declined participating in {shift}.").format(shift=method.shift)
             )
-    return None
 
 
 def check_inside_signup_timeframe(method, participant):
@@ -153,7 +150,6 @@ def check_inside_signup_timeframe(method, participant):
         last_time = min(last_time, method.configuration.signup_until)
     if timezone.now() > last_time:
         return ParticipationError(_("The signup period is over."))
-    return None
 
 
 def check_participant_age(method, participant):
@@ -163,7 +159,6 @@ def check_participant_age(method, participant):
         return ParticipationError(
             _("You are too young. The minimum age is {age}.").format(age=minimum_age)
         )
-    return None
 
 
 class BaseSignupMethod:

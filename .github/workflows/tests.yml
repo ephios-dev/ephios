@@ -23,9 +23,13 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: check format with black
-      run: poetry run black --check .
+      run: |
+        poetry run black --version
+        poetry run black --check .
     - name: Lint with pylint
-      run: poetry run pylint -j0 ephios
+      run: |
+        poetry run pylint --version
+        poetry run pylint ephios
 
   test:
     runs-on: ubuntu-latest

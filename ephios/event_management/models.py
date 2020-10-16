@@ -68,12 +68,10 @@ class Event(Model):
     def get_start_time(self):
         if (first_shift := self.shifts.order_by("start_time").first()) is not None:
             return first_shift.start_time
-        return None
 
     def get_end_time(self):
         if (last_shift := self.shifts.order_by("end_time").last()) is not None:
             return last_shift.end_time
-        return None
 
     def __str__(self):
         return str(self.title)
