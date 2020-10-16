@@ -175,6 +175,22 @@ class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
             "publish_event_for_group": get_objects_for_group(
                 self.object, "publish_event_for_group", klass=Group
             ),
+            "can_manage_user": self.object.permissions.filter(
+                codename__in=[
+                    "add_userprofile",
+                    "change_userprofile",
+                    "delete_userprofile",
+                    "view_userprofile",
+                ]
+            ).exists(),
+            "can_manage_group": self.object.permissions.filter(
+                codename__in=[
+                    "add_group",
+                    "change_group",
+                    "delete_group",
+                    "view_group",
+                ]
+            ).exists(),
         }
         return kwargs
 
