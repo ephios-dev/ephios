@@ -20,8 +20,17 @@ def new_event(event):
 
     subject = _("New {type}: {title}").format(type=event.type, title=event.title)
     text_content = _(
-        "A new {type} ({title}) has been added. \n You can view it here: {link}"
-    ).format(type=event.type, title=event.title, link=event.get_absolute_url())
+        "A new {type} ({title}, {location}) has been added.\n"
+        "Further information: {description}\n"
+        "You can view the event here: {url}{link}"
+    ).format(
+        type=event.type,
+        title=event.title,
+        location=event.location,
+        description=event.description,
+        url=SITE_URL,
+        link=event.get_absolute_url(),
+    )
     html_content = render_to_string(
         "event_management/mails/new_event.html", {"event": event, "site_url": SITE_URL}
     )
