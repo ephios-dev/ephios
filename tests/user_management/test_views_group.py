@@ -36,6 +36,22 @@ class TestGroupView:
         assert list(group.user_set.all()) == [manager]
         assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
+        assert not group.permissions.filter(
+            codename__in=[
+                "add_userprofile",
+                "change_userprofile",
+                "delete_userprofile",
+                "view_userprofile",
+            ]
+        ).exists()
+        assert not group.permissions.filter(
+            codename__in=[
+                "add_group",
+                "change_group",
+                "delete_group",
+                "view_group",
+            ]
+        ).exists()
 
     def test_group_create_with_permissions(self, django_app, groups, manager):
         response = django_app.get(reverse("user_management:group_add"), user=manager)
@@ -46,6 +62,8 @@ class TestGroupView:
         form["can_view_past_event"] = True
         form["can_add_event"] = True
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
+        form["can_manage_user"] = True
+        form["can_manage_group"] = True
         response = form.submit()
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
@@ -55,6 +73,14 @@ class TestGroupView:
         assert "publish_event_for_group" in get_group_perms(
             group, Group.objects.get(name="Volunteers")
         )
+        assert group.permissions.filter(codename="add_userprofile").exists()
+        assert group.permissions.filter(codename="change_userprofile").exists()
+        assert group.permissions.filter(codename="delete_userprofile").exists()
+        assert group.permissions.filter(codename="view_userprofile").exists()
+        assert group.permissions.filter(codename="add_group").exists()
+        assert group.permissions.filter(codename="change_group").exists()
+        assert group.permissions.filter(codename="delete_group").exists()
+        assert group.permissions.filter(codename="view_group").exists()
 
     def test_group_edit(self, django_app, groups, manager):
         group = manager.groups.first()
