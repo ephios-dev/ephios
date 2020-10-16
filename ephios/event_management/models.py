@@ -44,16 +44,11 @@ class EventType(Model):
         return self.title
 
 
-class EventSeries(Model):
-    pass
-
-
 class Event(Model):
     title = CharField(_("title"), max_length=254)
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
-    series = ForeignKey(EventSeries, on_delete=models.CASCADE, blank=True, null=True)
     active = BooleanField(default=False)
     mail_updates = BooleanField(_("send updates via mail"), default=True)
 

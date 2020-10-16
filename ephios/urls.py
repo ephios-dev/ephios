@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.i18n import JavaScriptCatalog
 
 from ephios import settings
 
@@ -26,6 +27,7 @@ urlpatterns = [
     path("", include("ephios.user_management.urls")),
     path("", include("ephios.plugins.basesignup.urls")),
     path("", include("ephios.plugins.pages.urls")),
+    path('jsi18n.js', JavaScriptCatalog.as_view(packages=['recurrence']), name='jsi18n'),
 ]
 
 if settings.DEBUG:

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select, TimeField
+from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select, TimeField, Form
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
@@ -13,6 +13,7 @@ from guardian.shortcuts import (
     get_users_with_perms,
     get_objects_for_user,
 )
+from recurrence.forms import RecurrenceField
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift
@@ -148,3 +149,7 @@ class ShiftForm(ModelForm):
             if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
                 raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data
+
+
+class EventDuplicationForm(Form):
+    recurrence = RecurrenceField()

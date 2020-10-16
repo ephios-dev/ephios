@@ -1,3 +1,6 @@
+import json
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -20,10 +23,13 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormMixin, FormView
 from guardian.shortcuts import get_objects_for_user
+from recurrence.forms import RecurrenceField
 
-from ephios.event_management.forms import EventForm, ShiftForm
+from ephios.event_management.forms import EventForm, ShiftForm, EventDuplicationForm
 from ephios.event_management.models import Event, Shift
+from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
@@ -133,6 +139,49 @@ class EventArchiveView(CustomPermissionRequiredMixin, ListView):
             .filter(end_time__lt=timezone.now())
             .select_related("type")
         )
+
+
+class EventDuplicateView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    permission_required = "event_management.add_event"
+    model = Event
+    template_name = "event_management/event_duplicate.html"
+    form_class = EventDuplicationForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def form_valid(self, form):
+        occurences = form.cleaned_data["recurrence"].between(datetime.now(), datetime.now() + timedelta(days=365), inc=True)
+        for date in occurences:
+            event = self.get_object()
+            shifts = event.shifts.all()
+            event.pk = None
+            event.save()
+            for shift in shifts:
+                shift.pk = None
+                if shift.end_time <= shift.start_time:
+                    shift.end_time = datetime.combine(date.date() + timedelta(days=1), shift.end_time.time())
+                else:
+                    shift.end_time = datetime.combine(date.date(), shift.end_time.time())
+                shift.meeting_time = datetime.combine(date.date(), shift.meeting_time.time())
+                shift.start_time = datetime.combine(date.date(), shift.start_time.time())
+                shift.event = event
+                shift.save()
+                event.shifts.add(shift)
+        messages.success(self.request, _("Event succesfully duplicated."))
+        return redirect(reverse("event_management:event_list"))
+
+
+class RRuleOccurenceView(CustomPermissionRequiredMixin, View):
+    permission_required = "event_management.add_event"
+
+    def post(self, *args, **kwargs):
+        try:
+            recurrence = RecurrenceField().clean(self.request.POST["recurrence_string"])
+            return HttpResponse(json.dumps(recurrence.between(datetime.now(), datetime.now() + timedelta(days=365), inc=True), cls=CustomJSONEncoder))
+        except (TypeError, ValidationError):
+            return HttpResponse()
 
 
 class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):

@@ -50,6 +50,11 @@
                             {% trans "Delete event" %}
                         </a>
                         <a class="dropdown-item"
+                           href="{% url "event_management:event_duplicate" event.pk %}">
+                            <span class="fas fa-copy"></span>
+                            {% trans "Duplicate event" %}
+                        </a>
+                        <a class="dropdown-item"
                            href="{% url "event_management:event_detail_pdf" event.pk %}">
                             <span class="fas fa-file-pdf"></span>
                             {% trans "Download PDF" %}
