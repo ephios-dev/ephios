@@ -65,13 +65,13 @@ class AbstractParticipant:
         all_qualifications = set(self.qualifications)
         current = self.qualifications
         while current:
-            next = (
+            new = (
                 Qualification.objects.filter(included_by__in=current)
                 .exclude(id__in=(q.id for q in all_qualifications))
                 .distinct()
             )
-            all_qualifications |= set(next)
-            current = next
+            all_qualifications |= set(new)
+            current = new
         return all_qualifications
 
     def has_qualifications(self, qualifications):
@@ -103,6 +103,7 @@ class ConfigurationForm(forms.Form):
 def check_event_is_active(method, participant):
     if not method.shift.event.active:
         return ParticipationError(_("The event is not active."))
+    return None
 
 
 def check_participation_state_for_signup(method, participant):
@@ -114,14 +115,15 @@ def check_participation_state_for_signup(method, participant):
                     shift=method.shift
                 )
             )
-        elif participation.state == AbstractParticipation.States.CONFIRMED:
+        if participation.state == AbstractParticipation.States.CONFIRMED:
             return ParticipationError(
                 _("You are already signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
+    return None
 
 
 def check_participation_state_for_decline(method, participant):
@@ -134,14 +136,15 @@ def check_participation_state_for_decline(method, participant):
             return ParticipationError(
                 _("You are bindingly signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.USER_DECLINED:
+        if participation.state == AbstractParticipation.States.USER_DECLINED:
             return ParticipationError(
                 _("You have already declined participating in {shift}.").format(shift=method.shift)
             )
+    return None
 
 
 def check_inside_signup_timeframe(method, participant):
@@ -150,6 +153,7 @@ def check_inside_signup_timeframe(method, participant):
         last_time = min(last_time, method.configuration.signup_until)
     if timezone.now() > last_time:
         return ParticipationError(_("The signup period is over."))
+    return None
 
 
 def check_participant_age(method, participant):
@@ -159,6 +163,7 @@ def check_participant_age(method, participant):
         return ParticipationError(
             _("You are too young. The minimum age is {age}.").format(age=minimum_age)
         )
+    return None
 
 
 class BaseSignupMethod:
@@ -306,7 +311,7 @@ class BaseSignupMethod:
             form.fields[name] = config["formfield"]
         return form
 
-    def render_configuration_form(self, form=None, *args, **kwargs):
+    def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)
         template = Template(
             template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
@@ -322,12 +327,9 @@ class BaseSignupView(View):
         if (choice := request.POST.get("signup_choice")) is not None:
             if choice == "sign_up":
                 return self.signup_pressed(request, *args, **kwargs)
-            elif choice == "decline":
+            if choice == "decline":
                 return self.decline_pressed(request, *args, **kwargs)
-            else:
-                raise ValueError(
-                    _("'{choice}' is not a valid signup action.").format(choice=choice)
-                )
+            raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
         return super().dispatch(request, *args, **kwargs)
 
     def signup_pressed(self, request, *args, **kwargs):
@@ -341,8 +343,7 @@ class BaseSignupView(View):
         except ParticipationError as errors:
             for error in errors:
                 messages.error(request, self.method.signup_error_message.format(error=error))
-        finally:
-            return redirect(self.shift.event.get_absolute_url())
+        return redirect(self.shift.event.get_absolute_url())
 
     def decline_pressed(self, request, *args, **kwargs):
         try:
@@ -352,5 +353,4 @@ class BaseSignupView(View):
         except ParticipationError as errors:
             for error in errors:
                 messages.error(request, self.method.decline_error_message.format(error=error))
-        finally:
-            return redirect(self.shift.event.get_absolute_url())
+        return redirect(self.shift.event.get_absolute_url())

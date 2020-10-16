@@ -24,6 +24,7 @@ class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):
     def check_qualification(method, participant):
         if not participant.has_qualifications(method.configuration.required_qualifications):
             return ParticipationError(_("You are not qualified."))
+        return None
 
     def get_configuration_fields(self):
         return {
@@ -61,6 +62,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             ).count()
             if current_count >= method.configuration.maximum_number_of_participants:
                 return ParticipationError(_("The maximum number of participants is reached."))
+        return None
 
     def get_configuration_fields(self):
         return {
