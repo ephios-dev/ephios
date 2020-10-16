@@ -27,7 +27,7 @@ urlpatterns = [
     path("", include("ephios.user_management.urls")),
     path("", include("ephios.plugins.basesignup.urls")),
     path("", include("ephios.plugins.pages.urls")),
-    path('jsi18n.js', JavaScriptCatalog.as_view(packages=['recurrence']), name='jsi18n'),
+    path("jsi18n.js", JavaScriptCatalog.as_view(packages=["recurrence"]), name="jsi18n"),
 ]
 
 if settings.DEBUG:

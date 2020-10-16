@@ -152,7 +152,9 @@ class EventDuplicateView(CustomPermissionRequiredMixin, SingleObjectMixin, FormV
         self.object = self.get_object()
 
     def form_valid(self, form):
-        occurences = form.cleaned_data["recurrence"].between(datetime.now(), datetime.now() + timedelta(days=365), inc=True)
+        occurences = form.cleaned_data["recurrence"].between(
+            datetime.now(), datetime.now() + timedelta(days=365), inc=True
+        )
         for date in occurences:
             event = self.get_object()
             shifts = event.shifts.all()
@@ -161,7 +163,9 @@ class EventDuplicateView(CustomPermissionRequiredMixin, SingleObjectMixin, FormV
             for shift in shifts:
                 shift.pk = None
                 if shift.end_time <= shift.start_time:
-                    shift.end_time = datetime.combine(date.date() + timedelta(days=1), shift.end_time.time())
+                    shift.end_time = datetime.combine(
+                        date.date() + timedelta(days=1), shift.end_time.time()
+                    )
                 else:
                     shift.end_time = datetime.combine(date.date(), shift.end_time.time())
                 shift.meeting_time = datetime.combine(date.date(), shift.meeting_time.time())
@@ -179,7 +183,14 @@ class RRuleOccurenceView(CustomPermissionRequiredMixin, View):
     def post(self, *args, **kwargs):
         try:
             recurrence = RecurrenceField().clean(self.request.POST["recurrence_string"])
-            return HttpResponse(json.dumps(recurrence.between(datetime.now(), datetime.now() + timedelta(days=365), inc=True), cls=CustomJSONEncoder))
+            return HttpResponse(
+                json.dumps(
+                    recurrence.between(
+                        datetime.now(), datetime.now() + timedelta(days=365), inc=True
+                    ),
+                    cls=CustomJSONEncoder,
+                )
+            )
         except (TypeError, ValidationError):
             return HttpResponse()
 
