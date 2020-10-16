@@ -40,18 +40,25 @@ django-extensions = "^3.0.5"
 coverage = "^5.3"
 coveralls = "^2.1.2"
 isort = "^5.6.4"
+pylint = "^2.6.0"
 
 [tool.black]
 line-length = 100
+# https://github.com/psf/black/blob/master/docs/compatible_configs.md
 
 [tool.isort]
-# https://github.com/psf/black/blob/master/docs/compatible_configs.md
 multi_line_output = 3
-include_trailing_comma = True
+include_trailing_comma = true
 force_grid_wrap = 0
-use_parentheses = True
-ensure_newline_before_comments = True
+use_parentheses = true
+ensure_newline_before_comments = true
 line_length = 100
+
+[tool.pylint.messages_control]
+disable = "C0330, C0326"
+
+[tool.pylint.format]
+max-line-length = "100"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "ephios.settings"
