@@ -1,4 +1,5 @@
 import functools
+import json
 from argparse import Namespace
 from dataclasses import dataclass, field
 from datetime import date
@@ -47,6 +48,7 @@ class AbstractParticipant:
     email: Optional[str]  # if set to None, no notifications are sent
 
     def get_age(self, today: date = None):
+        json.dumps({2: 3})
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
