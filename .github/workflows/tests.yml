@@ -57,9 +57,11 @@ jobs:
       run: poetry install
 
     - name: Test apps
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp .env.example .env
         poetry run coverage run --source=ephios -m pytest tests/
-        poetry run coveralls
+    - name: Coveralls
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: poetry run coveralls
+      if: matrix.python-version == '3.9'
