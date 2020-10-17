@@ -29,6 +29,8 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 SITE_URL = env.str("SITE_URL")
+if SITE_URL.endswith("/"):
+    SITE_URL = SITE_URL[:-1]
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
