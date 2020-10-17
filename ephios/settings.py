@@ -153,6 +153,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
+COMPRESS_ENABLED = not DEBUG
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
