@@ -147,8 +147,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = env.str("STATIC_URL")
-STATIC_ROOT = env.str("STATIC_ROOT")
+STATIC_URL = env.str("STATIC_URL", default="/static/")
+STATIC_ROOT = env.str("STATIC_ROOT", default=os.path.join(DATA_DIR, "static"))
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
