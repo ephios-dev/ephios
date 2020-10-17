@@ -21,6 +21,10 @@ env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 
+DATA_DIR = env.str("DATA_DIR", default=os.path.join(BASE_DIR, "data"))
+if not os.path.exists(DATA_DIR):
+    os.mkdir(DATA_DIR)
+
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
