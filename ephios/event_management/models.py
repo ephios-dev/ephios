@@ -41,7 +41,7 @@ class EventType(Model):
         verbose_name_plural = _("event types")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class EventSeries(Model):
@@ -74,7 +74,7 @@ class Event(Model):
             return last_shift.end_time
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def get_absolute_url(self):
         from django.urls import reverse

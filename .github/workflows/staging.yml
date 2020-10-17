@@ -7,24 +7,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.8 ]
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Install and build
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-          source $HOME/.poetry/env
-          poetry install
-          poetry build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ephios-dev-wheel
-          path: dist/ephios-*.whl
-          if-no-files-found: error
-          retention-days: 1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: Gr1N/setup-poetry@v4
+    - name: Install dependencies
+      run: poetry install
+    - name: build
+      run: poetry build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ephios-dev-wheel
+        path: dist/ephios-*.whl
+        if-no-files-found: error
+        retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,7 +37,7 @@ jobs:
         name: ephios-dev-wheel
         path: wheel
 
-    - name: get path to rsynced wheel
+    - name: get path to wheel
       id: wheel
       run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
 

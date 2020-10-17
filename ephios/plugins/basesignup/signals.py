@@ -9,5 +9,5 @@ from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMe
     register_signup_methods,
     dispatch_uid="ephios.plugins.basesignup.signals.register_signup_methods",
 )
-def register_signup_methods(sender, **kwargs):
+def register_base_signup_methods(sender, **kwargs):
     return [InstantConfirmationSignupMethod, RequestConfirmSignupMethod]

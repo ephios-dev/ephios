@@ -6,9 +6,9 @@ import pytest
 from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
-from ephios.event_management.models import EventType, Event, Shift
+from ephios.event_management.models import Event, EventType, Shift
 from ephios.plugins.basesignup.signup.confirm import RequestConfirmSignupMethod
-from ephios.user_management.models import UserProfile, QualificationCategory, Qualification
+from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
 
 
 @pytest.fixture
