@@ -9,4 +9,4 @@ class Page(models.Model):
     publicly_visible = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return str(self.title)
