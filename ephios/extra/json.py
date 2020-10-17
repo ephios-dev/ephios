@@ -6,13 +6,12 @@ from django.utils import dateparse
 
 
 class CustomJSONEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, QuerySet):
-            return list(obj)
-        elif isinstance(obj, Model):
-            return obj.pk
-        else:
-            return super().default(obj)
+    def default(self, o):
+        if isinstance(o, QuerySet):
+            return list(o)
+        if isinstance(o, Model):
+            return o.pk
+        return super().default(o)
 
 
 class CustomJSONDecoder(json.JSONDecoder):

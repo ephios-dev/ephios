@@ -132,6 +132,7 @@ class QualificationDataset(AbstractDataset):
     action = "Create qualification objects for medical qualifications and driver licenses"
 
     def create_objects(self, *args, **options):
+        # pylint: disable=too-many-locals,unused-variable
         medical_category = QualificationCategory.objects.create(
             title=_("Medical"),
             uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),

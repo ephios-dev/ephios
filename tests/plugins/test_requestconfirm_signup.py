@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.event_management.models import LocalParticipation, AbstractParticipation
+from ephios.event_management.models import AbstractParticipation, LocalParticipation
 
 
 @pytest.mark.django_db

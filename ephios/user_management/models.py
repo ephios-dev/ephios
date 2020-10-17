@@ -140,7 +140,7 @@ class QualificationCategory(Model):
         verbose_name_plural = _("qualification tracks")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class Qualification(Model):
@@ -168,7 +168,7 @@ class Qualification(Model):
         verbose_name_plural = _("qualifications")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class QualificationGrant(Model):

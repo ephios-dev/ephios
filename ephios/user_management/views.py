@@ -59,12 +59,11 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
             if userprofile.is_active:
                 mail.send_account_creation_info(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
-        else:
-            return self.render_to_response(
-                self.get_context_data(
-                    userprofile_form=userprofile_form, qualification_formset=qualification_formset
-                )
+        return self.render_to_response(
+            self.get_context_data(
+                userprofile_form=userprofile_form, qualification_formset=qualification_formset
             )
+        )
 
 
 class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
