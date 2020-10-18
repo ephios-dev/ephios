@@ -61,7 +61,6 @@ duplicate-code, attribute-defined-outside-init, missing-module-docstring, missin
 no-member, invalid-name, import-outside-toplevel, unused-argument, too-many-ancestors, missing-function-docstring,
 too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsistent-return-statements
 """
-confidence = "INFERENCE"
 
 [tool.pylint.format]
 max-line-length = "100"
