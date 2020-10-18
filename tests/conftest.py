@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, EventType, Shift
-from ephios.plugins.basesignup.signup.confirm import RequestConfirmSignupMethod
+from ephios.plugins.basesignup.signup import RequestConfirmSignupMethod
 from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
 
 
