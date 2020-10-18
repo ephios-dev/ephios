@@ -4,7 +4,6 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.event_management.models import Event
 from ephios.extra.permissions import get_groups_with_perms
 
 
