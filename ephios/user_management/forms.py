@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField, inlineformset_factory
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
-from guardian.shortcuts import assign_perm, remove_perm, get_objects_for_group
+from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.extra.widgets import CustomDateInput
 from ephios.user_management.models import QualificationGrant, UserProfile
