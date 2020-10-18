@@ -153,6 +153,7 @@ class GroupForm(ModelForm):
                         "view_group",
                     ]
                 ).exists(),
+                **kwargs.get("initial", {}),
             }
         super().__init__(**kwargs)
 
