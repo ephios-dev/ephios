@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -22,14 +24,13 @@ def new_event(event):
     text_content = _(
         "A new {type} ({title}, {location}) has been added.\n"
         "Further information: {description}\n"
-        "You can view the event here: {url}{link}"
+        "You can view the event here: {url}"
     ).format(
         type=event.type,
         title=event.title,
         location=event.location,
         description=event.description,
-        url=SITE_URL,
-        link=event.get_absolute_url(),
+        url=urljoin(SITE_URL, event.get_absolute_url()),
     )
     html_content = render_to_string(
         "event_management/mails/new_event.html", {"event": event, "site_url": SITE_URL}
