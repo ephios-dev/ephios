@@ -23,7 +23,7 @@ from ephios.event_management.models import AbstractParticipation, LocalParticipa
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 from ephios.user_management.models import Qualification
 
-register_signup_methods = django.dispatch.Signal(providing_args=[])
+register_signup_methods = django.dispatch.Signal()
 
 
 def all_signup_methods():

@@ -3,12 +3,18 @@ from argparse import Namespace
 from datetime import date, datetime
 
 import pytest
+import pytz
 from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, EventType, Shift
 from ephios.plugins.basesignup.signup.confirm import RequestConfirmSignupMethod
 from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
+
+
+@pytest.fixture
+def tz():
+    return pytz.timezone("Europe/Berlin")
 
 
 @pytest.fixture
@@ -100,7 +106,7 @@ def groups(superuser, manager, planner, volunteer):
 
 
 @pytest.fixture
-def event(groups, service_event_type, planner):
+def event(groups, service_event_type, planner, tz):
     managers, planners, volunteers = groups
 
     event = Event.objects.create(
@@ -116,9 +122,9 @@ def event(groups, service_event_type, planner):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 7, 0),
-        start_time=datetime(2099, 6, 30, 8, 0),
-        end_time=datetime(2099, 6, 30, 20, 0),
+        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
+        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
+        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
