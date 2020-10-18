@@ -128,6 +128,7 @@ class Shift(Model):
     class Meta:
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")
+        ordering = ("meeting_time", "start_time", "id")
 
     @property
     def signup_method(self):
