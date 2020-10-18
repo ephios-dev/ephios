@@ -30,6 +30,10 @@ jobs:
       run: |
         poetry run black --version
         poetry run black --check .
+    - name: check import order with isort
+      run: |
+        poetry run isort --version
+        poetry run isort -c .
     - name: Lint with pylint
       run: |
         poetry run pylint --version

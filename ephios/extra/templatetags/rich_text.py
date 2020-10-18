@@ -1,14 +1,6 @@
-import urllib.parse
-
 import bleach
 import markdown
-from bleach import DEFAULT_CALLBACKS
-from bleach.linkifier import build_email_re, build_url_re
 from django import template
-from django.conf import settings
-from django.core import signing
-from django.urls import reverse
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 
 register = template.Library()
