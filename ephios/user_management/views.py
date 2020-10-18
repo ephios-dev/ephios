@@ -13,7 +13,6 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
-from guardian.shortcuts import get_objects_for_group
 
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.user_management import mail
