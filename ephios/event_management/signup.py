@@ -61,7 +61,7 @@ class AbstractParticipant:
         raise NotImplementedError
 
     def collect_all_qualifications(self):
-        """We collect using breath first search with one query for every layer of inclusion."""
+        """We collect using breadth first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
         current = self.qualifications
         while current:
@@ -98,6 +98,43 @@ class ParticipationError(ValidationError):
 
 class ConfigurationForm(forms.Form):
     pass
+
+
+class BaseSignupView(View):
+    shift: Shift = ...
+    method: "BaseSignupMethod" = ...
+
+    def dispatch(self, request, *args, **kwargs):
+        if (choice := request.POST.get("signup_choice")) is not None:
+            if choice == "sign_up":
+                return self.signup_pressed(request, *args, **kwargs)
+            if choice == "decline":
+                return self.decline_pressed(request, *args, **kwargs)
+            raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
+        return super().dispatch(request, *args, **kwargs)
+
+    def signup_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_signup(request.user.as_participant())
+                messages.success(
+                    request,
+                    self.method.signup_success_message.format(shift=self.shift),
+                )
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, self.method.signup_error_message.format(error=error))
+        return redirect(self.shift.event.get_absolute_url())
+
+    def decline_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_decline(request.user.as_participant())
+                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, self.method.decline_error_message.format(error=error))
+        return redirect(self.shift.event.get_absolute_url())
 
 
 def check_event_is_active(method, participant):
@@ -162,9 +199,16 @@ def check_participant_age(method, participant):
 
 
 class BaseSignupMethod:
-    slug = "abstract"
-    verbose_name = "abstract"
+    @property
+    def slug(self):
+        raise NotImplementedError()
+
+    @property
+    def verbose_name(self):
+        raise NotImplementedError()
+
     description = """"""
+    signup_view_class = BaseSignupView
 
     # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
@@ -181,10 +225,6 @@ class BaseSignupMethod:
         if shift is not None:
             for key, value in shift.signup_configuration.items():
                 setattr(self.configuration, key, value)
-
-    @property
-    def signup_view_class(self):
-        return BaseSignupView
 
     @cached_property
     def signup_view(self):
@@ -312,40 +352,3 @@ class BaseSignupMethod:
             template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
         ).render(Context({"form": form}))
         return template
-
-
-class BaseSignupView(View):
-    shift: Shift = ...
-    method: BaseSignupMethod = ...
-
-    def dispatch(self, request, *args, **kwargs):
-        if (choice := request.POST.get("signup_choice")) is not None:
-            if choice == "sign_up":
-                return self.signup_pressed(request, *args, **kwargs)
-            if choice == "decline":
-                return self.decline_pressed(request, *args, **kwargs)
-            raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
-        return super().dispatch(request, *args, **kwargs)
-
-    def signup_pressed(self, request, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                self.method.perform_signup(request.user.as_participant())
-                messages.success(
-                    request,
-                    self.method.signup_success_message.format(shift=self.shift),
-                )
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, self.method.signup_error_message.format(error=error))
-        return redirect(self.shift.event.get_absolute_url())
-
-    def decline_pressed(self, request, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                self.method.perform_decline(request.user.as_participant())
-                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, self.method.decline_error_message.format(error=error))
-        return redirect(self.shift.event.get_absolute_url())
