@@ -1,10 +1,9 @@
 from datetime import date
 
 import pytest
-from django.contrib.auth.models import Group
-from ephios.user_management.models import UserProfile
 from django.urls import reverse
-from guardian.shortcuts import get_group_perms
+
+from ephios.user_management.models import UserProfile
 
 
 @pytest.mark.django_db
@@ -44,52 +43,30 @@ class TestUserProfileView:
         form["groups"].force_value(3)
         response = form.submit()
         assert response.status_code == 302
-        userprofile = UserProfile.objects.get(email=userprofile_email)
-        assert not userprofile.user_permissions.filter(codename="view_past_event").exists()
-        assert not userprofile.user_permissions.filter(codename="add_event").exists()
+        # userprofile = UserProfile.objects.get(email=userprofile_email)
 
-    # def test_group_create_with_permissions(self, django_app, groups, manager):
-    #     response = django_app.get(reverse("user_management:group_add"), user=manager)
-    #     form = response.form
-    #     group_name = "Testgroup"
-    #     form["name"] = group_name
-    #     form["users"].force_value([manager.id])
-    #     form["can_view_past_event"] = True
-    #     form["can_add_event"] = True
-    #     form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-    #     response = form.submit()
-    #     assert response.status_code == 302
-    #     group = Group.objects.get(name=group_name)
-    #     assert set(group.user_set.all()) == {manager}
-    #     assert group.permissions.filter(codename="view_past_event").exists()
-    #     assert group.permissions.filter(codename="add_event").exists()
-    #     assert "publish_event_for_group" in get_group_perms(
-    #         group, Group.objects.get(name="Volunteers")
-    #     )
-    #
-    # def test_group_edit(self, django_app, groups, manager):
-    #     group = manager.groups.first()
-    #     response = django_app.get(
-    #         reverse("user_management:group_edit", kwargs={"pk": group.id}), user=manager
-    #     )
-    #     form = response.form
-    #     group_name = "New name"
-    #     form["name"] = group_name
-    #     form["users"].force_value([manager.id])
-    #     form["can_view_past_event"] = False
-    #     form["can_add_event"] = False
-    #     form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-    #     response = form.submit()
-    #     assert response.status_code == 302
-    #     group.refresh_from_db()
-    #     assert group.name == group_name
-    #     assert set(group.user_set.all()) == {manager}
-    #     assert not group.permissions.filter(codename="view_past_event").exists()
-    #     assert not group.permissions.filter(codename="add_event").exists()
-    #     assert "publish_event_for_group" not in get_group_perms(
-    #         group, Group.objects.get(name="Volunteers")
-    #     )
-    #
+    def test_userprofile_edit(self, django_app, groups, manager, volunteer):
+        userprofile = volunteer
+        response = django_app.get(
+            reverse("user_management:userprofile_edit", kwargs={"pk": userprofile.id}), user=manager
+        )
+        form = response.form
+        userprofile_email = "newmail@localhost"
+        userprofile_phone = "12345"
+        form["email"] = userprofile_email
+        form["phone"] = userprofile_phone
+        form["groups"].select_multiple(texts=["Volunteers", "Planners"])
+        response = form.submit()
+        assert response.status_code == 302
+        userprofile.refresh_from_db()
+        assert userprofile.email == userprofile_email
+        assert set(userprofile.groups.all()) == {"Volunteers", "Planners"}
+        # assert not group.permissions.filter(codename="view_past_event").exists()
+        # assert not group.permissions.filter(codename="add_event").exists()
+        # assert "publish_event_for_group" not in get_group_perms(
+        #     group, Group.objects.get(name="Volunteers")
+        # )
+
     # def test_group_delete(self, django_app, groups, manager):
     #     group = Group(name="Testgroup")
     #     group.save()
