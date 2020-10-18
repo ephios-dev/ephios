@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField, inlineformset_factory
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
-from guardian.shortcuts import assign_perm, remove_perm
+from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.extra.widgets import CustomDateInput
 from ephios.user_management.models import QualificationGrant, UserProfile
@@ -90,14 +90,24 @@ class UserChangeForm(forms.ModelForm):
 
 class GroupForm(ModelForm):
     publish_event_for_group = ModelMultipleChoiceField(
-        label=_("Can publish event for group"),
+        label=_("Can publish events for groups"),
         queryset=Group.objects.all(),
         required=False,
         help_text=_("Choose groups that this group can make events visible for."),
         widget=Select2MultipleWidget,
     )
     can_view_past_event = BooleanField(label=_("Can view past events"), required=False)
-    can_add_event = BooleanField(label=_("Can add event"), required=False)
+    can_add_event = BooleanField(label=_("Can add events"), required=False)
+    can_manage_user = BooleanField(
+        label=_("Can manage users"),
+        help_text=_("If checked, users in this group can view, add, edit and delete users."),
+        required=False,
+    )
+    can_manage_group = BooleanField(
+        label=_("Can manage groups"),
+        help_text=_("If checked, users in this group can view, add, edit and delete groups."),
+        required=False,
+    )
     users = ModelMultipleChoiceField(
         label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
@@ -105,6 +115,8 @@ class GroupForm(ModelForm):
     field_order = [
         "name",
         "users",
+        "can_manage_user",
+        "can_manage_group",
         "can_view_past_event",
         "can_add_event",
         "publish_event_for_group",
@@ -113,6 +125,37 @@ class GroupForm(ModelForm):
     class Meta:
         model = Group
         fields = ["name"]
+
+    def __init__(self, **kwargs):
+        if (group := kwargs.get("instance", None)) is not None:
+            kwargs["initial"] = {
+                "users": group.user_set.all(),
+                "can_view_past_event": group.permissions.filter(
+                    codename="view_past_event"
+                ).exists(),
+                "can_add_event": group.permissions.filter(codename="add_event").exists(),
+                "publish_event_for_group": get_objects_for_group(
+                    group, "publish_event_for_group", klass=Group
+                ),
+                "can_manage_user": group.permissions.filter(
+                    codename__in=[
+                        "add_userprofile",
+                        "change_userprofile",
+                        "delete_userprofile",
+                        "view_userprofile",
+                    ]
+                ).exists(),
+                "can_manage_group": group.permissions.filter(
+                    codename__in=[
+                        "add_group",
+                        "change_group",
+                        "delete_group",
+                        "view_group",
+                    ]
+                ).exists(),
+                **kwargs.get("initial", {}),
+            }
+        super().__init__(**kwargs)
 
     def save(self, commit=True):
         group = super().save(commit)
@@ -134,6 +177,28 @@ class GroupForm(ModelForm):
         else:
             remove_perm("event_management.add_event", group)
             remove_perm("event_management.delete_event", group)
+
+        if self.cleaned_data["can_manage_user"]:
+            assign_perm("user_management.add_userprofile", group)
+            assign_perm("user_management.change_userprofile", group)
+            assign_perm("user_management.delete_userprofile", group)
+            assign_perm("user_management.view_userprofile", group)
+        else:
+            remove_perm("user_management.add_userprofile", group)
+            remove_perm("user_management.change_userprofile", group)
+            remove_perm("user_management.delete_userprofile", group)
+            remove_perm("user_management.view_userprofile", group)
+
+        if self.cleaned_data["can_manage_group"]:
+            assign_perm("auth.add_group", group)
+            assign_perm("auth.change_group", group)
+            assign_perm("auth.delete_group", group)
+            assign_perm("auth.view_group", group)
+        else:
+            remove_perm("auth.add_group", group)
+            remove_perm("auth.change_group", group)
+            remove_perm("auth.delete_group", group)
+            remove_perm("auth.view_group", group)
 
         return group
 
