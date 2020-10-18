@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -16,9 +18,9 @@ def send_account_creation_info(userprofile):
     reset_link = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
     text_content = _(
         "You're receiving this email because a new account has been created for you at ephios.\n"
-        "Please go to the following page and choose a password: {url}{reset_link}\n"
+        "Please go to the following page and choose a password: {url}\n"
         "Your username is your email address: {email}\n"
-    ).format(url=SITE_URL, reset_link=reset_link, email=userprofile.email)
+    ).format(url=urljoin(SITE_URL, reset_link), email=userprofile.email)
 
     html_content = render_to_string(
         "user_management/new_account_email.html",
@@ -34,9 +36,9 @@ def send_account_update_info(userprofile):
     url = reverse("user_management:profile")
     text_content = _(
         "You're receiving this email because your account at ephios has been updated.\n"
-        "You can see the changes in your profile: {site_url}{url}\n"
+        "You can see the changes in your profile: {url}\n"
         "Your username is your email address: {email}\n"
-    ).format(site_url=SITE_URL, url=url, email=userprofile.email)
+    ).format(url=urljoin(SITE_URL, url), email=userprofile.email)
 
     html_content = render_to_string(
         "user_management/account_updated_email.html",
