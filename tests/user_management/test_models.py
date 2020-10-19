@@ -1,15 +1,13 @@
 from datetime import datetime
 
 import pytest
-import pytz
 from django.utils import timezone
 
 from ephios.user_management.models import QualificationGrant
 
 
 @pytest.fixture
-def qualified_volunteer(volunteer, qualifications):
-    tz = pytz.timezone("Europe/Berlin")
+def qualified_volunteer(volunteer, qualifications, tz):
     QualificationGrant.objects.create(
         user=volunteer,
         qualification=qualifications.nfs,
@@ -23,8 +21,7 @@ def qualified_volunteer(volunteer, qualifications):
 
 
 @pytest.mark.django_db
-def test_user_qualifications(qualified_volunteer, qualifications):
-    tz = pytz.timezone("Europe/Berlin")
+def test_user_qualifications(qualified_volunteer, qualifications, tz):
     assert timezone.now().year < 2064  # update tests
     assert set(qualified_volunteer.qualifications) == {
         qualifications.nfs,
