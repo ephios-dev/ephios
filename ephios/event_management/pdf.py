@@ -150,5 +150,4 @@ class EventDetailPDFView(CustomPermissionRequiredMixin, SingleObjectMixin, View)
         event = self.get_object()
         if event.shifts.count() > 1:
             return MultipleShiftEventExporter(event=event).get_pdf()
-        else:
-            return SingleShiftEventExporter(event=event).get_pdf()
+        return SingleShiftEventExporter(event=event).get_pdf()

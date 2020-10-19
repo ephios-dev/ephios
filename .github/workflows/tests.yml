@@ -1,31 +1,71 @@
 name: tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
-
+  lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.9 ]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: Gr1N/setup-poetry@v4
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+    - name: Install dependencies
+      run: poetry install
+    - name: check format with black
+      run: |
+        poetry run black --version
+        poetry run black --check .
+    - name: check import order with isort
+      run: |
+        poetry run isort --version
+        poetry run isort -c .
+    - name: Lint with pylint
+      run: |
+        poetry run pylint --version
+        poetry run pylint ephios
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.8, 3.9 ]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
+    - uses: Gr1N/setup-poetry@v4
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
     - name: Install dependencies
-      run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-        source $HOME/.poetry/env
-        poetry install
-    - name: Lint with black
-      run: |
-        source $HOME/.poetry/env
-        $HOME/.poetry/bin/poetry run black --check .
+      run: poetry install
+
     - name: Test apps
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp .env.example .env
-        $HOME/.poetry/bin/poetry run coverage run --source=ephios -m pytest tests/
-        $HOME/.poetry/bin/poetry run coveralls
+        poetry run coverage run --source=ephios -m pytest tests/
+    - name: Coveralls
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: poetry run coveralls
+      if: matrix.python-version == '3.9'

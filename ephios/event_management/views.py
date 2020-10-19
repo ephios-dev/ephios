@@ -59,8 +59,7 @@ class EventDetailView(CustomPermissionRequiredMixin, DetailView):
     def get_queryset(self):
         if self.request.user.has_perm("event_management.add_event"):
             return Event.all_objects.all()
-        else:
-            return Event.objects.all()
+        return Event.objects.all()
 
 
 class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
@@ -212,6 +211,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         kwargs.setdefault("event", self.event)
         kwargs.setdefault("form", self.get_shift_form())
+        kwargs.setdefault("configuration_form", "")
         return super().get_context_data(**kwargs)
 
     def post(self, *args, **kwargs):
@@ -222,7 +222,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
-            raise ValidationError(e)
+            raise ValidationError(e) from e
         if form.is_valid() and configuration_form.is_valid():
             shift = form.save(commit=False)
             shift.event = self.event
@@ -234,25 +234,21 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
                         "event_management:event_createshift", kwargs={"pk": self.kwargs.get("pk")}
                     )
                 )
-            else:
-                try:
-                    self.event.activate()
-                    messages.success(
-                        self.request,
-                        _("The event {title} has been saved.").format(title=self.event.title),
-                    )
-                except ValidationError as e:
-                    messages.error(self.request, e)
-                return redirect(self.event.get_absolute_url())
-        else:
-            return self.render_to_response(
-                self.get_context_data(
-                    form=form,
-                    configuration_form=signup_method.render_configuration_form(
-                        form=configuration_form
-                    ),
+            try:
+                self.event.activate()
+                messages.success(
+                    self.request,
+                    _("The event {title} has been saved.").format(title=self.event.title),
                 )
+            except ValidationError as e:
+                messages.error(self.request, e)
+            return redirect(self.event.get_absolute_url())
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                configuration_form=signup_method.render_configuration_form(form=configuration_form),
             )
+        )
 
 
 class ShiftConfigurationFormView(View):
@@ -302,7 +298,7 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
             signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
-            raise ValidationError(e)
+            raise ValidationError(e) from e
         if form.is_valid() and configuration_form.is_valid():
             shift = form.save(commit=False)
             shift.signup_configuration = configuration_form.cleaned_data
@@ -311,20 +307,16 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
                 return redirect(
                     reverse("event_management:event_createshift", kwargs={"pk": shift.event.pk})
                 )
-            else:
-                messages.success(
-                    self.request, _("The shift {shift} has been saved.").format(shift=shift)
-                )
-                return redirect(self.object.event.get_absolute_url())
-        else:
-            return self.render_to_response(
-                self.get_context_data(
-                    form=form,
-                    configuration_form=signup_method.render_configuration_form(
-                        form=configuration_form
-                    ),
-                )
+            messages.success(
+                self.request, _("The shift {shift} has been saved.").format(shift=shift)
             )
+            return redirect(self.object.event.get_absolute_url())
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                configuration_form=signup_method.render_configuration_form(form=configuration_form),
+            )
+        )
 
 
 class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
@@ -339,8 +331,7 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
         if self.object.event.shifts.count() == 1:
             messages.error(self.request, _("You cannot delete the last shift!"))
             return redirect(self.object.event.get_absolute_url())
-        else:
-            return super().delete(request, *args, **kwargs)
+        return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
         messages.success(self.request, _("The shift has been deleted."))

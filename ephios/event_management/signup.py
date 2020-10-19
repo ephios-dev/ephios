@@ -23,7 +23,7 @@ from ephios.event_management.models import AbstractParticipation, LocalParticipa
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 from ephios.user_management.models import Qualification
 
-register_signup_methods = django.dispatch.Signal(providing_args=[])
+register_signup_methods = django.dispatch.Signal()
 
 
 def all_signup_methods():
@@ -61,17 +61,17 @@ class AbstractParticipant:
         raise NotImplementedError
 
     def collect_all_qualifications(self):
-        """We collect using breath first search with one query for every layer of inclusion."""
+        """We collect using breadth first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
         current = self.qualifications
         while current:
-            next = (
+            new = (
                 Qualification.objects.filter(included_by__in=current)
                 .exclude(id__in=(q.id for q in all_qualifications))
                 .distinct()
             )
-            all_qualifications |= set(next)
-            current = next
+            all_qualifications |= set(new)
+            current = new
         return all_qualifications
 
     def has_qualifications(self, qualifications):
@@ -100,6 +100,43 @@ class ConfigurationForm(forms.Form):
     pass
 
 
+class BaseSignupView(View):
+    shift: Shift = ...
+    method: "BaseSignupMethod" = ...
+
+    def dispatch(self, request, *args, **kwargs):
+        if (choice := request.POST.get("signup_choice")) is not None:
+            if choice == "sign_up":
+                return self.signup_pressed(request, *args, **kwargs)
+            if choice == "decline":
+                return self.decline_pressed(request, *args, **kwargs)
+            raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
+        return super().dispatch(request, *args, **kwargs)
+
+    def signup_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_signup(request.user.as_participant())
+                messages.success(
+                    request,
+                    self.method.signup_success_message.format(shift=self.shift),
+                )
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, self.method.signup_error_message.format(error=error))
+        return redirect(self.shift.event.get_absolute_url())
+
+    def decline_pressed(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                self.method.perform_decline(request.user.as_participant())
+                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
+        except ParticipationError as errors:
+            for error in errors:
+                messages.error(request, self.method.decline_error_message.format(error=error))
+        return redirect(self.shift.event.get_absolute_url())
+
+
 def check_event_is_active(method, participant):
     if not method.shift.event.active:
         return ParticipationError(_("The event is not active."))
@@ -114,11 +151,11 @@ def check_participation_state_for_signup(method, participant):
                     shift=method.shift
                 )
             )
-        elif participation.state == AbstractParticipation.States.CONFIRMED:
+        if participation.state == AbstractParticipation.States.CONFIRMED:
             return ParticipationError(
                 _("You are already signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
@@ -134,11 +171,11 @@ def check_participation_state_for_decline(method, participant):
             return ParticipationError(
                 _("You are bindingly signed up for {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(
                 _("You are rejected from {shift}.").format(shift=method.shift)
             )
-        elif participation.state == AbstractParticipation.States.USER_DECLINED:
+        if participation.state == AbstractParticipation.States.USER_DECLINED:
             return ParticipationError(
                 _("You have already declined participating in {shift}.").format(shift=method.shift)
             )
@@ -162,9 +199,16 @@ def check_participant_age(method, participant):
 
 
 class BaseSignupMethod:
-    slug = "abstract"
-    verbose_name = "abstract"
+    @property
+    def slug(self):
+        raise NotImplementedError()
+
+    @property
+    def verbose_name(self):
+        raise NotImplementedError()
+
     description = """"""
+    signup_view_class = BaseSignupView
 
     # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
@@ -181,10 +225,6 @@ class BaseSignupMethod:
         if shift is not None:
             for key, value in shift.signup_configuration.items():
                 setattr(self.configuration, key, value)
-
-    @property
-    def signup_view_class(self):
-        return BaseSignupView
 
     @cached_property
     def signup_view(self):
@@ -306,51 +346,9 @@ class BaseSignupMethod:
             form.fields[name] = config["formfield"]
         return form
 
-    def render_configuration_form(self, form=None, *args, **kwargs):
+    def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)
         template = Template(
             template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
         ).render(Context({"form": form}))
         return template
-
-
-class BaseSignupView(View):
-    shift: Shift = ...
-    method: BaseSignupMethod = ...
-
-    def dispatch(self, request, *args, **kwargs):
-        if (choice := request.POST.get("signup_choice")) is not None:
-            if choice == "sign_up":
-                return self.signup_pressed(request, *args, **kwargs)
-            elif choice == "decline":
-                return self.decline_pressed(request, *args, **kwargs)
-            else:
-                raise ValueError(
-                    _("'{choice}' is not a valid signup action.").format(choice=choice)
-                )
-        return super().dispatch(request, *args, **kwargs)
-
-    def signup_pressed(self, request, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                self.method.perform_signup(request.user.as_participant())
-                messages.success(
-                    request,
-                    self.method.signup_success_message.format(shift=self.shift),
-                )
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, self.method.signup_error_message.format(error=error))
-        finally:
-            return redirect(self.shift.event.get_absolute_url())
-
-    def decline_pressed(self, request, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                self.method.perform_decline(request.user.as_participant())
-                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(request, self.method.decline_error_message.format(error=error))
-        finally:
-            return redirect(self.shift.event.get_absolute_url())

@@ -15,7 +15,6 @@ from django.db.models import (
     TextField,
 )
 from django.utils import formats
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 
@@ -41,7 +40,7 @@ class EventType(Model):
         verbose_name_plural = _("event types")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class Event(Model):
@@ -69,7 +68,7 @@ class Event(Model):
             return last_shift.end_time
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def get_absolute_url(self):
         from django.urls import reverse
@@ -124,8 +123,9 @@ class Shift(Model):
     class Meta:
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")
+        ordering = ("meeting_time", "start_time", "id")
 
-    @cached_property
+    @property
     def signup_method(self):
         from ephios.event_management.signup import signup_method_from_slug
 

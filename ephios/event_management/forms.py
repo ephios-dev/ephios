@@ -7,13 +7,7 @@ from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select,
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
-from guardian.shortcuts import (
-    assign_perm,
-    remove_perm,
-    get_users_with_perms,
-    get_objects_for_user,
-)
-from recurrence.forms import RecurrenceField
+from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift

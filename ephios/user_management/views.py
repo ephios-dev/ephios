@@ -13,7 +13,6 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
-from guardian.shortcuts import get_objects_for_group
 
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.user_management import mail
@@ -59,12 +58,11 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
             if userprofile.is_active:
                 mail.send_account_creation_info(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
-        else:
-            return self.render_to_response(
-                self.get_context_data(
-                    userprofile_form=userprofile_form, qualification_formset=qualification_formset
-                )
+        return self.render_to_response(
+            self.get_context_data(
+                userprofile_form=userprofile_form, qualification_formset=qualification_formset
             )
+        )
 
 
 class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
@@ -142,15 +140,6 @@ class GroupCreateView(CustomPermissionRequiredMixin, CreateView):
     template_name = "user_management/group_form.html"
     form_class = GroupForm
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["initial"] = {
-            "users": UserProfile.objects.none(),
-            "can_add_event": False,
-            "publish_event_for_group": Group.objects.none(),
-        }
-        return kwargs
-
     def get_success_url(self):
         messages.success(
             self.request, _('Group "{group}" created successfully.').format(group=self.object)
@@ -163,20 +152,6 @@ class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
     template_name = "user_management/group_form.html"
     form_class = GroupForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["initial"] = {
-            "users": self.object.user_set.all(),
-            "can_view_past_event": self.object.permissions.filter(
-                codename="view_past_event"
-            ).exists(),
-            "can_add_event": self.object.permissions.filter(codename="add_event").exists(),
-            "publish_event_for_group": get_objects_for_group(
-                self.object, "publish_event_for_group", klass=Group
-            ),
-        }
-        return kwargs
 
     def get_success_url(self):
         messages.success(

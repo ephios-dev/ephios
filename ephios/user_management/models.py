@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
-class UserManager(BaseUserManager):
+class UserProfileManager(BaseUserManager):
     def create_user(
         self,
         email,
@@ -31,6 +31,7 @@ class UserManager(BaseUserManager):
         date_of_birth,
         password=None,
     ):
+        # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
         user = self.model(
             email=email,
             first_name=first_name,
@@ -79,7 +80,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
         "date_of_birth",
     ]
 
-    objects = UserManager()
+    objects = UserProfileManager()
 
     class Meta:
         verbose_name = _("user profile")
@@ -140,7 +141,7 @@ class QualificationCategory(Model):
         verbose_name_plural = _("qualification tracks")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class Qualification(Model):
@@ -168,7 +169,7 @@ class Qualification(Model):
         verbose_name_plural = _("qualifications")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class QualificationGrant(Model):
