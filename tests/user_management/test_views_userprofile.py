@@ -31,6 +31,7 @@ class TestUserProfileView:
         assert response.status_code == 403
 
     def test_userprofile_create(self, django_app, groups, manager):
+        managers, planners, volunteers = groups
         response = django_app.get(reverse("user_management:userprofile_create"), user=manager)
         form = response.form
         userprofile_email = "testuser@localhost"
@@ -40,13 +41,15 @@ class TestUserProfileView:
         form["first_name"] = userprofile_first_name
         form["last_name"] = userprofile_last_name
         form["date_of_birth"] = date(1999, 1, 1)
-        form["groups"].force_value(3)
+        form["groups"].select_multiple(texts=["Volunteers"])
         response = form.submit()
         assert response.status_code == 302
-        # userprofile = UserProfile.objects.get(email=userprofile_email)
+        userprofile = UserProfile.objects.get(email=userprofile_email)
+        assert userprofile.email == userprofile_email
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
+        managers, planners, volunteers = groups
         response = django_app.get(
             reverse("user_management:userprofile_edit", kwargs={"pk": userprofile.id}), user=manager
         )
@@ -60,21 +63,17 @@ class TestUserProfileView:
         assert response.status_code == 302
         userprofile.refresh_from_db()
         assert userprofile.email == userprofile_email
-        assert set(userprofile.groups.all()) == {"Volunteers", "Planners"}
-        # assert not group.permissions.filter(codename="view_past_event").exists()
-        # assert not group.permissions.filter(codename="add_event").exists()
-        # assert "publish_event_for_group" not in get_group_perms(
-        #     group, Group.objects.get(name="Volunteers")
-        # )
+        assert set(userprofile.groups.all()) == {volunteers, planners}
 
-    # def test_group_delete(self, django_app, groups, manager):
-    #     group = Group(name="Testgroup")
-    #     group.save()
-    #     response = django_app.get(
-    #         reverse("user_management:group_delete", kwargs={"pk": group.id}), user=manager
-    #     )
-    #     assert response.status_code == 200
-    #     response = response.form.submit()
-    #     assert response.status_code == 302
-    #     with pytest.raises(Group.DoesNotExist):
-    #         Group.objects.get(name=group.name).exists()
+    def test_userprofile_delete(self, django_app, groups, volunteer, manager):
+        userprofile = volunteer
+        userprofile.save()
+        response = django_app.get(
+            reverse("user_management:userprofile_delete", kwargs={"pk": userprofile.id}),
+            user=manager,
+        )
+        assert response.status_code == 200
+        response = response.form.submit()
+        assert response.status_code == 302
+        with pytest.raises(UserProfile.DoesNotExist):
+            UserProfile.objects.get(email=userprofile.email).exists()
