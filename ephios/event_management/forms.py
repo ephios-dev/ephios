@@ -8,6 +8,7 @@ from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
+from recurrence.forms import RecurrenceField
 
 from ephios.event_management import signup
 from ephios.event_management.models import Event, Shift
