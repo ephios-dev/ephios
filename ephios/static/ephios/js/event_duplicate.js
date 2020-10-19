@@ -1,12 +1,27 @@
-$("#id_recurrence").on('input', function () {
-    $.ajax({
-        url: JSON.parse(document.getElementById('rrule_url').textContent).url,
-        type: 'POST',
-        data: {"recurrence_string": $("#id_recurrence").val()},
-        headers: {"X-CSRFToken": getCookie("csrftoken")},
+$(document).ready(function () {
+    $("#btn_check").on('click', function () {
+        $.ajax({
+            url: JSON.parse(document.getElementById('rrule_url').textContent).url,
+            type: 'POST',
+            data: {"recurrence_string": $("#id_recurrence").val()},
+            headers: {"X-CSRFToken": getCookie("csrftoken")},
 
-        success: function (data) {
-            $('#rrule_occurrences').html(data);
-        }
+            success: function (data) {
+                $("#rrule_occurences_heading").html(gettext("Currently selected dates"));
+                if (data) {
+                    data = JSON.parse(data)
+                    if (Array.isArray(data) && data.length) {
+                        $('#rrule_occurrences').html(data.map(isodate => parseIsoDatetime(isodate).toLocaleDateString() + "<br>"));
+                        return;
+                    }
+                }
+                $('#rrule_occurrences').html("<p>" + gettext("No dates selected") + "</p>");
+            }
+        });
     });
 });
+
+function parseIsoDatetime(dtstr) {
+    var dt = dtstr.split(/[: T-]/).map(parseFloat);
+    return new Date(dt[0], dt[1] - 1, dt[2], dt[3] || 0, dt[4] || 0, dt[5] || 0, 0);
+}
