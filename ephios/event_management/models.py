@@ -15,7 +15,6 @@ from django.db.models import (
     TextField,
 )
 from django.utils import formats
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 
@@ -129,8 +128,9 @@ class Shift(Model):
     class Meta:
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")
+        ordering = ("meeting_time", "start_time", "id")
 
-    @cached_property
+    @property
     def signup_method(self):
         from ephios.event_management.signup import signup_method_from_slug
 

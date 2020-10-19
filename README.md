@@ -1,6 +1,8 @@
 ![ephios](https://github.com/ephios-dev/ephios/workflows/ephios/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ephios-dev/ephios/badge.svg?branch=main)](https://coveralls.io/github/ephios-dev/ephios?branch=main)
+
 # ephios
+
 ephios is a tool to manage shifts for medical services.
 
 ## Development setup
@@ -17,4 +19,17 @@ To set up a development version on your local machine, you need to execute the f
 9. Start the development server with `python manage.py runserver`
 10. Open your web browser, visit `http://localhost:8000` and log in with the default credentials (user `admin@localhost` and password `admin`)
 
-Before committing, make sure to lint your changes with `black .`. You can also check the [IDE integration](https://github.com/psf/black#editor-integration) or install a pre-commit hook with `pre-commit install` (recommended). You also need to to test the code with `pytest`.
+### Tests
+
+Test the code with `pytest`.
+
+### Code style
+
+We recommend installing a pre-commit hook with `pre-commit install`. That will (look at `.pre-commit-config.yaml`) before every commit
+
+* run `autoflake` with a couple of flags to remove unused imports,
+* run `isort .` to sort imports,
+* run `black .` to format the code. You can also check out the [IDE integration](https://github.com/psf/black#editor-integration)
+
+If you want to do that manually, run `pre-commit run --all-files`. Next to that, we also run `pylint ephios` to check for semantic issues in the code.
+

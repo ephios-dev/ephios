@@ -151,6 +151,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         kwargs.setdefault("event", self.event)
         kwargs.setdefault("form", self.get_shift_form())
+        kwargs.setdefault("configuration_form", "")
         return super().get_context_data(**kwargs)
 
     def post(self, *args, **kwargs):
