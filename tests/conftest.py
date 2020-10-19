@@ -9,7 +9,12 @@ from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, EventType, Shift
 from ephios.plugins.basesignup.signup import RequestConfirmSignupMethod
-from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
+from ephios.user_management.models import (
+    Qualification,
+    QualificationCategory,
+    QualificationGrant,
+    UserProfile,
+)
 
 
 @pytest.fixture
@@ -27,6 +32,7 @@ def superuser():
         email="rica@localhost",
         date_of_birth=date(1970, 1, 1),
         password="dummy",
+        phone="+4912345678",
     )
 
 
@@ -72,6 +78,25 @@ def responsible_user():
         date_of_birth=date(1960, 1, 1),
         password="dummy",
     )
+
+
+@pytest.fixture
+def qualified_volunteer(volunteer, qualifications, tz):
+    QualificationGrant.objects.create(
+        user=volunteer,
+        qualification=qualifications.na,
+        expires=datetime(2015, 4, 1).astimezone(tz),
+    )
+    QualificationGrant.objects.create(
+        user=volunteer,
+        qualification=qualifications.nfs,
+        expires=datetime(2064, 4, 1).astimezone(tz),
+    )
+    QualificationGrant.objects.create(
+        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1).astimezone(tz)
+    )
+    QualificationGrant.objects.create(user=volunteer, qualification=qualifications.b, expires=None)
+    return volunteer
 
 
 @pytest.fixture
