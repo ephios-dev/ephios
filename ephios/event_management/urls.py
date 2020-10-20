@@ -14,7 +14,7 @@ urlpatterns = [
     path("events/<int:pk>/createshift/", views.ShiftCreateView.as_view(), name="event_createshift"),
     path("events/<int:pk>/activate/", views.EventActivateView.as_view(), name="event_activate"),
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
-    path("events/<int:pk>/duplicate", views.EventDuplicateView.as_view(), name="event_duplicate"),
+    path("events/<int:pk>/copy", views.EventCopyView.as_view(), name="event_duplicate"),
     path("events/create/", views.EventCreateView.as_view(), name="event_create"),
     path("events/past/", views.EventArchiveView.as_view(), name="event_list_past"),
     path(

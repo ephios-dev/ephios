@@ -140,10 +140,10 @@ class EventArchiveView(CustomPermissionRequiredMixin, ListView):
         )
 
 
-class EventDuplicateView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = "event_management.add_event"
     model = Event
-    template_name = "event_management/event_duplicate.html"
+    template_name = "event_management/event_copy.html"
     form_class = EventDuplicationForm
 
     def setup(self, request, *args, **kwargs):
@@ -156,23 +156,23 @@ class EventDuplicateView(CustomPermissionRequiredMixin, SingleObjectMixin, FormV
         )
         for date in occurences:
             event = self.get_object()
+            start_date = event.get_start_time().date()
             shifts = event.shifts.all()
             event.pk = None
             event.save()
             for shift in shifts:
                 shift.pk = None
-                if shift.end_time <= shift.start_time:
-                    shift.end_time = datetime.combine(
-                        date.date() + timedelta(days=1), shift.end_time.time()
-                    )
-                else:
-                    shift.end_time = datetime.combine(date.date(), shift.end_time.time())
-                shift.meeting_time = datetime.combine(date.date(), shift.meeting_time.time())
-                shift.start_time = datetime.combine(date.date(), shift.start_time.time())
+                # shifts on following days should have the same offset from the new date
+                offset = shift.start_time.date() - start_date
+                # shifts ending on the next day should end on the next day to the new date
+                end_offset = shift.end_time.date() - shift.start_time.date()
+                shift.end_time = datetime.combine(date.date() + offset + end_offset, shift.end_time.time())
+                shift.meeting_time = datetime.combine(date.date() + offset, shift.meeting_time.time())
+                shift.start_time = datetime.combine(date.date() + offset, shift.start_time.time())
                 shift.event = event
                 shift.save()
                 event.shifts.add(shift)
-        messages.success(self.request, _("Event succesfully duplicated."))
+        messages.success(self.request, _("Event succesfully copied."))
         return redirect(reverse("event_management:event_list"))
 
 

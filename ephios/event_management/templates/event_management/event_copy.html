@@ -13,8 +13,12 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>{% translate "Duplicate event" %}</h1>
+        <h1>{% translate "Copy event" %} "{{ event.title }}"</h1>
     </div>
+
+    {% blocktranslate with shift_count=event.shifts.all.count  %}
+        This will copy the event to the dates you select below. All {{ shift_count }} shifts will be incurred.
+    {% endblocktranslate %}
 
     <form method="post" novalidate>
         {% csrf_token %}
@@ -32,7 +36,7 @@
         {% buttons %}
             <a role="button" class="btn btn-secondary"
                href="{% url "event_management:event_detail" event.pk %}">{% trans "Back" %}</a>
-            <button type="submit" class="btn btn-primary float-right">{% trans "Duplicate" %}</button>
+            <button type="submit" class="btn btn-primary float-right">{% trans "Copy" %}</button>
             <button type="button" role="button" class="btn btn-outline-success float-right mr-1" id="btn_check">{% translate "Check rules" %}</button>
         {% endbuttons %}
 
@@ -43,5 +47,5 @@
     <script type="text/javascript" src="{% static "recurrence/js/recurrence.js" %}"></script>
     <script type="text/javascript" src="{% static "recurrence/js/recurrence-widget.js" %}"></script>
     <script type="application/json" id="rrule_url">{"url": "{% url "event_management:rrule_occurences"%}"}</script>
-    <script type="text/javascript" src="{% static "ephios/js/event_duplicate.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/event_copy.js" %}"></script>
 {% endblock %}
