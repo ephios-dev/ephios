@@ -27,7 +27,7 @@ from django.views.generic.edit import FormMixin, FormView
 from guardian.shortcuts import get_objects_for_user
 from recurrence.forms import RecurrenceField
 
-from ephios.event_management.forms import EventForm, ShiftForm, EventDuplicationForm
+from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
 from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.permissions import CustomPermissionRequiredMixin
@@ -166,8 +166,12 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 offset = shift.start_time.date() - start_date
                 # shifts ending on the next day should end on the next day to the new date
                 end_offset = shift.end_time.date() - shift.start_time.date()
-                shift.end_time = datetime.combine(date.date() + offset + end_offset, shift.end_time.time())
-                shift.meeting_time = datetime.combine(date.date() + offset, shift.meeting_time.time())
+                shift.end_time = datetime.combine(
+                    date.date() + offset + end_offset, shift.end_time.time()
+                )
+                shift.meeting_time = datetime.combine(
+                    date.date() + offset, shift.meeting_time.time()
+                )
                 shift.start_time = datetime.combine(date.date() + offset, shift.start_time.time())
                 shift.event = event
                 shift.save()

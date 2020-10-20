@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.forms import DateField, ModelForm, ModelMultipleChoiceField, Select, TimeField, Form
+from django.forms import DateField, Form, ModelForm, ModelMultipleChoiceField, Select, TimeField
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
