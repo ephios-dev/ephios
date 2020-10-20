@@ -23,7 +23,7 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormMixin, FormView
+from django.views.generic.edit import FormView
 from guardian.shortcuts import get_objects_for_user
 from recurrence.forms import RecurrenceField
 
