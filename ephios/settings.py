@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django_select2",
     "jquery",
     "djangoformsetjs",
+    "compressor",
     "ephios.user_management",
     "ephios.event_management",
     "ephios.extra",
@@ -143,6 +144,11 @@ USE_TZ = True
 STATIC_URL = env.str("STATIC_URL")
 STATIC_ROOT = env.str("STATIC_ROOT")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+)
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")

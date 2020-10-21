@@ -5,7 +5,7 @@ $(document).ready(function () {
         animateForms: true,
         reorderMode: 'dom',
     }).on("formAdded", "div", function (event) {
-        $(event.target).find(".django-select2").first().djangoSelect2()
+        $(event.target).find(".django-select2").djangoSelect2()
     });
 
     $(".datatable").DataTable({
