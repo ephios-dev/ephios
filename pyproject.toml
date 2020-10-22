@@ -25,6 +25,7 @@ markdown = "^3.2.2"
 
 psycopg2 = {version = "^2.8.6", optional = true}
 mysqlclient = {version = "^2.0.1", optional = true}
+django-compressor = "^2.4"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
