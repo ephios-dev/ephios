@@ -1,8 +1,10 @@
 from datetime import date
 
 import pytest
+from django.core import mail
 from django.urls import reverse
 
+from ephios.settings import SITE_URL
 from ephios.user_management.models import UserProfile
 
 
@@ -30,7 +32,7 @@ class TestUserProfileView:
         )
         assert response.status_code == 403
 
-    def test_userprofile_create(self, django_app, groups, manager):
+    def test_userprofile_create(self, django_app, groups, manager, qualifications):
         managers, planners, volunteers = groups
         response = django_app.get(reverse("user_management:userprofile_create"), user=manager)
         form = response.form
@@ -42,10 +44,15 @@ class TestUserProfileView:
         form["last_name"] = userprofile_last_name
         form["date_of_birth"] = date(1999, 1, 1)
         form["groups"].select_multiple(texts=["Volunteers"])
+        # qualification grant cannot be tested easily
         response = form.submit()
         assert response.status_code == 302
         userprofile = UserProfile.objects.get(email=userprofile_email)
         assert userprofile.email == userprofile_email
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].subject == "Welcome to ephios!" or "Willkommen bei ephios!"
+        assert SITE_URL in mail.outbox[0].body
+        assert userprofile_email in mail.outbox[0].body
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
