@@ -21,10 +21,16 @@ env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 
+DATA_DIR = env.str("DATA_DIR", default=os.path.join(BASE_DIR, "data"))
+if not os.path.exists(DATA_DIR):
+    os.mkdir(DATA_DIR)
+
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 SITE_URL = env.str("SITE_URL")
+if SITE_URL.endswith("/"):
+    SITE_URL = SITE_URL[:-1]
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
@@ -52,6 +58,7 @@ INSTALLED_APPS = [
     "django_select2",
     "jquery",
     "djangoformsetjs",
+    "compressor",
     "recurrence",
     "ephios.user_management",
     "ephios.event_management",
@@ -144,6 +151,12 @@ USE_TZ = True
 STATIC_URL = env.str("STATIC_URL")
 STATIC_ROOT = env.str("STATIC_ROOT")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+)
+COMPRESS_ENABLED = not DEBUG
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
