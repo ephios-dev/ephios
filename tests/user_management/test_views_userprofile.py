@@ -53,6 +53,7 @@ class TestUserProfileView:
         assert mail.outbox[0].subject == "Welcome to ephios!" or "Willkommen bei ephios!"
         assert SITE_URL in mail.outbox[0].body
         assert userprofile_email in mail.outbox[0].body
+        assert mail.outbox[0].to == [userprofile_email]
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
