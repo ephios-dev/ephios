@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Max, Min
+from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -24,13 +25,13 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
-from guardian.shortcuts import get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from recurrence.forms import RecurrenceField
 
 from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
 from ephios.extra.json import CustomJSONEncoder
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -152,7 +153,12 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
     def form_valid(self, form):
         occurences = form.cleaned_data["recurrence"].between(
-            datetime.now(), datetime.now() + timedelta(days=365), inc=True
+            datetime.now() - timedelta(days=1),
+            datetime.now() + timedelta(days=365),
+            inc=True,
+            dtstart=datetime.combine(
+                DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
+            ),
         )
         for date in occurences:
             event = self.get_object()
@@ -160,6 +166,13 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             shifts = event.shifts.all()
             event.pk = None
             event.save()
+            assign_perm(
+                "view_event", get_groups_with_perms(self.get_object(), ["view_event"]), event
+            )
+            assign_perm(
+                "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
+            )
+
             for shift in shifts:
                 shift.pk = None
                 # shifts on following days should have the same offset from the new date
@@ -176,6 +189,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 shift.event = event
                 shift.save()
                 event.shifts.add(shift)
+
         messages.success(self.request, _("Event succesfully copied."))
         return redirect(reverse("event_management:event_list"))
 
@@ -189,12 +203,17 @@ class RRuleOccurenceView(CustomPermissionRequiredMixin, View):
             return HttpResponse(
                 json.dumps(
                     recurrence.between(
-                        datetime.now(), datetime.now() + timedelta(days=365), inc=True
+                        datetime.now() - timedelta(days=1),
+                        datetime.now() + timedelta(days=365),
+                        inc=True,
+                        dtstart=datetime.combine(
+                            DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
+                        ),
                     ),
                     cls=CustomJSONEncoder,
                 )
             )
-        except (TypeError, ValidationError):
+        except (TypeError, KeyError, ValidationError):
             return HttpResponse()
 
 
