@@ -33,6 +33,7 @@ class TestEventCopy:
                 recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
             ],
         )
+        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         ocurrences = recurr.between(
@@ -54,6 +55,7 @@ class TestEventCopy:
             dtstart=datetime.now(),
             rdates=[target_date],
         )
+        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         ocurrences = recurr.between(
@@ -77,6 +79,7 @@ class TestEventCopy:
                 recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
             ],
         )
+        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         ocurrences = recurr.between(
@@ -111,6 +114,7 @@ class TestEventCopy:
             dtstart=datetime.now(),
             rdates=[target_date],
         )
+        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         ocurrences = recurr.between(

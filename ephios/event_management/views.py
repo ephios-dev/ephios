@@ -12,7 +12,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.utils.timezone import get_default_timezone
+from django.utils.formats import date_format
+from django.utils.timezone import get_default_timezone, make_aware
 from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
@@ -179,13 +180,13 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 offset = shift.start_time.date() - start_date
                 # shifts ending on the next day should end on the next day to the new date
                 end_offset = shift.end_time.date() - shift.start_time.date()
-                shift.end_time = datetime.combine(
+                shift.end_time = make_aware(datetime.combine(
                     date.date() + offset + end_offset, shift.end_time.time()
-                )
-                shift.meeting_time = datetime.combine(
+                ))
+                shift.meeting_time = make_aware(datetime.combine(
                     date.date() + offset, shift.meeting_time.time()
-                )
-                shift.start_time = datetime.combine(date.date() + offset, shift.start_time.time())
+                ))
+                shift.start_time = make_aware(datetime.combine(date.date() + offset, shift.start_time.time()))
                 shift.event = event
                 shift.save()
                 event.shifts.add(shift)
@@ -210,7 +211,7 @@ class RRuleOccurenceView(CustomPermissionRequiredMixin, View):
                             DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
                         ),
                     ),
-                    cls=CustomJSONEncoder,
+                    default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT")
                 )
             )
         except (TypeError, KeyError, ValidationError):

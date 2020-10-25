@@ -11,7 +11,7 @@ $(document).ready(function () {
                 if (data) {
                     data = JSON.parse(data)
                     if (Array.isArray(data) && data.length) {
-                        $('#rrule_occurrences').html(data.map(isodate => parseIsoDatetime(isodate).toLocaleDateString() + "<br>"));
+                        $('#rrule_occurrences').html(data.join("<br>"));
                         return;
                     }
                 }
