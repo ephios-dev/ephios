@@ -31,7 +31,6 @@ from recurrence.forms import RecurrenceField
 
 from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
-from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
 
