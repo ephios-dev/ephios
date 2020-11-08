@@ -19,6 +19,7 @@ from django.views.generic import (
     UpdateView,
     View,
 )
+from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import get_objects_for_user
 
@@ -43,6 +44,7 @@ class EventListView(LoginRequiredMixin, ListView):
             )
             .filter(end_time__gte=timezone.now())
             .select_related("type")
+            .order_by("start_time")
         )
 
 
@@ -115,6 +117,20 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     queryset = Event.all_objects.all()
     permission_required = "event_management.delete_event"
     success_url = reverse_lazy("event_management:event_list")
+
+
+class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, View):
+    permission_required = "event_management.delete_event"
+    template_name = "event_management/event_bulk_delete.html"
+
+    def post(self, request, *args, **kwargs):
+        events = Event.objects.filter(pk__in=request.POST.getlist("bulk_action"))
+        if request.POST.get("confirm"):
+            events.delete()
+            messages.info(request, _("The selected events have been deleted."))
+            return redirect(reverse("event_management:event_list"))
+        else:
+            return self.render_to_response({"events": events})
 
 
 class EventArchiveView(CustomPermissionRequiredMixin, ListView):

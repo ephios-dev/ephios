@@ -16,6 +16,7 @@ urlpatterns = [
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
     path("events/create/", views.EventCreateView.as_view(), name="event_create"),
     path("events/past/", views.EventArchiveView.as_view(), name="event_list_past"),
+    path("events/delete", views.EventBulkDeleteView.as_view(), name="event_bulk_delete"),
     path(
         "shifts/<int:pk>/signup-action/",
         views.ShiftSignupView.as_view(),

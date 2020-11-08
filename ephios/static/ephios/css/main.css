@@ -26,3 +26,7 @@ footer {
 .btn-disabled {
     pointer-events: none;
 }
+
+.break-word {
+    word-break: break-word;
+}
