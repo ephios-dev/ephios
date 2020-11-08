@@ -129,8 +129,7 @@ class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, 
             events.delete()
             messages.info(request, _("The selected events have been deleted."))
             return redirect(reverse("event_management:event_list"))
-        else:
-            return self.render_to_response({"events": events})
+        return self.render_to_response({"events": events})
 
 
 class EventArchiveView(CustomPermissionRequiredMixin, ListView):
