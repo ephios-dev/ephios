@@ -361,7 +361,7 @@ pytz = "*"
 
 [[package]]
 name = "django-select2"
-version = "7.4.2"
+version = "7.5.0"
 description = "Select2 option fields for Django"
 category = "main"
 optional = false
@@ -1039,8 +1039,8 @@ django-recurrence = [
     {file = "django_recurrence-1.10.3-py3-none-any.whl", hash = "sha256:9053b44b78b7fbfe3530673edfdd6d2f562105f8a192bc6a4b906a3df4f95f59"},
 ]
 django-select2 = [
-    {file = "django-select2-7.4.2.tar.gz", hash = "sha256:9d3330fa0083a03fb69fceb5dcd2e78065cfd08e45c89d4fd727fce4673d3e08"},
-    {file = "django_select2-7.4.2-py2.py3-none-any.whl", hash = "sha256:06531d563ce33c3133682ae2bb9e6d762103a863d0054ffef51bae8b4cfcca6c"},
+    {file = "django-select2-7.5.0.tar.gz", hash = "sha256:df71dedba9a362041b65e3cd692cb8b4f9e1e17a19681c7b4e61f331868bae0c"},
+    {file = "django_select2-7.5.0-py2.py3-none-any.whl", hash = "sha256:6662aa1c21d4839b8fff38e4c9d402ed3da81f7c5ef7f7e703c862255ba3b9ed"},
 ]
 django-webtest = [
     {file = "django-webtest-1.9.7.tar.gz", hash = "sha256:c5a1e486a3d8d3623aa615b6db2f27de848aa7079303a84721e9a685f839796c"},
