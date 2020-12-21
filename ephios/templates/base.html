@@ -110,7 +110,9 @@
     </header>
     <main class="row">
         <div class="col-md-12">
-            {% bootstrap_messages %}
+            <div id="messages">
+                {% bootstrap_messages %}
+            </div>
             {% block content %}{% endblock %}
         </div>
     </main>

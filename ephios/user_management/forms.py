@@ -243,12 +243,11 @@ class QualificationGrantForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        instance = getattr(self, "instance", None)
-        if instance and instance.pk:
+        if hasattr(self, "instance") and self.instance.pk:
             # Hide the field and simply display the qualification name in the template
             self.fields["qualification"].disabled = True
             self.fields["qualification"].widget = forms.HiddenInput()
-            self.fields["qualification"].title = instance.qualification.title
+            self.fields["qualification"].title = self.instance.qualification.title
 
 
 QualificationGrantFormset = inlineformset_factory(

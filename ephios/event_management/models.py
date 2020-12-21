@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import pytz
+from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -20,7 +21,6 @@ from polymorphic.models import PolymorphicModel
 
 from ephios import settings
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.user_management.models import UserProfile
 
 if TYPE_CHECKING:
     from ephios.event_management.signup import AbstractParticipant
@@ -98,6 +98,11 @@ class AbstractParticipation(PolymorphicModel):
     state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
 
     @property
+    def hours_value(self):
+        td = self.shift.end_time - self.shift.start_time
+        return td.total_seconds() / (60 * 60)
+
+    @property
     def participant(self) -> "AbstractParticipant":
         raise NotImplementedError
 
@@ -154,7 +159,7 @@ class Shift(Model):
 
 
 class LocalParticipation(AbstractParticipation):
-    user = ForeignKey(UserProfile, on_delete=models.CASCADE)
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     @property
     def participant(self):

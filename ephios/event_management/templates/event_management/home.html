@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 {% load event_extras %}
 {% load i18n %}
+{% load static %}
+
 
 {% block title %}
     {% trans "Home" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/consequences.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -31,4 +37,7 @@
             </div>
         {% endif %}
     {% endwith %}
+
+    {% include "event_management/fragments/approve_consequences.html" %}
+
 {% endblock %}

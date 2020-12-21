@@ -35,3 +35,8 @@ footer {
 .break-word {
     word-break: break-word;
 }
+
+.consequence-list {
+    max-height: 70vh;
+    overflow: auto;
+}

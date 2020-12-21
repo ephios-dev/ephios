@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<section>
+
+    {% with request.user|editable_consequences as confirmed_shifts %}
+        {% if confirmed_shifts|length > 0 %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{% trans "Confirm results" %}</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for shift in confirmed_shifts %}
+                        <li class="list-group-item flex-column">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <span>{{ shift.event.title }} ({{ shift.get_start_end_time_display }})</span>
+                                <a class="btn btn-outline-primary btn-sm" href="{% url "event_management:event_detail" shift.event.pk %}#shift-{{ shift.pk }}"><span
+                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View" %}</span></a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
+        <div class="consequence-list">
+            <ul class="list-group list-group-flush">
+                {% for c in consequences %}
+                    <li class="list-group-item">
+                        <form action="{% url "user_management:consequence_edit" pk=c.id %}" method="POST"
+                              class="consequence-form d-inline-block">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm btn-consequence"
+                                    name="action" value="confirm"><i class="fas fa-check"></i>
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-consequence"
+                                    name="action" value="deny"><i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                        {{ c.render }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">
+                        {% trans "all done" %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</section>

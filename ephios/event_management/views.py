@@ -33,10 +33,21 @@ from recurrence.forms import RecurrenceField
 from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
 from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
+from ephios.user_management.consequences import editable_consequences
+from ephios.user_management.models import Consequence
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "event_management/home.html"
+
+    def get_context_data(self, **kwargs):
+        if (user := self.request.user).is_authenticated:
+            kwargs["consequences"] = (
+                editable_consequences(user)
+                .filter(state=Consequence.States.NEEDS_CONFIRMATION)
+                .select_related("user", "shift", "shift__event")
+            )
+        return super().get_context_data(**kwargs)
 
 
 class EventListView(LoginRequiredMixin, ListView):

@@ -29,4 +29,9 @@ urlpatterns = [
         views.UserProfileCreateView.as_view(),
         name="userprofile_create",
     ),
+    path(
+        "consequences/<int:pk>/edit",
+        views.ConsequenceUpdateView.as_view(),
+        name="consequence_edit",
+    ),
 ]
