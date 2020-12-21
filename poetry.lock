@@ -282,7 +282,7 @@ python-versions = "*"
 
 [[package]]
 name = "django-extensions"
-version = "3.0.9"
+version = "3.1.0"
 description = "Extensions for Django"
 category = "dev"
 optional = false
@@ -867,7 +867,7 @@ pgsql = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "aa49088ed4df435726589d557e312e864e7d80d2024e221ff4128e60f48d8d62"
+content-hash = "fe0b3df4d2f0b3e6c6f0247292eed2ff29d86e82d70d5ac308c62ff1f5f7e416"
 
 [metadata.files]
 appdirs = [
@@ -1013,8 +1013,8 @@ django-environ = [
     {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
 ]
 django-extensions = [
-    {file = "django-extensions-3.0.9.tar.gz", hash = "sha256:6809c89ca952f0e08d4e0766bc0101dfaf508d7649aced1180c091d737046ea7"},
-    {file = "django_extensions-3.0.9-py3-none-any.whl", hash = "sha256:dc663652ac9460fd06580a973576820430c6d428720e874ae46b041fa63e0efa"},
+    {file = "django-extensions-3.1.0.tar.gz", hash = "sha256:7cd002495ff0a0e5eb6cdd6be759600905b4e4079232ea27618fc46bdd853651"},
+    {file = "django_extensions-3.1.0-py3-none-any.whl", hash = "sha256:c7f88625a53f631745d4f2bef9ec4dcb999ed59476393bdbbe99db8596778846"},
 ]
 django-formset-js-improved = [
     {file = "django-formset-js-improved-0.5.0.2.tar.gz", hash = "sha256:251649ca389144728359b57d5845c601b3420fdafa2e4634668de614e14953ce"},
