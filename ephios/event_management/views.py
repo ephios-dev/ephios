@@ -152,7 +152,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         self.object = self.get_object()
 
     def form_valid(self, form):
-        occurences = form.cleaned_data["recurrence"].between(
+        occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
             datetime.now() + timedelta(days=730),
             inc=True,
@@ -160,7 +160,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
             ),
         )
-        for date in occurences:
+        for date in occurrences:
             event = self.get_object()
             start_date = event.get_start_time().date()
             shifts = event.shifts.all()
@@ -192,11 +192,11 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 shift.save()
                 event.shifts.add(shift)
 
-        messages.success(self.request, _("Event succesfully copied."))
+        messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("event_management:event_list"))
 
 
-class RRuleOccurenceView(CustomPermissionRequiredMixin, View):
+class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
     permission_required = "event_management.add_event"
 
     def post(self, *args, **kwargs):

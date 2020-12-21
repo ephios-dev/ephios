@@ -13,7 +13,9 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>{% translate "Copy event" %} "{{ event.title }}"</h1>
+        <h1>
+            {% translate "Copy event" %} "{{ event.title }}" <small>({{ event.get_start_time }})</small>
+        </h1>
     </div>
 
     <div class="mt-2">
@@ -26,7 +28,7 @@
                     {{ form.recurrence }}
                 </div>
                 <div class="col-md-6">
-                    <h2 id="rrule_occurences_heading"></h2>
+                    <h2 id="rrule_occurrences_heading"></h2>
                     <div id="rrule_occurrences" class="twoColumns"></div>
                 </div>
             </div>
@@ -46,6 +48,6 @@
 {% block javascript %}
     <script type="text/javascript" src="{% static "recurrence/js/recurrence.js" %}"></script>
     <script type="text/javascript" src="{% static "recurrence/js/recurrence-widget.js" %}"></script>
-    <script type="application/json" id="rrule_url">{"url": "{% url "event_management:rrule_occurences" %}"}</script>
+    <script type="application/json" id="rrule_url">{"url": "{% url "event_management:rrule_occurrences" %}"}</script>
     <script type="text/javascript" src="{% static "ephios/js/event_copy.js" %}"></script>
 {% endblock %}

@@ -39,5 +39,5 @@ urlpatterns = [
     ),
     path("calendar/", EventFeed(), name="event_feed"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
-    path("extra/rruleoccurence", views.RRuleOccurenceView.as_view(), name="rrule_occurences"),
+    path("extra/rruleoccurrence", views.RRuleOccurrenceView.as_view(), name="rrule_occurrences"),
 ]

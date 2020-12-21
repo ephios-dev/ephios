@@ -7,7 +7,7 @@ $(document).ready(function () {
             headers: {"X-CSRFToken": getCookie("csrftoken")},
 
             success: function (data) {
-                $("#rrule_occurences_heading").html(gettext("Currently selected dates"));
+                $("#rrule_occurrences_heading").html(gettext("Currently selected dates"));
                 if (data) {
                     data = JSON.parse(data)
                     if (Array.isArray(data) && data.length) {
