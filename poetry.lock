@@ -166,7 +166,7 @@ toml = ["toml"]
 
 [[package]]
 name = "coveralls"
-version = "2.1.2"
+version = "2.2.0"
 description = "Show coverage stats online via coveralls.io"
 category = "dev"
 optional = false
@@ -867,7 +867,7 @@ pgsql = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "fe0b3df4d2f0b3e6c6f0247292eed2ff29d86e82d70d5ac308c62ff1f5f7e416"
+content-hash = "5a7e1a08d0e9160765102c4bca8ae58313165317230a780e6137314e81923bf7"
 
 [metadata.files]
 appdirs = [
@@ -977,8 +977,8 @@ coverage = [
     {file = "coverage-5.3.1.tar.gz", hash = "sha256:38f16b1317b8dd82df67ed5daa5f5e7c959e46579840d77a67a4ceb9cef0a50b"},
 ]
 coveralls = [
-    {file = "coveralls-2.1.2-py2.py3-none-any.whl", hash = "sha256:b3b60c17b03a0dee61952a91aed6f131e0b2ac8bd5da909389c53137811409e1"},
-    {file = "coveralls-2.1.2.tar.gz", hash = "sha256:4430b862baabb3cf090d36d84d331966615e4288d8a8c5957e0fd456d0dd8bd6"},
+    {file = "coveralls-2.2.0-py2.py3-none-any.whl", hash = "sha256:2301a19500b06649d2ec4f2858f9c69638d7699a4c63027c5d53daba666147cc"},
+    {file = "coveralls-2.2.0.tar.gz", hash = "sha256:b990ba1f7bc4288e63340be0433698c1efe8217f78c689d254c2540af3d38617"},
 ]
 distlib = [
     {file = "distlib-0.3.1-py2.py3-none-any.whl", hash = "sha256:8c09de2c67b3e7deef7184574fc060ab8a793e7adbb183d942c389c8b13c52fb"},
