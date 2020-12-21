@@ -154,7 +154,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     def form_valid(self, form):
         occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=730),
+            datetime.now() + timedelta(days=730), # allow dates up to two years in the future
             inc=True,
             dtstart=datetime.combine(
                 DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
@@ -206,7 +206,7 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
                 json.dumps(
                     recurrence.between(
                         datetime.now() - timedelta(days=1),
-                        datetime.now() + timedelta(days=730),
+                        datetime.now() + timedelta(days=730), # allow dates up to two years in the future
                         inc=True,
                         dtstart=datetime.combine(
                             DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()

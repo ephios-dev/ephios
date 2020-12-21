@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -149,8 +149,9 @@ class ShiftForm(ModelForm):
 class EventDuplicationForm(Form):
     start_date = DateField(
         widget=CustomDateInput(format="%Y-%m-%d"),
+        initial=date.today(),
         help_text=_(
-            "The event will be copied to this date. If you want to select further dates, you can do so below. This date will also be used as the start date for recurring events that you create below."
+            "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."
         ),
     )
-    recurrence = RecurrenceField()
+    recurrence = RecurrenceField(required=False)
