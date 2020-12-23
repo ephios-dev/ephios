@@ -36,6 +36,19 @@ $(document).ready(function () {
     Array.prototype.forEach.call(recurrenceFields, function(field, index) {
         new recurrence.widget.Widget(field.id, {});
     });
+
+    $('#checkall').change(function () {
+        $('.cb-element').prop('checked',this.checked);
+    });
+
+    $('.cb-element').change(function () {
+     if ($('.cb-element:checked').length === $('.cb-element').length){
+      $('#checkall').prop('checked',true);
+     }
+     else {
+      $('#checkall').prop('checked',false);
+     }
+    });
 })
 
 function getCookie(name) {
