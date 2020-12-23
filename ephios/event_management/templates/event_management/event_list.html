@@ -14,7 +14,7 @@
     <form method="post">
         {% csrf_token %}
         {% if perms.event_management.add_event %}
-            <div class="btn-group" role="group">
+            <div id="event-controls">
                 <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
                         class="fa fa-plus"></span> {% translate "Add event" %}</a>
                 <button class="btn btn-danger" type="submit" name="delete" formaction="{% url "event_management:event_bulk_delete" %}"><span
