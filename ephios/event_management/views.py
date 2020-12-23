@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
-from django.utils.timezone import get_default_timezone, make_aware
+from django.utils.timezone import get_default_timezone, make_aware, get_current_timezone
 from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
@@ -173,24 +173,26 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
             )
 
+            shifts_to_create =[]
             for shift in shifts:
                 shift.pk = None
                 # shifts on following days should have the same offset from the new date
                 offset = shift.start_time.date() - start_date
                 # shifts ending on the next day should end on the next day to the new date
                 end_offset = shift.end_time.date() - shift.start_time.date()
+                current_tz = get_current_timezone()
                 shift.end_time = make_aware(
-                    datetime.combine(date.date() + offset + end_offset, shift.end_time.time())
+                    datetime.combine(date.date() + offset + end_offset, shift.end_time.astimezone(current_tz).time())
                 )
                 shift.meeting_time = make_aware(
-                    datetime.combine(date.date() + offset, shift.meeting_time.time())
+                    datetime.combine(date.date() + offset, shift.meeting_time.astimezone(current_tz).time())
                 )
                 shift.start_time = make_aware(
-                    datetime.combine(date.date() + offset, shift.start_time.time())
+                    datetime.combine(date.date() + offset, shift.start_time.astimezone(current_tz).time())
                 )
                 shift.event = event
-                shift.save()
-                event.shifts.add(shift)
+                shifts_to_create.append(shift)
+            Shift.objects.bulk_create(shifts_to_create)
 
         messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("event_management:event_list"))
