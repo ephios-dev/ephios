@@ -17,7 +17,7 @@
             <div class="btn-group" role="group">
                 <a class="btn btn-secondary" href="{% url "event_management:event_create" %}"><span
                         class="fa fa-plus"></span> {% translate "Add event" %}</a>
-                <button class="btn btn-danger" type="submit" formaction="{% url "event_management:event_bulk_delete" %}"><span
+                <button class="btn btn-danger" type="submit" name="delete" formaction="{% url "event_management:event_bulk_delete" %}"><span
                         class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
             </div>
         {% endif %}
