@@ -154,7 +154,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     def form_valid(self, form):
         occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=730), # allow dates up to two years in the future
+            datetime.now() + timedelta(days=730),  # allow dates up to two years in the future
             inc=True,
             dtstart=datetime.combine(
                 DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
@@ -173,7 +173,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
             )
 
-            shifts_to_create =[]
+            shifts_to_create = []
             for shift in shifts:
                 shift.pk = None
                 # shifts on following days should have the same offset from the new date
@@ -182,13 +182,20 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 end_offset = shift.end_time.date() - shift.start_time.date()
                 current_tz = get_current_timezone()
                 shift.end_time = make_aware(
-                    datetime.combine(date.date() + offset + end_offset, shift.end_time.astimezone(current_tz).time())
+                    datetime.combine(
+                        date.date() + offset + end_offset,
+                        shift.end_time.astimezone(current_tz).time(),
+                    )
                 )
                 shift.meeting_time = make_aware(
-                    datetime.combine(date.date() + offset, shift.meeting_time.astimezone(current_tz).time())
+                    datetime.combine(
+                        date.date() + offset, shift.meeting_time.astimezone(current_tz).time()
+                    )
                 )
                 shift.start_time = make_aware(
-                    datetime.combine(date.date() + offset, shift.start_time.astimezone(current_tz).time())
+                    datetime.combine(
+                        date.date() + offset, shift.start_time.astimezone(current_tz).time()
+                    )
                 )
                 shift.event = event
                 shifts_to_create.append(shift)
@@ -208,7 +215,8 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
                 json.dumps(
                     recurrence.between(
                         datetime.now() - timedelta(days=1),
-                        datetime.now() + timedelta(days=730), # allow dates up to two years in the future
+                        datetime.now()
+                        + timedelta(days=730),  # allow dates up to two years in the future
                         inc=True,
                         dtstart=datetime.combine(
                             DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
