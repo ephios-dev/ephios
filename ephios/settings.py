@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "jquery",
     "djangoformsetjs",
     "compressor",
+    "recurrence",
     "ephios.user_management",
     "ephios.event_management",
     "ephios.extra",
