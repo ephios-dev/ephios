@@ -125,6 +125,9 @@ class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, 
 
     def post(self, request, *args, **kwargs):
         events = Event.objects.filter(pk__in=request.POST.getlist("bulk_action"))
+        if not events:
+            messages.info(request, _("No events were selected for deletion."))
+            return redirect(reverse("event_management:event_list"))
         if request.POST.get("confirm"):
             events.delete()
             messages.info(request, _("The selected events have been deleted."))
