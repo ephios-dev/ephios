@@ -132,6 +132,67 @@ def event(groups, service_event_type, planner, tz):
 
 
 @pytest.fixture
+def event_to_next_day(groups, service_event_type, planner, tz):
+    managers, planners, volunteers = groups
+
+    event = Event.objects.create(
+        title="Party until next day",
+        description="all night long",
+        location="Potsdam",
+        type=service_event_type,
+        mail_updates=True,
+        active=True,
+    )
+    assign_perm("view_event", [volunteers, planners], event)
+    assign_perm("change_event", planners, event)
+
+    Shift.objects.create(
+        event=event,
+        meeting_time=datetime(2099, 6, 30, 18, 0).astimezone(tz),
+        start_time=datetime(2099, 6, 30, 19, 0).astimezone(tz),
+        end_time=datetime(2099, 7, 1, 6, 0).astimezone(tz),
+        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_configuration={},
+    )
+    return event
+
+
+@pytest.fixture
+def multi_shift_event(groups, service_event_type, planner, tz):
+    managers, planners, volunteers = groups
+
+    event = Event.objects.create(
+        title="Multi-shift event",
+        description="long",
+        location="Berlin",
+        type=service_event_type,
+        mail_updates=True,
+        active=True,
+    )
+    assign_perm("view_event", [volunteers, planners], event)
+    assign_perm("change_event", planners, event)
+
+    Shift.objects.create(
+        event=event,
+        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
+        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
+        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
+        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_configuration={},
+    )
+
+    Shift.objects.create(
+        event=event,
+        meeting_time=datetime(2099, 7, 1, 7, 0).astimezone(tz),
+        start_time=datetime(2099, 7, 1, 8, 0).astimezone(tz),
+        end_time=datetime(2099, 7, 1, 20, 0).astimezone(tz),
+        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_configuration={},
+    )
+    return event
+
+
+@pytest.fixture
 def qualifications():
     """
     Subset of the qualifications of the setupdata fixture, returned as a namespace.

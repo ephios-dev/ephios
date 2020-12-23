@@ -1,14 +1,19 @@
+import json
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Max, Min
+from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.utils.timezone import get_default_timezone
+from django.utils.formats import date_format
+from django.utils.timezone import get_current_timezone, get_default_timezone, make_aware
 from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
@@ -20,11 +25,13 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.detail import SingleObjectMixin
-from guardian.shortcuts import get_objects_for_user
+from django.views.generic.edit import FormView
+from guardian.shortcuts import assign_perm, get_objects_for_user
+from recurrence.forms import RecurrenceField
 
-from ephios.event_management.forms import EventForm, ShiftForm
+from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
 from ephios.event_management.models import Event, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -132,6 +139,94 @@ class EventArchiveView(CustomPermissionRequiredMixin, ListView):
             .filter(end_time__lt=timezone.now())
             .select_related("type")
         )
+
+
+class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    permission_required = "event_management.add_event"
+    model = Event
+    template_name = "event_management/event_copy.html"
+    form_class = EventDuplicationForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def form_valid(self, form):
+        occurrences = form.cleaned_data["recurrence"].between(
+            datetime.now() - timedelta(days=1),
+            datetime.now() + timedelta(days=730),  # allow dates up to two years in the future
+            inc=True,
+            dtstart=datetime.combine(
+                DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
+            ),
+        )
+        for date in occurrences:
+            event = self.get_object()
+            start_date = event.get_start_time().date()
+            shifts = event.shifts.all()
+            event.pk = None
+            event.save()
+            assign_perm(
+                "view_event", get_groups_with_perms(self.get_object(), ["view_event"]), event
+            )
+            assign_perm(
+                "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
+            )
+
+            shifts_to_create = []
+            for shift in shifts:
+                shift.pk = None
+                # shifts on following days should have the same offset from the new date
+                offset = shift.start_time.date() - start_date
+                # shifts ending on the next day should end on the next day to the new date
+                end_offset = shift.end_time.date() - shift.start_time.date()
+                current_tz = get_current_timezone()
+                shift.end_time = make_aware(
+                    datetime.combine(
+                        date.date() + offset + end_offset,
+                        shift.end_time.astimezone(current_tz).time(),
+                    )
+                )
+                shift.meeting_time = make_aware(
+                    datetime.combine(
+                        date.date() + offset, shift.meeting_time.astimezone(current_tz).time()
+                    )
+                )
+                shift.start_time = make_aware(
+                    datetime.combine(
+                        date.date() + offset, shift.start_time.astimezone(current_tz).time()
+                    )
+                )
+                shift.event = event
+                shifts_to_create.append(shift)
+            Shift.objects.bulk_create(shifts_to_create)
+
+        messages.success(self.request, _("Event copied successfully."))
+        return redirect(reverse("event_management:event_list"))
+
+
+class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
+    permission_required = "event_management.add_event"
+
+    def post(self, *args, **kwargs):
+        try:
+            recurrence = RecurrenceField().clean(self.request.POST["recurrence_string"])
+            return HttpResponse(
+                json.dumps(
+                    recurrence.between(
+                        datetime.now() - timedelta(days=1),
+                        datetime.now()
+                        + timedelta(days=730),  # allow dates up to two years in the future
+                        inc=True,
+                        dtstart=datetime.combine(
+                            DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
+                        ),
+                    ),
+                    default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT"),
+                )
+            )
+        except (TypeError, KeyError, ValidationError):
+            return HttpResponse()
 
 
 class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):

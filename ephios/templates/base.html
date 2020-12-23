@@ -26,6 +26,7 @@
         <script type="text/javascript" src="{% static "datatables/datatables.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
+        <script type="text/javascript" src="{% url 'jsi18n' %}"></script>
         {% block javascript %}{% endblock %}
     {% endcompress %}
     <script id="datatables-script" data-datatables-translation-url="{{ datatables_translation_url }}"></script>
