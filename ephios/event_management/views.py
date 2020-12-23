@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
-from django.utils.timezone import get_default_timezone, make_aware, get_current_timezone
+from django.utils.timezone import get_current_timezone, get_default_timezone, make_aware
 from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
