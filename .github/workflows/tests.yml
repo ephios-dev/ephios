@@ -59,7 +59,10 @@ jobs:
           ${{ runner.os }}-poetry-
     - name: Install dependencies
       run: poetry install
-
+    - name: Collect static files
+      run: |
+        poetry run python manage.py collectstatic
+        poetry run python manage.py compilejsi18n
     - name: Test apps
       run: |
         cp .env.example .env
