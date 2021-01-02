@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "djangoformsetjs",
     "compressor",
     "recurrence",
+    "statici18n",
     "ephios.user_management",
     "ephios.event_management",
     "ephios.extra",
@@ -91,6 +92,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
                 "ephios.extra.context.ephios_base_context",
             ],
         },
@@ -135,7 +137,7 @@ LOGIN_REDIRECT_URL = "/"
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = "de-de"
+LANGUAGE_CODE = "de"
 
 TIME_ZONE = "Europe/Berlin"
 
