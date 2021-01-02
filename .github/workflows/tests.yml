@@ -59,14 +59,13 @@ jobs:
           ${{ runner.os }}-poetry-
     - name: Install dependencies
       run: poetry install
-    - name: Collect static files
+    - name: Prepare files for test run
       run: |
+        cp .env.example .env
         poetry run python manage.py collectstatic
         poetry run python manage.py compilejsi18n
     - name: Test apps
-      run: |
-        cp .env.example .env
-        poetry run coverage run --source=ephios -m pytest tests/
+      run: poetry run coverage run --source=ephios -m pytest tests/
     - name: Coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
