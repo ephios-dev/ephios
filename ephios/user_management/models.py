@@ -212,6 +212,7 @@ class Consequence(Model):
         on_delete=models.SET_NULL,
         verbose_name=_("causing shift"),
         null=True,
+        blank=True,
     )
 
     class States(models.TextChoices):
