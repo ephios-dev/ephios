@@ -1,6 +1,6 @@
 {% load statici18n %}
 {% load i18n %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 {% load static %}
 {% load compress %}
 
@@ -40,75 +40,60 @@
     <header class="row mb-3">
         <div class="col-md-12 px-0">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">ephios</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/">ephios</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    {% if user.is_authenticated %}
-                        <ul class="navbar-nav mr-auto">
-                            {% with url_name=request.resolver_match.url_name %}
-                                <li class="nav-item {% if url_name == "index" %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "event_management:index" %}">{% trans "Home" %}
-                                        <span
-                                                class="sr-only">(current)</span></a>
-                                </li>
-                                <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{% url "event_management:event_list" %}">{% trans "Events" %}
-                                        <span
-                                                class="sr-only">(current)</span></a>
-                                </li>
-                                {% if perms.event_management.view_past_event %}
-                                    <li class="nav-item {% if url_name == "event_list_past" %}active{% endif %}">
-                                        <a class="nav-link"
-                                           href="{% url "event_management:event_list_past" %}">{% trans "Past events" %}
-                                            <span
-                                                    class="sr-only">(current)</span></a>
-                                    </li>
-                                {% endif %}
-                                {% if perms.user_management.view_userprofile %}
-                                    <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
-                                        <a class="nav-link"
-                                           href="{% url "user_management:userprofile_list" %}">{% trans "Users" %}
-                                            <span
-                                                    class="sr-only">(current)</span></a>
-                                    </li>
-                                {% endif %}
-                                {% if perms.auth.view_group %}
-                                    <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
-                                        <a class="nav-link"
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        {% if user.is_authenticated %}
+                            <div class="navbar-nav">
+                                {% with url_name=request.resolver_match.url_name %}
+                                    <a class="nav-link {% if url_name == "index" %}active{% endif %}"
+                                       href="{% url "event_management:index" %}">{% trans "Home" %}</a>
+                                    <a class="nav-link {% if url_name == "event_list" %}active{% endif %}"
+                                       href="{% url "event_management:event_list" %}">{% trans "Events" %}</a>
+                                    {% if perms.event_management.view_past_event %}
+                                        <a class="nav-link {% if url_name == "event_list_past" %}active{% endif %}"
+                                           href="{% url "event_management:event_list_past" %}">{% trans "Past events" %}</a>
+                                    {% endif %}
+                                    {% if perms.user_management.view_userprofile %}
+                                        <a class="nav-link {% if url_name == "userprofile_list" %}active{% endif %}"
+                                           href="{% url "user_management:userprofile_list" %}">{% trans "Users" %}</a>
+                                    {% endif %}
+                                    {% if perms.auth.view_group %}
+                                        <a class="nav-link {% if url_name == "group_list" %}active{% endif %}"
                                            href="{% url "user_management:group_list" %}">{% trans "Groups" %}
                                         </a>
-                                    </li>
-                                {% endif %}
-                            {% endwith %}
-                        </ul>
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{ user.get_full_name }}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    {% if user.is_staff %}
-                                        <a class="dropdown-item"
-                                           href="{% url "admin:index" %}">{% trans "Administration" %}</a>
-                                        <div class="dropdown-divider"></div>
                                     {% endif %}
-                                    <a class="dropdown-item"
-                                       href="{% url "user_management:profile" %}">{% trans "Profile" %}</a>
-                                    <a class="dropdown-item"
-                                       href="{% url "password_change" %}">{% trans "Change password" %}</a>
-                                    <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
-                                </div>
-                            </li>
+                                {% endwith %}
+                            </div>
+                            <ul class="navbar-nav ms-auto">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ user.get_full_name }}
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                        {% if user.is_staff %}
+                                            <a class="dropdown-item"
+                                               href="{% url "admin:index" %}">{% trans "Administration" %}</a>
+                                            <div class="dropdown-divider"></div>
+                                        {% endif %}
+                                        <a class="dropdown-item"
+                                           href="{% url "user_management:profile" %}">{% trans "Profile" %}</a>
+                                        <a class="dropdown-item"
+                                           href="{% url "password_change" %}">{% trans "Change password" %}</a>
+                                        <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
+                                    </div>
+                                </li>
 
-                        </ul>
-                    {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
                 </div>
             </nav>
         </div>

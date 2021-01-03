@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 {% load i18n %}
 
 {% block title %}
@@ -36,8 +36,8 @@
             {% buttons %}
                 <a role="button" class="btn btn-secondary"
                    href="{% url "event_management:event_detail" event.pk %}">{% trans "Back" %}</a>
-                <button type="submit" class="btn btn-primary float-right">{% trans "Copy" %}</button>
-                <button type="button" role="button" class="btn btn-outline-success float-right mr-1"
+                <button type="submit" class="btn btn-primary float-end">{% trans "Copy" %}</button>
+                <button type="button" role="button" class="btn btn-outline-success float-end mr-1"
                         id="btn_check">{% translate "Preview" %}</button>
             {% endbuttons %}
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 
 {% block title %}
     {% trans "Login" %}
@@ -13,6 +13,6 @@
         {% csrf_token %}
         {% bootstrap_form form %}
         {% bootstrap_button login_message "submit" %}
-        <a class="float-right" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
+        <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
     </form>
 {% endblock %}

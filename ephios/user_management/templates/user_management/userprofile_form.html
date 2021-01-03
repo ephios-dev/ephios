@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 {% load static %}
 
 {% block title %}
@@ -100,7 +100,7 @@
                     href="{% url "user_management:userprofile_delete" userprofile.pk %}">
                     <span class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
             {% endif %}
-            <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+            <button type="submit" class="btn btn-primary float-end">{% trans "Save" %}</button>
         {% endbuttons %}
     </form>
 {% endblock %}

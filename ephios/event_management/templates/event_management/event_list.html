@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 
 {% block title %}
     {% translate "Events" %}
@@ -21,7 +21,7 @@
                         class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
             </div>
         {% endif %}
-        <table id="event_table" class="table table-striped display mt-2">
+        <table id="event_table" class="table table-striped display align-middle mt-2">
             <thead>
             <tr>
                 {% if perms.event_management.add_event %}
