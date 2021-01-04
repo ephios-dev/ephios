@@ -8,15 +8,6 @@ $(document).ready(function () {
         $(event.target).find(".django-select2").djangoSelect2()
     });
 
-    $(".datatable").DataTable({
-        "paging": false,
-        "info": false,
-        "responsive": true,
-        "language": {
-            "url": $("#datatables-script").data("datatables-translation-url")
-        }
-    });
-
     $("[data-drop-to-state]").each(function (index, elem) {
         Sortable.create(elem, {
             group: "participations",
