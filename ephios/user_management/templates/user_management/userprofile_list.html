@@ -36,7 +36,7 @@
                     <a class="btn btn-outline-primary btn-sm text-nowrap" href="{% url "user_management:userprofile_edit" userprofile.pk %}"><span
                             class="fa fa-edit"></span> {% trans "Edit" %}</a>
                     {% if perms.user_management.delete_userprofile %}
-                        <a class="btn btn-outline-danger btn-sm text-nowrap ms-1" href="{% url "user_management:userprofile_delete" userprofile.pk %}"><span
+                        <a class="btn btn-outline-danger btn-sm text-nowrap ml-1" href="{% url "user_management:userprofile_delete" userprofile.pk %}"><span
                                 class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
                     {% endif %}
                 </td>
