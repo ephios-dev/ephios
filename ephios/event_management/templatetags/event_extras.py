@@ -43,3 +43,8 @@ def can_decline(shift, user):
 @register.filter(name="decline_errors")
 def decline_errors(shift, user):
     return shift.signup_method.get_decline_errors(user.as_participant())
+
+
+@register.filter(name="confirmed_shifts")
+def confirmed_shifts(user):
+    return user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED])
