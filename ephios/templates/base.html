@@ -15,7 +15,6 @@
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "ephios/css/main.css" %}">
-        <link type="text/css" media="screen" rel="stylesheet" href="{% static "datatables/datatables.min.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2.min.css" %}">
         {% block css %}{% endblock %}
     {% endcompress %}
@@ -24,18 +23,14 @@
         <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
         <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
         <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
-        <script type="text/javascript" src="{% static "datatables/datatables.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
         <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
         {% block javascript %}{% endblock %}
     {% endcompress %}
-    <script id="datatables-script" data-datatables-translation-url="{{ datatables_translation_url }}"></script>
 </head>
 
-{% get_current_language as current_language %}
 <body>
-
 <div class="container container-main">
     <header class="row mb-3">
         <div class="col-md-12 px-0">
