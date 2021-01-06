@@ -28,6 +28,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "user_management.view_userprofile"
+    ordering = "last_name"
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
@@ -131,6 +132,7 @@ class GroupListView(CustomPermissionRequiredMixin, ListView):
     model = Group
     permission_required = "auth.view_group"
     template_name = "user_management/group_list.html"
+    ordering = "name"
 
 
 class GroupCreateView(CustomPermissionRequiredMixin, CreateView):

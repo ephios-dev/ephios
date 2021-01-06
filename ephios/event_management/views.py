@@ -156,6 +156,7 @@ class EventArchiveView(CustomPermissionRequiredMixin, ListView):
             )
             .filter(end_time__lt=timezone.now())
             .select_related("type")
+            .order_by("-start_time")
         )
 
 
