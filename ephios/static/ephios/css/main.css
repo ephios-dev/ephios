@@ -1,17 +1,13 @@
-.datatable {
-    width: 100% !important;
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .container-main {
     min-height: calc(100vh - 60px);
     display: flex;
     flex-flow: column;
-}
-
-header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
 }
 
 main {
