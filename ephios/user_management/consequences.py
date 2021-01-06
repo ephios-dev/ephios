@@ -125,7 +125,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def editable_by_filter(cls, user):
-        return Q(slug=cls.slug)  # TODO needs actual permission checks
+        return Q(slug=cls.slug)  # needs actual permission checks
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
@@ -203,6 +203,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             s += " " + _("(valid until {expires_str})").format(expires_str=expires_str)
         return s
 
+    @classmethod
     def editable_by_filter(cls, user: UserProfile):
         # Qualifications can be granted by people who...
         return Q(slug=cls.slug,) & (
@@ -217,6 +218,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             )
         )
 
+    @classmethod
     def annotate_queryset(cls, qs):
         return qs.annotate(
             qualification_id=KeyTransform("qualification_id", "data"),

@@ -191,9 +191,7 @@ class QualificationGrant(Model):
         return f"{self.qualification!s}, {self.user!s}"
 
     class Meta:
-        unique_together = [
-            ["qualification", "user"]
-        ]  # TODO FIX validation edge cases in UserEditForm/UserCreateForm
+        unique_together = [["qualification", "user"]]  # issue #218
 
 
 class Consequence(Model):
