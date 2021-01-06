@@ -100,12 +100,11 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         hours: Decimal,
         reason: str,
     ):
-        c = Consequence.objects.create(
+        return Consequence.objects.create(
             slug=cls.slug,
             user=user,
             data=dict(hours=hours, datetime=when.isoformat(), reason=reason),
         )
-        return c
 
     @classmethod
     def execute(cls, consequence):
@@ -126,7 +125,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def editable_by_filter(cls, user):
-        return Q()  # TODO
+        return Q(slug=cls.slug)  # TODO needs actual permission checks
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
@@ -140,7 +139,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         expires: datetime = None,
         shift: Shift = None,
     ):
-        c = Consequence.objects.create(
+        return Consequence.objects.create(
             slug=cls.slug,
             user=user,
             data=dict(
@@ -149,8 +148,6 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 expires=None if expires is None else expires.isoformat(),
             ),
         )
-
-        return c
 
     @classmethod
     def execute(cls, consequence):
