@@ -185,10 +185,8 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 id=consequence.data["qualification_id"]
             ).title
 
-        try:
-            expires_str = date_format(datetime.fromisoformat(consequence.data["expires"]))
-        except KeyError:
-            expires_str = None
+        if expires_str := consequence.data.get("expires"):
+            expires_str = date_format(datetime.fromisoformat(expires_str))
 
         user = consequence.user.get_full_name()
 

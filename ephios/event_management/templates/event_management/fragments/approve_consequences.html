@@ -1,32 +1,15 @@
 {% load i18n %}
+{% load user_extras %}
 
-<section>
-
-    {% with request.user|editable_consequences as confirmed_shifts %}
-        {% if confirmed_shifts|length > 0 %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{% trans "Confirm results" %}</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for shift in confirmed_shifts %}
-                        <li class="list-group-item flex-column">
-                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                <span>{{ shift.event.title }} ({{ shift.get_start_end_time_display }})</span>
-                                <a class="btn btn-outline-primary btn-sm" href="{% url "event_management:event_detail" shift.event.pk %}#shift-{{ shift.pk }}"><span
-                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View" %}</span></a>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+{% with request.user|editable_consequences:"needs_confirmation" as editable_consequences %}
+    {% if editable_consequences|length > 0 %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "Confirm results" %}</h5>
             </div>
-        {% endif %}
-    {% endwith %}
-
-
-        <div class="consequence-list">
             <ul class="list-group list-group-flush">
-                {% for c in consequences %}
+                {% for c in editable_consequences %}
+
                     <li class="list-group-item">
                         <form action="{% url "user_management:consequence_edit" pk=c.id %}" method="POST"
                               class="consequence-form d-inline-block">
@@ -40,13 +23,9 @@
                         </form>
                         {{ c.render }}
                     </li>
-                {% empty %}
-                    <li class="list-group-item">
-                        {% trans "all done" %}
-                    </li>
+
                 {% endfor %}
             </ul>
         </div>
-    </div>
-
-</section>
+    {% endif %}
+{% endwith %}
