@@ -24,21 +24,20 @@ $(document).ready(function () {
     });
 
     var recurrenceFields = document.querySelectorAll('.recurrence-widget');
-    Array.prototype.forEach.call(recurrenceFields, function(field, index) {
+    Array.prototype.forEach.call(recurrenceFields, function (field, index) {
         new recurrence.widget.Widget(field.id, {});
     });
 
     $('#checkall').change(function () {
-        $('.cb-element').prop('checked',this.checked);
+        $('.cb-element').prop('checked', this.checked);
     });
 
     $('.cb-element').change(function () {
-     if ($('.cb-element:checked').length === $('.cb-element').length){
-      $('#checkall').prop('checked',true);
-     }
-     else {
-      $('#checkall').prop('checked',false);
-     }
+        if ($('.cb-element:checked').length === $('.cb-element').length) {
+            $('#checkall').prop('checked', true);
+        } else {
+            $('#checkall').prop('checked', false);
+        }
     });
 })
 
@@ -56,4 +55,13 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function message(cls, message, timeout) {
+    html = '<div class="alert alert-' + cls + ' alert-dismissible fade show" role="alert">' + message + `
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>`;
+    $("#messages").append(html);
 }

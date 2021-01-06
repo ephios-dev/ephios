@@ -6,7 +6,7 @@ import guardian.mixins
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.db import models
+from django.db import models, transaction
 from django.db.models import (
     BooleanField,
     CharField,
@@ -189,3 +189,89 @@ class QualificationGrant(Model):
 
     def __str__(self):
         return f"{self.qualification!s}, {self.user!s}"
+
+    class Meta:
+        unique_together = [["qualification", "user"]]  # issue #218
+
+
+class Consequence(Model):
+    slug = models.CharField(max_length=255)
+    data = models.JSONField(default=dict)
+
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name=_("affected user"),
+        null=True,
+        related_name="affecting_consequences",
+    )
+
+    class States(models.TextChoices):
+        NEEDS_CONFIRMATION = "needs_confirmation", _("needs confirmation")
+        EXECUTED = "executed", _("executed")
+        FAILED = "failed", _("failed")
+        DENIED = "denied", _("denied")
+
+    state = models.TextField(
+        max_length=31, choices=States.choices, default=States.NEEDS_CONFIRMATION
+    )
+    decided_by = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        verbose_name=_("confirmed by"),
+        null=True,
+        related_name="confirmed_consequences",
+        blank=True,
+    )
+    executed_at = models.DateTimeField(null=True, blank=True)
+    fail_reason = models.TextField(max_length=255, blank=True)
+
+    @property
+    def handler(self):
+        from ephios.user_management import consequences
+
+        return consequences.consequence_handler_from_slug(self.slug)
+
+    def confirm(self, user):
+        from ephios.user_management.consequences import ConsequenceError
+
+        if self.state not in {
+            self.States.NEEDS_CONFIRMATION,
+            self.States.DENIED,
+            self.States.FAILED,
+        }:
+            raise ConsequenceError(_("Consequence was executed already."))
+
+        with transaction.atomic():
+            try:
+                self.decided_by = user
+                self.handler.execute(self)
+            except Exception as e:  # pylint: disable=broad-except
+                self.state = self.States.FAILED
+                self.fail_reason = str(getattr(e, "message", repr(e)))
+            else:
+                self.state = self.States.EXECUTED
+                self.executed_at = timezone.now()
+            self.save()
+
+    def deny(self, user):
+        from ephios.user_management.consequences import ConsequenceError
+
+        if self.state not in {self.States.NEEDS_CONFIRMATION, self.States.FAILED}:
+            raise ConsequenceError(_("Consequence was executed or denied already."))
+        self.state = self.States.DENIED
+        self.decided_by = user
+        self.save()
+
+    def render(self):
+        return self.handler.render(self)
+
+    def __str__(self):
+        return f"[{self.state}] {self.id} - {self.user!s} - {self.slug}"
+
+
+class WorkingHours(Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    hours = models.DecimalField(decimal_places=2, max_digits=7)
+    reason = models.CharField(max_length=1024, blank=True, default="")
+    datetime = models.DateTimeField(null=True, blank=True)

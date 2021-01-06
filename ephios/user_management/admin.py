@@ -3,10 +3,12 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from ephios.user_management.forms import UserChangeForm, UserCreationForm
 from ephios.user_management.models import (
+    Consequence,
     Qualification,
     QualificationCategory,
     QualificationGrant,
     UserProfile,
+    WorkingHours,
 )
 
 
@@ -60,3 +62,5 @@ admin.site.register(UserProfile, UserAdmin)
 admin.site.register(Qualification)
 admin.site.register(QualificationGrant)
 admin.site.register(QualificationCategory)
+admin.site.register(WorkingHours)
+admin.site.register(Consequence)

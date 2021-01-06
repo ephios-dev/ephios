@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load user_extras %}
+
+{% with request.user|editable_consequences:"needs_confirmation" as editable_consequences %}
+    {% if editable_consequences|length > 0 %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "Confirm results" %}</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for c in editable_consequences %}
+
+                    <li class="list-group-item">
+                        <form action="{% url "user_management:consequence_edit" pk=c.id %}" method="POST"
+                              class="consequence-form d-inline-block">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm btn-consequence"
+                                    name="action" value="confirm"><i class="fas fa-check"></i>
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-consequence"
+                                    name="action" value="deny"><i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                        {{ c.render }}
+                    </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endwith %}
