@@ -207,13 +207,6 @@ class Consequence(Model):
         null=True,
         related_name="affecting_consequences",
     )
-    shift = models.ForeignKey(
-        "event_management.Shift",
-        on_delete=models.SET_NULL,
-        verbose_name=_("causing shift"),
-        null=True,
-        blank=True,
-    )
 
     class States(models.TextChoices):
         NEEDS_CONFIRMATION = "needs_confirmation", _("needs confirmation")

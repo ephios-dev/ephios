@@ -42,10 +42,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         if (user := self.request.user).is_authenticated:
-            kwargs["consequences"] = (
-                editable_consequences(user)
-                .filter(state=Consequence.States.NEEDS_CONFIRMATION)
-                .select_related("user", "shift", "shift__event")
+            kwargs["consequences"] = editable_consequences(user).filter(
+                state=Consequence.States.NEEDS_CONFIRMATION
             )
         return super().get_context_data(**kwargs)
 
