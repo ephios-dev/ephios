@@ -3,7 +3,7 @@
 }
 
 .container-main {
-    height: calc(100vh - 60px);
+    min-height: calc(100vh - 60px);
     display: flex;
     flex-flow: column;
 }
@@ -20,7 +20,7 @@ main {
 
 footer {
     height: 60px;
-    line-height: 60px;
+    line-height: 3;
 }
 
 .btn-disabled {
