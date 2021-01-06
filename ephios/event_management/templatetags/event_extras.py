@@ -47,4 +47,4 @@ def decline_errors(shift, user):
 
 @register.filter(name="confirmed_shifts")
 def confirmed_shifts(user):
-    return user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED])
+    return user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED]).order_by("start_time")
