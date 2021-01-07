@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load user_extras %}
 {% load static %}
 {% load i18n %}
 
@@ -44,20 +45,51 @@
             </ul>
         </div>
     </div>
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">{% trans "Calendar feed" %}</h5>
             <p class="card-text">
                 {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
                 <br> <br>
             <div class="input-group mb-3">
-                <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url" value="{{ SITE_URL }}{% url "event_management:user_event_feed" userprofile.calendar_token %}" readonly>
+                <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
+                       value="{{ SITE_URL }}{% url "event_management:user_event_feed" userprofile.calendar_token %}"
+                       readonly>
                 <div class="input-group-append">
-                    <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button" data-clipboard-target="#calendar-url" data-trigger="manual" title="Copied!">{% translate "Copy" %}</button>
+                    <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"
+                            data-clipboard-target="#calendar-url" data-trigger="manual"
+                            title="Copied!">{% translate "Copy" %}</button>
                 </div>
             </div>
             </p>
         </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="card-title">{% translate "Working hours" %}</h5>
+                <a class="btn btn-outline-primary btn-sm" href="{% url "user_management:request_workinghour" %}">{% translate "Request working hours" %}</a>
+            </div>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% with userprofile|workhour_items as workhour_items %}
+                {% for item in workhour_items.1 %}
+                    <li class="list-group-item flex-column">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <span class="mr-1">{{ item.datetime|date:"SHORT_DATE_FORMAT" }}</span>
+                            <span class="flex-grow-1 mr-1">{{ item.reason }}</span>
+                            <span class="text-nowrap">{{ item.hours|floatformat:1 }} {% translate "hours" %}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                <li class="list-group-item flex-column">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <b>{% translate "Total" %}</b>
+                        <span>{{ workhour_items.0 }} {% translate "hours" %}</span>
+                    </div>
+                </li>
+            {% endwith %}
+        </ul>
     </div>
 {% endblock %}
 

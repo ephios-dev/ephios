@@ -1,7 +1,6 @@
 import functools
 import operator
 from datetime import datetime
-from decimal import Decimal
 
 import django.dispatch
 from django.contrib.auth import get_user_model
@@ -97,7 +96,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         cls,
         user: UserProfile,
         when: datetime,
-        hours: Decimal,
+        hours: float,
         reason: str,
     ):
         return Consequence.objects.create(

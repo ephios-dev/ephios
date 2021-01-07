@@ -2,12 +2,22 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-from django.forms import BooleanField, ModelForm, ModelMultipleChoiceField, inlineformset_factory
+from django.forms import (
+    BooleanField,
+    CharField,
+    DateField,
+    DecimalField,
+    Form,
+    ModelForm,
+    ModelMultipleChoiceField,
+    inlineformset_factory,
+)
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.extra.widgets import CustomDateInput
+from ephios.user_management.consequences import WorkingHoursConsequenceHandler
 from ephios.user_management.models import QualificationGrant, UserProfile
 from ephios.user_management.widgets import MultiUserProfileWidget
 
@@ -256,3 +266,21 @@ QualificationGrantFormset = inlineformset_factory(
     form=QualificationGrantForm,
     extra=0,
 )
+
+
+class WorkingHourRequestForm(Form):
+    when = DateField(widget=CustomDateInput)
+    hours = DecimalField()
+    reason = CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
+    def create_consequence(self):
+        WorkingHoursConsequenceHandler.create(
+            user=self.request.user,
+            when=self.cleaned_data["when"],
+            hours=float(self.cleaned_data["hours"]),
+            reason=self.cleaned_data["reason"],
+        )

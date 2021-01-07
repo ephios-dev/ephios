@@ -1,6 +1,7 @@
 import secrets
 import uuid
 from datetime import date
+from itertools import chain
 
 import guardian.mixins
 from django.contrib.auth import get_user_model
@@ -12,11 +13,13 @@ from django.db.models import (
     CharField,
     DateField,
     EmailField,
+    ExpressionWrapper,
     F,
     ForeignKey,
     Max,
     Model,
     Q,
+    Sum,
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -130,6 +133,30 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             state__in=with_participation_state_in
         ).values_list("shift", flat=True)
         return Shift.objects.filter(pk__in=shift_ids)
+
+    def get_workhour_items(self):
+        from ephios.event_management.models import AbstractParticipation
+
+        participation = (
+            self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
+            .annotate(
+                hours=ExpressionWrapper(
+                    (F("shift__end_time") - F("shift__start_time")) / 3600000000,
+                    output_field=models.DecimalField(),
+                ),
+                datetime=F("shift__start_time"),
+                reason=F("shift__event__title"),
+            )
+            .values("hours", "datetime", "reason")
+        )
+        workinghours = self.workinghours_set.all().values("hours", "datetime", "reason")
+        hour_sum = (
+            participation.aggregate(Sum("hours"))["hours__sum"]
+            + workinghours.aggregate(Sum("hours"))["hours__sum"]
+        )
+        return hour_sum, list(
+            sorted(chain(participation, workinghours), key=lambda k: k["datetime"])
+        )
 
 
 class QualificationCategory(Model):

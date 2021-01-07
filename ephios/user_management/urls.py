@@ -34,4 +34,9 @@ urlpatterns = [
         views.ConsequenceUpdateView.as_view(),
         name="consequence_edit",
     ),
+    path(
+        "profile/requestworkinghour",
+        views.WorkingHourRequestView.as_view(),
+        name="request_workinghour",
+    ),
 ]
