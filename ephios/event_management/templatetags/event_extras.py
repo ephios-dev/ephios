@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import template
 from django.utils.safestring import mark_safe
 
@@ -47,6 +49,8 @@ def decline_errors(shift, user):
 
 @register.filter(name="confirmed_shifts")
 def confirmed_shifts(user):
-    return user.get_shifts(
-        with_participation_state_in=[AbstractParticipation.States.CONFIRMED]
-    ).order_by("start_time")
+    return (
+        user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED])
+        .filter(end_time__gte=datetime.now())
+        .order_by("start_time")
+    )
