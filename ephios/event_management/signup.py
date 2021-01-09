@@ -96,10 +96,6 @@ class ParticipationError(ValidationError):
     pass
 
 
-class ConfigurationForm(forms.Form):
-    pass
-
-
 class BaseSignupView(View):
     shift: Shift = ...
     method: "BaseSignupMethod" = ...
@@ -209,6 +205,7 @@ class BaseSignupMethod:
 
     description = """"""
     signup_view_class = BaseSignupView
+    configuration_form_class = forms.Form
 
     # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
@@ -274,10 +271,10 @@ class BaseSignupMethod:
             self.shift
         )
 
-    def perform_signup(self, participant: AbstractParticipant, **kwargs):
+    def perform_signup(self, participant: AbstractParticipant, **kwargs) -> AbstractParticipation:
         """
         Configure a participation object for the given participant according to the method's configuration.
-        `kwargs` may contain further instructions from a e.g. a form.
+        `kwargs` may contain further instructions from e.g. a form.
         """
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
@@ -295,7 +292,7 @@ class BaseSignupMethod:
     def get_configuration_fields(self):
         return {
             "minimum_age": {
-                "formfield": forms.IntegerField(required=False),
+                "formfield": forms.IntegerField(required=False, min_value=1, max_value=999),
                 "default": 16,
                 "publish_with_label": _("Minimum age"),
             },
@@ -341,7 +338,7 @@ class BaseSignupMethod:
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
-        form = ConfigurationForm(*args, **kwargs)
+        form = self.configuration_form_class(*args, **kwargs)
         for name, config in self.get_configuration_fields().items():
             form.fields[name] = config["formfield"]
         return form

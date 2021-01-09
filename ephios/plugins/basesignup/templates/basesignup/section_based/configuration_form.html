@@ -1,0 +1,69 @@
+{% load bootstrap4 %}
+{% load i18n %}
+{% load formset_tags %}
+
+{% bootstrap_form form %}
+
+
+<div class="formset" data-formset data-formset-prefix="{{ form.sections_formset.prefix }}">
+    {{ form.sections_formset.management_form }}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h3 class="card-title">{% translate "Sections" %}</h3>
+            {% bootstrap_formset_errors form.sections_formset %}
+            <ul class="list-group list-group-flush" data-formset-body>
+                {% for section_form in form.sections_formset %}
+                    <div class="list-group-item" data-formset-form>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                {% bootstrap_field section_form.title %}
+                            </div>
+                            <div class="col-md-2">
+                                {% bootstrap_field section_form.min_count %}
+                            </div>
+                            <div class="col-md-4">
+                                {% bootstrap_field section_form.qualifications %}
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-link" type="button"
+                                        data-formset-delete-button><span
+                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                            </div>
+                        </div>
+                        <div class="d-none">{{ section_form.DELETE }}{{ section_form.uuid }}</div>
+                    </div>
+                {% endfor %}
+            </ul>
+
+            <input class="btn btn-secondary mt-2" type="button"
+                   value="{% translate "Add section" %}"
+                   data-formset-add>
+        </div>
+    </div>
+
+    <script type="form-template" data-formset-empty-form>
+        {% escapescript %}
+            <div class="list-group-item django-select2" data-formset-form>
+            <div class="form-row">
+                {{ section_form.id }}
+                <div class="form-row">
+                    <div class="col-md-4">
+                        {% bootstrap_field form.sections_formset.empty_form.title %}
+                    </div>
+                    <div class="col-md-2">
+                        {% bootstrap_field form.sections_formset.empty_form.min_count %}
+                    </div>
+                    <div class="col-md-4">
+                        {% bootstrap_field form.sections_formset.empty_form.qualifications %}
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-link" type="button"
+                                data-formset-delete-button><span
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                    </div>
+                </div>
+                <div class="d-none">{{ form.sections_formset.empty_form.DELETE }}{{ form.sections_formset.empty_form.uuid }}</div>
+            </div>
+        {% endescapescript %}
+    </script>
+</div>
