@@ -121,6 +121,15 @@ class GroupForm(ModelForm):
     users = ModelMultipleChoiceField(
         label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
+    decide_workinghours_for_group = ModelMultipleChoiceField(
+        label=_("Can decide working hours for groups"),
+        queryset=Group.objects.all(),
+        required=False,
+        help_text=_(
+            "Choose groups that the group you are currently editing can decide whether to grant working hours for."
+        ),
+        widget=Select2MultipleWidget,
+    )
 
     field_order = [
         "name",
@@ -128,8 +137,8 @@ class GroupForm(ModelForm):
         "can_manage_user",
         "can_manage_group",
         "can_view_past_event",
+        "decide_workinghours_for_group",
         "can_add_event",
-        "publish_event_for_group",
     ]
 
     class Meta:
@@ -163,6 +172,9 @@ class GroupForm(ModelForm):
                         "view_group",
                     ]
                 ).exists(),
+                "decide_workinghours_for_group": get_objects_for_group(
+                    group, "decide_workinghours_for_group", klass=Group
+                ),
                 **kwargs.get("initial", {}),
             }
         super().__init__(**kwargs)
@@ -209,6 +221,14 @@ class GroupForm(ModelForm):
             remove_perm("auth.change_group", group)
             remove_perm("auth.delete_group", group)
             remove_perm("auth.view_group", group)
+
+        if "decide_workinghours_for_group" in self.changed_data:
+            remove_perm("decide_workinghours_for_group", group, Group.objects.all())
+            assign_perm(
+                "decide_workinghours_for_group",
+                group,
+                self.cleaned_data["decide_workinghours_for_group"],
+            )
 
         return group
 
@@ -269,9 +289,9 @@ QualificationGrantFormset = inlineformset_factory(
 
 
 class WorkingHourRequestForm(Form):
-    when = DateField(widget=CustomDateInput)
-    hours = DecimalField()
-    reason = CharField()
+    when = DateField(widget=CustomDateInput, label=_("Date"))
+    hours = DecimalField(label=_("Hours of work"), min_value=0.5)
+    reason = CharField(label=_("Occasion"))
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")

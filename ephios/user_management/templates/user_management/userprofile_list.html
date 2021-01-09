@@ -34,10 +34,10 @@
                 <td class="d-none d-lg-table-cell">{% include "user_management/userprofile_badges.html" with userprofile=userprofile %}</td>
                 <td class="d-flex">
                     <a class="btn btn-outline-primary btn-sm text-nowrap" href="{% url "user_management:userprofile_edit" userprofile.pk %}"><span
-                            class="fa fa-edit"></span> {% trans "Edit" %}</a>
+                            class="fa fa-edit"></span> <span class="d-none d-md-inline">{% trans "Edit" %}</span></a>
                     {% if perms.user_management.delete_userprofile %}
                         <a class="btn btn-outline-danger btn-sm text-nowrap ml-1" href="{% url "user_management:userprofile_delete" userprofile.pk %}"><span
-                                class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
+                                class="fa fa-trash-alt"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
                     {% endif %}
                 </td>
             </tr>

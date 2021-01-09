@@ -85,7 +85,7 @@
                 <li class="list-group-item flex-column">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <b>{% translate "Total" %}</b>
-                        <span>{{ workhour_items.0 }} {% translate "hours" %}</span>
+                        <span>{{ workhour_items.0|floatformat:1 }} {% translate "hours" %}</span>
                     </div>
                 </li>
             {% endwith %}

@@ -141,7 +141,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 hours=ExpressionWrapper(
-                    (F("shift__end_time") - F("shift__start_time")) / 3600000000,
+                    (F("shift__end_time") - F("shift__start_time"))
+                    / 1000000
+                    / 3600,  # convert microseconds to hours
                     output_field=models.DecimalField(),
                 ),
                 datetime=F("shift__start_time"),
