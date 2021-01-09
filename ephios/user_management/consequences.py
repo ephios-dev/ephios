@@ -4,6 +4,7 @@ from datetime import datetime
 
 import django.dispatch
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db.models import OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.utils.formats import date_format
@@ -42,7 +43,7 @@ def editable_consequences(user):
             (handler.editable_by_filter(user) for handler in handlers),
             Q(),
         )
-    )
+    ).distinct()
     for handler in handlers:
         qs = handler.annotate_queryset(qs)
     return qs
@@ -124,7 +125,12 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def editable_by_filter(cls, user):
-        return Q(slug=cls.slug)  # needs actual permission checks
+        return Q(
+            slug=cls.slug,
+            user__groups__in=get_objects_for_user(
+                user, "decide_workinghours_for_group", klass=Group
+            ),
+        )
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
