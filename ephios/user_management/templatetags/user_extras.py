@@ -11,3 +11,8 @@ def editable_consequences_tag(user, states=None):
     if states:
         qs = qs.filter(state__in=states.split(" "))
     return qs
+
+
+@register.filter(name="workhour_items")
+def workhour_items(user):
+    return user.get_workhour_items()

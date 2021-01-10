@@ -1,10 +1,10 @@
 import functools
 import operator
 from datetime import datetime
-from decimal import Decimal
 
 import django.dispatch
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db.models import OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.utils.formats import date_format
@@ -43,7 +43,7 @@ def editable_consequences(user):
             (handler.editable_by_filter(user) for handler in handlers),
             Q(),
         )
-    )
+    ).distinct()
     for handler in handlers:
         qs = handler.annotate_queryset(qs)
     return qs
@@ -97,35 +97,41 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         cls,
         user: UserProfile,
         when: datetime,
-        hours: Decimal,
+        hours: float,
         reason: str,
     ):
         return Consequence.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(hours=hours, datetime=when.isoformat(), reason=reason),
+            data=dict(hours=hours, date=when, reason=reason),
         )
 
     @classmethod
     def execute(cls, consequence):
         WorkingHours.objects.create(
             user=consequence.user,
-            datetime=datetime.fromisoformat(consequence.data["datetime"]),
+            date=consequence.data["date"],
             hours=consequence.data["hours"],
             reason=consequence.data.get("reason"),
         )
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} logs {hours} hours: {reason}").format(
+        return _("{user} logs {hours:.1f} hours on {date} for {reason}").format(
             user=consequence.user.get_full_name(),
-            hours=str(consequence.data.get("hours")),
+            hours=consequence.data.get("hours"),
             reason=consequence.data.get("reason"),
+            date=date_format(consequence.data.get("date")),
         )
 
     @classmethod
     def editable_by_filter(cls, user):
-        return Q(slug=cls.slug)  # needs actual permission checks
+        return Q(
+            slug=cls.slug,
+            user__groups__in=get_objects_for_user(
+                user, "decide_workinghours_for_group", klass=Group
+            ),
+        )
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
