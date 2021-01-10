@@ -14,7 +14,7 @@ class TestQualificationConsequence:
     def test_render_qualification_granting(self, qualifications_consequence):
         assert qualifications_consequence.render()
 
-    def test_render_qualification_without_shift_information(volunteer, qualifications, tz):
+    def test_render_qualification_without_shift_information(self, volunteer, qualifications, tz):
         c = QualificationConsequenceHandler.create(
             user=volunteer,
             qualification=qualifications.nfs,
