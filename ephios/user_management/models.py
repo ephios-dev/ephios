@@ -21,8 +21,11 @@ from django.db.models import (
     Q,
     Sum,
 )
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 
 
 class UserProfileManager(BaseUserManager):
@@ -141,24 +144,23 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 hours=ExpressionWrapper(
-                    (F("shift__end_time") - F("shift__start_time"))
-                    / 1000000
-                    / 3600,  # convert microseconds to hours
+                    (
+                        F("shift__end_time") - F("shift__start_time")
+                    )  # calculate length of shift in μs
+                    / 1000000  # convert microseconds to seconds
+                    / 3600,  # convert seconds to hours
                     output_field=models.DecimalField(),
                 ),
-                datetime=F("shift__start_time"),
+                date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
-            .values("hours", "datetime", "reason")
+            .values("hours", "date", "reason")
         )
-        workinghours = self.workinghours_set.all().values("hours", "datetime", "reason")
-        hour_sum = (
-            participation.aggregate(Sum("hours"))["hours__sum"]
-            + workinghours.aggregate(Sum("hours"))["hours__sum"]
+        workinghours = self.workinghours_set.all().values("hours", "date", "reason")
+        hour_sum = (participation.aggregate(Sum("hours"))["hours__sum"] or 0) + (
+            workinghours.aggregate(Sum("hours"))["hours__sum"] or 0
         )
-        return hour_sum, list(
-            sorted(chain(participation, workinghours), key=lambda k: k["datetime"])
-        )
+        return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
 
 
 class QualificationCategory(Model):
@@ -225,7 +227,7 @@ class QualificationGrant(Model):
 
 class Consequence(Model):
     slug = models.CharField(max_length=255)
-    data = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder)
 
     user = models.ForeignKey(
         get_user_model(),
@@ -302,5 +304,5 @@ class Consequence(Model):
 class WorkingHours(Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     hours = models.DecimalField(decimal_places=2, max_digits=7)
-    reason = models.CharField(max_length=1024, blank=True, default="")
-    datetime = models.DateTimeField(null=True, blank=True)
+    reason = models.CharField(max_length=1024, default="")
+    date = models.DateField()

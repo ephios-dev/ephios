@@ -110,17 +110,18 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
     def execute(cls, consequence):
         WorkingHours.objects.create(
             user=consequence.user,
-            datetime=datetime.fromisoformat(consequence.data["datetime"]),
+            datetime=consequence.data["datetime"],
             hours=consequence.data["hours"],
             reason=consequence.data.get("reason"),
         )
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} logs {hours:.1f} hours: {reason}").format(
+        return _("{user} logs {hours:.1f} hours on {datetime} for {reason}").format(
             user=consequence.user.get_full_name(),
             hours=consequence.data.get("hours"),
             reason=consequence.data.get("reason"),
+            datetime=date_format(consequence.data.get("datetime")),
         )
 
     @classmethod
