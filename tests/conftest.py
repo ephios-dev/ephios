@@ -9,7 +9,16 @@ from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, EventType, Shift
 from ephios.plugins.basesignup.signup import RequestConfirmSignupMethod
-from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
+from ephios.user_management.consequences import (
+    QualificationConsequenceHandler,
+    WorkingHoursConsequenceHandler,
+)
+from ephios.user_management.models import (
+    Qualification,
+    QualificationCategory,
+    UserProfile,
+    WorkingHours,
+)
 
 
 @pytest.fixture
@@ -282,3 +291,32 @@ def qualifications():
     q.ce.included_qualifications.add(q.c1e)
 
     return q
+
+
+@pytest.fixture
+def qualifications_consequence(volunteer, qualifications, event, tz):
+    return QualificationConsequenceHandler.create(
+        user=volunteer,
+        shift=event.shifts.first(),
+        qualification=qualifications.nfs,
+        expires=datetime(2064, 4, 1).astimezone(tz),
+    )
+
+
+@pytest.fixture
+def workinghours_consequence(volunteer):
+    return WorkingHoursConsequenceHandler.create(
+        user=volunteer, when=date(2020, 1, 1), hours=42, reason="testing"
+    )
+
+
+@pytest.fixture
+def workinghours(volunteer):
+    return [
+        WorkingHours.objects.create(
+            user=volunteer, hours=21, reason="Lager aufräumen", date=date(2020, 1, 1)
+        ),
+        WorkingHours.objects.create(
+            user=volunteer, hours=21, reason="RTW checken", date=date(2021, 1, 1)
+        ),
+    ]
