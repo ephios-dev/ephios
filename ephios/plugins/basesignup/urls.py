@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ephios.plugins.basesignup.signup import RequestConfirmDispositionView
+from ephios.plugins.basesignup.signup.simple import RequestConfirmDispositionView
 
 app_name = "basesignup"
 urlpatterns = [

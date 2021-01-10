@@ -17,7 +17,7 @@ from ephios.event_management.signup import (
     BaseSignupView,
     ParticipationError,
 )
-from ephios.plugins.basesignup.signup import RequestConfirmDispositionView
+from ephios.plugins.basesignup.signup.simple import RequestConfirmDispositionView
 from ephios.user_management.models import Qualification
 
 

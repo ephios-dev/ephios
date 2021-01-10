@@ -1,10 +1,10 @@
 from django.dispatch import receiver
 
 from ephios.event_management.signup import register_signup_methods
-from ephios.plugins.basesignup.signup import (
+from ephios.plugins.basesignup.signup.section_based import SectionBasedSignupMethod
+from ephios.plugins.basesignup.signup.simple import (
     InstantConfirmationSignupMethod,
     RequestConfirmSignupMethod,
-    SectionBasedSignupMethod,
 )
 
 
