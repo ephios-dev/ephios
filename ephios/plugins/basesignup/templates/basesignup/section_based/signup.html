@@ -15,6 +15,12 @@
     <form method="post" class="form">
         {% csrf_token %}
         {% bootstrap_form form %}
+        {% if unqualified_sections %}
+        <p>
+            {% translate "You don't qualify for" %}
+            {{ unqualified_sections|join:", "}}.
+        </p>
+        {% endif %}
         <button type="submit" class="btn btn-primary w-100">{% translate "Request" %}</button>
     </form>
 
