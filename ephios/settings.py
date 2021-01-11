@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     "bootstrap4",
     "guardian",
     "django_select2",
-    "jquery",
     "djangoformsetjs",
     "compressor",
     "recurrence",
