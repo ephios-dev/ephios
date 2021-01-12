@@ -132,7 +132,7 @@ class QualificationDataset(AbstractDataset):
     action = "Create qualification objects for medical qualifications and driver licenses"
 
     def create_objects(self, *args, **options):
-        # pylint: disable=too-many-locals,unused-variable
+        # pylint: disable=too-many-locals,unused-variable,too-many-statements
         medical_category = QualificationCategory.objects.create(
             title=_("Medical"),
             uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
@@ -351,7 +351,7 @@ class DLRGQualificationDataset(AbstractDataset):
     action = "Create qualification objects for water rescue and diving"
 
     def create_objects(self, *args, **options):
-        # pylint: disable=too-many-locals,unused-variable
+        # pylint: disable=too-many-locals,unused-variable,too-many-statements
         diving_category = QualificationCategory.objects.create(
             title=_("Diving"),
             uuid=uuid.UUID("6212a425-5cdf-49b0-bcb2-5075862a0c4a"),
