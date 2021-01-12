@@ -43,17 +43,21 @@ class DispositionParticipationForm(forms.ModelForm):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        sections = self.instance.shift.signup_method.configuration.sections
         self.fields["section"].choices = [("", "---")] + [
             (section["uuid"], section["title"])
             for section in sections_participant_qualifies_for(
-                self.instance.shift.signup_method.configuration.sections,
+                sections,
                 self.instance.participant,
             )
         ]
         if initial := self.instance.data.get("dispatched_section_uuid"):
             self.fields["section"].initial = initial
-        elif initial := self.instance.data.get("preferred_section_uuid"):
-            self.fields["section"].initial = initial
+        elif preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
+            self.fields["section"].initial = preferred_section_uuid
+            self.preferred_section = next(
+                filter(lambda section: section["uuid"] == preferred_section_uuid, sections), None
+            )
 
     def clean(self):
         super().clean()
@@ -165,6 +169,7 @@ class SectionSignupForm(forms.Form):
     section = forms.ChoiceField(
         label=_("Preferred Section"),
         widget=forms.RadioSelect,
+        required=False,
         # choices are set as (uuid, title) of section
     )
 

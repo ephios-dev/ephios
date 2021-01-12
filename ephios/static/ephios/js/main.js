@@ -19,7 +19,7 @@ $(document).ready(function () {
     $("[data-drop-to-state]").each(function (index, elem) {
         Sortable.create(elem, {
             group: "participations",
-            sort: false,
+            sort: true,
             draggable: ".draggable",
             emptyInsertThreshold: 50,
             animation: 150,
