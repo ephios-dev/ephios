@@ -1,5 +1,7 @@
 import uuid
 from functools import cached_property
+from itertools import groupby
+from operator import itemgetter
 
 from django import forms
 from django.contrib import messages
@@ -283,36 +285,35 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         return template
 
     def render_shift_state(self, request):
-        participations = self.shift.participations.filter(
-            state__in={
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.CONFIRMED,
+        section_by_uuid = {section["uuid"]: section for section in self.configuration.sections}
+        # get name and preferred section uuid for confirmed participants
+        # if they have a section assigned and we have that section on record
+        confirmed_participations = [
+            {
+                "name": str(participation.participant),
+                "uuid": dispatched_section_uuid,
             }
-        )
-        section_titles = {
-            section["uuid"]: section["title"] for section in self.configuration.sections
-        }
-
-        def annotated_participant(participation):
-            participant = participation.participant
-            section_uuid = participation.data.get(
-                "dispatched_section_uuid"
-            ) or participation.data.get("preferred_section_uuid")
-            # participants are frozen, so we annotate into the __dict__ attribute
-            participant.__dict__["section_title"] = section_titles.get(section_uuid)
-            return participant
+            for participation in self.shift.participations.filter(
+                state=AbstractParticipation.States.CONFIRMED
+            )
+            if (dispatched_section_uuid := participation.data.get("dispatched_section_uuid"))
+            and dispatched_section_uuid in section_by_uuid
+        ]
+        # group by section and do some stats
+        confirmed_sections_with_users = [
+            (section_by_uuid.get(uuid), [user["name"] for user in group])
+            for uuid, group in groupby(
+                sorted(confirmed_participations, key=itemgetter("uuid")), itemgetter("uuid")
+            )
+        ]
 
         return get_template("basesignup/section_based/fragment_state.html").render(
             {
                 "shift": self.shift,
-                "requested_participants": (
-                    annotated_participant(p)
-                    for p in participations.filter(state=AbstractParticipation.States.REQUESTED)
+                "requested_participations": (
+                    self.shift.participations.filter(state=AbstractParticipation.States.REQUESTED)
                 ),
-                "confirmed_participants": (
-                    annotated_participant(p)
-                    for p in participations.filter(state=AbstractParticipation.States.CONFIRMED)
-                ),
+                "confirmed_sections_with_users": confirmed_sections_with_users,
                 "disposition_url": (
                     reverse(
                         "basesignup:shift_disposition_section_based",
