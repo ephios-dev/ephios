@@ -53,13 +53,13 @@ class DispositionParticipationForm(forms.ModelForm):
                 self.instance.participant,
             )
         ]
-        if initial := self.instance.data.get("dispatched_section_uuid"):
-            self.fields["section"].initial = initial
-        elif preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
+        if preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
             self.fields["section"].initial = preferred_section_uuid
             self.preferred_section = next(
                 filter(lambda section: section["uuid"] == preferred_section_uuid, sections), None
             )
+        if initial := self.instance.data.get("dispatched_section_uuid"):
+            self.fields["section"].initial = initial
 
     def clean(self):
         super().clean()
