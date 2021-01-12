@@ -1,9 +1,9 @@
 import uuid
+from functools import cached_property
 
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db import transaction
 from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
@@ -86,7 +86,7 @@ DispositionParticipationFormset = forms.modelformset_factory(
 class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     permission_required = "event_management.change_event"
-    template_name = "basesignup/section_based/disposition.html"
+    template_name = "basesignup/disposition.html"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -112,6 +112,9 @@ class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMix
         kwargs.setdefault("formset", self.get_formset())
         kwargs.setdefault("states", AbstractParticipation.States)
         kwargs.setdefault("sections", self.object.signup_method.configuration.sections)
+        kwargs.setdefault(
+            "participant_template", "basesignup/section_based/fragment_participant.html"
+        )
         return super().get_context_data(**kwargs)
 
 
@@ -169,13 +172,17 @@ class SectionSignupForm(forms.Form):
 class SectionBasedSignupView(FormView, BaseSignupView):
     template_name = "basesignup/section_based/signup.html"
 
+    @cached_property
+    def sections_participant_qualifies_for(self):
+        return sections_participant_qualifies_for(
+            self.method.configuration.sections, self.request.user.as_participant()
+        )
+
     def get_form(self, form_class=None):
         form = SectionSignupForm(self.request.POST)
         form.fields["section"].choices = [
             (section["uuid"], section["title"])
-            for section in sections_participant_qualifies_for(
-                self.method.configuration.sections, self.request.user.as_participant()
-            )
+            for section in self.sections_participant_qualifies_for
         ]
         return form
 
@@ -186,34 +193,28 @@ class SectionBasedSignupView(FormView, BaseSignupView):
             [
                 section["title"]
                 for section in self.method.configuration.sections
-                if section
-                not in sections_participant_qualifies_for(
-                    self.method.configuration.sections, self.request.user.as_participant()
-                )
+                if section not in self.sections_participant_qualifies_for
             ],
         )
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        try:
-            with transaction.atomic():
-                self.method.perform_signup(
-                    self.request.user.as_participant(),
-                    preferred_section_uuid=form.cleaned_data["section"],
-                )
-                messages.success(
-                    self.request,
-                    self.method.signup_success_message.format(shift=self.shift),
-                )
-        except ParticipationError as errors:
-            for error in errors:
-                messages.error(self.request, self.method.signup_error_message.format(error=error))
-        return redirect(self.shift.event.get_absolute_url())
+        return super().signup_pressed(preferred_section_uuid=form.cleaned_data.get("section"))
 
-    def signup_pressed(self, request, *args, **kwargs):
+    def signup_pressed(self):
         if not self.method.configuration.choose_preferred_section:
-            return super().signup_pressed(request, *args, **kwargs)
-        return redirect(reverse("event_management:shift_action", kwargs=dict(pk=self.shift.pk)))
+            # do straight signup if choosing is not enabled
+            return super().signup_pressed()
+
+        if not self.method.can_sign_up(self.request.user.as_participant()):
+            # redirect a misled request
+            messages.warning(self.request, _("You can not sign up for this shift."))
+            return redirect(
+                reverse("event_management:event_detail", kwargs=dict(pk=self.shift.event_id))
+            )
+
+        # all good, redirect to the form
+        return redirect(reverse("event_management:signup_action", kwargs=dict(pk=self.shift.pk)))
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):

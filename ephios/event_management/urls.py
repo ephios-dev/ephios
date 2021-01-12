@@ -21,7 +21,7 @@ urlpatterns = [
     path(
         "shifts/<int:pk>/signup-action/",
         views.ShiftSignupView.as_view(),
-        name="shift_action",
+        name="signup_action",
     ),
     path(
         "shifts/<int:pk>/edit/",
