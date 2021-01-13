@@ -27,7 +27,7 @@ from django.views.generic import (
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 from recurrence.forms import RecurrenceField
 
 from ephios.event_management.forms import EventDuplicationForm, EventForm, ShiftForm
@@ -190,6 +190,13 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             )
             assign_perm(
                 "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
+            )
+            assign_perm(
+                "change_event",
+                get_users_with_perms(
+                    self.get_object(), only_with_perms_in=["change_event"], with_group_users=False
+                ),
+                event,
             )
 
             shifts_to_create = []
