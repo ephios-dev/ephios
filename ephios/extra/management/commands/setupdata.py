@@ -435,7 +435,6 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="FA WRD",
             uuid=uuid.UUID("bd7ca398-ed2a-4e97-b681-bc8fb1138ada"),
         )
-        wr.included_qualifications.add(rettschw_silber)
         sr1 = Qualification.objects.create(
             category=wr_category,
             title="Strömungsretter I (DLRG)",
