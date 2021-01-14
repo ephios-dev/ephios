@@ -181,7 +181,7 @@ class QualificationDataset(AbstractDataset):
         rs = Qualification.objects.create(
             category=medical_category,
             title="Rettungssanitäter",
-            abbreviation="RS",
+            abbreviation="RettSan",
             uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
         )
         rs.included_qualifications.add(rh)
@@ -367,7 +367,7 @@ class DLRGQualificationDataset(AbstractDataset):
         taucher_1 = Qualification.objects.create(
             category=diving_category,
             title="Einsatztaucher Stufe 1",
-            abbreviation="Einsatztaucher Stufe 1",
+            abbreviation="ET1",
             uuid=uuid.UUID("52fc6a88-6e56-4af5-8021-b8a6412f405c"),
         )
         taucher_1.included_qualifications.add(signal)
@@ -375,7 +375,7 @@ class DLRGQualificationDataset(AbstractDataset):
         taucher_2 = Qualification.objects.create(
             category=diving_category,
             title="Einsatztaucher Stufe 2",
-            abbreviation="Einsatztaucher Stufe 2",
+            abbreviation="ET2",
             uuid=uuid.UUID("481fc9fb-e90a-4b83-8a07-456034aa0a33"),
         )
         taucher_2.included_qualifications.add(taucher_1)
@@ -383,7 +383,7 @@ class DLRGQualificationDataset(AbstractDataset):
         tauchf = Qualification.objects.create(
             category=diving_category,
             title="Taucheinsatzführer",
-            abbreviation="Taucheinsatzführer",
+            abbreviation="TEF",
             uuid=uuid.UUID("a3c5a3a0-f577-4bf5-8b2f-84108022d793"),
         )
         tauchf.included_qualifications.add(taucher_2)
@@ -394,14 +394,14 @@ class DLRGQualificationDataset(AbstractDataset):
         )
         Qualification.objects.create(
             category=boats_category,
-            title="Bootsführerschein Binnen (DLRG)",
-            abbreviation="Bootsführerschein Binnen",
+            title="DLRG-Bootsführerschein A",
+            abbreviation="BF Binnen",
             uuid=uuid.UUID("7ec0c9e2-f211-4370-b796-e309f3e9b448"),
         )
         Qualification.objects.create(
             category=boats_category,
-            title="Bootsführerschein See (DLRG)",
-            abbreviation="Bootsführerschein See",
+            title="DLRG-Bootsführerschein B",
+            abbreviation="BF See",
             uuid=uuid.UUID("1ba25ee1-fa88-4d44-9416-3a024caa6daf"),
         )
 
@@ -409,19 +409,33 @@ class DLRGQualificationDataset(AbstractDataset):
             title=_("Water rescue (DLRG)"),
             uuid=uuid.UUID("93574a61-1a6e-4dd5-8df3-40e8c51b693f"),
         )
-        rettschw = Qualification.objects.create(
+        rettschw_bronze = Qualification.objects.create(
             category=wr_category,
-            title="Rettungsschwimmer",
-            abbreviation="Rettungsschwimmer",
+            title="Rettungsschwimmer Bronze",
+            abbreviation="RS Bronze",
+            uuid=uuid.UUID("247fab6a-8784-4976-a406-985fe47dc683"),
+        )
+        rettschw_silber = Qualification.objects.create(
+            category=wr_category,
+            title="Rettungsschwimmer Silber",
+            abbreviation="RS Silber",
             uuid=uuid.UUID("ef95a854-2eeb-431c-a795-bc291b341d49"),
         )
+        rettschw_silber.included_qualifications.add(rettschw_bronze)
+        rettschw_gold = Qualification.objects.create(
+            category=wr_category,
+            title="Rettungsschwimmer Gold",
+            abbreviation="RS Gold",
+            uuid=uuid.UUID("b601a18b-cee8-4037-af33-dd7aabeac295"),
+        )
+        rettschw_gold.included_qualifications.add(rettschw_silber)
         wr = Qualification.objects.create(
             category=wr_category,
             title="Fachausbildung Wasserrettungsdienst (DLRG)",
-            abbreviation="Wasserretter",
+            abbreviation="FA WRD",
             uuid=uuid.UUID("bd7ca398-ed2a-4e97-b681-bc8fb1138ada"),
         )
-        wr.included_qualifications.add(rettschw)
+        wr.included_qualifications.add(rettschw_silber)
         sr1 = Qualification.objects.create(
             category=wr_category,
             title="Strömungsretter I (DLRG)",
@@ -443,20 +457,20 @@ class DLRGQualificationDataset(AbstractDataset):
         )
         Qualification.objects.create(
             category=radio_category,
-            title="Digitalfunk",
+            title="BOS-Sprechfunker -digital-",
             abbreviation="Digitalfunk",
             uuid=uuid.UUID("506c4d4c-df11-4d41-95d7-c4ddfc78b706"),
         )
         Qualification.objects.create(
             category=radio_category,
-            title="Analogfunk",
+            title="BOS-Sprechfunker -analog-",
             abbreviation="Analogfunk",
             uuid=uuid.UUID("4974ea66-2086-4987-958b-503de21a285a"),
         )
         Qualification.objects.create(
             category=radio_category,
-            title="Betriebsfunk (DLRG)",
-            abbreviation="Betriebsfunk (DLRG)",
+            title="DLRG-Sprechfunker",
+            abbreviation="DLRG-Sprechfunker",
             uuid=uuid.UUID("e8ff96da-0dd3-4664-9b9d-3c4abc1f40de"),
         )
 
