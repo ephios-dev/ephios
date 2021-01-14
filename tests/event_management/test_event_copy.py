@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 import recurrence
 from django.urls import reverse
+from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, Shift
 from ephios.extra.permissions import get_groups_with_perms
@@ -43,8 +44,11 @@ class TestEventCopy:
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 3
         self.assert_dates(event, occurrences, volunteers, planners)
 
-    def test_event_copy_by_date(self, django_app, planner, event, groups):
+    def test_event_copy_by_date(self, django_app, planner, event, groups, volunteer):
         managers, planners, volunteers = groups
+        assign_perm(
+            "change_event", volunteer, event
+        )  # test that single user permissions are transferred
         response = django_app.get(
             reverse("event_management:event_copy", kwargs={"pk": event.id}), user=planner
         )
@@ -61,9 +65,14 @@ class TestEventCopy:
         occurrences = recurr.between(
             datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
         )
+        new_event = Event.objects.get(title=event.title, shifts__start_time__date=target_date)
         assert Event.objects.all().count() == event_count + 2
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 2
         self.assert_dates(event, occurrences, volunteers, planners)
+        assert volunteer.has_perm("change_event", new_event)
+        assert set(get_groups_with_perms(new_event, ["change_event"])) == set(
+            get_groups_with_perms(event, ["change_event"])
+        )
 
     def test_event_multi_shift_copy(self, django_app, planner, groups, multi_shift_event):
         managers, planners, volunteers = groups
