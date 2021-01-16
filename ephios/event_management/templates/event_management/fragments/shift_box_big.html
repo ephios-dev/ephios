@@ -29,7 +29,7 @@
                         {% endfor %}
                         {% if event.active and not without_controls %}
                             <form method="POST" class="form"
-                                  action="{% url "event_management:shift_action" shift.pk %}">
+                                  action="{% url "event_management:signup_action" shift.pk %}">
                                 {% csrf_token %}
                                 <dt>{{ shift|shift_status:request.user }}</dt>
                                 <dd>

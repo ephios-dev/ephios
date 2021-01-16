@@ -60,7 +60,8 @@ class AbstractParticipant:
         """Return the participation object for a shift. Return None if it does not exist."""
         raise NotImplementedError
 
-    def collect_all_qualifications(self):
+    @functools.lru_cache(maxsize=1)
+    def collect_all_qualifications(self) -> set:
         """We collect using breadth first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
         current = self.qualifications
@@ -96,10 +97,6 @@ class ParticipationError(ValidationError):
     pass
 
 
-class ConfigurationForm(forms.Form):
-    pass
-
-
 class BaseSignupView(View):
     shift: Shift = ...
     method: "BaseSignupMethod" = ...
@@ -107,33 +104,35 @@ class BaseSignupView(View):
     def dispatch(self, request, *args, **kwargs):
         if (choice := request.POST.get("signup_choice")) is not None:
             if choice == "sign_up":
-                return self.signup_pressed(request, *args, **kwargs)
+                return self.signup_pressed()
             if choice == "decline":
-                return self.decline_pressed(request, *args, **kwargs)
+                return self.decline_pressed()
             raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
         return super().dispatch(request, *args, **kwargs)
 
-    def signup_pressed(self, request, *args, **kwargs):
+    def signup_pressed(self, **signup_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_signup(request.user.as_participant())
+                self.method.perform_signup(self.request.user.as_participant(), **signup_kwargs)
                 messages.success(
-                    request,
+                    self.request,
                     self.method.signup_success_message.format(shift=self.shift),
                 )
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, self.method.signup_error_message.format(error=error))
+                messages.error(self.request, self.method.signup_error_message.format(error=error))
         return redirect(self.shift.event.get_absolute_url())
 
-    def decline_pressed(self, request, *args, **kwargs):
+    def decline_pressed(self, **decline_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_decline(request.user.as_participant())
-                messages.info(request, self.method.decline_success_message.format(shift=self.shift))
+                self.method.perform_decline(self.request.user.as_participant(), **decline_kwargs)
+                messages.info(
+                    self.request, self.method.decline_success_message.format(shift=self.shift)
+                )
         except ParticipationError as errors:
             for error in errors:
-                messages.error(request, self.method.decline_error_message.format(error=error))
+                messages.error(self.request, self.method.decline_error_message.format(error=error))
         return redirect(self.shift.event.get_absolute_url())
 
 
@@ -209,6 +208,7 @@ class BaseSignupMethod:
 
     description = """"""
     signup_view_class = BaseSignupView
+    configuration_form_class = forms.Form
 
     # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
@@ -274,10 +274,10 @@ class BaseSignupMethod:
             self.shift
         )
 
-    def perform_signup(self, participant: AbstractParticipant, **kwargs):
+    def perform_signup(self, participant: AbstractParticipant, **kwargs) -> AbstractParticipation:
         """
         Configure a participation object for the given participant according to the method's configuration.
-        `kwargs` may contain further instructions from a e.g. a form.
+        `kwargs` may contain further instructions from e.g. a form.
         """
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
@@ -295,7 +295,7 @@ class BaseSignupMethod:
     def get_configuration_fields(self):
         return {
             "minimum_age": {
-                "formfield": forms.IntegerField(required=False),
+                "formfield": forms.IntegerField(required=False, min_value=1, max_value=999),
                 "default": 16,
                 "publish_with_label": _("Minimum age"),
             },
@@ -341,7 +341,7 @@ class BaseSignupMethod:
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
-        form = ConfigurationForm(*args, **kwargs)
+        form = self.configuration_form_class(*args, **kwargs)
         for name, config in self.get_configuration_fields().items():
             form.fields[name] = config["formfield"]
         return form

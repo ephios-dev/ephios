@@ -1,17 +1,25 @@
-$(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-
-    $("[data-formset]").formset({
+function handleForms(elem) {
+    // Configure the subtree specified by the root elem (jquery object) for use
+    // with the various JS libs
+    elem.find('[data-toggle="tooltip"]').tooltip();
+    elem.find(".django-select2").djangoSelect2()
+    elem.find("[data-formset]").formset({
         animateForms: true,
         reorderMode: 'dom',
     }).on("formAdded", "div", function (event) {
-        $(event.target).find(".django-select2").djangoSelect2()
+        handleForms($(event.target));
     });
+}
 
+$(document).ready(function () {
+    // Configure all prerendered Forms
+    handleForms($(document));
+
+    // Used for disposition TODO: move to plugin specific JS!
     $("[data-drop-to-state]").each(function (index, elem) {
         Sortable.create(elem, {
             group: "participations",
-            sort: false,
+            sort: true,
             draggable: ".draggable",
             emptyInsertThreshold: 50,
             animation: 150,

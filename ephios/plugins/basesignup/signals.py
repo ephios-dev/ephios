@@ -1,7 +1,8 @@
 from django.dispatch import receiver
 
 from ephios.event_management.signup import register_signup_methods
-from ephios.plugins.basesignup.signup import (
+from ephios.plugins.basesignup.signup.section_based import SectionBasedSignupMethod
+from ephios.plugins.basesignup.signup.simple import (
     InstantConfirmationSignupMethod,
     RequestConfirmSignupMethod,
 )
@@ -12,4 +13,4 @@ from ephios.plugins.basesignup.signup import (
     dispatch_uid="ephios.plugins.basesignup.signals.register_signup_methods",
 )
 def register_base_signup_methods(sender, **kwargs):
-    return [InstantConfirmationSignupMethod, RequestConfirmSignupMethod]
+    return [InstantConfirmationSignupMethod, RequestConfirmSignupMethod, SectionBasedSignupMethod]
