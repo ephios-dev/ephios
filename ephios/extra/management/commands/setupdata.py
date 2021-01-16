@@ -405,30 +405,35 @@ class DLRGQualificationDataset(AbstractDataset):
             uuid=uuid.UUID("1ba25ee1-fa88-4d44-9416-3a024caa6daf"),
         )
 
-        wr_category = QualificationCategory.objects.create(
-            title=_("Water rescue (DLRG)"),
-            uuid=uuid.UUID("93574a61-1a6e-4dd5-8df3-40e8c51b693f"),
+        drsa_category = QualificationCategory.objects.create(
+            title=_("DRSA"),
+            uuid=uuid.UUID("cd10e68f-41fe-4ca0-a624-3ab3eb85bd08"),
         )
         rettschw_bronze = Qualification.objects.create(
-            category=wr_category,
+            category=drsa_category,
             title="Rettungsschwimmer Bronze",
             abbreviation="RS Bronze",
             uuid=uuid.UUID("247fab6a-8784-4976-a406-985fe47dc683"),
         )
         rettschw_silber = Qualification.objects.create(
-            category=wr_category,
+            category=drsa_category,
             title="Rettungsschwimmer Silber",
             abbreviation="RS Silber",
             uuid=uuid.UUID("ef95a854-2eeb-431c-a795-bc291b341d49"),
         )
         rettschw_silber.included_qualifications.add(rettschw_bronze)
         rettschw_gold = Qualification.objects.create(
-            category=wr_category,
+            category=drsa_category,
             title="Rettungsschwimmer Gold",
             abbreviation="RS Gold",
             uuid=uuid.UUID("b601a18b-cee8-4037-af33-dd7aabeac295"),
         )
         rettschw_gold.included_qualifications.add(rettschw_silber)
+
+        wr_category = QualificationCategory.objects.create(
+            title=_("Water rescue (DLRG)"),
+            uuid=uuid.UUID("93574a61-1a6e-4dd5-8df3-40e8c51b693f"),
+        )
         wr = Qualification.objects.create(
             category=wr_category,
             title="Fachausbildung Wasserrettungsdienst (DLRG)",
