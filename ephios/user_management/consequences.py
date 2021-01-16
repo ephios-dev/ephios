@@ -157,17 +157,17 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def execute(cls, consequence):
-        expires_str = consequence.data["expires"]
-        expires = None if not expires_str else datetime.fromisoformat(expires_str)
         qg, created = QualificationGrant.objects.get_or_create(
             defaults=dict(
-                expires=expires,
+                expires=consequence.data["expires"],
             ),
             user=consequence.user,
             qualification_id=consequence.data["qualification_id"],
         )
         if not created:
-            qg.expires = max(qg.expires, expires, key=lambda dt: dt or datetime.max)
+            qg.expires = max(
+                qg.expires, consequence.data["expires"], key=lambda dt: dt or datetime.max
+            )
             qg.save()
 
     @classmethod
