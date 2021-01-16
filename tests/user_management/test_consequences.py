@@ -45,6 +45,18 @@ class TestQualificationConsequence:
         qualifications_consequence.confirm(superuser)
         assert qualifications.nfs in qualifications_consequence.user.qualifications
 
+    def test_extend_qualification(
+        self, django_app, qualified_volunteer, qualifications_consequence, qualifications
+    ):
+        with pytest.raises(Qualification.DoesNotExist):
+            qualified_volunteer.qualifications.get(
+                pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
+            )
+        qualifications_consequence.confirm(qualified_volunteer)
+        assert qualified_volunteer.qualifications.get(
+            pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
+        )
+
 
 @pytest.mark.django_db
 class TestWorkingHourConsequence:
@@ -58,10 +70,36 @@ class TestWorkingHourConsequence:
             user=volunteer, data__date=datetime.now().date(), data__hours=42, data__reason="testing"
         )
 
-    def test_render_qualification_granting(self, qualifications_consequence):
-        assert qualifications_consequence.render()
+    def test_render_workinghour_consequence(self, workinghours_consequence):
+        assert workinghours_consequence.render()
 
     def test_confirm_workinghours(self, volunteer, superuser, workinghours_consequence):
         assert volunteer.get_workhour_items()[0] == 0
         workinghours_consequence.confirm(superuser)
         assert volunteer.get_workhour_items()[0] == workinghours_consequence.data.get("hours")
+
+
+@pytest.mark.django_db
+def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualifications_consequence):
+    assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
+    POST_DATA = {"action": "confirm"}
+    csrf_exempt_django_app.post(
+        reverse("user_management:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
+        user=superuser,
+        params=POST_DATA,
+    )
+    qualifications_consequence.refresh_from_db()
+    assert qualifications_consequence.state == Consequence.States.EXECUTED
+
+
+@pytest.mark.django_db
+def test_post_consequence_deny(csrf_exempt_django_app, superuser, qualifications_consequence):
+    assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
+    POST_DATA = {"action": "deny"}
+    csrf_exempt_django_app.post(
+        reverse("user_management:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
+        user=superuser,
+        params=POST_DATA,
+    )
+    qualifications_consequence.refresh_from_db()
+    assert qualifications_consequence.state == Consequence.States.DENIED

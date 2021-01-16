@@ -151,23 +151,23 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             data=dict(
                 qualification_id=qualification.id,
                 event_id=None if shift is None else shift.event_id,
-                expires=None if expires is None else expires.isoformat(),
+                expires=expires,
             ),
         )
 
     @classmethod
     def execute(cls, consequence):
-        expires_str = consequence.data["expires"]
-        expires = None if not expires_str else datetime.fromisoformat(expires_str)
         qg, created = QualificationGrant.objects.get_or_create(
             defaults=dict(
-                expires=expires,
+                expires=consequence.data["expires"],
             ),
             user=consequence.user,
             qualification_id=consequence.data["qualification_id"],
         )
         if not created:
-            qg.expires = max(qg.expires, expires, key=lambda dt: dt or datetime.max)
+            qg.expires = max(
+                qg.expires, consequence.data["expires"], key=lambda dt: dt or datetime.max
+            )
             qg.save()
 
     @classmethod
@@ -188,8 +188,8 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 id=consequence.data["qualification_id"]
             ).title
 
-        if expires_str := consequence.data.get("expires"):
-            expires_str = date_format(datetime.fromisoformat(expires_str))
+        if expires := consequence.data.get("expires"):
+            expires = date_format(expires)
 
         user = consequence.user.get_full_name()
 
@@ -205,8 +205,8 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 qualification=qualification_title,
             )
 
-        if expires_str:
-            s += " " + _("(valid until {expires_str})").format(expires_str=expires_str)
+        if expires:
+            s += " " + _("(valid until {expires_str})").format(expires_str=expires)
         return s
 
     @classmethod

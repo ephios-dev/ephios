@@ -319,7 +319,7 @@ def qualifications_consequence(volunteer, qualifications, event, tz):
         user=volunteer,
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
-        expires=datetime(2064, 4, 1).astimezone(tz),
+        expires=datetime(2065, 4, 1).astimezone(tz),
     )
 
 
