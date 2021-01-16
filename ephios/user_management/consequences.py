@@ -188,8 +188,8 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 id=consequence.data["qualification_id"]
             ).title
 
-        if expires_str := consequence.data.get("expires"):
-            expires_str = date_format(datetime.fromisoformat(expires_str))
+        if expires := consequence.data.get("expires"):
+            expires = date_format(expires)
 
         user = consequence.user.get_full_name()
 
@@ -205,8 +205,8 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 qualification=qualification_title,
             )
 
-        if expires_str:
-            s += " " + _("(valid until {expires_str})").format(expires_str=expires_str)
+        if expires:
+            s += " " + _("(valid until {expires_str})").format(expires_str=expires)
         return s
 
     @classmethod
