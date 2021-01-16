@@ -151,7 +151,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             data=dict(
                 qualification_id=qualification.id,
                 event_id=None if shift is None else shift.event_id,
-                expires=None if expires is None else expires.isoformat(),
+                expires=expires,
             ),
         )
 
