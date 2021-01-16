@@ -69,7 +69,7 @@ too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsis
 max-line-length = "100"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "ephios.settings"
+DJANGO_SETTINGS_MODULE = "tests.settings"
 addopts = "--fail-on-template-vars"
 
 [build-system]

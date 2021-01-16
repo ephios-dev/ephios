@@ -96,6 +96,7 @@ class AbstractParticipation(PolymorphicModel):
 
     shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
     state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
+    data = models.JSONField(default=dict)
 
     @property
     def hours_value(self):

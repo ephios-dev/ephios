@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
 from ephios.event_management.models import Event, EventType, Shift
-from ephios.plugins.basesignup.signup import RequestConfirmSignupMethod
+from ephios.plugins.basesignup.signup.simple import RequestConfirmSignupMethod
 from ephios.user_management.consequences import (
     QualificationConsequenceHandler,
     WorkingHoursConsequenceHandler,
@@ -16,9 +16,15 @@ from ephios.user_management.consequences import (
 from ephios.user_management.models import (
     Qualification,
     QualificationCategory,
+    QualificationGrant,
     UserProfile,
     WorkingHours,
 )
+
+
+@pytest.fixture
+def csrf_exempt_django_app(django_app_factory):
+    return django_app_factory(csrf_checks=False)
 
 
 @pytest.fixture
@@ -70,6 +76,20 @@ def volunteer():
         date_of_birth=date(1990, 1, 1),
         password="dummy",
     )
+
+
+@pytest.fixture
+def qualified_volunteer(volunteer, qualifications, tz):
+    QualificationGrant.objects.create(
+        user=volunteer,
+        qualification=qualifications.nfs,
+        expires=datetime(2064, 4, 1).astimezone(tz),
+    )
+    QualificationGrant.objects.create(
+        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1).astimezone(tz)
+    )
+    QualificationGrant.objects.create(user=volunteer, qualification=qualifications.b, expires=None)
+    return volunteer
 
 
 @pytest.fixture

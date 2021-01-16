@@ -1,0 +1,50 @@
+{% load i18n %}
+
+
+<div class="row">
+    <div class="col-lg-4">
+        <dl>
+            <dt>
+                {% translate "Requests" %}
+            </dt>
+            <dd>
+                <ul>
+                    {% for participation in requested_participations %}
+                        <li>{{ participation.participant }}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </div>
+    <div class="col-lg-8">
+        <dl>
+            <dt>
+                {% translate "Signed up" %}
+            </dt>
+            <dd>
+                <ul>
+                    {% for section, names in confirmed_sections_with_users %}
+                        <li>
+                            {{ section.title }}
+                            <small class="text-secondary float-right">
+                                {{ names|length }}/{{ section.min_count }}
+                            </small>
+                            <ul>
+                                {% for name in names %}
+                                    <li>{{ name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+{% if disposition_url %}
+    <div class="row float-right">
+        <a href="{{ disposition_url }}" class="btn btn-outline-info"><span
+                class="fas fa-hand-point-right"></span> {% translate "Disposition" %}</a>
+    </div>
+{% endif %}

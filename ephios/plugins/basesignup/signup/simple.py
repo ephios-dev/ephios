@@ -103,7 +103,7 @@ DispositionParticipationFormset = forms.modelformset_factory(
 class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     model = Shift
     permission_required = "event_management.change_event"
-    template_name = "basesignup/requestconfirm_signup/disposition.html"
+    template_name = "basesignup/disposition.html"
 
     def get_permission_object(self):
         self.object: Shift = self.get_object()
@@ -129,6 +129,9 @@ class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectM
     def get_context_data(self, **kwargs):
         kwargs.setdefault("formset", self.get_formset())
         kwargs.setdefault("states", AbstractParticipation.States)
+        kwargs.setdefault(
+            "participant_template", "basesignup/requestconfirm/fragment_participant.html"
+        )
         return super().get_context_data(**kwargs)
 
 
@@ -149,7 +152,7 @@ class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
                 AbstractParticipation.States.CONFIRMED,
             }
         )
-        return get_template("basesignup/requestconfirm_signup/fragment_state.html").render(
+        return get_template("basesignup/requestconfirm/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participants": (
