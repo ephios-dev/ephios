@@ -70,9 +70,9 @@ msgid ""
 "Further information: {description}\n"
 "You can view the event here: {url}"
 msgstr ""
-"{type} {title} wurde hinzugefügt.\n"
+"{type} {title} ({location}) wurde hinzugefügt.\n"
 " Weitere Informationen: {description}\n"
-"Sie können die Veranstaltung hier ansehen: {link}"
+"Sie können die Veranstaltung hier ansehen: {url}"
 
 #: .\ephios\event_management\mail.py:55
 #, python-brace-format
