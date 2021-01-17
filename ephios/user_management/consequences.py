@@ -117,7 +117,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} logs {hours:.1f} hours on {date} for {reason}").format(
+        return _("{user} logs {hours:.1f} hours on {date}. Reason: {reason}").format(
             user=consequence.user.get_full_name(),
             hours=consequence.data.get("hours"),
             reason=consequence.data.get("reason"),
