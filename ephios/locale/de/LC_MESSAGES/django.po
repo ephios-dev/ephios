@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 17:28+0100\n"
+"POT-Creation-Date: 2021-01-17 18:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -668,11 +668,11 @@ msgstr "Funk"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:39
 msgid "Section"
-msgstr "Sektion"
+msgstr "Abschnitt"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:72
 msgid "You must select a section when confirming a participation."
-msgstr "Sie müssen eine Sektion auswählen um diese Teilnahme zu bestätigen."
+msgstr "Sie müssen einen Abschnitt auswählen um diese Teilnahme zu bestätigen."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:130
 #: .\ephios\plugins\basesignup\signup\simple.py:39
@@ -685,11 +685,11 @@ msgstr "Mindestanzahl"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:158
 msgid "The sections aren't configured correctly."
-msgstr "Die Sektionen sind nicht korrekt konfiguiert."
+msgstr "Die Abschnitte sind nicht korrekt konfiguiert."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:172
 msgid "Preferred Section"
-msgstr "Bevorzugte Sektion"
+msgstr "Bevorzugter Abschnitt"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:218
 msgid "You can not sign up for this shift."
@@ -697,15 +697,15 @@ msgstr "Sie können sich für diese Schicht nicht anmelden."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:229
 msgid "Apply for sections"
-msgstr "Bewerbung auf Sektionen"
+msgstr "Bewerbung auf Abschnitte"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:231
 msgid ""
 "This method lets you define sections for which people can choose from.\n"
 "        Sections contain qualifications that helpers need to fulfil."
 msgstr ""
-"Dieses Verfahren ermöglicht das Definieren von Sektionen, aus denen die "
-"Teilnehmenden auswählen können. Sektionen können Qualifikationen fordern, "
+"Dieses Verfahren ermöglicht das Definieren von Abschnitten, aus denen die "
+"Teilnehmenden auswählen können. Abschnitte können Qualifikationen fordern, "
 "die die Teilnehmenden aufweisen müssen."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:234
@@ -729,12 +729,12 @@ msgstr "Das Anfragen einer Teilnahme ist fehlgeschlagen: {error}"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:245
 msgid "Ask participants for a preferred section"
-msgstr "Teilnehmende nach einer bevorzugten Sektion fragen"
+msgstr "Teilnehmende nach einem bevorzugten Abschnitt fragen"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:246
 msgid "This only makes sense if you configure multiple sections."
 msgstr ""
-"Diese Option ist nur sinnvoll wenn Sie mehrere Sektionen konfigurieren."
+"Diese Option ist nur sinnvoll wenn Sie mehrere Abschnitte konfigurieren."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:254
 msgid "Structure"
@@ -798,11 +798,11 @@ msgstr "Angemeldet"
 
 #: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:12
 msgid "Sections"
-msgstr "Sektionen"
+msgstr "Abschnitte"
 
 #: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:39
 msgid "Add section"
-msgstr "Sektion hinzufügen"
+msgstr "Abschnitt hinzufügen"
 
 #: .\ephios\plugins\basesignup\templates\basesignup\section_based\fragment_participant.html:11
 msgid "prefers"
@@ -990,9 +990,8 @@ msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
 #: .\ephios\user_management\consequences.py:120
-#, python-brace-format
-msgid "{user} logs {hours:.1f} hours on {date} for {reason}"
-msgstr "{user} leistete am {date} {hours:.1f} Stunden für {reason}"
+msgid "{user} logs {hours:.1f} hours on {date}. Reason: {reason}"
+msgstr "{user} leistete {hours:.1f} Stunden am {date}. Anlass: {reason}"
 
 #: .\ephios\user_management\consequences.py:199
 #, python-brace-format
