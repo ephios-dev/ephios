@@ -1097,8 +1097,7 @@ msgid ""
 msgstr ""
 "Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerkonto in ephios "
 "angelegt wurde.\n"
-"Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort: {url}"
-"{reset_link}\n"
+"Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort: {url}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
 #: .\ephios\user_management\mail.py:35
