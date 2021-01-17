@@ -6,15 +6,12 @@
 Welcome to ephios's documentation!
 ==================================
 
+This documentation explains how to use, install or extend ephios. If you can't find what you're looking for in
+the corresponding section, feel free to contact us.
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   user/index
+   admin/index
+   development/index

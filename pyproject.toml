@@ -7,6 +7,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://ephios.de"
 repository = "https://github.com/ephios-dev/ephios"
+documentation = "https://ephios.readthedocs.io/en/stable/"
 
 [tool.poetry.dependencies]
 python = "^3.8"
