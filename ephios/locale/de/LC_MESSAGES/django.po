@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 17:05+0100\n"
+"POT-Creation-Date: 2021-01-17 17:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,20 +55,23 @@ msgid ""
 "create below, e.g. daily events will be created from this date onwards."
 msgstr ""
 "Dieses Datum wird als Startdatum für wiederkehrende Veranstaltungen "
-"verwendet, die Sie unten erstellen. So werden beispielsweise tägliche Veranstaltungen "
-"ab diesem Datum erstellt."
+"verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
+"Veranstaltungen ab diesem Datum erstellt."
 
 #: .\ephios\event_management\mail.py:23
 #, python-brace-format
 msgid "New {type}: {title}"
 msgstr "{type} hinzugefügt: {title}"
 
+#: .\ephios\event_management\mail.py:25
+#, python-brace-format
 msgid ""
 "A new {type} ({title}, {location}) has been added.\n"
 "Further information: {description}\n"
 "You can view the event here: {url}"
 msgstr ""
-"{type} {title} wurde hinzugefügt.\n Weitere Informationen: {description}\n"
+"{type} {title} wurde hinzugefügt.\n"
+" Weitere Informationen: {description}\n"
 "Sie können die Veranstaltung hier ansehen: {link}"
 
 #: .\ephios\event_management\mail.py:55
@@ -204,7 +207,6 @@ msgid "Date"
 msgstr "Datum"
 
 #: .\ephios\event_management\pdf.py:67
-#: .\venv\Lib\site-packages\django\db\models\fields\__init__.py:2088
 msgid "Time"
 msgstr "Zeit"
 
@@ -323,8 +325,6 @@ msgstr "Vergangene Veranstaltungen"
 
 #: .\ephios\event_management\templates\event_management\event_archive.html:17
 #: .\ephios\event_management\templates\event_management\event_list.html:29
-#: .\venv\Lib\site-packages\polymorphic\admin\filters.py:18
-#: .\venv\Lib\site-packages\polymorphic\admin\forms.py:12
 msgid "Type"
 msgstr "Typ"
 
@@ -386,8 +386,6 @@ msgstr "Zurück"
 #: .\ephios\user_management\templates\user_management\userprofile_form.html:86
 #: .\ephios\user_management\templates\user_management\userprofile_form.html:101
 #: .\ephios\user_management\templates\user_management\userprofile_list.html:40
-#: .\venv\Lib\site-packages\django\forms\formsets.py:391
-#: .\venv\Lib\site-packages\polymorphic\templatetags\polymorphic_formset_tags.py:50
 msgid "Delete"
 msgstr "Löschen"
 
@@ -403,9 +401,6 @@ msgid "Are you sure you want to delete the event \"%(object)s\"?"
 msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 
 #: .\ephios\event_management\templates\event_management\event_copy.html:7
-msgid "Duplicate event"
-msgstr "Veranstaltung duplizieren"
-
 #: .\ephios\event_management\templates\event_management\event_copy.html:17
 #: .\ephios\event_management\templates\event_management\event_detail.html:55
 msgid "Copy event"
@@ -710,8 +705,8 @@ msgid ""
 "        Sections contain qualifications that helpers need to fulfil."
 msgstr ""
 "Dieses Verfahren ermöglicht das Definieren von Sektionen, aus denen die "
-"Teilnehmenden auswählen können. Sektionen können Qualifikationen "
-"fordern, die die Teilnehmenden aufweisen müssen."
+"Teilnehmenden auswählen können. Sektionen können Qualifikationen fordern, "
+"die die Teilnehmenden aufweisen müssen."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:234
 #: .\ephios\plugins\basesignup\signup\simple.py:144
@@ -738,7 +733,8 @@ msgstr "Teilnehmende nach einer bevorzugten Sektion fragen"
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:246
 msgid "This only makes sense if you configure multiple sections."
-msgstr "Diese Option ist nur sinnvoll wenn Sie mehrere Sektionen konfigurieren."
+msgstr ""
+"Diese Option ist nur sinnvoll wenn Sie mehrere Sektionen konfigurieren."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:254
 msgid "Structure"
@@ -989,6 +985,7 @@ msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
 #: .\ephios\user_management\consequences.py:35
+#, python-brace-format
 msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
@@ -1000,9 +997,12 @@ msgstr "{user} leistete am {date} {hours:.1f} Stunden für {reason}"
 #: .\ephios\user_management\consequences.py:199
 #, python-brace-format
 msgid "{user} acquires '{qualification}' after participating in {event}."
-msgstr "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an {event}"
+msgstr ""
+"{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
+"{event}"
 
 #: .\ephios\user_management\consequences.py:203
+#, python-brace-format
 msgid "{user} acquires '{qualification}'."
 msgstr "{user} erhält die Qualifikation '{qualification}'"
 
@@ -1044,8 +1044,8 @@ msgstr "Kann Benutzer verwalten"
 #: .\ephios\user_management\forms.py:113
 msgid "If checked, users in this group can view, add, edit and delete users."
 msgstr ""
-"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe "
-" andere Benutzerprofile ansehen, bearbeiten und löschen."
+"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe  andere "
+"Benutzerprofile ansehen, bearbeiten und löschen."
 
 #: .\ephios\user_management\forms.py:117
 msgid "Can manage groups"
@@ -1054,8 +1054,8 @@ msgstr "Kann Gruppen verwalten"
 #: .\ephios\user_management\forms.py:118
 msgid "If checked, users in this group can view, add, edit and delete groups."
 msgstr ""
-"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe "
-" andere Gruppen ansehen, bearbeiten und löschen."
+"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe  andere "
+"Gruppen ansehen, bearbeiten und löschen."
 
 #: .\ephios\user_management\forms.py:125
 msgid "Can decide working hours for groups"
@@ -1066,8 +1066,8 @@ msgid ""
 "Choose groups that the group you are currently editing can decide whether to "
 "grant working hours for."
 msgstr ""
-"Wählen Sie Gruppen für die die gerade bearbeitete Gruppe über "
-"die Genehmigung von Arbeitsstunden entscheiden kann."
+"Wählen Sie Gruppen für die die gerade bearbeitete Gruppe über die "
+"Genehmigung von Arbeitsstunden entscheiden kann."
 
 #: .\ephios\user_management\forms.py:256
 msgid "Inactive users cannot log in and do not get any notifications."
@@ -1088,6 +1088,7 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: .\ephios\user_management\mail.py:20
+#, python-brace-format
 msgid ""
 "You're receiving this email because a new account has been created for you "
 "at ephios.\n"
@@ -1105,6 +1106,12 @@ msgid "ephios account updated"
 msgstr "ephios-Benutzerkonto aktualisiert"
 
 #: .\ephios\user_management\mail.py:38
+#, fuzzy, python-brace-format
+#| msgid ""
+#| "You're receiving this email because your account at ephios has been "
+#| "updated.\n"
+#| "You can see the changes in your profile: {url}\n"
+#| "Your username is your email address: {email}\n"
 msgid ""
 "You're receiving this email because your account at ephios has been "
 "updated.\n"
@@ -1376,7 +1383,6 @@ msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
 #: .\ephios\user_management\templates\user_management\userprofile_list.html:23
-#: .\venv\Lib\site-packages\django\db\models\fields\__init__.py:1589
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
