@@ -132,7 +132,7 @@ class SectionForm(forms.Form):
         widget=Select2MultipleWidget,
         required=False,
     )
-    min_count = forms.IntegerField(label=_("min amount"), min_value=1, required=True)
+    min_count = forms.IntegerField(label=_("min amount"), min_value=0, required=True)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def clean_uuid(self):
