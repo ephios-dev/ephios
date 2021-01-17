@@ -44,6 +44,7 @@ coveralls = "^2.2.0"
 isort = "^5.7.0"
 pylint = "^2.6.0"
 autoflake = "^1.4"
+Sphinx = "^3.4.3"
 
 [tool.black]
 line-length = 100
