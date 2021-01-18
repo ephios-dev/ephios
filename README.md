@@ -17,7 +17,7 @@ qualifications or an overview of the volunteer hours worked. The functions can b
 for example by complete modules (such as stock control) or by further process types for the registration for events.
 
 ## Documentation
-You can find the documentation for ephios at [Read the Docs](https://docs.ephios.de/en/latest>). This includes
+You can find the documentation for ephios at [Read the Docs](https://docs.ephios.de/en/latest). This includes
 the user guide and installation instructions.
 
 ## Contributing
