@@ -47,6 +47,7 @@ pylint = "^2.6.0"
 autoflake = "^1.4"
 Sphinx = "^3.4.3"
 sphinx-rtd-theme = "^0.5.1"
+sphinx-intl = "^2.0.1"
 
 [tool.black]
 line-length = 100

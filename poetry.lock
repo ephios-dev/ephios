@@ -856,6 +856,23 @@ lint = ["flake8 (>=3.5.0)", "isort", "mypy (>=0.790)", "docutils-stubs"]
 test = ["pytest", "pytest-cov", "html5lib", "cython", "typed-ast"]
 
 [[package]]
+name = "sphinx-intl"
+version = "2.0.1"
+description = "Sphinx utility that make it easy to translate and to apply translation."
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+babel = "*"
+click = "*"
+sphinx = "*"
+
+[package.extras]
+test = ["pytest", "mock"]
+transifex = ["transifex_client (>=0.11)"]
+
+[[package]]
 name = "sphinx-rtd-theme"
 version = "0.5.1"
 description = "Read the Docs theme for Sphinx"
@@ -1068,7 +1085,7 @@ pgsql = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "31d36fe5d159458202107d41162b4e825c62d54dce16bafe86ff2e0dd4574496"
+content-hash = "6b4d8aeaedb9faded1ae7dc6979c570488609c2624d3d77da4ca765e943c6153"
 
 [metadata.files]
 alabaster = [
@@ -1596,6 +1613,10 @@ soupsieve = [
 sphinx = [
     {file = "Sphinx-3.4.3-py3-none-any.whl", hash = "sha256:c314c857e7cd47c856d2c5adff514ac2e6495f8b8e0f886a8a37e9305dfea0d8"},
     {file = "Sphinx-3.4.3.tar.gz", hash = "sha256:41cad293f954f7d37f803d97eb184158cfd90f51195131e94875bc07cd08b93c"},
+]
+sphinx-intl = [
+    {file = "sphinx-intl-2.0.1.tar.gz", hash = "sha256:b25a6ec169347909e8d983eefe2d8adecb3edc2f27760db79b965c69950638b4"},
+    {file = "sphinx_intl-2.0.1-py3.8.egg", hash = "sha256:2ff97cba0e4e43249e339a3c29dd2f5b63c25ce794050aabca320ad95f5c5b55"},
 ]
 sphinx-rtd-theme = [
     {file = "sphinx_rtd_theme-0.5.1-py2.py3-none-any.whl", hash = "sha256:fa6bebd5ab9a73da8e102509a86f3fcc36dec04a0b52ea80e5a033b2aba00113"},
