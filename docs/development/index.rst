@@ -7,3 +7,4 @@ This section shows how to contribute to ephios and how to develop plugins.
     :maxdepth: 2
 
     contributing
+    plugin
