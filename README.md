@@ -1,6 +1,9 @@
 ![ephios](https://github.com/ephios-dev/ephios/workflows/ephios/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/ephios/badge/?version=latest)](https://docs.ephios.de/en/latest/?badge=latest)
+![PyPI](https://img.shields.io/pypi/v/ephios)
 [![Coverage Status](https://coveralls.io/repos/github/ephios-dev/ephios/badge.svg?branch=main)](https://coveralls.io/github/ephios-dev/ephios?branch=main)
+[![translated by Weblate](https://hosted.weblate.org/widgets/ephios/-/svg-badge.svg)](https://hosted.weblate.org/engage/ephios/)
+
 
 # ephios
 
@@ -19,3 +22,4 @@ the user guide and installation instructions.
 
 ## Contributing
 Contributions to ephios are very welcome. You can find information about contributing at our [Contribution page](https://docs.ephios.de/en/latest/development/contributing.html)
+We are using Weblate for translations, you can also contribute [there](https://hosted.weblate.org/engage/ephios/).
