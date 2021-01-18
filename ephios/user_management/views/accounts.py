@@ -37,7 +37,9 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
     model = UserProfile
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault("userprofile_form", UserProfileForm(self.request.POST or None))
+        kwargs.setdefault(
+            "userprofile_form", UserProfileForm(self.request.POST or None, request=self.request)
+        )
         kwargs.setdefault(
             "qualification_formset", QualificationGrantFormset(self.request.POST or None)
         )
@@ -78,6 +80,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                 "groups": self.get_object().groups.all(),
             },
             instance=self.object,
+            request=self.request,
         )
 
     def get_qualification_formset(self):
