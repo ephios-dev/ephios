@@ -22,6 +22,7 @@ $(document).ready(function () {
             sort: true,
             draggable: ".draggable",
             emptyInsertThreshold: 50,
+            fallbackTolerance: 5,
             animation: 150,
             easing: "cubic-bezier(1, 0, 0, 1)",
             onAdd: function (event) {
