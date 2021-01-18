@@ -7,6 +7,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://ephios.de"
 repository = "https://github.com/ephios-dev/ephios"
+documentation = "https://docs.ephios.de/en/stable/"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -44,6 +45,9 @@ coveralls = "^2.2.0"
 isort = "^5.7.0"
 pylint = "^2.6.0"
 autoflake = "^1.4"
+Sphinx = "^3.4.3"
+sphinx-rtd-theme = "^0.5.1"
+sphinx-intl = "^2.0.1"
 
 [tool.black]
 line-length = 100
