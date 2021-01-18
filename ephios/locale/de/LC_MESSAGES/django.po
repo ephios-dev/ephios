@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-17 18:00+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2021-01-18 16:50+0000\n"
+"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.5-dev\n"
 
 #: .\ephios\event_management\forms.py:24
 msgid "Visible for"
@@ -241,7 +242,7 @@ msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 #: .\ephios\event_management\signup.py:149
 #, python-brace-format
 msgid "You have already requested your participation for {shift}"
-msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt."
+msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt"
 
 #: .\ephios\event_management\signup.py:155
 #, python-brace-format
@@ -307,7 +308,7 @@ msgstr "Anmelden bis"
 
 #: .\ephios\event_management\signup.py:312
 msgid "Confirmed users can decline by themselves"
-msgstr "Bestätigte Nutzer können selbstständig absagen."
+msgstr "Bestätigte Nutzer können selbstständig absagen"
 
 #: .\ephios\event_management\signup.py:314
 msgid "only if the signup timeframe has not ended"
@@ -498,7 +499,7 @@ msgstr "Ausgewählte löschen"
 
 #: .\ephios\event_management\templates\event_management\fragments\approve_consequences.html:8
 msgid "Confirm results"
-msgstr "Konsequenzen bestätigen"
+msgstr "Offene Anfragen"
 
 #: .\ephios\event_management\templates\event_management\fragments\shift_box_big.html:12
 #: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:9
@@ -705,8 +706,9 @@ msgid ""
 "        Sections contain qualifications that helpers need to fulfil."
 msgstr ""
 "Dieses Verfahren ermöglicht das Definieren von Abschnitten, aus denen die "
-"Teilnehmenden auswählen können. Abschnitte können Qualifikationen fordern, "
-"die die Teilnehmenden aufweisen müssen."
+"Teilnehmenden auswählen können.\n"
+"Abschnitte können Qualifikationen fordern, die die Teilnehmenden aufweisen "
+"müssen."
 
 #: .\ephios\plugins\basesignup\signup\section_based.py:234
 #: .\ephios\plugins\basesignup\signup\simple.py:144
@@ -998,12 +1000,12 @@ msgstr "{user} leistete {hours:.1f} Stunden am {date}. Anlass: {reason}"
 msgid "{user} acquires '{qualification}' after participating in {event}."
 msgstr ""
 "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
-"{event}"
+"{event}."
 
 #: .\ephios\user_management\consequences.py:203
 #, python-brace-format
 msgid "{user} acquires '{qualification}'."
-msgstr "{user} erhält die Qualifikation '{qualification}'"
+msgstr "{user} erhält die Qualifikation '{qualification}'."
 
 #: .\ephios\user_management\consequences.py:209
 #, python-brace-format
@@ -1020,7 +1022,7 @@ msgstr "Bestätigung des Passworts"
 
 #: .\ephios\user_management\forms.py:50
 msgid "Passwords don't match"
-msgstr "Die Passwörter stimmen nicht überein."
+msgstr "Die Passwörter stimmen nicht überein"
 
 #: .\ephios\user_management\forms.py:103
 msgid "Can publish events for groups"
@@ -1043,7 +1045,7 @@ msgstr "Kann Benutzer verwalten"
 #: .\ephios\user_management\forms.py:113
 msgid "If checked, users in this group can view, add, edit and delete users."
 msgstr ""
-"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe  andere "
+"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
 "Benutzerprofile ansehen, bearbeiten und löschen."
 
 #: .\ephios\user_management\forms.py:117
@@ -1053,7 +1055,7 @@ msgstr "Kann Gruppen verwalten"
 #: .\ephios\user_management\forms.py:118
 msgid "If checked, users in this group can view, add, edit and delete groups."
 msgstr ""
-"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe  andere "
+"Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
 "Gruppen ansehen, bearbeiten und löschen."
 
 #: .\ephios\user_management\forms.py:125
@@ -1104,12 +1106,7 @@ msgid "ephios account updated"
 msgstr "ephios-Benutzerkonto aktualisiert"
 
 #: .\ephios\user_management\mail.py:38
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "You're receiving this email because your account at ephios has been "
-#| "updated.\n"
-#| "You can see the changes in your profile: {url}\n"
-#| "Your username is your email address: {email}\n"
+#, python-brace-format
 msgid ""
 "You're receiving this email because your account at ephios has been "
 "updated.\n"
@@ -1118,7 +1115,7 @@ msgid ""
 msgstr ""
 "Sie erhalten diese E-Mail, weil Ihr Benutzerkonto in ephios aktualisiert "
 "wurde.\n"
-"Sie können die Änderungen in Ihrem Benutzerprofil einsehen: {site_url}{url}\n"
+"Sie können die Änderungen in Ihrem Benutzerprofil einsehen: {url}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
 #: .\ephios\user_management\models.py:73
@@ -1289,7 +1286,8 @@ msgid ""
 msgstr ""
 "\n"
 "            Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich "
-"löschen?"
+"löschen?\n"
+"        "
 
 #: .\ephios\user_management\templates\user_management\userprofile_detail.html:16
 msgid "Your data"
@@ -1324,7 +1322,7 @@ msgstr "Qualifikationen"
 
 #: .\ephios\user_management\templates\user_management\userprofile_detail.html:43
 msgid "You have not been assigned any qualificiations. "
-msgstr "Ihnen wurden keine Qualifikationen zugewiesen."
+msgstr "Ihnen wurden keine Qualifikationen zugewiesen. "
 
 #: .\ephios\user_management\templates\user_management\userprofile_detail.html:50
 msgid "Calendar feed"
@@ -1399,7 +1397,7 @@ msgstr ""
 
 #: .\ephios\user_management\utils.py:18
 msgid "Your password has been changed"
-msgstr "Ihr Passwort wurde geändert."
+msgstr "Ihr Passwort wurde geändert"
 
 #: .\ephios\user_management\views\accounts.py:55
 #, python-brace-format
