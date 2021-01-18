@@ -15,8 +15,7 @@ The volunteers can register for the respective shifts via a clearly arranged web
 The planners can then assign personnel and have an overview of the current status.
 Around this central feature there are further supporting functions like the management of the volunteers and their
 qualifications or an overview of the volunteer hours worked. A flexible group systems helps to support complex permission
-szenarios. The functions can be extended at any time via plugin, for example by complete modules (such as stock control)
-or by further process types for the registration for events.
+szenarios. The functionality can be extended using plugins.
 
 ## Documentation
 You can find the documentation for ephios at [Read the Docs](https://docs.ephios.de/en/latest). This includes
