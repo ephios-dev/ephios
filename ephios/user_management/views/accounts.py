@@ -46,7 +46,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
         return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
-        userprofile_form = UserProfileForm(self.request.POST)
+        userprofile_form = UserProfileForm(self.request.POST, request=request)
         qualification_formset = QualificationGrantFormset(self.request.POST)
         if all((userprofile_form.is_valid(), qualification_formset.is_valid())):
             userprofile = userprofile_form.save()
