@@ -235,7 +235,10 @@ class GroupForm(ModelForm):
 
 class UserProfileForm(ModelForm):
     groups = ModelMultipleChoiceField(
-        label=_("Groups"), queryset=Group.objects.all(), widget=Select2MultipleWidget
+        label=_("Groups"),
+        queryset=Group.objects.all(),
+        widget=Select2MultipleWidget,
+        required=False,
     )
 
     field_order = [
