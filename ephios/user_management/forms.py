@@ -115,7 +115,9 @@ class GroupForm(ModelForm):
     )
     can_manage_group = BooleanField(
         label=_("Can manage groups"),
-        help_text=_("If checked, users in this group can view, add, edit and delete groups."),
+        help_text=_(
+            "If checked, users in this group can add and edit all groups, their permissions as well as group memberships."
+        ),
         required=False,
     )
     users = ModelMultipleChoiceField(
@@ -235,8 +237,20 @@ class GroupForm(ModelForm):
 
 class UserProfileForm(ModelForm):
     groups = ModelMultipleChoiceField(
-        label=_("Groups"), queryset=Group.objects.all(), widget=Select2MultipleWidget
+        label=_("Groups"),
+        queryset=Group.objects.all(),
+        widget=Select2MultipleWidget,
+        required=False,
+        disabled=True,  # explicitly enable for users with `change_group` permission
     )
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        if request and request.user.has_perm("change_group"):
+            self.fields["groups"].disabled = False
+        else:
+            self.fields["groups"].help_text = _("You are not allowed to change group associations.")
 
     field_order = [
         "email",
