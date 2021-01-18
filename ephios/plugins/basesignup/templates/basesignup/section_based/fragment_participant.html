@@ -1,6 +1,6 @@
 {% load bootstrap4 %}
 {% load i18n %}
-<li class="list-group-item draggable">
+<li class="list-group-item draggable" data-formset-form>
     <h6 class="card-title mb-0">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -13,13 +13,17 @@
                     </small>
                 {% endif %}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
                 {% bootstrap_field form.section show_label='sr-only' form_group_class="form-group mb-0" %}
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn  btn-sm" data-formset-delete-button>
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
     </h6>
     <div class="d-none">
-        {{ form.state }}
-        {{ form.id }}
+        {% bootstrap_form form exclude="section" layout="inline" %}
     </div>
 </li>

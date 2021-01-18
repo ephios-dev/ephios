@@ -6,13 +6,16 @@ from operator import itemgetter
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import FormView, TemplateView
+from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
-from django_select2.forms import Select2MultipleWidget
+from django_select2.forms import ModelSelect2Widget, Select2MultipleWidget
 
 from ephios.event_management.models import AbstractParticipation, Shift
 from ephios.event_management.signup import (
@@ -22,7 +25,7 @@ from ephios.event_management.signup import (
     ParticipationError,
 )
 from ephios.extra.permissions import CustomPermissionRequiredMixin
-from ephios.user_management.models import Qualification
+from ephios.user_management.models import Qualification, UserProfile
 
 
 def sections_participant_qualifies_for(sections, participant: AbstractParticipant):
@@ -42,17 +45,35 @@ class DispositionParticipationForm(forms.ModelForm):
     class Meta:
         model = AbstractParticipation
         fields = ["state"]
+        widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
-    def __init__(self, **kwargs):
+    def __init__(self, shift, **kwargs):
         super().__init__(**kwargs)
-        sections = self.instance.shift.signup_method.configuration.sections
-        self.fields["section"].choices = [("", "---")] + [
-            (section["uuid"], section["title"])
-            for section in sections_participant_qualifies_for(
+        sections = shift.signup_method.configuration.sections
+        qualified_sections = list(
+            sections_participant_qualifies_for(
                 sections,
                 self.instance.participant,
             )
+        )
+        unqualified_sections = [
+            section for section in sections if section not in qualified_sections
         ]
+        self.fields["section"].choices = (
+            ("", "---"),
+            (
+                _("qualified"),
+                [(section["uuid"], section["title"]) for section in qualified_sections],
+            )
+            if qualified_sections
+            else (),
+            (
+                _("unqualified"),
+                [(section["uuid"], section["title"]) for section in unqualified_sections],
+            )
+            if unqualified_sections
+            else (),
+        )
         if preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
             self.fields["section"].initial = preferred_section_uuid
             self.preferred_section = next(
@@ -82,14 +103,51 @@ DispositionParticipationFormset = forms.modelformset_factory(
     form=DispositionParticipationForm,
     extra=0,
     can_order=False,
-    can_delete=False,
-    widgets={
-        "state": forms.HiddenInput(attrs={"class": "state-input"}),
-    },
+    can_delete=True,
 )
 
 
+class AddUserForm(forms.Form):
+    user = forms.ModelChoiceField(
+        widget=ModelSelect2Widget(
+            model=UserProfile,
+            search_fields=["first_name__icontains", "last_name__icontains"],
+            attrs={"form": "add-user-form"},
+        ),
+        queryset=UserProfile.objects.none(),  # set using __init__
+    )
+
+    def __init__(self, user_queryset, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["user"].queryset = user_queryset
+
+
+class SectionBasedAddUserView(SingleObjectMixin, TemplateResponseMixin, View):
+    template_name = "basesignup/section_based/fragment_participant.html"
+    model = Shift
+    form_class = AddUserForm
+
+    def post(self, request, *args, **kwargs):
+        shift = self.get_object()
+        form = AddUserForm(
+            user_queryset=UserProfile.objects.exclude(localparticipation__shift__in=[shift]),
+            data=request.POST,
+        )
+        if form.is_valid():
+            user: UserProfile = form.cleaned_data["user"]
+            return self.render_to_response(
+                {
+                    "form": DispositionParticipationForm(
+                        instance=shift.signup_method.get_participation_for(user.as_participant()),
+                        shift=shift,
+                    ),
+                }
+            )
+        raise Http404("User does not exist")
+
+
 class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+    # TODO unite this class with the request_confirm one ;)
     model = Shift
     permission_required = "event_management.change_event"
     template_name = "basesignup/disposition.html"
@@ -103,7 +161,10 @@ class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMix
 
     def get_formset(self):
         formset = DispositionParticipationFormset(
-            self.request.POST or None, queryset=self.object.participations, prefix="participations"
+            self.request.POST or None,
+            queryset=self.object.participations,
+            prefix="participations",
+            form_kwargs=dict(shift=self.object),
         )
         return formset
 
@@ -120,6 +181,14 @@ class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMix
         kwargs.setdefault("sections", self.object.signup_method.configuration.sections)
         kwargs.setdefault(
             "participant_template", "basesignup/section_based/fragment_participant.html"
+        )
+        kwargs.setdefault(
+            "add_user_form",
+            AddUserForm(
+                user_queryset=UserProfile.objects.exclude(
+                    localparticipation__shift__in=[self.object]
+                )
+            ),
         )
         return super().get_context_data(**kwargs)
 
