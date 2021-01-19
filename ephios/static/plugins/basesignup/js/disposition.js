@@ -15,37 +15,58 @@ $(document).ready(function () {
         });
     });
 
-    $("select#id_user[form='add-user-form']").change(function () {
-        // Check input( $( this ).val() ) for validity here
-        console.log($(this).val());
-        const form = $("#" + $(this)[0].form.id);
-        console.log(form);
-        console.log(form.serialize());
-        $.ajax({
-            url: form.attr("action"),
-            type: 'post',
-            dataType: 'html',
-            data: form.serialize(),
-            success: function (data) {
-                // adapted from addForm from formset.js, maybe open a PR for that?!
-                const formset = $('#participation-form').formset('getOrCreate');
-                const newIndex = formset.totalFormCount();
+    $("select#id_user[form='add-user-form']").on('select2:close', function () {
+        // clear select2
+        const userSelect = $(this);
+        setTimeout(() => {userSelect.val(null).change()});
 
-                const spawn = $("[data-formset-spawn]");
-                const newFormHtml = data.replace(new RegExp(formset.opts.empty_prefix, 'g'), newIndex);
-                const $newFormFragment = $($.parseHTML(newFormHtml));
-                formset.$managementForm('TOTAL_FORMS').val(newIndex + 1);
-                spawn.append($newFormFragment);
-
-                var $newForm = $newFormFragment.filter(formset.opts.form);
-                formset.bindForm($newForm, newIndex);
-
-                var prefix = formset.formsetPrefix + '-' + newIndex;
-                $newForm.find('[name=' + prefix + '-ORDER]').val(newIndex);
-                $newForm.attr("data-formset-created-at-runtime", "true");
+        const spawn = $("[data-formset-spawn]");
+        const formset = $('#participation-form').formset('getOrCreate');
+        // look for existing form with that participation
+        const userId = $(this).val();
+        const participation = $('[data-participant-id=' + userId + ']');
+        if (participation.length) {
+            // we already have that card
+            const prefix = participation.find(":input").first().attr('name').replace(/(^.+-\d+)-(.+$)/i, '$1');
+            const deleteCheckbox = participation.find('[name=' + prefix + '-DELETE]');
+            if (deleteCheckbox.attr("checked")) {
+                // was marked for deletion, so revert that.
+                participation.attr("data-formset-created-at-runtime", true); // so formset.js decides to slideDown() it
+                deleteCheckbox.attr("checked", false).change();
             }
-        });
+            // now visible. Move it to here.
+            $([document.documentElement, document.body]).animate({
+                scrollTop: participation.offset().top
+            }, 1000);
+            participation.addClass("list-group-item-info");
+            setTimeout(() => {
+                participation.removeClass("list-group-item-info")
+            }, 2000);
+        } else {
+            // get the new form from the server
+            const addUserForm = $("#" + $(this)[0].form.id);
+            $.ajax({
+                url: addUserForm.attr("action"),
+                type: 'post',
+                dataType: 'html',
+                data: addUserForm.serialize(),
+                success: function (data) {
+                    // adapted from addForm from formset.js
+                    // update management form
+                    const newIndex = formset.totalFormCount() + 1;
+                    formset.$managementForm('TOTAL_FORMS').val(newIndex);
+                    formset.$managementForm('INITIAL_FORMS').val(newIndex);
 
+                    // insert html
+                    const $newFormFragment = $($.parseHTML(data));
+                    spawn.append($newFormFragment);
+
+                    var $newForm = $newFormFragment.filter(formset.opts.form);
+                    formset.bindForm($newForm, newIndex);
+                    $newForm.attr("data-formset-created-at-runtime", "true");
+                }
+            });
+        }
     });
 
 });

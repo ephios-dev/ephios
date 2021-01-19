@@ -1,7 +1,7 @@
 {% load bootstrap4 %}
 {% load i18n %}
-<li class="list-group-item draggable" data-formset-form>
-    <h6 class="card-title mb-0">
+<li class="list-group-item draggable" data-formset-form data-participant-id="{{ form.instance.user.id }}">
+    <h6 class="mb-0">
         <div class="row align-items-center">
             <div class="col-md-6">
                 <span class="fa fa-user"></span>

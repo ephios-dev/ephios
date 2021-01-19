@@ -44,11 +44,15 @@ class DispositionParticipationForm(forms.ModelForm):
 
     class Meta:
         model = AbstractParticipation
-        fields = ["state"]
+        fields = ["state", "id"]
         widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
     def __init__(self, shift, **kwargs):
         super().__init__(**kwargs)
+
+        # if "id" not in self.fields:
+        #    self.fields['id'] = forms.IntegerField(initial=self.instance.pk, widget=forms.HiddenInput)
+
         sections = shift.signup_method.configuration.sections
         qualified_sections = list(
             sections_participant_qualifies_for(
@@ -59,21 +63,21 @@ class DispositionParticipationForm(forms.ModelForm):
         unqualified_sections = [
             section for section in sections if section not in qualified_sections
         ]
-        self.fields["section"].choices = (
-            ("", "---"),
-            (
-                _("qualified"),
-                [(section["uuid"], section["title"]) for section in qualified_sections],
-            )
-            if qualified_sections
-            else (),
-            (
-                _("unqualified"),
-                [(section["uuid"], section["title"]) for section in unqualified_sections],
-            )
-            if unqualified_sections
-            else (),
-        )
+        self.fields["section"].choices = [("", "---")]
+        if qualified_sections:
+            self.fields["section"].choices += [
+                (
+                    _("qualified"),
+                    [(section["uuid"], section["title"]) for section in qualified_sections],
+                )
+            ]
+        if unqualified_sections:
+            self.fields["section"].choices += [
+                (
+                    _("unqualified"),
+                    [(section["uuid"], section["title"]) for section in unqualified_sections],
+                )
+            ]
         if preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
             self.fields["section"].initial = preferred_section_uuid
             self.preferred_section = next(
@@ -107,6 +111,17 @@ DispositionParticipationFormset = forms.modelformset_factory(
 )
 
 
+def addable_users(shift):
+    """
+    Return queryset of user objects that can be added to the shift.
+    This also includes users that already have a participation, as that might have gotten removed in JS.
+
+    This also includes users that can normally not see the event. The permission will be added accordingly.
+    # TODO: check how that looks and wether we actually check for that elsewhere and also actually add the permission.
+    """
+    return UserProfile.objects.all()  # you surprised it's just this? :D
+
+
 class AddUserForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=ModelSelect2Widget(
@@ -122,32 +137,44 @@ class AddUserForm(forms.Form):
         self.fields["user"].queryset = user_queryset
 
 
-class SectionBasedAddUserView(SingleObjectMixin, TemplateResponseMixin, View):
+class SectionBasedAddUserView(
+    CustomPermissionRequiredMixin, SingleObjectMixin, TemplateResponseMixin, View
+):
     template_name = "basesignup/section_based/fragment_participant.html"
+    permission_required = "event_management.change_event"
     model = Shift
-    form_class = AddUserForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object: Shift = self.get_object()
+
+    def get_permission_object(self):
+        return self.object.event
 
     def post(self, request, *args, **kwargs):
-        shift = self.get_object()
+        shift = self.object
         form = AddUserForm(
-            user_queryset=UserProfile.objects.exclude(localparticipation__shift__in=[shift]),
+            user_queryset=addable_users(shift),
             data=request.POST,
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
-            return self.render_to_response(
-                {
-                    "form": DispositionParticipationForm(
-                        instance=shift.signup_method.get_participation_for(user.as_participant()),
-                        shift=shift,
-                    ),
-                }
+            instance = shift.signup_method.get_participation_for(user.as_participant())
+            instance.state = AbstractParticipation.States.RESPONSIBLE_ADDED
+            instance.save()
+
+            formset = DispositionParticipationFormset(
+                queryset=self.object.participations,
+                prefix="participations",
+                form_kwargs=dict(shift=self.object),
             )
+            form = next(filter(lambda form: form.instance.id == instance.id, formset))
+            return self.render_to_response({"form": form})
         raise Http404("User does not exist")
 
 
 class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
-    # TODO unite this class with the request_confirm one ;)
+    # TODO unite this class with the request_confirm one ;)  [and the other ones too]
     model = Shift
     permission_required = "event_management.change_event"
     template_name = "basesignup/disposition.html"
@@ -172,6 +199,9 @@ class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMix
         formset = self.get_formset()
         if formset.is_valid():
             formset.save()
+            self.object.participations.filter(
+                state=AbstractParticipation.States.RESPONSIBLE_ADDED
+            ).delete()
             return redirect(self.object.event.get_absolute_url())
         return self.get(request, *args, **kwargs, formset=formset)
 
@@ -184,11 +214,7 @@ class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMix
         )
         kwargs.setdefault(
             "add_user_form",
-            AddUserForm(
-                user_queryset=UserProfile.objects.exclude(
-                    localparticipation__shift__in=[self.object]
-                )
-            ),
+            AddUserForm(user_queryset=addable_users(self.object)),
         )
         return super().get_context_data(**kwargs)
 

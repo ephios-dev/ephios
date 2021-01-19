@@ -18,7 +18,8 @@
         <h1>{{ shift }}</h1>
     </div>
 
-    <form method="post" class="d-none" id="add-user-form" action="{% url "basesignup:shift_disposition_add_user_section_based" pk=shift.pk %}">{% csrf_token %}</form>
+    <form method="post" class="d-none" id="add-user-form"
+          action="{% url "basesignup:shift_disposition_add_user_section_based" pk=shift.pk %}">{% csrf_token %}</form>
 
     <form method="post" class="form" id="participation-form" data-formset data-formset-prefix="{{ formset.prefix }}">
         {% csrf_token %}
@@ -45,8 +46,13 @@
                         <div class="card-body">
                             <h5 class="card-title">{% trans "Add others" %}</h5>
                             {% bootstrap_form add_user_form layout="inline" %}
-                            <ul data-formset-spawn class="list-group list-group-flush" data-drop-to-state="js-created">
-
+                            <ul data-formset-spawn class="list-group list-group-flush"
+                                data-drop-to-state="{{ states.RESPONSIBLE_ADDED }}">
+                                {% for form in formset %}
+                                    {% if form.instance.state == states.RESPONSIBLE_ADDED %}
+                                        {% include participant_template %}
+                                    {% endif %}
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>

@@ -93,9 +93,10 @@ class AbstractParticipation(PolymorphicModel):
         CONFIRMED = 1, _("confirmed")
         USER_DECLINED = 2, _("declined by user")
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
+        RESPONSIBLE_ADDED = 4, _("added by responsible")
 
     shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
-    state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
+    state = IntegerField(_("state"), choices=States.choices)
     data = models.JSONField(default=dict)
 
     @property
