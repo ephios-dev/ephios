@@ -39,7 +39,11 @@ def sections_participant_qualifies_for(sections, participant: AbstractParticipan
 
 class DispositionParticipationForm(forms.ModelForm):
     section = forms.ChoiceField(
-        label=_("Section"), required=False  # only required if participation is confirmed
+        label=_("Section"),
+        required=False,  # only required if participation is confirmed
+        widget=forms.Select(
+            attrs={"data-show-for-state": str(AbstractParticipation.States.CONFIRMED)}
+        ),
     )
 
     class Meta:

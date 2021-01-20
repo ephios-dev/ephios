@@ -1,12 +1,24 @@
-
 $(document).ready(function () {
+    function handleDispositionForm($form, state, instant) {
+        $form.find("[data-show-for-state]").each((index, el) => {
+            el = $(el);
+            if (el.attr("data-show-for-state").split(",").includes(state.toString())) {
+                el.slideDown();
+            } else if (!instant) {
+                el.slideUp();
+            } else {
+                el.fadeOut(0);
+            }
+        });
+    }
 
     $("[data-drop-to-state]").each(function (index, elem) {
+        const newState = $(elem).data("drop-to-state");
         Sortable.create(elem, {
             group: "participations",
             sort: true,
             draggable: ".draggable",
-            emptyInsertThreshold: 5,
+            emptyInsertThreshold: 20,
             fallbackTolerance: 5,
             animation: 150,
             easing: "cubic-bezier(1, 0, 0, 1)",
@@ -14,11 +26,12 @@ $(document).ready(function () {
             scrollSensitivity: 150,
             scrollSpeed: 15,
             // set state
-            onAdd: function (event) {
-                const newState = $(event.target).data("drop-to-state");
+            onAdd: (event) => {
                 $(event.item).find(".state-input").val(newState);
+                handleDispositionForm($(event.item), newState, false);
             },
         });
+        handleDispositionForm($(elem), newState, true);
     });
 
     $("select#id_user[form='add-user-form']").on('select2:close', function () {
@@ -32,7 +45,7 @@ $(document).ready(function () {
         const formset = $('#participation-form').formset('getOrCreate');
         // look for existing form with that participation
         const userId = $(this).val();
-        if(!userId) {
+        if (!userId) {
             return;
         }
 
@@ -50,6 +63,7 @@ $(document).ready(function () {
             $([document.documentElement, document.body]).animate({
                 scrollTop: participation.offset().top - 200
             }, 1000);
+            participation.focus();
             participation.addClass("list-group-item-info");
             setTimeout(() => {
                 participation.removeClass("list-group-item-info")
