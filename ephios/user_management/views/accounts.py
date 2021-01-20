@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -13,6 +14,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from dynamic_preferences.users.views import UserPreferenceFormView
 
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.user_management import mail
@@ -105,7 +107,10 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            if userprofile.is_active:
+            if (
+                userprofile.is_active
+                and userprofile.preferences["notifications__userprofile_update"]
+            ):
                 mail.send_account_update_info(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
 
@@ -129,6 +134,14 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
             ),
         )
         return reverse("user_management:userprofile_list")
+
+
+class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
+    template_name = "user_management/userprofile_settings.html"
+    success_message = _("Settings succesfully saved.")
+
+    def get_success_url(self):
+        return reverse("user_management:profile")
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

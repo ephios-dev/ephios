@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.event_management.models import AbstractParticipation
+from ephios.event_management.models import AbstractParticipation, LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.settings import SITE_URL
 from ephios.user_management.models import UserProfile
@@ -37,11 +37,15 @@ def new_event(event):
     )
 
     for user in users:
-        message = EmailMultiAlternatives(
-            to=[user.email], subject=subject, body=text_content, reply_to=responsible_persons_mails
-        )
-        message.attach_alternative(html_content, "text/html")
-        messages.append(message)
+        if user.preferences["notifications__new_event"]:
+            message = EmailMultiAlternatives(
+                to=[user.email],
+                subject=subject,
+                body=text_content,
+                reply_to=responsible_persons_mails,
+            )
+            message.attach_alternative(html_content, "text/html")
+            messages.append(message)
     mail.get_connection().send_messages(messages)
 
 
@@ -50,7 +54,18 @@ def participation_state_changed(participation: AbstractParticipation):
         messages = []
 
         # send mail to the participant whose participation has been changed
-        if participation.participant.email is not None:
+        mail_requested = True
+        if participation.get_real_instance_class() == LocalParticipation:
+            local_participation = participation.get_real_instance()
+            if participation.state == AbstractParticipation.States.CONFIRMED:
+                mail_requested = local_participation.user.preferences[
+                    "notifications__confirm_participation"
+                ]
+            if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                mail_requested = local_participation.user.preferences[
+                    "notifications__reject_participation"
+                ]
+        if participation.participant.email is not None and mail_requested:
             text_content = _(
                 "The status for your participation for {shift} has changed. It is now {status}."
             ).format(shift=participation.shift, status=participation.get_state_display())

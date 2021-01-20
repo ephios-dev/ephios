@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     "compressor",
     "recurrence",
     "statici18n",
+    "dynamic_preferences",
+    "dynamic_preferences.users.apps.UserPreferencesConfig",
     "ephios.user_management",
     "ephios.event_management",
     "ephios.extra",
