@@ -1,60 +1,9 @@
-from django import forms
-from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import TemplateView
-from django.views.generic.detail import SingleObjectMixin
 
-from ephios.event_management.models import AbstractParticipation, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.event_management.models import AbstractParticipation
 from ephios.plugins.basesignup.signup.common import SimpleQualificationsRequiredSignupMethod
-
-DispositionParticipationFormset = forms.modelformset_factory(
-    model=AbstractParticipation,
-    fields=["state"],
-    extra=0,
-    can_order=False,
-    can_delete=False,
-    widgets={
-        "state": forms.HiddenInput(attrs={"class": "state-input"}),
-    },
-)
-
-
-class RequestConfirmDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
-    model = Shift
-    permission_required = "event_management.change_event"
-    template_name = "basesignup/disposition.html"
-
-    def get_permission_object(self):
-        self.object: Shift = self.get_object()
-        return self.object.event
-
-    def get_formset(self):
-        return DispositionParticipationFormset(
-            self.request.POST or None, queryset=self.object.participations
-        )
-
-    def get(self, request, *args, **kwargs):
-        self.object: Shift = self.get_object()
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object: Shift = self.get_object()
-        formset = self.get_formset()
-        if formset.is_valid():
-            formset.save()
-            return redirect(self.object.event.get_absolute_url())
-        return self.get(request, *args, **kwargs, formset=formset)
-
-    def get_context_data(self, **kwargs):
-        kwargs.setdefault("formset", self.get_formset())
-        kwargs.setdefault("states", AbstractParticipation.States)
-        kwargs.setdefault(
-            "participant_template", "basesignup/request_confirm/fragment_participant.html"
-        )
-        return super().get_context_data(**kwargs)
 
 
 class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
