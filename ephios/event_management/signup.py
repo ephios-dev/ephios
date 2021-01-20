@@ -53,6 +53,7 @@ class AbstractParticipant:
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    # TODO: change these to get and get_or_create
     def new_participation(self, shift):
         raise NotImplementedError
 

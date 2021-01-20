@@ -1,4 +1,6 @@
+
 $(document).ready(function () {
+
     $("[data-drop-to-state]").each(function (index, elem) {
         Sortable.create(elem, {
             group: "participations",
@@ -8,6 +10,10 @@ $(document).ready(function () {
             fallbackTolerance: 5,
             animation: 150,
             easing: "cubic-bezier(1, 0, 0, 1)",
+            // scrolling
+            scrollSensitivity: 150,
+            scrollSpeed: 15,
+            // set state
             onAdd: function (event) {
                 const newState = $(event.target).data("drop-to-state");
                 $(event.item).find(".state-input").val(newState);
@@ -18,12 +24,18 @@ $(document).ready(function () {
     $("select#id_user[form='add-user-form']").on('select2:close', function () {
         // clear select2
         const userSelect = $(this);
-        setTimeout(() => {userSelect.val(null).change()});
+        setTimeout(() => {
+            userSelect.val(null).change()
+        });
 
         const spawn = $("[data-formset-spawn]");
         const formset = $('#participation-form').formset('getOrCreate');
         // look for existing form with that participation
         const userId = $(this).val();
+        if(!userId) {
+            return;
+        }
+
         const participation = $('[data-participant-id=' + userId + ']');
         if (participation.length) {
             // we already have that card
@@ -36,7 +48,7 @@ $(document).ready(function () {
             }
             // now visible. Move it to here.
             $([document.documentElement, document.body]).animate({
-                scrollTop: participation.offset().top
+                scrollTop: participation.offset().top - 200
             }, 1000);
             participation.addClass("list-group-item-info");
             setTimeout(() => {
