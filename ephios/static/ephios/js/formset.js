@@ -1,15 +1,15 @@
 /**
-* Django formset helper
-*/
-(function($) {
+ * Django formset helper
+ */
+(function ($) {
     "use strict";
 
     var pluginName = 'formset';
 
     /**
-    * Wraps up a formset, allowing adding, and removing forms
-    */
-    var Formset = function(el, options) {
+     * Wraps up a formset, allowing adding, and removing forms
+     */
+    var Formset = function (el, options) {
         var _this = this;
 
         //Defaults:
@@ -30,9 +30,9 @@
         this.$formset.on('formAdded formDeleted', this.opts.form, $.proxy(this, 'checkMaxForms'));
 
         // Set up the existing forms
-        this.$forms().each(function(i, form) {
+        this.$forms().each(function (i, form) {
             var $form = $(form);
-            _this.bindForm($(this));
+            _this.bindForm($(this), i);
         });
 
         // Fill "ORDER" fields with the current order
@@ -42,7 +42,7 @@
         this.$formset.data(pluginName, this);
 
         var extras = ['animateForms'];
-        $.each(extras, function(i, extra) {
+        $.each(extras, function (i, extra) {
             if ((extra in _this.opts) && (_this.opts[extra])) {
                 _this[extra]();
             }
@@ -63,7 +63,7 @@
         empty_prefix: '__prefix__'
     };
 
-    Formset.prototype.addForm = function() {
+    Formset.prototype.addForm = function () {
         // Don't proceed if the number of maximum forms has been reached
         if (this.hasMaxForms()) {
             throw new Error("MAX_NUM_FORMS reached");
@@ -89,26 +89,39 @@
         return $newForm;
     };
 
-    /**
-    * Attach any events needed to a new form
-    */
-    Formset.prototype.bindForm = function($form) {
-        var _this = this;
-        // find the true index by reading it from the first input element's name
-        var index = $form.find(":input").first().attr('name').replace( /(^.+)-(\d+)-(.+$)/i,'$2')
+    Formset.prototype.extractPrefix = function ($form) {
+        const indexRegex = new RegExp("(" + this.formsetPrefix + "-\\d+)-id");
+        let toReturn = null;
+        $form.find(":input").each((idx, element) => {
+            const name = $(element).attr("name");
+            if (name && name.match(indexRegex)) {
+                toReturn = name.replace(indexRegex, "$1");
+                return false;
+            }
+        });
+        return toReturn;
+    }
 
-        var prefix = this.formsetPrefix + '-' + index;
+    /**
+     * Attach any events needed to a new form
+     */
+    Formset.prototype.bindForm = function ($form, index) {
+        var _this = this;
+
+        // try to find prefix, otherwise guess it from the index
+        const extractedPrefix = this.extractPrefix($form);
+        var prefix = extractedPrefix || (this.formsetPrefix + '-' + index);
         $form.data(pluginName + '__formPrefix', prefix);
 
         var $delete = $form.find('[name=' + prefix + '-DELETE]');
         var $order = $form.find('[name=' + prefix + '-ORDER]');
 
-        var onChangeDelete = function() {
+        var onChangeDelete = function () {
             if ($delete.is(':checked')) {
                 $form.attr('data-formset-form-deleted', '');
                 // Remove required property and pattern attribute to allow submit, back it up to data field
                 $form.find(':required').data(pluginName + '-required-field', true).prop('required', false);
-                $form.find('input[pattern]').each(function() {
+                $form.find('input[pattern]').each(function () {
                     var pattern = $(this).attr('pattern');
                     $(this).data(pluginName + '-field-pattern', pattern).removeAttr('pattern');
                 });
@@ -116,10 +129,10 @@
             } else {
                 $form.removeAttr('data-formset-form-deleted');
                 // Restore required property and pattern attributes from data field
-                $form.find('*').filter(function() {
+                $form.find('*').filter(function () {
                     return $(this).data(pluginName + '-required-field') === true;
                 }).prop('required', true);
-                $form.find('input').each(function() {
+                $form.find('input').each(function () {
                     var pattern = $(this).data(pluginName + '-field-pattern');
                     if (pattern) {
                         $(this).attr('pattern', pattern);
@@ -141,31 +154,31 @@
 
         // Delete the form if the delete button is pressed
         var $deleteButton = $form.find(this.opts.deleteButton);
-        $deleteButton.bind('click', function() {
+        $deleteButton.bind('click', function () {
             $delete.attr('checked', true).change();
         });
 
-        $order.change(function(event) {
+        $order.change(function (event) {
             _this.reorderForms();
         });
 
         var $moveUpButton = $form.find(this.opts.moveUpButton);
 
-        $moveUpButton.bind('click', function() {
+        $moveUpButton.bind('click', function () {
             // Find the closest form with an ORDER value lower
             // than ours
             var current = $order.val();
             var $nextOrder = null;
-            _this.$activeForms().each(function(i, form) {
+            _this.$activeForms().each(function (i, form) {
                 var $o = $(form).find('[name*=ORDER]');
                 var order = parseInt($o.val());
-                if(order < current && ($nextOrder == null || order > parseInt($nextOrder.val()))) {
+                if (order < current && ($nextOrder == null || order > parseInt($nextOrder.val()))) {
                     $nextOrder = $o;
                 }
             });
 
             // Swap the order values
-            if($nextOrder != null) {
+            if ($nextOrder != null) {
                 // Swap the order values
                 $order.val($nextOrder.val());
                 $nextOrder.val(current);
@@ -176,12 +189,12 @@
 
         var $moveDownButton = $form.find(this.opts.moveDownButton);
 
-        $moveDownButton.bind('click', function() {
+        $moveDownButton.bind('click', function () {
             // Find the closest form with an ORDER value higher
             // than ours
             var current = $order.val();
             var $nextOrder = null;
-            _this.$activeForms().each(function(i, form) {
+            _this.$activeForms().each(function (i, form) {
                 var $o = $(form).find('[name*=ORDER]');
                 var order = parseInt($o.val());
                 if (order > current && ($nextOrder == null || order < parseInt($nextOrder.val()))) {
@@ -190,7 +203,7 @@
             });
 
             // Swap the order values
-            if($nextOrder != null) {
+            if ($nextOrder != null) {
                 $order.val($nextOrder.val());
                 $nextOrder.val(current);
             }
@@ -203,9 +216,9 @@
      * Enumerate the forms and fill numbers into their ORDER input
      * fields, if present.
      */
-    Formset.prototype.prefillOrder = function() {
+    Formset.prototype.prefillOrder = function () {
         var _this = this;
-       this.$forms().each(function(i, form) {
+        this.$forms().each(function (i, form) {
             var prefix = _this.formsetPrefix + '-' + i;
             var $order = $(form).find('[name=' + prefix + '-ORDER]');
             $order.val(i);
@@ -216,10 +229,10 @@
      * Enumerate the forms and fill numbers into their ORDER input
      * fields, if present.
      */
-    Formset.prototype.reorderForms = function() {
+    Formset.prototype.reorderForms = function () {
         var _this = this;
 
-        var compareForms = function(form_a, form_b) {
+        var compareForms = function (form_a, form_b) {
             /**
              * Compare two forms based on their ORDER input value.
              */
@@ -230,7 +243,7 @@
         var $forms = this.$activeForms().sort(compareForms);
 
         if (this.opts.reorderMode == 'dom') {
-            $forms.reverse().each(function(i, form) {
+            $forms.reverse().each(function (i, form) {
                 // Move the forms to the top of $body, one by one
                 _this.$body.prepend($(form));
             });
@@ -241,7 +254,7 @@
             if (this.$body.css("position") != "relative") {
                 this.$body.css("height", this.$body.outerHeight(true) + "px");
                 this.$body.css("position", "relative");
-                this.$activeForms().each(function(i, form) {
+                this.$activeForms().each(function (i, form) {
                     $(form).css("position", "absolute");
                     $(form).css("top", accumulatedHeight + "px");
                     accumulatedHeight += $(form).outerHeight(true);
@@ -250,7 +263,7 @@
             }
 
             // Do the animation
-            $forms.each(function(i, form) {
+            $forms.each(function (i, form) {
                 $(form).stop().animate({
                     "top": accumulatedHeight + "px"
                 }, 1000);
@@ -259,8 +272,8 @@
             this.$body.css("height", accumulatedHeight + "px");
 
             // Reset the CSS
-            window.setTimeout(function() {
-                $forms.reverse().each(function(i, form) {
+            window.setTimeout(function () {
+                $forms.reverse().each(function (i, form) {
                     $(form).css("position", "static");
                     // Move the forms to the top of $body, one by one
                     _this.$body.prepend($(form));
@@ -271,36 +284,36 @@
         }
     }
 
-    Formset.prototype.$forms = function() {
+    Formset.prototype.$forms = function () {
         return this.$body.find(this.opts.form);
     };
 
-    Formset.prototype.$activeForms = function() {
+    Formset.prototype.$activeForms = function () {
         return this.$body.find(this.opts.form).not("[data-formset-form-deleted]");
     };
 
-    Formset.prototype.$managementForm = function(name) {
+    Formset.prototype.$managementForm = function (name) {
         return this.$formset.find('[name=' + this.formsetPrefix + '-' + name + ']');
     };
 
-    Formset.prototype.totalFormCount = function() {
+    Formset.prototype.totalFormCount = function () {
         return this.$forms().length;
     };
 
-    Formset.prototype.deletedFormCount = function() {
+    Formset.prototype.deletedFormCount = function () {
         return this.$forms().filter('[data-formset-form-deleted]').length;
     };
 
-    Formset.prototype.activeFormCount = function() {
+    Formset.prototype.activeFormCount = function () {
         return this.totalFormCount() - this.deletedFormCount();
     };
 
-    Formset.prototype.hasMaxForms = function() {
+    Formset.prototype.hasMaxForms = function () {
         var maxForms = parseInt(this.$managementForm('MAX_NUM_FORMS').val(), 10) || 1000;
         return this.activeFormCount() >= maxForms;
     };
 
-    Formset.prototype.checkMaxForms = function() {
+    Formset.prototype.checkMaxForms = function () {
         if (this.hasMaxForms()) {
             this.$formset.addClass(this.opts.hasMaxFormsClass);
             this.$add.attr('disabled', 'disabled');
@@ -311,15 +324,15 @@
         return false;
     };
 
-    Formset.prototype.animateForms = function() {
-        this.$formset.on('formAdded', this.opts.form, function() {
+    Formset.prototype.animateForms = function () {
+        this.$formset.on('formAdded', this.opts.form, function () {
             var $form = $(this);
             if ($form.attr("data-formset-created-at-runtime") == "true") {
                 $form.slideUp(0);
                 $form.slideDown();
             }
             return false;
-        }).on('formDeleted', this.opts.form, function() {
+        }).on('formDeleted', this.opts.form, function () {
             var $form = $(this);
             $form.slideUp();
             return false;
@@ -327,7 +340,7 @@
         this.$forms().filter('[data-formset-form-deleted]').slideUp(0);
     };
 
-    Formset.getOrCreate = function(el, options) {
+    Formset.getOrCreate = function (el, options) {
         var rev = $(el).data(pluginName);
         if (!rev) {
             rev = new Formset(el, options);
@@ -336,12 +349,12 @@
         return rev;
     };
 
-    $.fn[pluginName] = function() {
+    $.fn[pluginName] = function () {
         var options, fn, args;
         // Create a new Formset for each element
         if (arguments.length === 0 || (arguments.length === 1 && $.type(arguments[0]) != 'string')) {
             options = arguments[0];
-            return this.each(function() {
+            return this.each(function () {
                 return Formset.getOrCreate(this, options);
             });
         }

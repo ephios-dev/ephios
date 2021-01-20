@@ -52,7 +52,7 @@ $(document).ready(function () {
         const participation = $('[data-participant-id=' + userId + ']');
         if (participation.length) {
             // we already have that card
-            const prefix = participation.find(":input").first().attr('name').replace(/(^.+-\d+)-(.+$)/i, '$1');
+            const prefix = formset.extractPrefix(participation);
             const deleteCheckbox = participation.find('[name=' + prefix + '-DELETE]');
             if (deleteCheckbox.attr("checked")) {
                 // was marked for deletion, so revert that.

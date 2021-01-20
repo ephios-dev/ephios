@@ -1,26 +1,17 @@
 from django.urls import path
 
-from ephios.plugins.basesignup.signup.section_based import (
-    SectionBasedAddUserView,
-    SectionBasedDispositionView,
-)
-from ephios.plugins.basesignup.signup.simple import RequestConfirmDispositionView
+from ephios.plugins.basesignup.signup.disposition import AddUserView, DispositionView
 
 app_name = "basesignup"
 urlpatterns = [
     path(
-        "shifts/<int:pk>/disposition/requestconfirm/",
-        RequestConfirmDispositionView.as_view(),
-        name="shift_disposition_requestconfirm",
+        "shifts/<int:pk>/disposition/",
+        DispositionView.as_view(),
+        name="shift_disposition",
     ),
     path(
-        "shifts/<int:pk>/disposition/section-based/",
-        SectionBasedDispositionView.as_view(),
-        name="shift_disposition_section_based",
-    ),
-    path(
-        "shifts/<int:pk>/disposition/section-based/add-user/",
-        SectionBasedAddUserView.as_view(),
-        name="shift_disposition_add_user_section_based",
+        "shifts/<int:pk>/disposition/add-user/",
+        AddUserView.as_view(),
+        name="shift_disposition_add_user",
     ),
 ]

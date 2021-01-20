@@ -26,7 +26,7 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("basesignup:shift_disposition_requestconfirm", kwargs=dict(pk=shift.pk)),
+        reverse("basesignup:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     )
     response.form["form-0-state"] = AbstractParticipation.States.CONFIRMED.value
