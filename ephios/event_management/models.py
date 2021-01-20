@@ -17,6 +17,7 @@ from django.db.models import (
 )
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
+from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
 from ephios import settings
@@ -24,6 +25,7 @@ from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 
 if TYPE_CHECKING:
     from ephios.event_management.signup import AbstractParticipant
+    from ephios.user_management.models import UserProfile
 
 
 class ActiveManager(Manager):
@@ -161,7 +163,20 @@ class Shift(Model):
 
 
 class LocalParticipation(AbstractParticipation):
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user: "UserProfile" = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if (
+            not self.user.has_perm("event_management.view_event", obj=self.shift.event)
+            and self.state != self.States.RESPONSIBLE_ADDED
+        ):
+            # If dispatched by a responsible, the user should be able to view
+            # the event, if not already permitted through its group.
+            # Currently, this permission does not get removed automatically.
+            assign_perm(
+                "event_management.view_event", user_or_group=self.user, obj=self.shift.event
+            )
 
     @property
     def participant(self):

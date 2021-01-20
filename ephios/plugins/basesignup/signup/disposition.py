@@ -46,9 +46,8 @@ def addable_users(shift):
 
     This also includes users that can normally not see the event. The permission will be added accordingly.
     If needed, this method could be moved to signup methods.
-    # TODO: check how that looks and wether we actually check for that elsewhere and also actually add the permission.
     """
-    return UserProfile.objects.all()  # you surprised it's just this? :D
+    return UserProfile.objects.all()
 
 
 class AddUserForm(forms.Form):
