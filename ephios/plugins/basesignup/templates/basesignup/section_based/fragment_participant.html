@@ -1,6 +1,6 @@
 {% load bootstrap4 %}
 {% load i18n %}
-<li class="list-group-item draggable" data-formset-form data-participant-id="{{ form.instance.user.id }}">
+<div class="list-group-item draggable" data-formset-form data-participant-id="{{ form.instance.user.id }}">
     <h6 class="mb-0">
         <div class="row align-items-center no-gutters">
             <div class="col-6 pr-3">
@@ -25,4 +25,4 @@
     <div class="d-none">
         {% bootstrap_form form exclude="section" layout="inline" %}
     </div>
-</li>
+</div>

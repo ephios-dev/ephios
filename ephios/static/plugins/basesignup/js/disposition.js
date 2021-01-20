@@ -6,7 +6,7 @@ $(document).ready(function () {
             group: "participations",
             sort: true,
             draggable: ".draggable",
-            emptyInsertThreshold: 50,
+            emptyInsertThreshold: 5,
             fallbackTolerance: 5,
             animation: 150,
             easing: "cubic-bezier(1, 0, 0, 1)",

@@ -29,76 +29,77 @@
             <div class="row">
                 <div class="col-lg-6 d-flex flex-column">
                     <div class="card border-warning mb-3 flex-grow-1">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ states.REQUESTED.label|capfirst }}</h5>
-                            <ul class="list-group list-group-flush" data-drop-to-state="{{ states.REQUESTED }}">
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.REQUESTED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.REQUESTED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 d-flex flex-column">
                     <div class="card border-secondary mb-3 flex-grow-1">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{% trans "Add others" %}</h5>
                             {% bootstrap_form add_user_form layout="inline" %}
-                            <ul data-formset-spawn class="list-group list-group-flush"
-                                data-drop-to-state="{{ states.RESPONSIBLE_ADDED }}">
+                            <div data-formset-spawn class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.RESPONSIBLE_ADDED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.RESPONSIBLE_ADDED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-lg-6">
-                    <div class="card border-danger mb-3">
-                        <div class="card-body">
+                <div class="col-lg-6 d-flex flex-column">
+                    <div class="card border-danger mb-3 flex-grow-1">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ states.RESPONSIBLE_REJECTED.label|capfirst }}</h5>
-                            <ul class="list-group list-group-flush"
-                                data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.RESPONSIBLE_REJECTED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="card border-danger mb-3 mb-lg-0">
-                        <div class="card-body">
+                    <div class="card border-danger mb-3 flex-grow-1">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ states.USER_DECLINED.label|capfirst }}</h5>
-                            <ul class="list-group list-group-flush" data-drop-to-state="{{ states.USER_DECLINED }}">
-
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.USER_DECLINED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.USER_DECLINED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card border-success h-100">
+                <div class="col-lg-6 d-flex flex-column">
+                    <div class="card border-success mb-3 flex-grow-1">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title no-drag">{{ states.CONFIRMED.label|capfirst }}</h5>
-                            <ul class="list-group list-group-flush flex-grow-1"
-                                data-drop-to-state="{{ states.CONFIRMED }}">
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.CONFIRMED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.CONFIRMED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
