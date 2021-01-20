@@ -1,5 +1,5 @@
 /**
- * Django formset helper
+ * Django formset helper, adapted from django-formset-js-improved
  */
 (function ($) {
     "use strict";
