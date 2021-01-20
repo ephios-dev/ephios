@@ -179,10 +179,10 @@ class SectionBasedSignupView(FormView, BaseSignupView):
     def form_valid(self, form):
         return super().signup_pressed(preferred_section_uuid=form.cleaned_data.get("section"))
 
-    def signup_pressed(self):
+    def signup_pressed(self, **kwargs):
         if not self.method.configuration.choose_preferred_section:
             # do straight signup if choosing is not enabled
-            return super().signup_pressed()
+            return super().signup_pressed(**kwargs)
 
         if not self.method.can_sign_up(self.request.user.as_participant()):
             # redirect a misled request
@@ -242,7 +242,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def signup_checkers(self):
         return super().signup_checkers + [self.check_qualification]
 
-    def perform_signup(self, participant: AbstractParticipant, preferred_section_uuid=None):
+    def perform_signup(
+        self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
+    ):
         participation = super().perform_signup(participant)
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:

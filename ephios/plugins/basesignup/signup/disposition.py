@@ -20,8 +20,8 @@ class BaseDispositionParticipationForm(forms.ModelForm):
         super().__init__(**kwargs)
         try:
             self.shift = self.instance.shift
-        except AttributeError:
-            raise ValueError(f"{type(self)} must be initialized with an instance.")
+        except AttributeError as e:
+            raise ValueError(f"{type(self)} must be initialized with an instance.") from e
 
     class Meta:
         model = AbstractParticipation
