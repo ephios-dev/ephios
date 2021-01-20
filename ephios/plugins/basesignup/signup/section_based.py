@@ -246,7 +246,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def perform_signup(
         self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
     ):
-        participation = super().perform_signup(participant)
+        participation = super().perform_signup(participant, **kwargs)
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice
