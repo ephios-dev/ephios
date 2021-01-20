@@ -56,3 +56,24 @@ def test_request_confirm_decline_flow(django_app, volunteer, planner, event):
         reverse("event_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
     )
     assert "already declined" in response
+
+
+@pytest.mark.django_db
+def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner, event):
+    # confirm the participation as planner
+    shift = event.shifts.first()
+    form = django_app.get(
+        reverse("basesignup:shift_disposition", kwargs=dict(pk=shift.pk)),
+        user=planner,
+    ).forms["add-user-form"]
+    # can't user form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
+    response = django_app.post(
+        form.action,
+        user=planner,
+        params={
+            "csrfmiddlewaretoken": form["csrfmiddlewaretoken"].value,
+            "user": volunteer.id,
+        },
+    )
+    assert volunteer.first_name in response
+    assert volunteer.as_participant().participation_for(shift) is not None
