@@ -42,7 +42,7 @@ $(document).ready(function () {
         });
 
         const spawn = $("[data-formset-spawn]");
-        const formset = $('#participation-form').formset('getOrCreate');
+        const formset = $('#participations-form').formset('getOrCreate');
         // look for existing form with that participation
         const userId = $(this).val();
         if (!userId) {

@@ -21,7 +21,7 @@
     <form method="post" class="d-none" id="add-user-form"
           action="{% url "basesignup:shift_disposition_add_user" pk=shift.pk %}">{% csrf_token %}</form>
 
-    <form method="post" class="form" id="participation-form" data-formset data-formset-prefix="{{ formset.prefix }}">
+    <form method="post" class="form" id="participations-form" data-formset data-formset-prefix="{{ formset.prefix }}">
         {% csrf_token %}
         {{ formset.management_form }}
 
