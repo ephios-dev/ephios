@@ -242,6 +242,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def signup_checkers(self):
         return super().signup_checkers + [self.check_qualification]
 
+    # pylint: disable=arguments-differ
     def perform_signup(
         self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
     ):
