@@ -34,14 +34,14 @@
 
                     <div class="card border-secondary mb-3 flex-grow-1">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title d-flex">
+                            <h5 class="card-title d-flex align-items-center">
                                 {% trans "Add others" %}
-                                {% bootstrap_field add_user_form.user layout="inline" form_group_class="form-group flex-grow-1 d-inline-block ml-3" %}
                             </h5>
+                            {% bootstrap_field add_user_form.user layout="inline" form_group_class="form-group" %}
                             <div data-formset-spawn class="list-group list-group-flush flex-grow-1"
-                                 data-drop-to-state="{{ states.RESPONSIBLE_ADDED }}">
+                                 data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
                                 {% for form in formset %}
-                                    {% if form.instance.state == states.RESPONSIBLE_ADDED %}
+                                    {% if form.instance.state == states.GETTING_DISPATCHED %}
                                         {% include participant_template %}
                                     {% endif %}
                                 {% endfor %}

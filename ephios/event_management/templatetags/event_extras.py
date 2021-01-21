@@ -17,6 +17,7 @@ def shift_status(shift, user):
             AbstractParticipation.States.RESPONSIBLE_REJECTED: "text-danger",
             AbstractParticipation.States.REQUESTED: "text-warning",
             AbstractParticipation.States.CONFIRMED: "text-success",
+            AbstractParticipation.States.GETTING_DISPATCHED: "text-secondary",
         }[participation.state]
         return mark_safe(f'<span class="{color}">{participation.get_state_display()}</span><br>')
     return ""

@@ -113,7 +113,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
             instance = shift.signup_method.get_participation_for(user.as_participant())
-            instance.state = AbstractParticipation.States.RESPONSIBLE_ADDED
+            instance.state = AbstractParticipation.States.GETTING_DISPATCHED
             instance.save()
 
             DispositionParticipationFormset = get_disposition_formset(
@@ -126,7 +126,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
             )
             form = next(filter(lambda form: form.instance.id == instance.id, formset))
             return self.render_to_response({"form": form})
-        raise Http404("User does not exist")
+        raise Http404()
 
 
 class DispositionView(DispositionBaseViewMixin, TemplateView):
@@ -148,7 +148,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         if formset.is_valid():
             formset.save()
             self.object.participations.filter(
-                state=AbstractParticipation.States.RESPONSIBLE_ADDED
+                state=AbstractParticipation.States.GETTING_DISPATCHED
             ).delete()
             return redirect(self.object.event.get_absolute_url())
         return self.get(request, *args, **kwargs, formset=formset)

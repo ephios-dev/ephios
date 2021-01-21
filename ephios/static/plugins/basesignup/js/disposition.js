@@ -2,12 +2,12 @@ $(document).ready(function () {
     function handleDispositionForm($form, state, instant) {
         $form.find("[data-show-for-state]").each((index, el) => {
             el = $(el);
-            if (el.attr("data-show-for-state").split(",").includes(state.toString())) {
+            if (state && el.attr("data-show-for-state").split(",").includes(state.toString())) {
                 el.slideDown();
             } else if (!instant) {
                 el.slideUp();
             } else {
-                el.fadeOut(0);
+                el.hide();
             }
         });
     }
@@ -69,6 +69,15 @@ $(document).ready(function () {
                 participation.removeClass("list-group-item-info")
             }, 2000);
         } else {
+            // We want to load using ajax.
+            // Put a spinner. Height 55px is what the default template produces for the card about to be loaded.
+            const spinnerHtml = `<div class="list-group-item">
+                                     <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                                 </div></div>`;
+            const $spinner = $($.parseHTML(spinnerHtml)).hide().css("height", "55px");
+            spawn.append($spinner);
+            $spinner.slideDown("fast");
+
             // get the new form from the server
             const addUserForm = $("#" + $(this)[0].form.id);
             const newIndex = formset.totalFormCount();
@@ -78,19 +87,29 @@ $(document).ready(function () {
                 type: 'post',
                 dataType: 'html',
                 data: addUserForm.serialize(),
+                timeout: 10000,
                 success: function (data) {
-                    // adapted from addForm from formset.js
-                    // update management form
+                    // updating the formset is adapted from `addForm` in formset.js
                     formset.$managementForm('TOTAL_FORMS').val(newIndex + 1);
                     formset.$managementForm('INITIAL_FORMS').val(newIndex + 1);
 
-                    // insert html
-                    const $newFormFragment = $($.parseHTML(data));
-                    spawn.append($newFormFragment);
+                    // fade spinner into prepared form
+                    const $newFormFragment = $($.parseHTML(data)).hide();
+                    handleDispositionForm($newFormFragment, false, true);
+                    $spinner.fadeOut("fast", function () {
+                        $(this).replaceWith($newFormFragment);
+                        $newFormFragment.fadeIn("fast");
+                    });
 
-                    var $newForm = $newFormFragment.filter(formset.opts.form);
-                    formset.bindForm($newForm, newIndex);
+                    // register form with formset
+                    const $newForm = $newFormFragment.filter(formset.opts.form);
                     $newForm.attr("data-formset-created-at-runtime", "true");
+                    formset.bindForm($newForm, newIndex);
+                },
+                error: () => {
+                    $spinner.slideUp();
+                    $spinner.remove();
+                    alert("Connection failed.");
                 }
             });
         }

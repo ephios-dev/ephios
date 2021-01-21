@@ -95,7 +95,7 @@ class AbstractParticipation(PolymorphicModel):
         CONFIRMED = 1, _("confirmed")
         USER_DECLINED = 2, _("declined by user")
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
-        RESPONSIBLE_ADDED = 4, _("added by responsible")
+        GETTING_DISPATCHED = 4, _("getting dispatched")
 
     shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
     state = IntegerField(_("state"), choices=States.choices)
@@ -169,7 +169,7 @@ class LocalParticipation(AbstractParticipation):
         super().save(*args, **kwargs)
         if (
             not self.user.has_perm("event_management.view_event", obj=self.shift.event)
-            and self.state != self.States.RESPONSIBLE_ADDED
+            and self.state != self.States.GETTING_DISPATCHED
         ):
             # If dispatched by a responsible, the user should be able to view
             # the event, if not already permitted through its group.
