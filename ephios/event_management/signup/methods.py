@@ -223,7 +223,7 @@ class BaseSignupMethod:
     Set to None if you don't want to support the default disposition.
     """
     disposition_participation_form_class = BaseDispositionParticipationForm
-    disposition_show_requested_state = True
+    uses_requested_state = True
 
     def __init__(self, shift):
         self.shift = shift

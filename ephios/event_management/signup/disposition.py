@@ -18,14 +18,11 @@ class BaseDispositionParticipationForm(forms.ModelForm):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
         try:
             self.shift = self.instance.shift
         except AttributeError as e:
             raise ValueError(f"{type(self)} must be initialized with an instance.") from e
-
-    @property
-    def can_delete(self):
-        return self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
 
     class Meta:
         model = AbstractParticipation
@@ -47,7 +44,9 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
         return "%s-%s" % (self.prefix, self._start_index + index)
 
     def delete_existing(self, obj, commit=True):
-        if obj.state != AbstractParticipation.States.GETTING_DISPATCHED:
+        # refresh from db as obj has the state from the post data
+        db_obj = AbstractParticipation.objects.get(id=obj.id)
+        if db_obj.state != AbstractParticipation.States.GETTING_DISPATCHED:
             raise ValueError(
                 "Deletion a participation is only allowed if it was just added through disposition."
             )

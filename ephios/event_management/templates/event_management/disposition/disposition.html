@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-lg-6 d-flex flex-column order-lg-last">
 
-                    <div class="card border-secondary mb-3 flex-grow-1">
+                    <div class="card border-secondary mb-3">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title d-flex align-items-center">
                                 {% trans "Add others" %}
@@ -66,7 +66,7 @@
                 </div>
                 <div class="col-lg-6 d-flex flex-column">
 
-                    {% if shift.signup_method.disposition_show_requested_state %}
+                    {% if shift.signup_method.uses_requested_state %}
                         <div class="card border-warning mb-3 flex-grow-1">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ states.REQUESTED.label|capfirst }}</h5>
