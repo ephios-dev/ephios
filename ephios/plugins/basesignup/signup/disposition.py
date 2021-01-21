@@ -29,9 +29,24 @@ class BaseDispositionParticipationForm(forms.ModelForm):
         widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
 
+class DispositionParticipationFormset(forms.BaseModelFormSet):
+    """
+    To allow us to dynamically add server-side rendered forms to a formset
+    we patch a way to change the starting index.
+    """
+
+    def __init__(self, *args, start_index=0, **kwargs):
+        self._start_index = start_index
+        super().__init__(*args, **kwargs)
+
+    def add_prefix(self, index):
+        return "%s-%s" % (self.prefix, self._start_index + index)
+
+
 def get_disposition_formset(form):
     return forms.modelformset_factory(
         model=AbstractParticipation,
+        formset=DispositionParticipationFormset,
         form=form,
         extra=0,
         can_order=False,
@@ -59,6 +74,7 @@ class AddUserForm(forms.Form):
         ),
         queryset=UserProfile.objects.none(),  # set using __init__
     )
+    new_index = forms.IntegerField(widget=forms.HiddenInput)
 
     def __init__(self, user_queryset, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,8 +107,8 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def post(self, request, *args, **kwargs):
         shift = self.object
         form = AddUserForm(
-            user_queryset=addable_users(shift),
             data=request.POST,
+            user_queryset=addable_users(shift),
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
@@ -104,8 +120,9 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
                 self.object.signup_method.disposition_participation_form_class
             )
             formset = DispositionParticipationFormset(
-                queryset=self.object.participations,
+                queryset=AbstractParticipation.objects.filter(pk=instance.pk),
                 prefix="participations",
+                start_index=form.cleaned_data["new_index"],
             )
             form = next(filter(lambda form: form.instance.id == instance.id, formset))
             return self.render_to_response({"form": form})

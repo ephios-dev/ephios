@@ -19,7 +19,10 @@
     </div>
 
     <form method="post" class="d-none" id="add-user-form"
-          action="{% url "basesignup:shift_disposition_add_user" pk=shift.pk %}">{% csrf_token %}</form>
+          action="{% url "basesignup:shift_disposition_add_user" pk=shift.pk %}">
+        {% csrf_token %}
+        {{ add_user_form.new_index }}
+    </form>
 
     <form method="post" class="form" id="participations-form" data-formset data-formset-prefix="{{ formset.prefix }}">
         {% csrf_token %}
@@ -32,7 +35,7 @@
                     <div class="card border-secondary mb-3 flex-grow-1">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{% trans "Add others" %}</h5>
-                            {% bootstrap_form add_user_form layout="inline" %}
+                            {% bootstrap_field add_user_form.user layout="inline" %}
                             <div data-formset-spawn class="list-group list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.RESPONSIBLE_ADDED }}">
                                 {% for form in formset %}

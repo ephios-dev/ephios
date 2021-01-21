@@ -71,6 +71,8 @@ $(document).ready(function () {
         } else {
             // get the new form from the server
             const addUserForm = $("#" + $(this)[0].form.id);
+            const newIndex = formset.totalFormCount();
+            addUserForm.find('[name=new_index]').val(newIndex);
             $.ajax({
                 url: addUserForm.attr("action"),
                 type: 'post',
@@ -79,9 +81,8 @@ $(document).ready(function () {
                 success: function (data) {
                     // adapted from addForm from formset.js
                     // update management form
-                    const newIndex = formset.totalFormCount() + 1;
-                    formset.$managementForm('TOTAL_FORMS').val(newIndex);
-                    formset.$managementForm('INITIAL_FORMS').val(newIndex);
+                    formset.$managementForm('TOTAL_FORMS').val(newIndex + 1);
+                    formset.$managementForm('INITIAL_FORMS').val(newIndex + 1);
 
                     // insert html
                     const $newFormFragment = $($.parseHTML(data));
