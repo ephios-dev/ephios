@@ -15,23 +15,6 @@ $(document).ready(function () {
     // Configure all prerendered Forms
     handleForms($(document));
 
-    // Used for disposition TODO: move to plugin specific JS!
-    $("[data-drop-to-state]").each(function (index, elem) {
-        Sortable.create(elem, {
-            group: "participations",
-            sort: true,
-            draggable: ".draggable",
-            emptyInsertThreshold: 50,
-            fallbackTolerance: 5,
-            animation: 150,
-            easing: "cubic-bezier(1, 0, 0, 1)",
-            onAdd: function (event) {
-                const newState = $(event.target).data("drop-to-state");
-                $(event.item).find(".state-input").val(newState);
-            },
-        });
-    });
-
     var recurrenceFields = document.querySelectorAll('.recurrence-widget');
     Array.prototype.forEach.call(recurrenceFields, function (field, index) {
         new recurrence.widget.Widget(field.id, {});

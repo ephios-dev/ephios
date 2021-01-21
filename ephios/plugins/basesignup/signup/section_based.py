@@ -10,18 +10,17 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import FormView, TemplateView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
 
-from ephios.event_management.models import AbstractParticipation, Shift
+from ephios.event_management.models import AbstractParticipation
 from ephios.event_management.signup import (
     AbstractParticipant,
     BaseSignupMethod,
     BaseSignupView,
     ParticipationError,
 )
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.event_management.signup.disposition import BaseDispositionParticipationForm
 from ephios.user_management.models import Qualification
 
 
@@ -34,25 +33,44 @@ def sections_participant_qualifies_for(sections, participant: AbstractParticipan
     ]
 
 
-class DispositionParticipationForm(forms.ModelForm):
-    section = forms.ChoiceField(
-        label=_("Section"), required=False  # only required if participation is confirmed
-    )
+class SectionBasedDispositionParticipationForm(BaseDispositionParticipationForm):
+    disposition_participation_template = "basesignup/section_based/fragment_participant.html"
 
-    class Meta:
-        model = AbstractParticipation
-        fields = ["state"]
+    section = forms.ChoiceField(
+        label=_("Section"),
+        required=False,  # only required if participation is confirmed
+        widget=forms.Select(
+            attrs={"data-show-for-state": str(AbstractParticipation.States.CONFIRMED)}
+        ),
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        sections = self.instance.shift.signup_method.configuration.sections
-        self.fields["section"].choices = [("", "---")] + [
-            (section["uuid"], section["title"])
-            for section in sections_participant_qualifies_for(
+        sections = self.shift.signup_method.configuration.sections
+        qualified_sections = list(
+            sections_participant_qualifies_for(
                 sections,
                 self.instance.participant,
             )
+        )
+        unqualified_sections = [
+            section for section in sections if section not in qualified_sections
         ]
+        self.fields["section"].choices = [("", "---")]
+        if qualified_sections:
+            self.fields["section"].choices += [
+                (
+                    _("qualified"),
+                    [(section["uuid"], section["title"]) for section in qualified_sections],
+                )
+            ]
+        if unqualified_sections:
+            self.fields["section"].choices += [
+                (
+                    _("unqualified"),
+                    [(section["uuid"], section["title"]) for section in unqualified_sections],
+                )
+            ]
         if preferred_section_uuid := self.instance.data.get("preferred_section_uuid"):
             self.fields["section"].initial = preferred_section_uuid
             self.preferred_section = next(
@@ -75,53 +93,6 @@ class DispositionParticipationForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.data["dispatched_section_uuid"] = self.cleaned_data["section"]
         super().save(commit)
-
-
-DispositionParticipationFormset = forms.modelformset_factory(
-    model=AbstractParticipation,
-    form=DispositionParticipationForm,
-    extra=0,
-    can_order=False,
-    can_delete=False,
-    widgets={
-        "state": forms.HiddenInput(attrs={"class": "state-input"}),
-    },
-)
-
-
-class SectionBasedDispositionView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
-    model = Shift
-    permission_required = "event_management.change_event"
-    template_name = "basesignup/disposition.html"
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.object: Shift = self.get_object()
-
-    def get_permission_object(self):
-        return self.object.event
-
-    def get_formset(self):
-        formset = DispositionParticipationFormset(
-            self.request.POST or None, queryset=self.object.participations, prefix="participations"
-        )
-        return formset
-
-    def post(self, request, *args, **kwargs):
-        formset = self.get_formset()
-        if formset.is_valid():
-            formset.save()
-            return redirect(self.object.event.get_absolute_url())
-        return self.get(request, *args, **kwargs, formset=formset)
-
-    def get_context_data(self, **kwargs):
-        kwargs.setdefault("formset", self.get_formset())
-        kwargs.setdefault("states", AbstractParticipation.States)
-        kwargs.setdefault("sections", self.object.signup_method.configuration.sections)
-        kwargs.setdefault(
-            "participant_template", "basesignup/section_based/fragment_participant.html"
-        )
-        return super().get_context_data(**kwargs)
 
 
 class SectionForm(forms.Form):
@@ -208,10 +179,10 @@ class SectionBasedSignupView(FormView, BaseSignupView):
     def form_valid(self, form):
         return super().signup_pressed(preferred_section_uuid=form.cleaned_data.get("section"))
 
-    def signup_pressed(self):
+    def signup_pressed(self, **kwargs):
         if not self.method.configuration.choose_preferred_section:
             # do straight signup if choosing is not enabled
-            return super().signup_pressed()
+            return super().signup_pressed(**kwargs)
 
         if not self.method.can_sign_up(self.request.user.as_participant()):
             # redirect a misled request
@@ -234,8 +205,11 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     registration_button_text = _("Request")
     signup_success_message = _("You have successfully requested a participation for {shift}.")
     signup_error_message = _("Requesting a participation failed: {error}")
+
     configuration_form_class = SectionBasedConfigurationForm
     signup_view_class = SectionBasedSignupView
+
+    disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
     def get_configuration_fields(self):
         return {
@@ -268,8 +242,11 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def signup_checkers(self):
         return super().signup_checkers + [self.check_qualification]
 
-    def perform_signup(self, participant: AbstractParticipant, preferred_section_uuid=None):
-        participation = super().perform_signup(participant)
+    # pylint: disable=arguments-differ
+    def perform_signup(
+        self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
+    ):
+        participation = super().perform_signup(participant, **kwargs)
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice
@@ -316,7 +293,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "confirmed_sections_with_users": confirmed_sections_with_users,
                 "disposition_url": (
                     reverse(
-                        "basesignup:shift_disposition_section_based",
+                        "basesignup:shift_disposition",
                         kwargs=dict(pk=self.shift.pk),
                     )
                     if request.user.has_perm("event_management.change_event", obj=self.shift.event)
