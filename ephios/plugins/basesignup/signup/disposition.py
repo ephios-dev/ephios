@@ -29,7 +29,7 @@ class BaseDispositionParticipationForm(forms.ModelForm):
         widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
 
-class DispositionParticipationFormset(forms.BaseModelFormSet):
+class CustomStartIndexModelFormset(forms.BaseModelFormSet):
     """
     To allow us to dynamically add server-side rendered forms to a formset
     we patch a way to change the starting index.
@@ -46,7 +46,7 @@ class DispositionParticipationFormset(forms.BaseModelFormSet):
 def get_disposition_formset(form):
     return forms.modelformset_factory(
         model=AbstractParticipation,
-        formset=DispositionParticipationFormset,
+        formset=CustomStartIndexModelFormset,
         form=form,
         extra=0,
         can_order=False,
