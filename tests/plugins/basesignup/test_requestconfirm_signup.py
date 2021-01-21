@@ -73,6 +73,7 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
         params={
             "csrfmiddlewaretoken": form["csrfmiddlewaretoken"].value,
             "user": volunteer.id,
+            "new_index": 0,
         },
     )
     assert volunteer.first_name in response
