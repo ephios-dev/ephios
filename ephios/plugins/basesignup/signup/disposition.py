@@ -70,7 +70,7 @@ class AddUserForm(forms.Form):
         widget=ModelSelect2Widget(
             model=UserProfile,
             search_fields=["first_name__icontains", "last_name__icontains"],
-            attrs={"form": "add-user-form"},
+            attrs={"form": "add-user-form", "data-placeholder": _("search")},
         ),
         queryset=UserProfile.objects.none(),  # set using __init__
     )
