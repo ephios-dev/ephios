@@ -17,6 +17,7 @@ from django.db.models import (
 )
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
+from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
 from ephios import settings
@@ -24,6 +25,7 @@ from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 
 if TYPE_CHECKING:
     from ephios.event_management.signup import AbstractParticipant
+    from ephios.user_management.models import UserProfile
 
 
 class ActiveManager(Manager):
@@ -93,9 +95,10 @@ class AbstractParticipation(PolymorphicModel):
         CONFIRMED = 1, _("confirmed")
         USER_DECLINED = 2, _("declined by user")
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
+        GETTING_DISPATCHED = 4, _("getting dispatched")
 
     shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
-    state = IntegerField(_("state"), choices=States.choices, default=States.REQUESTED)
+    state = IntegerField(_("state"), choices=States.choices)
     data = models.JSONField(default=dict)
 
     @property
@@ -160,7 +163,20 @@ class Shift(Model):
 
 
 class LocalParticipation(AbstractParticipation):
-    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user: "UserProfile" = ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if (
+            not self.user.has_perm("event_management.view_event", obj=self.shift.event)
+            and self.state != self.States.GETTING_DISPATCHED
+        ):
+            # If dispatched by a responsible, the user should be able to view
+            # the event, if not already permitted through its group.
+            # Currently, this permission does not get removed automatically.
+            assign_perm(
+                "event_management.view_event", user_or_group=self.user, obj=self.shift.event
+            )
 
     @property
     def participant(self):
