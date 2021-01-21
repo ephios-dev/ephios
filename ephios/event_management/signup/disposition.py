@@ -14,7 +14,7 @@ from ephios.user_management.models import UserProfile
 
 
 class BaseDispositionParticipationForm(forms.ModelForm):
-    disposition_participation_template = "basesignup/common/fragment_participant.html"
+    disposition_participation_template = "event_management/disposition/fragment_participant.html"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -130,7 +130,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
 
 
 class DispositionView(DispositionBaseViewMixin, TemplateView):
-    template_name = "basesignup/common/disposition.html"
+    template_name = "event_management/disposition/disposition.html"
 
     def get_formset(self):
         DispositionParticipationFormset = get_disposition_formset(

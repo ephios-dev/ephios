@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ephios.plugins.basesignup.signup.disposition import AddUserView, DispositionView
+from ephios.event_management.signup.disposition import AddUserView, DispositionView
 
 app_name = "basesignup"
 urlpatterns = [

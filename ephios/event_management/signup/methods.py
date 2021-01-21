@@ -20,8 +20,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from ephios.event_management.models import AbstractParticipation, LocalParticipation, Shift
+from ephios.event_management.signup.disposition import BaseDispositionParticipationForm
 from ephios.extra.widgets import CustomSplitDateTimeWidget
-from ephios.plugins.basesignup.signup.disposition import BaseDispositionParticipationForm
 from ephios.user_management.models import Qualification
 
 register_signup_methods = django.dispatch.Signal()

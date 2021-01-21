@@ -20,7 +20,7 @@ from ephios.event_management.signup import (
     BaseSignupView,
     ParticipationError,
 )
-from ephios.plugins.basesignup.signup.disposition import BaseDispositionParticipationForm
+from ephios.event_management.signup.disposition import BaseDispositionParticipationForm
 from ephios.user_management.models import Qualification
 
 

@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ephios.event_management.models import AbstractParticipation
-from ephios.event_management.signup import ParticipationError
+from ephios.event_management.signup.methods import ParticipationError
 from ephios.plugins.basesignup.signup.common import SimpleQualificationsRequiredSignupMethod
 
 
