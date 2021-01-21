@@ -1,0 +1,12 @@
+{% load bootstrap4 %}
+{% load i18n %}
+<div class="list-group-item draggable" data-formset-form data-participant-id="{{ form.instance.user.id }}">
+    {% block body %}
+
+    {% endblock %}
+    <div class="d-none">
+        {{ form.DELETE }}
+        {{ form.state }}
+        {{ form.id }}
+    </div>
+</div>

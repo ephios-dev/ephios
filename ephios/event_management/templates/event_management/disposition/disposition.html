@@ -38,7 +38,7 @@
                                 {% trans "Add others" %}
                             </h5>
                             {% bootstrap_field add_user_form.user layout="inline" form_group_class="form-group" %}
-                            <div data-formset-spawn class="list-group list-group-flush flex-grow-1"
+                            <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
                                 {% for form in formset %}
                                     {% if form.instance.state == states.GETTING_DISPATCHED %}

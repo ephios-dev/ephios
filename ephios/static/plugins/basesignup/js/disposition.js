@@ -15,7 +15,10 @@ $(document).ready(function () {
     $("[data-drop-to-state]").each(function (index, elem) {
         const newState = $(elem).data("drop-to-state");
         Sortable.create(elem, {
-            group: "participations",
+            group: {
+                name: "participations",
+                put: !$(elem).hasClass("sortable-reject-put")
+            },
             sort: true,
             draggable: ".draggable",
             emptyInsertThreshold: 20,
@@ -55,19 +58,19 @@ $(document).ready(function () {
             const prefix = formset.extractPrefix(participation);
             const deleteCheckbox = participation.find('[name=' + prefix + '-DELETE]');
             if (deleteCheckbox.attr("checked")) {
-                // was marked for deletion, so revert that.
-                participation.attr("data-formset-created-at-runtime", true); // so formset.js decides to slideDown() it
+                // already exists, move back to spawn, undelete and show it.
+                spawn.append(participation.detach());
                 deleteCheckbox.attr("checked", false).change();
+                participation.slideDown();
+            } else {
+                // already visible. Move there and highlight it.
+                participation[0].scrollIntoView({behavior: "smooth", block: "end"});
+                participation.focus();
+                participation.addClass("list-group-item-info");
+                setTimeout(() => {
+                    participation.removeClass("list-group-item-info")
+                }, 2000);
             }
-            // now visible. Move it to here.
-            $([document.documentElement, document.body]).animate({
-                scrollTop: participation.offset().top - 200
-            }, 1000);
-            participation.focus();
-            participation.addClass("list-group-item-info");
-            setTimeout(() => {
-                participation.removeClass("list-group-item-info")
-            }, 2000);
         } else {
             // We want to load using ajax.
             // Put a spinner. Height 55px is what the default template produces for the card about to be loaded.
@@ -103,7 +106,6 @@ $(document).ready(function () {
 
                     // register form with formset
                     const $newForm = $newFormFragment.filter(formset.opts.form);
-                    $newForm.attr("data-formset-created-at-runtime", "true");
                     formset.bindForm($newForm, newIndex);
                 },
                 error: () => {

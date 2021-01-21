@@ -14,7 +14,7 @@ from ephios.user_management.models import UserProfile
 
 
 class BaseDispositionParticipationForm(forms.ModelForm):
-    disposition_participation_template = "event_management/disposition/fragment_participant.html"
+    disposition_participation_template = "event_management/disposition/fragment_participation.html"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,13 +23,17 @@ class BaseDispositionParticipationForm(forms.ModelForm):
         except AttributeError as e:
             raise ValueError(f"{type(self)} must be initialized with an instance.") from e
 
+    @property
+    def can_delete(self):
+        return self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
+
     class Meta:
         model = AbstractParticipation
         fields = ["state"]
         widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
 
-class CustomStartIndexModelFormset(forms.BaseModelFormSet):
+class DispositionBaseModelFormset(forms.BaseModelFormSet):
     """
     To allow us to dynamically add server-side rendered forms to a formset
     we patch a way to change the starting index.
@@ -42,11 +46,18 @@ class CustomStartIndexModelFormset(forms.BaseModelFormSet):
     def add_prefix(self, index):
         return "%s-%s" % (self.prefix, self._start_index + index)
 
+    def delete_existing(self, obj, commit=True):
+        if obj.state != AbstractParticipation.States.GETTING_DISPATCHED:
+            raise ValueError(
+                "Deletion a participation is only allowed if it was just added through disposition."
+            )
+        super().delete_existing(obj, commit)
+
 
 def get_disposition_formset(form):
     return forms.modelformset_factory(
         model=AbstractParticipation,
-        formset=CustomStartIndexModelFormset,
+        formset=DispositionBaseModelFormset,
         form=form,
         extra=0,
         can_order=False,
