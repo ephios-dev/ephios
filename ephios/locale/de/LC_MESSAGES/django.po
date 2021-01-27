@@ -835,7 +835,7 @@ msgstr "Anmeldung"
 
 #: ephios/plugins/basesignup/templates/basesignup/section_based/signup.html:20
 msgid "You don't qualify for"
-msgstr "Sie nicht qualifiziert für"
+msgstr "Sie sind nicht qualifiziert für"
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
