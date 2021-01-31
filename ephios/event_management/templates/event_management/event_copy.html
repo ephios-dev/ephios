@@ -11,6 +11,17 @@
     <link rel="stylesheet" media="screen" href="{% static "recurrence/css/recurrence.css" %}">
 {% endblock %}
 
+{% block javascript %}
+    <script type="text/javascript" src="{% static "recurrence/js/recurrence.js" %}"></script>
+    <script type="text/javascript" src="{% static "recurrence/js/recurrence-widget.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/event_copy.js" %}"></script>
+{% endblock %}
+
+{% block html_head %}
+    <script type="application/json" id="rrule_url">{"url": "{% url "event_management:rrule_occurrences" %}"}</script>
+{% endblock %}
+
+
 {% block content %}
     <div class="page-header">
         <h1>
@@ -45,9 +56,3 @@
     </div>
 {% endblock %}
 
-{% block javascript %}
-    <script type="text/javascript" src="{% static "recurrence/js/recurrence.js" %}"></script>
-    <script type="text/javascript" src="{% static "recurrence/js/recurrence-widget.js" %}"></script>
-    <script type="application/json" id="rrule_url">{"url": "{% url "event_management:rrule_occurrences" %}"}</script>
-    <script type="text/javascript" src="{% static "ephios/js/event_copy.js" %}"></script>
-{% endblock %}
