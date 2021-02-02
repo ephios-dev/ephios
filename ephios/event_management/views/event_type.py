@@ -34,11 +34,13 @@ class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObj
         preference_form = self.get_preference_form()
 
         if form.is_valid() and preference_form.is_valid():
-            type = form.save()
+            event_type = form.save()
             preference_form.update_preferences()
             messages.success(
-                self.request, _("The event type {type} has been saved.").format(type=type)
+                self.request, _("The event type {type} has been saved.").format(type=event_type)
             )
             return redirect(reverse("event_management:index"))
-        else:
-            return self.render_to_response(form=form, preference_form=preference_form)
+
+        return self.render_to_response(
+            self.get_context_data(form=form, preference_form=preference_form)
+        )
