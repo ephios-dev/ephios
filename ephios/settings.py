@@ -134,6 +134,7 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = "user_management.UserProfile"
 LOGIN_REDIRECT_URL = "/"
+PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

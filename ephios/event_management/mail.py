@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.event_management.models import AbstractParticipation, LocalParticipation
+from ephios.event_management.models import AbstractParticipation
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.settings import SITE_URL
 from ephios.user_management.models import UserProfile
@@ -50,35 +50,30 @@ def new_event(event):
 
 
 def participation_state_changed(participation: AbstractParticipation):
-    if participation.state != AbstractParticipation.States.USER_DECLINED:
-        messages = []
+    messages = []
 
-        # send mail to the participant whose participation has been changed
-        mail_requested = True
-        if participation.get_real_instance_class() == LocalParticipation:
-            local_participation = participation.get_real_instance()
-            if participation.state == AbstractParticipation.States.CONFIRMED:
-                mail_requested = local_participation.user.preferences[
-                    "notifications__confirm_participation"
-                ]
-            if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                mail_requested = local_participation.user.preferences[
-                    "notifications__reject_participation"
-                ]
-        if participation.participant.email is not None and mail_requested:
-            text_content = _(
-                "The status for your participation for {shift} has changed. It is now {status}."
-            ).format(shift=participation.shift, status=participation.get_state_display())
-            html_content = render_to_string("email_base.html", {"message_text": text_content})
-            message = EmailMultiAlternatives(
-                to=[participation.participant.email],
-                subject=_("Your participation state changed"),
-                body=text_content,
-            )
-            message.attach_alternative(html_content, "text/html")
-            messages.append(message)
+    # send mail to the participant whose participation has been changed
+    if participation.participant.email is not None and participation.state in (
+        AbstractParticipation.States.CONFIRMED,
+        AbstractParticipation.States.RESPONSIBLE_REJECTED,
+    ):
+        text_content = _(
+            "The status for your participation for {shift} has changed. It is now {status}."
+        ).format(shift=participation.shift, status=participation.get_state_display())
+        html_content = render_to_string("email_base.html", {"message_text": text_content})
+        message = EmailMultiAlternatives(
+            to=[participation.participant.email],
+            subject=_("Your participation state changed"),
+            body=text_content,
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
 
-        # send mail to responsible users
+    # send mail to responsible users
+    if participation.state == AbstractParticipation.States.REQUESTED or (
+        not participation.shift.signup_method.uses_requested_state
+        and AbstractParticipation.States.CONFIRMED
+    ):
         responsible_users = get_users_with_perms(
             participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
@@ -96,4 +91,4 @@ def participation_state_changed(participation: AbstractParticipation):
             message.attach_alternative(html_content, "text/html")
             messages.append(message)
 
-        mail.get_connection().send_messages(messages)
+    mail.get_connection().send_messages(messages)

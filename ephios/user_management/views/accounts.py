@@ -56,8 +56,8 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
             qualification_formset.save()
             messages.success(
                 self.request,
-                _("User {name} ({user}) added successfully.").format(
-                    name=userprofile.get_full_name(), user=userprofile
+                _("User {name} ({email}) added successfully.").format(
+                    name=userprofile.get_full_name(), email=userprofile.email
                 ),
             )
             if userprofile.is_active:

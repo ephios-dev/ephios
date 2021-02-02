@@ -119,11 +119,12 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("basesignup:shift_disposition_section_based", kwargs=dict(pk=sectioned_shift.pk)),
+        reverse("basesignup:shift_disposition", kwargs=dict(pk=sectioned_shift.pk)),
         user=planner,
     )
-    response.form["participations-0-state"] = AbstractParticipation.States.CONFIRMED.value
-    response.form.submit()
+    form = response.forms["participations-form"]
+    form["participations-0-state"] = AbstractParticipation.States.CONFIRMED.value
+    form.submit()
     participation = LocalParticipation.objects.get(user=qualified_volunteer, shift=sectioned_shift)
     assert participation.state == AbstractParticipation.States.CONFIRMED
     assert participation.data.get("preferred_section_uuid") == KTW_UUID

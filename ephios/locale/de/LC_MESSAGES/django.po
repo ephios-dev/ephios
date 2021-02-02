@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 18:00+0100\n"
-"PO-Revision-Date: 2021-01-18 16:50+0000\n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
+"POT-Creation-Date: 2021-01-21 22:59+0100\n"
+"PO-Revision-Date: 2021-01-21 22:14+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
@@ -19,23 +19,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.5-dev\n"
 
-#: .\ephios\event_management\forms.py:24
+#: ephios/event_management/forms.py:24
 msgid "Visible for"
 msgstr "Sichtbar für"
 
-#: .\ephios\event_management\forms.py:25
+#: ephios/event_management/forms.py:25
 msgid "Select groups which the event shall be visible for."
 msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
 
-#: .\ephios\event_management\forms.py:32
+#: ephios/event_management/forms.py:32
 msgid "Responsible persons"
 msgstr "Verantwortliche Personen"
 
-#: .\ephios\event_management\forms.py:38
+#: ephios/event_management/forms.py:38
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
-#: .\ephios\event_management\forms.py:75
+#: ephios/event_management/forms.py:75
 #, python-brace-format
 msgid ""
 "Select groups which the event shall be visible for. This event is also "
@@ -46,11 +46,11 @@ msgstr ""
 "Veranstaltung ist außerdem für <b>{groups}</b> sichtbar, aber Sie haben "
 "keine Berechtigung, die Sichtbarkeit für diese Gruppen zu ändern."
 
-#: .\ephios\event_management\forms.py:145
+#: ephios/event_management/forms.py:145
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
-#: .\ephios\event_management\forms.py:154
+#: ephios/event_management/forms.py:154
 msgid ""
 "This date will be used as the start date for recurring events that you "
 "create below, e.g. daily events will be created from this date onwards."
@@ -59,12 +59,12 @@ msgstr ""
 "verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
 "Veranstaltungen ab diesem Datum erstellt."
 
-#: .\ephios\event_management\mail.py:23
+#: ephios/event_management/mail.py:23
 #, python-brace-format
 msgid "New {type}: {title}"
 msgstr "{type} hinzugefügt: {title}"
 
-#: .\ephios\event_management\mail.py:25
+#: ephios/event_management/mail.py:25
 #, python-brace-format
 msgid ""
 "A new {type} ({title}, {location}) has been added.\n"
@@ -75,7 +75,7 @@ msgstr ""
 " Weitere Informationen: {description}\n"
 "Sie können die Veranstaltung hier ansehen: {url}"
 
-#: .\ephios\event_management\mail.py:55
+#: ephios/event_management/mail.py:57
 #, python-brace-format
 msgid ""
 "The status for your participation for {shift} has changed. It is now "
@@ -84,15 +84,15 @@ msgstr ""
 "Der Status Ihrer Teilnahme für {shift} hat sich geändert. Die Teilnahme ist "
 "nun {status}."
 
-#: .\ephios\event_management\mail.py:60
+#: ephios/event_management/mail.py:62
 msgid "Your participation state changed"
 msgstr "Der Status Ihrer Teilnahme hat sich geändert"
 
-#: .\ephios\event_management\mail.py:70
+#: ephios/event_management/mail.py:76
 msgid "Participation was changed for your event"
 msgstr "Teilnahme an Ihrer Veranstaltung geändert"
 
-#: .\ephios\event_management\mail.py:72
+#: ephios/event_management/mail.py:78
 #, python-brace-format
 msgid ""
 "The participation of {participant} for {shift} was changed. The status is "
@@ -101,322 +101,349 @@ msgstr ""
 "Die Teilnahme von {participant} an {shift} wurde geändert. Die Teilnahme ist "
 "nun {status}."
 
-#: .\ephios\event_management\models.py:35
-#: .\ephios\event_management\models.py:47
-#: .\ephios\user_management\models.py:168
-#: .\ephios\user_management\models.py:180
+#: ephios/event_management/models.py:37 ephios/event_management/models.py:49
+#: ephios/user_management/models.py:171 ephios/user_management/models.py:183
 msgid "title"
 msgstr "Titel"
 
-#: .\ephios\event_management\models.py:36
+#: ephios/event_management/models.py:38
 msgid "can grant qualification"
 msgstr "Kann Qualifikation gewähren"
 
-#: .\ephios\event_management\models.py:39
-#: .\ephios\event_management\models.py:50
+#: ephios/event_management/models.py:41 ephios/event_management/models.py:52
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
-#: .\ephios\event_management\models.py:40
+#: ephios/event_management/models.py:42
 msgid "event types"
 msgstr "Veranstaltungstypen"
 
-#: .\ephios\event_management\models.py:48
+#: ephios/event_management/models.py:50
 msgid "description"
 msgstr "Beschreibung"
 
-#: .\ephios\event_management\models.py:49
+#: ephios/event_management/models.py:51
 msgid "location"
 msgstr "Ort"
 
-#: .\ephios\event_management\models.py:52
+#: ephios/event_management/models.py:54
 msgid "send updates via mail"
 msgstr "Updates per E-Mail senden"
 
-#: .\ephios\event_management\models.py:58
+#: ephios/event_management/models.py:60
 msgid "event"
 msgstr "Veranstaltung"
 
-#: .\ephios\event_management\models.py:59
+#: ephios/event_management/models.py:61
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: .\ephios\event_management\models.py:60 .\ephios\user_management\forms.py:109
+#: ephios/event_management/models.py:62 ephios/user_management/forms.py:109
 msgid "Can view past events"
 msgstr "Darf vergangene Veranstaltungen sehen"
 
-#: .\ephios\event_management\models.py:92
+#: ephios/event_management/models.py:94
 msgid "requested"
 msgstr "angefragt"
 
-#: .\ephios\event_management\models.py:93
+#: ephios/event_management/models.py:95
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: .\ephios\event_management\models.py:94
+#: ephios/event_management/models.py:96
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: .\ephios\event_management\models.py:95
+#: ephios/event_management/models.py:97
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: .\ephios\event_management\models.py:97
-#: .\ephios\event_management\models.py:130
+#: ephios/event_management/models.py:98
+msgid "getting dispatched"
+msgstr "in Zuteilung"
+
+#: ephios/event_management/models.py:100 ephios/event_management/models.py:133
 msgid "shift"
 msgstr "Schicht"
 
-#: .\ephios\event_management\models.py:98
+#: ephios/event_management/models.py:101
 msgid "state"
 msgstr "Status"
 
-#: .\ephios\event_management\models.py:119
-#: .\ephios\event_management\models.py:131
+#: ephios/event_management/models.py:122 ephios/event_management/models.py:134
 msgid "shifts"
 msgstr "Schichten"
 
-#: .\ephios\event_management\models.py:121
+#: ephios/event_management/models.py:124
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: .\ephios\event_management\models.py:122
+#: ephios/event_management/models.py:125
 msgid "start time"
 msgstr "Beginn"
 
-#: .\ephios\event_management\models.py:123
+#: ephios/event_management/models.py:126
 msgid "end time"
 msgstr "Ende"
 
-#: .\ephios\event_management\models.py:124
+#: ephios/event_management/models.py:127
 msgid "signup method"
 msgstr "Anmeldeverfahren"
 
-#: .\ephios\event_management\pdf.py:61 .\ephios\event_management\pdf.py:115
-#: .\ephios\event_management\templates\event_management\event_archive.html:19
-#: .\ephios\event_management\templates\event_management\event_list.html:31
-#: .\ephios\event_management\templates\event_management\mails\new_event.html:8
-#: .\ephios\event_management\templates\event_management\shift_form.html:68
+#: ephios/event_management/pdf.py:61 ephios/event_management/pdf.py:115
+#: ephios/event_management/templates/event_management/event_archive.html:19
+#: ephios/event_management/templates/event_management/event_list.html:31
+#: ephios/event_management/templates/event_management/mails/new_event.html:8
+#: ephios/event_management/templates/event_management/shift_form.html:68
 msgid "Location"
 msgstr "Ort"
 
-#: .\ephios\event_management\pdf.py:63 .\ephios\event_management\pdf.py:116
-#: .\ephios\event_management\templates\event_management\event_archive.html:20
-#: .\ephios\event_management\templates\event_management\event_list.html:32
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:17
-#: .\ephios\user_management\forms.py:292
+#: ephios/event_management/pdf.py:63 ephios/event_management/pdf.py:116
+#: ephios/event_management/templates/event_management/event_archive.html:20
+#: ephios/event_management/templates/event_management/event_list.html:32
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:17
+#: ephios/user_management/forms.py:306
 msgid "Date"
 msgstr "Datum"
 
-#: .\ephios\event_management\pdf.py:67
+#: ephios/event_management/pdf.py:67
 msgid "Time"
 msgstr "Zeit"
 
-#: .\ephios\event_management\pdf.py:70 .\ephios\event_management\pdf.py:127
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_big.html:24
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:18
+#: ephios/event_management/pdf.py:70 ephios/event_management/pdf.py:127
+#: ephios/event_management/templates/event_management/fragments/shift_box_big.html:24
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:18
 msgid "Meeting time"
 msgstr "Treffpunkt"
 
-#: .\ephios\event_management\pdf.py:76 .\ephios\event_management\pdf.py:117
+#: ephios/event_management/pdf.py:76 ephios/event_management/pdf.py:117
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ephios\event_management\pdf.py:88 .\ephios\event_management\pdf.py:139
+#: ephios/event_management/pdf.py:88 ephios/event_management/pdf.py:139
 msgid "Participants"
 msgstr "Teilnehmende"
 
-#: .\ephios\event_management\signup.py:38
+#: ephios/event_management/signup/disposition.py:83
+msgid "search"
+msgstr "suchen"
+
+#: ephios/event_management/signup/disposition.py:104
+msgid "This signup method does not support disposition."
+msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
+
+#: ephios/event_management/signup/methods.py:39
 #, python-brace-format
 msgid "Signup Method '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: .\ephios\event_management\signup.py:110
+#: ephios/event_management/signup/methods.py:111
 #, python-brace-format
 msgid "'{choice}' is not a valid signup action."
 msgstr "'{choice}' ist keinen gültige Anmeldeaktion."
 
-#: .\ephios\event_management\signup.py:141
+#: ephios/event_management/signup/methods.py:142
 msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
-#: .\ephios\event_management\signup.py:149
+#: ephios/event_management/signup/methods.py:150
 #, python-brace-format
 msgid "You have already requested your participation for {shift}"
 msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt"
 
-#: .\ephios\event_management\signup.py:155
+#: ephios/event_management/signup/methods.py:156
 #, python-brace-format
 msgid "You are already signed up for {shift}."
 msgstr "Sie sind bereits für {shift} eingeteilt."
 
-#: .\ephios\event_management\signup.py:159
-#: .\ephios\event_management\signup.py:175
+#: ephios/event_management/signup/methods.py:160
+#: ephios/event_management/signup/methods.py:176
 #, python-brace-format
 msgid "You are rejected from {shift}."
 msgstr "Sie wurden für {shift} abgelehnt."
 
-#: .\ephios\event_management\signup.py:171
+#: ephios/event_management/signup/methods.py:172
 #, python-brace-format
 msgid "You are bindingly signed up for {shift}."
 msgstr "Sie sind verbindlich für {shift} eingeteilt."
 
-#: .\ephios\event_management\signup.py:179
+#: ephios/event_management/signup/methods.py:180
 #, python-brace-format
 msgid "You have already declined participating in {shift}."
 msgstr "Sie haben bereits für {shift} abgesagt."
 
-#: .\ephios\event_management\signup.py:188
+#: ephios/event_management/signup/methods.py:189
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: .\ephios\event_management\signup.py:196
+#: ephios/event_management/signup/methods.py:197
 #, python-brace-format
 msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
-#: .\ephios\event_management\signup.py:214
+#: ephios/event_management/signup/methods.py:215
 msgid "Sign up"
 msgstr "Anmelden"
 
-#: .\ephios\event_management\signup.py:215
+#: ephios/event_management/signup/methods.py:216
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: .\ephios\event_management\signup.py:216
+#: ephios/event_management/signup/methods.py:217
 #, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
-#: .\ephios\event_management\signup.py:217
+#: ephios/event_management/signup/methods.py:218
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: .\ephios\event_management\signup.py:218
+#: ephios/event_management/signup/methods.py:219
 #, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
 
-#: .\ephios\event_management\signup.py:300
+#: ephios/event_management/signup/methods.py:308
 msgid "Minimum age"
 msgstr "Mindestalter"
 
-#: .\ephios\event_management\signup.py:307
+#: ephios/event_management/signup/methods.py:315
 msgid "Signup until"
 msgstr "Anmelden bis"
 
-#: .\ephios\event_management\signup.py:312
+#: ephios/event_management/signup/methods.py:320
 msgid "Confirmed users can decline by themselves"
 msgstr "Bestätigte Nutzer können selbstständig absagen"
 
-#: .\ephios\event_management\signup.py:314
+#: ephios/event_management/signup/methods.py:322
 msgid "only if the signup timeframe has not ended"
 msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: .\ephios\event_management\signup.py:317
+#: ephios/event_management/signup/methods.py:325
 msgid "Can decline after confirmation"
 msgstr "Kann nach Bestätigung absagen"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:7
-#: .\ephios\event_management\templates\event_management\event_archive.html:12
-#: .\ephios\templates\base.html:63
+#: ephios/event_management/templates/event_management/disposition/disposition.html:8
+#: ephios/plugins/basesignup/templates/basesignup/instant/fragment_state.html:17
+#: ephios/plugins/basesignup/templates/basesignup/request_confirm/fragment_state.html:37
+#: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:48
+msgid "Disposition"
+msgstr "Disposition"
+
+#: ephios/event_management/templates/event_management/disposition/disposition.html:38
+msgid "Add others"
+msgstr "Weitere hinzufügen"
+
+#: ephios/event_management/templates/event_management/disposition/disposition.html:116
+#: ephios/event_management/templates/event_management/event_detail.html:15
+#: ephios/event_management/templates/event_management/event_form.html:37
+#: ephios/event_management/templates/event_management/shift_form.html:43
+#: ephios/user_management/templates/user_management/group_form.html:30
+#: ephios/user_management/templates/user_management/userprofile_form.html:103
+msgid "Save"
+msgstr "Speichern"
+
+#: ephios/event_management/templates/event_management/event_archive.html:7
+#: ephios/event_management/templates/event_management/event_archive.html:12
+#: ephios/templates/base.html:63
 msgid "Past events"
 msgstr "Vergangene Veranstaltungen"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:17
-#: .\ephios\event_management\templates\event_management\event_list.html:29
+#: ephios/event_management/templates/event_management/event_archive.html:17
+#: ephios/event_management/templates/event_management/event_list.html:29
 msgid "Type"
 msgstr "Typ"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:18
-#: .\ephios\event_management\templates\event_management\event_list.html:30
-#: .\ephios\plugins\basesignup\signup\section_based.py:128
+#: ephios/event_management/templates/event_management/event_archive.html:18
+#: ephios/event_management/templates/event_management/event_list.html:30
+#: ephios/plugins/basesignup/signup/section_based.py:99
 msgid "Title"
 msgstr "Titel"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:21
-#: .\ephios\event_management\templates\event_management\event_list.html:33
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:39
+#: ephios/event_management/templates/event_management/event_archive.html:21
+#: ephios/event_management/templates/event_management/event_list.html:33
+#: ephios/user_management/templates/user_management/userprofile_detail.html:39
 msgid "until"
 msgstr "bis"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:22
-#: .\ephios\event_management\templates\event_management\event_list.html:34
-#: .\ephios\user_management\templates\user_management\group_list.html:22
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:25
+#: ephios/event_management/templates/event_management/event_archive.html:22
+#: ephios/event_management/templates/event_management/event_list.html:34
+#: ephios/user_management/templates/user_management/group_list.html:22
+#: ephios/user_management/templates/user_management/userprofile_list.html:25
 msgid "Action"
 msgstr "Aktion"
 
-#: .\ephios\event_management\templates\event_management\event_archive.html:34
-#: .\ephios\event_management\templates\event_management\event_list.html:49
+#: ephios/event_management/templates/event_management/event_archive.html:34
+#: ephios/event_management/templates/event_management/event_list.html:49
 msgid "Show"
 msgstr "Anzeigen"
 
-#: .\ephios\event_management\templates\event_management\event_bulk_delete.html:5
-#: .\ephios\event_management\templates\event_management\event_bulk_delete.html:10
+#: ephios/event_management/templates/event_management/event_bulk_delete.html:5
+#: ephios/event_management/templates/event_management/event_bulk_delete.html:10
 msgid "Delete events"
 msgstr "Veranstaltungen löschen"
 
-#: .\ephios\event_management\templates\event_management\event_bulk_delete.html:12
+#: ephios/event_management/templates/event_management/event_bulk_delete.html:12
 msgid "Are you sure that you want to delete the following events?"
 msgstr "Möchten Sie die folgenden Veranstaltungen wirklich löschen?"
 
-#: .\ephios\event_management\templates\event_management\event_bulk_delete.html:23
-#: .\ephios\event_management\templates\event_management\event_confirm_delete.html:17
-#: .\ephios\event_management\templates\event_management\event_copy.html:38
-#: .\ephios\event_management\templates\event_management\event_form.html:36
-#: .\ephios\event_management\templates\event_management\shift_confirm_delete.html:17
-#: .\ephios\user_management\templates\user_management\group_confirm_delete.html:17
-#: .\ephios\user_management\templates\user_management\userprofile_confirm_delete.html:19
+#: ephios/event_management/templates/event_management/event_bulk_delete.html:23
+#: ephios/event_management/templates/event_management/event_confirm_delete.html:17
+#: ephios/event_management/templates/event_management/event_copy.html:38
+#: ephios/event_management/templates/event_management/event_form.html:36
+#: ephios/event_management/templates/event_management/shift_confirm_delete.html:17
+#: ephios/user_management/templates/user_management/group_confirm_delete.html:17
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:19
 msgid "Back"
 msgstr "Zurück"
 
-#: .\ephios\event_management\templates\event_management\event_bulk_delete.html:24
-#: .\ephios\event_management\templates\event_management\event_confirm_delete.html:18
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_big.html:15
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:12
-#: .\ephios\event_management\templates\event_management\shift_confirm_delete.html:18
-#: .\ephios\event_management\templates\event_management\shift_form.html:40
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:30
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:62
-#: .\ephios\user_management\templates\user_management\group_confirm_delete.html:18
-#: .\ephios\user_management\templates\user_management\group_list.html:33
-#: .\ephios\user_management\templates\user_management\userprofile_confirm_delete.html:20
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:57
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:86
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:101
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:40
+#: ephios/event_management/templates/event_management/event_bulk_delete.html:24
+#: ephios/event_management/templates/event_management/event_confirm_delete.html:18
+#: ephios/event_management/templates/event_management/fragments/shift_box_big.html:15
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:12
+#: ephios/event_management/templates/event_management/shift_confirm_delete.html:18
+#: ephios/event_management/templates/event_management/shift_form.html:40
+#: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:30
+#: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:62
+#: ephios/user_management/templates/user_management/group_confirm_delete.html:18
+#: ephios/user_management/templates/user_management/group_list.html:33
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:20
+#: ephios/user_management/templates/user_management/userprofile_form.html:57
+#: ephios/user_management/templates/user_management/userprofile_form.html:86
+#: ephios/user_management/templates/user_management/userprofile_form.html:101
+#: ephios/user_management/templates/user_management/userprofile_list.html:40
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\ephios\event_management\templates\event_management\event_confirm_delete.html:7
-#: .\ephios\event_management\templates\event_management\event_confirm_delete.html:12
-#: .\ephios\event_management\templates\event_management\event_detail.html:50
+#: ephios/event_management/templates/event_management/event_confirm_delete.html:7
+#: ephios/event_management/templates/event_management/event_confirm_delete.html:12
+#: ephios/event_management/templates/event_management/event_detail.html:50
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
-#: .\ephios\event_management\templates\event_management\event_confirm_delete.html:16
+#: ephios/event_management/templates/event_management/event_confirm_delete.html:16
 #, python-format
 msgid "Are you sure you want to delete the event \"%(object)s\"?"
 msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 
-#: .\ephios\event_management\templates\event_management\event_copy.html:7
-#: .\ephios\event_management\templates\event_management\event_copy.html:17
-#: .\ephios\event_management\templates\event_management\event_detail.html:55
+#: ephios/event_management/templates/event_management/event_copy.html:7
+#: ephios/event_management/templates/event_management/event_copy.html:17
+#: ephios/event_management/templates/event_management/event_detail.html:55
 msgid "Copy event"
 msgstr "Veranstaltung kopieren"
 
-#: .\ephios\event_management\templates\event_management\event_copy.html:39
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:61
+#: ephios/event_management/templates/event_management/event_copy.html:39
+#: ephios/user_management/templates/user_management/userprofile_detail.html:61
 msgid "Copy"
 msgstr "Kopieren"
 
-#: .\ephios\event_management\templates\event_management\event_copy.html:41
+#: ephios/event_management/templates/event_management/event_copy.html:41
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:14
+#: ephios/event_management/templates/event_management/event_detail.html:14
 msgid ""
 "This event has not been saved! If you are done editing the event, you can "
 "save it."
@@ -424,283 +451,339 @@ msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Wenn Sie mit dem "
 "Bearbeiten der Veranstaltung fertig sind, können Sie sie speichern."
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:15
-#: .\ephios\event_management\templates\event_management\event_form.html:37
-#: .\ephios\event_management\templates\event_management\shift_form.html:43
-#: .\ephios\plugins\basesignup\templates\basesignup\disposition.html:83
-#: .\ephios\user_management\templates\user_management\group_form.html:30
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:103
-msgid "Save"
-msgstr "Speichern"
-
-#: .\ephios\event_management\templates\event_management\event_detail.html:21
+#: ephios/event_management/templates/event_management/event_detail.html:21
 msgid "This event has not been saved! Please add a shift to save this event."
 msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
 "Schicht hinzu, um sie zu speichern."
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:34
+#: ephios/event_management/templates/event_management/event_detail.html:34
 msgid "Manage event"
 msgstr "Veranstaltung verwalten"
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:40
-#: .\ephios\event_management\templates\event_management\event_form.html:8
-#: .\ephios\event_management\templates\event_management\event_form.html:25
+#: ephios/event_management/templates/event_management/event_detail.html:40
+#: ephios/event_management/templates/event_management/event_form.html:8
+#: ephios/event_management/templates/event_management/event_form.html:25
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:45
-#: .\ephios\event_management\templates\event_management\shift_form.html:53
+#: ephios/event_management/templates/event_management/event_detail.html:45
+#: ephios/event_management/templates/event_management/shift_form.html:53
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
-#: .\ephios\event_management\templates\event_management\event_detail.html:60
+#: ephios/event_management/templates/event_management/event_detail.html:60
 msgid "Download PDF"
 msgstr "PDF herunterladen"
 
-#: .\ephios\event_management\templates\event_management\event_form.html:10
-#: .\ephios\event_management\templates\event_management\event_form.html:27
+#: ephios/event_management/templates/event_management/event_form.html:10
+#: ephios/event_management/templates/event_management/event_form.html:27
 msgid "Create new event"
 msgstr "Neue Veranstaltung anlegen"
 
-#: .\ephios\event_management\templates\event_management\event_form.html:18
+#: ephios/event_management/templates/event_management/event_form.html:18
 msgid "You have an unsaved event"
 msgstr "Sie haben eine nicht gespeicherte Veranstaltung"
 
-#: .\ephios\event_management\templates\event_management\event_form.html:19
-#: .\ephios\event_management\templates\event_management\home.html:32
-#: .\ephios\event_management\templates\event_management\mails\new_event.html:9
+#: ephios/event_management/templates/event_management/event_form.html:19
+#: ephios/event_management/templates/event_management/home.html:32
+#: ephios/event_management/templates/event_management/mails/new_event.html:9
 msgid "View"
 msgstr "Anzeigen"
 
-#: .\ephios\event_management\templates\event_management\event_form.html:39
-#: .\ephios\user_management\templates\user_management\group_form.html:29
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:97
+#: ephios/event_management/templates/event_management/event_form.html:39
+#: ephios/user_management/templates/user_management/group_form.html:29
+#: ephios/user_management/templates/user_management/userprofile_form.html:97
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: .\ephios\event_management\templates\event_management\event_form.html:40
+#: ephios/event_management/templates/event_management/event_form.html:40
 msgid "Next"
 msgstr "Weiter"
 
-#: .\ephios\event_management\templates\event_management\event_list.html:7
-#: .\ephios\event_management\templates\event_management\event_list.html:12
-#: .\ephios\templates\base.html:56
+#: ephios/event_management/templates/event_management/event_list.html:7
+#: ephios/event_management/templates/event_management/event_list.html:12
+#: ephios/templates/base.html:56
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: .\ephios\event_management\templates\event_management\event_list.html:19
+#: ephios/event_management/templates/event_management/event_list.html:19
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: .\ephios\event_management\templates\event_management\event_list.html:21
+#: ephios/event_management/templates/event_management/event_list.html:21
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
-#: .\ephios\event_management\templates\event_management\fragments\approve_consequences.html:8
+#: ephios/event_management/templates/event_management/fragments/approve_consequences.html:8
 msgid "Confirm results"
 msgstr "Offene Anfragen"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_big.html:12
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:9
-#: .\ephios\event_management\templates\event_management\shift_form.html:64
-#: .\ephios\user_management\templates\user_management\group_list.html:31
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:37
+#: ephios/event_management/templates/event_management/fragments/shift_box_big.html:12
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:9
+#: ephios/event_management/templates/event_management/shift_form.html:64
+#: ephios/user_management/templates/user_management/group_list.html:31
+#: ephios/user_management/templates/user_management/userprofile_list.html:37
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_big.html:60
+#: ephios/event_management/templates/event_management/fragments/shift_box_big.html:60
 msgid "Decline"
 msgstr "Absagen"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:6
-#: .\ephios\event_management\templates\event_management\shift_form.html:78
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:6
+#: ephios/event_management/templates/event_management/shift_form.html:78
 msgid "Shift"
 msgstr "Schicht"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:19
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:19
 msgid "Start time"
 msgstr "Beginn"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:20
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:20
 msgid "End time"
 msgstr "Ende"
 
-#: .\ephios\event_management\templates\event_management\fragments\shift_box_small.html:21
+#: ephios/event_management/templates/event_management/fragments/shift_box_small.html:21
 msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
-#: .\ephios\event_management\templates\event_management\home.html:8
-#: .\ephios\templates\base.html:50
+#: ephios/event_management/templates/event_management/home.html:8
+#: ephios/templates/base.html:50
 msgid "Home"
 msgstr "Startseite"
 
-#: .\ephios\event_management\templates\event_management\home.html:17
-#: .\ephios\user_management\mail.py:15
+#: ephios/event_management/templates/event_management/home.html:17
+#: ephios/user_management/mail.py:15
 msgid "Welcome to ephios!"
 msgstr "Willkommen bei ephios!"
 
-#: .\ephios\event_management\templates\event_management\home.html:24
+#: ephios/event_management/templates/event_management/home.html:24
 msgid "Your upcoming events"
 msgstr "Anstehende Schichten"
 
-#: .\ephios\event_management\templates\event_management\mails\new_event.html:5
+#: ephios/event_management/templates/event_management/mails/new_event.html:5
 msgid "added"
 msgstr "hinzugefügt"
 
-#: .\ephios\event_management\templates\event_management\shift_confirm_delete.html:7
-#: .\ephios\event_management\templates\event_management\shift_confirm_delete.html:12
+#: ephios/event_management/templates/event_management/shift_confirm_delete.html:7
+#: ephios/event_management/templates/event_management/shift_confirm_delete.html:12
 msgid "Delete shift"
 msgstr "Schicht löschen"
 
-#: .\ephios\event_management\templates\event_management\shift_confirm_delete.html:16
+#: ephios/event_management/templates/event_management/shift_confirm_delete.html:16
 #, python-format
 msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
 msgstr "Möchten Sie die Schicht \"%(shift)s\" wirklich löschen?"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:8
-#: .\ephios\event_management\templates\event_management\shift_form.html:17
+#: ephios/event_management/templates/event_management/shift_form.html:8
+#: ephios/event_management/templates/event_management/shift_form.html:17
 msgid "Edit shift"
 msgstr "Schicht bearbeiten"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:10
-#: .\ephios\event_management\templates\event_management\shift_form.html:19
+#: ephios/event_management/templates/event_management/shift_form.html:10
+#: ephios/event_management/templates/event_management/shift_form.html:19
 msgid "Create new shift for event"
 msgstr "Schicht hinzufügen"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:35
+#: ephios/event_management/templates/event_management/shift_form.html:35
 msgid "Back to event"
 msgstr "Zurück zur Veranstaltung"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:47
+#: ephios/event_management/templates/event_management/shift_form.html:47
 msgid "Discard event"
 msgstr "Veranstaltung verwerfen"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:49
+#: ephios/event_management/templates/event_management/shift_form.html:49
 msgid "Save event"
 msgstr "Veranstaltung speichern"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:67
+#: ephios/event_management/templates/event_management/shift_form.html:67
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: .\ephios\event_management\templates\event_management\shift_form.html:79
+#: ephios/event_management/templates/event_management/shift_form.html:79
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
-#: .\ephios\event_management\views.py:116
-#: .\ephios\event_management\views.py:302
+#: ephios/event_management/views.py:116 ephios/event_management/views.py:302
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: .\ephios\event_management\views.py:136
+#: ephios/event_management/views.py:136
 msgid "No events were selected for deletion."
 msgstr "Es wurden keine Veranstaltungen zum Löschen ausgewählt."
 
-#: .\ephios\event_management\views.py:140
+#: ephios/event_management/views.py:140
 msgid "The selected events have been deleted."
 msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 
-#: .\ephios\event_management\views.py:230
+#: ephios/event_management/views.py:230
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: .\ephios\event_management\views.py:372
+#: ephios/event_management/views.py:372
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: .\ephios\event_management\views.py:393
+#: ephios/event_management/views.py:393
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: .\ephios\event_management\views.py:398
+#: ephios/event_management/views.py:398
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
-#: .\ephios\extra\management\commands\setupdata.py:68
+#: ephios/extra/management/commands/setupdata.py:68
 msgid "Volunteers"
 msgstr "Helfer"
 
-#: .\ephios\extra\management\commands\setupdata.py:72
+#: ephios/extra/management/commands/setupdata.py:72
 msgid "Planners"
 msgstr "Planer"
 
-#: .\ephios\extra\management\commands\setupdata.py:76
+#: ephios/extra/management/commands/setupdata.py:76
 msgid "Managers"
 msgstr "Manager"
 
-#: .\ephios\extra\management\commands\setupdata.py:93
+#: ephios/extra/management/commands/setupdata.py:93
 msgid "Service"
 msgstr "Dienst"
 
-#: .\ephios\extra\management\commands\setupdata.py:94
+#: ephios/extra/management/commands/setupdata.py:94
 msgid "Training"
 msgstr "Ausbildung"
 
-#: .\ephios\extra\management\commands\setupdata.py:137
+#: ephios/extra/management/commands/setupdata.py:137
 msgid "Medical"
 msgstr "Medizinisch"
 
-#: .\ephios\extra\management\commands\setupdata.py:213
+#: ephios/extra/management/commands/setupdata.py:213
 msgid "License"
 msgstr "Führerschein"
 
-#: .\ephios\extra\management\commands\setupdata.py:356
+#: ephios/extra/management/commands/setupdata.py:356
 msgid "Diving"
 msgstr "Tauchen"
 
-#: .\ephios\extra\management\commands\setupdata.py:392
+#: ephios/extra/management/commands/setupdata.py:392
 msgid "Boats (DLRG)"
 msgstr "Bootsführerscheine (DLRG)"
 
-#: .\ephios\extra\management\commands\setupdata.py:409
+#: ephios/extra/management/commands/setupdata.py:409
 msgid "DRSA"
 msgstr "DRSA"
 
-#: .\ephios\extra\management\commands\setupdata.py:434
+#: ephios/extra/management/commands/setupdata.py:434
 msgid "Water rescue (DLRG)"
 msgstr "Wasserrettung (DLRG)"
 
-#: .\ephios\extra\management\commands\setupdata.py:459
+#: ephios/extra/management/commands/setupdata.py:459
 msgid "Radio"
 msgstr "Funk"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:39
-msgid "Section"
-msgstr "Abschnitt"
+#: ephios/plugins/basesignup/signup/common.py:25
+#: ephios/plugins/basesignup/signup/section_based.py:239
+msgid "You are not qualified."
+msgstr "Sie sind nicht qualifiziert."
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:72
-msgid "You must select a section when confirming a participation."
-msgstr "Sie müssen einen Abschnitt auswählen um diese Teilnahme zu bestätigen."
-
-#: .\ephios\plugins\basesignup\signup\section_based.py:130
-#: .\ephios\plugins\basesignup\signup\simple.py:39
+#: ephios/plugins/basesignup/signup/common.py:32
+#: ephios/plugins/basesignup/signup/section_based.py:101
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:135
+#: ephios/plugins/basesignup/signup/common.py:38
+msgid "Required Qualification"
+msgstr "Erforderliche Qualifikation"
+
+#: ephios/plugins/basesignup/signup/instant.py:13
+msgid "Instant Confirmation"
+msgstr "Direkte Bestätigung"
+
+#: ephios/plugins/basesignup/signup/instant.py:14
+msgid "This method instantly confirms every signup after it was requested."
+msgstr ""
+"Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie "
+"angefordert wurde."
+
+#: ephios/plugins/basesignup/signup/instant.py:28
+msgid "The maximum number of participants is reached."
+msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
+
+#: ephios/plugins/basesignup/signup/instant.py:36
+msgid "Maximum number of participants"
+msgstr "Maximale Anzahl Teilnehmende"
+
+#: ephios/plugins/basesignup/signup/request_confirm.py:11
+msgid "Request and confirm"
+msgstr "Anfragen und bestätigen"
+
+#: ephios/plugins/basesignup/signup/request_confirm.py:13
+msgid ""
+"This method lets people request participation. Responsibles can then confirm "
+"the participation."
+msgstr ""
+"Dieses Anmeldeverfahren lässt Helfende eine Teilnahme anfragen. "
+"Verantwortliche Personen können die Teilnahme dann bestätigen."
+
+#: ephios/plugins/basesignup/signup/request_confirm.py:15
+#: ephios/plugins/basesignup/signup/section_based.py:205
+#: ephios/plugins/basesignup/templates/basesignup/section_based/signup.html:24
+#: ephios/user_management/templates/user_management/workinghour_request.html:16
+msgid "Request"
+msgstr "Anfragen"
+
+#: ephios/plugins/basesignup/signup/request_confirm.py:16
+#: ephios/plugins/basesignup/signup/section_based.py:206
+#, python-brace-format
+msgid "You have successfully requested a participation for {shift}."
+msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
+
+#: ephios/plugins/basesignup/signup/request_confirm.py:17
+#: ephios/plugins/basesignup/signup/section_based.py:207
+#, python-brace-format
+msgid "Requesting a participation failed: {error}"
+msgstr "Das Anfragen einer Teilnahme ist fehlgeschlagen: {error}"
+
+#: ephios/plugins/basesignup/signup/section_based.py:40
+msgid "Section"
+msgstr "Abschnitt"
+
+#: ephios/plugins/basesignup/signup/section_based.py:63
+msgid "qualified"
+msgstr "qualifiziert"
+
+#: ephios/plugins/basesignup/signup/section_based.py:70
+msgid "unqualified"
+msgstr "unqualifiziert"
+
+#: ephios/plugins/basesignup/signup/section_based.py:90
+msgid "You must select a section when confirming a participation."
+msgstr "Sie müssen einen Abschnitt auswählen um diese Teilnahme zu bestätigen."
+
+#: ephios/plugins/basesignup/signup/section_based.py:106
 msgid "min amount"
 msgstr "Mindestanzahl"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:158
+#: ephios/plugins/basesignup/signup/section_based.py:129
 msgid "The sections aren't configured correctly."
 msgstr "Die Abschnitte sind nicht korrekt konfiguiert."
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:172
+#: ephios/plugins/basesignup/signup/section_based.py:143
 msgid "Preferred Section"
 msgstr "Bevorzugter Abschnitt"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:218
+#: ephios/plugins/basesignup/signup/section_based.py:189
 msgid "You can not sign up for this shift."
 msgstr "Sie können sich für diese Schicht nicht anmelden."
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:229
+#: ephios/plugins/basesignup/signup/section_based.py:200
 msgid "Apply for sections"
 msgstr "Bewerbung auf Abschnitte"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:231
+#: ephios/plugins/basesignup/signup/section_based.py:202
 msgid ""
 "This method lets you define sections for which people can choose from.\n"
 "        Sections contain qualifications that helpers need to fulfil."
@@ -710,119 +793,55 @@ msgstr ""
 "Abschnitte können Qualifikationen fordern, die die Teilnehmenden aufweisen "
 "müssen."
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:234
-#: .\ephios\plugins\basesignup\signup\simple.py:144
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\signup.html:24
-#: .\ephios\user_management\templates\user_management\workinghour_request.html:16
-msgid "Request"
-msgstr "Anfragen"
-
-#: .\ephios\plugins\basesignup\signup\section_based.py:235
-#: .\ephios\plugins\basesignup\signup\simple.py:145
-#, python-brace-format
-msgid "You have successfully requested a participation for {shift}."
-msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
-
-#: .\ephios\plugins\basesignup\signup\section_based.py:236
-#: .\ephios\plugins\basesignup\signup\simple.py:146
-#, python-brace-format
-msgid "Requesting a participation failed: {error}"
-msgstr "Das Anfragen einer Teilnahme ist fehlgeschlagen: {error}"
-
-#: .\ephios\plugins\basesignup\signup\section_based.py:245
+#: ephios/plugins/basesignup/signup/section_based.py:219
 msgid "Ask participants for a preferred section"
 msgstr "Teilnehmende nach einem bevorzugten Abschnitt fragen"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:246
+#: ephios/plugins/basesignup/signup/section_based.py:220
 msgid "This only makes sense if you configure multiple sections."
 msgstr ""
 "Diese Option ist nur sinnvoll wenn Sie mehrere Abschnitte konfigurieren."
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:254
+#: ephios/plugins/basesignup/signup/section_based.py:228
 msgid "Structure"
 msgstr "Struktur"
 
-#: .\ephios\plugins\basesignup\signup\section_based.py:265
-#: .\ephios\plugins\basesignup\signup\simple.py:32
-msgid "You are not qualified."
-msgstr "Sie sind nicht qualifiziert."
-
-#: .\ephios\plugins\basesignup\signup\simple.py:45
-msgid "Required Qualification"
-msgstr "Erforderliche Qualifikation"
-
-#: .\ephios\plugins\basesignup\signup\simple.py:55
-msgid "Instant Confirmation"
-msgstr "Direkte Bestätigung"
-
-#: .\ephios\plugins\basesignup\signup\simple.py:56
-msgid "This method instantly confirms every signup after it was requested."
-msgstr ""
-"Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie "
-"angefordert wurde."
-
-#: .\ephios\plugins\basesignup\signup\simple.py:69
-msgid "The maximum number of participants is reached."
-msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
-
-#: .\ephios\plugins\basesignup\signup\simple.py:77
-msgid "Maximum number of participants"
-msgstr "Maximale Anzahl Teilnehmende"
-
-#: .\ephios\plugins\basesignup\signup\simple.py:140
-msgid "Request and confirm"
-msgstr "Anfragen und bestätigen"
-
-#: .\ephios\plugins\basesignup\signup\simple.py:142
-msgid ""
-"This method lets people request participation. Responsibles can then confirm "
-"the participation."
-msgstr ""
-"Dieses Anmeldeverfahren lässt Helfende eine Teilnahme anfragen. "
-"Verantwortliche Personen können die Teilnahme dann bestätigen."
-
-#: .\ephios\plugins\basesignup\templates\basesignup\disposition.html:7
-#: .\ephios\plugins\basesignup\templates\basesignup\requestconfirm\fragment_state.html:37
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\fragment_state.html:48
-msgid "Disposition"
-msgstr "Disposition"
-
-#: .\ephios\plugins\basesignup\templates\basesignup\requestconfirm\fragment_state.html:8
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\fragment_state.html:8
-msgid "Requests"
-msgstr "Anfragen"
-
-#: .\ephios\plugins\basesignup\templates\basesignup\requestconfirm\fragment_state.html:22
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\fragment_state.html:22
-#: .\ephios\plugins\basesignup\templates\basesignup\signup_instant_state.html:4
+#: ephios/plugins/basesignup/templates/basesignup/instant/fragment_state.html:4
+#: ephios/plugins/basesignup/templates/basesignup/request_confirm/fragment_state.html:22
+#: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:22
 msgid "Signed up"
 msgstr "Angemeldet"
 
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:12
+#: ephios/plugins/basesignup/templates/basesignup/request_confirm/fragment_state.html:8
+#: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:8
+msgid "Requests"
+msgstr "Anfragen"
+
+#: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:12
 msgid "Sections"
 msgstr "Abschnitte"
 
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:39
+#: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:39
 msgid "Add section"
 msgstr "Abschnitt hinzufügen"
 
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\fragment_participant.html:11
+#: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_participant.html:12
 msgid "prefers"
 msgstr "bevorzugt"
 
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\signup.html:7
+#: ephios/plugins/basesignup/templates/basesignup/section_based/signup.html:7
 msgid "Signup"
 msgstr "Anmeldung"
 
-#: .\ephios\plugins\basesignup\templates\basesignup\section_based\signup.html:20
+#: ephios/plugins/basesignup/templates/basesignup/section_based/signup.html:20
 msgid "You don't qualify for"
-msgstr "Sie nicht qualifiziert für"
+msgstr "Sie sind nicht qualifiziert für"
 
-#: .\ephios\templates\400.html:5 .\ephios\templates\400.html:9
+#: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
 msgstr "Fehlerhafte Anfrage"
 
-#: .\ephios\templates\400.html:10
+#: ephios/templates/400.html:10
 msgid ""
 "Your request contained invalid data, please try again. Please contact an "
 "administrator if the error recurs."
@@ -830,27 +849,27 @@ msgstr ""
 "Ihre Anfrage enthielt ungültige Daten, bitte versuchen Sie es erneut. "
 "Kontaktieren Sie einen Administrator, falls das Problem erneut auftritt."
 
-#: .\ephios\templates\403.html:5 .\ephios\templates\403.html:9
+#: ephios/templates/403.html:5 ephios/templates/403.html:9
 msgid "Permission denied"
 msgstr "Zugriff verweigert"
 
-#: .\ephios\templates\403.html:10
+#: ephios/templates/403.html:10
 msgid "You don't have the permission to view this page."
 msgstr "Sie haben keine Berechtigung, diese Seite aufzurufen."
 
-#: .\ephios\templates\404.html:5 .\ephios\templates\404.html:9
+#: ephios/templates/404.html:5 ephios/templates/404.html:9
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: .\ephios\templates\404.html:10
+#: ephios/templates/404.html:10
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: .\ephios\templates\500.html:5 .\ephios\templates\500.html:9
+#: ephios/templates/500.html:5 ephios/templates/500.html:9
 msgid "Internal server error"
 msgstr "Serverfehler"
 
-#: .\ephios\templates\500.html:10
+#: ephios/templates/500.html:10
 msgid ""
 "An error occurred while processing your request. The administrators have "
 "been informed about the error."
@@ -858,39 +877,39 @@ msgstr ""
 "Beim Bearbeiten Ihrer Anfrage ist ein Fehler aufgetreten. Die "
 "Administratoren wurden über den Fehler informiert."
 
-#: .\ephios\templates\base.html:71 .\ephios\user_management\forms.py:122
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:7
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:12
+#: ephios/templates/base.html:71 ephios/user_management/forms.py:124
+#: ephios/user_management/templates/user_management/userprofile_list.html:7
+#: ephios/user_management/templates/user_management/userprofile_list.html:12
 msgid "Users"
 msgstr "Benutzer"
 
-#: .\ephios\templates\base.html:79 .\ephios\user_management\forms.py:238
-#: .\ephios\user_management\templates\user_management\group_list.html:7
-#: .\ephios\user_management\templates\user_management\group_list.html:12
+#: ephios/templates/base.html:79 ephios/user_management/forms.py:240
+#: ephios/user_management/templates/user_management/group_list.html:7
+#: ephios/user_management/templates/user_management/group_list.html:12
 msgid "Groups"
 msgstr "Gruppen"
 
-#: .\ephios\templates\base.html:94
+#: ephios/templates/base.html:94
 msgid "Administration"
 msgstr "Administration"
 
-#: .\ephios\templates\base.html:98
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:7
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:12
+#: ephios/templates/base.html:98
+#: ephios/user_management/templates/user_management/userprofile_detail.html:7
+#: ephios/user_management/templates/user_management/userprofile_detail.html:12
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: .\ephios\templates\base.html:100
-#: .\ephios\templates\registration\password_change_form.html:6
-#: .\ephios\templates\registration\password_change_form.html:10
+#: ephios/templates/base.html:100
+#: ephios/templates/registration/password_change_form.html:6
+#: ephios/templates/registration/password_change_form.html:10
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: .\ephios\templates\base.html:101
+#: ephios/templates/base.html:101
 msgid "Logout"
 msgstr "Abmelden"
 
-#: .\ephios\templates\base.html:126
+#: ephios/templates/base.html:126
 #, python-format
 msgid ""
 "\n"
@@ -901,69 +920,69 @@ msgstr ""
 "                        powered by %(brand)s\n"
 "                    "
 
-#: .\ephios\templates\registration\logged_out.html:6
+#: ephios/templates/registration/logged_out.html:6
 msgid "Logged out"
 msgstr "Abgemeldet"
 
-#: .\ephios\templates\registration\logged_out.html:10
+#: ephios/templates/registration/logged_out.html:10
 msgid "Logged out successfully."
 msgstr "Erfolgreich abgemeldet."
 
-#: .\ephios\templates\registration\logged_out.html:12
-#: .\ephios\templates\registration\password_reset_done.html:12
+#: ephios/templates/registration/logged_out.html:12
+#: ephios/templates/registration/password_reset_done.html:12
 msgid "Back to login"
 msgstr "Zur Anmeldung"
 
-#: .\ephios\templates\registration\login.html:6
-#: .\ephios\templates\registration\login.html:10
-#: .\ephios\templates\registration\password_reset_complete.html:12
+#: ephios/templates/registration/login.html:6
+#: ephios/templates/registration/login.html:10
+#: ephios/templates/registration/password_reset_complete.html:12
 msgid "Login"
 msgstr "Anmelden"
 
-#: .\ephios\templates\registration\login.html:16
+#: ephios/templates/registration/login.html:16
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: .\ephios\templates\registration\password_change_done.html:6
-#: .\ephios\templates\registration\password_change_done.html:10
+#: ephios/templates/registration/password_change_done.html:6
+#: ephios/templates/registration/password_change_done.html:10
 msgid "Password changed successfully"
 msgstr "Passwort erfolgreich geändert"
 
-#: .\ephios\templates\registration\password_change_done.html:11
+#: ephios/templates/registration/password_change_done.html:11
 msgid "Back to home page"
 msgstr "Zurück zur Startseite"
 
-#: .\ephios\templates\registration\password_change_form.html:14
+#: ephios/templates/registration/password_change_form.html:14
 msgid "Submit"
 msgstr "Absenden"
 
-#: .\ephios\templates\registration\password_reset_complete.html:6
-#: .\ephios\templates\registration\password_reset_complete.html:10
+#: ephios/templates/registration/password_reset_complete.html:6
+#: ephios/templates/registration/password_reset_complete.html:10
 msgid "Password set successfully"
 msgstr "Passwort erfolgreich festgelegt"
 
-#: .\ephios\templates\registration\password_reset_complete.html:11
+#: ephios/templates/registration/password_reset_complete.html:11
 msgid "Your password has been set. You may go ahead and log in now."
 msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
 
-#: .\ephios\templates\registration\password_reset_confirm.html:7
-#: .\ephios\templates\registration\password_reset_confirm.html:19
-#: .\ephios\user_management\templates\user_management\new_account_email.html:7
+#: ephios/templates/registration/password_reset_confirm.html:7
+#: ephios/templates/registration/password_reset_confirm.html:19
+#: ephios/user_management/templates/user_management/new_account_email.html:7
 msgid "Set password"
 msgstr "Passwort setzen"
 
-#: .\ephios\templates\registration\password_reset_confirm.html:9
+#: ephios/templates/registration/password_reset_confirm.html:9
 msgid "Invalid link"
 msgstr "Link ungültig"
 
-#: .\ephios\templates\registration\password_reset_confirm.html:15
+#: ephios/templates/registration/password_reset_confirm.html:15
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
 "Bitte geben Sie ihr neues Passwort zweimal ein, um Tippfehler auszuschließen."
 
-#: .\ephios\templates\registration\password_reset_confirm.html:23
+#: ephios/templates/registration/password_reset_confirm.html:23
 msgid ""
 "The password reset link was invalid, possibly because it had already been "
 "used. Please request a new password reset."
@@ -971,98 +990,102 @@ msgstr ""
 "Der Link zum Zurücksetzen Ihres Passworts war ungültig, möglicherweise wurde "
 "er schon benutzt. Bitte fordern Sie einen neuen Link an."
 
-#: .\ephios\templates\registration\password_reset_done.html:6
-#: .\ephios\templates\registration\password_reset_done.html:10
+#: ephios/templates/registration/password_reset_done.html:6
+#: ephios/templates/registration/password_reset_done.html:10
 msgid "Password reset successfully"
 msgstr "Passwort erfolgreich zurückgesetzt"
 
-#: .\ephios\templates\registration\password_reset_done.html:11
+#: ephios/templates/registration/password_reset_done.html:11
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#: .\ephios\templates\registration\password_reset_form.html:6
-#: .\ephios\templates\registration\password_reset_form.html:10
-#: .\ephios\templates\registration\password_reset_form.html:14
+#: ephios/templates/registration/password_reset_form.html:6
+#: ephios/templates/registration/password_reset_form.html:10
+#: ephios/templates/registration/password_reset_form.html:14
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: .\ephios\user_management\consequences.py:35
+#: ephios/user_management/consequences.py:35
 #, python-brace-format
 msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
-#: .\ephios\user_management\consequences.py:120
+#: ephios/user_management/consequences.py:120
+#, python-brace-format
 msgid "{user} logs {hours:.1f} hours on {date}. Reason: {reason}"
 msgstr "{user} leistete {hours:.1f} Stunden am {date}. Anlass: {reason}"
 
-#: .\ephios\user_management\consequences.py:199
+#: ephios/user_management/consequences.py:199
 #, python-brace-format
 msgid "{user} acquires '{qualification}' after participating in {event}."
 msgstr ""
 "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
 "{event}."
 
-#: .\ephios\user_management\consequences.py:203
+#: ephios/user_management/consequences.py:203
 #, python-brace-format
 msgid "{user} acquires '{qualification}'."
 msgstr "{user} erhält die Qualifikation '{qualification}'."
 
-#: .\ephios\user_management\consequences.py:209
+#: ephios/user_management/consequences.py:209
 #, python-brace-format
 msgid "(valid until {expires_str})"
 msgstr "(gültig bis {expires_str})"
 
-#: .\ephios\user_management\forms.py:29
+#: ephios/user_management/forms.py:29
 msgid "Password"
 msgstr "Passwort"
 
-#: .\ephios\user_management\forms.py:31
+#: ephios/user_management/forms.py:31
 msgid "Password confirmation"
 msgstr "Bestätigung des Passworts"
 
-#: .\ephios\user_management\forms.py:50
+#: ephios/user_management/forms.py:50
 msgid "Passwords don't match"
 msgstr "Die Passwörter stimmen nicht überein"
 
-#: .\ephios\user_management\forms.py:103
+#: ephios/user_management/forms.py:103
 msgid "Can publish events for groups"
 msgstr "Darf Veranstaltungen sichtbar machen für"
 
-#: .\ephios\user_management\forms.py:106
+#: ephios/user_management/forms.py:106
 msgid "Choose groups that this group can make events visible for."
 msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
 
-#: .\ephios\user_management\forms.py:110
+#: ephios/user_management/forms.py:110
 msgid "Can add events"
 msgstr "Darf Veranstaltungen hinzufügen"
 
-#: .\ephios\user_management\forms.py:112
+#: ephios/user_management/forms.py:112
 msgid "Can manage users"
 msgstr "Kann Benutzer verwalten"
 
-#: .\ephios\user_management\forms.py:113
+#: ephios/user_management/forms.py:113
 msgid "If checked, users in this group can view, add, edit and delete users."
 msgstr ""
 "Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
 "Benutzerprofile ansehen, bearbeiten und löschen."
 
-#: .\ephios\user_management\forms.py:117
+#: ephios/user_management/forms.py:117
 msgid "Can manage groups"
 msgstr "Kann Gruppen verwalten"
 
-#: .\ephios\user_management\forms.py:118
-msgid "If checked, users in this group can view, add, edit and delete groups."
+#: ephios/user_management/forms.py:119
+msgid ""
+"If checked, users in this group can add and edit all groups, their "
+"permissions as well as group memberships."
 msgstr ""
 "Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
-"Gruppen ansehen, bearbeiten und löschen."
+"Gruppen, Berechtigungen und Gruppenmitgliedschaften bearbeiten und "
+"hinzufügen."
 
-#: .\ephios\user_management\forms.py:125
+#: ephios/user_management/forms.py:127
 msgid "Can decide working hours for groups"
 msgstr "Kann Arbeitsstunden genehmigen für"
 
-#: .\ephios\user_management\forms.py:129
+#: ephios/user_management/forms.py:131
 msgid ""
 "Choose groups that the group you are currently editing can decide whether to "
 "grant working hours for."
@@ -1070,25 +1093,29 @@ msgstr ""
 "Wählen Sie Gruppen für die die gerade bearbeitete Gruppe über die "
 "Genehmigung von Arbeitsstunden entscheiden kann."
 
-#: .\ephios\user_management\forms.py:256
+#: ephios/user_management/forms.py:253
+msgid "You are not allowed to change group associations."
+msgstr "Sie sind nicht berechtigt Gruppenmitgliedschaften zu bearbeiten."
+
+#: ephios/user_management/forms.py:270
 msgid "Inactive users cannot log in and do not get any notifications."
 msgstr ""
 "Inaktive Benutzer können sich nicht anmelden und bekommen keine "
 "Benachrichtigungen."
 
-#: .\ephios\user_management\forms.py:258
+#: ephios/user_management/forms.py:272
 msgid "Active user"
 msgstr "Aktiver Benutzer"
 
-#: .\ephios\user_management\forms.py:293
+#: ephios/user_management/forms.py:307
 msgid "Hours of work"
 msgstr "Arbeitsstunden"
 
-#: .\ephios\user_management\forms.py:294
+#: ephios/user_management/forms.py:308
 msgid "Occasion"
 msgstr "Anlass"
 
-#: .\ephios\user_management\mail.py:20
+#: ephios/user_management/mail.py:20
 #, python-brace-format
 msgid ""
 "You're receiving this email because a new account has been created for you "
@@ -1101,11 +1128,11 @@ msgstr ""
 "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort: {url}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
-#: .\ephios\user_management\mail.py:35
+#: ephios/user_management/mail.py:35
 msgid "ephios account updated"
 msgstr "ephios-Benutzerkonto aktualisiert"
 
-#: .\ephios\user_management\mail.py:38
+#: ephios/user_management/mail.py:38
 #, python-brace-format
 msgid ""
 "You're receiving this email because your account at ephios has been "
@@ -1118,140 +1145,139 @@ msgstr ""
 "Sie können die Änderungen in Ihrem Benutzerprofil einsehen: {url}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
-#: .\ephios\user_management\models.py:73
+#: ephios/user_management/models.py:73
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: .\ephios\user_management\models.py:76
+#: ephios/user_management/models.py:76
 msgid "first name"
 msgstr "Vorname"
 
-#: .\ephios\user_management\models.py:77
+#: ephios/user_management/models.py:77
 msgid "last name"
 msgstr "Nachname"
 
-#: .\ephios\user_management\models.py:78
+#: ephios/user_management/models.py:78
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: .\ephios\user_management\models.py:79
+#: ephios/user_management/models.py:79
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: .\ephios\user_management\models.py:80
+#: ephios/user_management/models.py:80
 msgid "calendar token"
 msgstr "Kalender-Token"
 
-#: .\ephios\user_management\models.py:92 .\ephios\user_management\models.py:217
+#: ephios/user_management/models.py:92 ephios/user_management/models.py:220
 msgid "user profile"
 msgstr "Benutzerprofil"
 
-#: .\ephios\user_management\models.py:93
+#: ephios/user_management/models.py:93
 msgid "user profiles"
 msgstr "Benutzerprofile"
 
-#: .\ephios\user_management\models.py:171
+#: ephios/user_management/models.py:174
 msgid "qualification track"
 msgstr "Qualifikationskategorie"
 
-#: .\ephios\user_management\models.py:172
+#: ephios/user_management/models.py:175
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
-#: .\ephios\user_management\models.py:186
+#: ephios/user_management/models.py:189
 msgid "category"
 msgstr "Kategorie"
 
-#: .\ephios\user_management\models.py:199
-#: .\ephios\user_management\models.py:210
+#: ephios/user_management/models.py:202 ephios/user_management/models.py:213
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: .\ephios\user_management\models.py:200
+#: ephios/user_management/models.py:203
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: .\ephios\user_management\models.py:219
+#: ephios/user_management/models.py:222
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
-#: .\ephios\user_management\models.py:235
+#: ephios/user_management/models.py:238
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
-#: .\ephios\user_management\models.py:241
+#: ephios/user_management/models.py:244
 msgid "needs confirmation"
 msgstr "benötigt Bestätigung"
 
-#: .\ephios\user_management\models.py:242
+#: ephios/user_management/models.py:245
 msgid "executed"
 msgstr "ausgeführt"
 
-#: .\ephios\user_management\models.py:243
+#: ephios/user_management/models.py:246
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: .\ephios\user_management\models.py:244
+#: ephios/user_management/models.py:247
 msgid "denied"
 msgstr "abgelehnt"
 
-#: .\ephios\user_management\models.py:252
+#: ephios/user_management/models.py:255
 msgid "confirmed by"
 msgstr "bestätigt durch"
 
-#: .\ephios\user_management\models.py:274
+#: ephios/user_management/models.py:277
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: .\ephios\user_management\models.py:292
+#: ephios/user_management/models.py:295
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
-#: .\ephios\user_management\templates\user_management\account_updated_email.html:4
+#: ephios/user_management/templates/user_management/account_updated_email.html:4
 msgid ""
 "You're receiving this email because your account at ephios has been updated."
 msgstr ""
 "Sie erhalten diese E-Mail, weil Ihr Benutzerkonto in ephios aktualisiert "
 "wurde."
 
-#: .\ephios\user_management\templates\user_management\account_updated_email.html:5
+#: ephios/user_management/templates/user_management/account_updated_email.html:5
 msgid "You can see the changes in your profile:"
 msgstr "Sie können die Änderungen in Ihrem Benutzerprofil einsehen:"
 
-#: .\ephios\user_management\templates\user_management\account_updated_email.html:6
-#: .\ephios\user_management\templates\user_management\new_account_email.html:9
+#: ephios/user_management/templates/user_management/account_updated_email.html:6
+#: ephios/user_management/templates/user_management/new_account_email.html:9
 msgid "Your username is your email address:"
 msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
 
-#: .\ephios\user_management\templates\user_management\group_confirm_delete.html:7
-#: .\ephios\user_management\templates\user_management\group_confirm_delete.html:12
+#: ephios/user_management/templates/user_management/group_confirm_delete.html:7
+#: ephios/user_management/templates/user_management/group_confirm_delete.html:12
 msgid "Delete group"
 msgstr "Gruppe löschen"
 
-#: .\ephios\user_management\templates\user_management\group_confirm_delete.html:16
+#: ephios/user_management/templates/user_management/group_confirm_delete.html:16
 #, python-format
 msgid "Are you sure you want to delete the group \"%(group)s\"?"
 msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
 
-#: .\ephios\user_management\templates\user_management\group_form.html:8
-#: .\ephios\user_management\templates\user_management\group_form.html:17
+#: ephios/user_management/templates/user_management/group_form.html:8
+#: ephios/user_management/templates/user_management/group_form.html:17
 msgid "Edit group"
 msgstr "Gruppe bearbeiten"
 
-#: .\ephios\user_management\templates\user_management\group_form.html:10
-#: .\ephios\user_management\templates\user_management\group_form.html:19
+#: ephios/user_management/templates/user_management/group_form.html:10
+#: ephios/user_management/templates/user_management/group_form.html:19
 msgid "Create new group"
 msgstr "Neue Gruppe erstellen"
 
-#: .\ephios\user_management\templates\user_management\group_list.html:16
+#: ephios/user_management/templates/user_management/group_list.html:16
 msgid "Add group"
 msgstr "Gruppe hinzufügen"
 
-#: .\ephios\user_management\templates\user_management\group_list.html:21
+#: ephios/user_management/templates/user_management/group_list.html:21
 msgid "Name"
 msgstr "Name"
 
-#: .\ephios\user_management\templates\user_management\new_account_email.html:4
+#: ephios/user_management/templates/user_management/new_account_email.html:4
 msgid ""
 "You're receiving this email because a new account has been created for you "
 "at ephios."
@@ -1259,24 +1285,24 @@ msgstr ""
 "Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil in ephios "
 "angelegt wurde."
 
-#: .\ephios\user_management\templates\user_management\new_account_email.html:5
+#: ephios/user_management/templates/user_management/new_account_email.html:5
 msgid "Please go to the following page and choose a new password:"
 msgstr "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort:"
 
-#: .\ephios\user_management\templates\user_management\userprofile_badges.html:4
+#: ephios/user_management/templates/user_management/userprofile_badges.html:4
 msgid "Minor"
 msgstr "Minderjährig"
 
-#: .\ephios\user_management\templates\user_management\userprofile_badges.html:7
+#: ephios/user_management/templates/user_management/userprofile_badges.html:7
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: .\ephios\user_management\templates\user_management\userprofile_confirm_delete.html:7
-#: .\ephios\user_management\templates\user_management\userprofile_confirm_delete.html:12
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:7
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:12
 msgid "Delete user"
 msgstr "Benutzer löschen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_confirm_delete.html:16
+#: ephios/user_management/templates/user_management/userprofile_confirm_delete.html:16
 #, python-format
 msgid ""
 "\n"
@@ -1289,46 +1315,46 @@ msgstr ""
 "löschen?\n"
 "        "
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:16
+#: ephios/user_management/templates/user_management/userprofile_detail.html:16
 msgid "Your data"
 msgstr "Persönliche Daten"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:18
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:22
+#: ephios/user_management/templates/user_management/userprofile_detail.html:18
+#: ephios/user_management/templates/user_management/userprofile_list.html:22
 msgid "First name"
 msgstr "Vorname"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:20
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:21
+#: ephios/user_management/templates/user_management/userprofile_detail.html:20
+#: ephios/user_management/templates/user_management/userprofile_list.html:21
 msgid "Last name"
 msgstr "Nachname"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:22
+#: ephios/user_management/templates/user_management/userprofile_detail.html:22
 msgid "E-Mail address"
 msgstr "E-Mail-Adresse"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:24
+#: ephios/user_management/templates/user_management/userprofile_detail.html:24
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:26
+#: ephios/user_management/templates/user_management/userprofile_detail.html:26
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:33
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:31
+#: ephios/user_management/templates/user_management/userprofile_detail.html:33
+#: ephios/user_management/templates/user_management/userprofile_form.html:31
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:43
-msgid "You have not been assigned any qualificiations. "
-msgstr "Ihnen wurden keine Qualifikationen zugewiesen. "
+#: ephios/user_management/templates/user_management/userprofile_detail.html:43
+msgid "You have not been assigned any qualificiations."
+msgstr "Ihnen wurden keine Qualifikationen zugewiesen."
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:50
+#: ephios/user_management/templates/user_management/userprofile_detail.html:50
 msgid "Calendar feed"
 msgstr "Kalender"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:52
+#: ephios/user_management/templates/user_management/userprofile_detail.html:52
 msgid ""
 "You can subscribe to a calendar containing all events that you participate "
 "in. Most calendars (e.g. Google Calendar) offer this feature. This allows "
@@ -1341,52 +1367,52 @@ msgstr ""
 "Kalender sehen. Um dies zu aktivieren, müssen Sie die Adresse des folgenden "
 "Links kopieren und den Kalender mit dieser URL abonnieren."
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:70
+#: ephios/user_management/templates/user_management/userprofile_detail.html:70
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:71
-#: .\ephios\user_management\templates\user_management\workinghour_request.html:6
-#: .\ephios\user_management\templates\user_management\workinghour_request.html:11
+#: ephios/user_management/templates/user_management/userprofile_detail.html:71
+#: ephios/user_management/templates/user_management/workinghour_request.html:6
+#: ephios/user_management/templates/user_management/workinghour_request.html:11
 msgid "Request working hours"
 msgstr "Arbeitsstunden anfragen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:81
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:88
+#: ephios/user_management/templates/user_management/userprofile_detail.html:81
+#: ephios/user_management/templates/user_management/userprofile_detail.html:88
 msgid "hours"
 msgstr "Stunden"
 
-#: .\ephios\user_management\templates\user_management\userprofile_detail.html:87
+#: ephios/user_management/templates/user_management/userprofile_detail.html:87
 msgid "Total"
 msgstr "Summe"
 
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:8
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:17
+#: ephios/user_management/templates/user_management/userprofile_form.html:8
+#: ephios/user_management/templates/user_management/userprofile_form.html:17
 msgid "Edit user"
 msgstr "Benutzer bearbeiten"
 
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:10
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:19
+#: ephios/user_management/templates/user_management/userprofile_form.html:10
+#: ephios/user_management/templates/user_management/userprofile_form.html:19
 msgid "Add new user"
 msgstr "Neuen Benutzer anlegen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_form.html:66
+#: ephios/user_management/templates/user_management/userprofile_form.html:66
 msgid "Add qualification"
 msgstr "Qualifikation hinzufügen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:16
+#: ephios/user_management/templates/user_management/userprofile_list.html:16
 msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:23
+#: ephios/user_management/templates/user_management/userprofile_list.html:23
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: .\ephios\user_management\templates\user_management\userprofile_list.html:24
+#: ephios/user_management/templates/user_management/userprofile_list.html:24
 msgid "Information"
 msgstr "Information"
 
-#: .\ephios\user_management\utils.py:13
+#: ephios/user_management/utils.py:13
 #, python-brace-format
 msgid ""
 "Your password for {site} has been changed. If you didn't request this "
@@ -1395,44 +1421,44 @@ msgstr ""
 "Ihr Passwort für {site} wurde geändert. Wenn Sie diese Änderung nicht "
 "veranlasst haben, kontaktieren Sie umgehend einen Administrator."
 
-#: .\ephios\user_management\utils.py:18
+#: ephios/user_management/utils.py:18
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: .\ephios\user_management\views\accounts.py:55
+#: ephios/user_management/views/accounts.py:57
 #, python-brace-format
-msgid "User {name} ({user}) added successfully."
-msgstr "Benutzer {name} ({user}) erfolgreich hinzugefügt."
+msgid "User {name} ({email}) added successfully."
+msgstr "Benutzer {name} ({email}) erfolgreich hinzugefügt."
 
-#: .\ephios\user_management\views\accounts.py:101
+#: ephios/user_management/views/accounts.py:104
 #, python-brace-format
 msgid "User {name} ({user}) updated successfully."
 msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 
-#: .\ephios\user_management\views\accounts.py:124
+#: ephios/user_management/views/accounts.py:127
 #, python-brace-format
 msgid "The user {name} ({user}) was deleted."
 msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
-#: .\ephios\user_management\views\accounts.py:147
+#: ephios/user_management/views/accounts.py:150
 #, python-brace-format
 msgid "Group \"{group}\" created successfully."
 msgstr "Gruppe \"{group}\" erfolgreich erstellt."
 
-#: .\ephios\user_management\views\accounts.py:160
+#: ephios/user_management/views/accounts.py:163
 #, python-brace-format
 msgid "Group \"{group}\" updated successfully."
 msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 
-#: .\ephios\user_management\views\accounts.py:171
+#: ephios/user_management/views/accounts.py:174
 #, python-brace-format
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
 
-#: .\ephios\user_management\views\consequences.py:32
+#: ephios/user_management/views/consequences.py:32
 msgid "There was an error performing that action."
 msgstr "Beim Ausführen der Aktion ist ein Fehler aufgetreten."
 
-#: .\ephios\user_management\views\consequences.py:47
+#: ephios/user_management/views/consequences.py:47
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
