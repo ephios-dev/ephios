@@ -7,11 +7,12 @@ from django.forms import DateField, Form, ModelForm, ModelMultipleChoiceField, S
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
+from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
 from recurrence.forms import RecurrenceField
 
-from ephios.event_management import signup
-from ephios.event_management.models import Event, Shift
+from ephios.event_management import event_type_preference_registry, signup
+from ephios.event_management.models import Event, EventType, Shift
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
@@ -155,3 +156,13 @@ class EventDuplicationForm(Form):
         ),
     )
     recurrence = RecurrenceField(required=False)
+
+
+class EventTypeForm(ModelForm):
+    class Meta:
+        model = EventType
+        fields = ["title", "can_grant_qualification"]
+
+
+class EventTypePreferenceForm(PreferenceForm):
+    registry = event_type_preference_registry

@@ -1,9 +1,13 @@
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
-from dynamic_preferences.types import BooleanPreference
+from dynamic_preferences.types import BooleanPreference, ModelMultipleChoicePreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
+from ephios.event_management.models import EventType
+
 notifications = Section("notifications")
+responsible_notifications = Section("responsible_notifications")
 
 
 @user_preferences_registry.register
@@ -36,3 +40,27 @@ class UserProfileUpdateNotification(BooleanPreference):
     verbose_name = _("Receive notifications for changes to your profile")
     section = notifications
     default = True
+
+
+@user_preferences_registry.register
+class ResponsibleRequestedParticipationNotification(ModelMultipleChoicePreference):
+    name = "requested_participation"
+    verbose_name = _(
+        "Receive notifications when a user requests a particpation for the following event types:"
+    )
+    section = responsible_notifications
+    model = EventType
+    default = EventType.objects.all()
+    field_kwargs = {"widget": Select2MultipleWidget}
+
+
+@user_preferences_registry.register
+class ResponsibleRejectedParticipationNotification(ModelMultipleChoicePreference):
+    name = "rejected_participation"
+    verbose_name = _(
+        "Receive notifications when a confirmed user rejects a particpation for the following event types:"
+    )
+    section = responsible_notifications
+    model = EventType
+    default = EventType.objects.all()
+    field_kwargs = {"widget": Select2MultipleWidget}
