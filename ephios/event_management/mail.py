@@ -99,8 +99,11 @@ def participation_state_changed(participation: AbstractParticipation):
         )
         html_content = render_to_string("email_base.html", {"message_text": text_content})
         for user in responsible_users:
-            message = EmailMultiAlternatives(to=[user.email], subject=subject, body=text_content)
-            message.attach_alternative(html_content, "text/html")
-            messages.append(message)
+            if participation.shift.event.type in user.preferences.get("requested_participation"):
+                message = EmailMultiAlternatives(
+                    to=[user.email], subject=subject, body=text_content
+                )
+                message.attach_alternative(html_content, "text/html")
+                messages.append(message)
 
     mail.get_connection().send_messages(messages)
