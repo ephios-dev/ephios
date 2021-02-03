@@ -11,7 +11,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.event_management import signup
-from ephios.event_management.models import Event, Shift
+from ephios.event_management.models import Event, LocalParticipation, Shift
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
@@ -105,6 +105,15 @@ class EventForm(ModelForm):
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
         assign_perm("view_event", self.cleaned_data["responsible_users"], event)
         assign_perm("change_event", self.cleaned_data["responsible_users"], event)
+
+        # assign view permissions to users that already have some sort of participation for the event
+        # (-> they saw and interacted with it)
+        participating_users = UserProfile.objects.filter(
+            pk__in=LocalParticipation.objects.filter(shift_id__in=event.shifts.all()).values_list(
+                "user", flat=True
+            )
+        )
+        assign_perm("view_event", participating_users, event)
 
         return event
 

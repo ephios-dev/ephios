@@ -153,10 +153,8 @@ class Shift(Model):
         return AbstractParticipation.objects.filter(shift=self)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
-        yield from (
-            participation.participant
-            for participation in self.participations.filter(state__in=with_state_in)
-        )
+        for participation in self.participations.filter(state__in=with_state_in):
+            yield participation.participant
 
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
