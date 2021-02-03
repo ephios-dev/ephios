@@ -1,5 +1,5 @@
+from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
 from dynamic_preferences.types import BooleanPreference, ModelMultipleChoicePreference
 from dynamic_preferences.users.registries import user_preferences_registry
@@ -51,7 +51,7 @@ class ResponsibleRequestedParticipationNotification(ModelMultipleChoicePreferenc
     section = responsible_notifications
     model = EventType
     default = EventType.objects.all()
-    field_kwargs = {"widget": Select2MultipleWidget}
+    field_kwargs = {"widget": CheckboxSelectMultiple}
 
 
 @user_preferences_registry.register
@@ -63,4 +63,4 @@ class ResponsibleRejectedParticipationNotification(ModelMultipleChoicePreference
     section = responsible_notifications
     model = EventType
     default = EventType.objects.all()
-    field_kwargs = {"widget": Select2MultipleWidget}
+    field_kwargs = {"widget": CheckboxSelectMultiple}

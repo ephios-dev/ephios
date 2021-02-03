@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}
+    {% translate "Settings" %}
+{% endblock %}
+
 {% block content %}
     <div class="page-header mb-3">
         <h1>{% translate "Settings" %} {% block settings_title %}{% endblock %}</h1>
