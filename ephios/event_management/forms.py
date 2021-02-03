@@ -22,7 +22,9 @@ class EventForm(ModelForm):
     visible_for = ModelMultipleChoiceField(
         queryset=Group.objects.none(),
         label=_("Visible for"),
-        help_text=_("Select groups which the event shall be visible for."),
+        help_text=_(
+            "Select groups which the event shall be visible for. Regardless, the event will be visible for users that already signed up."
+        ),
         widget=Select2MultipleWidget,
         required=False,
     )
