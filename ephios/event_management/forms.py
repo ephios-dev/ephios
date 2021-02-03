@@ -13,7 +13,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.event_management import event_type_preference_registry, signup
-from ephios.event_management.models import Event, EventType, Shift
+from ephios.event_management.models import Event, EventType, LocalParticipation, Shift
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
@@ -24,7 +24,9 @@ class EventForm(ModelForm):
     visible_for = ModelMultipleChoiceField(
         queryset=Group.objects.none(),
         label=_("Visible for"),
-        help_text=_("Select groups which the event shall be visible for."),
+        help_text=_(
+            "Select groups which the event shall be visible for. Regardless, the event will be visible for users that already signed up."
+        ),
         widget=Select2MultipleWidget,
         required=False,
     )
@@ -119,6 +121,15 @@ class EventForm(ModelForm):
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
         assign_perm("view_event", self.cleaned_data["responsible_users"], event)
         assign_perm("change_event", self.cleaned_data["responsible_users"], event)
+
+        # assign view permissions to users that already have some sort of participation for the event
+        # (-> they saw and interacted with it)
+        participating_users = UserProfile.objects.filter(
+            pk__in=LocalParticipation.objects.filter(shift_id__in=event.shifts.all()).values_list(
+                "user", flat=True
+            )
+        )
+        assign_perm("view_event", participating_users, event)
 
         return event
 
