@@ -4,6 +4,7 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
+from ephios.event_management.signup import LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
 
 
@@ -52,3 +53,26 @@ def test_add_responsible_user_to_event(django_app, planner, event, responsible_u
     assert set(
         get_users_with_perms(event, only_with_perms_in=["change_event"], with_group_users=False)
     ) == {responsible_user}
+
+
+@pytest.mark.django_db
+def test_participating_users_can_see_otherwise_invisible_event(
+    django_app, planner, event, responsible_user, volunteer
+):
+    # create a participation
+    LocalParticipation.objects.create(
+        user=volunteer, shift=event.shifts.first(), state=LocalParticipation.States.CONFIRMED
+    )
+    assert list(event.shifts.first().get_participants())
+
+    # make event invisible
+    response = django_app.get(
+        reverse("event_management:event_edit", kwargs=dict(pk=event.pk)), user=planner
+    )
+    response.form["visible_for"].force_value([])
+    response.form.submit()
+
+    # check that we can get (200 OK) the event details as a participant
+    assert django_app.get(
+        reverse("event_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
+    )
