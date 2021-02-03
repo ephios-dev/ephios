@@ -1,8 +1,9 @@
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.forms import preference_form_builder
 
@@ -12,7 +13,7 @@ from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
 class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObjectMixin):
-    template_name = "event_management/event_type_form.html"
+    template_name = "event_management/eventtype_form.html"
     permission_required = "event_management.add_event"
     model = EventType
 
@@ -39,8 +40,37 @@ class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObj
             messages.success(
                 self.request, _("The event type {type} has been saved.").format(type=event_type)
             )
-            return redirect(reverse("event_management:index"))
+            return redirect(reverse("event_management:settings_eventtype_list"))
 
         return self.render_to_response(
             self.get_context_data(form=form, preference_form=preference_form)
         )
+
+
+class EventTypeListView(CustomPermissionRequiredMixin, ListView):
+    permission_required = "event_management.add_event"
+    model = EventType
+
+
+class EventTypeDeleteView(CustomPermissionRequiredMixin, DeleteView):
+    permission_required = "event_management.add_event"
+    model = EventType
+
+    def get_success_url(self):
+        messages.info(
+            self.request, _("Eventtype {type} succesfully deleted.").format(type=self.object)
+        )
+        return reverse("event_management:settings_eventtype_list")
+
+
+class EventTypeCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    permission_required = "event_management.add_event"
+    template_name = "event_management/eventtype_form.html"
+    model = EventType
+    fields = ["title", "can_grant_qualification"]
+    success_message = _(
+        "Eventtype succesfully created. More settings for this eventtype can be managed below. "
+    )
+
+    def get_success_url(self):
+        return reverse("event_management:setting_eventtype_edit", kwargs=dict(pk=self.object.pk))

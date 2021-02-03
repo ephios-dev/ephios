@@ -6,7 +6,13 @@ import ephios.event_management.views.shift
 import ephios.event_management.views.signup
 from ephios.event_management import pdf
 from ephios.event_management.ical import EventFeed, user_event_feed_view
-from ephios.event_management.views.event_type import EventTypeUpdateView
+from ephios.event_management.views.eventtype import (
+    EventTypeCreateView,
+    EventTypeDeleteView,
+    EventTypeListView,
+    EventTypeUpdateView,
+)
+from ephios.event_management.views.settings import GeneralSettingsView
 from ephios.event_management.views.shift import ShiftConfigurationFormView
 
 app_name = "event_management"
@@ -86,5 +92,21 @@ urlpatterns = [
         ephios.event_management.views.event.RRuleOccurrenceView.as_view(),
         name="rrule_occurrences",
     ),
-    path("event_type/<int:pk>/edit/", EventTypeUpdateView.as_view(), name="event_type_edit"),
+    path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
+    path("settings/eventtype/", EventTypeListView.as_view(), name="settings_eventtype_list"),
+    path(
+        "settings/eventtype/create/",
+        EventTypeCreateView.as_view(),
+        name="settings_eventtype_create",
+    ),
+    path(
+        "settings/eventtype/<int:pk>/edit/",
+        EventTypeUpdateView.as_view(),
+        name="setting_eventtype_edit",
+    ),
+    path(
+        "settings/eventtype/<int:pk>/delete/",
+        EventTypeDeleteView.as_view(),
+        name="setting_eventtype_delete",
+    ),
 ]
