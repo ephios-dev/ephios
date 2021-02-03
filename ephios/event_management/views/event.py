@@ -2,14 +2,12 @@ import json
 from datetime import datetime, timedelta
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Max, Min
 from django.forms import DateField
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
@@ -30,7 +28,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.event_management.forms import EventDuplicationForm, EventForm
-from ephios.event_management.models import Event, Shift
+from ephios.event_management.models import Event, EventType, Shift
 from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
 
@@ -48,6 +46,10 @@ class EventListView(LoginRequiredMixin, ListView):
             .select_related("type")
             .order_by("start_time")
         )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        kwargs.setdefault("eventtypes", EventType.objects.all())
+        return super().get_context_data(**kwargs)
 
 
 class EventDetailView(CustomPermissionRequiredMixin, DetailView):
@@ -75,23 +77,23 @@ class EventCreateView(CustomPermissionRequiredMixin, CreateView):
     template_name = "event_management/event_form.html"
     permission_required = "event_management.add_event"
     accept_object_perms = False
+    model = EventType
+
+    def dispatch(self, request, *args, **kwargs):
+        self.eventtype = get_object_or_404(EventType, pk=self.kwargs.get("type"))
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
         return EventForm(
             data=self.request.POST or None,
             user=self.request.user,
-            initial={
-                "responsible_users": get_user_model().objects.filter(pk=self.request.user.pk),
-                "responsible_groups": Group.objects.none(),
-                "visible_for": get_objects_for_user(
-                    self.request.user, "publish_event_for_group", klass=Group
-                ),
-            },
+            eventtype=self.eventtype,
         )
 
     def get_context_data(self, **kwargs):
         inactive_events = Event.all_objects.filter(active=False)
         kwargs.setdefault("inactive_events", inactive_events)
+        kwargs.setdefault("eventtype", self.eventtype)
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):

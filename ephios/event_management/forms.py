@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -42,13 +43,14 @@ class EventForm(ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location", "type", "mail_updates"]
+        fields = ["title", "description", "location", "mail_updates"]
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
         can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
 
         if (event := kwargs.get("instance", None)) is not None:
+            self.eventtype = event.type
             responsible_users = get_users_with_perms(
                 event, only_with_perms_in=["change_event"], with_group_users=False
             )
@@ -65,6 +67,14 @@ class EventForm(ModelForm):
                 **kwargs.get("initial", {}),
             }
         else:
+            self.eventtype = kwargs.pop("eventtype")
+            kwargs["initial"] = {
+                "responsible_users": self.eventtype.preferences.get("responsible_users")
+                or get_user_model().objects.filter(pk=user.pk),
+                "responsible_groups": self.eventtype.preferences.get("responsible_groups"),
+                "visible_for": self.eventtype.preferences.get("visible_for")
+                or get_objects_for_user(user, "publish_event_for_group", klass=Group),
+            }
             self.locked_visible_for_groups = set()
 
         super().__init__(**kwargs)
@@ -80,7 +90,10 @@ class EventForm(ModelForm):
             ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
 
     def save(self, commit=True):
-        event = super().save(commit)
+        event = super().save(commit=False)
+        event.type = self.eventtype
+        if commit:
+            event.save()
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)

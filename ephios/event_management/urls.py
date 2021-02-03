@@ -45,7 +45,7 @@ urlpatterns = [
         name="event_copy",
     ),
     path(
-        "events/create/",
+        "events/create/<int:type>/",
         ephios.event_management.views.event.EventCreateView.as_view(),
         name="event_create",
     ),
