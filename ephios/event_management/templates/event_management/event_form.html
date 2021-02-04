@@ -32,12 +32,14 @@
         {% bootstrap_form form exclude="visible_for,responsible_groups,responsible_users" %}
 
         <div class="card mb-3">
-            <div class="card-header">
-                <a data-toggle="collapse" data-target="#advancedSettings">Advanced settings</a>
+            <div class="card-header" data-toggle="collapse" data-target="#advancedSettings">
+                <a href="#">Advanced settings</a>
             </div>
             <div id="advancedSettings" class="collapse">
                 <div class="card-body">
-                    {% bootstrap_form form exclude="title, description, location, mail_updates" field_class="w-100" %}
+                    {% bootstrap_field form.visible_for %}
+                    {% bootstrap_field form.responsible_groups %}
+                    {% bootstrap_field form.responsible_users %}
                 </div>
             </div>
         </div>
