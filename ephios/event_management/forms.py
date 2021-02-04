@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -7,11 +8,12 @@ from django.forms import DateField, Form, ModelForm, ModelMultipleChoiceField, S
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
+from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
 from recurrence.forms import RecurrenceField
 
-from ephios.event_management import signup
-from ephios.event_management.models import Event, LocalParticipation, Shift
+from ephios.event_management import event_type_preference_registry, signup
+from ephios.event_management.models import Event, EventType, LocalParticipation, Shift
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 from ephios.user_management.models import UserProfile
@@ -43,13 +45,14 @@ class EventForm(ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location", "type", "mail_updates"]
+        fields = ["title", "description", "location", "mail_updates"]
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
         can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
 
         if (event := kwargs.get("instance", None)) is not None:
+            self.eventtype = event.type
             responsible_users = get_users_with_perms(
                 event, only_with_perms_in=["change_event"], with_group_users=False
             )
@@ -66,6 +69,14 @@ class EventForm(ModelForm):
                 **kwargs.get("initial", {}),
             }
         else:
+            self.eventtype = kwargs.pop("eventtype")
+            kwargs["initial"] = {
+                "responsible_users": self.eventtype.preferences.get("responsible_users")
+                or get_user_model().objects.filter(pk=user.pk),
+                "responsible_groups": self.eventtype.preferences.get("responsible_groups"),
+                "visible_for": self.eventtype.preferences.get("visible_for")
+                or get_objects_for_user(user, "publish_event_for_group", klass=Group),
+            }
             self.locked_visible_for_groups = set()
 
         super().__init__(**kwargs)
@@ -81,7 +92,10 @@ class EventForm(ModelForm):
             ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
 
     def save(self, commit=True):
-        event = super().save(commit)
+        event = super().save(commit=False)
+        event.type = self.eventtype
+        if commit:
+            event.save()
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
@@ -166,3 +180,13 @@ class EventDuplicationForm(Form):
         ),
     )
     recurrence = RecurrenceField(required=False)
+
+
+class EventTypeForm(ModelForm):
+    class Meta:
+        model = EventType
+        fields = ["title", "can_grant_qualification"]
+
+
+class EventTypePreferenceForm(PreferenceForm):
+    registry = event_type_preference_registry

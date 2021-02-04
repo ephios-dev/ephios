@@ -17,6 +17,7 @@ from django.db.models import (
 )
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
+from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
@@ -179,3 +180,12 @@ class LocalParticipation(AbstractParticipation):
     @property
     def participant(self):
         return self.user.as_participant()
+
+
+class EventTypePreference(PerInstancePreferenceModel):
+    instance = ForeignKey(EventType, on_delete=models.CASCADE)
+
+    class Meta:
+        app_label = (
+            "event_management"  # https://github.com/agateblue/django-dynamic-preferences/issues/96
+        )
