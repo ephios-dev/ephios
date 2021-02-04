@@ -7,9 +7,11 @@ from dynamic_preferences.forms import global_preference_form_builder
 
 
 class GeneralSettingsView(UserPassesTestMixin, SuccessMessageMixin, FormView):
-    form_class = global_preference_form_builder()
     template_name = "event_management/settings/general.html"
     success_message = _("Settings successfully saved.")
+
+    def get_form_class(self):
+        return global_preference_form_builder()
 
     def test_func(self):
         return self.request.user.is_staff
