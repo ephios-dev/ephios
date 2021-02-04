@@ -55,15 +55,10 @@ def participation_state_changed(participation: AbstractParticipation):
     # send mail to the participant whose participation has been changed
     mail_requested = participation.participant.email is not None
     if participation.get_real_instance_class() == LocalParticipation:
-        local_participation = participation.get_real_instance()
         if participation.state == AbstractParticipation.States.CONFIRMED:
-            mail_requested = local_participation.user.preferences[
-                "notifications__confirm_participation"
-            ]
+            mail_requested = participation.user.preferences["notifications__confirm_participation"]
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            mail_requested = local_participation.user.preferences[
-                "notifications__reject_participation"
-            ]
+            mail_requested = participation.user.preferences["notifications__reject_participation"]
 
     if mail_requested and participation.state in (
         AbstractParticipation.States.CONFIRMED,
