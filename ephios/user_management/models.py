@@ -91,6 +91,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin, guardian.mixins.GuardianUs
     class Meta:
         verbose_name = _("user profile")
         verbose_name_plural = _("user profiles")
+        db_table = "userprofile"
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -173,6 +174,7 @@ class QualificationCategory(Model):
     class Meta:
         verbose_name = _("qualification track")
         verbose_name_plural = _("qualification tracks")
+        db_table = "qualificationcategory"
 
     def __str__(self):
         return str(self.title)
@@ -201,6 +203,7 @@ class Qualification(Model):
     class Meta:
         verbose_name = _("qualification")
         verbose_name_plural = _("qualifications")
+        db_table = "qualification"
 
     def __str__(self):
         return str(self.title)
@@ -226,6 +229,7 @@ class QualificationGrant(Model):
 
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
+        db_table = "qualificationgrant"
 
 
 class Consequence(Model):
@@ -259,6 +263,9 @@ class Consequence(Model):
     )
     executed_at = models.DateTimeField(null=True, blank=True)
     fail_reason = models.TextField(max_length=255, blank=True)
+
+    class Meta:
+        db_table = "consequence"
 
     @property
     def handler(self):
@@ -309,3 +316,6 @@ class WorkingHours(Model):
     hours = models.DecimalField(decimal_places=2, max_digits=7)
     reason = models.CharField(max_length=1024, default="")
     date = models.DateField()
+
+    class Meta:
+        db_table = "workinghours"

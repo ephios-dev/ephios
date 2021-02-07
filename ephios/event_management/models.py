@@ -41,6 +41,7 @@ class EventType(Model):
     class Meta:
         verbose_name = _("event type")
         verbose_name_plural = _("event types")
+        db_table = "eventtype"
 
     def __str__(self):
         return str(self.title)
@@ -61,6 +62,7 @@ class Event(Model):
         verbose_name = _("event")
         verbose_name_plural = _("events")
         permissions = [("view_past_event", _("Can view past events"))]
+        db_table = "event"
 
     def get_start_time(self):
         if (first_shift := self.shifts.order_by("start_time").first()) is not None:
@@ -111,6 +113,9 @@ class AbstractParticipation(PolymorphicModel):
     def participant(self) -> "AbstractParticipant":
         raise NotImplementedError
 
+    class Meta:
+        db_table = "abstractparticipation"
+
     def __str__(self):
         try:
             return f"{self.participant} @ {self.shift}"
@@ -134,6 +139,7 @@ class Shift(Model):
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")
         ordering = ("meeting_time", "start_time", "id")
+        db_table = "shift"
 
     @property
     def signup_method(self):
@@ -181,11 +187,15 @@ class LocalParticipation(AbstractParticipation):
     def participant(self):
         return self.user.as_participant()
 
+    class Meta:
+        db_table = "localparticipation"
+
 
 class EventTypePreference(PerInstancePreferenceModel):
     instance = ForeignKey(EventType, on_delete=models.CASCADE)
 
     class Meta:
+        db_table = "eventtypepreference"
         app_label = (
             "event_management"  # https://github.com/agateblue/django-dynamic-preferences/issues/96
         )
