@@ -10,15 +10,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("user_management", "0003_userprofile_calendar_token"),
-        ("user_management", "0004_auto_20200829_1535"),
-        ("user_management", "0005_qualification_abbreviation"),
-        ("user_management", "0006_auto_20200829_2348"),
-        ("user_management", "0007_auto_20200921_2155"),
-        ("user_management", "0008_auto_20200925_1640"),
-    ]
-
     dependencies = [
         ("user_management", "0002_initial_permissions"),
     ]
