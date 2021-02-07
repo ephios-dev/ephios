@@ -3,11 +3,11 @@ from django.forms.utils import to_current_timezone
 
 
 class CustomDateInput(DateInput):
-    template_name = "event_management/fragments/custom_date_input.html"
+    template_name = "user_management/fragments/custom_date_input.html"
 
 
 class CustomTimeInput(TimeInput):
-    template_name = "event_management/fragments/custom_time_input.html"
+    template_name = "user_management/fragments/custom_time_input.html"
 
 
 class CustomSplitDateTimeInput(SplitDateTimeWidget):
@@ -20,7 +20,7 @@ class CustomSplitDateTimeWidget(MultiWidget):
     """
 
     supports_microseconds = False
-    template_name = "event_management/fragments/custom_split_date_time_widget.html"
+    template_name = "user_management/fragments/custom_split_date_time_widget.html"
 
     def __init__(self, *args, **kwargs):
         widgets = (

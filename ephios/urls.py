@@ -23,7 +23,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("select2/", include("django_select2.urls")),
-    path("", include("ephios.event_management.urls")),
     path("", include("ephios.user_management.urls")),
     path("", include("ephios.plugins.basesignup.urls")),
     path("", include("ephios.plugins.pages.urls")),

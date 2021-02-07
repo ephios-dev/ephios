@@ -18,7 +18,7 @@ from dynamic_preferences.users.views import UserPreferenceFormView
 
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 from ephios.user_management import mail
-from ephios.user_management.forms import GroupForm, QualificationGrantFormset, UserProfileForm
+from ephios.user_management.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.user_management.models import UserProfile
 
 

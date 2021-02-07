@@ -53,7 +53,7 @@
                 <br> <br>
             <div class="input-group mb-3">
                 <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
-                       value="{{ SITE_URL }}{% url "event_management:user_event_feed" userprofile.calendar_token %}"
+                       value="{{ SITE_URL }}{% url "user_management:user_event_feed" userprofile.calendar_token %}"
                        readonly>
                 <div class="input-group-append">
                     <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"

@@ -9,7 +9,7 @@ from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
 from ephios.user_management.consequences import editable_consequences
-from ephios.user_management.forms import WorkingHourRequestForm
+from ephios.user_management.forms.users import WorkingHourRequestForm
 from ephios.user_management.models import Consequence
 
 
@@ -30,7 +30,7 @@ class ConsequenceUpdateView(LoginRequiredMixin, SingleObjectMixin, View):
             )
         if consequence.state == Consequence.States.FAILED:
             messages.error(request, _("There was an error performing that action."))
-        return redirect("event_management:index")
+        return redirect("user_management:index")
 
 
 class WorkingHourRequestView(LoginRequiredMixin, FormView):

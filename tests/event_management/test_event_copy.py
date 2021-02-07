@@ -5,8 +5,8 @@ import recurrence
 from django.urls import reverse
 from guardian.shortcuts import assign_perm
 
-from ephios.event_management.models import Event, Shift
 from ephios.extra.permissions import get_groups_with_perms
+from ephios.user_management.models import Event, Shift
 
 
 @pytest.mark.django_db
@@ -24,7 +24,7 @@ class TestEventCopy:
     def test_event_copy_by_rule(self, django_app, planner, event, groups):
         managers, planners, volunteers = groups
         response = django_app.get(
-            reverse("event_management:event_copy", kwargs={"pk": event.id}), user=planner
+            reverse("user_management:event_copy", kwargs={"pk": event.id}), user=planner
         )
         event_count = Event.objects.all().count()
         form = response.form
@@ -50,7 +50,7 @@ class TestEventCopy:
             "change_event", volunteer, event
         )  # test that single user permissions are transferred
         response = django_app.get(
-            reverse("event_management:event_copy", kwargs={"pk": event.id}), user=planner
+            reverse("user_management:event_copy", kwargs={"pk": event.id}), user=planner
         )
         event_count = Event.objects.all().count()
         form = response.form
@@ -77,7 +77,7 @@ class TestEventCopy:
     def test_event_multi_shift_copy(self, django_app, planner, groups, multi_shift_event):
         managers, planners, volunteers = groups
         response = django_app.get(
-            reverse("event_management:event_copy", kwargs={"pk": multi_shift_event.id}),
+            reverse("user_management:event_copy", kwargs={"pk": multi_shift_event.id}),
             user=planner,
         )
         event_count = Event.objects.all().count()
@@ -113,7 +113,7 @@ class TestEventCopy:
     def test_event_to_next_day_copy(self, django_app, planner, event_to_next_day, groups):
         managers, planners, volunteers = groups
         response = django_app.get(
-            reverse("event_management:event_copy", kwargs={"pk": event_to_next_day.id}),
+            reverse("user_management:event_copy", kwargs={"pk": event_to_next_day.id}),
             user=planner,
         )
         event_count = Event.objects.all().count()
