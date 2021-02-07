@@ -21,7 +21,6 @@ def create_initial_permissions(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("user_management", "0005_auto_20210106_2219"),
-        ("guardian", "0001_initial"),
     ]
 
     operations = [
