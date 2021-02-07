@@ -2,8 +2,8 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
-from ephios.event_management.signup import BaseSignupMethod, ParticipationError
 from ephios.user_management.models import Qualification
+from ephios.user_management.signup import BaseSignupMethod, ParticipationError
 
 
 class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):

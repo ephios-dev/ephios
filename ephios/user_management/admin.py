@@ -1,12 +1,17 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from guardian.admin import GuardedModelAdmin
 
-from ephios.user_management.forms import UserChangeForm, UserCreationForm
+from ephios.user_management.forms.users import UserChangeForm, UserCreationForm
 from ephios.user_management.models import (
     Consequence,
+    Event,
+    EventType,
+    LocalParticipation,
     Qualification,
     QualificationCategory,
     QualificationGrant,
+    Shift,
     UserProfile,
     WorkingHours,
 )
@@ -64,3 +69,8 @@ admin.site.register(QualificationGrant)
 admin.site.register(QualificationCategory)
 admin.site.register(WorkingHours)
 admin.site.register(Consequence)
+
+admin.site.register(Shift)
+admin.site.register(Event, GuardedModelAdmin)
+admin.site.register(EventType)
+admin.site.register(LocalParticipation)

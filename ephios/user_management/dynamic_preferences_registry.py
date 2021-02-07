@@ -1,11 +1,14 @@
+from django.contrib.auth.models import Group
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
 from dynamic_preferences.types import BooleanPreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
-from ephios.event_management.models import EventType
 from ephios.extra.preferences import CustomModelMultipleChoicePreference
+from ephios.user_management.models import EventType, UserProfile
+from ephios.user_management.registries import event_type_preference_registry
 
 notifications = Section("notifications")
 responsible_notifications = Section("responsible_notifications")
@@ -65,3 +68,30 @@ class ResponsibleRejectedParticipationNotification(CustomModelMultipleChoicePref
     model = EventType
     default = EventType.objects.all()
     field_kwargs = {"widget": CheckboxSelectMultiple}
+
+
+@event_type_preference_registry.register
+class VisibleForPreference(CustomModelMultipleChoicePreference):
+    name = "visible_for"
+    verbose_name = _("Events of this type should by default be visible for")
+    model = Group
+    default = Group.objects.all()
+    field_kwargs = {"widget": Select2MultipleWidget}
+
+
+@event_type_preference_registry.register
+class ResponsibleUsersPreference(CustomModelMultipleChoicePreference):
+    name = "responsible_users"
+    verbose_name = _("Users that are responsible for this event type by default")
+    model = UserProfile
+    default = UserProfile.objects.none()
+    field_kwargs = {"widget": Select2MultipleWidget}
+
+
+@event_type_preference_registry.register
+class ResponsibleGroupsPreference(CustomModelMultipleChoicePreference):
+    name = "responsible_groups"
+    verbose_name = _("Groups that are responsible for this event type by default")
+    model = Group
+    default = Group.objects.none()
+    field_kwargs = {"widget": Select2MultipleWidget}

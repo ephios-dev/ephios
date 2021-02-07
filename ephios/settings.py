@@ -62,7 +62,6 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "ephios.user_management",
-    "ephios.event_management",
     "ephios.extra",
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",

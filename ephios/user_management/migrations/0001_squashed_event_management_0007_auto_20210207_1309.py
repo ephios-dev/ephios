@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("contenttypes", "0002_remove_content_type_name"),
+        ("user_management", "0001_squashed_0008_auto_20210207_1309"),
     ]
 
     operations = [
@@ -66,7 +67,7 @@ class Migration(migrations.Migration):
                     "type",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="event_management.eventtype",
+                        to="eventtype",
                         verbose_name="event type",
                     ),
                 ),
@@ -108,7 +109,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="shifts",
-                        to="event_management.event",
+                        to="event",
                         verbose_name="shifts",
                     ),
                 ),
@@ -144,7 +145,7 @@ class Migration(migrations.Migration):
                     "shift",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="event_management.shift",
+                        to="shift",
                         verbose_name="shift",
                     ),
                 ),
@@ -174,7 +175,7 @@ class Migration(migrations.Migration):
                         parent_link=True,
                         primary_key=True,
                         serialize=False,
-                        to="event_management.abstractparticipation",
+                        to="abstractparticipation",
                     ),
                 ),
                 (
@@ -187,7 +188,7 @@ class Migration(migrations.Migration):
             options={
                 "base_manager_name": "objects",
             },
-            bases=("event_management.abstractparticipation",),
+            bases=("user_management.abstractparticipation",),
         ),
         migrations.AlterModelOptions(
             name="shift",
@@ -226,9 +227,7 @@ class Migration(migrations.Migration):
                 ("raw_value", models.TextField(blank=True, null=True, verbose_name="Raw Value")),
                 (
                     "instance",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="event_management.eventtype"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="eventtype"),
                 ),
             ],
         ),

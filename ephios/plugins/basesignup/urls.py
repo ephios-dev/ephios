@@ -1,6 +1,8 @@
 from django.urls import path
 
-from ephios.event_management.signup.disposition import AddUserView, DispositionView
+from ephios.user_management.signup.disposition import AddUserView, DispositionView
+
+# TODO move this url definition to core
 
 app_name = "basesignup"
 urlpatterns = [

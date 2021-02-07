@@ -11,11 +11,12 @@ from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
 
-from ephios.event_management.models import Event, Shift
 from ephios.user_management.models import (
     Consequence,
+    Event,
     Qualification,
     QualificationGrant,
+    Shift,
     UserProfile,
     WorkingHours,
 )

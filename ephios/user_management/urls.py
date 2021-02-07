@@ -1,43 +1,144 @@
 from django.urls import path
 
-from ephios.user_management import views
+from ephios.user_management import pdf
+from ephios.user_management.ical import EventFeed, user_event_feed_view
+from ephios.user_management.views.accounts import *
+from ephios.user_management.views.bulk import *
+from ephios.user_management.views.consequences import *
+from ephios.user_management.views.event import *
+from ephios.user_management.views.eventtype import *
+from ephios.user_management.views.settings import *
+from ephios.user_management.views.shift import *
+from ephios.user_management.views.signup import *
 
 app_name = "user_management"
 urlpatterns = [
-    path("profile/", views.ProfileView.as_view(), name="profile"),
-    path("profile/settings", views.UserProfileSettingsView.as_view(), name="profile_settings"),
-    path("groups/", views.GroupListView.as_view(), name="group_list"),
-    path("groups/<int:pk>/edit", views.GroupUpdateView.as_view(), name="group_edit"),
-    path("groups/<int:pk>/delete", views.GroupDeleteView.as_view(), name="group_delete"),
-    path("groups/create", views.GroupCreateView.as_view(), name="group_add"),
+    path("", HomeView.as_view(), name="index"),
+    path("events/", EventListView.as_view(), name="event_list"),
+    path(
+        "events/<int:pk>/edit/",
+        EventUpdateView.as_view(),
+        name="event_edit",
+    ),
+    path(
+        "events/<int:pk>/delete/",
+        EventDeleteView.as_view(),
+        name="event_delete",
+    ),
+    path(
+        "events/<int:pk>/",
+        EventDetailView.as_view(),
+        name="event_detail",
+    ),
+    path(
+        "events/<int:pk>/createshift/",
+        ShiftCreateView.as_view(),
+        name="event_createshift",
+    ),
+    path(
+        "events/<int:pk>/activate/",
+        EventActivateView.as_view(),
+        name="event_activate",
+    ),
+    path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
+    path(
+        "events/<int:pk>/copy",
+        EventCopyView.as_view(),
+        name="event_copy",
+    ),
+    path(
+        "events/create/<int:type>/",
+        EventCreateView.as_view(),
+        name="event_create",
+    ),
+    path(
+        "events/past/",
+        EventArchiveView.as_view(),
+        name="event_list_past",
+    ),
+    path(
+        "events/delete",
+        EventBulkDeleteView.as_view(),
+        name="event_bulk_delete",
+    ),
+    path(
+        "shifts/<int:pk>/signup-action/",
+        ShiftSignupView.as_view(),
+        name="signup_action",
+    ),
+    path(
+        "shifts/<int:pk>/edit/",
+        ShiftUpdateView.as_view(),
+        name="shift_edit",
+    ),
+    path(
+        "shifts/<int:pk>/delete/",
+        ShiftDeleteView.as_view(),
+        name="shift_delete",
+    ),
+    path(
+        "signup_methods/<slug:slug>/configuration_form/",
+        ShiftConfigurationFormView.as_view(),
+        name="signupmethod_configurationform",
+    ),
+    path("calendar/", EventFeed(), name="event_feed"),
+    path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
+    path(
+        "extra/rruleoccurrence",
+        RRuleOccurrenceView.as_view(),
+        name="rrule_occurrences",
+    ),
+    path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
+    path("settings/eventtype/", EventTypeListView.as_view(), name="settings_eventtype_list"),
+    path(
+        "settings/eventtype/create/",
+        EventTypeCreateView.as_view(),
+        name="settings_eventtype_create",
+    ),
+    path(
+        "settings/eventtype/<int:pk>/edit/",
+        EventTypeUpdateView.as_view(),
+        name="setting_eventtype_edit",
+    ),
+    path(
+        "settings/eventtype/<int:pk>/delete/",
+        EventTypeDeleteView.as_view(),
+        name="setting_eventtype_delete",
+    ),
+    path("profile/", ProfileView.as_view(), name="profile"),
+    path("profile/settings", UserProfileSettingsView.as_view(), name="profile_settings"),
+    path("groups/", GroupListView.as_view(), name="group_list"),
+    path("groups/<int:pk>/edit", GroupUpdateView.as_view(), name="group_edit"),
+    path("groups/<int:pk>/delete", GroupDeleteView.as_view(), name="group_delete"),
+    path("groups/create", GroupCreateView.as_view(), name="group_add"),
     path(
         "users/",
-        views.UserProfileListView.as_view(),
+        UserProfileListView.as_view(),
         name="userprofile_list",
     ),
     path(
         "users/<int:pk>/edit",
-        views.UserProfileUpdateView.as_view(),
+        UserProfileUpdateView.as_view(),
         name="userprofile_edit",
     ),
     path(
         "users/<int:pk>/delete",
-        views.UserProfileDeleteView.as_view(),
+        UserProfileDeleteView.as_view(),
         name="userprofile_delete",
     ),
     path(
         "users/create/",
-        views.UserProfileCreateView.as_view(),
+        UserProfileCreateView.as_view(),
         name="userprofile_create",
     ),
     path(
         "consequences/<int:pk>/edit",
-        views.ConsequenceUpdateView.as_view(),
+        ConsequenceUpdateView.as_view(),
         name="consequence_edit",
     ),
     path(
         "profile/requestworkinghour",
-        views.WorkingHourRequestView.as_view(),
+        WorkingHourRequestView.as_view(),
         name="request_workinghour",
     ),
 ]

@@ -8,8 +8,14 @@ from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from guardian.shortcuts import assign_perm
 
-from ephios.event_management.models import Event, EventType, Shift
-from ephios.user_management.models import Qualification, QualificationCategory, UserProfile
+from ephios.user_management.models import (
+    Event,
+    EventType,
+    Qualification,
+    QualificationCategory,
+    Shift,
+    UserProfile,
+)
 
 AVAILABLE_DATASET_CLASSES = []
 
@@ -78,9 +84,9 @@ class DebugDataset(AdminUserDataset):
         managers.save()
 
         assign_perm("publish_event_for_group", planners, volunteers)
-        assign_perm("event_management.add_event", planners)
-        assign_perm("event_management.delete_event", planners)
-        assign_perm("event_management.view_past_event", planners)
+        assign_perm("user_management.add_event", planners)
+        assign_perm("user_management.delete_event", planners)
+        assign_perm("user_management.view_past_event", planners)
         assign_perm("user_management.view_userprofile", managers)
         assign_perm("user_management.add_userprofile", managers)
         assign_perm("user_management.change_userprofile", managers)
@@ -111,7 +117,7 @@ class DebugDataset(AdminUserDataset):
             active=True,
         )
 
-        assign_perm("event_management.view_event", volunteers, event)
+        assign_perm("user_management.view_event", volunteers, event)
 
         Shift.objects.create(
             event=event,
@@ -214,6 +220,7 @@ class QualificationDataset(AbstractDataset):
             uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
         )
 
+        # noinspection PyPep8
         l = Qualification.objects.create(
             category=driverslicense_category,
             title="Fahrerlaubnis Klasse L",
