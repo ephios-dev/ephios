@@ -61,7 +61,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             if userprofile.is_active:
-                mail.send_account_creation_info(userprofile)
+                mail.send_account_creation_info_to_user(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
         return self.render_to_response(
             self.get_context_data(
@@ -111,7 +111,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                 userprofile.is_active
                 and userprofile.preferences["notifications__userprofile_update"]
             ):
-                mail.send_account_update_info(userprofile)
+                mail.send_account_update_info_to_user(userprofile)
             return redirect(reverse("user_management:userprofile_list"))
 
         return self.render_to_response(

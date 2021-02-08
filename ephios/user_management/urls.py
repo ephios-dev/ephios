@@ -2,14 +2,47 @@ from django.urls import path
 
 from ephios.user_management import pdf
 from ephios.user_management.ical import EventFeed, user_event_feed_view
-from ephios.user_management.views.accounts import *
-from ephios.user_management.views.bulk import *
-from ephios.user_management.views.consequences import *
-from ephios.user_management.views.event import *
-from ephios.user_management.views.eventtype import *
-from ephios.user_management.views.settings import *
-from ephios.user_management.views.shift import *
-from ephios.user_management.views.signup import *
+from ephios.user_management.signup.disposition import AddUserView, DispositionView
+from ephios.user_management.views.accounts import (
+    GroupCreateView,
+    GroupDeleteView,
+    GroupListView,
+    GroupUpdateView,
+    ProfileView,
+    UserProfileCreateView,
+    UserProfileDeleteView,
+    UserProfileListView,
+    UserProfileSettingsView,
+    UserProfileUpdateView,
+)
+from ephios.user_management.views.bulk import EventBulkDeleteView
+from ephios.user_management.views.consequences import ConsequenceUpdateView, WorkingHourRequestView
+from ephios.user_management.views.event import (
+    EventActivateView,
+    EventArchiveView,
+    EventCopyView,
+    EventCreateView,
+    EventDeleteView,
+    EventDetailView,
+    EventListView,
+    EventUpdateView,
+    HomeView,
+    RRuleOccurrenceView,
+)
+from ephios.user_management.views.eventtype import (
+    EventTypeCreateView,
+    EventTypeDeleteView,
+    EventTypeListView,
+    EventTypeUpdateView,
+)
+from ephios.user_management.views.settings import GeneralSettingsView
+from ephios.user_management.views.shift import (
+    ShiftConfigurationFormView,
+    ShiftCreateView,
+    ShiftDeleteView,
+    ShiftUpdateView,
+)
+from ephios.user_management.views.signup import ShiftSignupView
 
 app_name = "user_management"
 urlpatterns = [
@@ -80,6 +113,16 @@ urlpatterns = [
         "signup_methods/<slug:slug>/configuration_form/",
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
+    ),
+    path(
+        "shifts/<int:pk>/disposition/",
+        DispositionView.as_view(),
+        name="shift_disposition",
+    ),
+    path(
+        "shifts/<int:pk>/disposition/add-user/",
+        AddUserView.as_view(),
+        name="shift_disposition_add_user",
     ),
     path("calendar/", EventFeed(), name="event_feed"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
