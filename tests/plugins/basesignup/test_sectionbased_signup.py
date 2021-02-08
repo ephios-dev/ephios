@@ -119,7 +119,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("basesignup:shift_disposition", kwargs=dict(pk=sectioned_shift.pk)),
+        reverse("user_management:shift_disposition", kwargs=dict(pk=sectioned_shift.pk)),
         user=planner,
     )
     form = response.forms["participations-form"]

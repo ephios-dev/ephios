@@ -42,7 +42,7 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             {
                 "shift": self.shift,
                 "disposition_url": (
-                    reverse("basesignup:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                    reverse("user_management:shift_disposition", kwargs=dict(pk=self.shift.pk))
                     if request.user.has_perm("user_management.change_event", obj=self.shift.event)
                     else None
                 ),

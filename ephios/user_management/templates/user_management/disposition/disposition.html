@@ -19,7 +19,7 @@
     </div>
 
     <form method="post" class="d-none" id="add-user-form"
-          action="{% url "basesignup:shift_disposition_add_user" pk=shift.pk %}">
+          action="{% url "user_management:shift_disposition_add_user" pk=shift.pk %}">
         {% csrf_token %}
         {{ add_user_form.new_index }}
     </form>

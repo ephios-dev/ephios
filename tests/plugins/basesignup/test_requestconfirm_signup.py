@@ -26,7 +26,7 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("basesignup:shift_disposition", kwargs=dict(pk=shift.pk)),
+        reverse("user_management:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     )
     form = response.forms["participations-form"]
@@ -63,7 +63,7 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
     # confirm the participation as planner
     shift = event.shifts.first()
     form = django_app.get(
-        reverse("basesignup:shift_disposition", kwargs=dict(pk=shift.pk)),
+        reverse("user_management:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     ).forms["add-user-form"]
     # can't user form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
