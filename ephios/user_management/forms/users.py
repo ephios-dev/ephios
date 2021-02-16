@@ -247,7 +247,7 @@ class UserProfileForm(ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        if request and request.user.has_perm("change_group"):
+        if request and request.user.has_perm("auth.change_group"):
             self.fields["groups"].disabled = False
         else:
             self.fields["groups"].help_text = _("You are not allowed to change group associations.")
