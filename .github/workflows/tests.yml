@@ -62,6 +62,7 @@ jobs:
     - name: Prepare files for test run
       run: |
         cp .env.example .env
+        poetry run python manage.py compilemessages
         poetry run python manage.py collectstatic
         poetry run python manage.py compilejsi18n
     - name: Test apps
