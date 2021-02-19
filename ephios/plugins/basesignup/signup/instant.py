@@ -3,9 +3,9 @@ from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from ephios.core.models import AbstractParticipation
+from ephios.core.signup import ParticipationError
 from ephios.plugins.basesignup.signup.common import SimpleQualificationsRequiredSignupMethod
-from ephios.user_management.models import AbstractParticipation
-from ephios.user_management.signup import ParticipationError
 
 
 class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
@@ -42,8 +42,8 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             {
                 "shift": self.shift,
                 "disposition_url": (
-                    reverse("user_management:shift_disposition", kwargs=dict(pk=self.shift.pk))
-                    if request.user.has_perm("user_management.change_event", obj=self.shift.event)
+                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
                     else None
                 ),
             }

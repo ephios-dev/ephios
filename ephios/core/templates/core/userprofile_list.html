@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {% trans "Users" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% trans "Users" %}</h1>
+    </div>
+    {% if perms.core.add_userprofile %}
+        <a class="btn btn-secondary" href="{% url "core:userprofile_create" %}"><span
+                class="fa fa-plus"></span> {% trans "Add user" %}</a>
+    {% endif %}
+    <table id="userprofile_table" class="table table-striped display">
+        <thead>
+        <tr>
+            <th>{% trans "Last name" %}</th>
+            <th>{% trans "First name" %}</th>
+            <th class="d-none d-md-table-cell">{% trans "Email address" %}</th>
+            <th class="d-none d-lg-table-cell">{% trans "Information" %}</th>
+            <th>{% trans "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for userprofile in userprofile_list %}
+            <tr>
+                <td>{{ userprofile.last_name }}</td>
+                <td>{{ userprofile.first_name }}</td>
+                <td class="d-none d-md-table-cell">{{ userprofile.email }}</td>
+                <td class="d-none d-lg-table-cell">{% include "core/userprofile_badges.html" with userprofile=userprofile %}</td>
+                <td class="d-flex">
+                    <a class="btn btn-outline-primary btn-sm text-nowrap" href="{% url "core:userprofile_edit" userprofile.pk %}"><span
+                            class="fa fa-edit"></span> <span class="d-none d-md-inline">{% trans "Edit" %}</span></a>
+                    {% if perms.core.delete_userprofile %}
+                        <a class="btn btn-outline-danger btn-sm text-nowrap ml-1" href="{% url "core:userprofile_delete" userprofile.pk %}"><span
+                                class="fa fa-trash-alt"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

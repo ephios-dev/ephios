@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    {% if userprofile %}
+        {% trans "Edit user" %}
+    {% else %}
+        {% trans "Add new user" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if userprofile %}
+            <h1>{% trans "Edit user" %}</h1>
+        {% else %}
+            <h1>{% trans "Add new user" %}</h1>
+        {% endif %}
+    </div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form userprofile_form %}
+        {% load formset_tags %}
+
+        <div class="formset" data-formset data-formset-prefix="{{ qualification_formset.prefix }}">
+            {{ qualification_formset.management_form }}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h3 class="card-title">{% translate "Qualifications" %}</h3>
+                    <ul class="list-group list-group-flush" data-formset-body>
+                        {% for form in qualification_formset %}
+                            <div class="list-group-item" data-formset-form>
+                                {{ form.id }}
+                                <div class="form-row">
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label for="{{ form.qualification.id_for_label }}"
+                                                   class="col-md-4 col-form-label">{{ form.qualification.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.qualification }}
+                                                {% if form.fields.qualification.disabled %}
+                                                    <span class="form-control-plaintext">{{ form.fields.qualification.title }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4">
+                                        {% bootstrap_field form.expires layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-link" type="button"
+                                                data-formset-delete-button><span
+                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                    </div>
+                                </div>
+                                <div class="d-none">{{ form.DELETE }}</div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+
+                    <input class="btn btn-secondary mt-2" type="button"
+                           value="{% translate "Add qualification" %}"
+                           data-formset-add>
+                </div>
+            </div>
+
+            <script type="form-template" data-formset-empty-form>
+                {% escapescript %}
+                    <div class="list-group-item django-select2" data-formset-form>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                {% bootstrap_field qualification_formset.empty_form.qualification layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-4">
+                                {% bootstrap_field qualification_formset.empty_form.expires layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-1">
+                                <button class="btn btn-link" type="button"
+                                        data-formset-delete-button><span
+                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                            </div>
+                        </div>
+                        <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
+                    </div>
+                {% endescapescript %}
+            </script>
+        </div>
+
+        {% buttons %}
+            <a role="button" class="btn btn-secondary"
+               href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
+            {% if userprofile and perms.core.delete_userprofile %}
+                <a role="button" class="btn btn-outline-danger"
+                   href="{% url "core:userprofile_delete" userprofile.pk %}">
+                    <span class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
+            {% endif %}
+            <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+        {% endbuttons %}
+    </form>
+{% endblock %}

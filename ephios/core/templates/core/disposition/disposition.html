@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+{% load formset_tags %}
+
+{% block title %}
+    {% translate "Disposition" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "sortablejs/Sortable.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "plugins/basesignup/js/disposition.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ shift }}</h1>
+    </div>
+
+    <form method="post" class="d-none" id="add-user-form"
+          action="{% url "core:shift_disposition_add_user" pk=shift.pk %}">
+        {% csrf_token %}
+        {{ add_user_form.new_index }}
+    </form>
+
+    <form method="post" class="form" id="participations-form" data-formset data-formset-prefix="{{ formset.prefix }}">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div data-formset-body>
+            <div class="row">
+                <div class="col-lg-6 d-flex flex-column order-lg-last">
+
+                    <div class="card border-secondary mb-3">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title d-flex align-items-center">
+                                {% trans "Add others" %}
+                            </h5>
+                            {% bootstrap_field add_user_form.user layout="inline" form_group_class="form-group" %}
+                            <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
+                                {% for form in formset %}
+                                    {% if form.instance.state == states.GETTING_DISPATCHED %}
+                                        {% include participant_template %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-success mb-3 flex-grow-1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title no-drag">{{ states.CONFIRMED.label|capfirst }}</h5>
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.CONFIRMED }}">
+                                {% for form in formset %}
+                                    {% if form.instance.state == states.CONFIRMED %}
+                                        {% include participant_template %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6 d-flex flex-column">
+
+                    {% if shift.signup_method.uses_requested_state %}
+                        <div class="card border-warning mb-3 flex-grow-1">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ states.REQUESTED.label|capfirst }}</h5>
+                                <div class="list-group list-group-flush flex-grow-1"
+                                     data-drop-to-state="{{ states.REQUESTED }}">
+                                    {% for form in formset %}
+                                        {% if form.instance.state == states.REQUESTED %}
+                                            {% include participant_template %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="card border-danger mb-3 flex-grow-1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ states.RESPONSIBLE_REJECTED.label|capfirst }}</h5>
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.RESPONSIBLE_REJECTED }}">
+                                {% for form in formset %}
+                                    {% if form.instance.state == states.RESPONSIBLE_REJECTED %}
+                                        {% include participant_template %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-danger mb-3 flex-grow-1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ states.USER_DECLINED.label|capfirst }}</h5>
+                            <div class="list-group list-group-flush flex-grow-1"
+                                 data-drop-to-state="{{ states.USER_DECLINED }}">
+                                {% for form in formset %}
+                                    {% if form.instance.state == states.USER_DECLINED %}
+                                        {% include participant_template %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">{% translate "Save" %}</button>
+        </div>
+    </form>
+
+{% endblock %}

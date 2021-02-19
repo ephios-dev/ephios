@@ -5,8 +5,8 @@ from django.db.models import OuterRef, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.urls import reverse
 
-from ephios.user_management.consequences import QualificationConsequenceHandler
-from ephios.user_management.models import Consequence, Qualification
+from ephios.core.consequences import QualificationConsequenceHandler
+from ephios.core.models import Consequence, Qualification
 
 
 @pytest.mark.django_db
@@ -61,7 +61,7 @@ class TestQualificationConsequence:
 @pytest.mark.django_db
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
-        form = django_app.get(reverse("user_management:request_workinghour"), user=volunteer).form
+        form = django_app.get(reverse("core:request_workinghour"), user=volunteer).form
         form["when"] = datetime.now().date()
         form["hours"] = 42
         form["reason"] = "testing"
@@ -84,7 +84,7 @@ def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualificati
     assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "confirm"}
     csrf_exempt_django_app.post(
-        reverse("user_management:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
+        reverse("core:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
         user=superuser,
         params=POST_DATA,
     )
@@ -97,7 +97,7 @@ def test_post_consequence_deny(csrf_exempt_django_app, superuser, qualifications
     assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "deny"}
     csrf_exempt_django_app.post(
-        reverse("user_management:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
+        reverse("core:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
         user=superuser,
         params=POST_DATA,
     )

@@ -13,8 +13,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
 
-from ephios.user_management.models import AbstractParticipation, Qualification
-from ephios.user_management.signup import (
+from ephios.core.models import AbstractParticipation, Qualification
+from ephios.core.signup import (
     AbstractParticipant,
     BaseDispositionParticipationForm,
     BaseSignupMethod,
@@ -186,12 +186,10 @@ class SectionBasedSignupView(FormView, BaseSignupView):
         if not self.method.can_sign_up(self.request.user.as_participant()):
             # redirect a misled request
             messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(
-                reverse("user_management:event_detail", kwargs=dict(pk=self.shift.event_id))
-            )
+            return redirect(reverse("core:event_detail", kwargs=dict(pk=self.shift.event_id)))
 
         # all good, redirect to the form
-        return redirect(reverse("user_management:signup_action", kwargs=dict(pk=self.shift.pk)))
+        return redirect(reverse("core:signup_action", kwargs=dict(pk=self.shift.pk)))
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):
@@ -292,10 +290,10 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "confirmed_sections_with_users": confirmed_sections_with_users,
                 "disposition_url": (
                     reverse(
-                        "user_management:shift_disposition",
+                        "core:shift_disposition",
                         kwargs=dict(pk=self.shift.pk),
                     )
-                    if request.user.has_perm("user_management.change_event", obj=self.shift.event)
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
                     else None
                 ),
             }

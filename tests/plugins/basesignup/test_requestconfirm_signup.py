@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.user_management.models import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation, LocalParticipation
 
 
 @pytest.mark.django_db
@@ -10,7 +10,7 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     # request a participation as volunteer
     assert volunteer in get_users_with_perms(event, only_with_perms_in=["view_event"])
     response = django_app.get(
-        reverse("user_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
+        reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
     )
     response.form.submit(name="signup_choice", value="sign_up")
     shift = event.shifts.first()
@@ -20,13 +20,13 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     )
 
     response = django_app.get(
-        reverse("user_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
+        reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
     )
     assert "already requested" in response
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("user_management:shift_disposition", kwargs=dict(pk=shift.pk)),
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     )
     form = response.forms["participations-form"]
@@ -43,7 +43,7 @@ def test_request_confirm_decline_flow(django_app, volunteer, planner, event):
     # decline a participation as volunteer
     assert volunteer in get_users_with_perms(event, only_with_perms_in=["view_event"])
     response = django_app.get(
-        reverse("user_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
+        reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
     )
     response.form.submit(name="signup_choice", value="decline")
     shift = event.shifts.first()
@@ -53,7 +53,7 @@ def test_request_confirm_decline_flow(django_app, volunteer, planner, event):
     )
 
     response = django_app.get(
-        reverse("user_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
+        reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
     )
     assert "already declined" in response
 
@@ -63,7 +63,7 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
     # confirm the participation as planner
     shift = event.shifts.first()
     form = django_app.get(
-        reverse("user_management:shift_disposition", kwargs=dict(pk=shift.pk)),
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     ).forms["add-user-form"]
     # can't user form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)

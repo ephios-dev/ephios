@@ -1,7 +1,7 @@
 import pytest
 from django.core.management import call_command
 
-from ephios.user_management.models import Qualification
+from ephios.core.models import Qualification
 
 
 @pytest.mark.django_db

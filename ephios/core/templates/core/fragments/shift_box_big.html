@@ -1,0 +1,77 @@
+{% load event_extras %}
+{% load i18n %}
+
+<div id="shift-{{ shift.pk }}" class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">
+            <span class="fa fa-calendar-alt"></span>
+            {{ shift.get_start_end_time_display }}
+            {% if not without_controls and "change_event" in event_perms %}
+                <small class="float-right">
+                    <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
+                        {% trans "Edit" %}</a>
+                    {% if shift.event.shifts.count > 1 %}
+                        <a href="{% url "core:shift_delete" shift.pk %}"><span
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
+                    {% endif %}
+                </small>
+            {% endif %}
+        </h5>
+        <div class="card-body container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <dl>
+                        <dt>{% trans "Meeting time" %}</dt>
+                        <dd> {{ shift.meeting_time | time }}</dd>
+                        {% for label, value in shift.signup_method.get_signup_info.items %}
+                            <dt>{{ label }}</dt>
+                            <dd> {{ value }}</dd>
+                        {% endfor %}
+                        {% if event.active and not without_controls %}
+                            <form method="POST" class="form"
+                                  action="{% url "core:signup_action" shift.pk %}">
+                                {% csrf_token %}
+                                <dt>{{ shift|shift_status:request.user }}</dt>
+                                <dd>
+                                    {% with can_sign_up=shift|can_sign_up:request.user %}
+                                        <span class="d-inline-block" tabindex="0"
+                                                {% if not can_sign_up %}
+                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                                 {% for error in shift|signup_errors:request.user %}
+                                                     <p>{{ error.message }}</p>
+                                                 {% endfor %}"
+                                                {% endif %}>
+                                            <button type="submit" name="signup_choice" value="sign_up"
+                                                    {% if can_sign_up %}class="btn btn-outline-success">{% else %}class="btn btn-outline-success btn-disabled" disabled>{% endif %}
+                                                {{ shift.signup_method.registration_button_text }}
+                                            </button>
+                                        </span>
+                                    {% endwith %}
+                                    {% with can_decline=shift|can_decline:request.user %}
+                                        <span class="d-inline-block" tabindex="0"
+                                                {% if not can_decline %}
+                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                                 {% for error in shift|decline_errors:request.user %}
+                                                     <p>{{ error.message }}</p>
+                                                 {% endfor %}"
+                                                {% endif %}>
+                                            <button type="submit" name="signup_choice" value="decline"
+                                                {% if can_decline %}class="btn btn-outline-danger">{% else %}class="btn btn-outline-danger btn-disabled" disabled>{% endif %}
+                                                {% trans "Decline" %}
+                                            </button>
+                                        </span>
+                                    {% endwith %}
+                                </dd>
+                            </form>
+                        {% endif %}
+                    </dl>
+                </div>
+                <div class="col-lg-8">
+                    {% if not without_controls %}
+                        {{ shift|render_shift_state:request }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

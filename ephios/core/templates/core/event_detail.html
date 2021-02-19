@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load guardian_tags %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {{ event.title }}
+{% endblock %}
+
+{% block content %}
+    {% get_obj_perms request.user for event as "event_perms" %}
+    {% if not event.active %}
+        {% if event.shifts.exists %}
+            {% trans "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
+            {% trans "Save" as save_trans %}
+            <form method='POST' class='form' action='{% url "core:event_activate" event.pk %}'>
+                {% csrf_token %}
+                {% bootstrap_alert not_active_error|add:"<button type='submit' class='btn btn-primary'>"|add:save_trans|add:"</button>"|safe "warning" %}
+            </form>
+        {% else %}
+            {% trans "This event has not been saved! Please add a shift to save this event." as no_shift_error %}
+            {% bootstrap_alert no_shift_error "danger" %}
+        {% endif %}
+    {% endif %}
+    <div class="page-header clearfix">
+        <h1>
+            {{ event.type }}: {{ event.title }} <small>({{ event.location }})</small>
+        </h1>
+        {% if "change_event" in event_perms %}
+            <div class="float-right d-inline">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% translate "Manage event" %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdownButton">
+                        <a class="dropdown-item"
+                           href="{% url "core:event_edit" event.pk %}">
+                            <span class="fas fa-edit"></span>
+                            {% trans "Edit event" %}
+                        </a>
+                        <a class="dropdown-item"
+                           href="{% url "core:event_createshift" event.pk %}">
+                            <span class="fas fa-plus"></span>
+                            {% trans "Add another shift" %}
+                        </a>
+                        <a class="dropdown-item"
+                           href="{% url "core:event_delete" event.pk %}">
+                            <span class="fas fa-trash-alt"></span>
+                            {% trans "Delete event" %}
+                        </a>
+                        <a class="dropdown-item"
+                           href="{% url "core:event_copy" event.pk %}">
+                            <span class="fas fa-copy"></span>
+                            {% translate "Copy event" %}
+                        </a>
+                        <a class="dropdown-item"
+                           href="{% url "core:event_detail_pdf" event.pk %}">
+                            <span class="fas fa-file-pdf"></span>
+                            {% trans "Download PDF" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <p>{{ event.description }}</p>
+    <div>
+        {% for shift in event.shifts.all %}
+            {% include "core/fragments/shift_box_big.html" with shift=shift %}
+        {% endfor %}
+    </div>
+{% endblock %}

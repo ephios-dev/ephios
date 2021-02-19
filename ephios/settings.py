@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "recurrence",
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
-    "ephios.user_management",
+    "ephios.core",
     "ephios.extra",
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "ephios.user_management.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.core.utils.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -131,7 +131,7 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
-AUTH_USER_MODEL = "user_management.UserProfile"
+AUTH_USER_MODEL = "core.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 

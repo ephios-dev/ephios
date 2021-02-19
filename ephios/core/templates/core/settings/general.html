@@ -1,0 +1,11 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block settings_content %}
+    <form method="post">
+     {% csrf_token %}
+    {% bootstrap_form form %}
+    <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
+    </form>
+{% endblock %}

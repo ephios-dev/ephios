@@ -4,8 +4,8 @@ from datetime import datetime
 import pytest
 from django.urls import reverse
 
+from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
 from ephios.plugins.basesignup.signup.section_based import SectionBasedSignupMethod
-from ephios.user_management.models import AbstractParticipation, LocalParticipation, Shift
 
 KTW_UUID = "f92fe836-6dc5-4afd-b488-aee3fe7eda32"
 
@@ -72,12 +72,12 @@ def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
     )
 
     csrf_exempt_django_app.get(
-        reverse("user_management:event_createshift", kwargs=dict(pk=event.pk)),
+        reverse("core:event_createshift", kwargs=dict(pk=event.pk)),
         user=planner,
     )
     # no csrf check for plain post
     csrf_exempt_django_app.post(
-        reverse("user_management:event_createshift", kwargs=dict(pk=event.pk)),
+        reverse("core:event_createshift", kwargs=dict(pk=event.pk)),
         user=planner,
         params=POST_DATA,
     ).follow()
@@ -91,7 +91,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     # request a participation as volunteer on *second* shift
     response = (
         django_app.get(
-            reverse("user_management:event_detail", kwargs=dict(pk=event.pk)),
+            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
             user=qualified_volunteer,
         )
         .forms[1]
@@ -109,7 +109,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert (
         "You can not sign up for this shift."
         in django_app.get(
-            reverse("user_management:event_detail", kwargs=dict(pk=event.pk)),
+            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
             user=qualified_volunteer,
         )
         .forms[1]
@@ -119,7 +119,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
 
     # confirm the participation as planner
     response = django_app.get(
-        reverse("user_management:shift_disposition", kwargs=dict(pk=sectioned_shift.pk)),
+        reverse("core:shift_disposition", kwargs=dict(pk=sectioned_shift.pk)),
         user=planner,
     )
     form = response.forms["participations-form"]

@@ -1,0 +1,11 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+
+{% block settings_content %}
+        <form method="post">
+            {% csrf_token %}
+            <p>{% blocktrans %}Are you sure you want to delete the eventtype "{{ eventtype }}"?{% endblocktrans %}</p>
+        <a role="button" class="btn btn-secondary" href="{% url "core:settings_eventtype_list" %}">{% trans "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+    </form>
+{% endblock %}
