@@ -58,7 +58,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-poetry-
     - name: Install dependencies
-      run: poetry install
+      run: |
+        apt-get install gettext
+        poetry install
     - name: Prepare files for test run
       run: |
         cp .env.example .env
