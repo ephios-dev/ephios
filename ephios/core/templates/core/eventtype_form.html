@@ -1,0 +1,22 @@
+{% extends "core/settings/settings_base.html" %}
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block settings_title %}
+    {% if eventtype %}
+        - {% translate "Edit event type" %}
+    {% else %}
+        - {% translate "Add event type" %}
+    {% endif %}
+{% endblock %}
+
+{% block settings_content %}
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% if preference_form %}
+            {% bootstrap_form preference_form %}
+        {% endif %}
+        <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
+    </form>
+{% endblock %}

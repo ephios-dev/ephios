@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {% if group %}
+        {% trans "Edit group" %}
+    {% else %}
+        {% trans "Create new group" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if group %}
+            <h1>{% trans "Edit group" %}</h1>
+        {% else %}
+            <h1>{% trans "Create new group" %}</h1>
+        {% endif %}
+    </div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form exclude="publish_event_for_group" %}
+        {% bootstrap_field form.publish_event_for_group form_group_class="form-group publish-select" %}
+
+        {% buttons %}
+            <a role="button" class="btn btn-secondary"
+               href="{% url "core:group_list" %}">{% trans "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+
+        {% endbuttons %}
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/group_form.js" %}"></script>
+{% endblock %}

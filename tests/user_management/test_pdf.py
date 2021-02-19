@@ -3,14 +3,14 @@ from datetime import datetime
 import pytest
 from django.urls import reverse
 
+from ephios.core.models import Shift
 from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
-from ephios.user_management.models import Shift
 
 
 @pytest.mark.django_db
 def test_single_shift_pdf(django_app, planner, event):
     response = django_app.get(
-        reverse("user_management:event_detail_pdf", kwargs=dict(pk=event.pk)),
+        reverse("core:event_detail_pdf", kwargs=dict(pk=event.pk)),
         user=planner,
     )
     assert response
@@ -27,7 +27,7 @@ def test_multi_shift_pdf(django_app, planner, event, tz):
         signup_configuration={},
     )
     response = django_app.get(
-        reverse("user_management:event_detail_pdf", kwargs=dict(pk=event.pk)),
+        reverse("core:event_detail_pdf", kwargs=dict(pk=event.pk)),
         user=planner,
     )
     assert response

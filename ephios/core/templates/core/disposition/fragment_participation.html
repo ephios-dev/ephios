@@ -1,0 +1,21 @@
+{% extends "core/disposition/base_participation.html" %}
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block body %}
+    <h6 class="mb-0">
+        <div class="row align-items-center no-gutters">
+            <div class="col-10 pr-3">
+                <span class="fa fa-user"></span>
+                {{ form.instance.participant }}
+            </div>
+            <div class="col-2 d-flex justify-content-between align-items-center">
+                {% if form.can_delete %}
+                    <button type="button" class="btn float-right btn-sm ml-3" data-formset-delete-button>
+                        <i class="fas fa-times"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </h6>
+{% endblock %}

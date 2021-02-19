@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load user_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Profile" %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {% trans "Profile" %}
+    </h1>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{% trans "Your data" %}</h5>
+            <dl class="row">
+                <dt class="col-lg-3">{% translate "First name" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.first_name }}</dd>
+                <dt class="col-lg-3">{% translate "Last name" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.last_name }}</dd>
+                <dt class="col-lg-3">{% translate "E-Mail address" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.email }}</dd>
+                <dt class="col-lg-3">{% translate "Date of birth" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.date_of_birth|default_if_none:"" }}</dd>
+                <dt class="col-lg-3">{% translate "Phone number" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.phone|default_if_none:"" }}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{% translate "Qualifications" %}</h5>
+            <ul>
+                {% for qualification in userprofile.qualifications %}
+                    <li>
+                        {{ qualification }}
+                        {% if qualification.expires is not None %}
+                            ({% translate "until" %} {{ qualification.expires|date }})
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <i>{% translate "You have not been assigned any qualificiations." %}</i>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{% trans "Calendar feed" %}</h5>
+            <p class="card-text">
+                {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
+                <br> <br>
+            <div class="input-group mb-3">
+                <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
+                       value="{{ SITE_URL }}{% url "core:user_event_feed" userprofile.calendar_token %}"
+                       readonly>
+                <div class="input-group-append">
+                    <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"
+                            data-clipboard-target="#calendar-url" data-trigger="manual"
+                            title="Copied!">{% translate "Copy" %}</button>
+                </div>
+            </div>
+            </p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="card-title">{% translate "Working hours" %}</h5>
+                <a class="btn btn-outline-primary btn-sm" href="{% url "core:request_workinghour" %}">{% translate "Request working hours" %}</a>
+            </div>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% with userprofile|workhour_items as workhour_items %}
+                {% for item in workhour_items.1 %}
+                    <li class="list-group-item flex-column">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <span class="mr-1">{{ item.date|date:"SHORT_DATE_FORMAT" }}</span>
+                            <span class="flex-grow-1 mr-2 break-word">{{ item.reason }}</span>
+                            <span class="text-nowrap">{{ item.hours|floatformat:1 }} {% translate "hours" %}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                <li class="list-group-item flex-column">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <b>{% translate "Total" %}</b>
+                        <span>{{ workhour_items.0|floatformat:1 }} {% translate "hours" %}</span>
+                    </div>
+                </li>
+            {% endwith %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "clipboardjs/js/clipboard.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/userprofile.js" %}"></script>
+{% endblock %}

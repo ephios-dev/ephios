@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+    {% if event %}
+        {% trans "Edit event" %}
+    {% else %}
+        {% trans "Create new event" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if inactive_events %}
+        {% for event in inactive_events %}
+            {% url "core:event_detail" event.pk as event_url %}
+            {% trans "You have an unsaved event" as unsaved_message %}
+            {% trans "View" as view_message %}
+            {% bootstrap_alert unsaved_message|add:" ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event_url|add:"'>"|add:view_message|add:"</a>"|safe %}
+        {% endfor %}
+    {% endif %}
+    <div class="page-header">
+        {% if event %}
+            <h1>{% trans "Edit event" %}</h1>
+        {% else %}
+            <h1>{% blocktranslate with title=eventtype.title %}Create new {{ title }}{% endblocktranslate %}</h1>
+        {% endif %}
+    </div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form exclude="visible_for,responsible_groups,responsible_users" %}
+
+        <div class="card mb-3">
+            <div class="card-header" data-toggle="collapse" data-target="#advancedSettings">
+                <a href="#">{%translate "Advanced settings" %}</a>
+            </div>
+            <div id="advancedSettings" class="collapse">
+                <div class="card-body">
+                    {% bootstrap_field form.visible_for %}
+                    {% bootstrap_field form.responsible_groups %}
+                    {% bootstrap_field form.responsible_users %}
+                </div>
+            </div>
+        </div>
+
+        {% buttons %}
+            {% if event %}
+                <a role="button" class="btn btn-secondary"
+                   href="{% url "core:event_detail" event.pk %}">{% trans "Back" %}</a>
+                <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+            {% else %}
+                <a role="button" class="btn btn-secondary"
+                   href="{% url "core:event_list" %}">{% trans "Cancel" %}</a>
+                <button type="submit" class="btn btn-primary float-right">{% trans "Next" %}</button>
+            {% endif %}
+
+        {% endbuttons %}
+    </form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {% translate "Past events" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Past events" %}</h1>
+    </div>
+    <table id="event_table" class="table table-striped display align-middle">
+        <thead>
+        <tr>
+            <th class="d-none d-md-table-cell">{% translate "Type" %}</th>
+            <th>{% translate "Title" %}</th>
+            <th class="d-none d-md-table-cell">{% translate "Location" %}</th>
+            <th>{% translate "Date" %}</th>
+            <th class="d-none d-sm-table-cell">{% translate "until" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in event_list %}
+            <tr>
+                <td class="d-none d-md-table-cell">{{ event.type }}</td>
+                <td class="break-word">{{ event.title }}</td>
+                <td class="d-none d-md-table-cell">{{ event.location }}</td>
+                <td>{{ event.start_time|date:"SHORT_DATE_FORMAT" }}</td>
+                <td class="d-none d-sm-table-cell">{{ event.end_time|date:"SHORT_DATE_FORMAT" }}</td>
+                <td><a class="btn btn-primary text-nowrap" href="{% url "core:event_detail" event.id %}"><span
+                        class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "Show" %}</span></a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

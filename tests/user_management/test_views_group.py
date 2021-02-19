@@ -7,25 +7,25 @@ from guardian.shortcuts import get_group_perms
 @pytest.mark.django_db
 class TestGroupView:
     def test_group_list_permission_required(self, django_app, volunteer):
-        response = django_app.get(reverse("user_management:group_list"), user=volunteer, status=403)
+        response = django_app.get(reverse("core:group_list"), user=volunteer, status=403)
         assert response.status_code == 403
 
     def test_group_list(self, django_app, superuser, groups):
-        response = django_app.get(reverse("user_management:group_list"), user=superuser)
+        response = django_app.get(reverse("core:group_list"), user=superuser)
         assert response.status_code == 200
         assert response.html.findAll(text=Group.objects.all().values_list("name", flat=True))
         edit_links = [
-            reverse("user_management:group_edit", kwargs={"pk": group_id})
+            reverse("core:group_edit", kwargs={"pk": group_id})
             for group_id in Group.objects.all().values_list("id", flat=True)
         ]
         assert response.html.findAll("a", href=edit_links)
 
     def test_group_create_permission_required(self, django_app, volunteer):
-        response = django_app.get(reverse("user_management:group_add"), user=volunteer, status=403)
+        response = django_app.get(reverse("core:group_add"), user=volunteer, status=403)
         assert response.status_code == 403
 
     def test_group_create(self, django_app, groups, manager):
-        response = django_app.get(reverse("user_management:group_add"), user=manager)
+        response = django_app.get(reverse("core:group_add"), user=manager)
         form = response.form
         group_name = "Testgroup"
         form["name"] = group_name
@@ -54,7 +54,7 @@ class TestGroupView:
         ).exists()
 
     def test_group_create_with_permissions(self, django_app, groups, manager):
-        response = django_app.get(reverse("user_management:group_add"), user=manager)
+        response = django_app.get(reverse("core:group_add"), user=manager)
         form = response.form
         group_name = "Testgroup"
         form["name"] = group_name
@@ -84,9 +84,7 @@ class TestGroupView:
 
     def test_group_edit(self, django_app, groups, manager):
         group = manager.groups.first()
-        response = django_app.get(
-            reverse("user_management:group_edit", kwargs={"pk": group.id}), user=manager
-        )
+        response = django_app.get(reverse("core:group_edit", kwargs={"pk": group.id}), user=manager)
         form = response.form
         group_name = "New name"
         form["name"] = group_name
@@ -109,7 +107,7 @@ class TestGroupView:
         group = Group(name="Testgroup")
         group.save()
         response = django_app.get(
-            reverse("user_management:group_delete", kwargs={"pk": group.id}), user=manager
+            reverse("core:group_delete", kwargs={"pk": group.id}), user=manager
         )
         assert response.status_code == 200
         response = response.form.submit()

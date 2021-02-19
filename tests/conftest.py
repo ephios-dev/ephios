@@ -7,12 +7,8 @@ import pytz
 from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
-from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
-from ephios.user_management.consequences import (
-    QualificationConsequenceHandler,
-    WorkingHoursConsequenceHandler,
-)
-from ephios.user_management.models import (
+from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
+from ephios.core.models import (
     Event,
     EventType,
     Qualification,
@@ -22,6 +18,7 @@ from ephios.user_management.models import (
     UserProfile,
     WorkingHours,
 )
+from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
 
 
 @pytest.fixture
@@ -122,13 +119,13 @@ def groups(superuser, manager, planner, volunteer):
     volunteers.user_set.add(superuser, planner, volunteer)
 
     assign_perm("publish_event_for_group", planners, volunteers)
-    assign_perm("user_management.add_event", planners)
-    assign_perm("user_management.delete_event", planners)
-    assign_perm("user_management.view_past_event", planners)
-    assign_perm("user_management.view_userprofile", managers)
-    assign_perm("user_management.add_userprofile", managers)
-    assign_perm("user_management.change_userprofile", managers)
-    assign_perm("user_management.delete_userprofile", managers)
+    assign_perm("core.add_event", planners)
+    assign_perm("core.delete_event", planners)
+    assign_perm("core.view_past_event", planners)
+    assign_perm("core.view_userprofile", managers)
+    assign_perm("core.add_userprofile", managers)
+    assign_perm("core.change_userprofile", managers)
+    assign_perm("core.delete_userprofile", managers)
     assign_perm("auth.view_group", managers)
     assign_perm("auth.add_group", managers)
     assign_perm("auth.change_group", managers)

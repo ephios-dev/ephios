@@ -4,8 +4,8 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
+from ephios.core.signup import LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.user_management.signup import LocalParticipation
 
 
 @pytest.mark.django_db
@@ -13,7 +13,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     managers, planners, volunteers = groups
 
     event_form = django_app.get(
-        reverse("user_management:event_create", kwargs=dict(type=service_event_type.pk)),
+        reverse("core:event_create", kwargs=dict(type=service_event_type.pk)),
         user=planner,
     ).form
     event_form["title"] = "Seeed Concert"
@@ -46,9 +46,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
 
 @pytest.mark.django_db
 def test_add_responsible_user_to_event(django_app, planner, event, responsible_user):
-    response = django_app.get(
-        reverse("user_management:event_edit", kwargs=dict(pk=event.pk)), user=planner
-    )
+    response = django_app.get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
     # select2 selects must be forced as they don't have html options
     response.form["responsible_users"].force_value([responsible_user.id])
     event = response.form.submit().follow().context["event"]
@@ -68,13 +66,9 @@ def test_participating_users_can_see_otherwise_invisible_event(
     assert list(event.shifts.first().get_participants())
 
     # make event invisible
-    response = django_app.get(
-        reverse("user_management:event_edit", kwargs=dict(pk=event.pk)), user=planner
-    )
+    response = django_app.get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
     response.form["visible_for"].force_value([])
     response.form.submit()
 
     # check that we can get (200 OK) the event details as a participant
-    assert django_app.get(
-        reverse("user_management:event_detail", kwargs=dict(pk=event.pk)), user=volunteer
-    )
+    assert django_app.get(reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer)

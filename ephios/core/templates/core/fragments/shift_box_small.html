@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="card mb-2 {% if shift == editing_shift %}border-info{% endif %}">
+    <div class="card-body">
+        <h5 class="card-subtitle mb-2 text-muted">
+            {% trans "Shift" %}
+            {% if can_change and not shift == editing_shift %}
+                <small class="float-right">
+                    <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>{% trans "Edit" %}</a><br>
+                    {% if shift.event.shifts.count > 1 %}
+                        <a href="{% url "core:shift_delete" shift.pk %}"><span
+                                class="fas fa-trash-alt"></span>  {% trans "Delete" %}</a>
+                    {% endif %}            </small>
+            {% endif %}
+        </h5><br>
+        <p class="card-text">
+            <b>{% trans "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
+            <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
+            <b>{% trans "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
+            <b>{% trans "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
+            <b>{% trans "Signup method" %}:</b> {{ shift.signup_method.verbose_name }}
+        </p>
+    </div>
+</div>

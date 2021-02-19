@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}
+    {% translate "Events" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Events" %}</h1>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {% if perms.core.add_event %}
+            <div id="event-controls" class="d-flex">
+                <div class="dropdown mr-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="eventCreateButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% translate "Add event" %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
+                        {% for eventtype in eventtypes %}
+                            <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">{% blocktranslate with title=eventtype.title %}Add {{ title }}{% endblocktranslate %}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button class="btn btn-danger" type="submit" name="delete"
+                        formaction="{% url "core:event_bulk_delete" %}"><span
+                        class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+            </div>
+        {% endif %}
+        <table id="event_table" class="table table-striped display mt-2">
+            <thead>
+            <tr>
+                {% if perms.core.add_event %}
+                    <th><input type="checkbox" id="checkall"></th>{% endif %}
+                <th class="d-none d-md-table-cell">{% translate "Type" %}</th>
+                <th>{% translate "Title" %}</th>
+                <th class="d-none d-md-table-cell">{% translate "Location" %}</th>
+                <th>{% translate "Date" %}</th>
+                <th class="d-none d-sm-table-cell">{% translate "until" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in event_list %}
+                <tr>
+                    {% if perms.core.add_event %}
+                        <td><input name="bulk_action" value="{{ event.pk }}" type="checkbox" class="cb-element"></td>
+                    {% endif %}
+                    <td class="d-none d-md-table-cell">{{ event.type }}</td>
+                    <td class="break-word">{{ event.title }}</td>
+                    <td class="d-none d-md-table-cell">{{ event.location }}</td>
+                    <td>{{ event.start_time|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td class="d-none d-sm-table-cell">{{ event.end_time|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td><a class="btn btn-primary text-nowrap"
+                           href="{% url "core:event_detail" event.id %}"><span
+                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "Show" %}</span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

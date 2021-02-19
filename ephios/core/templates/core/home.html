@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load event_extras %}
+{% load i18n %}
+{% load static %}
+
+
+{% block title %}
+    {% trans "Home" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/consequences.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {% trans "Welcome to ephios!" %}
+    </h1>
+
+    {% with request.user|confirmed_shifts as confirmed_shifts %}
+        {% if confirmed_shifts|length > 0 %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{% trans "Your upcoming events" %}</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for shift in confirmed_shifts %}
+                        <li class="list-group-item flex-column">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <span>{{ shift.event.title }} ({{ shift.get_start_end_time_display }})</span>
+                                <a class="btn btn-outline-primary btn-sm" href="{% url "core:event_detail" shift.event.pk %}#shift-{{ shift.pk }}"><span
+                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View" %}</span></a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% include "core/fragments/approve_consequences.html" %}
+
+{% endblock %}
