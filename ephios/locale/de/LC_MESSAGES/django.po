@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-02-19 18:55+0100\n"
-"PO-Revision-Date: 2021-02-19 18:13+0000\n"
+"PO-Revision-Date: 2021-02-19 19:42+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
@@ -841,7 +841,7 @@ msgstr "Ausgewählte löschen"
 #: .\core\templates\core\eventtype_confirm_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete the eventtype \"%(eventtype)s\"?"
-msgstr "Möchten Sie den Veranstaltungstyp \"%(object)s\" wirklich löschen?"
+msgstr "Möchten Sie den Veranstaltungstyp \"%(eventtype)s\" wirklich löschen?"
 
 #: .\core\templates\core\eventtype_form.html:7
 msgid "Edit event type"
@@ -1209,7 +1209,7 @@ msgstr "Veranstaltung erfolgreich kopiert."
 #: .\core\views\eventtype.py:41
 #, python-brace-format
 msgid "The event type {type} has been saved."
-msgstr "Der Veranstaltungstyp {title} wurde gespeichert."
+msgstr "Der Veranstaltungstyp {type} wurde gespeichert."
 
 #: .\core\views\eventtype.py:61
 #, python-brace-format
