@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-02-19 18:55+0100\n"
-"PO-Revision-Date: 2021-02-19 18:13+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"PO-Revision-Date: 2021-02-19 19:42+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -67,16 +67,16 @@ msgid ""
 "Receive notifications when a user requests a particpation for the following "
 "event types:"
 msgstr ""
-"Benachrichtigungen erhalten wenn ein Nutzer eine Teilnahme an den folgenden "
-"Eventtypen anfragt:"
+"Benachrichtigungen erhalten, wenn eine Person eine Teilnahme für die "
+"folgenden Eventtypen anfragt:"
 
 #: .\core\dynamic_preferences_registry.py:65
 msgid ""
 "Receive notifications when a confirmed user rejects a particpation for the "
 "following event types:"
 msgstr ""
-"Benachrichtigungen erhalten wenn ein bestätigter Nutzer eine Teilnahme an "
-"den folgenden Veranstaltungstypen ablehnt:"
+"Benachrichtigungen erhalten, wenn eine Person eine bestätigte Teilnahme für "
+"die folgenden Veranstaltungstypen absagt:"
 
 #: .\core\dynamic_preferences_registry.py:76
 msgid "Events of this type should by default be visible for"
@@ -841,7 +841,7 @@ msgstr "Ausgewählte löschen"
 #: .\core\templates\core\eventtype_confirm_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete the eventtype \"%(eventtype)s\"?"
-msgstr "Möchten Sie den Veranstaltungstyp \"%(object)s\" wirklich löschen?"
+msgstr "Möchten Sie den Veranstaltungstyp \"%(eventtype)s\" wirklich löschen?"
 
 #: .\core\templates\core\eventtype_form.html:7
 msgid "Edit event type"
@@ -1209,7 +1209,7 @@ msgstr "Veranstaltung erfolgreich kopiert."
 #: .\core\views\eventtype.py:41
 #, python-brace-format
 msgid "The event type {type} has been saved."
-msgstr "Der Veranstaltungstyp {title} wurde gespeichert."
+msgstr "Der Veranstaltungstyp {type} wurde gespeichert."
 
 #: .\core\views\eventtype.py:61
 #, python-brace-format
