@@ -126,7 +126,7 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
 class EventArchiveView(CustomPermissionRequiredMixin, ListView):
     permission_required = "core.view_past_event"
     model = Event
-    template_name = "event_management/../templates/core/event_archive.html"
+    template_name = "core/event_archive.html"
 
     def get_queryset(self):
         return (
