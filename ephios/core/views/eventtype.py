@@ -65,7 +65,7 @@ class EventTypeDeleteView(CustomPermissionRequiredMixin, DeleteView):
 
 class EventTypeCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
     permission_required = "core.add_event"
-    template_name = "event_management/../templates/core/eventtype_form.html"
+    template_name = "core/eventtype_form.html"
     model = EventType
     fields = ["title", "can_grant_qualification"]
     success_message = _(
