@@ -230,6 +230,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             },
         }
 
+    def get_participant_count_bounds(self):
+        return sum(section.get("min_count") or 0 for section in self.configuration.sections), None
+
     @staticmethod
     def check_qualification(method, participant):
         if not sections_participant_qualifies_for(method.configuration.sections, participant):

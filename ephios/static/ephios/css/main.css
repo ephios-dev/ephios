@@ -41,6 +41,10 @@ footer {
     overflow: auto;
 }
 
+.event-list-status-icon {
+    min-width: 28px;
+}
+
 /*
 When select2s are hidden on page load, they tend to have the wrong size.
 This hack fixes that. See https://github.com/select2/select2/issues/4220#issuecomment-705855505

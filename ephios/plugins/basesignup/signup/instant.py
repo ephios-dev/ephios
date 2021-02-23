@@ -49,6 +49,9 @@ class InstantConfirmationSignupMethod(SimpleQualificationsRequiredSignupMethod):
             }
         )
 
+    def get_participant_count_bounds(self):
+        return None, self.configuration.maximum_number_of_participants
+
     def perform_signup(self, participant, **kwargs):
         participation = super().perform_signup(participant, **kwargs)
         participation.state = AbstractParticipation.States.CONFIRMED

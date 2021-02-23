@@ -3,7 +3,7 @@ from datetime import datetime
 from django import template
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation
+from ephios.core.models import AbstractParticipation, LocalParticipation
 
 register = template.Library()
 
@@ -55,3 +55,21 @@ def confirmed_shifts(user):
         .filter(end_time__gte=datetime.now())
         .order_by("start_time")
     )
+
+
+@register.filter(name="relevant_signup_status")
+def relevant_signup_status(event, user):
+    states = LocalParticipation.objects.filter(shift__event=event, user=user).values_list(
+        "state", flat=True
+    )
+    s = AbstractParticipation.States
+    if s.CONFIRMED in states:
+        return s.CONFIRMED
+    elif s.REQUESTED in states:
+        return s.REQUESTED
+    elif s.RESPONSIBLE_REJECTED in states:
+        return s.RESPONSIBLE_REJECTED
+    elif set(states) == {s.USER_DECLINED}:
+        return s.USER_DECLINED
+    else:
+        return None

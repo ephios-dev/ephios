@@ -1,6 +1,6 @@
+import dataclasses
 import functools
 from argparse import Namespace
-from dataclasses import dataclass, field
 from datetime import date
 from typing import List, Optional
 
@@ -39,11 +39,11 @@ def signup_method_from_slug(slug, shift=None):
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class AbstractParticipant:
     first_name: str
     last_name: str
-    qualifications: QuerySet = field(hash=False)
+    qualifications: QuerySet = dataclasses.field(hash=False)
     date_of_birth: date
     email: Optional[str]  # if set to None, no notifications are sent
 
@@ -80,7 +80,7 @@ class AbstractParticipant:
         return set(qualifications) <= self.collect_all_qualifications()
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class LocalUserParticipant(AbstractParticipant):
     user: get_user_model()
 
@@ -339,6 +339,31 @@ class BaseSignupMethod:
             and (value := getattr(self.configuration, key))
         }
 
+    def get_participant_count_bounds(self):
+        """
+        Return a typle of min, max for how many participants are allowed for the shift.
+        Use None for any value if it is not specifiable.
+        The default implementation returns None, None to signify both values are not specified.
+        """
+        return None, None
+
+    def get_signup_stats(self):
+        """
+        Return an instance of SignupStats for the shift.
+        """
+        min_count, max_count = self.get_participant_count_bounds()
+        participations = list(self.shift.participations.all())
+        return SignupStats(
+            requested_count=sum(
+                p.state == AbstractParticipation.States.REQUESTED for p in participations
+            ),
+            signed_up_count=sum(
+                p.state == AbstractParticipation.States.CONFIRMED for p in participations
+            ),
+            min_count=min_count,
+            max_count=max_count,
+        )
+
     def render_shift_state(self, request):
         """
         Render html that will be shown in the shift info box.
@@ -360,3 +385,27 @@ class BaseSignupMethod:
             template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
         ).render(Context({"form": form}))
         return template
+
+
+@dataclasses.dataclass()
+class SignupStats:
+    requested_count: int
+    signed_up_count: int
+    min_count: Optional[int]
+    max_count: Optional[int]
+
+    def __add__(self, other: "SignupStats"):
+        if self.min_count is not None or other.min_count is not None:
+            min_count = (self.min_count or 0) + (other.min_count or 0)
+        else:
+            min_count = None
+        if self.max_count is not None or other.max_count is not None:
+            max_count = (self.max_count or 0) + (other.max_count or 0)
+        else:
+            max_count = None
+        return SignupStats(
+            requested_count=self.requested_count + other.requested_count,
+            signed_up_count=self.signed_up_count + other.signed_up_count,
+            min_count=min_count,
+            max_count=max_count,
+        )

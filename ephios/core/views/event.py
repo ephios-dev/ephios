@@ -44,6 +44,7 @@ class EventListView(LoginRequiredMixin, ListView):
             )
             .filter(end_time__gte=timezone.now())
             .select_related("type")
+            .prefetch_related("shifts", "shifts__participations")
             .order_by("start_time")
         )
 

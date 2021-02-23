@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load bootstrap4 %}
+{% load event_extras %}
 
 {% block title %}
     {% translate "Events" %}
@@ -14,54 +15,108 @@
     <form method="post">
         {% csrf_token %}
         {% if perms.core.add_event %}
-            <div id="event-controls" class="d-flex">
-                <div class="dropdown mr-1">
+            <div id="event-controls" class="d-flex flex-wrap">
+                <div class="dropdown m-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="eventCreateButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="fa fa-plus"></span>
                         {% translate "Add event" %}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
                         {% for eventtype in eventtypes %}
-                            <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">{% blocktranslate with title=eventtype.title %}Add {{ title }}{% endblocktranslate %}</a>
+                            <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
+                                {% blocktranslate with title=eventtype.title %}Add
+                                    {{ title }}{% endblocktranslate %}</a>
                         {% endfor %}
                     </div>
                 </div>
-                <button class="btn btn-danger" type="submit" name="delete"
+                <button class="btn btn-danger m-1" type="submit" name="delete"
                         formaction="{% url "core:event_bulk_delete" %}"><span
                         class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
             </div>
         {% endif %}
-        <table id="event_table" class="table table-striped display mt-2">
-            <thead>
-            <tr>
+
+        {% if event_list %}
+            <div class="container mt-3 mx-0 px-0">
                 {% if perms.core.add_event %}
-                    <th><input type="checkbox" id="checkall"></th>{% endif %}
-                <th class="d-none d-md-table-cell">{% translate "Type" %}</th>
-                <th>{% translate "Title" %}</th>
-                <th class="d-none d-md-table-cell">{% translate "Location" %}</th>
-                <th>{% translate "Date" %}</th>
-                <th class="d-none d-sm-table-cell">{% translate "until" %}</th>
-                <th>{% translate "Action" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for event in event_list %}
-                <tr>
-                    {% if perms.core.add_event %}
-                        <td><input name="bulk_action" value="{{ event.pk }}" type="checkbox" class="cb-element"></td>
-                    {% endif %}
-                    <td class="d-none d-md-table-cell">{{ event.type }}</td>
-                    <td class="break-word">{{ event.title }}</td>
-                    <td class="d-none d-md-table-cell">{{ event.location }}</td>
-                    <td>{{ event.start_time|date:"SHORT_DATE_FORMAT" }}</td>
-                    <td class="d-none d-sm-table-cell">{{ event.end_time|date:"SHORT_DATE_FORMAT" }}</td>
-                    <td><a class="btn btn-primary text-nowrap"
-                           href="{% url "core:event_detail" event.id %}"><span
-                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "Show" %}</span></a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    <div class="px-2 py-1">
+                        <input type="checkbox" id="checkall">
+                    </div>
+                {% endif %}
+                {% for event in event_list %}
+                    <div class="my-0 py-1 border-top border-1 d-flex flex-row">
+                        <div class="m-0 d-flex flex-column flex-lg-row-reverse align-center justify-content-around flex-grow-0">
+                            <div class="pl-2 d-flex flex-column justify-content-center event-list-status-icon">
+                                {% with event|relevant_signup_status:request.user as status %}
+                                    {% if status == ParticipationStates.CONFIRMED %}
+                                        <span class="text-success fa fa-user-check"></span>
+                                    {% elif status == ParticipationStates.REQUESTED %}
+                                        <span class="text-warning fa fa-user-clock"></span>
+                                    {% elif status == ParticipationStates.RESPONSIBLE_REJECTED %}
+                                        <span class="text-danger fa fa-user-times"></span>
+                                    {% elif status == ParticipationStates.USER_DECLINED %}
+                                        <span class="text-danger fa fa-user-minus"></span>
+                                    {% else %}
+                                        <span class="text-secondary far fa-user"></span>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            {% if perms.core.add_event %}
+                                <div class="pl-2 d-flex flex-column justify-content-center">
+                                    <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
+                                           class="cb-element">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row m-0 px-2 py-0 flex-grow-1">
+                            <div class="col-lg p-0">
+                                <h5 class="mb-0">
+                                    {{ event.title }}
+                                    <small class="float-right mr-lg-3"><span
+                                            class="badge badge-dark">{{ event.type }}</span></small>
+                                </h5>
+                                <span class="w-100 text-secondary">
+                                {{ event.location }}
+                            </span>
+                            </div>
+                            <div class="col-sm-auto col-lg-3 p-0">
+                                {{ event.start_time|date:"D" }},
+                                {% if event.start_time.date == event.end_time.date %}
+                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}<span class="d-lg-none">,</span>
+                                    <span class="d-none d-lg-inline"><br></span>
+                                    {{ event.start_time|date:"TIME_FORMAT" }} – {{ event.end_time|date:"TIME_FORMAT" }}
+                                {% else %}
+                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                    <span class="d-none d-lg-inline"><br></span>
+                                    {% translate "to" %}
+                                    {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-4 p-0 d-flex flex-row align-items-center justify-content-between">
+                                <p class="my-0 mr-1">
+                                    <span class="fas fa-users"></span>
+                                    {% with event.get_signup_stats as stats %}
+                                        {{ stats.signed_up_count }}
+                                        {% if stats.max_count is not None %}
+                                            / {{ stats.max_count }}
+                                        {% elif stats.min_count is not None %}
+                                            / {{ stats.min_count }}+
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                                <a class="btn btn-primary text-nowrap"
+                                   href="{% url "core:event_detail" event.id %}"><span
+                                        class="fa fa-eye"></span> <span
+                                        class="d-none d-lg-inline">{% translate "Show" %}</span></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h5 class="mt-5 text-center">
+                {% translate "There are no events." %}
+            </h5>
+        {% endif %}
     </form>
 {% endblock %}
