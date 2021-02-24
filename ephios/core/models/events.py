@@ -114,6 +114,10 @@ class AbstractParticipation(PolymorphicModel):
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
         GETTING_DISPATCHED = 4, _("getting dispatched")
 
+        @classmethod
+        def labels_dict(cls):
+            return dict(zip(cls.values, cls.labels))
+
     shift = ForeignKey(
         "Shift", on_delete=models.CASCADE, verbose_name=_("shift"), related_name="participations"
     )

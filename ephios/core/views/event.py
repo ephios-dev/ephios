@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Prefetch
 from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -44,7 +44,8 @@ class EventListView(LoginRequiredMixin, ListView):
             )
             .filter(end_time__gte=timezone.now())
             .select_related("type")
-            .prefetch_related("shifts", "shifts__participations")
+            .prefetch_related("shifts")
+            .prefetch_related(Prefetch("shifts__participations"))
             .order_by("start_time")
         )
 

@@ -1,3 +1,4 @@
+import collections
 from datetime import datetime
 
 from django import template
@@ -57,19 +58,16 @@ def confirmed_shifts(user):
     )
 
 
-@register.filter(name="relevant_signup_status")
-def relevant_signup_status(event, user):
-    states = LocalParticipation.objects.filter(shift__event=event, user=user).values_list(
-        "state", flat=True
-    )
-    s = AbstractParticipation.States
-    if s.CONFIRMED in states:
-        return s.CONFIRMED
-    elif s.REQUESTED in states:
-        return s.REQUESTED
-    elif s.RESPONSIBLE_REJECTED in states:
-        return s.RESPONSIBLE_REJECTED
-    elif set(states) == {s.USER_DECLINED}:
-        return s.USER_DECLINED
-    else:
-        return None
+@register.filter(name="event_signup_state_counts")
+def event_signup_state_counts(event, user):
+    """
+    Return a counter counting states for a users participations for shifts of an event.
+    Uses None as key for no participation info.
+    """
+    counter = collections.Counter()
+    for shift in event.shifts.all():
+        for participation in shift.participations.all():
+            if type(participation) is LocalParticipation and participation.user_id == user.id:
+                counter[participation.state] += 1
+                break
+    return counter

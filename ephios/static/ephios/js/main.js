@@ -31,6 +31,13 @@ $(document).ready(function () {
             $('#checkall').prop('checked', false);
         }
     });
+
+    $("[data-jslink]").on("click", function (ev) {
+        if($("#"+$(ev.currentTarget).data("jslink-ifnot")).css("display") === "none") {
+            ev.preventDefault();
+            window.location = $(ev.currentTarget).data("jslink");
+        }
+    });
 })
 
 function getCookie(name) {
