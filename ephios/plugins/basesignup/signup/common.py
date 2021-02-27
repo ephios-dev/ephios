@@ -51,17 +51,17 @@ class MinMaxParticipantsMixin(_Base):
 
     def get_signup_info(self):
         infos = super().get_signup_info()
-        min = self.configuration.minimum_number_of_participants
-        max = self.configuration.maximum_number_of_participants
-        if min is not None or max is not None:
-            if min == max:
-                number_info = str(min)
-            elif min is not None and max is not None:
-                number_info = _("{min} to {max}").format(min=min, max=max)
-            elif min is not None:
-                number_info = _("at least {min}").format(min=min)
+        min_count = self.configuration.minimum_number_of_participants
+        max_count = self.configuration.maximum_number_of_participants
+        if min_count is not None or max_count is not None:
+            if min_count == max_count:
+                number_info = str(min_count)
+            elif min_count is not None and max_count is not None:
+                number_info = _("{min} to {max}").format(min=min_count, max=max_count)
+            elif min_count is not None:
+                number_info = _("at least {min}").format(min=min_count)
             else:
-                number_info = _("at most {max}").format(max=max)
+                number_info = _("at most {max}").format(max=max_count)
             infos.update({_("Required number of participants"): number_info})
         return infos
 
