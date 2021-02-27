@@ -5,8 +5,9 @@ from datetime import datetime
 import django.dispatch
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import IntegerField, OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
+from django.db.models.functions import Cast
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
@@ -186,7 +187,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             qualification_title = consequence.qualification_title
         except AttributeError:
             qualification_title = Qualification.objects.get(
-                id=consequence.data["qualification_id"]
+                id=Cast(consequence.data["qualification_id"], IntegerField())
             ).title
 
         if expires := consequence.data.get("expires"):
