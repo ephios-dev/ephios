@@ -6,7 +6,7 @@ from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
 from django.urls import reverse
 
-from ephios.core.consequences import QualificationConsequenceHandler
+from ephios.core.consequences import QualificationConsequenceHandler, editable_consequences
 from ephios.core.models import Consequence, Qualification
 
 
@@ -59,6 +59,9 @@ class TestQualificationConsequence:
         assert qualified_volunteer.qualifications.get(
             pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
         )
+
+    def test_consequence_appears(self, groups, manager, qualifications_consequence):
+        assert qualifications_consequence in editable_consequences(manager)
 
 
 @pytest.mark.django_db
