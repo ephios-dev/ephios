@@ -399,7 +399,7 @@ class SignupStats:
             min_count = (self.min_count or 0) + (other.min_count or 0)
         else:
             min_count = None
-        if self.max_count is not None or other.max_count is not None:
+        if self.max_count is not None and other.max_count is not None:
             max_count = (self.max_count or 0) + (other.max_count or 0)
         else:
             max_count = None
