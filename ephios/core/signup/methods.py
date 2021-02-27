@@ -337,12 +337,14 @@ class BaseSignupMethod:
         Return key/value pairs about the configuration to show in the shift info box.
         """
         fields = self.get_configuration_fields()
-        return {
-            label: field.get("format", str)(value)
-            for key, field in fields.items()
-            if (label := field.get("publish_with_label", False))
-            and (value := getattr(self.configuration, key))
-        }
+        return OrderedDict(
+            {
+                label: field.get("format", str)(value)
+                for key, field in fields.items()
+                if (label := field.get("publish_with_label", False))
+                and (value := getattr(self.configuration, key))
+            }
+        )
 
     def get_participant_count_bounds(self):
         """
