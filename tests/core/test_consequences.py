@@ -1,8 +1,9 @@
 from datetime import datetime
 
 import pytest
-from django.db.models import OuterRef, Subquery
+from django.db.models import IntegerField, OuterRef, Subquery
 from django.db.models.fields.json import KeyTransform
+from django.db.models.functions import Cast
 from django.urls import reverse
 
 from ephios.core.consequences import QualificationConsequenceHandler
@@ -25,7 +26,9 @@ class TestQualificationConsequence:
     def test_annotation_with_json(self, qualifications_consequence, qualifications):
         qs = (
             Consequence.objects.filter(state=Consequence.States.NEEDS_CONFIRMATION)
-            .annotate(qualification_id=KeyTransform("qualification_id", "data"))
+            .annotate(
+                qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField())
+            )
             .annotate(
                 qualification_title=Subquery(
                     Qualification.objects.filter(pk=OuterRef("qualification_id")).values("title")[
