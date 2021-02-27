@@ -90,6 +90,7 @@ jobs:
     - name: Setup mysql
       run: |
         sudo systemctl start mysql.service
+        mysql -uroot -proot -e"CREATE DATABASE ephios DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;"
         mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -proot -Dephios
       if: matrix.database == 'mysql'
 
