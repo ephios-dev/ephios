@@ -47,12 +47,13 @@ visible
                     </div>
                 {% endif %}
                 {% for event in event_list %}
-                    <div class="list-group-item list-group-item-action px-0 d-flex flex-row">
-                        <div class="m-0 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
+                    <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
+                        <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                             {% with event|event_signup_state_counts:request.user as counter %}
                                 <div class="pl-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
                                      {% if counter %}data-toggle="tooltip" data-placement="bottom" data-html="true"
                                      title="{% for state in counter %}<div>
+
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
                                         <div>{% endfor %}"
                                      {% endif %}
@@ -77,52 +78,53 @@ visible
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="row m-0 py-0 flex-grow-1"
-                        data-jslink-ifnot="id_event_{{ event.id }}" data-jslink="{% url "core:event_detail" event.id %}">
-                            <div class="col-lg">
-                                <h5 class="mb-0">
-                                    {{ event.title }}
-                                    <small class="float-right mr-lg-3"><span
-                                            class="badge badge-dark">{{ event.type }}</span></small>
-                                </h5>
-                                <span class="w-100 text-secondary">
+                        <a class="list-group-item-action py-2 event-list-item-link"
+                           href="{% url "core:event_detail" event.id %}">
+                            <div class="row m-0 py-0 flex-grow-1">
+                                <div class="col-lg">
+                                    <h5 class="mb-0">
+                                        {{ event.title }}
+                                        <small class="float-right mr-lg-3"><span
+                                                class="badge badge-dark">{{ event.type }}</span></small>
+                                    </h5>
+                                    <span class="w-100 text-secondary">
                                     {{ event.location }}
                                 </span>
+                                </div>
+                                <div class="col col-lg-3">
+                                    {{ event.start_time|date:"D" }},
+                                    {% if event.start_time.date == event.end_time.date %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}<span class="d-lg-none">,</span>
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {{ event.start_time|date:"TIME_FORMAT" }} –
+                                        {{ event.end_time|date:"TIME_FORMAT" }}
+                                    {% else %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {% translate "to" %}
+                                        {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                                    {% endif %}
+                                </div>
+                                <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
+                                    <p class="my-0 mr-1">
+                                        <span class="fas fa-users"></span>
+                                        {% with event.get_signup_stats as stats %}
+                                            {{ stats.signed_up_count }}
+                                            {% if stats.max_count is not None %}
+                                                / {{ stats.max_count }}
+                                            {% elif stats.min_count is not None %}
+                                                / {{ stats.min_count }}+
+                                            {% endif %}
+                                        {% endwith %}
+                                    </p>
+                                </div>
+                                <div class="col-lg-auto d-none d-lg-flex flex-column justify-content-center">
+                                    <div class="btn btn-outline-primary text-nowrap">
+                                        <span class="fa fa-eye"></span> {% translate "Show" %}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col col-lg-3">
-                                {{ event.start_time|date:"D" }},
-                                {% if event.start_time.date == event.end_time.date %}
-                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}<span class="d-lg-none">,</span>
-                                    <span class="d-none d-lg-inline"><br></span>
-                                    {{ event.start_time|date:"TIME_FORMAT" }} –
-                                    {{ event.end_time|date:"TIME_FORMAT" }}
-                                {% else %}
-                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
-                                    <span class="d-none d-lg-inline"><br></span>
-                                    {% translate "to" %}
-                                    {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
-                                {% endif %}
-                            </div>
-                            <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
-                                <p class="my-0 mr-1">
-                                    <span class="fas fa-users"></span>
-                                    {% with event.get_signup_stats as stats %}
-                                        {{ stats.signed_up_count }}
-                                        {% if stats.max_count is not None %}
-                                            / {{ stats.max_count }}
-                                        {% elif stats.min_count is not None %}
-                                            / {{ stats.min_count }}+
-                                        {% endif %}
-                                    {% endwith %}
-                                </p>
-                            </div>
-                            <div class="col-lg-auto d-none d-lg-flex flex-column justify-content-center" id="id_event_{{ event.id }}">
-                                <a class="btn btn-outline-primary text-nowrap stretched-link"
-                                     href="{% url "core:event_detail" event.id %}">
-                                    <span class="fa fa-eye"></span> {% translate "Show" %}
-                                </a>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 {% endfor %}
             </div>

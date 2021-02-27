@@ -49,6 +49,19 @@ footer {
     text-align: left;
 }
 
+
+
+/* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
+@media (min-width: 992px) {
+    .event-list-item-link {
+        pointer-events: none;
+    }
+
+    .btn {
+        pointer-events: auto;
+    }
+}
+
 /*
 When select2s are hidden on page load, they tend to have the wrong size.
 This hack fixes that. See https://github.com/select2/select2/issues/4220#issuecomment-705855505
