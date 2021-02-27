@@ -40,7 +40,7 @@ def editable_consequences(user):
     qs = Consequence.objects.all()
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)
-    return qs.filter(slug__in=map(lambda hl: hl.slug, handlers))
+    return qs.filter(slug__in=map(lambda hl: hl.slug, handlers)).distinct()
 
 
 class ConsequenceError(Exception):
@@ -200,24 +200,23 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def filter_queryset(cls, qs, user: UserProfile):
+        # For some reason postgres does not supporting annotating event_id and event_title in the same way,
+        # instead destroying the whole queryset. Until we find out why, we don't annotate it and load it while rendering
         qs = qs.annotate(
-            qualification_id=KeyTransform("qualification_id", "data"),
-            event_id=Cast(KeyTransform("event_id", "data"), IntegerField()),
+            qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField()),
         ).annotate(
             qualification_title=Subquery(
-                Qualification.objects.filter(
-                    id=Cast(OuterRef("qualification_id"), IntegerField())
-                ).values("title")[:1]
+                Qualification.objects.filter(id=OuterRef("qualification_id")).values("title")[:1]
             ),
-            event_title=Subquery(Event.objects.filter(id=OuterRef("event_id")).values("title")[:1]),
         )
 
         return qs.filter(
             ~Q(slug=cls.slug)
             # Qualifications can be granted by people who...
             | Q(  # are responsible for the event the consequence originated from, if applicable
-                event_id__isnull=False,
-                event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
+                data__event_id__in=set(
+                    get_objects_for_user(user, perms="change_event", klass=Event)
+                ),
             )
             | Q(  # can edit the affected user anyway
                 user__in=get_objects_for_user(
