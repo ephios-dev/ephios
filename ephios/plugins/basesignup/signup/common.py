@@ -1,13 +1,58 @@
+import typing
+from collections import OrderedDict
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
-from ephios.core.models import Qualification
+from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup import BaseSignupMethod, ParticipationError
 
+_Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 
-class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):
-    # pylint: disable=abstract-method
+
+class MinMaxParticipantsMixin(_Base):
+    @property
+    def signup_checkers(self):
+        return super().signup_checkers + [self.check_maximum_number_of_participants]
+
+    @staticmethod
+    def check_maximum_number_of_participants(method, participant):
+        if (
+            not method.uses_requested_state
+            and method.configuration.maximum_number_of_participants is not None
+        ):
+            current_count = AbstractParticipation.objects.filter(
+                shift=method.shift, state=AbstractParticipation.States.CONFIRMED
+            ).count()
+            if current_count >= method.configuration.maximum_number_of_participants:
+                return ParticipationError(_("The maximum number of participants is reached."))
+
+    def get_participant_count_bounds(self):
+        return (
+            self.configuration.minimum_number_of_participants,
+            self.configuration.maximum_number_of_participants,
+        )
+
+    def get_configuration_fields(self):
+        return OrderedDict(
+            {
+                **super().get_configuration_fields(),
+                "minimum_number_of_participants": {
+                    "formfield": forms.IntegerField(min_value=0, required=False),
+                    "default": None,
+                    "publish_with_label": _("Minimum number of participants"),
+                },
+                "maximum_number_of_participants": {
+                    "formfield": forms.IntegerField(min_value=1, required=False),
+                    "default": None,
+                    "publish_with_label": _("Maximum number of participants"),
+                },
+            }
+        )
+
+
+class QualificationsRequiredSignupMixin(_Base):
     def __init__(self, shift):
         super().__init__(shift)
         if shift is not None:
@@ -25,19 +70,21 @@ class SimpleQualificationsRequiredSignupMethod(BaseSignupMethod):
             return ParticipationError(_("You are not qualified."))
 
     def get_configuration_fields(self):
-        return {
-            **super().get_configuration_fields(),
-            "required_qualification_ids": {
-                "formfield": forms.ModelMultipleChoiceField(
-                    label=_("Required Qualifications"),
-                    queryset=Qualification.objects.all(),
-                    widget=Select2MultipleWidget,
-                    required=False,
-                ),
-                "default": [],
-                "publish_with_label": _("Required Qualification"),
-                "format": lambda ids: ", ".join(
-                    Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
-                ),
-            },
-        }
+        return OrderedDict(
+            {
+                **super().get_configuration_fields(),
+                "required_qualification_ids": {
+                    "formfield": forms.ModelMultipleChoiceField(
+                        label=_("Required Qualifications"),
+                        queryset=Qualification.objects.all(),
+                        widget=Select2MultipleWidget,
+                        required=False,
+                    ),
+                    "default": [],
+                    "publish_with_label": _("Required Qualification"),
+                    "format": lambda ids: ", ".join(
+                        Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
+                    ),
+                },
+            }
+        )

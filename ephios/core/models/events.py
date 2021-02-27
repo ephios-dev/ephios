@@ -77,13 +77,15 @@ class Event(Model):
         return max(s.end_time for s in self.shifts.all()) if self.shifts.all() else None
 
     def get_signup_stats(self) -> "SignupStats":
-        """Return a SignupStats object aggregated over all shifts of this event."""
+        """Return a SignupStats object aggregated over all shifts of this event, or a default"""
         from ephios.core.signup import SignupStats
+
+        default_for_no_shifts = SignupStats(0, 0, None, None)
 
         return functools.reduce(
             operator.add,
-            (shift.signup_method.get_signup_stats() for shift in self.shifts.all()),
-            SignupStats(0, 0, None, None),
+            [shift.signup_method.get_signup_stats() for shift in self.shifts.all()]
+            or [default_for_no_shifts],
         )
 
     def __str__(self):

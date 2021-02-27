@@ -1,6 +1,7 @@
 import dataclasses
 import functools
 from argparse import Namespace
+from collections import OrderedDict
 from datetime import date
 from typing import List, Optional
 
@@ -301,31 +302,35 @@ class BaseSignupMethod:
         return participation
 
     def get_configuration_fields(self):
-        return {
-            "minimum_age": {
-                "formfield": forms.IntegerField(required=False, min_value=1, max_value=999),
-                "default": 16,
-                "publish_with_label": _("Minimum age"),
-            },
-            "signup_until": {
-                "formfield": forms.SplitDateTimeField(
-                    required=False, widget=CustomSplitDateTimeWidget
-                ),
-                "default": None,
-                "publish_with_label": _("Signup until"),
-                "format": functools.partial(formats.date_format, format="SHORT_DATETIME_FORMAT"),
-            },
-            "user_can_decline_confirmed": {
-                "formfield": forms.BooleanField(
-                    label=_("Confirmed users can decline by themselves"),
-                    required=False,
-                    help_text=_("only if the signup timeframe has not ended"),
-                ),
-                "default": False,
-                "publish_with_label": _("Can decline after confirmation"),
-                "format": yesno,
-            },
-        }
+        return OrderedDict(
+            {
+                "minimum_age": {
+                    "formfield": forms.IntegerField(required=False, min_value=1, max_value=999),
+                    "default": 16,
+                    "publish_with_label": _("Minimum age"),
+                },
+                "signup_until": {
+                    "formfield": forms.SplitDateTimeField(
+                        required=False, widget=CustomSplitDateTimeWidget
+                    ),
+                    "default": None,
+                    "publish_with_label": _("Signup until"),
+                    "format": functools.partial(
+                        formats.date_format, format="SHORT_DATETIME_FORMAT"
+                    ),
+                },
+                "user_can_decline_confirmed": {
+                    "formfield": forms.BooleanField(
+                        label=_("Confirmed users can decline by themselves"),
+                        required=False,
+                        help_text=_("only if the signup timeframe has not ended"),
+                    ),
+                    "default": False,
+                    "publish_with_label": _("Can decline after confirmation"),
+                    "format": yesno,
+                },
+            }
+        )
 
     def get_signup_info(self):
         """
