@@ -40,7 +40,7 @@ def editable_consequences(user):
     qs = Consequence.objects.all()
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)
-    return qs
+    return qs.filter(slug__in=map(lambda hl: hl.slug, handlers))
 
 
 class ConsequenceError(Exception):
