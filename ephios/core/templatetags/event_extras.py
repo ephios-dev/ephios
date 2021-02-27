@@ -67,7 +67,7 @@ def event_signup_state_counts(event, user):
     counter = collections.Counter()
     for shift in event.shifts.all():
         for participation in shift.participations.all():
-            if type(participation) is LocalParticipation and participation.user_id == user.id:
+            if isinstance(participation, LocalParticipation) and participation.user_id == user.id:
                 counter[participation.state] += 1
                 break
     return counter
