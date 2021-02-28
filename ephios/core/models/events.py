@@ -1,3 +1,5 @@
+import functools
+import operator
 from typing import TYPE_CHECKING
 
 import pytz
@@ -25,7 +27,7 @@ from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup import AbstractParticipant
+    from ephios.core.signup import AbstractParticipant, SignupStats
 
 
 class ActiveManager(Manager):
@@ -41,6 +43,10 @@ class EventType(Model):
         verbose_name = _("event type")
         verbose_name_plural = _("event types")
         db_table = "eventtype"
+
+    @property
+    def color_hex(self):
+        return "#FF0"
 
     def __str__(self):
         return str(self.title)
@@ -64,12 +70,23 @@ class Event(Model):
         db_table = "event"
 
     def get_start_time(self):
-        if (first_shift := self.shifts.order_by("start_time").first()) is not None:
-            return first_shift.start_time
+        # use shifts.all() in case the shifts have been prefetched
+        return min(s.start_time for s in self.shifts.all()) if self.shifts.all() else None
 
     def get_end_time(self):
-        if (last_shift := self.shifts.order_by("end_time").last()) is not None:
-            return last_shift.end_time
+        return max(s.end_time for s in self.shifts.all()) if self.shifts.all() else None
+
+    def get_signup_stats(self) -> "SignupStats":
+        """Return a SignupStats object aggregated over all shifts of this event, or a default"""
+        from ephios.core.signup import SignupStats
+
+        default_for_no_shifts = SignupStats(0, 0, None, None)
+
+        return functools.reduce(
+            operator.add,
+            [shift.signup_method.get_signup_stats() for shift in self.shifts.all()]
+            or [default_for_no_shifts],
+        )
 
     def __str__(self):
         return str(self.title)
@@ -99,7 +116,13 @@ class AbstractParticipation(PolymorphicModel):
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
         GETTING_DISPATCHED = 4, _("getting dispatched")
 
-    shift = ForeignKey("Shift", on_delete=models.CASCADE, verbose_name=_("shift"))
+        @classmethod
+        def labels_dict(cls):
+            return dict(zip(cls.values, cls.labels))
+
+    shift = ForeignKey(
+        "Shift", on_delete=models.CASCADE, verbose_name=_("shift"), related_name="participations"
+    )
     state = IntegerField(_("state"), choices=States.choices)
     data = models.JSONField(default=dict)
 
@@ -153,10 +176,6 @@ class Shift(Model):
             f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}, "
             + f"{formats.time_format(start_time)} - {formats.time_format(self.end_time.astimezone(tz))}"
         )
-
-    @property
-    def participations(self):
-        return AbstractParticipation.objects.filter(shift=self)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
