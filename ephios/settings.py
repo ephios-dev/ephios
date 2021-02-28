@@ -14,6 +14,7 @@ import os
 from email.utils import getaddresses
 
 import environ
+from django.contrib.messages import constants
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -53,7 +54,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "bootstrap4",
     "guardian",
     "django_select2",
     "djangoformsetjs",
@@ -194,3 +194,12 @@ CSP_IMG_SRC = ("'self'", "data:")
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# django.contrib.messages
+MESSAGE_TAGS = {
+    constants.DEBUG: "alert-info",
+    constants.INFO: "alert-info",
+    constants.SUCCESS: "alert-success",
+    constants.WARNING: "alert-warning",
+    constants.ERROR: "alert-danger",
+}

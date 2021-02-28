@@ -389,7 +389,7 @@ class BaseSignupMethod:
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)
         template = Template(
-            template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
+            template_string="{% load crispy_forms_filters %}{{ form|crispy }}"
         ).render(Context({"form": form}))
         return template
 

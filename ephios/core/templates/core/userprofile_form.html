@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load user_extras %}
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
@@ -75,11 +76,11 @@
                     <div class="list-group-item django-select2" data-formset-form>
                         <div class="form-row">
                             <div class="col-md-4">
-                                {{ qualification_formset.empty_form.qualification|consequence_formset_field }}
+                                {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
                             </div>
                             <div class="col-md-1"></div>
                             <div class="col-md-4">
-                                {{ qualification_formset.empty_form.expires|consequence_formset_field }}
+                                {% crispy_field qualification_formset.empty_form.expires label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
                             </div>
                             <div class="col-md-2"></div>
                             <div class="col-md-1">

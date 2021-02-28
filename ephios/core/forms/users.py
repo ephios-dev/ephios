@@ -245,7 +245,7 @@ class WorkingHourRequestForm(Form):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Submit"))
+        self.helper.add_input(Submit("submit", _("Submit")))
 
     def create_consequence(self):
         WorkingHoursConsequenceHandler.create(
