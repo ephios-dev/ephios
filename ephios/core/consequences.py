@@ -50,6 +50,11 @@ def editable_consequences(user):
     return qs
 
 
+def my_pending_consequences(user):
+    qs = Consequence.objects.filter(user=user, state=Consequence.States.NEEDS_CONFIRMATION)
+    return qs
+
+
 class ConsequenceError(Exception):
     pass
 
