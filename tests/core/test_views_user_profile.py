@@ -28,7 +28,4 @@ class TestUserProfileView:
     def test_correct_qualifications(self, django_app, qualified_volunteer):
         response = django_app.get(reverse("core:profile"), user=qualified_volunteer)
         for q in qualified_volunteer.qualifications:
-            if q.expires is not None:
-                assert True
-            else:
-                assert response.html.findAll("li", text=re.compile(f"{q.title}"))
+            assert q.expires is None or response.html.findAll("li", text=re.compile(f"{q.title}"))
