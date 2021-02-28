@@ -139,7 +139,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         shift_ids = self.localparticipation_set.filter(
             state__in=with_participation_state_in
         ).values_list("shift", flat=True)
-        return Shift.objects.filter(pk__in=shift_ids)
+        return Shift.objects.filter(pk__in=shift_ids).select_related("event")
 
     def get_workhour_items(self):
         from ephios.core.models import AbstractParticipation

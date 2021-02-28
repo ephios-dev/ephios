@@ -45,7 +45,7 @@ django-extensions = "^3.1.1"
 coverage = "^5.4"
 coveralls = "^2.2.0"
 isort = "^5.7.0"
-pylint = "^2.6.2"
+pylint = "^2.7.1"
 autoflake = "^1.4"
 Sphinx = "^3.5.1"
 sphinx-rtd-theme = "^0.5.1"
@@ -68,7 +68,8 @@ line_length = 100
 disable = """C0330, C0301,
 duplicate-code, attribute-defined-outside-init, missing-module-docstring, missing-class-docstring,
 no-member, invalid-name, import-outside-toplevel, unused-argument, too-many-ancestors, missing-function-docstring,
-too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsistent-return-statements
+too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsistent-return-statements,
+useless-object-inheritance
 """
 
 [tool.pylint.format]
