@@ -5,7 +5,6 @@ from collections import OrderedDict
 from datetime import date
 from typing import List, Optional
 
-import django.dispatch
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -23,9 +22,8 @@ from django.views import View
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
+from ..signals import register_signup_methods
 from .disposition import BaseDispositionParticipationForm
-
-register_signup_methods = django.dispatch.Signal()
 
 
 def all_signup_methods():

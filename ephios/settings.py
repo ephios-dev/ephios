@@ -53,16 +53,19 @@ INSTALLED_APPS = [
     "crispy_forms",
     "ephios.core",
     "ephios.extra",
-    "ephios.plugins.basesignup",
-    "ephios.plugins.pages",
-    "dynamic_preferences",  # must come after our apps to collect preferences
 ]
 
-PLUGINS = []
+PLUGINS = [
+    "ephios.plugins.basesignup",
+    "ephios.plugins.pages",
+]
 for ep in metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
-    INSTALLED_APPS.append(ep.module)
-print(f"Installed plugins: {','.join(PLUGINS)}")
+
+INSTALLED_APPS += PLUGINS
+print(f"Installed plugins: {', '.join(PLUGINS)}")
+
+INSTALLED_APPS.append("dynamic_preferences")  # must come after our apps to collect preferences
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -90,7 +93,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.i18n",
                 "dynamic_preferences.processors.global_preferences",
-                "ephios.extra.context.ephios_base_context",
+                "ephios.core.context.ephios_base_context",
             ],
         },
     },
