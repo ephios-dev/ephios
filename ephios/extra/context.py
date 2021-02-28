@@ -3,6 +3,7 @@ import importlib
 from django.templatetags.static import static
 from django.utils.translation import get_language
 
+from ephios.core.models import AbstractParticipation
 from ephios.extra.signals import footer_link
 from ephios.settings import SITE_URL
 
@@ -21,6 +22,7 @@ def ephios_base_context(request):
         datatables_translation_url = static("datatables/german.json")
 
     return {
+        "ParticipationStates": AbstractParticipation.States,
         "footer": footer,
         "datatables_translation_url": datatables_translation_url,
         "ephios_version": EPHIOS_VERSION,

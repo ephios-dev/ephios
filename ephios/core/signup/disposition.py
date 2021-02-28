@@ -147,7 +147,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         )
         formset = DispositionParticipationFormset(
             self.request.POST or None,
-            queryset=self.object.participations,
+            queryset=self.object.participations.all(),
             prefix="participations",
         )
         return formset

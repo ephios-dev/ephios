@@ -11,6 +11,6 @@ def test_qualifications(django_app):
 
 
 @pytest.mark.django_db
-def test_qualifications(django_app):
+def test_qualifications_dlrg(django_app):
     call_command("setupdata", "qualifications_dlrg")
     assert Qualification.objects.get(title="Rettungsschwimmer Silber")
