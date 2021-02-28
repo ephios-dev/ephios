@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
-from ephios.plugins import PluginConfig
+from ephios.core.plugins import PluginConfig
 
 
 class PluginApp(PluginConfig):

@@ -1,11 +1,9 @@
 from typing import List
 
 from django.apps import AppConfig, apps
+from django.conf import settings
 from django.dispatch import Signal
 from dynamic_preferences.registries import global_preferences_registry
-
-global_preferences = global_preferences_registry.manager()
-
 
 # The plugin mechanics are heavily inspired by pretix.eu - Check them out!
 
@@ -30,10 +28,15 @@ def get_all_plugins() -> List[type]:
     )
 
 
+global_preferences = None
+
+
 def get_enabled_plugins() -> List[type]:
     """
     Return a subset of all plugin meta classes - those that are enabled
     """
+    global global_preferences
+    global_preferences = global_preferences or global_preferences_registry.manager()
     enabled_plugins = global_preferences["general__enabled_plugins"]
     return [plugin for plugin in get_all_plugins() if plugin.module in enabled_plugins]
 
@@ -48,7 +51,9 @@ class PluginSignal(Signal):
         # Find the Django application this belongs to
         # then compare to the module attribute of enabled plugins
         # e.g. receiver with module origin 'ephios.plugins.pages.signals' will match agains the app module path 'ephios.plugins.pages'
-        enabled_paths = set(plugin.module for plugin in get_enabled_plugins())
+        enabled_paths = set(
+            [plugin.module for plugin in get_enabled_plugins()] + settings.EPHIOS_CORE_MODULES
+        )
         for receiver in receivers:
             searchpath: str = receiver.__module__
             while searchpath:

@@ -49,7 +49,10 @@ class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
 class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
-    default = [ephios.plugins.basesignup.PluginApp.__module__]
+    default = [
+        ephios.plugins.basesignup.PluginApp.__module__,
+        ephios.plugins.pages.PluginApp.__module__,
+    ]
     section = general_global_section
     required = False
 
