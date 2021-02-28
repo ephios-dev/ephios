@@ -44,6 +44,14 @@ jobs:
     strategy:
       matrix:
         python-version: [ 3.8, 3.9 ]
+        database: [ sqlite, mysql, postgres ]
+        include:
+          - database: sqlite
+            database_url: "sqlite:///data/db.sqlite3"
+          - database: mysql
+            database_url: "mysql://root:root@127.0.0.1:3306/ephios"
+          - database: postgres
+            database_url: "psql://user:pass@127.0.0.1:5432/ephios"
 
     steps:
     - uses: actions/checkout@v2
@@ -58,16 +66,35 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-poetry-
     - name: Install dependencies
+      # always install all -E extras to use a single cache
       run: |
         sudo apt-get install gettext
-        poetry install
+        poetry install -E mysql -E pgsql
     - name: Prepare files for test run
       run: |
         cp .env.example .env
         poetry run python manage.py compilemessages
         poetry run python manage.py collectstatic
         poetry run python manage.py compilejsi18n
+
+    - name: Setup postgres
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '11'  # See https://hub.docker.com/_/postgres for available versions
+        postgresql db: ephios
+        postgresql user: user
+        postgresql password: pass
+      if: matrix.database == 'postgres'
+
+    - name: Setup mysql
+      run: |
+        sudo systemctl start mysql.service
+        mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -proot -Dmysql
+      if: matrix.database == 'mysql'
+
     - name: Test apps
+      env:
+        DATABASE_URL: ${{ matrix.database_url }}
       run: poetry run coverage run --source=ephios -m pytest tests/
     - name: Coveralls
       env:
