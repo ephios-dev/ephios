@@ -37,7 +37,7 @@ def consequence_handler_from_slug(slug):
 
 def editable_consequences(user):
     handlers = list(all_consequence_handlers())
-    qs = Consequence.objects.all()
+    qs = Consequence.objects.all().select_related("user")
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)
     return qs.filter(slug__in=map(lambda hl: hl.slug, handlers)).distinct()
@@ -73,7 +73,7 @@ class BaseConsequenceHandler:
         Return a filtered that excludes consequences with the slug of this class that the user is not allowed to edit.
         Consequences should also be annotated with values needed for rendering.
         """
-        return qs.none()
+        raise NotImplementedError
 
 
 class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
@@ -200,27 +200,25 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def filter_queryset(cls, qs, user: UserProfile):
-        # For some reason postgres does not supporting annotating event_id and event_title in the same way,
-        # instead destroying the whole queryset. Until we find out why, we don't annotate it and load it while rendering
         qs = qs.annotate(
             qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField()),
+            event_id=Cast(KeyTransform("event_id", "data"), IntegerField()),
         ).annotate(
             qualification_title=Subquery(
                 Qualification.objects.filter(id=OuterRef("qualification_id")).values("title")[:1]
             ),
+            event_title=Subquery(Event.objects.filter(id=OuterRef("event_id")).values("title")[:1]),
         )
 
         return qs.filter(
             ~Q(slug=cls.slug)
             # Qualifications can be granted by people who...
             | Q(  # are responsible for the event the consequence originated from, if applicable
-                data__event_id__in=set(
-                    get_objects_for_user(user, perms="change_event", klass=Event)
-                ),
+                event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
             )
             | Q(  # can edit the affected user anyway
                 user__in=get_objects_for_user(
-                    user, perms="core.change_userprofile", klass=get_user_model()
+                    user, perms="change_userprofile", klass=get_user_model()
                 )
             )
         )
