@@ -23,9 +23,13 @@
         {% endif %}
     {% endif %}
     <div class="page-header clearfix">
-        <h1>
-            {{ event.type }}: {{ event.title }} <small>({{ event.location }})</small>
-        </h1>
+        <h2>
+            <small class="float-right mr-lg-3"><span class="badge badge-dark">{{ event.type }}</span></small>
+            {{ event.title }}
+        </h2>
+        <h4 class="text-muted">
+            {{ event.location }}
+        </h4>
         {% if "change_event" in event_perms %}
             <div class="float-right d-inline">
                 <div class="dropdown">

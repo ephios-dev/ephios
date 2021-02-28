@@ -1,12 +1,11 @@
-import functools
-import operator
 from datetime import datetime
 
 import django.dispatch
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import IntegerField, OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
+from django.db.models.functions import Cast
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
@@ -38,16 +37,10 @@ def consequence_handler_from_slug(slug):
 
 def editable_consequences(user):
     handlers = list(all_consequence_handlers())
-    qs = Consequence.objects.filter(
-        functools.reduce(
-            operator.or_,
-            (handler.editable_by_filter(user) for handler in handlers),
-            Q(),
-        )
-    ).distinct()
+    qs = Consequence.objects.all().select_related("user")
     for handler in handlers:
-        qs = handler.annotate_queryset(qs)
-    return qs
+        qs = handler.filter_queryset(qs, user)
+    return qs.filter(slug__in=map(lambda hl: hl.slug, handlers)).distinct()
 
 
 def my_pending_consequences(user):
@@ -80,19 +73,12 @@ class BaseConsequenceHandler:
         raise NotImplementedError
 
     @classmethod
-    def editable_by_filter(cls, user: UserProfile):
+    def filter_queryset(cls, qs, user: UserProfile):
         """
-        Return a Q object to filter consequence objects of this type that can be confirmed by the given user.
+        Return a filtered that excludes consequences with the slug of this class that the user is not allowed to edit.
+        Consequences should also be annotated with values needed for rendering.
         """
         raise NotImplementedError
-
-    @classmethod
-    def annotate_queryset(cls, qs):
-        """
-        Annotate a queryset of heterogeneous consequences to avoid needing additional queries for rendering a consequence.
-        Does no annotations by default.
-        """
-        return qs
 
 
 class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
@@ -131,12 +117,14 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         )
 
     @classmethod
-    def editable_by_filter(cls, user):
-        return Q(
-            slug=cls.slug,
-            user__groups__in=get_objects_for_user(
-                user, "decide_workinghours_for_group", klass=Group
-            ),
+    def filter_queryset(cls, qs, user: UserProfile):
+        return qs.filter(
+            ~Q(slug=cls.slug)
+            | Q(
+                user__groups__in=get_objects_for_user(
+                    user, "decide_workinghours_for_group", klass=Group
+                )
+            )
         )
 
 
@@ -191,7 +179,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             qualification_title = consequence.qualification_title
         except AttributeError:
             qualification_title = Qualification.objects.get(
-                id=consequence.data["qualification_id"]
+                id=Cast(consequence.data["qualification_id"], IntegerField())
             ).title
 
         if expires := consequence.data.get("expires"):
@@ -216,28 +204,26 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         return s
 
     @classmethod
-    def editable_by_filter(cls, user: UserProfile):
-        # Qualifications can be granted by people who...
-        return Q(slug=cls.slug,) & (
-            Q(  # are responsible for the event the consequence originated from, if applicable
-                data__event_id__isnull=False,
-                data__event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
-            )
-            | Q(  # can edit the affected user anyway
-                user__in=get_objects_for_user(
-                    user, perms="core.change_userprofile", klass=get_user_model()
-                )
-            )
-        )
-
-    @classmethod
-    def annotate_queryset(cls, qs):
-        return qs.annotate(
-            qualification_id=KeyTransform("qualification_id", "data"),
-            event_id=KeyTransform("event_id", "data"),
+    def filter_queryset(cls, qs, user: UserProfile):
+        qs = qs.annotate(
+            qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField()),
+            event_id=Cast(KeyTransform("event_id", "data"), IntegerField()),
         ).annotate(
             qualification_title=Subquery(
                 Qualification.objects.filter(id=OuterRef("qualification_id")).values("title")[:1]
             ),
             event_title=Subquery(Event.objects.filter(id=OuterRef("event_id")).values("title")[:1]),
+        )
+
+        return qs.filter(
+            ~Q(slug=cls.slug)
+            # Qualifications can be granted by people who...
+            | Q(  # are responsible for the event the consequence originated from, if applicable
+                event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
+            )
+            | Q(  # can edit the affected user anyway
+                user__in=get_objects_for_user(
+                    user, perms="change_userprofile", klass=get_user_model()
+                )
+            )
         )
