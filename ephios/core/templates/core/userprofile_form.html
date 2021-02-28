@@ -19,11 +19,13 @@
             <h1>{% trans "Add new user" %}</h1>
         {% endif %}
     </div>
-    <div class="float-right d-flex">
+    {% if userprofile %}
+        <div class="float-right d-flex">
         <a class="btn btn-outline-danger text-nowrap" href="{% url "core:userprofile_password_reset" userprofile.pk %}">
             <span class="d-none d-md-inline">{% trans "Reset password" %}</span></a>
-    </div>
+        </div>
     <p></p>
+    {% endif %}
     <form method="post" class="form">
         {% csrf_token %}
         {% bootstrap_form userprofile_form %}
