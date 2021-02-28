@@ -31,5 +31,18 @@ class TestUserProfileView:
             if q.expires is not None:
                 assert True
             else:
-                response.showbrowser()
                 assert response.html.findAll("li", text=re.compile(f"{q.title}"))
+
+    def test_correct_amount_of_working_hours(self, django_app, workinghours, volunteer):
+        response = django_app.get(reverse("core:profile"), user=volunteer)
+        total = 0
+        for w in workinghours:
+            assert w.user == volunteer
+            assert response.html.find(
+                "span", text=re.compile(f"{date_format(w.date, format='SHORT_DATE_FORMAT')}")
+            )
+            assert response.html.find("span", text=re.compile(f"{w.reason}"))
+            assert response.html.find("span", text=re.compile(f"{w.hours}"))
+            total += w.hours
+
+        assert response.html.find("span", text=re.compile(f"{total}"))
