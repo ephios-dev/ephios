@@ -5,6 +5,7 @@ import pytest
 from django.core import mail
 from django.urls import reverse
 from django.utils.timezone import make_aware
+from django.utils.translation import gettext as _
 
 from ephios.core.models import UserProfile
 from ephios.settings import SITE_URL
@@ -66,7 +67,7 @@ class TestUserProfileView:
         userprofile = UserProfile.objects.get(email=userprofile_email)
         assert userprofile.email == userprofile_email
         assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == "Welcome to ephios!" or "Willkommen bei ephios!"
+        assert mail.outbox[0].subject == _("Welcome to ephios!")
         assert SITE_URL in mail.outbox[0].body
         assert userprofile_email in mail.outbox[0].body
         assert mail.outbox[0].to == [userprofile_email]
@@ -103,7 +104,6 @@ class TestUserProfileView:
 
     def test_userprofile_delete(self, django_app, groups, volunteer, manager):
         userprofile = volunteer
-        userprofile.save()
         response = django_app.get(
             reverse("core:userprofile_delete", kwargs={"pk": userprofile.id}),
             user=manager,
