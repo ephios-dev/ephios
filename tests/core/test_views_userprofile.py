@@ -1,8 +1,10 @@
-from datetime import date
+from collections import OrderedDict
+from datetime import date, datetime
 
 import pytest
 from django.core import mail
 from django.urls import reverse
+from django.utils.timezone import make_aware
 
 from ephios.core.models import UserProfile
 from ephios.settings import SITE_URL
@@ -28,20 +30,38 @@ class TestUserProfileView:
         response = django_app.get(reverse("core:userprofile_create"), user=volunteer, status=403)
         assert response.status_code == 403
 
-    def test_userprofile_create(self, django_app, groups, manager, qualifications):
+    def test_userprofile_create(self, csrf_exempt_django_app, groups, manager, qualifications):
         managers, planners, volunteers = groups
-        response = django_app.get(reverse("core:userprofile_create"), user=manager)
-        form = response.form
+        response = csrf_exempt_django_app.get(reverse("core:userprofile_create"), user=manager)
+        assert response.status_code == 200
         userprofile_email = "testuser@localhost"
-        userprofile_first_name = "testfirst"
-        userprofile_last_name = "testlast"
-        form["email"] = userprofile_email
-        form["first_name"] = userprofile_first_name
-        form["last_name"] = userprofile_last_name
-        form["date_of_birth"] = date(1999, 1, 1)
-        form["groups"].select_multiple(texts=["Volunteers"])
-        # qualification grant cannot be tested easily
-        response = form.submit()
+
+        POST_DATA = OrderedDict(
+            {
+                "email": userprofile_email,
+                "first_name": "testfirst",
+                "last_name": "testlast",
+                "date_of_birth": "1999-01-01",
+                "phone": "",
+                "groups": volunteers.id,
+                "is_active": "on",
+                "qualification_grants": "",
+                "qualification_grants-0-qualification": qualifications.rs.id,
+                "qualification_grants-0-expires": "",
+                "qualification_grants-1-qualification": qualifications.na.id,
+                "qualification_grants-1-expires": "2030-01-01",
+                "qualification_grants-INITIAL_FORMS": "0",
+                "qualification_grants-MAX_NUM_FORMS": "1000",
+                "qualification_grants-MIN_NUM_FORMS": "0",
+                "qualification_grants-TOTAL_FORMS": "2",
+            }
+        )
+        response = csrf_exempt_django_app.post(
+            reverse("core:userprofile_create"),
+            user=manager,
+            params=POST_DATA,
+        )
+
         assert response.status_code == 302
         userprofile = UserProfile.objects.get(email=userprofile_email)
         assert userprofile.email == userprofile_email
@@ -50,6 +70,18 @@ class TestUserProfileView:
         assert SITE_URL in mail.outbox[0].body
         assert userprofile_email in mail.outbox[0].body
         assert mail.outbox[0].to == [userprofile_email]
+
+        assert userprofile.first_name == "testfirst"
+        assert userprofile.last_name == "testlast"
+        assert userprofile.date_of_birth == date(1999, 1, 1)
+        assert userprofile.phone == ""
+        assert userprofile.is_active
+        assert set(userprofile.groups.all()) == {volunteers}
+        assert set(userprofile.qualifications) == {qualifications.rs, qualifications.na}
+        assert userprofile.qualifications.get(id=qualifications.rs.id).expires == None
+        assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
+            datetime(2030, 1, 1)
+        )
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
