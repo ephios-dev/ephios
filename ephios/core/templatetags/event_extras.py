@@ -1,9 +1,10 @@
+import collections
 from datetime import datetime
 
 from django import template
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation
+from ephios.core.models import AbstractParticipation, LocalParticipation
 
 register = template.Library()
 
@@ -55,3 +56,18 @@ def confirmed_shifts(user):
         .filter(end_time__gte=datetime.now())
         .order_by("start_time")
     )
+
+
+@register.filter(name="event_signup_state_counts")
+def event_signup_state_counts(event, user):
+    """
+    Return a counter counting states for a users participations for shifts of an event.
+    Uses None as key for no participation info.
+    """
+    counter = collections.Counter()
+    for shift in event.shifts.all():
+        for participation in shift.participations.all():
+            if isinstance(participation, LocalParticipation) and participation.user_id == user.id:
+                counter[participation.state] += 1
+                break
+    return counter

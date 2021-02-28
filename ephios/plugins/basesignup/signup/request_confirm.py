@@ -3,10 +3,16 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
-from ephios.plugins.basesignup.signup.common import SimpleQualificationsRequiredSignupMethod
+from ephios.core.signup import BaseSignupMethod
+from ephios.plugins.basesignup.signup.common import (
+    MinMaxParticipantsMixin,
+    QualificationsRequiredSignupMixin,
+)
 
 
-class RequestConfirmSignupMethod(SimpleQualificationsRequiredSignupMethod):
+class RequestConfirmSignupMethod(
+    QualificationsRequiredSignupMixin, MinMaxParticipantsMixin, BaseSignupMethod
+):
     slug = "request_confirm"
     verbose_name = _("Request and confirm")
     description = _(
