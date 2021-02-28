@@ -50,7 +50,6 @@ footer {
 }
 
 
-
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
 @media (min-width: 992px) {
     .event-list-item-link {
