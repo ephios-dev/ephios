@@ -6,7 +6,11 @@ from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
 from django.urls import reverse
 
-from ephios.core.consequences import QualificationConsequenceHandler, editable_consequences
+from ephios.core.consequences import (
+    QualificationConsequenceHandler,
+    editable_consequences,
+    my_pending_consequences,
+)
 from ephios.core.models import Consequence, Qualification
 
 
@@ -60,8 +64,11 @@ class TestQualificationConsequence:
             pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
         )
 
-    def test_consequence_appears(self, groups, manager, qualifications_consequence):
+    def test_consequence_to_decide_appears(self, groups, manager, qualifications_consequence):
         assert qualifications_consequence in editable_consequences(manager)
+
+    def test_consequence_pends_for_user(self, volunteer, qualifications_consequence):
+        assert qualifications_consequence in my_pending_consequences(volunteer)
 
 
 @pytest.mark.django_db
@@ -83,6 +90,12 @@ class TestWorkingHourConsequence:
         assert volunteer.get_workhour_items()[0] == 0
         workinghours_consequence.confirm(superuser)
         assert volunteer.get_workhour_items()[0] == workinghours_consequence.data.get("hours")
+
+    def test_consequence_to_decide_appears(self, groups, manager, workinghours_consequence):
+        assert workinghours_consequence in editable_consequences(manager)
+
+    def test_consequence_pends_for_user(self, volunteer, workinghours_consequence):
+        assert workinghours_consequence in my_pending_consequences(volunteer)
 
 
 @pytest.mark.django_db

@@ -130,6 +130,7 @@ def groups(superuser, manager, planner, volunteer):
     assign_perm("auth.add_group", managers)
     assign_perm("auth.change_group", managers)
     assign_perm("auth.delete_group", managers)
+    assign_perm("decide_workinghours_for_group", managers, volunteers)
     return managers, planners, volunteers
 
 
