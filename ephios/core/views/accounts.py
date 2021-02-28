@@ -1,14 +1,19 @@
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
     TemplateView,
     UpdateView,
@@ -134,6 +139,47 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
             ),
         )
         return reverse("core:userprofile_list")
+
+
+# class UserProfilePasswordResetView(CustomPermissionRequiredMixin, TemplateView):
+#     model = UserProfile
+#     permission_required = "core.change_userprofile"
+#     template_name = "core/userprofile_confirm_password_reset.html"
+
+
+class UserProfilePasswordResetView(CustomPermissionRequiredMixin, FormView):
+    permission_required = "core.change_userprofile"
+    email_template_name = "registration/password_reset_email.html"
+    extra_email_context = None
+    form_class = PasswordResetForm
+    from_email = None
+    html_email_template_name = None
+    subject_template_name = "registration/password_reset_subject.txt"
+    success_url = reverse_lazy("password_reset_done")
+    template_name = "core/userprofile_confirm_password_reset.html"
+    title = _("Password reset")
+    token_generator = default_token_generator
+
+    @method_decorator(csrf_protect)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        opts = {
+            "use_https": self.request.is_secure(),
+            "token_generator": self.token_generator,
+            "from_email": self.from_email,
+            "email_template_name": self.email_template_name,
+            "subject_template_name": self.subject_template_name,
+            "request": self.request,
+            "html_email_template_name": self.html_email_template_name,
+            "extra_email_context": self.extra_email_context,
+        }
+        form.save(**opts)
+        return super().form_valid(form)
+
+
+INTERNAL_RESET_SESSION_TOKEN = "_password_reset_token"
 
 
 class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
