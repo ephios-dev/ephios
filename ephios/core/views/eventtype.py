@@ -9,6 +9,7 @@ from dynamic_preferences.forms import preference_form_builder
 
 from ephios.core.forms.events import EventTypeForm, EventTypePreferenceForm
 from ephios.core.models import EventType
+from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
@@ -47,7 +48,7 @@ class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObj
         )
 
 
-class EventTypeListView(CustomPermissionRequiredMixin, ListView):
+class EventTypeListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
     permission_required = "core.add_event"
     model = EventType
 

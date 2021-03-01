@@ -131,19 +131,19 @@ urlpatterns = [
         name="rrule_occurrences",
     ),
     path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
-    path("settings/eventtype/", EventTypeListView.as_view(), name="settings_eventtype_list"),
+    path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
-        "settings/eventtype/create/",
+        "settings/eventtypes/create/",
         EventTypeCreateView.as_view(),
         name="settings_eventtype_create",
     ),
     path(
-        "settings/eventtype/<int:pk>/edit/",
+        "settings/eventtypes/<int:pk>/edit/",
         EventTypeUpdateView.as_view(),
         name="setting_eventtype_edit",
     ),
     path(
-        "settings/eventtype/<int:pk>/delete/",
+        "settings/eventtypes/<int:pk>/delete/",
         EventTypeDeleteView.as_view(),
         name="setting_eventtype_delete",
     ),

@@ -56,7 +56,8 @@ class EnabledPlugins(MultipleChoicePreference):
     section = general_global_section
     required = False
 
-    def get_choices(self):
+    @staticmethod
+    def get_choices():
         return [
             (plugin.module, mark_safe(f"<strong>{plugin.name}</strong>: {plugin.description}"))
             for plugin in plugins.get_all_plugins()

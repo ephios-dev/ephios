@@ -5,6 +5,8 @@ from ephios.core import mail
 from ephios.core.models import LocalParticipation
 from ephios.core.plugins import PluginSignal
 
+# PluginSignals are only send out to enabled plugins.
+
 register_consequence_handlers = PluginSignal()
 """
 This signal is sent out to get all known consequence handlers. Receivers should return a list of
@@ -21,6 +23,14 @@ footer_link = PluginSignal()
 """
 This signal is sent out to get links for that page footer. Receivers should return a dict of
 with keys being the text and values being the url to link to.
+Receivers will receive a ``request`` keyword argument.
+"""
+
+administration_settings_section = PluginSignal()
+"""
+This signal is sent out to get sections for administration settings. Receivers should return a list of dicts
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
+Receivers will receive a ``request`` keyword argument.
 """
 
 
