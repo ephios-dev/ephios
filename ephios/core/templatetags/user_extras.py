@@ -18,9 +18,6 @@ def workhour_items(user):
     return user.get_workhour_items()
 
 
-@register.filter(name="qualifications_in")
-def qualifications_by_category(user, qualification_category):
-    # return Qualification.objects.filter(pk__in=user.qualification_grants.filter(
-    #             Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
-    #         ).values_list("qualification_id", flat=True), category=qualification_category)
-    return user.qualification_grants.filter(qualification__category=qualification_category)
+@register.filter(name="render_qualifications")
+def render_qualifications_from_grants(grant_list):
+    return ", ".join(map(lambda grant: grant.qualification.abbreviation, grant_list))

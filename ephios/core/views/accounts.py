@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -19,7 +20,7 @@ from dynamic_preferences.users.views import UserPreferenceFormView
 
 from ephios.core import mail
 from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
-from ephios.core.models import UserProfile
+from ephios.core.models import QualificationGrant, UserProfile
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
@@ -37,10 +38,15 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         global_preferences = global_preferences_registry.manager()
         categories = global_preferences["general__relevant_qualification_categories"]
         qs = UserProfile.objects.all()
-        qs2 = qs.prefetch_related("qualification_grants").prefetch_related(
-            "qualification_grants__qualification"
-        )
-        return qs2
+        for category in categories:
+            qs = qs.prefetch_related(
+                Prefetch(
+                    "qualification_grants",
+                    queryset=QualificationGrant.objects.filter(qualification__category=category),
+                    to_attr=str(category.pk),
+                )
+            ).prefetch_related(f"{category.pk}__qualification")
+        return qs
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
