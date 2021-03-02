@@ -38,9 +38,7 @@
                     <td>{{ userprofile.first_name }}</td>
                     <td class="d-none d-md-table-cell">{{ userprofile.email }}</td>
                     {% for category in relevant_qualification_categories %}
-                        {% with userprofile|getattr:category.pk as grants %}
-                            <td class="d-none d-lg-table-cell">{{ grants|render_qualifications }}</td>
-                        {% endwith %}
+                        <td class="d-none d-lg-table-cell">{{ userprofile|qualifications_for_category:category.pk }}</td>
                     {% endfor %}
                     <td class="d-none d-lg-table-cell">{% include "core/userprofile_badges.html" with userprofile=userprofile %}</td>
                     <td class="d-flex">

@@ -43,9 +43,9 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
                 Prefetch(
                     "qualification_grants",
                     queryset=QualificationGrant.objects.filter(qualification__category=category),
-                    to_attr=str(category.pk),
+                    to_attr=f"qualifications_for_category_{category.pk}",
                 )
-            ).prefetch_related(f"{category.pk}__qualification")
+            ).prefetch_related(f"qualifications_for_category_{category.pk}__qualification")
         return qs
 
 

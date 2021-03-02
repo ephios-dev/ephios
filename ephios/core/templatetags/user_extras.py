@@ -19,9 +19,14 @@ def workhour_items(user):
     return user.get_workhour_items()
 
 
-@register.filter(name="render_qualifications")
-def render_qualifications_from_grants(grant_list):
-    return ", ".join(map(lambda grant: grant.qualification.abbreviation, grant_list))
+@register.filter(name="qualifications_for_category")
+def render_qualifications_for_category(userprofile, category_id):
+    return ", ".join(
+        map(
+            lambda grant: grant.qualification.abbreviation,
+            getattr(userprofile, f"qualifications_for_category_{category_id}"),
+        )
+    )
 
 
 @register.filter(name="get_relevant_qualifications")
