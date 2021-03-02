@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: admin@ephios.de\n"
-"POT-Creation-Date: 2021-02-19 18:55+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-02 14:47+0100\n"
 "PO-Revision-Date: 2021-02-19 19:42+0000\n"
 "Last-Translator: Felix Rindt <felix@rindt.me>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
-"\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
+">\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,29 +19,29 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.5\n"
 
-#: .\core\consequences.py:36
+#: .\core\consequences.py:35
 #, python-brace-format
 msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
-#: .\core\consequences.py:121
+#: .\core\consequences.py:107
 #, python-brace-format
 msgid "{user} logs {hours:.1f} hours on {date}. Reason: {reason}"
 msgstr "{user} leistete {hours:.1f} Stunden am {date}. Anlass: {reason}"
 
-#: .\core\consequences.py:200
+#: .\core\consequences.py:188
 #, python-brace-format
 msgid "{user} acquires '{qualification}' after participating in {event}."
 msgstr ""
 "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
 "{event}."
 
-#: .\core\consequences.py:204
+#: .\core\consequences.py:192
 #, python-brace-format
 msgid "{user} acquires '{qualification}'."
 msgstr "{user} erhält die Qualifikation '{qualification}'."
 
-#: .\core\consequences.py:210
+#: .\core\consequences.py:198
 #, python-brace-format
 msgid "(valid until {expires_str})"
 msgstr "(gültig bis {expires_str})"
@@ -157,7 +157,7 @@ msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
 
-#: .\core\forms\users.py:109 .\core\models\events.py:63
+#: .\core\forms\users.py:109 .\core\models\events.py:69
 msgid "Can view past events"
 msgstr "Darf vergangene Veranstaltungen sehen"
 
@@ -226,7 +226,6 @@ msgstr "Aktiver Benutzer"
 
 #: .\core\forms\users.py:306 .\core\pdf.py:63 .\core\pdf.py:116
 #: .\core\templates\core\event_archive.html:20
-#: .\core\templates\core\event_list.html:42
 #: .\core\templates\core\fragments\shift_box_small.html:17
 msgid "Date"
 msgstr "Datum"
@@ -315,88 +314,88 @@ msgstr ""
 "Die Teilnahme von {participant} an {shift} wurde geändert. Die Teilnahme ist "
 "nun {status}."
 
-#: .\core\models\events.py:37 .\core\models\events.py:50
+#: .\core\models\events.py:39 .\core\models\events.py:56
 #: .\core\models\users.py:172 .\core\models\users.py:185
 msgid "title"
 msgstr "Titel"
 
-#: .\core\models\events.py:38
+#: .\core\models\events.py:40
 msgid "can grant qualification"
 msgstr "Kann Qualifikation gewähren"
 
-#: .\core\models\events.py:41 .\core\models\events.py:53
+#: .\core\models\events.py:43 .\core\models\events.py:59
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
-#: .\core\models\events.py:42
+#: .\core\models\events.py:44
 msgid "event types"
 msgstr "Veranstaltungstypen"
 
-#: .\core\models\events.py:51
+#: .\core\models\events.py:57
 msgid "description"
 msgstr "Beschreibung"
 
-#: .\core\models\events.py:52
+#: .\core\models\events.py:58
 msgid "location"
 msgstr "Ort"
 
-#: .\core\models\events.py:55
+#: .\core\models\events.py:61
 msgid "send updates via mail"
 msgstr "Updates per E-Mail senden"
 
-#: .\core\models\events.py:61
+#: .\core\models\events.py:67
 msgid "event"
 msgstr "Veranstaltung"
 
-#: .\core\models\events.py:62
+#: .\core\models\events.py:68
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: .\core\models\events.py:96
+#: .\core\models\events.py:113
 msgid "requested"
 msgstr "angefragt"
 
-#: .\core\models\events.py:97
+#: .\core\models\events.py:114
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: .\core\models\events.py:98
+#: .\core\models\events.py:115
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: .\core\models\events.py:99
+#: .\core\models\events.py:116
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: .\core\models\events.py:100
+#: .\core\models\events.py:117
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: .\core\models\events.py:102 .\core\models\events.py:138
+#: .\core\models\events.py:124 .\core\models\events.py:161
 msgid "shift"
 msgstr "Schicht"
 
-#: .\core\models\events.py:103
+#: .\core\models\events.py:126
 msgid "state"
 msgstr "Status"
 
-#: .\core\models\events.py:127 .\core\models\events.py:139
+#: .\core\models\events.py:150 .\core\models\events.py:162
 msgid "shifts"
 msgstr "Schichten"
 
-#: .\core\models\events.py:129
+#: .\core\models\events.py:152
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: .\core\models\events.py:130
+#: .\core\models\events.py:153
 msgid "start time"
 msgstr "Beginn"
 
-#: .\core\models\events.py:131
+#: .\core\models\events.py:154
 msgid "end time"
 msgstr "Ende"
 
-#: .\core\models\events.py:132
+#: .\core\models\events.py:155
 msgid "signup method"
 msgstr "Anmeldeverfahren"
 
@@ -490,7 +489,6 @@ msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
 #: .\core\pdf.py:61 .\core\pdf.py:115
 #: .\core\templates\core\event_archive.html:19
-#: .\core\templates\core\event_list.html:41
 #: .\core\templates\core\mails\new_event.html:8
 #: .\core\templates\core\shift_form.html:68
 msgid "Location"
@@ -522,95 +520,95 @@ msgstr "suchen"
 msgid "This signup method does not support disposition."
 msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 
-#: .\core\signup\methods.py:39
+#: .\core\signup\methods.py:40
 #, python-brace-format
 msgid "Signup Method '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: .\core\signup\methods.py:111
+#: .\core\signup\methods.py:112
 #, python-brace-format
 msgid "'{choice}' is not a valid signup action."
 msgstr "'{choice}' ist keinen gültige Anmeldeaktion."
 
-#: .\core\signup\methods.py:142
+#: .\core\signup\methods.py:143
 msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
-#: .\core\signup\methods.py:150
+#: .\core\signup\methods.py:151
 #, python-brace-format
 msgid "You have already requested your participation for {shift}"
 msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt"
 
-#: .\core\signup\methods.py:156
+#: .\core\signup\methods.py:157
 #, python-brace-format
 msgid "You are already signed up for {shift}."
 msgstr "Sie sind bereits für {shift} eingeteilt."
 
-#: .\core\signup\methods.py:160 .\core\signup\methods.py:176
+#: .\core\signup\methods.py:161 .\core\signup\methods.py:177
 #, python-brace-format
 msgid "You are rejected from {shift}."
 msgstr "Sie wurden für {shift} abgelehnt."
 
-#: .\core\signup\methods.py:172
+#: .\core\signup\methods.py:173
 #, python-brace-format
 msgid "You are bindingly signed up for {shift}."
 msgstr "Sie sind verbindlich für {shift} eingeteilt."
 
-#: .\core\signup\methods.py:180
+#: .\core\signup\methods.py:181
 #, python-brace-format
 msgid "You have already declined participating in {shift}."
 msgstr "Sie haben bereits für {shift} abgesagt."
 
-#: .\core\signup\methods.py:189
+#: .\core\signup\methods.py:190
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: .\core\signup\methods.py:197
+#: .\core\signup\methods.py:198
 #, python-brace-format
 msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
-#: .\core\signup\methods.py:215
+#: .\core\signup\methods.py:216
 msgid "Sign up"
 msgstr "Anmelden"
 
-#: .\core\signup\methods.py:216
+#: .\core\signup\methods.py:217
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: .\core\signup\methods.py:217
+#: .\core\signup\methods.py:218
 #, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
-#: .\core\signup\methods.py:218
+#: .\core\signup\methods.py:219
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: .\core\signup\methods.py:219
+#: .\core\signup\methods.py:220
 #, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
 
-#: .\core\signup\methods.py:308
+#: .\core\signup\methods.py:310
 msgid "Minimum age"
 msgstr "Mindestalter"
 
-#: .\core\signup\methods.py:315
+#: .\core\signup\methods.py:317
 msgid "Signup until"
 msgstr "Anmelden bis"
 
-#: .\core\signup\methods.py:320
+#: .\core\signup\methods.py:324
 msgid "Confirmed users can decline by themselves"
 msgstr "Bestätigte Nutzer können selbstständig absagen"
 
-#: .\core\signup\methods.py:322
+#: .\core\signup\methods.py:326
 msgid "only if the signup timeframe has not ended"
 msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: .\core\signup\methods.py:325
+#: .\core\signup\methods.py:329
 msgid "Can decline after confirmation"
 msgstr "Kann nach Bestätigung absagen"
 
@@ -659,25 +657,21 @@ msgid "Past events"
 msgstr "Vergangene Veranstaltungen"
 
 #: .\core\templates\core\event_archive.html:17
-#: .\core\templates\core\event_list.html:39
 msgid "Type"
 msgstr "Typ"
 
 #: .\core\templates\core\event_archive.html:18
-#: .\core\templates\core\event_list.html:40
 #: .\core\templates\core\eventtype_list.html:10
 #: .\plugins\basesignup\signup\section_based.py:98
 msgid "Title"
 msgstr "Titel"
 
 #: .\core\templates\core\event_archive.html:21
-#: .\core\templates\core\event_list.html:43
 #: .\core\templates\core\userprofile_detail.html:39
 msgid "until"
 msgstr "bis"
 
 #: .\core\templates\core\event_archive.html:22
-#: .\core\templates\core\event_list.html:44
 #: .\core\templates\core\eventtype_list.html:11
 #: .\core\templates\core\group_list.html:22
 #: .\core\templates\core\userprofile_list.html:25
@@ -685,7 +679,7 @@ msgid "Action"
 msgstr "Aktion"
 
 #: .\core\templates\core\event_archive.html:34
-#: .\core\templates\core\event_list.html:60
+#: .\core\templates\core\event_list.html:123
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -731,7 +725,7 @@ msgstr "Löschen"
 
 #: .\core\templates\core\event_confirm_delete.html:7
 #: .\core\templates\core\event_confirm_delete.html:12
-#: .\core\templates\core\event_detail.html:50
+#: .\core\templates\core\event_detail.html:54
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -742,7 +736,7 @@ msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 
 #: .\core\templates\core\event_copy.html:7
 #: .\core\templates\core\event_copy.html:28
-#: .\core\templates\core\event_detail.html:55
+#: .\core\templates\core\event_detail.html:59
 msgid "Copy event"
 msgstr "Veranstaltung kopieren"
 
@@ -769,22 +763,22 @@ msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
 "Schicht hinzu, um sie zu speichern."
 
-#: .\core\templates\core\event_detail.html:34
+#: .\core\templates\core\event_detail.html:38
 msgid "Manage event"
 msgstr "Veranstaltung verwalten"
 
-#: .\core\templates\core\event_detail.html:40
+#: .\core\templates\core\event_detail.html:44
 #: .\core\templates\core\event_form.html:8
 #: .\core\templates\core\event_form.html:25
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: .\core\templates\core\event_detail.html:45
+#: .\core\templates\core\event_detail.html:49
 #: .\core\templates\core\shift_form.html:53
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
-#: .\core\templates\core\event_detail.html:60
+#: .\core\templates\core\event_detail.html:64
 msgid "Download PDF"
 msgstr "PDF herunterladen"
 
@@ -820,23 +814,42 @@ msgstr "Abbrechen"
 msgid "Next"
 msgstr "Weiter"
 
-#: .\core\templates\core\event_list.html:7
-#: .\core\templates\core\event_list.html:12 .\templates\base.html:58
+#: .\core\templates\core\event_list.html:9
+#: .\core\templates\core\event_list.html:14 .\templates\base.html:58
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: .\core\templates\core\event_list.html:21
+#: .\core\templates\core\event_list.html:24
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: .\core\templates\core\event_list.html:25
-#, python-format
-msgid "Add %(title)s"
-msgstr "%(title)s hinzufügen"
+#: .\core\templates\core\event_list.html:29
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                        powered by %(brand)s\n"
+#| "                    "
+msgid ""
+"Add\n"
+"                                    %(title)s"
+msgstr ""
+"\n"
+"                        powered by %(brand)s\n"
+"                    "
 
-#: .\core\templates\core\event_list.html:31
+#: .\core\templates\core\event_list.html:36
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
+
+#: .\core\templates\core\event_list.html:104
+msgid "to"
+msgstr ""
+
+#: .\core\templates\core\event_list.html:133
+#, fuzzy
+#| msgid "Create new event"
+msgid "There are no events."
+msgstr "Neue Veranstaltung anlegen"
 
 #: .\core\templates\core\eventtype_confirm_delete.html:7
 #, python-format
@@ -1128,7 +1141,7 @@ msgid "Information"
 msgstr "Information"
 
 #: .\core\templates\core\workinghour_request.html:16
-#: .\plugins\basesignup\signup\request_confirm.py:15
+#: .\plugins\basesignup\signup\request_confirm.py:21
 #: .\plugins\basesignup\signup\section_based.py:202
 #: .\plugins\basesignup\templates\basesignup\section_based\signup.html:24
 msgid "Request"
@@ -1197,12 +1210,12 @@ msgstr "Beim Ausführen der Aktion ist ein Fehler aufgetreten."
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: .\core\views\event.py:113 .\core\views\shift.py:59
+#: .\core\views\event.py:115 .\core\views\shift.py:59
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: .\core\views\event.py:211
+#: .\core\views\event.py:213
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
@@ -1289,43 +1302,60 @@ msgstr "Wasserrettung (DLRG)"
 msgid "Radio"
 msgstr "Funk"
 
-#: .\plugins\basesignup\signup\common.py:25
-#: .\plugins\basesignup\signup\section_based.py:236
+#: .\plugins\basesignup\signup\common.py:29
+msgid "The maximum number of participants is reached."
+msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
+
+#: .\plugins\basesignup\signup\common.py:60
+#, python-brace-format
+msgid "{min} to {max}"
+msgstr ""
+
+#: .\plugins\basesignup\signup\common.py:62
+#, python-brace-format
+msgid "at least {min}"
+msgstr ""
+
+#: .\plugins\basesignup\signup\common.py:64
+#, python-brace-format
+msgid "at most {max}"
+msgstr ""
+
+#: .\plugins\basesignup\signup\common.py:65
+#, fuzzy
+#| msgid "Maximum number of participants"
+msgid "Required number of participants"
+msgstr "Maximale Anzahl Teilnehmende"
+
+#: .\plugins\basesignup\signup\common.py:84
+#: .\plugins\basesignup\signup\section_based.py:239
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
-#: .\plugins\basesignup\signup\common.py:32
+#: .\plugins\basesignup\signup\common.py:92
 #: .\plugins\basesignup\signup\section_based.py:100
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: .\plugins\basesignup\signup\common.py:38
+#: .\plugins\basesignup\signup\common.py:98
 msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
 
-#: .\plugins\basesignup\signup\instant.py:13
+#: .\plugins\basesignup\signup\instant.py:17
 msgid "Instant Confirmation"
 msgstr "Direkte Bestätigung"
 
-#: .\plugins\basesignup\signup\instant.py:14
+#: .\plugins\basesignup\signup\instant.py:18
 msgid "This method instantly confirms every signup after it was requested."
 msgstr ""
 "Dieses Anmeldeverfahren bestätigt jede Anmeldung sofort nachdem sie "
 "angefordert wurde."
 
-#: .\plugins\basesignup\signup\instant.py:28
-msgid "The maximum number of participants is reached."
-msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
-
-#: .\plugins\basesignup\signup\instant.py:36
-msgid "Maximum number of participants"
-msgstr "Maximale Anzahl Teilnehmende"
-
-#: .\plugins\basesignup\signup\request_confirm.py:11
+#: .\plugins\basesignup\signup\request_confirm.py:17
 msgid "Request and confirm"
 msgstr "Anfragen und bestätigen"
 
-#: .\plugins\basesignup\signup\request_confirm.py:13
+#: .\plugins\basesignup\signup\request_confirm.py:19
 msgid ""
 "This method lets people request participation. Responsibles can then confirm "
 "the participation."
@@ -1333,13 +1363,13 @@ msgstr ""
 "Dieses Anmeldeverfahren lässt Helfende eine Teilnahme anfragen. "
 "Verantwortliche Personen können die Teilnahme dann bestätigen."
 
-#: .\plugins\basesignup\signup\request_confirm.py:16
+#: .\plugins\basesignup\signup\request_confirm.py:22
 #: .\plugins\basesignup\signup\section_based.py:203
 #, python-brace-format
 msgid "You have successfully requested a participation for {shift}."
 msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
 
-#: .\plugins\basesignup\signup\request_confirm.py:17
+#: .\plugins\basesignup\signup\request_confirm.py:23
 #: .\plugins\basesignup\signup\section_based.py:204
 #, python-brace-format
 msgid "Requesting a participation failed: {error}"
@@ -1577,6 +1607,10 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #: .\templates\registration\password_reset_form.html:14
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
+
+#, python-format
+#~ msgid "Add %(title)s"
+#~ msgstr "%(title)s hinzufügen"
 
 #~ msgid "Select groups which the event shall be visible for."
 #~ msgstr "Wählen Sie Gruppen, für die die Veranstaltung sichtbar sein soll."
