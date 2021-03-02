@@ -378,6 +378,15 @@ class BaseSignupMethod:
         """
         return ""
 
+    def get_participation_display(self):
+        """
+        Returns a displayable representation of participation (list of lists) that can be rendered into a table.
+        """
+        return [
+            [f"{participant.first_name} {participant.last_name}"]
+            for participant in self.shift.get_participants()
+        ]
+
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)

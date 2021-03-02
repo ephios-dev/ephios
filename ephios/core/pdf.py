@@ -80,13 +80,9 @@ class SingleShiftEventExporter(BasePDFExporter):
         story.append(table)
         story.append(Spacer(height=0.5 * cm, width=15 * cm))
 
-        data = [
-            [f"{participant.first_name} {participant.last_name}"]
-            for participant in shift.get_participants()
-        ]
-        if data:
+        if participation_info := shift.signup_method.get_participation_display():
             story.append(Paragraph(_("Participants"), self.style["Heading2"]))
-            story.append(Table(data, colWidths=[12.7 * cm]))
+            story.append(Table(participation_info, hAlign="LEFT"))
 
         return story
 
@@ -131,13 +127,9 @@ class MultipleShiftEventExporter(BasePDFExporter):
             ]
             story.append(Table(data, colWidths=[6 * cm, 13 * cm]))
 
-            data = [
-                [f"{participant.first_name} {participant.last_name}"]
-                for participant in shift.get_participants()
-            ]
-            if data:
+            if participation_info := shift.signup_method.get_participation_display():
                 story.append(Paragraph(_("Participants"), self.style["Heading3"]))
-                story.append(Table(data, colWidths=[19 * cm]))
+                story.append(Table(participation_info, hAlign="LEFT"))
 
         return story
 

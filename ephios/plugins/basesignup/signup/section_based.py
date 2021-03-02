@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
 
-from ephios.core.models import AbstractParticipation, Qualification
+from ephios.core.models import AbstractParticipation, Qualification, QualificationCategory
 from ephios.core.signup import (
     AbstractParticipant,
     BaseDispositionParticipationForm,
@@ -261,13 +261,22 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         )
         return template
 
-    def render_shift_state(self, request):
+    def _get_confirmed_sections_with_users(self):
+        # relevant_qualification_categories = global_preferences_registry.manager()["general__relevant_qualification_categories"]
+        relevant_qualification_categories = QualificationCategory.objects.filter(
+            title="Medizinisch"
+        )  # TODO remove when #343 is merged
         section_by_uuid = {section["uuid"]: section for section in self.configuration.sections}
         # get name and preferred section uuid for confirmed participants
         # if they have a section assigned and we have that section on record
         confirmed_participations = [
             {
                 "name": str(participation.participant),
+                "relevant_qualifications": ", ".join(
+                    participation.participant.qualifications.filter(
+                        category__in=relevant_qualification_categories
+                    ).values_list("title", flat=True)
+                ),
                 "uuid": dispatched_section_uuid,
             }
             for participation in self.shift.participations.filter(
@@ -277,20 +286,24 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             and dispatched_section_uuid in section_by_uuid
         ]
         # group by section and do some stats
-        confirmed_sections_with_users = [
-            (section_by_uuid.get(uuid), [user["name"] for user in group])
+        return [
+            (
+                section_by_uuid.get(uuid),
+                [[user["name"], user["relevant_qualifications"]] for user in group],
+            )
             for uuid, group in groupby(
                 sorted(confirmed_participations, key=itemgetter("uuid")), itemgetter("uuid")
             )
         ]
 
+    def render_shift_state(self, request):
         return get_template("basesignup/section_based/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "requested_participations": (
                     self.shift.participations.filter(state=AbstractParticipation.States.REQUESTED)
                 ),
-                "confirmed_sections_with_users": confirmed_sections_with_users,
+                "confirmed_sections_with_users": self._get_confirmed_sections_with_users(),
                 "disposition_url": (
                     reverse(
                         "core:shift_disposition",
@@ -301,3 +314,19 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 ),
             }
         )
+
+    def get_participation_display(self):
+        confirmed_sections_with_users = self._get_confirmed_sections_with_users()
+        participation_display = []
+        for section, users in confirmed_sections_with_users:
+            participation_display += [[user[0], user[1], section["title"]] for user in users]
+            if len(users) < section["min_count"]:
+                required_qualifications = ", ".join(
+                    Qualification.objects.filter(pk__in=section["qualifications"]).values_list(
+                        "title", flat=True
+                    )
+                )
+                participation_display += [["", required_qualifications, section["title"]]] * (
+                    section["min_count"] - len(users)
+                )
+        return participation_display
