@@ -30,9 +30,7 @@ class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
     section = general
     model = QualificationCategory
     default = QualificationCategory.objects.none()
-    verbose_name = _(
-        "Select qualification grants that are relevant for your organization. Qualifications from these categories will be displayed for each user in the user list and the disposition view."
-    )
+    verbose_name = _("Relevant qualification categories (for user list and disposition view)")
     field_kwargs = {"widget": Select2MultipleWidget}
 
 
