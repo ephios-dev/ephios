@@ -1,8 +1,9 @@
-{% load bootstrap4 %}
+{% load bootstrap %}
+{% load crispy_forms_filters %}
 {% load i18n %}
 {% load formset_tags %}
 
-{% bootstrap_form form %}
+{{ form|crispy }}
 
 
 <div class="formset" data-formset data-formset-prefix="{{ form.sections_formset.prefix }}">
@@ -10,19 +11,19 @@
     <div class="card mb-2">
         <div class="card-body">
             <h3 class="card-title">{% translate "Sections" %}</h3>
-            {% bootstrap_formset_errors form.sections_formset %}
+            {{ form.sections_formset|formset_errors }}
             <ul class="list-group list-group-flush" data-formset-body>
                 {% for section_form in form.sections_formset %}
                     <div class="list-group-item" data-formset-form>
                         <div class="form-row">
                             <div class="col-md-4">
-                                {% bootstrap_field section_form.title %}
+                                {{ section_form.title|as_crispy_field }}
                             </div>
                             <div class="col-md-2">
-                                {% bootstrap_field section_form.min_count %}
+                                {{ section_form.min_count|as_crispy_field }}
                             </div>
                             <div class="col-md-4">
-                                {% bootstrap_field section_form.qualifications %}
+                                {{ section_form.qualifications|as_crispy_field }}
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-link" type="button"
@@ -48,13 +49,13 @@
                 {{ section_form.id }}
                 <div class="form-row">
                     <div class="col-md-4">
-                        {% bootstrap_field form.sections_formset.empty_form.title %}
+                        {{ form.sections_formset.empty_form.title|as_crispy_field }}
                     </div>
                     <div class="col-md-2">
-                        {% bootstrap_field form.sections_formset.empty_form.min_count %}
+                        {{ form.sections_formset.empty_form.min_count|as_crispy_field }}
                     </div>
                     <div class="col-md-4">
-                        {% bootstrap_field form.sections_formset.empty_form.qualifications %}
+                        {{ form.sections_formset.empty_form.qualifications|as_crispy_field }}
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-link" type="button"

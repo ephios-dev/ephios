@@ -1,6 +1,6 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 {% load i18n %}
-{% load bootstrap4 %}
 {% load static %}
 {% load formset_tags %}
 
@@ -37,7 +37,9 @@
                             <h5 class="card-title d-flex align-items-center">
                                 {% trans "Add others" %}
                             </h5>
-                            {% bootstrap_field add_user_form.user layout="inline" form_group_class="form-group" %}
+                            <div class="form-group">
+                                {{ add_user_form.user }}
+                            </div>
                             <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
                                 {% for form in formset %}
