@@ -12,4 +12,6 @@ def render_alert_tag(content, alert_type="info", dismissible=True):
 
 @register.filter(name="formset_errors")
 def formset_errors(formset):
-    return render_alert("<br>".join(formset.non_form_errors()), alert_type="danger")
+    if errors := formset.non_form_errors():
+        return render_alert("<br>".join(errors), alert_type="danger")
+    return ""
