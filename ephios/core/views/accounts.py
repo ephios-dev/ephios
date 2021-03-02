@@ -14,6 +14,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users.views import UserPreferenceFormView
 
 from ephios.core import mail
@@ -31,6 +32,15 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "core.view_userprofile"
     ordering = "last_name"
+
+    def get_queryset(self):
+        global_preferences = global_preferences_registry.manager()
+        categories = global_preferences["general__relevant_qualification_categories"]
+        qs = UserProfile.objects.all()
+        qs2 = qs.prefetch_related("qualification_grants").prefetch_related(
+            "qualification_grants__qualification"
+        )
+        return qs2
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):

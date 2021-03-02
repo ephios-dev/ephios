@@ -93,6 +93,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.i18n",
+                "dynamic_preferences.processors.global_preferences",
                 "ephios.extra.context.ephios_base_context",
             ],
         },

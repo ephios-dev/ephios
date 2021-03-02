@@ -3,15 +3,37 @@ from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
-from dynamic_preferences.types import BooleanPreference
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.types import BooleanPreference, StringPreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
-from ephios.core.models import EventType, UserProfile
+from ephios.core.models import EventType, QualificationCategory, UserProfile
 from ephios.core.registries import event_type_preference_registry
 from ephios.extra.preferences import CustomModelMultipleChoicePreference
 
 notifications = Section("notifications")
 responsible_notifications = Section("responsible_notifications")
+general = Section("general")
+
+
+@global_preferences_registry.register
+class OrganizationName(StringPreference):
+    name = "organization_name"
+    section = general
+    default = ""
+    required = False
+
+
+@global_preferences_registry.register
+class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
+    name = "relevant_qualification_categories"
+    section = general
+    model = QualificationCategory
+    default = QualificationCategory.objects.none()
+    verbose_name = _(
+        "Select qualification grants that are relevant for your organization. Qualifications from these categories will be displayed for each user in the user list and the disposition view."
+    )
+    field_kwargs = {"widget": Select2MultipleWidget}
 
 
 @user_preferences_registry.register
