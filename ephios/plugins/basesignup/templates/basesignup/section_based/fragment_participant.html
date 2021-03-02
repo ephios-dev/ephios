@@ -1,5 +1,5 @@
 {% extends "core/disposition/base_participation.html" %}
-{% load bootstrap4 %}
+{% load ephios_crispy %}
 {% load i18n %}
 {% block body %}
     <h6 class="mb-0">
@@ -15,7 +15,7 @@
                 {% endif %}
             </div>
             <div class="col-6 d-flex justify-content-between align-items-center">
-                {% bootstrap_field form.section show_label='sr-only' form_group_class="form-group d-inline-block mb-0" %}
+                {% crispy_field form.section label_class="d-none" wrapper_class="d-inline-block mb-0" %}
 
                 {% if form.can_delete %}
                     <button type="button" class="btn float-right btn-sm ml-3" data-formset-delete-button>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
+{% load bootstrap %}
 {% load guardian_tags %}
 {% load i18n %}
-{% load bootstrap4 %}
 
 {% block title %}
     {{ event.title }}
@@ -15,11 +15,11 @@
             {% trans "Save" as save_trans %}
             <form method='POST' class='form' action='{% url "core:event_activate" event.pk %}'>
                 {% csrf_token %}
-                {% bootstrap_alert not_active_error|add:"<button type='submit' class='btn btn-primary'>"|add:save_trans|add:"</button>"|safe "warning" %}
+                {% render_alert not_active_error|add:"<button type='submit' class='btn btn-primary'>"|add:save_trans|add:"</button>"|safe "warning" %}
             </form>
         {% else %}
             {% trans "This event has not been saved! Please add a shift to save this event." as no_shift_error %}
-            {% bootstrap_alert no_shift_error "danger" %}
+            {% render_alert no_shift_error "danger" %}
         {% endif %}
     {% endif %}
     <div class="page-header clearfix">

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 {% load i18n %}
-{% load bootstrap4 %}
 
 {% block title %}
     {% trans "Login" %}
@@ -11,8 +11,8 @@
     <h2>{{ login_message }}</h2>
     <form method="post">
         {% csrf_token %}
-        {% bootstrap_form form %}
-        {% bootstrap_button login_message "submit" %}
+        {{ form|crispy }}
+        <button class="btn btn-primary" type="submit">{{ login_message }}</button>
         <a class="float-right" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
     </form>
 {% endblock %}
