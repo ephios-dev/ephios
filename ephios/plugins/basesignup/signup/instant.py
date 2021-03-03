@@ -1,8 +1,9 @@
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.models import AbstractParticipation, QualificationCategory
+from ephios.core.models import AbstractParticipation
 from ephios.core.signup import BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import (
     MinMaxParticipantsMixin,
@@ -37,10 +38,9 @@ class InstantConfirmationSignupMethod(
         return participation
 
     def get_participation_display(self):
-        # relevant_qualification_categories = global_preferences_registry.manager()["general__relevant_qualification_categories"]
-        relevant_qualification_categories = QualificationCategory.objects.filter(
-            title="Medizinisch"
-        )  # TODO remove when #343 is merged
+        relevant_qualification_categories = global_preferences_registry.manager()[
+            "general__relevant_qualification_categories"
+        ]
         participation_info = [
             [
                 f"{participant.first_name} {participant.last_name}",

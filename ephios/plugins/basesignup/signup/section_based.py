@@ -12,8 +12,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
+from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.models import AbstractParticipation, Qualification, QualificationCategory
+from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup import (
     AbstractParticipant,
     BaseDispositionParticipationForm,
@@ -262,10 +263,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         return template
 
     def _get_confirmed_sections_with_users(self):
-        # relevant_qualification_categories = global_preferences_registry.manager()["general__relevant_qualification_categories"]
-        relevant_qualification_categories = QualificationCategory.objects.filter(
-            title="Medizinisch"
-        )  # TODO remove when #343 is merged
+        relevant_qualification_categories = global_preferences_registry.manager()[
+            "general__relevant_qualification_categories"
+        ]
         section_by_uuid = {section["uuid"]: section for section in self.configuration.sections}
         # get name and preferred section uuid for confirmed participants
         # if they have a section assigned and we have that section on record
