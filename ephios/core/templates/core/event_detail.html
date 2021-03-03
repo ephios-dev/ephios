@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap %}
+{% load rich_text %}
 {% load guardian_tags %}
 {% load i18n %}
 
@@ -68,7 +69,7 @@
             </div>
         {% endif %}
     </div>
-    <p>{{ event.description }}</p>
+    <div>{{ event.description|rich_text:"h1,h2" }}</div>
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}
