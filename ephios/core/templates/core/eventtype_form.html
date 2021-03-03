@@ -1,5 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
-{% load bootstrap4 %}
+{% load crispy_forms_filters %}
 {% load i18n %}
 
 {% block settings_title %}
@@ -13,9 +13,9 @@
 {% block settings_content %}
     <form method="post">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {{ form|crispy }}
         {% if preference_form %}
-            {% bootstrap_form preference_form %}
+            {{ preference_form|crispy }}
         {% endif %}
         <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
     </form>

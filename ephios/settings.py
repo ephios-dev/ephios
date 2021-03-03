@@ -14,6 +14,7 @@ import os
 from email.utils import getaddresses
 
 import environ
+from django.contrib.messages import constants
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -53,7 +54,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "bootstrap4",
     "guardian",
     "django_select2",
     "djangoformsetjs",
@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "recurrence",
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
+    "crispy_forms",
     "ephios.core",
     "ephios.extra",
     "ephios.plugins.basesignup",
@@ -191,3 +192,15 @@ if DEBUG:
 # bootstrap v5 or v6. See https://github.com/twbs/bootstrap/issues/25394 for details on the problem and
 # https://security.stackexchange.com/a/167244 on why allowing data: is considered okay
 CSP_IMG_SRC = ("'self'", "data:")
+
+# django-crispy-forms
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# django.contrib.messages
+MESSAGE_TAGS = {
+    constants.DEBUG: "alert-info",
+    constants.INFO: "alert-info",
+    constants.SUCCESS: "alert-success",
+    constants.WARNING: "alert-warning",
+    constants.ERROR: "alert-danger",
+}

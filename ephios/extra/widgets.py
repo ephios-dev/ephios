@@ -24,8 +24,8 @@ class CustomSplitDateTimeWidget(MultiWidget):
 
     def __init__(self, *args, **kwargs):
         widgets = (
-            CustomDateInput(format="%Y-%m-%d"),
-            CustomTimeInput(format="%H:%M"),
+            CustomDateInput(format="%Y-%m-%d", attrs={"class": "form-control"}),
+            CustomTimeInput(format="%H:%M", attrs={"class": "form-control"}),
         )
         super().__init__(widgets, *args, **kwargs)
 
