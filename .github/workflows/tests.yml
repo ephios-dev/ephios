@@ -100,4 +100,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: poetry run coveralls
-      if: matrix.python-version == '3.9'
+      if: matrix.python-version == '3.9' && matrix.database == 'sqlite'
