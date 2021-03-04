@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group, Permission
+from django.forms import BooleanField
 from guardian.ctypes import get_content_type
+from guardian.shortcuts import assign_perm, remove_perm
 from guardian.utils import get_group_obj_perms_model
 
 
@@ -65,3 +67,41 @@ class StaffRequiredMixin(AccessMixin):
         if not request.user.is_staff:
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
+
+
+class PermissionField(BooleanField):
+    def __init__(self, *args, **kwargs):
+        self.permission_set = kwargs.pop("permissions")
+        super().__init__(*args, **kwargs)
+
+    def set_initial_value(self, user_or_group):
+        self.target = user_or_group
+        self.initial = self.target.permissions.filter(
+            codename__in=map(lambda perm: perm.split(".")[-1], self.permission_set)
+        ).exists()
+
+    def update_permissions(self, assign):
+        if assign:
+            for permission in self.permission_set:
+                assign_perm(permission, self.target)
+        else:
+            for permission in self.permission_set:
+                remove_perm(permission, self.target)
+
+
+class PermissionFormMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field, PermissionField):
+                field.set_initial_value(self.get_permission_target())
+
+    def get_permission_target(self):
+        return self.permission_target
+
+    def save(self, commit=True):
+        result = super().save(commit)
+        for key, field in self.fields.items():
+            if isinstance(field, PermissionField):
+                field.update_permissions(self.cleaned_data[key])
+        return result
