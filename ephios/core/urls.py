@@ -140,12 +140,12 @@ urlpatterns = [
     path(
         "settings/eventtypes/<int:pk>/edit/",
         EventTypeUpdateView.as_view(),
-        name="setting_eventtype_edit",
+        name="settings_eventtype_edit",
     ),
     path(
         "settings/eventtypes/<int:pk>/delete/",
         EventTypeDeleteView.as_view(),
-        name="setting_eventtype_delete",
+        name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("profile/settings", UserProfileSettingsView.as_view(), name="profile_settings"),

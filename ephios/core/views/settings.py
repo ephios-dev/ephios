@@ -20,7 +20,7 @@ def get_available_administration_settings_sections(request):
         {
             "label": _("Event types"),
             "url": reverse("core:settings_eventtype_list"),
-            "active": request.resolver_match.url_name == "settings_eventtype_list",
+            "active": request.resolver_match.url_name.startswith("settings_eventtype"),
         },
     ]
     for __, result in administration_settings_section.send(None, request=request):

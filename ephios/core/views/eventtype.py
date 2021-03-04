@@ -13,7 +13,9 @@ from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.permissions import CustomPermissionRequiredMixin
 
 
-class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObjectMixin):
+class EventTypeUpdateView(
+    CustomPermissionRequiredMixin, SettingsViewMixin, TemplateView, SingleObjectMixin
+):
     template_name = "core/eventtype_form.html"
     permission_required = "core.add_event"
     model = EventType
@@ -53,7 +55,7 @@ class EventTypeListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListVi
     model = EventType
 
 
-class EventTypeDeleteView(CustomPermissionRequiredMixin, DeleteView):
+class EventTypeDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, DeleteView):
     permission_required = "core.add_event"
     model = EventType
 
@@ -64,7 +66,9 @@ class EventTypeDeleteView(CustomPermissionRequiredMixin, DeleteView):
         return reverse("core:settings_eventtype_list")
 
 
-class EventTypeCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
+class EventTypeCreateView(
+    CustomPermissionRequiredMixin, SettingsViewMixin, SuccessMessageMixin, CreateView
+):
     permission_required = "core.add_event"
     template_name = "core/eventtype_form.html"
     model = EventType
@@ -74,4 +78,4 @@ class EventTypeCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, Cr
     )
 
     def get_success_url(self):
-        return reverse("core:setting_eventtype_edit", kwargs=dict(pk=self.object.pk))
+        return reverse("core:settings_eventtype_edit", kwargs=dict(pk=self.object.pk))
