@@ -4,9 +4,9 @@ from django.apps import AppConfig, apps
 from django.conf import settings
 from django.dispatch import Signal, receiver
 from dynamic_preferences.registries import global_preferences_registry
-
-# The plugin mechanics are heavily inspired by pretix.eu - Check them out!
 from dynamic_preferences.signals import preference_updated
+
+# The plugin mechanics are heavily inspired by pretix (licenced under Apache 2.0) - Check it out!
 
 
 def get_all_plugins():
@@ -29,17 +29,12 @@ def get_all_plugins():
     )
 
 
-global_preferences = None
-
-
 def get_enabled_plugins():
     """
     Return a subset of all plugin meta classes - those that are enabled
     """
-    global global_preferences
-    global_preferences = global_preferences or global_preferences_registry.manager()
-    enabled_plugins = global_preferences["general__enabled_plugins"]
-    return [plugin for plugin in get_all_plugins() if plugin.module in enabled_plugins]
+    enabled_plugins = global_preferences_registry.manager().get("general__enabled_plugins")
+    yield from (plugin for plugin in get_all_plugins() if plugin.module in enabled_plugins)
 
 
 @functools.lru_cache()
@@ -49,13 +44,14 @@ def is_receiver_path_enabled(searchpath):
     relies in a module that is either an enabled plugin or considered ephios core.
     Uses a cache that gets reset when enabled plugins preference changes.
     """
-    enabled_paths = [
+    enabled_paths = settings.EPHIOS_CORE_MODULES + [
         plugin.module for plugin in get_enabled_plugins()
-    ] + settings.EPHIOS_CORE_MODULES
+    ]
+    # Not using `startwith`, as we don't want to match "ephios_foobar" against "ephios_foo"
     while True:
         if searchpath in enabled_paths:
             return True
-        if len(split := searchpath.rsplit(".", 1)) > 1:
+        elif len(split := searchpath.rsplit(".", 1)) > 1:
             searchpath, _ = split
         else:
             return False
