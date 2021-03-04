@@ -1,7 +1,7 @@
 from django.urls import path
 
 from ephios.core import pdf
-from ephios.core.ical import EventFeed, user_event_feed_view
+from ephios.core.ical import user_event_feed_view
 from ephios.core.signup.disposition import AddUserView, DispositionView
 from ephios.core.views.accounts import (
     GroupCreateView,
@@ -124,7 +124,6 @@ urlpatterns = [
         AddUserView.as_view(),
         name="shift_disposition_add_user",
     ),
-    path("calendar/", EventFeed(), name="event_feed"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
     path(
         "extra/rruleoccurrence",
