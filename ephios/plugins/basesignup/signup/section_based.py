@@ -262,7 +262,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         )
         return template
 
-    def _get_confirmed_sections_with_users(self):
+    def _get_sections_with_users(self):
         relevant_qualification_categories = global_preferences_registry.manager()[
             "general__relevant_qualification_categories"
         ]
@@ -286,15 +286,18 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             and dispatched_section_uuid in section_by_uuid
         ]
         # group by section and do some stats
-        return [
+        sections_with_users = [
             (
-                section_by_uuid.get(uuid),
+                section_by_uuid.pop(uuid),
                 [[user["name"], user["relevant_qualifications"]] for user in group],
             )
             for uuid, group in groupby(
                 sorted(confirmed_participations, key=itemgetter("uuid")), itemgetter("uuid")
             )
         ]
+        # add sections without participants
+        sections_with_users += [(section, None) for section in section_by_uuid.values()]
+        return sections_with_users
 
     def render_shift_state(self, request):
         return get_template("basesignup/section_based/fragment_state.html").render(
@@ -303,7 +306,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "requested_participations": (
                     self.shift.participations.filter(state=AbstractParticipation.States.REQUESTED)
                 ),
-                "confirmed_sections_with_users": self._get_confirmed_sections_with_users(),
+                "sections_with_users": self._get_sections_with_users(),
                 "disposition_url": (
                     reverse(
                         "core:shift_disposition",
@@ -316,17 +319,18 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         )
 
     def get_participation_display(self):
-        confirmed_sections_with_users = self._get_confirmed_sections_with_users()
+        confirmed_sections_with_users = self._get_sections_with_users()
         participation_display = []
         for section, users in confirmed_sections_with_users:
-            participation_display += [[user[0], user[1], section["title"]] for user in users]
-            if len(users) < section["min_count"]:
+            if users:
+                participation_display += [[user[0], user[1], section["title"]] for user in users]
+            if not users or len(users) < section["min_count"]:
                 required_qualifications = ", ".join(
                     Qualification.objects.filter(pk__in=section["qualifications"]).values_list(
                         "title", flat=True
                     )
                 )
                 participation_display += [["", required_qualifications, section["title"]]] * (
-                    section["min_count"] - len(users)
+                    section["min_count"] - (len(users) if users else 0)
                 )
         return participation_display

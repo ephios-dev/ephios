@@ -4,6 +4,7 @@ from collections import OrderedDict
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
+from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup import BaseSignupMethod, ParticipationError
@@ -102,3 +103,36 @@ class QualificationsRequiredSignupMixin(_Base):
                 },
             }
         )
+
+    def get_participation_display(self):
+        relevant_qualification_categories = global_preferences_registry.manager()[
+            "general__relevant_qualification_categories"
+        ]
+        participation_info = [
+            [
+                f"{participant.first_name} {participant.last_name}",
+                ", ".join(
+                    participant.qualifications.filter(
+                        category__in=relevant_qualification_categories
+                    ).values_list("title", flat=True)
+                ),
+            ]
+            for participant in self.shift.get_participants()
+        ]
+        try:
+            # we may not be using MinMaxParticipantsMixin so there may be no bounds
+            min_count, max_count = self.get_participant_count_bounds()
+            rendered_count = max(min_count or 0, max_count or 0)
+            if len(participation_info) < rendered_count:
+                required_qualifications = self.configuration.required_qualifications
+                qualifications_display = (
+                    ", ".join(required_qualifications.values_list("title", flat=True))
+                    if required_qualifications
+                    else "-"
+                )
+                participation_info += [["", qualifications_display]] * (
+                    rendered_count - len(participation_info)
+                )
+        except AttributeError:
+            pass
+        return participation_info
