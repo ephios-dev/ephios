@@ -21,9 +21,9 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        key: ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          ${{ runner.os }}-poetry-
+          ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-
     - name: Install dependencies
       run: poetry install
     - name: check format with black
@@ -62,9 +62,9 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        key: ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          ${{ runner.os }}-poetry-
+          ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-
     - name: Install dependencies
       # always install all -E extras to use a single cache
       run: |
