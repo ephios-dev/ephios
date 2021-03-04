@@ -5,22 +5,14 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.types import BooleanPreference, StringPreference
-from dynamic_preferences.users.registries import user_preferences_registry
-
-from ephios.core.models import EventType, QualificationCategory, UserProfile
-from ephios.core.registries import event_type_preference_registry
-from ephios.extra.preferences import CustomModelMultipleChoicePreference
-
 from dynamic_preferences.types import BooleanPreference, MultipleChoicePreference, StringPreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
 from ephios.core import plugins
-from ephios.core.models import EventType, UserProfile
+from ephios.core.models import EventType, QualificationCategory, UserProfile
 from ephios.core.registries import event_type_preference_registry
 from ephios.extra.preferences import CustomModelMultipleChoicePreference
-
 
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
@@ -45,6 +37,7 @@ class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
     verbose_name = _("Relevant qualification categories (for user list and disposition view)")
     field_kwargs = {"widget": Select2MultipleWidget}
 
+
 @global_preferences_registry.register
 class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
@@ -62,7 +55,6 @@ class EnabledPlugins(MultipleChoicePreference):
             (plugin.module, mark_safe(f"<strong>{plugin.name}</strong>: {plugin.description}"))
             for plugin in plugins.get_all_plugins()
         ]
-
 
 
 @user_preferences_registry.register

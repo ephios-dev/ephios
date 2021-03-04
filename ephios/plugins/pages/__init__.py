@@ -15,7 +15,7 @@ class PluginApp(PluginConfig):
         )
 
     def ready(self):
-        from . import signals  # NOQA
+        from . import signals  # pylint: disable=unused-import
 
 
 default_app_config = "ephios.plugins.pages.PluginApp"

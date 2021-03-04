@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 # The plugin mechanics are heavily inspired by pretix (licenced under Apache 2.0) - Check it out!
 
-logger.info(f"Installed plugins: {', '.join(settings.PLUGINS)}")
+logger.info("Installed plugins: %s", ", ".join(settings.PLUGINS))
 
 
 def get_all_plugins():
@@ -56,7 +56,7 @@ def is_receiver_path_enabled(searchpath):
     while True:
         if searchpath in enabled_paths:
             return True
-        elif len(split := searchpath.rsplit(".", 1)) > 1:
+        if len(split := searchpath.rsplit(".", 1)) > 1:
             searchpath, _ = split
         else:
             return False
@@ -67,6 +67,10 @@ def clear_receiver_path_cache(sender, **kwargs):
     from ephios.core.dynamic_preferences_registry import EnabledPlugins
 
     if kwargs.get("name") == EnabledPlugins.name:
+        logger.debug(
+            "Resetting plugin path cache. Now enabled: %s",
+            ", ".join(str(plugin.name) for plugin in get_enabled_plugins()),
+        )
         is_receiver_path_enabled.cache_clear()
 
 

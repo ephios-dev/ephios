@@ -15,7 +15,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 from ephios.core.models import Event
 from ephios.extra.permissions import CustomPermissionRequiredMixin
-from django.conf import settings
+
 
 class BasePDFExporter:
     def __init__(self, title, style=getSampleStyleSheet(), pagesize=A4):
