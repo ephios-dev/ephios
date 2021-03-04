@@ -25,6 +25,7 @@ from ephios.core.views.event import (
     EventDeleteView,
     EventDetailView,
     EventListView,
+    EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
@@ -72,6 +73,11 @@ urlpatterns = [
         "events/<int:pk>/activate/",
         EventActivateView.as_view(),
         name="event_activate",
+    ),
+    path(
+        "events/<int:pk>/notifications/",
+        EventNotificationView.as_view(),
+        name="event_notifications",
     ),
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
     path(

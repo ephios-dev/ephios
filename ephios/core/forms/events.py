@@ -1,10 +1,23 @@
 from datetime import date, datetime, timedelta
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Layout, Submit
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.forms import DateField, Form, ModelForm, ModelMultipleChoiceField, Select, TimeField
+from django.forms import (
+    CharField,
+    ChoiceField,
+    DateField,
+    Form,
+    ModelForm,
+    ModelMultipleChoiceField,
+    RadioSelect,
+    Select,
+    Textarea,
+    TimeField,
+)
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
@@ -45,7 +58,7 @@ class EventForm(ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location", "mail_updates"]
+        fields = ["title", "description", "location"]
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
@@ -190,3 +203,28 @@ class EventTypeForm(ModelForm):
 
 class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
+
+
+class EventNotificationForm(Form):
+    NEW_EVENT = "new"
+    REMINDER = "remind"
+    PARTICIPANTS = "participants"
+    action = ChoiceField(
+        choices=[
+            (NEW_EVENT, _("Send notification about new event to everyone")),
+            (REMINDER, _("Send reminder to everyone that is not participating")),
+            (PARTICIPANTS, _("Send remarks to all participants")),
+        ],
+        widget=RadioSelect,
+        label=False,
+    )
+    mail_content = CharField(required=False, widget=Textarea)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field("action"),
+            Field("mail_content", wrapper_class="no-display"),
+            Submit("submit", _("Send")),
+        )

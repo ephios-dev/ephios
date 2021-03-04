@@ -68,3 +68,7 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
 .select2 {
     width: 100% !important;
 }
+
+.no-display {
+    display: none;
+}
