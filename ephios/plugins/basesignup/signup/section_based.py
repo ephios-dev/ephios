@@ -275,7 +275,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "relevant_qualifications": ", ".join(
                     participation.participant.qualifications.filter(
                         category__in=relevant_qualification_categories
-                    ).values_list("title", flat=True)
+                    ).values_list("abbreviation", flat=True)
                 ),
                 "uuid": dispatched_section_uuid,
             }
@@ -327,7 +327,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             if not users or len(users) < section["min_count"]:
                 required_qualifications = ", ".join(
                     Qualification.objects.filter(pk__in=section["qualifications"]).values_list(
-                        "title", flat=True
+                        "abbreviation", flat=True
                     )
                 )
                 participation_display += [["", required_qualifications, section["title"]]] * (

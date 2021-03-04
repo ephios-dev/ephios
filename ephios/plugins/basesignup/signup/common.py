@@ -119,20 +119,16 @@ class QualificationsRequiredSignupMixin(_Base):
             ]
             for participant in self.shift.get_participants()
         ]
-        try:
-            # we may not be using MinMaxParticipantsMixin so there may be no bounds
-            min_count, max_count = self.get_participant_count_bounds()
-            rendered_count = max(min_count or 0, max_count or 0)
-            if len(participation_info) < rendered_count:
-                required_qualifications = self.configuration.required_qualifications
-                qualifications_display = (
-                    ", ".join(required_qualifications.values_list("title", flat=True))
-                    if required_qualifications
-                    else "-"
-                )
-                participation_info += [["", qualifications_display]] * (
-                    rendered_count - len(participation_info)
-                )
-        except AttributeError:
-            pass
+        min_count, max_count = self.get_participant_count_bounds()
+        rendered_count = max(min_count or 0, max_count or 0)
+        if len(participation_info) < rendered_count:
+            required_qualifications = self.configuration.required_qualifications
+            qualifications_display = (
+                ", ".join(required_qualifications.values_list("title", flat=True))
+                if required_qualifications
+                else "-"
+            )
+            participation_info += [["", qualifications_display]] * (
+                rendered_count - len(participation_info)
+            )
         return participation_info
