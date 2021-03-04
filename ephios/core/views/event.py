@@ -28,7 +28,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
-from ephios.core.mail import new_event
+from ephios.core.mail import new_event, remind_users_not_participating
 from ephios.core.models import Event, EventType, Shift
 from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
 
@@ -258,7 +258,7 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
         if action == form.NEW_EVENT:
             new_event(self.object)
         elif action == form.REMINDER:
-            ...
+            remind_users_not_participating(self.object)
         elif action == form.PARTICIPANTS:
             ...
         messages.success(self.request, _("Notifications sent succesfully."))
