@@ -91,7 +91,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     # request a participation as volunteer on *second* shift
     response = (
         django_app.get(
-            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
+            event.get_absolute_url(),
             user=qualified_volunteer,
         )
         .forms[1]
@@ -109,7 +109,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert (
         "You can not sign up for this shift."
         in django_app.get(
-            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
+            event.get_absolute_url(),
             user=qualified_volunteer,
         )
         .forms[1]

@@ -6,9 +6,7 @@ from ephios.core.models import AbstractParticipation
 
 @pytest.mark.django_db
 def test_user_event_feed(django_app, qualified_volunteer, event):
-    response = django_app.get(
-        reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=qualified_volunteer
-    )
+    response = django_app.get(event.get_absolute_url(), user=qualified_volunteer)
     response.form.submit(name="signup_choice", value="sign_up")
 
     # the event feed should work, but not contain participations in state REQUESTED

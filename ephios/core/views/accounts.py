@@ -21,7 +21,7 @@ from dynamic_preferences.users.views import UserPreferenceFormView
 from ephios.core import mail
 from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.core.models import QualificationGrant, UserProfile
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class ProfileView(LoginRequiredMixin, DetailView):

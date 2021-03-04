@@ -7,7 +7,7 @@ from django.views.generic import FormView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.signals import administration_settings_section
-from ephios.extra.permissions import StaffRequiredMixin
+from ephios.extra.mixins import StaffRequiredMixin
 
 
 def get_available_administration_settings_sections(request):

@@ -2,7 +2,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.views.generic import DetailView, ListView
 
 from ephios.core.views.settings import SettingsViewMixin
-from ephios.extra.permissions import StaffRequiredMixin
+from ephios.extra.mixins import StaffRequiredMixin
 from ephios.plugins.pages.models import Page
 
 

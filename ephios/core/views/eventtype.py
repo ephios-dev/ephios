@@ -10,7 +10,7 @@ from dynamic_preferences.forms import preference_form_builder
 from ephios.core.forms.events import EventTypeForm, EventTypePreferenceForm
 from ephios.core.models import EventType
 from ephios.core.views.settings import SettingsViewMixin
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class EventTypeUpdateView(

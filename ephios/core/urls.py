@@ -59,7 +59,7 @@ urlpatterns = [
         name="event_delete",
     ),
     path(
-        "events/<int:pk>/",
+        "events/<int:pk>-<slug:slug>/",
         EventDetailView.as_view(),
         name="event_detail",
     ),

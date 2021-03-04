@@ -78,7 +78,7 @@ visible
                             {% endif %}
                         </div>
                         <a class="list-group-item-action py-2 event-list-item-link"
-                           href="{% url "core:event_detail" event.id %}">
+                           href="{{ event.get_absolute_url }}">
                             <div class="row m-0 py-0 flex-grow-1">
                                 <div class="col-lg">
                                     <h5 class="mb-0">

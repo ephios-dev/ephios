@@ -29,7 +29,8 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm
 from ephios.core.models import Event, EventType, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
+from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
+from ephios.extra.permissions import get_groups_with_perms
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -54,7 +55,7 @@ class EventListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class EventDetailView(CustomPermissionRequiredMixin, DetailView):
+class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):
     model = Event
     permission_required = "core.view_event"
 
@@ -116,7 +117,7 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
             )
         except ValidationError as e:
             messages.error(request, e)
-        return redirect(reverse("core:event_detail", kwargs={"pk": event.pk}))
+        return redirect(event.get_absolute_url())
 
 
 class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):

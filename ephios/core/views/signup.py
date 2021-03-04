@@ -2,7 +2,7 @@ from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.models import Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class SignupMethodViewMixin(SingleObjectMixin):
