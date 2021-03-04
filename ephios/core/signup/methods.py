@@ -380,7 +380,10 @@ class BaseSignupMethod:
 
     def get_participation_display(self):
         """
-        Returns a displayable representation of participation (list of lists) that can be rendered into a table.
+        Returns a displayable representation of participation that can be rendered into a table (e.g. for pdf export).
+        Must return a list of participations or empty slots. Each element of the list has to be a list of a fixed
+        size where each entry is rendered to a separate column.
+        Ex.: [["participant1_name", "participant1_qualification"], ["participant2_name", "participant2_qualification"]]
         """
         return [
             [f"{participant.first_name} {participant.last_name}"]
