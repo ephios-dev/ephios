@@ -5,5 +5,5 @@ $(document).ready(function () {
         else
             $("#div_id_mail_content").slideUp();
     });
-    // $("#div_id_mail_content").slideUp();
+
 });
