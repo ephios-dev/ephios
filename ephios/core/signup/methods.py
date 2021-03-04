@@ -378,6 +378,18 @@ class BaseSignupMethod:
         """
         return ""
 
+    def get_participation_display(self):
+        """
+        Returns a displayable representation of participation that can be rendered into a table (e.g. for pdf export).
+        Must return a list of participations or empty slots. Each element of the list has to be a list of a fixed
+        size where each entry is rendered to a separate column.
+        Ex.: [["participant1_name", "participant1_qualification"], ["participant2_name", "participant2_qualification"]]
+        """
+        return [
+            [f"{participant.first_name} {participant.last_name}"]
+            for participant in self.shift.get_participants()
+        ]
+
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
