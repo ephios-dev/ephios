@@ -6,10 +6,11 @@ from django.utils import formats
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, A5
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import cm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table
+from reportlab.lib.units import cm, mm
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from ephios import settings
 from ephios.core.models import Event
@@ -80,13 +81,26 @@ class SingleShiftEventExporter(BasePDFExporter):
         story.append(table)
         story.append(Spacer(height=0.5 * cm, width=15 * cm))
 
-        data = [
-            [f"{participant.first_name} {participant.last_name}"]
-            for participant in shift.get_participants()
-        ]
-        if data:
+        if participation_info := shift.signup_method.get_participation_display():
             story.append(Paragraph(_("Participants"), self.style["Heading2"]))
-            story.append(Table(data, colWidths=[12.7 * cm]))
+            col_count = len(participation_info[0])
+            table = Table(
+                [
+                    [[Paragraph(entry)] for entry in participation]
+                    for participation in participation_info
+                ],
+                hAlign="LEFT",
+                colWidths=[125 * mm / col_count] * col_count,
+            )
+            table.setStyle(
+                TableStyle(
+                    [
+                        ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.black),
+                        ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
+                    ]
+                )
+            )
+            story.append(table)
 
         return story
 
@@ -131,13 +145,26 @@ class MultipleShiftEventExporter(BasePDFExporter):
             ]
             story.append(Table(data, colWidths=[6 * cm, 13 * cm]))
 
-            data = [
-                [f"{participant.first_name} {participant.last_name}"]
-                for participant in shift.get_participants()
-            ]
-            if data:
+            if participation_info := shift.signup_method.get_participation_display():
                 story.append(Paragraph(_("Participants"), self.style["Heading3"]))
-                story.append(Table(data, colWidths=[19 * cm]))
+                col_count = len(participation_info[0])
+                table = Table(
+                    [
+                        [[Paragraph(entry)] for entry in participation]
+                        for participation in participation_info
+                    ],
+                    hAlign="LEFT",
+                    colWidths=[185 * mm / col_count] * col_count,
+                )
+                table.setStyle(
+                    TableStyle(
+                        [
+                            ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.black),
+                            ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
+                        ]
+                    )
+                )
+                story.append(table)
 
         return story
 
