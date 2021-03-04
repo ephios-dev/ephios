@@ -52,7 +52,7 @@
                                                 {% if not can_decline %}
                                               data-toggle="tooltip" data-html="true" data-placement="bottom" title="
                                                  {% for error in shift|decline_errors:request.user %}
-                                                     <p>{{ error.message }}</p>
+                                                     <div>{{ error.message }}</div>
                                                  {% endfor %}"
                                                 {% endif %}>
                                             <button type="submit" name="signup_choice" value="decline"
