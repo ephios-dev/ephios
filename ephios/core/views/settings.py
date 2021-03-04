@@ -1,6 +1,5 @@
 import typing
 
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -8,6 +7,7 @@ from django.views.generic import FormView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.signals import administration_settings_section
+from ephios.extra.permissions import StaffRequiredMixin
 
 
 def get_available_administration_settings_sections(request):
@@ -34,15 +34,12 @@ class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
         return super().get_context_data(**kwargs)
 
 
-class GeneralSettingsView(UserPassesTestMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
+class GeneralSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
     template_name = "core/settings/general.html"
     success_message = _("Settings saved successfully.")
 
     def get_form_class(self):
         return global_preference_form_builder()
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def form_valid(self, form):
         form.update_preferences()
