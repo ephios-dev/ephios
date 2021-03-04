@@ -37,7 +37,7 @@ class BasePDFExporter:
         )
         p.build(story)
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=False, filename=f"{self.title}.pdf")
+        return FileResponse(buffer, as_attachment=True, filename=f"{self.title}.pdf")
 
     def get_story(self):
         return NotImplemented
