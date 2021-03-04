@@ -1,4 +1,5 @@
 import functools
+import logging
 
 from django.apps import AppConfig, apps
 from django.conf import settings
@@ -6,7 +7,11 @@ from django.dispatch import Signal, receiver
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.signals import preference_updated
 
+logger = logging.getLogger(__name__)
+
 # The plugin mechanics are heavily inspired by pretix (licenced under Apache 2.0) - Check it out!
+
+logger.info(f"Installed plugins: {', '.join(settings.PLUGINS)}")
 
 
 def get_all_plugins():

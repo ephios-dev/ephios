@@ -67,11 +67,8 @@ for ep in metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
 
 INSTALLED_APPS += PLUGINS
-print(f"Installed plugins: {', '.join(PLUGINS)}")
 
-INSTALLED_APPS += [
-    "dynamic_preferences"  # must come after our apps to collect preferences
-]
+INSTALLED_APPS += ["dynamic_preferences"]  # must come after our apps to collect preferences
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
