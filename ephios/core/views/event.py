@@ -1,3 +1,4 @@
+import functools
 import json
 from datetime import datetime, timedelta
 
@@ -31,6 +32,7 @@ from ephios.core.forms.events import EventDuplicationForm, EventForm
 from ephios.core.models import Event, EventType, Shift
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
 from ephios.extra.permissions import get_groups_with_perms
+from ephios.core.signals import event_forms
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -65,7 +67,37 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         return Event.objects.all()
 
 
-class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
+class EventEditMixin:
+    @functools.cached_property
+    def plugin_forms(self):
+        forms = []
+        for __, resp in event_forms.send(sender=None, event=self.object, request=self.request):
+            forms.extend(resp)
+        return forms
+
+    def get_context_data(self, **kwargs):
+        kwargs["plugin_forms"] = self.plugin_forms
+        return super().get_context_data(**kwargs)
+
+    def is_valid(self, form):
+        return form.is_valid() and all(plugin_form.is_valid() for plugin_form in self.plugin_forms)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if self.is_valid(form):
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        for plugin_form in self.plugin_forms:
+            plugin_form.save()
+        return response
+
+
+class EventUpdateView(CustomPermissionRequiredMixin, EventEditMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
     permission_required = "core.change_event"
@@ -76,7 +108,7 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
         )
 
 
-class EventCreateView(CustomPermissionRequiredMixin, CreateView):
+class EventCreateView(CustomPermissionRequiredMixin, EventEditMixin, CreateView):
     template_name = "core/event_form.html"
     permission_required = "core.add_event"
     accept_object_perms = False

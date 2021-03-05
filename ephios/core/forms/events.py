@@ -1,10 +1,11 @@
 from datetime import date, datetime, timedelta
 
+import django.forms as forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.forms import DateField, Form, ModelForm, ModelMultipleChoiceField, Select, TimeField
+from django.template.loader import render_to_string
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
@@ -20,8 +21,8 @@ from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput
 
 
-class EventForm(ModelForm):
-    visible_for = ModelMultipleChoiceField(
+class EventForm(forms.ModelForm):
+    visible_for = forms.ModelMultipleChoiceField(
         queryset=Group.objects.none(),
         label=_("Visible for"),
         help_text=_(
@@ -30,13 +31,13 @@ class EventForm(ModelForm):
         widget=Select2MultipleWidget,
         required=False,
     )
-    responsible_users = ModelMultipleChoiceField(
+    responsible_users = forms.ModelMultipleChoiceField(
         queryset=UserProfile.objects.all(),
         required=False,
         label=_("Responsible persons"),
         widget=MultiUserProfileWidget,
     )
-    responsible_groups = ModelMultipleChoiceField(
+    responsible_groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
         required=False,
         label=_("Responsible groups"),
@@ -134,11 +135,11 @@ class EventForm(ModelForm):
         return event
 
 
-class ShiftForm(ModelForm):
-    date = DateField(widget=CustomDateInput(format="%Y-%m-%d"))
-    meeting_time = TimeField(widget=CustomTimeInput)
-    start_time = TimeField(widget=CustomTimeInput)
-    end_time = TimeField(widget=CustomTimeInput)
+class ShiftForm(forms.ModelForm):
+    date = forms.DateField(widget=CustomDateInput(format="%Y-%m-%d"))
+    meeting_time = forms.TimeField(widget=CustomTimeInput)
+    start_time = forms.TimeField(widget=CustomTimeInput)
+    end_time = forms.TimeField(widget=CustomTimeInput)
 
     field_order = ["date", "meeting_time", "start_time", "end_time", "signup_method_slug"]
 
@@ -148,7 +149,7 @@ class ShiftForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["signup_method_slug"].widget = Select(
+        self.fields["signup_method_slug"].widget = forms.Select(
             choices=((method.slug, method.verbose_name) for method in signup.all_signup_methods())
         )
 
@@ -171,8 +172,8 @@ class ShiftForm(ModelForm):
         return cleaned_data
 
 
-class EventDuplicationForm(Form):
-    start_date = DateField(
+class EventDuplicationForm(forms.Form):
+    start_date = forms.DateField(
         widget=CustomDateInput(format="%Y-%m-%d"),
         initial=date.today(),
         help_text=_(
@@ -182,7 +183,7 @@ class EventDuplicationForm(Form):
     recurrence = RecurrenceField(required=False)
 
 
-class EventTypeForm(ModelForm):
+class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
         fields = ["title", "can_grant_qualification"]
@@ -190,3 +191,15 @@ class EventTypeForm(ModelForm):
 
 class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
+
+
+class BaseEventPluginForm(forms.Form):
+    @property
+    def heading(self):
+        raise NotImplementedError
+
+    def render(self):
+        return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
+
+    def save(self):
+        pass

@@ -41,6 +41,11 @@ The first non-None return-value will be used.
 Receivers will receive a ``request`` keyword argument.
 """
 
+event_forms = PluginSignal()
+"""
+This signal...
+"""
+
 
 @receiver(
     register_consequence_handlers,

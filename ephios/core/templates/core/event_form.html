@@ -36,7 +36,7 @@
 
         <div class="card mb-3">
             <div class="card-header" data-toggle="collapse" data-target="#advancedSettings">
-                <a href="#">{% translate "Advanced settings" %}</a>
+                <a href="#">{% translate "Permissions" %}</a>
             </div>
             <div id="advancedSettings" class="collapse">
                 <div class="card-body">
@@ -46,6 +46,10 @@
                 </div>
             </div>
         </div>
+
+        {% for plugin_form in plugin_forms %}
+            {{ plugin_form.render }}
+        {% endfor %}
 
         <div class="form-group">
             {% if event %}

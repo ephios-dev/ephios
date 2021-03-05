@@ -1,6 +1,7 @@
 import dataclasses
 import secrets
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -8,6 +9,21 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Event
 from ephios.core.signup import AbstractParticipant, Qualification
+
+
+class EventGuestShare(models.Model):
+    event = models.OneToOneField(Event, related_name="guest_link", on_delete=models.CASCADE)
+    token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
+    active = models.BooleanField(default=False)
+
+    def new_token(self):
+        self.token = secrets.token_urlsafe()
+
+    @property
+    def url(self):
+        return settings.SITE_URL + reverse(
+            "guests:register", kwargs=dict(public_signup_token=self.token, event_id=self.event_id)
+        )
 
 
 class GuestUser(models.Model):
@@ -19,6 +35,7 @@ class GuestUser(models.Model):
     access_token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
     qualifications = models.ManyToManyField(Qualification)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def as_participant(self) -> "GuestParticipant":
         return GuestParticipant(
@@ -29,6 +46,13 @@ class GuestUser(models.Model):
             email=self.email,
             guest_user=self,
         )
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}@{self.event}"
+
+    class Meta:
+        # there might be two people using the same email *sigh*
+        unique_together = [["event", "email", "first_name"]]
 
 
 class GuestParticipation(AbstractParticipation):
