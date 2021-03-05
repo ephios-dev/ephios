@@ -62,6 +62,7 @@ INSTALLED_APPS += EPHIOS_CORE_MODULES
 PLUGINS = [
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
+    "ephios.plugins.guests",
 ]
 for ep in metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)

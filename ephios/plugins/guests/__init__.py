@@ -5,10 +5,10 @@ from ephios.core.plugins import PluginConfig
 
 
 class PluginApp(PluginConfig):
-    name = "ephios.plugins.public_participation"
+    name = "ephios.plugins.guests"
 
     class EphiosPluginMeta:
-        name = _("Public Participations")
+        name = _("Guest Participations")
         author = "Ephios Team"
         description = _(
             "This plugins allows you to accept signups for individual events from people without an account, using a public signup form."
@@ -18,4 +18,4 @@ class PluginApp(PluginConfig):
         from . import signals  # pylint: disable=unused-import
 
 
-default_app_config = "ephios.plugins.pages.PluginApp"
+default_app_config = "ephios.plugins.guests.PluginApp"

@@ -42,7 +42,7 @@ from ephios.core.views.shift import (
     ShiftDeleteView,
     ShiftUpdateView,
 )
-from ephios.core.views.signup import LocalUserSignupView
+from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
@@ -96,7 +96,7 @@ urlpatterns = [
     ),
     path(
         "shifts/<int:pk>/signup-action/",
-        LocalUserSignupView.as_view(),
+        LocalUserShiftActionView.as_view(),
         name="signup_action",
     ),
     path(
