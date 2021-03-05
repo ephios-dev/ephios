@@ -1,5 +1,6 @@
 import dataclasses
 import functools
+import logging
 from argparse import Namespace
 from collections import OrderedDict
 from datetime import date
@@ -15,15 +16,17 @@ from django.shortcuts import redirect
 from django.template import Context, Template
 from django.template.defaultfilters import yesno
 from django.utils import formats, timezone
-from django.utils.functional import cached_property
+from django.utils.functional import SimpleLazyObject, cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
-from ..signals import register_signup_methods
+from ..signals import participant_from_request, register_signup_methods
 from .disposition import BaseDispositionParticipationForm
+
+logger = logging.getLogger(__name__)
 
 
 def all_signup_methods():
@@ -97,9 +100,43 @@ class ParticipationError(ValidationError):
     pass
 
 
+def prevent_getting_participant_from_request_user(request):
+    original_user = request.user
+
+    class ProtectedUser(SimpleLazyObject):
+        def as_participant(self):
+            raise Exception("Access of request.user.as_participant in SignupViews is not allowed.")
+
+    request.user = ProtectedUser(lambda: original_user)
+
+
 class BaseSignupView(View):
+    """
+    This View reacts to the signup or decline buttons being pressed using a POST request.
+    It can be modified to not directly create a participation, but show a form first, then
+    create the participation.
+
+    Beware that request.user might be anonymous. You should only act on participants acquired
+    using `get_participant`.
+    """
+
     shift: Shift = ...
     method: "BaseSignupMethod" = ...
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self._user_participant = None
+        if request.user.is_authenticated:
+            self._user_participant = request.user.as_participant()
+            prevent_getting_participant_from_request_user(request)
+
+    @functools.cache
+    def get_participant(self):
+        if self._user_participant:
+            return self._user_participant
+        for _, participant in participant_from_request.send(request=self.request):
+            if participant is not None:
+                return participant
 
     def dispatch(self, request, *args, **kwargs):
         if (choice := request.POST.get("signup_choice")) is not None:
@@ -113,7 +150,7 @@ class BaseSignupView(View):
     def signup_pressed(self, **signup_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_signup(self.request.user.as_participant(), **signup_kwargs)
+                self.method.perform_signup(self.get_participant(), **signup_kwargs)
                 messages.success(
                     self.request,
                     self.method.signup_success_message.format(shift=self.shift),
@@ -126,7 +163,7 @@ class BaseSignupView(View):
     def decline_pressed(self, **decline_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_decline(self.request.user.as_participant(), **decline_kwargs)
+                self.method.perform_decline(self.get_participant(), **decline_kwargs)
                 messages.info(
                     self.request, self.method.decline_success_message.format(shift=self.shift)
                 )
