@@ -78,7 +78,7 @@ class PermissionField(BooleanField):
         self.target = user_or_group
         self.initial = self.target.permissions.filter(
             codename__in=map(lambda perm: perm.split(".")[-1], self.permission_set)
-        ).exists()
+        ).count() == len(self.permission_set)
 
     def update_permissions(self, assign):
         if assign:

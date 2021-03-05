@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit
+from crispy_forms.layout import Field, Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth.models import Group
 from django.forms import (
@@ -24,47 +24,21 @@ from ephios.extra.widgets import CustomDateInput
 
 
 class GroupForm(PermissionFormMixin, ModelForm):
+    can_view_past_event = PermissionField(
+        label=_("Can view past events"), permissions=["core.view_past_event"], required=False
+    )
+
+    is_planning_group = PermissionField(
+        label=_("Can add events"),
+        permissions=["core.add_event", "core.delete_event"],
+        required=False,
+    )
     publish_event_for_group = ModelMultipleChoiceField(
         label=_("Can publish events for groups"),
         queryset=Group.objects.all(),
         required=False,
         help_text=_("Choose groups that this group can make events visible for."),
         widget=Select2MultipleWidget,
-    )
-    can_view_past_event = PermissionField(
-        label=_("Can view past events"), permissions=["core.view_past_event"], required=False
-    )
-    can_add_event = PermissionField(
-        label=_("Can add events"),
-        permissions=["core.add_event", "core.delete_event"],
-        required=False,
-    )
-    can_manage_user = PermissionField(
-        label=_("Can manage users"),
-        help_text=_("If checked, users in this group can view, add, edit and delete users."),
-        permissions=[
-            "core.add_userprofile",
-            "core.change_userprofile",
-            "core.delete_userprofile",
-            "core.view_userprofile",
-        ],
-        required=False,
-    )
-    can_manage_group = PermissionField(
-        label=_("Can manage groups"),
-        help_text=_(
-            "If checked, users in this group can add and edit all groups, their permissions as well as group memberships."
-        ),
-        permissions=[
-            "auth.add_group",
-            "auth.change_group",
-            "auth.delete_group",
-            "auth.view_group",
-        ],
-        required=False,
-    )
-    users = ModelMultipleChoiceField(
-        label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
     decide_workinghours_for_group = ModelMultipleChoiceField(
         label=_("Can decide working hours for groups"),
@@ -74,6 +48,51 @@ class GroupForm(PermissionFormMixin, ModelForm):
             "Choose groups that the group you are currently editing can decide whether to grant working hours for."
         ),
         widget=Select2MultipleWidget,
+    )
+
+    is_hr_group = PermissionField(
+        label=_("Can edit users"),
+        help_text=_("If checked, users in this group can view, add, edit and delete users."),
+        permissions=[
+            "core.add_userprofile",
+            "core.change_userprofile",
+            "core.delete_userprofile",
+            "core.view_userprofile",
+        ],
+        required=False,
+    )
+    is_management_group = PermissionField(
+        label=_("Can manage ephios"),
+        help_text=_(
+            "If checked, users in this group can manage users, groups, eventtypes and qualifications"
+        ),
+        permissions=[
+            "auth.add_group",
+            "auth.change_group",
+            "auth.delete_group",
+            "auth.view_group",
+            "core.add_userprofile",
+            "core.change_userprofile",
+            "core.delete_userprofile",
+            "core.view_userprofile",
+            "core.view_event",
+            "core.add_event",
+            "core.change_event",
+            "core.delete_event",
+            "core.view_eventtype",
+            "core.add_eventtype",
+            "core.change_eventtype",
+            "core.delete_eventtype",
+            "core.view_qualification",
+            "core.add_qualification",
+            "core.change_qualification",
+            "core.delete_qualification",
+        ],
+        required=False,
+    )
+
+    users = ModelMultipleChoiceField(
+        label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
 
     class Meta:
@@ -98,12 +117,18 @@ class GroupForm(PermissionFormMixin, ModelForm):
         self.helper.layout = Layout(
             Field("name"),
             Field("users"),
-            Field("can_manage_user"),
-            Field("can_manage_group"),
             Field("can_view_past_event"),
-            Field("decide_workinghours_for_group"),
-            Field("can_add_event"),
-            Field("publish_event_for_group", wrapper_class="publish-select"),
+            Fieldset(
+                _("Management"),
+                "is_hr_group",
+                "is_management_group",
+            ),
+            Fieldset(
+                _("Planning"),
+                "is_planning_group",
+                Field("publish_event_for_group", wrapper_class="publish-select"),
+                "decide_workinghours_for_group",
+            ),
             FormActions(Submit("submit", _("Save"))),
         )
 
@@ -112,15 +137,8 @@ class GroupForm(PermissionFormMixin, ModelForm):
 
         group.user_set.set(self.cleaned_data["users"])
 
-        self.fields["can_view_past_event"].update_permissions(
-            self.cleaned_data["can_view_past_event"]
-        )
-        self.fields["can_add_event"].update_permissions(self.cleaned_data["can_add_event"])
-        self.fields["can_manage_group"].update_permissions(self.cleaned_data["can_manage_group"])
-        self.fields["can_manage_user"].update_permissions(self.cleaned_data["can_manage_user"])
-
         remove_perm("publish_event_for_group", group, Group.objects.all())
-        if self.cleaned_data["can_add_event"]:
+        if self.cleaned_data["is_planning_group"]:
             assign_perm(
                 "publish_event_for_group", group, self.cleaned_data["publish_event_for_group"]
             )
