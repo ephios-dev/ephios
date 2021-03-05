@@ -9,7 +9,7 @@ from typing import List, Optional
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import QuerySet
 from django.shortcuts import redirect
@@ -132,6 +132,7 @@ def get_nonlocal_participant_from_session(request):
     for _, participant in participant_from_request.send(sender=None, request=request):
         if participant is not None:
             return participant
+    raise PermissionDenied
 
 
 class BaseSignupView(View):
