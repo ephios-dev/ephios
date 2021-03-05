@@ -98,7 +98,7 @@ class Event(Model):
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("core:event_detail", args=[str(self.id), self.get_canonical_slug()])
+        return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
 
     def activate(self):
         from ephios.core import mail
