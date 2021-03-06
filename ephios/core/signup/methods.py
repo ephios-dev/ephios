@@ -65,7 +65,7 @@ class AbstractParticipant:
         """Return the participation object for a shift. Return None if it does not exist."""
         raise NotImplementedError
 
-    @functools.cache
+    @functools.lru_cache
     def collect_all_qualifications(self) -> set:
         """We collect using breadth first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
