@@ -1,3 +1,4 @@
+import copy
 import os
 from email.utils import getaddresses
 from importlib import metadata
@@ -64,7 +65,7 @@ CORE_PLUGINS = [
     "ephios.plugins.pages",
     "ephios.plugins.guests",
 ]
-PLUGINS = [plugin for plugin in CORE_PLUGINS]
+PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
 

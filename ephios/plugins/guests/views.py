@@ -18,7 +18,7 @@ class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect(self.get_authenticated_url())
-        elif "ephios.plugins.guests" not in global_preferences_registry.manager().get(
+        if "ephios.plugins.guests" not in global_preferences_registry.manager().get(
             "general__enabled_plugins"
         ):
             raise PermissionDenied
@@ -39,8 +39,8 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
     def get_event(self):
         try:
             return Event.objects.get(pk=self.kwargs.get("event_id"))
-        except Event.DoesNotExist:
-            raise PermissionDenied()
+        except Event.DoesNotExist as e:
+            raise PermissionDenied() from e
 
     def get_authenticated_url(self):
         messages.info(self.request, _("Log out to register as guest."))
@@ -55,8 +55,8 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
         input_token = kwargs["public_signup_token"]
         try:
             EventGuestShare.objects.get(event=self.event, active=True, token=input_token)
-        except EventGuestShare.DoesNotExist:
-            raise PermissionDenied
+        except EventGuestShare.DoesNotExist as e:
+            raise PermissionDenied from e
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -90,8 +90,8 @@ class GuestEventDetailView(RedirectAuthenticatedUserMixin, DetailView):
     def get_object(self, queryset=None):
         try:
             return GuestUser.objects.get(access_token=self.kwargs.get("guest_access_token"))
-        except GuestUser.DoesNotExist:
-            raise PermissionDenied()
+        except GuestUser.DoesNotExist as e:
+            raise PermissionDenied from e
 
 
 class GuestUserShiftActionView(RedirectAuthenticatedUserMixin, BaseShiftActionView):
@@ -100,5 +100,5 @@ class GuestUserShiftActionView(RedirectAuthenticatedUserMixin, BaseShiftActionVi
             return GuestUser.objects.get(
                 access_token=self.kwargs.get("guest_access_token")
             ).as_participant()
-        except GuestUser.DoesNotExist:
-            raise PermissionDenied()
+        except GuestUser.DoesNotExist as e:
+            raise PermissionDenied from e

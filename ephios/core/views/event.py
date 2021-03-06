@@ -87,8 +87,7 @@ class EventEditMixin:
         form = self.get_form()
         if self.is_valid(form):
             return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        return self.form_invalid(form)
 
     def form_valid(self, form):
         response = super().form_valid(form)

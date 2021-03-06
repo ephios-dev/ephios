@@ -9,8 +9,7 @@ from ephios.extra.mixins import CustomPermissionRequiredMixin
 def request_to_participant(request):
     if request.user.is_authenticated:
         return request.user.as_participant()
-    else:
-        return get_nonlocal_participant_from_session(request)
+    return get_nonlocal_participant_from_session(request)
 
 
 class BaseShiftActionView(SingleObjectMixin, View):
