@@ -53,22 +53,28 @@ ALLOWED_ATTRIBUTES = {
 ALLOWED_PROTOCOLS = ["http", "https", "mailto", "tel"]
 
 
-def markdown_compile(source):
+def markdown_compile(source, excluded_tags=""):
     extensions = ["markdown.extensions.sane_lists", "markdown.extensions.nl2br"]
+    tags = ALLOWED_TAGS.copy()
+    for tag in excluded_tags.split(","):
+        try:
+            tags.remove(tag)
+        except ValueError:
+            pass
     return bleach.clean(
         markdown.markdown(source, extensions=extensions),
-        tags=ALLOWED_TAGS,
+        tags=tags,
         attributes=ALLOWED_ATTRIBUTES,
         protocols=ALLOWED_PROTOCOLS,
     )
 
 
 @register.filter
-def rich_text(text: str, **kwargs):
+def rich_text(text: str, excluded_tags=""):
     """
     Processes markdown and cleans HTML in a text input.
     """
     text = str(text)
     linker = bleach.Linker(parse_email=True)
-    body_md = linker.linkify(markdown_compile(text))
+    body_md = linker.linkify(markdown_compile(text, excluded_tags=excluded_tags))
     return mark_safe(body_md)

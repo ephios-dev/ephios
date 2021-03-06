@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group, Permission
 from guardian.ctypes import get_content_type
 from guardian.utils import get_group_obj_perms_model
@@ -56,3 +56,12 @@ def get_groups_with_perms(obj, only_with_perms_in):
         }
     )
     return Group.objects.filter(**group_filters).distinct()
+
+
+class StaffRequiredMixin(AccessMixin):
+    """Verify that the current user is staff."""
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)

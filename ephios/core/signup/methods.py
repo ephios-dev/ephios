@@ -5,7 +5,6 @@ from collections import OrderedDict
 from datetime import date
 from typing import List, Optional
 
-import django.dispatch
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -23,9 +22,8 @@ from django.views import View
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
+from ..signals import register_signup_methods
 from .disposition import BaseDispositionParticipationForm
-
-register_signup_methods = django.dispatch.Signal()
 
 
 def all_signup_methods():
@@ -378,6 +376,18 @@ class BaseSignupMethod:
         """
         return ""
 
+    def get_participation_display(self):
+        """
+        Returns a displayable representation of participation that can be rendered into a table (e.g. for pdf export).
+        Must return a list of participations or empty slots. Each element of the list has to be a list of a fixed
+        size where each entry is rendered to a separate column.
+        Ex.: [["participant1_name", "participant1_qualification"], ["participant2_name", "participant2_qualification"]]
+        """
+        return [
+            [f"{participant.first_name} {participant.last_name}"]
+            for participant in self.shift.get_participants()
+        ]
+
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
@@ -389,7 +399,7 @@ class BaseSignupMethod:
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)
         template = Template(
-            template_string="{% load bootstrap4 %}{% bootstrap_form form %}"
+            template_string="{% load crispy_forms_filters %}{{ form|crispy }}"
         ).render(Context({"form": form}))
         return template
 

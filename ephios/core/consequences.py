@@ -1,6 +1,6 @@
+import operator
 from datetime import datetime
 
-import django.dispatch
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models import IntegerField, OuterRef, Q, Subquery
@@ -19,8 +19,7 @@ from ephios.core.models import (
     UserProfile,
     WorkingHours,
 )
-
-register_consequence_handlers = django.dispatch.Signal()
+from ephios.core.signals import register_consequence_handlers
 
 
 def all_consequence_handlers():
@@ -40,7 +39,7 @@ def editable_consequences(user):
     qs = Consequence.objects.all().select_related("user")
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)
-    return qs.filter(slug__in=map(lambda hl: hl.slug, handlers)).distinct()
+    return qs.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
 
 
 def my_pending_consequences(user):

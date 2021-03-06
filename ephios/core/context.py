@@ -4,7 +4,7 @@ from django.templatetags.static import static
 from django.utils.translation import get_language
 
 from ephios.core.models import AbstractParticipation
-from ephios.extra.signals import footer_link
+from ephios.core.signals import footer_link
 from ephios.settings import SITE_URL
 
 # suggested in https://github.com/python-poetry/poetry/issues/273

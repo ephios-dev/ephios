@@ -1,7 +1,7 @@
 from django.urls import path
 
 from ephios.core import pdf
-from ephios.core.ical import EventFeed, user_event_feed_view
+from ephios.core.ical import user_event_feed_view
 from ephios.core.signup.disposition import AddUserView, DispositionView
 from ephios.core.views.accounts import (
     GroupCreateView,
@@ -124,7 +124,6 @@ urlpatterns = [
         AddUserView.as_view(),
         name="shift_disposition_add_user",
     ),
-    path("calendar/", EventFeed(), name="event_feed"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
     path(
         "extra/rruleoccurrence",
@@ -132,21 +131,21 @@ urlpatterns = [
         name="rrule_occurrences",
     ),
     path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
-    path("settings/eventtype/", EventTypeListView.as_view(), name="settings_eventtype_list"),
+    path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
-        "settings/eventtype/create/",
+        "settings/eventtypes/create/",
         EventTypeCreateView.as_view(),
         name="settings_eventtype_create",
     ),
     path(
-        "settings/eventtype/<int:pk>/edit/",
+        "settings/eventtypes/<int:pk>/edit/",
         EventTypeUpdateView.as_view(),
-        name="setting_eventtype_edit",
+        name="settings_eventtype_edit",
     ),
     path(
-        "settings/eventtype/<int:pk>/delete/",
+        "settings/eventtypes/<int:pk>/delete/",
         EventTypeDeleteView.as_view(),
-        name="setting_eventtype_delete",
+        name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("profile/settings", UserProfileSettingsView.as_view(), name="profile_settings"),
