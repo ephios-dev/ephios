@@ -38,7 +38,7 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
 
     def get_event(self):
         try:
-            return Event.objects.get(pk=self.kwargs.get("event_id"))
+            return Event.all_objects.get(pk=self.kwargs.get("event_id"))
         except Event.DoesNotExist as e:
             raise PermissionDenied() from e
 

@@ -56,16 +56,18 @@
                             <span class="fas fa-trash-alt"></span>
                             {% trans "Delete event" %}
                         </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_copy" event.pk %}">
-                            <span class="fas fa-copy"></span>
-                            {% translate "Copy event" %}
-                        </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_detail_pdf" event.pk %}">
-                            <span class="fas fa-file-pdf"></span>
-                            {% trans "Download PDF" %}
-                        </a>
+                        {% if event.active %}
+                            <a class="dropdown-item"
+                               href="{% url "core:event_copy" event.pk %}">
+                                <span class="fas fa-copy"></span>
+                                {% translate "Copy event" %}
+                            </a>
+                            <a class="dropdown-item"
+                               href="{% url "core:event_detail_pdf" event.pk %}">
+                                <span class="fas fa-file-pdf"></span>
+                                {% trans "Download PDF" %}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -75,6 +77,8 @@
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}
+        {% empty %}
+            <p class="text-center"><em>{% translate "No shifts" %}</em></p>
         {% endfor %}
     </div>
 {% endblock %}

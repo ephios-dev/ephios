@@ -17,25 +17,29 @@ class EventAllowGuestsForm(BaseEventPluginForm):
         self.event = kwargs.pop("event")
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        share, __ = EventGuestShare.objects.get_or_create(event=self.event)
-        self.fields["link"].initial = share.url
-        self.fields["active"].initial = share.active
+        try:
+            self.instance = EventGuestShare.objects.get(event=self.event)
+            self.fields["link"].initial = self.instance.url
+        except EventGuestShare.DoesNotExist:
+            self.instance = EventGuestShare(event=self.event)
+            del self.fields["link"]
+            del self.fields["new_link"]
+        self.fields["active"].initial = self.instance.active
 
     def save(self):
-        share, __ = EventGuestShare.objects.get_or_create(event=self.event)
-        if self.cleaned_data["new_link"]:
-            share.new_token()
-        share.active = self.cleaned_data["active"]
+        if self.cleaned_data.get("new_link"):
+            self.instance.new_token()
+        self.instance.active = self.cleaned_data["active"]
         if self.cleaned_data["active"]:
             messages.info(
                 self.request,
                 mark_safe(
                     _("Guests can sign up for this event <a href={href}>here</a>. ").format(
-                        href=share.url
+                        href=self.instance.url
                     )
                 ),
             )
-        share.save()
+        self.instance.save()
 
     @property
     def heading(self):

@@ -82,13 +82,6 @@ class EventEditMixin:
     def is_valid(self, form):
         return form.is_valid() and all(plugin_form.is_valid() for plugin_form in self.plugin_forms)
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if self.is_valid(form):
-            return self.form_valid(form)
-        return self.form_invalid(form)
-
     def form_valid(self, form):
         response = super().form_valid(form)
         for plugin_form in self.plugin_forms:
@@ -106,12 +99,26 @@ class EventUpdateView(CustomPermissionRequiredMixin, EventEditMixin, UpdateView)
             data=self.request.POST or None, user=self.request.user, instance=self.object
         )
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if self.is_valid(form):
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
 
 class EventCreateView(CustomPermissionRequiredMixin, EventEditMixin, CreateView):
     template_name = "core/event_form.html"
     permission_required = "core.add_event"
     accept_object_perms = False
     model = EventType
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        self.object = form.instance
+        if self.is_valid(form):
+            return self.form_valid(form)
+        return self.form_invalid(form)
 
     def dispatch(self, request, *args, **kwargs):
         self.eventtype = get_object_or_404(EventType, pk=self.kwargs.get("type"))
