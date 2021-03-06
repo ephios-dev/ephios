@@ -12,7 +12,7 @@ from ephios.core.signup import AbstractParticipant, Qualification
 
 
 class EventGuestShare(models.Model):
-    event = models.OneToOneField(Event, related_name="guest_link", on_delete=models.CASCADE)
+    event = models.OneToOneField(Event, related_name="guest_share", on_delete=models.CASCADE)
     token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
     active = models.BooleanField(default=False)
 

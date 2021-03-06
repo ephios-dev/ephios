@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DetailView
 from django_select2.forms import Select2MultipleWidget
+from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import Event
 from ephios.core.views.signup import BaseShiftActionView
@@ -17,6 +18,10 @@ class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect(self.get_authenticated_url())
+        elif "ephios.plugins.guests" not in global_preferences_registry.manager().get(
+            "general__enabled_plugins"
+        ):
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
     def get_authenticated_url(self):
