@@ -1,36 +1,6 @@
-from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group, Permission
 from guardian.ctypes import get_content_type
 from guardian.utils import get_group_obj_perms_model
-
-
-class CustomPermissionRequiredMixin(PermissionRequiredMixin):
-    """
-    As of 2020-09-26, guardians permission mixin
-    doesn't support the mode of operation we want, but Django's does:
-    * Logged in users without permission get 403
-    * not logged in users get redirected to login
-    Therefore we patch Django's mixin to support object permissions
-    """
-
-    accept_global_perms = True
-    accept_object_perms = True
-
-    def get_permission_object(self):
-        if hasattr(self, "permission_object"):
-            return self.permission_object
-        if hasattr(self, "get_object") and (obj := self.get_object()) is not None:
-            return obj
-        return getattr(self, "object", None)
-
-    def has_permission(self):
-        user = self.request.user
-        perms = self.get_permission_required()
-        if self.accept_global_perms and all(user.has_perm(perm) for perm in perms):
-            return True
-        if not self.accept_object_perms or (obj := self.get_permission_object()) is None:
-            return False
-        return all(user.has_perm(perm, obj) for perm in perms)
 
 
 def get_groups_with_perms(obj, only_with_perms_in):
@@ -56,12 +26,3 @@ def get_groups_with_perms(obj, only_with_perms_in):
         }
     )
     return Group.objects.filter(**group_filters).distinct()
-
-
-class StaffRequiredMixin(AccessMixin):
-    """Verify that the current user is staff."""
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-            return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)

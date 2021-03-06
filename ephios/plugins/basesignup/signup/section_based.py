@@ -187,7 +187,7 @@ class SectionBasedSignupView(FormView, BaseSignupView):
         if not self.method.can_sign_up(self.request.user.as_participant()):
             # redirect a misled request
             messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(reverse("core:event_detail", kwargs=dict(pk=self.shift.event_id)))
+            return redirect(self.shift.event.get_absolute_url())
 
         # all good, redirect to the form
         return redirect(reverse("core:signup_action", kwargs=dict(pk=self.shift.pk)))

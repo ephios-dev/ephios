@@ -31,7 +31,7 @@
                 <div class="form-group">
                     {% if object or event.active %}
                         <a role="button" class="btn btn-secondary"
-                           href="{% url "core:event_detail" event.pk %}">
+                           href="{{ event.get_absolute_url }}">
                             <span class="fas fa-arrow-left"></span> {% trans "Back to event" %}
                         </a>
                         {% if object and object.event.shifts.count > 1 %}

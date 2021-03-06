@@ -71,4 +71,4 @@ def test_participating_users_can_see_otherwise_invisible_event(
     response.form.submit()
 
     # check that we can get (200 OK) the event details as a participant
-    assert django_app.get(reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer)
+    assert django_app.get(event.get_absolute_url(), user=volunteer)
