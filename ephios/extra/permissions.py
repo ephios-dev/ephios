@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group, Permission
+from django.forms import BooleanField
 from guardian.ctypes import get_content_type
 from guardian.shortcuts import assign_perm, remove_perm
 from guardian.utils import get_group_obj_perms_model

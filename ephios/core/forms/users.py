@@ -19,7 +19,8 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.widgets import MultiUserProfileWidget
-from ephios.extra.permissions import PermissionField, PermissionFormMixin
+from ephios.extra.mixins import PermissionFormMixin
+from ephios.extra.permissions import PermissionField
 from ephios.extra.widgets import CustomDateInput
 
 
