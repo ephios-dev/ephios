@@ -118,19 +118,23 @@ class EventForm(forms.ModelForm):
             event,
         )
         assign_perm("change_event", self.cleaned_data["responsible_groups"], event)
-        assign_perm("view_event", self.cleaned_data["responsible_users"], event)
         assign_perm("change_event", self.cleaned_data["responsible_users"], event)
 
-        # also assign view permissions to non-responsible users that already have some sort of participation for the event
+        # Assign view_event to responsible users  and to non-responsible users
+        # that already have some sort of participation for the event
         # (-> they saw and interacted with it)
-        participating_users = UserProfile.objects.exclude(
-            pk__in=self.cleaned_data["responsible_users"]
-        ).filter(
-            pk__in=LocalParticipation.objects.filter(shift_id__in=event.shifts.all()).values_list(
-                "user", flat=True
-            )
+        assign_perm(
+            "view_event",
+            UserProfile.objects.filter(
+                Q(pk__in=self.cleaned_data["responsible_users"])
+                | Q(
+                    pk__in=LocalParticipation.objects.filter(
+                        shift_id__in=event.shifts.all()
+                    ).values_list("user", flat=True)
+                )
+            ),
+            event,
         )
-        assign_perm("view_event", participating_users, event)
 
         return event
 
