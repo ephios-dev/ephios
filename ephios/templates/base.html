@@ -1,3 +1,4 @@
+{% load pwa %}
 {% load statici18n %}
 {% load i18n %}
 {% load static %}
@@ -10,6 +11,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>ephios - {% block title %} ephios {% endblock %}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "ephios/img/ephios-symbol-red.svg" %}">
+    {% include "core/fragments/pwa.html" %}
     {% compress css %}
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
@@ -36,7 +39,7 @@
     <header class="row mb-3">
         <div class="col-md-12 px-0">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">ephios</a>
+                <a class="navbar-brand" href="/"><img src="{% static "ephios/img/ephios-text-black.png" %}" alt="ephios" class="d-inline-block" width="75"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
