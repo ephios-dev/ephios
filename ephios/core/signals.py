@@ -43,7 +43,10 @@ Receivers will receive a ``request`` keyword argument.
 
 event_forms = PluginSignal()
 """
-This signal...
+This signal is sent out to get a list of form instances to show on the event create and update views.
+You receive an `event` and `request` keyword arg you should use to create an instance of your form.
+Subclass `BaseEventPluginForm` to customize the rendering behavior.
+If all forms are valid, `save` will be called on your form. 
 """
 
 
