@@ -1,3 +1,4 @@
+import functools
 from pathlib import Path
 
 from django.conf import settings
@@ -27,13 +28,15 @@ def manifest(request):
     return response
 
 
-with open(settings.STATIC_ROOT / Path("ephios/js/serviceworker.js"), "rb") as sw_js:
-    serviceworker_js = sw_js.read()
+@functools.lru_cache
+def serviceworker_js():
+    with open(settings.STATIC_ROOT / Path("ephios/js/serviceworker.js"), "rb") as sw_js:
+        return sw_js.read()
 
 
 def serviceworker(request):
     return HttpResponse(
-        serviceworker_js,
+        serviceworker_js(),
         content_type="application/javascript",
     )
 
