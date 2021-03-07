@@ -185,6 +185,6 @@ urlpatterns = [
         name="request_workinghour",
     ),
     path("manifest.json", manifest, name="pwa_manifest"),
-    path("serviceworker.js", serviceworker, name="pwa_manifest"),
+    path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
 ]
