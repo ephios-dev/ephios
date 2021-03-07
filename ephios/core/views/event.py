@@ -30,9 +30,9 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm
 from ephios.core.models import Event, EventType, Shift
+from ephios.core.signals import event_forms
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.core.signals import event_forms
 
 
 class EventListView(LoginRequiredMixin, ListView):
