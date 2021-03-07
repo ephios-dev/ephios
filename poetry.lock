@@ -371,17 +371,6 @@ python-versions = "*"
 Django = ">=2.1"
 
 [[package]]
-name = "django-pwa"
-version = "1.0.10"
-description = "A Django app to include a manifest.json and Service Worker instance to enable progressive web app behavior"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-django = ">=1.8"
-
-[[package]]
 name = "django-recurrence"
 version = "1.10.3"
 description = "Django utility wrapping dateutil.rrule"
@@ -1110,7 +1099,7 @@ pgsql = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6946cd37815257bb6ffeef5311b7875fd09fa3da635a793fedbde18e1997257a"
+content-hash = "0be74e5de480d8ed87b0201c0eae3fe4b3307c6cab917c938fbfe16fc4f046f5"
 
 [metadata.files]
 alabaster = [
@@ -1290,10 +1279,6 @@ django-jquery-js = [
 django-polymorphic = [
     {file = "django-polymorphic-3.0.0.tar.gz", hash = "sha256:9d886f19f031d26bb1391c055ed9be06fb226a04a4cec1842b372c58873b3caa"},
     {file = "django_polymorphic-3.0.0-py2.py3-none-any.whl", hash = "sha256:73b75eb44ea302bd32820f8661e469509d245ce7f7ff09cd2ad149e5c42034ff"},
-]
-django-pwa = [
-    {file = "django-pwa-1.0.10.tar.gz", hash = "sha256:07ed9dd57108838e3fe44b551a82032ca4ed76e31cb3c3e8d51604e0fe7e81e9"},
-    {file = "django_pwa-1.0.10-py3-none-any.whl", hash = "sha256:b1a2057b1e72c40c3a14beb90b958482da185f1d40a141fcae3d76580984b930"},
 ]
 django-recurrence = [
     {file = "django-recurrence-1.10.3.tar.gz", hash = "sha256:715f681f6af029ff3a8d73c7b1460abd8cbc5d5a5001efcb127032e84d9cb963"},

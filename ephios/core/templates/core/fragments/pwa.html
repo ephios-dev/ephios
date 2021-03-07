@@ -4,26 +4,20 @@
 
 <!-- Add to homescreen for Chrome on Android -->
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="{{ PWA_APP_NAME }}">
+<meta name="application-name" content="ephios">
 
 
 <!-- Chrome for Android theme color -->
-<meta name="theme-color" content="{{ PWA_APP_THEME_COLOR }}">
+<meta name="theme-color" content="#000">
 
 <!-- Add to homescreen for Safari on iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="{{ PWA_APP_NAME }}">
-<meta name="apple-mobile-web-app-status-bar-style" content="{{ PWA_APP_STATUS_BAR_COLOR }}">
+<meta name="apple-mobile-web-app-title" content="ephios">
+<meta name="apple-mobile-web-app-status-bar-style" content="#fff">
 
-{% if PWA_APP_ICONS_APPLE %}
-    {% for icon in PWA_APP_ICONS_APPLE %}
-        <link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.size }}">
-    {% endfor %}
-{% else %}
-    {% for icon in PWA_APP_ICONS %}
-        <link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.size }}">
-    {% endfor %}
-{% endif %}
+{% for icon in PWA_APP_ICONS %}
+    <link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.size }}">
+{% endfor %}
 
 
 {% for splash in PWA_APP_SPLASH_SCREEN %}
@@ -32,12 +26,10 @@
 
 
 <!-- Tile for Win8 -->
-<meta name="msapplication-TileColor" content="{{ PWA_APP_BACKGROUND_COLOR }}">
+<meta name="msapplication-TileColor" content="#fff">
 {% with PWA_APP_ICONS|last as icon %}
-<meta name="msapplication-TileImage" content="{{ icon.src }}">
-
-
-<link rel="icon" sizes="{{ icon.size }}" href="{{ icon.src }}">
+    <meta name="msapplication-TileImage" content="{{ icon.src }}">
+    <link rel="icon" sizes="{{ icon.size }}" href="{{ icon.src }}">
 {% endwith %}
 
 <script type="text/javascript" src="{% static "ephios/js/pwa_registration.js" %}"></script>

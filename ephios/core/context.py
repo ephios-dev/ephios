@@ -5,7 +5,7 @@ from django.utils.translation import get_language
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signals import footer_link
-from ephios.settings import SITE_URL
+from ephios.settings import PWA_APP_ICONS, SITE_URL
 
 # suggested in https://github.com/python-poetry/poetry/issues/273
 EPHIOS_VERSION = "v" + importlib.metadata.version("ephios")
@@ -27,4 +27,5 @@ def ephios_base_context(request):
         "datatables_translation_url": datatables_translation_url,
         "ephios_version": EPHIOS_VERSION,
         "SITE_URL": SITE_URL,
+        "PWA_APP_ICONS": PWA_APP_ICONS,
     }

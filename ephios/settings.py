@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
-    "pwa",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -210,6 +209,9 @@ MESSAGE_TAGS = {
     constants.ERROR: "alert-danger",
 }
 
-# django-pwa
-PWA_APP_NAME = "ephios"
-PWA_APP_ICONS = [{"src": "/static/ephios/img/ephios_pwa_icon.png", "sizes": "1024x1024"}]
+# PWA
+PWA_APP_ICONS = [
+    {"src": "/static/ephios/img/ephios-192x.png", "sizes": "192x192", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
+]
