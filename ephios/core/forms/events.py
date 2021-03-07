@@ -123,11 +123,13 @@ class EventForm(forms.ModelForm):
 
         # also assign view permissions to non-responsible users that already have some sort of participation for the event
         # (-> they saw and interacted with it)
-        participating_users = UserProfile.objects.filter(
+        participating_users = UserProfile.objects.exclude(
+            pk__in=self.cleaned_data["responsible_users"]
+        ).filter(
             pk__in=LocalParticipation.objects.filter(shift_id__in=event.shifts.all()).values_list(
                 "user", flat=True
             )
-        ).exclude(pk__in=self.cleaned_data["responsible_users"])
+        )
         assign_perm("view_event", participating_users, event)
 
         return event
