@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_ical.views import ICalFeed
@@ -5,7 +6,6 @@ from guardian.shortcuts import get_users_with_perms
 from icalendar import vCalAddress
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.settings import SITE_URL
 
 
 class EventFeed(ICalFeed):
@@ -35,7 +35,7 @@ class EventFeed(ICalFeed):
         return item.event.location
 
     def item_guid(self, item):
-        return f"{item.pk}@{SITE_URL}"
+        return f"{item.pk}@{settings.SITE_URL}"
 
     def item_organizer(self, item):
         user = get_users_with_perms(item.event, only_with_perms_in=["change_event"]).first()
