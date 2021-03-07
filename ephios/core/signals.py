@@ -33,6 +33,22 @@ containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
 Receivers will receive a ``request`` keyword argument.
 """
 
+participant_from_request = PluginSignal()
+"""
+This signal is sent out to get a participant from a request with an unauthenticated user.
+Return a subclass of AbstractParticipant or None if you cannot provide a participant.
+The first non-None return-value will be used.
+Receivers will receive a ``request`` keyword argument.
+"""
+
+event_forms = PluginSignal()
+"""
+This signal is sent out to get a list of form instances to show on the event create and update views.
+You receive an `event` and `request` keyword arg you should use to create an instance of your form.
+Subclass `BaseEventPluginForm` to customize the rendering behavior.
+If all forms are valid, `save` will be called on your form.
+"""
+
 
 @receiver(
     register_consequence_handlers,
