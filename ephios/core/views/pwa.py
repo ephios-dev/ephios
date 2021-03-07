@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -25,7 +27,7 @@ def manifest(request):
     return response
 
 
-with open(settings.STATIC_ROOT + "/ephios/js/serviceworker.js", "rb") as sw_js:
+with open(settings.STATIC_ROOT / Path("ephios/js/serviceworker.js"), "rb") as sw_js:
     serviceworker_js = sw_js.read()
 
 
