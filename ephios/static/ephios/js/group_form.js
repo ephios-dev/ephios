@@ -8,4 +8,22 @@ $(document).ready(function () {
     if (!$("#id_is_planning_group").is(":checked")) {
         $(".publish-select").slideUp();
     }
+    $("#id_is_management_group").click(function (event) {
+        if ($(this).is(":checked")) {
+            $("#id_is_hr_group").prop("disabled", true);
+            $("#id_is_planning_group").prop("disabled", true);
+            $("#id_is_hr_group").prop("checked", true);
+            $("#id_is_planning_group").prop("checked", true);
+        }
+        else {
+            $("#id_is_hr_group").prop("disabled", false);
+            $("#id_is_planning_group").prop("disabled", false);
+            $("#id_is_hr_group").prop("checked", false);
+            $("#id_is_planning_group").prop("checked", false);
+        }
+    });
+    if ($("#id_is_management_group").is(":checked")) {
+        $("#id_is_hr_group").prop("disabled", true);
+        $("#id_is_planning_group").prop("disabled", true);
+    }
 });

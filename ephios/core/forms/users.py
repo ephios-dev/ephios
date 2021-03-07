@@ -121,12 +121,12 @@ class GroupForm(PermissionFormMixin, ModelForm):
             Field("can_view_past_event"),
             Fieldset(
                 _("Management"),
-                "is_hr_group",
+                Field("is_hr_group", data_toggle="tooltip"),
                 "is_management_group",
             ),
             Fieldset(
                 _("Planning"),
-                "is_planning_group",
+                Field("is_planning_group", data_toggle="tooltip"),
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
             ),
