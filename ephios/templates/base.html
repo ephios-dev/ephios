@@ -33,7 +33,7 @@
 
 
     {% for splash in PWA_APP_SPLASH_SCREEN %}
-    <link href="{{ splash.src }}" media="{{ splash.media }}" rel="apple-touch-startup-image"/>
+        <link href="{{ splash.src }}" media="{{ splash.media }}" rel="apple-touch-startup-image"/>
     {% endfor %}
 
     <!-- Tile for Win8 -->
@@ -69,7 +69,8 @@
     <header class="row mb-3">
         <div class="col-md-12 px-0">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/"><img src="{% static "ephios/img/ephios-text-black.png" %}" alt="ephios" class="d-inline-block" width="75"></a>
+                <a class="navbar-brand" href="/"><img src="{% static "ephios/img/ephios-text-black.png" %}" alt="ephios"
+                                                      class="d-inline-block" width="75"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,8 +144,13 @@
                 </div>
             </nav>
         </div>
+        <div id="unloading-spinner" class="d-none">
+            <div class="spinner-grow" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
     </header>
-    <main class="row">
+    <main class="row blur-on-unload">
         <div class="col-md-12">
             <div id="messages">
                 {% for message in messages %}
@@ -159,7 +165,7 @@
             {% block content %}{% endblock %}
         </div>
     </main>
-    <footer class="row">
+    <footer class="row blur-on-unload">
         <div class="col-md-12 text-center">
             <small>
                 {% for label, url in footer.items %}
