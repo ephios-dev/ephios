@@ -18,6 +18,7 @@ from django.db.models import (
     TextField,
 )
 from django.utils import formats
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
@@ -91,10 +92,13 @@ class Event(Model):
     def __str__(self):
         return str(self.title)
 
+    def get_canonical_slug(self):
+        return slugify(self.title)
+
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("core:event_detail", args=[str(self.id)])
+        return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
 
     def activate(self):
         from ephios.core import mail

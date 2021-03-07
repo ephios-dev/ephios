@@ -60,7 +60,7 @@ jobs:
         key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
         inventory: |
           [servers]
-          despina.uberspace.de ansible_user=staghios domain=staging.ephios.de smtp_mailbox=noreply admin_email=admin@ephios.de
+          despina.uberspace.de ansible_user=staghios domain=staging.ephios.de smtp_mailbox=noreply admin_email="Ephios Admins <admin@ephios.de>"
         options: |
           --extra-vars package_name="${{steps.wheel.outputs.path}}"
           --verbose

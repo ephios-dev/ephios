@@ -29,7 +29,7 @@
                 <td class="d-none d-md-table-cell">{{ event.location }}</td>
                 <td>{{ event.start_time|date:"SHORT_DATE_FORMAT" }}</td>
                 <td class="d-none d-sm-table-cell">{{ event.end_time|date:"SHORT_DATE_FORMAT" }}</td>
-                <td><a class="btn btn-primary text-nowrap" href="{% url "core:event_detail" event.id %}"><span
+                <td><a class="btn btn-primary text-nowrap" href="{{ event.get_absolute_url }}"><span
                         class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "Show" %}</span></a></td>
             </tr>
         {% endfor %}

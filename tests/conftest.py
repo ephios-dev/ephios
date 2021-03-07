@@ -5,6 +5,7 @@ from datetime import date, datetime
 import pytest
 import pytz
 from django.contrib.auth.models import Group
+from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
@@ -24,6 +25,12 @@ from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignu
 @pytest.fixture
 def csrf_exempt_django_app(django_app_factory):
     return django_app_factory(csrf_checks=False)
+
+
+@pytest.fixture(autouse=True)
+def enable_plugins():
+    preferences = global_preferences_registry.manager()
+    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.pages"]
 
 
 @pytest.fixture

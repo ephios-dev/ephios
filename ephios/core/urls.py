@@ -35,6 +35,7 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import GeneralSettingsView
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
@@ -42,7 +43,7 @@ from ephios.core.views.shift import (
     ShiftDeleteView,
     ShiftUpdateView,
 )
-from ephios.core.views.signup import ShiftSignupView
+from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
@@ -59,7 +60,7 @@ urlpatterns = [
         name="event_delete",
     ),
     path(
-        "events/<int:pk>/",
+        "events/<int:pk>-<slug:slug>/",
         EventDetailView.as_view(),
         name="event_detail",
     ),
@@ -96,7 +97,7 @@ urlpatterns = [
     ),
     path(
         "shifts/<int:pk>/signup-action/",
-        ShiftSignupView.as_view(),
+        LocalUserShiftActionView.as_view(),
         name="signup_action",
     ),
     path(
@@ -183,4 +184,7 @@ urlpatterns = [
         WorkingHourRequestView.as_view(),
         name="request_workinghour",
     ),
+    path("manifest.json", manifest, name="pwa_manifest"),
+    path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
+    path("offline/", offline, name="pwa_offline"),
 ]

@@ -9,7 +9,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import ModelSelect2Widget
 
 from ephios.core.models import AbstractParticipation, Shift, UserProfile
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class BaseDispositionParticipationForm(forms.ModelForm):

@@ -1,3 +1,4 @@
+import copy
 import os
 from email.utils import getaddresses
 from importlib import metadata
@@ -59,10 +60,12 @@ EPHIOS_CORE_MODULES = [
 ]
 INSTALLED_APPS += EPHIOS_CORE_MODULES
 
-PLUGINS = [
+CORE_PLUGINS = [
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
+    "ephios.plugins.guests",
 ]
+PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
 
@@ -205,3 +208,10 @@ MESSAGE_TAGS = {
     constants.WARNING: "alert-warning",
     constants.ERROR: "alert-danger",
 }
+
+# PWA
+PWA_APP_ICONS = [
+    {"src": "/static/ephios/img/ephios-192x.png", "sizes": "192x192", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
+]

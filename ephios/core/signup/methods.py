@@ -1,5 +1,6 @@
 import dataclasses
 import functools
+import logging
 from argparse import Namespace
 from collections import OrderedDict
 from datetime import date
@@ -8,22 +9,26 @@ from typing import List, Optional
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import QuerySet
 from django.shortcuts import redirect
 from django.template import Context, Template
 from django.template.defaultfilters import yesno
+from django.urls import reverse
 from django.utils import formats, timezone
-from django.utils.functional import cached_property
+from django.utils.functional import SimpleLazyObject, cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
-from ..signals import register_signup_methods
+from ..signals import participant_from_request, register_signup_methods
 from .disposition import BaseDispositionParticipationForm
+
+logger = logging.getLogger(__name__)
 
 
 def all_signup_methods():
@@ -60,7 +65,7 @@ class AbstractParticipant:
         """Return the participation object for a shift. Return None if it does not exist."""
         raise NotImplementedError
 
-    @functools.lru_cache(maxsize=1)
+    @functools.lru_cache
     def collect_all_qualifications(self) -> set:
         """We collect using breadth first search with one query for every layer of inclusion."""
         all_qualifications = set(self.qualifications)
@@ -78,6 +83,16 @@ class AbstractParticipant:
     def has_qualifications(self, qualifications):
         return set(qualifications) <= self.collect_all_qualifications()
 
+    def reverse_signup_action(self, shift):
+        raise NotImplementedError
+
+    def reverse_event_detail(self, event):
+        raise NotImplementedError
+
+    @property
+    def icon(self):
+        return mark_safe('<span class="fa fa-user"></span>')
+
 
 @dataclasses.dataclass(frozen=True)
 class LocalUserParticipant(AbstractParticipant):
@@ -92,14 +107,51 @@ class LocalUserParticipant(AbstractParticipant):
         except LocalParticipation.DoesNotExist:
             return None
 
+    def reverse_signup_action(self, shift):
+        return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
+
+    def reverse_event_detail(self, event):
+        return event.get_absolute_url()
+
 
 class ParticipationError(ValidationError):
     pass
 
 
+def prevent_getting_participant_from_request_user(request):
+    original_user = request.user
+
+    class ProtectedUser(SimpleLazyObject):
+        def as_participant(self):
+            raise Exception("Access of request.user.as_participant in SignupViews is not allowed.")
+
+    request.user = ProtectedUser(lambda: original_user)
+
+
+def get_nonlocal_participant_from_session(request):
+    for _, participant in participant_from_request.send(sender=None, request=request):
+        if participant is not None:
+            return participant
+    raise PermissionDenied
+
+
 class BaseSignupView(View):
+    """
+    This View reacts to the signup or decline buttons being pressed using a POST request.
+    It can be modified to not directly create a participation, but show a form first, then
+    create the participation.
+
+    Beware that request.user might be anonymous. You should only act on participants acquired
+    using `get_participant`.
+    """
+
     shift: Shift = ...
     method: "BaseSignupMethod" = ...
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.participant: AbstractParticipant = kwargs["participant"]
+        prevent_getting_participant_from_request_user(request)
 
     def dispatch(self, request, *args, **kwargs):
         if (choice := request.POST.get("signup_choice")) is not None:
@@ -113,7 +165,7 @@ class BaseSignupView(View):
     def signup_pressed(self, **signup_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_signup(self.request.user.as_participant(), **signup_kwargs)
+                self.method.perform_signup(self.participant, **signup_kwargs)
                 messages.success(
                     self.request,
                     self.method.signup_success_message.format(shift=self.shift),
@@ -121,19 +173,19 @@ class BaseSignupView(View):
         except ParticipationError as errors:
             for error in errors:
                 messages.error(self.request, self.method.signup_error_message.format(error=error))
-        return redirect(self.shift.event.get_absolute_url())
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     def decline_pressed(self, **decline_kwargs):
         try:
             with transaction.atomic():
-                self.method.perform_decline(self.request.user.as_participant(), **decline_kwargs)
+                self.method.perform_decline(self.participant, **decline_kwargs)
                 messages.info(
                     self.request, self.method.decline_success_message.format(shift=self.shift)
                 )
         except ParticipationError as errors:
             for error in errors:
                 messages.error(self.request, self.method.decline_error_message.format(error=error))
-        return redirect(self.shift.event.get_absolute_url())
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
 
 def check_event_is_active(method, participant):

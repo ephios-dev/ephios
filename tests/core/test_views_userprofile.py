@@ -2,13 +2,13 @@ from collections import OrderedDict
 from datetime import date, datetime
 
 import pytest
+from django.conf import settings
 from django.core import mail
 from django.urls import reverse
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 
 from ephios.core.models import UserProfile
-from ephios.settings import SITE_URL
 
 
 @pytest.mark.django_db
@@ -68,7 +68,7 @@ class TestUserProfileView:
         assert userprofile.email == userprofile_email
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == _("Welcome to ephios!")
-        assert SITE_URL in mail.outbox[0].body
+        assert settings.SITE_URL in mail.outbox[0].body
         assert userprofile_email in mail.outbox[0].body
         assert mail.outbox[0].to == [userprofile_email]
 

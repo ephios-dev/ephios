@@ -13,7 +13,7 @@
 
     <form method="post">{% csrf_token %}
         <p>{% blocktrans %}Are you sure you want to delete the event "{{ object }}"?{% endblocktrans %}</p>
-        <a role="button" class="btn btn-secondary" href="{% url "core:event_detail" object.pk %}">{% trans "Back" %}</a>
+        <a role="button" class="btn btn-secondary" href="{{ object.get_absolute_url }}">{% trans "Back" %}</a>
         <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
     </form>
 
