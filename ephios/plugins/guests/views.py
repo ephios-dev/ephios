@@ -11,6 +11,7 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import Event
 from ephios.core.views.signup import BaseShiftActionView
+from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.guests.models import EventGuestShare, GuestUser
 
 
@@ -33,7 +34,10 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
     form_class = forms.modelform_factory(
         GuestUser,
         fields=["email", "first_name", "last_name", "date_of_birth", "phone", "qualifications"],
-        widgets={"qualifications": Select2MultipleWidget},
+        widgets={
+            "qualifications": Select2MultipleWidget,
+            "date_of_birth": CustomDateInput(format="%Y-%m-%d"),
+        },
     )
 
     def get_event(self):
@@ -67,11 +71,10 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
             # unique_together constraint not passed
             form.add_error(
                 None,
-                _(
-                    "You already registered as a guest for this event. Check your email to access the event."
-                ),
+                _("You already registered as a guest for this event."),
             )
             return self.form_invalid(form)
+        messages.info(self.request, _("Save the URL of this page to access this site later."))
         return redirect(guest.as_participant().reverse_event_detail(self.event))
 
 

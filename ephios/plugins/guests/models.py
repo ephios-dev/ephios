@@ -52,7 +52,7 @@ class GuestUser(models.Model):
 
     class Meta:
         # there might be two people using the same email *sigh*
-        unique_together = [["event", "email", "first_name"]]
+        unique_together = [["event", "email", "first_name", "last_name"]]
 
 
 class GuestParticipation(AbstractParticipation):

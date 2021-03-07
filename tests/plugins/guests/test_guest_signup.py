@@ -6,19 +6,29 @@ from ephios.plugins.guests.models import EventGuestShare, GuestParticipation, Gu
 
 
 @pytest.mark.django_db
-def test_guest_signup_flow(django_app, event, qualifications):
+def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.guests"]
 
+    # permission denied before share exists
     django_app.get(
         reverse(
-            "guests:register", kwargs=dict(event_id=event.id, public_signup_token="supersecret")
+            "guests:register", kwargs=dict(event_id=event.id, public_signup_token="somesecret")
         ),
         status=403,
     )
 
     share = EventGuestShare.objects.create(event=event, active=True)
-    response = django_app.get(share.url)
+
+    # permission denied with wrong secret
+    django_app.get(
+        reverse(
+            "guests:register", kwargs=dict(event_id=event.id, public_signup_token="somesecret")
+        ),
+        status=403,
+    )
+
+    response = django_app.get(share.url, status=200)
     response.form["first_name"] = "Carlson"
     response.form["last_name"] = "Carlsen"
     response.form["email"] = "guest@localhost"
@@ -73,3 +83,15 @@ def test_guest_settings_flow(django_app, event, planner):
     event.guest_share.refresh_from_db()
     assert event.guest_share.token != old_token
     assert not event.guest_share.active
+
+
+@pytest.mark.django_db
+def test_redirect_for_logged_in_users(django_app, event, volunteer):
+    share = EventGuestShare.objects.create(event=event, active=True)
+    assert (
+        "Log out to register as guest"
+        in django_app.get(
+            share.url,
+            user=volunteer,
+        ).follow()
+    )

@@ -93,10 +93,8 @@ class EventForm(forms.ModelForm):
             ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
 
     def save(self, commit=True):
-        event = super().save(commit=False)
-        event.type = self.eventtype
-        if commit:
-            event.save()
+        self.instance.type = self.eventtype
+        event = super().save(commit=commit)
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
@@ -123,13 +121,13 @@ class EventForm(forms.ModelForm):
         assign_perm("view_event", self.cleaned_data["responsible_users"], event)
         assign_perm("change_event", self.cleaned_data["responsible_users"], event)
 
-        # assign view permissions to users that already have some sort of participation for the event
+        # also assign view permissions to non-responsible users that already have some sort of participation for the event
         # (-> they saw and interacted with it)
         participating_users = UserProfile.objects.filter(
             pk__in=LocalParticipation.objects.filter(shift_id__in=event.shifts.all()).values_list(
                 "user", flat=True
             )
-        )
+        ).exclude(pk__in=self.cleaned_data["responsible_users"])
         assign_perm("view_event", participating_users, event)
 
         return event
