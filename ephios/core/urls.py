@@ -35,6 +35,7 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import GeneralSettingsView
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
@@ -183,4 +184,7 @@ urlpatterns = [
         WorkingHourRequestView.as_view(),
         name="request_workinghour",
     ),
+    path("manifest.json", manifest, name="pwa_manifest"),
+    path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
+    path("offline/", offline, name="pwa_offline"),
 ]

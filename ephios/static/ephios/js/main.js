@@ -31,7 +31,27 @@ $(document).ready(function () {
             $('#checkall').prop('checked', false);
         }
     });
+
+    // Blur the view when loading a new page as PWA
+    // https://stackoverflow.com/a/41749865
+    if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+        $(window).on('beforeunload', function () {
+            $('.blur-on-unload').addClass("unloading");
+            $('#unloading-spinner').removeClass("d-none")
+        });
+    }
 })
+
+// Initialize the service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/serviceworker.js', {
+        scope: '/'
+    }).then(function (registration) {
+        console.log('django-pwa: ServiceWorker registration successful with scope: ', registration.scope);
+    }, function (err) {
+        console.log('django-pwa: ServiceWorker registration failed: ', err);
+    });
+}
 
 function getCookie(name) {
     let cookieValue = null;
