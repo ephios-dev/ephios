@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group, Permission
 from guardian.ctypes import get_content_type
+from guardian.shortcuts import assign_perm, remove_perm
 from guardian.utils import get_group_obj_perms_model
 
 
@@ -26,3 +27,23 @@ def get_groups_with_perms(obj, only_with_perms_in):
         }
     )
     return Group.objects.filter(**group_filters).distinct()
+
+
+class PermissionField(BooleanField):
+    def __init__(self, *args, **kwargs):
+        self.permission_set = kwargs.pop("permissions")
+        super().__init__(*args, **kwargs)
+
+    def set_initial_value(self, user_or_group):
+        self.target = user_or_group
+        self.initial = self.target.permissions.filter(
+            codename__in=map(lambda perm: perm.split(".")[-1], self.permission_set)
+        ).count() == len(self.permission_set)
+
+    def update_permissions(self, assign):
+        if assign:
+            for permission in self.permission_set:
+                assign_perm(permission, self.target)
+        else:
+            for permission in self.permission_set:
+                remove_perm(permission, self.target)
