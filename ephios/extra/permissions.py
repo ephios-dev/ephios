@@ -41,10 +41,10 @@ class PermissionField(BooleanField):
             codename__in=map(lambda perm: perm.split(".")[-1], self.permission_set)
         ).count() == len(self.permission_set)
 
-    def update_permissions(self, assign):
+    def update_permissions(self, target, assign):
         if assign:
             for permission in self.permission_set:
-                assign_perm(permission, self.target)
+                assign_perm(permission, target)
         else:
             for permission in self.permission_set:
-                remove_perm(permission, self.target)
+                remove_perm(permission, target)

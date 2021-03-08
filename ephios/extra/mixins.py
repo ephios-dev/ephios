@@ -127,15 +127,12 @@ class PermissionFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            if isinstance(field, PermissionField):
-                field.set_initial_value(self.get_permission_target())
-
-    def get_permission_target(self):
-        return self.permission_target
+            if isinstance(field, PermissionField) and self.instance.pk is not None:
+                field.set_initial_value(self.permission_target)
 
     def save(self, commit=True):
-        result = super().save(commit)
+        target = super().save(commit)
         for key, field in self.fields.items():
             if isinstance(field, PermissionField) and key in self.changed_data:
-                field.update_permissions(self.cleaned_data[key])
-        return result
+                field.update_permissions(target, self.cleaned_data[key])
+        return target
