@@ -46,7 +46,7 @@ coveralls = "^2.2.0"
 isort = "^5.7.0"
 pylint = "^2.7.2"
 autoflake = "^1.4"
-Sphinx = "^3.5.1"
+Sphinx = "^3.5.2"
 sphinx-rtd-theme = "^0.5.1"
 sphinx-intl = "^2.0.1"
 
