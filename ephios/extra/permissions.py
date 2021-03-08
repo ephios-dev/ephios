@@ -53,13 +53,13 @@ class PermissionField(BooleanField):
             == codename_set
         )
 
-    def update_permissions(self, target, assign):
-        if assign:
-            for permission in self.permission_set:
-                assign_perm(permission, target)
-        else:
-            for permission in self.permission_set:
-                remove_perm(permission, target)
+    def assign_permissions(self, target):
+        for permission in self.permission_set:
+            assign_perm(permission, target)
+
+    def remove_permissions(self, target):
+        for permission in self.permission_set:
+            remove_perm(permission, target)
 
 
 class PermissionFormMixin:
@@ -75,7 +75,16 @@ class PermissionFormMixin:
 
     def save(self, commit=True):
         target = super().save(commit)
+        to_remove = set()
+        to_assign = set()
         for key, field in self.fields.items():
-            if isinstance(field, PermissionField) and key in self.changed_data:
-                field.update_permissions(target, self.cleaned_data[key])
+            if isinstance(field, PermissionField):
+                if self.cleaned_data[key]:
+                    to_assign.add(field)
+                else:
+                    to_remove.add(field)
+        for field in to_remove:
+            field.remove_permissions(target)
+        for field in to_assign:
+            field.assign_permissions(target)
         return target
