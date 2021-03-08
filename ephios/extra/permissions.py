@@ -43,9 +43,15 @@ class PermissionField(BooleanField):
 
     def set_initial_value(self, user_or_group):
         self.target = user_or_group
-        self.initial = self.target.permissions.filter(
-            codename__in=map(lambda perm: perm.split(".")[-1], self.permission_set)
-        ).count() == len(self.permission_set)
+        codename_set = set(map(lambda perm: perm.split(".")[-1], self.permission_set))
+        self.initial = (
+            set(
+                self.target.permissions.filter(codename__in=codename_set).values_list(
+                    "codename", flat=True
+                )
+            )
+            == codename_set
+        )
 
     def update_permissions(self, target, assign):
         if assign:
