@@ -70,14 +70,14 @@ class PermissionFormMixin:
 
     def save(self, commit=True):
         target = super().save(commit)
-        to_remove = set()
-        to_assign = set()
+        to_remove = list()
+        to_assign = list()
         for key, field in self.fields.items():
             if isinstance(field, PermissionField):
                 if self.cleaned_data[key]:
-                    to_assign.add(field)
+                    to_assign.append(field)
                 else:
-                    to_remove.add(field)
+                    to_remove.append(field)
         for field in to_remove:
             field.remove_permissions(target)
         for field in to_assign:
