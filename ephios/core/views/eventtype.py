@@ -17,7 +17,7 @@ class EventTypeUpdateView(
     CustomPermissionRequiredMixin, SettingsViewMixin, TemplateView, SingleObjectMixin
 ):
     template_name = "core/eventtype_form.html"
-    permission_required = "core.add_event"
+    permission_required = "core.change_eventtype"
     model = EventType
 
     def dispatch(self, request, *args, **kwargs):
@@ -51,12 +51,13 @@ class EventTypeUpdateView(
 
 
 class EventTypeListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
-    permission_required = "core.add_event"
+    permission_required = "core.view_eventtype"
+    accept_object_perms = False
     model = EventType
 
 
 class EventTypeDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, DeleteView):
-    permission_required = "core.add_event"
+    permission_required = "core.delete_eventtype"
     model = EventType
 
     def get_success_url(self):
@@ -69,7 +70,8 @@ class EventTypeDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, Dele
 class EventTypeCreateView(
     CustomPermissionRequiredMixin, SettingsViewMixin, SuccessMessageMixin, CreateView
 ):
-    permission_required = "core.add_event"
+    permission_required = "core.add_eventtype"
+    accept_object_perms = False
     template_name = "core/eventtype_form.html"
     model = EventType
     fields = ["title", "can_grant_qualification"]
