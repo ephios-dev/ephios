@@ -7,7 +7,6 @@ from ephios.plugins.pages.models import Page
 
 
 class PageListView(StaffRequiredMixin, SettingsViewMixin, ListView):
-    permission_required = "core.add_event"
     model = Page
 
 
