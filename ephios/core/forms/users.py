@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth.models import Group
+from django.db.models import Q
 from django.forms import (
     CharField,
     DateField,
@@ -121,12 +122,15 @@ class GroupForm(PermissionFormMixin, ModelForm):
             Field("can_view_past_event"),
             Fieldset(
                 _("Management"),
-                Field("is_hr_group", data_toggle="tooltip"),
+                Field("is_hr_group", title="This permission is included with the management role."),
                 "is_management_group",
             ),
             Fieldset(
                 _("Planning"),
-                Field("is_planning_group", data_toggle="tooltip"),
+                Field(
+                    "is_planning_group",
+                    title="This permission is included with the management role.",
+                ),
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
             ),
@@ -167,10 +171,18 @@ class UserProfileForm(ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        if request and request.user.has_perm("auth.change_group"):
+        self.locked_groups = set()
+        if request.user.has_perm("auth.change_group"):
             self.fields["groups"].disabled = False
-        else:
-            self.fields["groups"].help_text = _("You are not allowed to change group associations.")
+        elif allowed_groups := request.user.groups:
+            self.fields["groups"].disabled = False
+            self.fields["groups"].queryset = allowed_groups
+            if self.instance.pk:
+                self.locked_groups = set(self.instance.groups.exclude(id__in=allowed_groups.all()))
+            if self.locked_groups:
+                self.fields["groups"].help_text = _(
+                    "The user is also member of <b>{groups}</b>, but you are not allowed to manage memberships for those groups."
+                ).format(groups=", ".join((group.name for group in self.locked_groups)))
 
     field_order = [
         "email",
@@ -193,7 +205,11 @@ class UserProfileForm(ModelForm):
 
     def save(self, commit=True):
         userprofile = super().save(commit)
-        userprofile.groups.set(self.cleaned_data["groups"])
+        userprofile.groups.set(
+            Group.objects.filter(
+                Q(id__in=self.cleaned_data["groups"]) | Q(id__in=(g.id for g in self.locked_groups))
+            )
+        )
         userprofile.save()
         return userprofile
 

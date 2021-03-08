@@ -136,6 +136,6 @@ class PermissionFormMixin:
     def save(self, commit=True):
         result = super().save(commit)
         for key, field in self.fields.items():
-            if isinstance(field, PermissionField):
+            if isinstance(field, PermissionField) and key in self.changed_data:
                 field.update_permissions(self.cleaned_data[key])
         return result
