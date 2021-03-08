@@ -141,6 +141,17 @@ def groups(superuser, manager, planner, volunteer):
 
 
 @pytest.fixture
+def hr_group(volunteer):
+    hr_group = Group.objects.create(name="HR")
+    assign_perm("core.view_userprofile", hr_group)
+    assign_perm("core.add_userprofile", hr_group)
+    assign_perm("core.change_userprofile", hr_group)
+    assign_perm("core.delete_userprofile", hr_group)
+    hr_group.user_set.add(volunteer)
+    return hr_group
+
+
+@pytest.fixture
 def event(groups, service_event_type, planner, tz):
     managers, planners, volunteers = groups
 

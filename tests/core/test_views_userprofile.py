@@ -113,3 +113,24 @@ class TestUserProfileView:
         assert response.status_code == 302
         with pytest.raises(UserProfile.DoesNotExist):
             UserProfile.objects.get(email=userprofile.email).exists()
+
+    def test_userprofile_edit_by_hr_allowed(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([volunteers.id])
+        response = form.submit()
+        assert response.status_code == 302
+        assert set(volunteer.groups.all()) == {volunteers}
+
+    def test_userprofile_edit_by_hr_forbidden(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([managers.id])
+        response = form.submit()
+        assert response.status_code == 200
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}
