@@ -2,8 +2,6 @@ from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import resolve
 
-from ephios.extra.permissions import PermissionField
-
 
 class CustomPermissionRequiredMixin(PermissionRequiredMixin):
     """
@@ -121,18 +119,3 @@ class CanonicalSlugDetailMixin:
         object class. In that case, this method will never be called.
         """
         return self.get_object().slug
-
-
-class PermissionFormMixin:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            if isinstance(field, PermissionField) and self.instance.pk is not None:
-                field.set_initial_value(self.permission_target)
-
-    def save(self, commit=True):
-        target = super().save(commit)
-        for key, field in self.fields.items():
-            if isinstance(field, PermissionField) and key in self.changed_data:
-                field.update_permissions(target, self.cleaned_data[key])
-        return target

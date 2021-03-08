@@ -31,6 +31,12 @@ def get_groups_with_perms(obj, only_with_perms_in):
 
 
 class PermissionField(BooleanField):
+    """
+    This field takes a list of permissions and a permission_target and renders a checkbox that is checked if the target
+    has all given permissions. It requires a permission_target attribute on the form as well as calling the appropriate
+    methods which is taken care of by PermissionFormMixin
+    """
+
     def __init__(self, *args, **kwargs):
         self.permission_set = kwargs.pop("permissions")
         super().__init__(*args, **kwargs)
@@ -48,3 +54,22 @@ class PermissionField(BooleanField):
         else:
             for permission in self.permission_set:
                 remove_perm(permission, target)
+
+
+class PermissionFormMixin:
+    """
+    Mixin for django.forms.ModelForm that handles permission updates for all ephios.extra.permissions.PermissionField on that form
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field, PermissionField) and self.instance.pk is not None:
+                field.set_initial_value(self.permission_target)
+
+    def save(self, commit=True):
+        target = super().save(commit)
+        for key, field in self.fields.items():
+            if isinstance(field, PermissionField) and key in self.changed_data:
+                field.update_permissions(target, self.cleaned_data[key])
+        return target

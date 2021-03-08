@@ -20,8 +20,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.widgets import MultiUserProfileWidget
-from ephios.extra.mixins import PermissionFormMixin
-from ephios.extra.permissions import PermissionField
+from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
 
 
@@ -54,7 +53,9 @@ class GroupForm(PermissionFormMixin, ModelForm):
 
     is_hr_group = PermissionField(
         label=_("Can edit users"),
-        help_text=_("If checked, users in this group can view, add, edit and delete users."),
+        help_text=_(
+            "If checked, users in this group can view, add, edit and delete users. They can also manage group memberships for their own groups."
+        ),
         permissions=[
             "core.add_userprofile",
             "core.change_userprofile",
@@ -66,7 +67,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
     is_management_group = PermissionField(
         label=_("Can manage ephios"),
         help_text=_(
-            "If checked, users in this group can manage users, groups, eventtypes and qualifications"
+            "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
         permissions=[
             "auth.add_group",
