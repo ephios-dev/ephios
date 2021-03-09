@@ -1,3 +1,4 @@
+import functools
 import json
 from datetime import datetime, timedelta
 
@@ -30,7 +31,9 @@ from recurrence.forms import RecurrenceField
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
 from ephios.core.mail import new_event, remind_users_not_participating
 from ephios.core.models import Event, EventType, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin, get_groups_with_perms
+from ephios.core.signals import event_forms
+from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
+from ephios.extra.permissions import get_groups_with_perms
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -55,7 +58,7 @@ class EventListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class EventDetailView(CustomPermissionRequiredMixin, DetailView):
+class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):
     model = Event
     permission_required = "core.view_event"
 
@@ -65,7 +68,29 @@ class EventDetailView(CustomPermissionRequiredMixin, DetailView):
         return Event.objects.all()
 
 
-class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
+class EventEditMixin:
+    @functools.cached_property
+    def plugin_forms(self):
+        forms = []
+        for __, resp in event_forms.send(sender=None, event=self.object, request=self.request):
+            forms.extend(resp)
+        return forms
+
+    def get_context_data(self, **kwargs):
+        kwargs["plugin_forms"] = self.plugin_forms
+        return super().get_context_data(**kwargs)
+
+    def is_valid(self, form):
+        return form.is_valid() and all(plugin_form.is_valid() for plugin_form in self.plugin_forms)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        for plugin_form in self.plugin_forms:
+            plugin_form.save()
+        return response
+
+
+class EventUpdateView(CustomPermissionRequiredMixin, EventEditMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
     permission_required = "core.change_event"
@@ -75,12 +100,26 @@ class EventUpdateView(CustomPermissionRequiredMixin, UpdateView):
             data=self.request.POST or None, user=self.request.user, instance=self.object
         )
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if self.is_valid(form):
+            return self.form_valid(form)
+        return self.form_invalid(form)
 
-class EventCreateView(CustomPermissionRequiredMixin, CreateView):
+
+class EventCreateView(CustomPermissionRequiredMixin, EventEditMixin, CreateView):
     template_name = "core/event_form.html"
     permission_required = "core.add_event"
     accept_object_perms = False
     model = EventType
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        self.object = form.instance
+        if self.is_valid(form):
+            return self.form_valid(form)
+        return self.form_invalid(form)
 
     def dispatch(self, request, *args, **kwargs):
         self.eventtype = get_object_or_404(EventType, pk=self.kwargs.get("type"))
@@ -117,7 +156,7 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
             )
         except ValidationError as e:
             messages.error(request, e)
-        return redirect(reverse("core:event_detail", kwargs={"pk": event.pk}))
+        return redirect(event.get_absolute_url())
 
 
 class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):

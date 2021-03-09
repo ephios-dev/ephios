@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-    {% get_obj_perms request.user for event as "event_perms" %}
     {% if not event.active %}
         {% if event.shifts.exists %}
             {% trans "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
@@ -31,6 +30,9 @@
         <h4 class="text-muted">
             {{ event.location }}
         </h4>
+        {% if request.user.is_authenticated %}
+            {% get_obj_perms request.user for event as "event_perms" %}
+        {% endif %}
         {% if "change_event" in event_perms %}
             <div class="float-right d-inline">
                 <div class="dropdown">
@@ -54,21 +56,23 @@
                             <span class="fas fa-trash-alt"></span>
                             {% trans "Delete event" %}
                         </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_copy" event.pk %}">
-                            <span class="fas fa-copy"></span>
-                            {% translate "Copy event" %}
-                        </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_detail_pdf" event.pk %}">
-                            <span class="fas fa-file-pdf"></span>
-                            {% trans "Download PDF" %}
-                        </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_notifications" event.pk %}">
-                            <span class="fas fa-envelope"></span>
-                            {% trans "Send notifications" %}
-                        </a>
+                        {% if event.active %}
+                            <a class="dropdown-item"
+                               href="{% url "core:event_copy" event.pk %}">
+                                <span class="fas fa-copy"></span>
+                                {% translate "Copy event" %}
+                            </a>
+                            <a class="dropdown-item"
+                               href="{% url "core:event_detail_pdf" event.pk %}">
+                                <span class="fas fa-file-pdf"></span>
+                                {% trans "Download PDF" %}
+                            </a>
+                            <a class="dropdown-item"
+                               href="{% url "core:event_notifications" event.pk %}">
+                                <span class="fas fa-envelope"></span>
+                                {% trans "Send notifications" %}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -78,6 +82,8 @@
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}
+        {% empty %}
+            <p class="text-center"><em>{% translate "No shifts" %}</em></p>
         {% endfor %}
     </div>
 {% endblock %}

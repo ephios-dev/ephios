@@ -153,7 +153,7 @@ class SectionBasedSignupView(FormView, BaseSignupView):
     @cached_property
     def sections_participant_qualifies_for(self):
         return sections_participant_qualifies_for(
-            self.method.configuration.sections, self.request.user.as_participant()
+            self.method.configuration.sections, self.participant
         )
 
     def get_form(self, form_class=None):
@@ -184,13 +184,13 @@ class SectionBasedSignupView(FormView, BaseSignupView):
             # do straight signup if choosing is not enabled
             return super().signup_pressed(**kwargs)
 
-        if not self.method.can_sign_up(self.request.user.as_participant()):
+        if not self.method.can_sign_up(self.participant):
             # redirect a misled request
             messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(reverse("core:event_detail", kwargs=dict(pk=self.shift.event_id)))
+            return redirect(self.participant.reverse_event_detail(self.shift.event))
 
         # all good, redirect to the form
-        return redirect(reverse("core:signup_action", kwargs=dict(pk=self.shift.pk)))
+        return redirect(self.participant.reverse_signup_action(self.shift))
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):

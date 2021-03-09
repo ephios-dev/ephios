@@ -60,10 +60,10 @@ class TestGroupView:
         form["name"] = group_name
         form["users"].force_value([manager.id])
         form["can_view_past_event"] = True
-        form["can_add_event"] = True
+        form["is_planning_group"] = True
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-        form["can_manage_user"] = True
-        form["can_manage_group"] = True
+        form["is_hr_group"] = True
+        form["is_management_group"] = True
         response = form.submit()
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
@@ -90,7 +90,7 @@ class TestGroupView:
         form["name"] = group_name
         form["users"].force_value([manager.id])
         form["can_view_past_event"] = False
-        form["can_add_event"] = False
+        form["is_planning_group"] = False
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         response = form.submit()
         assert response.status_code == 302

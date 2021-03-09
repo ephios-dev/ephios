@@ -16,7 +16,7 @@ main {
 
 footer {
     height: 60px;
-    line-height: 3;
+    margin-top: 2rem;
 }
 
 .btn-disabled {
@@ -47,6 +47,22 @@ footer {
 
 .tooltip-inner {
     text-align: left;
+}
+
+.unloading {
+    transition: filter 0.5s;
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+#unloading-spinner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -38vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
 }
 
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */

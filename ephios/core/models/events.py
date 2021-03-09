@@ -3,6 +3,7 @@ import operator
 from typing import TYPE_CHECKING
 
 import pytz
+from django.conf import settings
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -17,12 +18,12 @@ from django.db.models import (
     TextField,
 )
 from django.utils import formats
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
-from ephios import settings
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 
 if TYPE_CHECKING:
@@ -90,10 +91,13 @@ class Event(Model):
     def __str__(self):
         return str(self.title)
 
+    def get_canonical_slug(self):
+        return slugify(self.title)
+
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("core:event_detail", args=[str(self.id)])
+        return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
 
     def activate(self):
         if not self.active:

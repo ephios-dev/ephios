@@ -1,10 +1,10 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit
+from crispy_forms.layout import Field, Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth.models import Group
+from django.db.models import Q
 from django.forms import (
-    BooleanField,
     CharField,
     DateField,
     DecimalField,
@@ -20,33 +20,26 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.widgets import MultiUserProfileWidget
+from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
 
 
-class GroupForm(ModelForm):
+class GroupForm(PermissionFormMixin, ModelForm):
+    can_view_past_event = PermissionField(
+        label=_("Can view past events"), permissions=["core.view_past_event"], required=False
+    )
+
+    is_planning_group = PermissionField(
+        label=_("Can add events"),
+        permissions=["core.add_event", "core.delete_event"],
+        required=False,
+    )
     publish_event_for_group = ModelMultipleChoiceField(
         label=_("Can publish events for groups"),
         queryset=Group.objects.all(),
         required=False,
         help_text=_("Choose groups that this group can make events visible for."),
         widget=Select2MultipleWidget,
-    )
-    can_view_past_event = BooleanField(label=_("Can view past events"), required=False)
-    can_add_event = BooleanField(label=_("Can add events"), required=False)
-    can_manage_user = BooleanField(
-        label=_("Can manage users"),
-        help_text=_("If checked, users in this group can view, add, edit and delete users."),
-        required=False,
-    )
-    can_manage_group = BooleanField(
-        label=_("Can manage groups"),
-        help_text=_(
-            "If checked, users in this group can add and edit all groups, their permissions as well as group memberships."
-        ),
-        required=False,
-    )
-    users = ModelMultipleChoiceField(
-        label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
     )
     decide_workinghours_for_group = ModelMultipleChoiceField(
         label=_("Can decide working hours for groups"),
@@ -58,6 +51,53 @@ class GroupForm(ModelForm):
         widget=Select2MultipleWidget,
     )
 
+    is_hr_group = PermissionField(
+        label=_("Can edit users"),
+        help_text=_(
+            "If checked, users in this group can view, add, edit and delete users. They can also manage group memberships for their own groups."
+        ),
+        permissions=[
+            "core.add_userprofile",
+            "core.change_userprofile",
+            "core.delete_userprofile",
+            "core.view_userprofile",
+        ],
+        required=False,
+    )
+    is_management_group = PermissionField(
+        label=_("Can manage ephios"),
+        help_text=_(
+            "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
+        ),
+        permissions=[
+            "auth.add_group",
+            "auth.change_group",
+            "auth.delete_group",
+            "auth.view_group",
+            "core.add_userprofile",
+            "core.change_userprofile",
+            "core.delete_userprofile",
+            "core.view_userprofile",
+            "core.view_event",
+            "core.add_event",
+            "core.change_event",
+            "core.delete_event",
+            "core.view_eventtype",
+            "core.add_eventtype",
+            "core.change_eventtype",
+            "core.delete_eventtype",
+            "core.view_qualification",
+            "core.add_qualification",
+            "core.change_qualification",
+            "core.delete_qualification",
+        ],
+        required=False,
+    )
+
+    users = ModelMultipleChoiceField(
+        label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
+    )
+
     class Meta:
         model = Group
         fields = ["name"]
@@ -66,46 +106,36 @@ class GroupForm(ModelForm):
         if (group := kwargs.get("instance", None)) is not None:
             kwargs["initial"] = {
                 "users": group.user_set.all(),
-                "can_view_past_event": group.permissions.filter(
-                    codename="view_past_event"
-                ).exists(),
-                "can_add_event": group.permissions.filter(codename="add_event").exists(),
                 "publish_event_for_group": get_objects_for_group(
                     group, "publish_event_for_group", klass=Group
                 ),
-                "can_manage_user": group.permissions.filter(
-                    codename__in=[
-                        "add_userprofile",
-                        "change_userprofile",
-                        "delete_userprofile",
-                        "view_userprofile",
-                    ]
-                ).exists(),
-                "can_manage_group": group.permissions.filter(
-                    codename__in=[
-                        "add_group",
-                        "change_group",
-                        "delete_group",
-                        "view_group",
-                    ]
-                ).exists(),
                 "decide_workinghours_for_group": get_objects_for_group(
                     group, "decide_workinghours_for_group", klass=Group
                 ),
                 **kwargs.get("initial", {}),
             }
+            self.permission_target = group
         super().__init__(**kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("name"),
             Field("users"),
-            Field("can_manage_user"),
-            Field("can_manage_group"),
             Field("can_view_past_event"),
-            Field("decide_workinghours_for_group"),
-            Field("can_add_event"),
-            Field("publish_event_for_group", wrapper_class="publish-select"),
-            FormActions(Submit("submit", "Submit")),
+            Fieldset(
+                _("Management"),
+                Field("is_hr_group", title="This permission is included with the management role."),
+                "is_management_group",
+            ),
+            Fieldset(
+                _("Planning"),
+                Field(
+                    "is_planning_group",
+                    title="This permission is included with the management role.",
+                ),
+                Field("publish_event_for_group", wrapper_class="publish-select"),
+                "decide_workinghours_for_group",
+            ),
+            FormActions(Submit("submit", _("Save"))),
         )
 
     def save(self, commit=True):
@@ -113,43 +143,11 @@ class GroupForm(ModelForm):
 
         group.user_set.set(self.cleaned_data["users"])
 
-        if self.cleaned_data["can_view_past_event"]:
-            assign_perm("core.view_past_event", group)
-        else:
-            remove_perm("core.view_past_event", group)
-
         remove_perm("publish_event_for_group", group, Group.objects.all())
-        if self.cleaned_data["can_add_event"]:
-            assign_perm("core.add_event", group)
-            assign_perm("core.delete_event", group)
+        if self.cleaned_data["is_planning_group"]:
             assign_perm(
                 "publish_event_for_group", group, self.cleaned_data["publish_event_for_group"]
             )
-        else:
-            remove_perm("core.add_event", group)
-            remove_perm("core.delete_event", group)
-
-        if self.cleaned_data["can_manage_user"]:
-            assign_perm("core.add_userprofile", group)
-            assign_perm("core.change_userprofile", group)
-            assign_perm("core.delete_userprofile", group)
-            assign_perm("core.view_userprofile", group)
-        else:
-            remove_perm("core.add_userprofile", group)
-            remove_perm("core.change_userprofile", group)
-            remove_perm("core.delete_userprofile", group)
-            remove_perm("core.view_userprofile", group)
-
-        if self.cleaned_data["can_manage_group"]:
-            assign_perm("auth.add_group", group)
-            assign_perm("auth.change_group", group)
-            assign_perm("auth.delete_group", group)
-            assign_perm("auth.view_group", group)
-        else:
-            remove_perm("auth.add_group", group)
-            remove_perm("auth.change_group", group)
-            remove_perm("auth.delete_group", group)
-            remove_perm("auth.view_group", group)
 
         if "decide_workinghours_for_group" in self.changed_data:
             remove_perm("decide_workinghours_for_group", group, Group.objects.all())
@@ -174,10 +172,18 @@ class UserProfileForm(ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        if request and request.user.has_perm("auth.change_group"):
+        self.locked_groups = set()
+        if request.user.has_perm("auth.change_group"):
             self.fields["groups"].disabled = False
-        else:
-            self.fields["groups"].help_text = _("You are not allowed to change group associations.")
+        elif allowed_groups := request.user.groups:
+            self.fields["groups"].disabled = False
+            self.fields["groups"].queryset = allowed_groups
+            if self.instance.pk:
+                self.locked_groups = set(self.instance.groups.exclude(id__in=allowed_groups.all()))
+            if self.locked_groups:
+                self.fields["groups"].help_text = _(
+                    "The user is also member of <b>{groups}</b>, but you are not allowed to manage memberships for those groups."
+                ).format(groups=", ".join((group.name for group in self.locked_groups)))
 
     field_order = [
         "email",
@@ -200,7 +206,11 @@ class UserProfileForm(ModelForm):
 
     def save(self, commit=True):
         userprofile = super().save(commit)
-        userprofile.groups.set(self.cleaned_data["groups"])
+        userprofile.groups.set(
+            Group.objects.filter(
+                Q(id__in=self.cleaned_data["groups"]) | Q(id__in=(g.id for g in self.locked_groups))
+            )
+        )
         userprofile.save()
         return userprofile
 

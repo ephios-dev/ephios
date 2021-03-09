@@ -1,6 +1,7 @@
 import io
 
 import pytz
+from django.conf import settings
 from django.http import FileResponse
 from django.utils import formats
 from django.utils.translation import gettext as _
@@ -12,9 +13,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm, mm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from ephios import settings
 from ephios.core.models import Event
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class BasePDFExporter:

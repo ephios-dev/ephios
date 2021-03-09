@@ -13,21 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.views.i18n import JavaScriptCatalog
 
-from ephios import settings
+from ephios.core.plugins import get_all_plugins
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("select2/", include("django_select2.urls")),
     path("", include("ephios.core.urls")),
-    path("", include("ephios.plugins.basesignup.urls")),
-    path("", include("ephios.plugins.pages.urls")),
     path("jsi18n.js", JavaScriptCatalog.as_view(packages=["recurrence"]), name="jsi18n"),
 ]
+
+# Insert plugin url configs. We can't easily restrict to enabled plugins, as patterns are collected on startup.
+for plugin in get_all_plugins():
+    try:
+        urlpatterns.append(path("", include(plugin.module + ".urls")))
+    except ModuleNotFoundError:
+        pass
 
 if settings.DEBUG:
     import debug_toolbar
