@@ -4,7 +4,7 @@ from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.forms.events import EventNotificationForm
-from ephios.core.models import AbstractParticipation, UserProfile
+from ephios.core.models import AbstractParticipation, LocalParticipation, UserProfile
 
 
 @pytest.mark.django_db
@@ -36,6 +36,11 @@ class TestEventNotifications:
         assert len(mail.outbox) == users_not_participating.count()
 
     def test_mail_participants(self, django_app, event, volunteer, planner, groups):
+        LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
         form = django_app.get(
             reverse("core:event_notifications", kwargs=dict(pk=event.id)), user=planner
         ).form
@@ -43,10 +48,7 @@ class TestEventNotifications:
         form["mail_content"] = "hey there"
         response = form.submit()
         assert response.status_code == 302
-        participants = set()
-        for shift in event.shifts.all():
-            participants.update(shift.get_participants())
-        assert len(mail.outbox) == len(participants)
+        assert len(mail.outbox) == 2  # one for the confirmed participation, one for this mail
 
     def test_mail_participants_content_required(
         self, django_app, event, volunteer, planner, groups
@@ -57,7 +59,4 @@ class TestEventNotifications:
         form["action"] = EventNotificationForm.PARTICIPANTS
         response = form.submit()
         assert response.status_code == 200
-        participants = set()
-        for shift in event.shifts.all():
-            participants.update(shift.get_participants())
-        assert len(mail.outbox) == len(participants)
+        assert len(mail.outbox) == 0
