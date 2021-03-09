@@ -164,7 +164,7 @@ def remind_users_not_participating(event):
         title=event.title,
         start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
         end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
-        url=urljoin(SITE_URL, event.get_absolute_url()),
+        url=urljoin(settings.SITE_URL, event.get_absolute_url()),
     )
     html_content = render_to_string("email_base.html", {"message_text": text_content})
     messages = []
@@ -175,6 +175,27 @@ def remind_users_not_participating(event):
             subject=subject,
             body=text_content,
             reply_to=responsible_persons_mails,
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
+    mail.get_connection().send_messages(messages)
+
+
+def mail_to_participants(event, content, sender):
+    participants = set()
+    for shift in event.shifts.all():
+        participants.update(shift.get_participants())
+
+    subject = _("Information for your participation at {title}").format(title=event.title)
+    html_content = render_to_string("email_base.html", {"message_text": content})
+    messages = []
+
+    for participant in participants:
+        message = EmailMultiAlternatives(
+            to=[participant.email],
+            subject=subject,
+            body=content,
+            reply_to=[sender.email],
         )
         message.attach_alternative(html_content, "text/html")
         messages.append(message)

@@ -219,7 +219,7 @@ class EventNotificationForm(forms.Form):
         choices=[
             (NEW_EVENT, _("Send notification about new event to everyone")),
             (REMINDER, _("Send reminder to everyone that is not participating")),
-            (PARTICIPANTS, _("Send remarks to all participants")),
+            (PARTICIPANTS, _("Send a message to all participants")),
         ],
         widget=forms.RadioSelect,
         label=False,
@@ -234,3 +234,11 @@ class EventNotificationForm(forms.Form):
             Field("mail_content", wrapper_class="no-display"),
             Submit("submit", _("Send")),
         )
+
+    def clean(self):
+        if (
+            self.cleaned_data["action"] == self.PARTICIPANTS
+            and not self.cleaned_data["mail_content"]
+        ):
+            raise ValidationError(_("You cannot send an empty mail."))
+        return super().clean()
