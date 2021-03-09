@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.shortcuts import redirect
 from django.template import Context, Template
 from django.template.defaultfilters import yesno
@@ -65,6 +65,10 @@ class AbstractParticipant:
         """Return the participation object for a shift. Return None if it does not exist."""
         raise NotImplementedError
 
+    def confirmed_participations(self):
+        """Return all confirmed participations for this participant"""
+        raise NotImplementedError
+
     @functools.lru_cache
     def collect_all_qualifications(self) -> set:
         """We collect using breadth first search with one query for every layer of inclusion."""
@@ -106,6 +110,11 @@ class LocalUserParticipant(AbstractParticipant):
             return LocalParticipation.objects.get(shift=shift, user=self.user)
         except LocalParticipation.DoesNotExist:
             return None
+
+    def confirmed_participations(self):
+        return LocalParticipation.objects.filter(
+            user=self.user, state=AbstractParticipation.States.CONFIRMED
+        )
 
     def reverse_signup_action(self, shift):
         return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
@@ -249,6 +258,23 @@ def check_participant_age(method, participant):
         )
 
 
+def check_conflicting_shifts(method, participant):
+    shift = method.shift
+    conflicting_shifts = (
+        participant.confirmed_participations()
+        .filter(
+            ~Q(shift=shift)
+            & (
+                Q(shift__start_time__lte=shift.start_time, shift__end_time__gte=shift.start_time)
+                | Q(shift__start_time__gte=shift.start_time, shift__start_time__lt=shift.end_time)
+            )
+        )
+        .exists()
+    )
+    if conflicting_shifts:
+        return ParticipationError(_("You are already participating at another shift at this time."))
+
+
 class BaseSignupMethod:
     @property
     def slug(self):
@@ -296,6 +322,7 @@ class BaseSignupMethod:
             check_participation_state_for_signup,
             check_inside_signup_timeframe,
             check_participant_age,
+            check_conflicting_shifts,
         ]
 
     @property
