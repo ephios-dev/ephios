@@ -116,6 +116,7 @@ DATABASES = {"default": env.db_url()}
 
 # Caches
 CACHES = {"default": env.cache_url(default="locmemcache://")}
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
