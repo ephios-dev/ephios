@@ -114,6 +114,9 @@ WSGI_APPLICATION = "ephios.wsgi.application"
 
 DATABASES = {"default": env.db_url()}
 
+# Caches
+CACHES = {"default": env.cache_url(default="locmemcache://")}
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
