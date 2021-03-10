@@ -256,21 +256,19 @@ def check_participant_age(method, participant):
         )
 
 
-def check_conflicting_shifts(method, participant):
-    shift = method.shift
-    conflicting_shifts = (
-        participant.all_participations()
-        .filter(
-            ~Q(shift=shift)
-            & Q(state=AbstractParticipation.States.CONFIRMED)
-            & (
-                Q(shift__start_time__lte=shift.start_time, shift__end_time__gte=shift.start_time)
-                | Q(shift__start_time__gte=shift.start_time, shift__start_time__lt=shift.end_time)
-            )
+def get_conflicting_shifts(shift, participant):
+    return participant.all_participations().filter(
+        ~Q(shift=shift)
+        & Q(state=AbstractParticipation.States.CONFIRMED)
+        & (
+            Q(shift__start_time__lte=shift.start_time, shift__end_time__gte=shift.start_time)
+            | Q(shift__start_time__gte=shift.start_time, shift__start_time__lt=shift.end_time)
         )
-        .exists()
     )
-    if conflicting_shifts:
+
+
+def check_conflicting_shifts(method, participant):
+    if get_conflicting_shifts(method.shift, participant).exists():
         return ParticipationError(_("You are already participating at another shift at this time."))
 
 
