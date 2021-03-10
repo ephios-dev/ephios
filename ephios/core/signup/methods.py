@@ -65,8 +65,8 @@ class AbstractParticipant:
         """Return the participation object for a shift. Return None if it does not exist."""
         raise NotImplementedError
 
-    def confirmed_participations(self):
-        """Return all confirmed participations for this participant"""
+    def all_participations(self):
+        """Return all participations for this participant"""
         raise NotImplementedError
 
     @functools.lru_cache
@@ -111,10 +111,8 @@ class LocalUserParticipant(AbstractParticipant):
         except LocalParticipation.DoesNotExist:
             return None
 
-    def confirmed_participations(self):
-        return LocalParticipation.objects.filter(
-            user=self.user, state=AbstractParticipation.States.CONFIRMED
-        )
+    def all_participations(self):
+        return LocalParticipation.objects.filter(user=self.user)
 
     def reverse_signup_action(self, shift):
         return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
@@ -261,9 +259,10 @@ def check_participant_age(method, participant):
 def check_conflicting_shifts(method, participant):
     shift = method.shift
     conflicting_shifts = (
-        participant.confirmed_participations()
+        participant.all_participations()
         .filter(
             ~Q(shift=shift)
+            & Q(state=AbstractParticipation.States.CONFIRMED)
             & (
                 Q(shift__start_time__lte=shift.start_time, shift__end_time__gte=shift.start_time)
                 | Q(shift__start_time__gte=shift.start_time, shift__start_time__lt=shift.end_time)
