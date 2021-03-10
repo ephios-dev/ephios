@@ -77,7 +77,7 @@ class GuestParticipant(AbstractParticipant):
             return None
 
     def confirmed_participations(self):
-        GuestParticipation.objects.filter(
+        return GuestParticipation.objects.filter(
             guest_user=self.guest_user, state=AbstractParticipation.States.CONFIRMED
         )
 
