@@ -20,3 +20,8 @@
         <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
     </form>
 {% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "areyousure/are-you-sure.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/areyousure_form.js" %}"></script>
+{% endblock %}

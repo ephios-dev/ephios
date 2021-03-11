@@ -104,3 +104,8 @@
             <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-right">
     </form>
 {% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "areyousure/are-you-sure.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/areyousure_form.js" %}"></script>
+{% endblock %}
