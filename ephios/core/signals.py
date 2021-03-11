@@ -49,6 +49,16 @@ Subclass `BaseEventPluginForm` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
+register_notification_types = PluginSignal()
+"""
+TODO
+"""
+
+register_notification_backends = PluginSignal()
+"""
+TODO
+"""
+
 
 @receiver(
     register_consequence_handlers,
@@ -70,3 +80,17 @@ def register_base_consequence_handlers(sender, **kwargs):
 )
 def send_participation_state_changed_mail(sender, instance, **kwargs):
     mail.participation_state_changed(instance)
+
+
+@receiver(register_notification_types)
+def register_core_notification_types(sender, **kwargs):
+    from ephios.core.notifications.types import ProfileUpdateNotification
+
+    return [ProfileUpdateNotification]
+
+
+@receiver(register_notification_backends)
+def register_core_notification_backends(sender, **kwargs):
+    from ephios.core.notifications.backends import EmailBackend
+
+    return [EmailBackend]

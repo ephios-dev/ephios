@@ -319,3 +319,14 @@ class WorkingHours(Model):
 
     class Meta:
         db_table = "workinghours"
+
+
+class Notification(Model):
+    slug = models.SlugField(max_length=255)
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name=_("affected user"),
+        null=True,
+    )
+    data = models.JSONField(default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder)
