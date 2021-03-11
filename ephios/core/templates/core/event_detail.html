@@ -67,6 +67,11 @@
                                 <span class="fas fa-file-pdf"></span>
                                 {% trans "Download PDF" %}
                             </a>
+                            <a class="dropdown-item"
+                               href="{% url "core:event_notifications" event.pk %}">
+                                <span class="fas fa-envelope"></span>
+                                {% trans "Send notifications" %}
+                            </a>
                         {% endif %}
                     </div>
                 </div>

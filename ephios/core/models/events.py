@@ -59,7 +59,6 @@ class Event(Model):
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
     active = BooleanField(default=False)
-    mail_updates = BooleanField(_("send updates via mail"), default=True)
 
     objects = ActiveManager()
     all_objects = Manager()
@@ -101,15 +100,11 @@ class Event(Model):
         return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
 
     def activate(self):
-        from ephios.core import mail
-
         if not self.active:
             with transaction.atomic():
                 self.active = True
                 self.full_clean()
                 self.save()
-                if self.mail_updates:
-                    mail.new_event(self)
 
 
 class AbstractParticipation(PolymorphicModel):

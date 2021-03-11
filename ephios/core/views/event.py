@@ -28,7 +28,8 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 from recurrence.forms import RecurrenceField
 
-from ephios.core.forms.events import EventDuplicationForm, EventForm
+from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
+from ephios.core.mail import mail_to_participants, new_event, remind_users_not_participating
 from ephios.core.models import Event, EventType, Shift
 from ephios.core.signals import event_forms
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
@@ -279,3 +280,25 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "core/home.html"
+
+
+class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    model = Event
+    permission_required = "core.change_event"
+    template_name = "core/event_notification.html"
+    form_class = EventNotificationForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def form_valid(self, form):
+        action = form.cleaned_data["action"]
+        if action == form.NEW_EVENT:
+            new_event(self.object)
+        elif action == form.REMINDER:
+            remind_users_not_participating(self.object)
+        elif action == form.PARTICIPANTS:
+            mail_to_participants(self.object, form.cleaned_data["mail_content"], self.request.user)
+        messages.success(self.request, _("Notifications sent succesfully."))
+        return redirect(self.object.get_absolute_url())
