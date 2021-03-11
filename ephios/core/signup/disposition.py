@@ -134,7 +134,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
                 start_index=form.cleaned_data["new_index"],
             )
             form = next(filter(lambda form: form.instance.id == instance.id, formset))
-            return self.render_to_response({"form": form})
+            return self.render_to_response({"form": form, "shift": shift})
         raise Http404()
 
 

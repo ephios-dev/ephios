@@ -17,6 +17,13 @@
                     {% endif %}
                 </div>
                 <div>
+                    {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
+                        {% if conflicting_shifts %}
+                            <span class="fa fa-exclamation-triangle text-danger"
+                                  data-toggle="tooltip"
+                                  title="{{ form.instance.participant }} already participates in {{ conflicting_shifts|join:", " }} at the same time."></span>
+                        {% endif %}
+                    {% endwith %}
                     {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
                         <span class="badge badge-secondary">{{ qualification }}</span>
                     {% endfor %}
