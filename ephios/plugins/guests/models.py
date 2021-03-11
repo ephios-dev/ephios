@@ -76,6 +76,9 @@ class GuestParticipant(AbstractParticipant):
         except GuestParticipation.DoesNotExist:
             return None
 
+    def all_participations(self):
+        return GuestParticipation.objects.filter(guest_user=self.guest_user)
+
     def reverse_signup_action(self, shift):
         return reverse(
             "guests:signup_action",
