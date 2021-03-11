@@ -18,9 +18,9 @@ from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users.views import UserPreferenceFormView
 
-from ephios.core import mail
 from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.core.models import QualificationGrant, UserProfile
+from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -79,7 +79,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             if userprofile.is_active:
-                mail.send_account_creation_info_to_user(userprofile)
+                NewProfileNotification.create(userprofile)
             return redirect(reverse("core:userprofile_list"))
         return self.render_to_response(
             self.get_context_data(
@@ -125,11 +125,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            if (
-                userprofile.is_active
-                and userprofile.preferences["notifications__userprofile_update"]
-            ):
-                mail.send_account_update_info_to_user(userprofile)
+            ProfileUpdateNotification.create(userprofile)
             return redirect(reverse("core:userprofile_list"))
 
         return self.render_to_response(

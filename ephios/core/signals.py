@@ -84,9 +84,9 @@ def send_participation_state_changed_mail(sender, instance, **kwargs):
 
 @receiver(register_notification_types)
 def register_core_notification_types(sender, **kwargs):
-    from ephios.core.notifications.types import ProfileUpdateNotification
+    from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
 
-    return [ProfileUpdateNotification]
+    return [ProfileUpdateNotification, NewProfileNotification]
 
 
 @receiver(register_notification_backends)

@@ -6,6 +6,7 @@ from ephios.core.models import (
     Event,
     EventType,
     LocalParticipation,
+    Notification,
     Qualification,
     QualificationCategory,
     QualificationGrant,
@@ -23,3 +24,4 @@ admin.site.register(Shift)
 admin.site.register(Event, GuardedModelAdmin)
 admin.site.register(EventType)
 admin.site.register(LocalParticipation)
+admin.site.register(Notification)

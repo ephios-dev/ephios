@@ -1,56 +1,14 @@
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, UserProfile
 from ephios.extra.permissions import get_groups_with_perms
-
-
-def send_account_creation_info_to_user(userprofile):
-    subject = _("Welcome to ephios!")
-    uid = urlsafe_base64_encode(force_bytes(userprofile.id))
-    token = default_token_generator.make_token(userprofile)
-    reset_link = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
-    text_content = _(
-        "You're receiving this email because a new account has been created for you at ephios.\n"
-        "Please go to the following page and choose a password: {url}\n"
-        "Your username is your email address: {email}\n"
-    ).format(url=urljoin(settings.SITE_URL, reset_link), email=userprofile.email)
-
-    html_content = render_to_string(
-        "core/new_account_email.html",
-        {"uid": uid, "token": token, "site_url": settings.SITE_URL, "email": userprofile.email},
-    )
-    message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
-    message.attach_alternative(html_content, "text/html")
-    message.send()
-
-
-def send_account_update_info_to_user(userprofile):
-    subject = _("ephios account updated")
-    url = reverse("core:profile")
-    text_content = _(
-        "You're receiving this email because your account at ephios has been updated.\n"
-        "You can see the changes in your profile: {url}\n"
-        "Your username is your email address: {email}\n"
-    ).format(url=urljoin(settings.SITE_URL, url), email=userprofile.email)
-
-    html_content = render_to_string(
-        "core/account_updated_email.html",
-        {"site_url": settings.SITE_URL, "url": url, "email": userprofile.email},
-    )
-    message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
-    message.attach_alternative(html_content, "text/html")
-    message.send()
 
 
 def new_event(event):
