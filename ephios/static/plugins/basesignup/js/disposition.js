@@ -101,6 +101,7 @@ $(document).ready(function () {
                     handleDispositionForm($newFormFragment, false, true);
                     $spinner.fadeOut("fast", function () {
                         $(this).replaceWith($newFormFragment);
+                        handleForms($newFormFragment);
                         $newFormFragment.fadeIn("fast");
                     });
 
