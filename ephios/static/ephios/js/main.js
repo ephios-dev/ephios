@@ -40,6 +40,8 @@ $(document).ready(function () {
             $('#unloading-spinner').removeClass("d-none")
         });
     }
+
+    // Confirm users wants to leave page with unsaved forms
     $('form').areYouSure();
     // Listener for inputs that can dynamically add new forms and trigger a scan of the new form
     $('.add-form').click(function() {
