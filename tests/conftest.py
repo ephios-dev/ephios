@@ -162,7 +162,6 @@ def event(groups, service_event_type, planner, tz):
         description="Rave and rescue!",
         location="Lärz",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)
@@ -187,7 +186,6 @@ def conflicting_event(event, service_event_type, volunteer, groups):
         description="clashes",
         location="Berlin",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
 
@@ -221,7 +219,6 @@ def event_to_next_day(groups, service_event_type, planner, tz):
         description="all night long",
         location="Potsdam",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)
@@ -247,7 +244,6 @@ def multi_shift_event(groups, service_event_type, planner, tz):
         description="long",
         location="Berlin",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)

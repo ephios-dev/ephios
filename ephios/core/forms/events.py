@@ -1,6 +1,8 @@
 from datetime import date, datetime, timedelta
 
 import django.forms as forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Layout, Submit
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -46,7 +48,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location", "mail_updates"]
+        fields = ["title", "description", "location"]
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
@@ -207,3 +209,36 @@ class BaseEventPluginForm(forms.Form):
 
     def save(self):
         pass
+
+
+class EventNotificationForm(forms.Form):
+    NEW_EVENT = "new"
+    REMINDER = "remind"
+    PARTICIPANTS = "participants"
+    action = forms.ChoiceField(
+        choices=[
+            (NEW_EVENT, _("Send notification about new event to everyone")),
+            (REMINDER, _("Send reminder to everyone that is not participating")),
+            (PARTICIPANTS, _("Send a message to all participants")),
+        ],
+        widget=forms.RadioSelect,
+        label=False,
+    )
+    mail_content = forms.CharField(required=False, widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field("action"),
+            Field("mail_content", wrapper_class="no-display"),
+            Submit("submit", _("Send")),
+        )
+
+    def clean(self):
+        if (
+            self.cleaned_data["action"] == self.PARTICIPANTS
+            and not self.cleaned_data["mail_content"]
+        ):
+            raise ValidationError(_("You cannot send an empty mail."))
+        return super().clean()

@@ -7,6 +7,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
+from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
@@ -144,4 +145,58 @@ def participation_state_changed(participation: AbstractParticipation):
                 message.attach_alternative(html_content, "text/html")
                 messages.append(message)
 
+    mail.get_connection().send_messages(messages)
+
+
+def remind_users_not_participating(event):
+    users_not_participating = UserProfile.objects.exclude(
+        pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
+            "localparticipation__user", flat=True
+        )
+    )
+    responsible_users = get_users_with_perms(event, only_with_perms_in=["change_event"]).distinct()
+    responsible_persons_mails = list(responsible_users.values_list("email", flat=True))
+
+    subject = _("Help needed for {title}").format(title=event.title)
+    text_content = _(
+        "Your support is needed for {title} ({start} - {end}). \nYou can view the event here: {url}"
+    ).format(
+        title=event.title,
+        start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
+        end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
+        url=urljoin(settings.SITE_URL, event.get_absolute_url()),
+    )
+    html_content = render_to_string("email_base.html", {"message_text": text_content})
+    messages = []
+
+    for user in users_not_participating:
+        message = EmailMultiAlternatives(
+            to=[user.email],
+            subject=subject,
+            body=text_content,
+            reply_to=responsible_persons_mails,
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
+    mail.get_connection().send_messages(messages)
+
+
+def mail_to_participants(event, content, sender):
+    participants = set()
+    for shift in event.shifts.all():
+        participants.update(shift.get_participants())
+
+    subject = _("Information for your participation at {title}").format(title=event.title)
+    html_content = render_to_string("email_base.html", {"message_text": content})
+    messages = []
+
+    for participant in participants:
+        message = EmailMultiAlternatives(
+            to=[participant.email],
+            subject=subject,
+            body=content,
+            reply_to=[sender.email],
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
     mail.get_connection().send_messages(messages)
