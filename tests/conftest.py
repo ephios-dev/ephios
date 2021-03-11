@@ -10,8 +10,10 @@ from guardian.shortcuts import assign_perm
 
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
 from ephios.core.models import (
+    AbstractParticipation,
     Event,
     EventType,
+    LocalParticipation,
     Qualification,
     QualificationCategory,
     QualificationGrant,
@@ -174,6 +176,39 @@ def event(groups, service_event_type, planner, tz):
         signup_configuration={},
     )
     return event
+
+
+@pytest.fixture
+def conflicting_event(event, service_event_type, volunteer, groups):
+    managers, planners, volunteers = groups
+    conflicting_event = Event.objects.create(
+        title="Conflicting event",
+        description="clashes",
+        location="Berlin",
+        type=service_event_type,
+        mail_updates=True,
+        active=True,
+    )
+
+    assign_perm("view_event", [volunteers, planners], conflicting_event)
+    assign_perm("change_event", planners, conflicting_event)
+
+    Shift.objects.create(
+        event=conflicting_event,
+        meeting_time=event.shifts.first().meeting_time,
+        start_time=event.shifts.first().start_time,
+        end_time=event.shifts.first().end_time,
+        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_configuration={},
+    )
+
+    LocalParticipation.objects.create(
+        shift=event.shifts.first(),
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+    )
+
+    return conflicting_event
 
 
 @pytest.fixture
