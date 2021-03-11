@@ -1,7 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from ephios.core import mail
 from ephios.core.models import LocalParticipation
 from ephios.core.plugins import PluginSignal
 
@@ -79,14 +78,45 @@ def register_base_consequence_handlers(sender, **kwargs):
     dispatch_uid="ephios.core.signals.send_participation_state_changed_mail",
 )
 def send_participation_state_changed_mail(sender, instance, **kwargs):
-    mail.participation_state_changed(instance)
+    from ephios.core.models import AbstractParticipation
+
+    if instance.state == AbstractParticipation.States.CONFIRMED:
+        from ephios.core.notifications.types import ParticipationConfirmedNotification
+
+        ParticipationConfirmedNotification.send(instance)
+    elif instance.state == AbstractParticipation.States.REQUESTED:
+        from ephios.core.notifications.types import ResponsibleParticipationRequested
+
+        ResponsibleParticipationRequested.send(instance)
+    elif instance.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+        from ephios.core.notifications.types import ParticipationRejectedNotification
+
+        ParticipationRejectedNotification.send(instance)
 
 
 @receiver(register_notification_types)
 def register_core_notification_types(sender, **kwargs):
-    from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
+    from ephios.core.notifications.types import (
+        CustomParticipantNotification,
+        EventReminderNotification,
+        NewEventNotification,
+        NewProfileNotification,
+        ParticipationConfirmedNotification,
+        ParticipationRejectedNotification,
+        ProfileUpdateNotification,
+        ResponsibleParticipationRequested,
+    )
 
-    return [ProfileUpdateNotification, NewProfileNotification]
+    return [
+        ProfileUpdateNotification,
+        NewProfileNotification,
+        ParticipationRejectedNotification,
+        ParticipationConfirmedNotification,
+        ResponsibleParticipationRequested,
+        NewEventNotification,
+        EventReminderNotification,
+        CustomParticipantNotification,
+    ]
 
 
 @receiver(register_notification_backends)

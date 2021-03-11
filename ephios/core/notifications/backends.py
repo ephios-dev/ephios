@@ -12,20 +12,30 @@ def all_notification_backends():
 
 
 class AbstractBackend:
+    def can_send(self, notification):
+        return notification.user is not None
+
     def send(self, notifications: list[Notification]):
         raise NotImplementedError
 
 
 class EmailBackend(AbstractBackend):
+    def can_send(self, notification):
+        return notification.user is not None or "email" in notification.data
+
+    def get_mailaddress(self, notification):
+        return notification.user.email if notification.user else notification.data.get("email")
+
     def send(self, notifications):
         email_messages = []
         for notification in notifications:
-            handler = notification_type_from_slug(notification.slug)
-            email = EmailMultiAlternatives(
-                to=[notification.user.email],
-                subject=handler.get_subject(notification),
-                body=handler.as_plaintext(notification),
-            )
-            email.attach_alternative(handler.as_html(notification), "text/html")
-            email_messages.append(email)
+            if self.can_send(notification):
+                handler = notification_type_from_slug(notification.slug)
+                email = EmailMultiAlternatives(
+                    to=[self.get_mailaddress(notification)],
+                    subject=handler.get_subject(notification),
+                    body=handler.as_plaintext(notification),
+                )
+                email.attach_alternative(handler.as_html(notification), "text/html")
+                email_messages.append(email)
         mail.get_connection().send_messages(email_messages)

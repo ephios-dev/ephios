@@ -79,7 +79,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             if userprofile.is_active:
-                NewProfileNotification.create(userprofile)
+                NewProfileNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
         return self.render_to_response(
             self.get_context_data(
@@ -125,7 +125,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            ProfileUpdateNotification.create(userprofile)
+            ProfileUpdateNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
 
         return self.render_to_response(
