@@ -186,7 +186,6 @@ def conflicting_event(event, service_event_type, volunteer, groups):
         description="clashes",
         location="Berlin",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
 
