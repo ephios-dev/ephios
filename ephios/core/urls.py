@@ -12,6 +12,7 @@ from ephios.core.views.accounts import (
     UserProfileCreateView,
     UserProfileDeleteView,
     UserProfileListView,
+    UserProfilePasswordResetView,
     UserProfileSettingsView,
     UserProfileUpdateView,
 )
@@ -174,6 +175,11 @@ urlpatterns = [
         "users/<int:pk>/delete",
         UserProfileDeleteView.as_view(),
         name="userprofile_delete",
+    ),
+    path(
+        "users/<int:pk>/password_reset",
+        UserProfilePasswordResetView.as_view(),
+        name="userprofile_password_reset",
     ),
     path(
         "users/create/",
