@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
@@ -152,6 +153,45 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
             ),
         )
         return reverse("core:userprofile_list")
+
+
+class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+    model = UserProfile
+    permission_required = "core.change_userprofile"
+    template_name = "core/userprofile_confirm_password_reset.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("confirm"):
+            form = PasswordResetForm(
+                {
+                    "email": self.object.email,
+                }
+            )
+            if form.is_valid():
+                form.save(request=request)
+                messages.info(
+                    request,
+                    _(
+                        "The user's password has been reset. An email was sent to {email}.".format(
+                            email=self.object.email
+                        )
+                    ),
+                )
+            else:
+                messages.error(
+                    request,
+                    _(
+                        "No valid email address ({email}). The password has not been reset.".format(
+                            email=self.object.email
+                        )
+                    ),
+                )
+            return redirect(reverse("core:userprofile_list"))
+        return self.render_to_response({"userprofile": self.object})
 
 
 class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
