@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic.base import TemplateResponseMixin
 
 from ephios.core.models import Event
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, View):

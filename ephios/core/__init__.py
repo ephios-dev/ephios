@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from dynamic_preferences.registries import preference_models
+from dynamic_preferences.registries import global_preferences_registry, preference_models
 
 from .registries import event_type_preference_registry
 

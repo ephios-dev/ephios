@@ -9,7 +9,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import ModelSelect2Widget
 
 from ephios.core.models import AbstractParticipation, Shift, UserProfile
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class BaseDispositionParticipationForm(forms.ModelForm):
@@ -134,7 +134,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
                 start_index=form.cleaned_data["new_index"],
             )
             form = next(filter(lambda form: form.instance.id == instance.id, formset))
-            return self.render_to_response({"form": form})
+            return self.render_to_response({"form": form, "shift": shift})
         raise Http404()
 
 

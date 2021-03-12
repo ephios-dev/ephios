@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.core.signup import LocalParticipation
+from ephios.core.signup import AbstractParticipation, LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
 
 
@@ -19,7 +19,6 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     event_form["title"] = "Seeed Concert"
     event_form["description"] = "when at location, call 0123456789"
     event_form["location"] = "BOS ARENA"
-    event_form["mail_updates"] = True
     event_form["visible_for"] = [volunteers.id]
     event_form["responsible_groups"] = [planners.id]
     # event_form["responsible_users"] is prefilled with planner
@@ -42,6 +41,23 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
         planner,
         superuser,
     }  # superuser is in planner group
+
+
+@pytest.mark.django_db
+def test_edit_event_with_participating_responsible(
+    django_app, planner, qualified_volunteer, event, groups
+):
+    LocalParticipation.objects.create(
+        shift=event.shifts.first(),
+        user=qualified_volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+    )
+    event_form = django_app.get(
+        reverse("core:event_edit", kwargs=dict(pk=event.pk)),
+        user=planner,
+    ).form
+    event_form["responsible_users"].force_value([qualified_volunteer.id])
+    event_form.submit()
 
 
 @pytest.mark.django_db
@@ -71,4 +87,4 @@ def test_participating_users_can_see_otherwise_invisible_event(
     response.form.submit()
 
     # check that we can get (200 OK) the event details as a participant
-    assert django_app.get(reverse("core:event_detail", kwargs=dict(pk=event.pk)), user=volunteer)
+    assert django_app.get(event.get_absolute_url(), user=volunteer)

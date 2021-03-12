@@ -1,6 +1,5 @@
 {% load statici18n %}
 {% load i18n %}
-{% load bootstrap4 %}
 {% load static %}
 {% load compress %}
 
@@ -11,6 +10,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>ephios - {% block title %} ephios {% endblock %}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "ephios/img/ephios-symbol-red.svg" %}">
+
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="ephios">
+
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#ff033f">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ephios">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#fff">
+
+    {% for icon in PWA_APP_ICONS %}
+        <link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.sizes }}">
+    {% endfor %}
+
+    {% for splash in PWA_APP_SPLASH_SCREEN %}
+        <link href="{{ splash.src }}" media="{{ splash.media }}" rel="apple-touch-startup-image"/>
+    {% endfor %}
+
+    <!-- Tile for Win8 -->
+    <meta name="msapplication-TileColor" content="#fff">
+    {% with PWA_APP_ICONS|last as icon %}
+        <meta name="msapplication-TileImage" content="{{ icon.src }}">
+        <link rel="icon" sizes="{{ icon.sizes }}" href="{{ icon.src }}">
+    {% endwith %}
+
     {% compress css %}
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
@@ -37,7 +67,8 @@
     <header class="row mb-3">
         <div class="col-md-12 px-0">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">ephios</a>
+                <a class="navbar-brand" href="/"><img src="{% static "ephios/img/ephios-text-black.png" %}" alt="ephios"
+                                                      class="d-inline-block" width="75"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,16 +142,28 @@
                 </div>
             </nav>
         </div>
+        <div id="unloading-spinner" class="d-none">
+            <div class="spinner-grow" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
     </header>
-    <main class="row">
+    <main class="row blur-on-unload">
         <div class="col-md-12">
             <div id="messages">
-                {% bootstrap_messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
             </div>
             {% block content %}{% endblock %}
         </div>
     </main>
-    <footer class="row">
+    <footer class="row blur-on-unload">
         <div class="col-md-12 text-center">
             <small>
                 {% for label, url in footer.items %}

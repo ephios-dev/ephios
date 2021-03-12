@@ -9,22 +9,18 @@
     <div class="page-header mb-3">
         <h1>{% translate "Settings" %} {% block settings_title %}{% endblock %}</h1>
     </div>
-    <div class="row">
-        <div class="col-2">
-            {% with url_name=request.resolver_match.url_name %}
+    <div class="d-flex flex-column flex-sm-row">
+        <div class="mr-3 mb-2">
                 <ul class="nav nav-pills flex-column">
+                    {% for section in settings_sections %}
                     <li class="nav-item">
-                        <a class="nav-link {% if url_name == "settings_general" %}active{% endif %}"
-                           href="{% url "core:settings_general" %}">{% translate "General" %}</a>
+                        <a class="nav-link {% if section.active %}active{% endif %}"
+                           href="{{ section.url }}">{{ section.label }}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == "settings_eventtype_list" %}active{% endif %}"
-                           href="{% url "core:settings_eventtype_list" %}">{% translate "Event types" %}</a>
-                    </li>
+                    {% endfor %}
                 </ul>
-            {% endwith %}
         </div>
-        <div class="col-10">
+        <div class="flex-fill">
             {% block settings_content %}
 
             {% endblock %}

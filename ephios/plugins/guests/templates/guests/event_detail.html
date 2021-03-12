@@ -1,0 +1,10 @@
+{% extends "core/event_detail.html" %}
+{% load bootstrap %}
+{% load rich_text %}
+{% load guardian_tags %}
+{% load i18n %}
+
+{% block content %}
+    <h6 class="text-secondary"><b>{{ object.as_participant }}</b></h6>
+    {{ block.super }}
+{% endblock %}

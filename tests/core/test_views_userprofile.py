@@ -2,13 +2,13 @@ from collections import OrderedDict
 from datetime import date, datetime
 
 import pytest
+from django.conf import settings
 from django.core import mail
 from django.urls import reverse
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 
 from ephios.core.models import UserProfile
-from ephios.settings import SITE_URL
 
 
 @pytest.mark.django_db
@@ -68,7 +68,7 @@ class TestUserProfileView:
         assert userprofile.email == userprofile_email
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == _("Welcome to ephios!")
-        assert SITE_URL in mail.outbox[0].body
+        assert settings.SITE_URL in mail.outbox[0].body
         assert userprofile_email in mail.outbox[0].body
         assert mail.outbox[0].to == [userprofile_email]
 
@@ -123,3 +123,24 @@ class TestUserProfileView:
         assert response.status_code == 200
         response.form.submit()
         assert response.status_code == 200
+
+    def test_userprofile_edit_by_hr_allowed(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([volunteers.id])
+        response = form.submit()
+        assert response.status_code == 302
+        assert set(volunteer.groups.all()) == {volunteers}
+
+    def test_userprofile_edit_by_hr_forbidden(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([managers.id])
+        response = form.submit()
+        assert response.status_code == 200
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}
