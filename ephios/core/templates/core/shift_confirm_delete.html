@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load bootstrap4 %}
 {% load static %}
 
 {% block title %}
@@ -14,7 +13,7 @@
 
     <form method="post">{% csrf_token %}
         <p>{% blocktrans %}Are you sure you want to delete the shift "{{ shift }}"?{% endblocktrans %}</p>
-        <a role="button" class="btn btn-secondary" href="{% url "core:event_detail" shift.event.pk %}">{% trans "Back" %}</a>
+        <a role="button" class="btn btn-secondary" href="{{ shift.event.get_absolute_url }}">{% trans "Back" %}</a>
         <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
     </form>
 

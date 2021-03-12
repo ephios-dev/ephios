@@ -11,7 +11,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):

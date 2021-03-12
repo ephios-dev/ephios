@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load bootstrap %}
+{% load crispy_forms_filters %}
 {% load i18n %}
-{% load bootstrap4 %}
 {% load static %}
 
 {% block title %}
@@ -14,10 +15,9 @@
 {% block content %}
     {% if inactive_events %}
         {% for event in inactive_events %}
-            {% url "core:event_detail" event.pk as event_url %}
             {% trans "You have an unsaved event" as unsaved_message %}
             {% trans "View" as view_message %}
-            {% bootstrap_alert unsaved_message|add:" ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event_url|add:"'>"|add:view_message|add:"</a>"|safe %}
+            {% render_alert unsaved_message|add:" ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event.get_absolute_url|add:"'>"|add:view_message|add:"</a>"|safe %}
         {% endfor %}
     {% endif %}
     <div class="page-header">
@@ -29,32 +29,37 @@
     </div>
     <form method="post" class="form">
         {% csrf_token %}
-        {% bootstrap_form form exclude="visible_for,responsible_groups,responsible_users" %}
+        {{ form.title|as_crispy_field }}
+        {{ form.description|as_crispy_field }}
+        {{ form.location|as_crispy_field }}
 
         <div class="card mb-3">
             <div class="card-header" data-toggle="collapse" data-target="#advancedSettings">
-                <a href="#">{%translate "Advanced settings" %}</a>
+                <a href="#">{% translate "Permissions" %}</a>
             </div>
             <div id="advancedSettings" class="collapse">
                 <div class="card-body">
-                    {% bootstrap_field form.visible_for %}
-                    {% bootstrap_field form.responsible_groups %}
-                    {% bootstrap_field form.responsible_users %}
+                    {{ form.visible_for|as_crispy_field }}
+                    {{ form.responsible_groups|as_crispy_field }}
+                    {{ form.responsible_users|as_crispy_field }}
                 </div>
             </div>
         </div>
 
-        {% buttons %}
+        {% for plugin_form in plugin_forms %}
+            {{ plugin_form.render }}
+        {% endfor %}
+
+        <div class="form-group">
             {% if event %}
                 <a role="button" class="btn btn-secondary"
-                   href="{% url "core:event_detail" event.pk %}">{% trans "Back" %}</a>
+                   href="{{ event.get_absolute_url }}">{% trans "Back" %}</a>
                 <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
             {% else %}
                 <a role="button" class="btn btn-secondary"
                    href="{% url "core:event_list" %}">{% trans "Cancel" %}</a>
                 <button type="submit" class="btn btn-primary float-right">{% trans "Next" %}</button>
             {% endif %}
-
-        {% endbuttons %}
+        </div>
     </form>
 {% endblock %}

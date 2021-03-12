@@ -1,18 +1,19 @@
 from urllib.parse import urljoin
 
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
+from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, UserProfile
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.settings import SITE_URL
 
 
 def send_account_creation_info_to_user(userprofile):
@@ -24,11 +25,11 @@ def send_account_creation_info_to_user(userprofile):
         "You're receiving this email because a new account has been created for you at ephios.\n"
         "Please go to the following page and choose a password: {url}\n"
         "Your username is your email address: {email}\n"
-    ).format(url=urljoin(SITE_URL, reset_link), email=userprofile.email)
+    ).format(url=urljoin(settings.SITE_URL, reset_link), email=userprofile.email)
 
     html_content = render_to_string(
         "core/new_account_email.html",
-        {"uid": uid, "token": token, "site_url": SITE_URL, "email": userprofile.email},
+        {"uid": uid, "token": token, "site_url": settings.SITE_URL, "email": userprofile.email},
     )
     message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
     message.attach_alternative(html_content, "text/html")
@@ -42,11 +43,11 @@ def send_account_update_info_to_user(userprofile):
         "You're receiving this email because your account at ephios has been updated.\n"
         "You can see the changes in your profile: {url}\n"
         "Your username is your email address: {email}\n"
-    ).format(url=urljoin(SITE_URL, url), email=userprofile.email)
+    ).format(url=urljoin(settings.SITE_URL, url), email=userprofile.email)
 
     html_content = render_to_string(
         "core/account_updated_email.html",
-        {"site_url": SITE_URL, "url": url, "email": userprofile.email},
+        {"site_url": settings.SITE_URL, "url": url, "email": userprofile.email},
     )
     message = EmailMultiAlternatives(to=[userprofile.email], subject=subject, body=text_content)
     message.attach_alternative(html_content, "text/html")
@@ -71,10 +72,10 @@ def new_event(event):
         title=event.title,
         location=event.location,
         description=event.description,
-        url=urljoin(SITE_URL, event.get_absolute_url()),
+        url=urljoin(settings.SITE_URL, event.get_absolute_url()),
     )
     html_content = render_to_string(
-        "core/mails/new_event.html", {"event": event, "site_url": SITE_URL}
+        "core/mails/new_event.html", {"event": event, "site_url": settings.SITE_URL}
     )
 
     for user in users:
@@ -144,4 +145,58 @@ def participation_state_changed(participation: AbstractParticipation):
                 message.attach_alternative(html_content, "text/html")
                 messages.append(message)
 
+    mail.get_connection().send_messages(messages)
+
+
+def remind_users_not_participating(event):
+    users_not_participating = UserProfile.objects.exclude(
+        pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
+            "localparticipation__user", flat=True
+        )
+    )
+    responsible_users = get_users_with_perms(event, only_with_perms_in=["change_event"]).distinct()
+    responsible_persons_mails = list(responsible_users.values_list("email", flat=True))
+
+    subject = _("Help needed for {title}").format(title=event.title)
+    text_content = _(
+        "Your support is needed for {title} ({start} - {end}). \nYou can view the event here: {url}"
+    ).format(
+        title=event.title,
+        start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
+        end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
+        url=urljoin(settings.SITE_URL, event.get_absolute_url()),
+    )
+    html_content = render_to_string("email_base.html", {"message_text": text_content})
+    messages = []
+
+    for user in users_not_participating:
+        message = EmailMultiAlternatives(
+            to=[user.email],
+            subject=subject,
+            body=text_content,
+            reply_to=responsible_persons_mails,
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
+    mail.get_connection().send_messages(messages)
+
+
+def mail_to_participants(event, content, sender):
+    participants = set()
+    for shift in event.shifts.all():
+        participants.update(shift.get_participants())
+
+    subject = _("Information for your participation at {title}").format(title=event.title)
+    html_content = render_to_string("email_base.html", {"message_text": content})
+    messages = []
+
+    for participant in participants:
+        message = EmailMultiAlternatives(
+            to=[participant.email],
+            subject=subject,
+            body=content,
+            reply_to=[sender.email],
+        )
+        message.attach_alternative(html_content, "text/html")
+        messages.append(message)
     mail.get_connection().send_messages(messages)

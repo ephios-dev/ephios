@@ -5,12 +5,15 @@ from datetime import date, datetime
 import pytest
 import pytz
 from django.contrib.auth.models import Group
+from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
 from ephios.core.models import (
+    AbstractParticipation,
     Event,
     EventType,
+    LocalParticipation,
     Qualification,
     QualificationCategory,
     QualificationGrant,
@@ -24,6 +27,12 @@ from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignu
 @pytest.fixture
 def csrf_exempt_django_app(django_app_factory):
     return django_app_factory(csrf_checks=False)
+
+
+@pytest.fixture(autouse=True)
+def enable_plugins():
+    preferences = global_preferences_registry.manager()
+    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.pages"]
 
 
 @pytest.fixture
@@ -134,6 +143,17 @@ def groups(superuser, manager, planner, volunteer):
 
 
 @pytest.fixture
+def hr_group(volunteer):
+    hr_group = Group.objects.create(name="HR")
+    assign_perm("core.view_userprofile", hr_group)
+    assign_perm("core.add_userprofile", hr_group)
+    assign_perm("core.change_userprofile", hr_group)
+    assign_perm("core.delete_userprofile", hr_group)
+    hr_group.user_set.add(volunteer)
+    return hr_group
+
+
+@pytest.fixture
 def event(groups, service_event_type, planner, tz):
     managers, planners, volunteers = groups
 
@@ -142,7 +162,6 @@ def event(groups, service_event_type, planner, tz):
         description="Rave and rescue!",
         location="Lärz",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)
@@ -160,6 +179,38 @@ def event(groups, service_event_type, planner, tz):
 
 
 @pytest.fixture
+def conflicting_event(event, service_event_type, volunteer, groups):
+    managers, planners, volunteers = groups
+    conflicting_event = Event.objects.create(
+        title="Conflicting event",
+        description="clashes",
+        location="Berlin",
+        type=service_event_type,
+        active=True,
+    )
+
+    assign_perm("view_event", [volunteers, planners], conflicting_event)
+    assign_perm("change_event", planners, conflicting_event)
+
+    Shift.objects.create(
+        event=conflicting_event,
+        meeting_time=event.shifts.first().meeting_time,
+        start_time=event.shifts.first().start_time,
+        end_time=event.shifts.first().end_time,
+        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_configuration={},
+    )
+
+    LocalParticipation.objects.create(
+        shift=event.shifts.first(),
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+    )
+
+    return conflicting_event
+
+
+@pytest.fixture
 def event_to_next_day(groups, service_event_type, planner, tz):
     managers, planners, volunteers = groups
 
@@ -168,7 +219,6 @@ def event_to_next_day(groups, service_event_type, planner, tz):
         description="all night long",
         location="Potsdam",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)
@@ -194,7 +244,6 @@ def multi_shift_event(groups, service_event_type, planner, tz):
         description="long",
         location="Berlin",
         type=service_event_type,
-        mail_updates=True,
         active=True,
     )
     assign_perm("view_event", [volunteers, planners], event)

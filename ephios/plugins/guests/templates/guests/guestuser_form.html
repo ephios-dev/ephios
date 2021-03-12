@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Register as guest" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ event }}</h1>
+        {% if event.shifts.exists %}
+            <h4 class="text-muted">{{ event.get_start_time }} {% trans "to" %} {{ event.get_end_time }}</h4>
+        {% endif %}
+        <h2>{% trans "Register as guest" %}</h2>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if preference_form %}
+            {{ preference_form|crispy }}
+        {% endif %}
+        <button class="btn btn-primary" type="submit">{% translate "Continue" %}</button>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/group_form.js" %}"></script>
+{% endblock %}

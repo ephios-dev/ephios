@@ -1,7 +1,7 @@
 from django.urls import path
 
 from ephios.core import pdf
-from ephios.core.ical import EventFeed, user_event_feed_view
+from ephios.core.ical import user_event_feed_view
 from ephios.core.signup.disposition import AddUserView, DispositionView
 from ephios.core.views.accounts import (
     GroupCreateView,
@@ -26,6 +26,7 @@ from ephios.core.views.event import (
     EventDeleteView,
     EventDetailView,
     EventListView,
+    EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
@@ -36,6 +37,7 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import GeneralSettingsView
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
@@ -43,7 +45,7 @@ from ephios.core.views.shift import (
     ShiftDeleteView,
     ShiftUpdateView,
 )
-from ephios.core.views.signup import ShiftSignupView
+from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
@@ -60,7 +62,7 @@ urlpatterns = [
         name="event_delete",
     ),
     path(
-        "events/<int:pk>/",
+        "events/<int:pk>-<slug:slug>/",
         EventDetailView.as_view(),
         name="event_detail",
     ),
@@ -73,6 +75,11 @@ urlpatterns = [
         "events/<int:pk>/activate/",
         EventActivateView.as_view(),
         name="event_activate",
+    ),
+    path(
+        "events/<int:pk>/notifications/",
+        EventNotificationView.as_view(),
+        name="event_notifications",
     ),
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
     path(
@@ -97,7 +104,7 @@ urlpatterns = [
     ),
     path(
         "shifts/<int:pk>/signup-action/",
-        ShiftSignupView.as_view(),
+        LocalUserShiftActionView.as_view(),
         name="signup_action",
     ),
     path(
@@ -125,7 +132,6 @@ urlpatterns = [
         AddUserView.as_view(),
         name="shift_disposition_add_user",
     ),
-    path("calendar/", EventFeed(), name="event_feed"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
     path(
         "extra/rruleoccurrence",
@@ -133,21 +139,21 @@ urlpatterns = [
         name="rrule_occurrences",
     ),
     path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
-    path("settings/eventtype/", EventTypeListView.as_view(), name="settings_eventtype_list"),
+    path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
-        "settings/eventtype/create/",
+        "settings/eventtypes/create/",
         EventTypeCreateView.as_view(),
         name="settings_eventtype_create",
     ),
     path(
-        "settings/eventtype/<int:pk>/edit/",
+        "settings/eventtypes/<int:pk>/edit/",
         EventTypeUpdateView.as_view(),
-        name="setting_eventtype_edit",
+        name="settings_eventtype_edit",
     ),
     path(
-        "settings/eventtype/<int:pk>/delete/",
+        "settings/eventtypes/<int:pk>/delete/",
         EventTypeDeleteView.as_view(),
-        name="setting_eventtype_delete",
+        name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("profile/settings", UserProfileSettingsView.as_view(), name="profile_settings"),
@@ -190,4 +196,7 @@ urlpatterns = [
         WorkingHourRequestView.as_view(),
         name="request_workinghour",
     ),
+    path("manifest.json", manifest, name="pwa_manifest"),
+    path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
+    path("offline/", offline, name="pwa_offline"),
 ]

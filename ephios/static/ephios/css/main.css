@@ -16,7 +16,7 @@ main {
 
 footer {
     height: 60px;
-    line-height: 3;
+    margin-top: 2rem;
 }
 
 .btn-disabled {
@@ -49,6 +49,21 @@ footer {
     text-align: left;
 }
 
+.unloading {
+    transition: filter 0.5s;
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+#unloading-spinner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -38vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+}
 
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
 @media (min-width: 992px) {
@@ -56,17 +71,19 @@ footer {
         pointer-events: none;
     }
 
-    .btn {
+    .event-list-item-button {
         pointer-events: auto;
     }
 }
 
 /*
 When select2s are hidden on page load, they tend to have the wrong size.
-This hack fixes that. See https://github.com/select2/select2/issues/4220#issuecomment-705855505
+This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220#issuecomment-705855505
 */
-.select2-container,
-.select2-container li:only-child,
-.select2-container input:placeholder-shown {
+.select2 {
     width: 100% !important;
+}
+
+.no-display {
+    display: none;
 }

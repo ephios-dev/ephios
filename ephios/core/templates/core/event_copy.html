@@ -1,6 +1,6 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 {% load static %}
-{% load bootstrap4 %}
 {% load i18n %}
 
 {% block title %}
@@ -35,7 +35,7 @@
 
             <div class="clearfix mb-2 row">
                 <div class="col-md-6">
-                    {% bootstrap_field form.start_date %}
+                    {{ form.start_date|as_crispy_field }}
                     {{ form.recurrence }}
                 </div>
                 <div class="col-md-6">
@@ -44,13 +44,13 @@
                 </div>
             </div>
 
-            {% buttons %}
+            <div>
                 <a role="button" class="btn btn-secondary"
-                   href="{% url "core:event_detail" event.pk %}">{% trans "Back" %}</a>
+                   href="{{ event.get_absolute_url }}">{% trans "Back" %}</a>
                 <button type="submit" class="btn btn-primary float-right">{% trans "Copy" %}</button>
                 <button type="button" role="button" class="btn btn-outline-success float-right mr-1"
                         id="btn_check">{% translate "Preview" %}</button>
-            {% endbuttons %}
+            </div>
 
         </form>
     </div>
