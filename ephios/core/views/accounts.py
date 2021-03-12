@@ -147,8 +147,6 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
         self.object = self.get_object()
 
     def post(self, request, *args, **kwargs):
-        userprofile = self.object
-
         if request.POST.get("confirm"):
             form = PasswordResetForm(
                 {
@@ -175,7 +173,7 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
                     ),
                 )
             return redirect(reverse("core:userprofile_list"))
-        return self.render_to_response({"userprofile": userprofile})
+        return self.render_to_response({"userprofile": self.object})
 
 
 class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
