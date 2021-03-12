@@ -148,9 +148,7 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
 
     def post(self, request, *args, **kwargs):
         userprofile = self.object
-        if not userprofile:
-            messages.info(request, _("Userprofile does not exist."))
-            return redirect(reverse("core:userprofile_list"))
+
         if request.POST.get("confirm"):
             form = PasswordResetForm(
                 {

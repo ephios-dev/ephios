@@ -19,13 +19,6 @@
             <h1>{% trans "Add new user" %}</h1>
         {% endif %}
     </div>
-    {% if userprofile %}
-        <div class="float-right d-flex">
-        <a class="btn btn-outline-danger text-nowrap" href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-            <span class="d-none d-md-inline">{% trans "Reset password" %}</span></a>
-        </div>
-    <p></p>
-    {% endif %}
     <form method="post" class="form">
         {% csrf_token %}
         {% bootstrap_form userprofile_form %}
@@ -102,10 +95,14 @@
         {% buttons %}
             <a role="button" class="btn btn-secondary"
                href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
-            {% if userprofile and perms.core.delete_userprofile %}
-                <a role="button" class="btn btn-outline-danger"
+            {% if userprofile %}
+                <a class="btn btn-outline-secondary text-nowrap" href="{% url "core:userprofile_password_reset" userprofile.pk %}">
+                    <span class="d-none d-md-inline">{% trans "Reset password" %}</span></a>
+                {% if perms.core.delete_userprofile %}
+                    <a role="button" class="btn btn-outline-danger"
                    href="{% url "core:userprofile_delete" userprofile.pk %}">
                     <span class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
+                {% endif %}
             {% endif %}
             <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
         {% endbuttons %}
