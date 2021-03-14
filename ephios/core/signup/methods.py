@@ -256,7 +256,7 @@ def check_participant_age(method, participant):
         )
 
 
-def get_conflicting_shifts(shift, participant):
+def get_conflicting_participations(shift, participant):
     return participant.all_participations().filter(
         ~Q(shift=shift)
         & Q(state=AbstractParticipation.States.CONFIRMED)
@@ -265,7 +265,7 @@ def get_conflicting_shifts(shift, participant):
 
 
 def check_conflicting_shifts(method, participant):
-    if get_conflicting_shifts(method.shift, participant).exists():
+    if get_conflicting_participations(method.shift, participant).exists():
         return ParticipationError(_("You are already confirmed for another shift at this time."))
 
 
