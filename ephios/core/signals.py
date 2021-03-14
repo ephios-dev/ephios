@@ -1,5 +1,5 @@
 from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.dispatch import Signal, receiver
 
 from ephios.core.models import LocalParticipation
 from ephios.core.plugins import PluginSignal
@@ -48,12 +48,12 @@ Subclass `BaseEventPluginForm` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
-register_notification_types = PluginSignal()
+register_notification_types = Signal()
 """
 TODO
 """
 
-register_notification_backends = PluginSignal()
+register_notification_backends = Signal()
 """
 TODO
 """
