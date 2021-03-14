@@ -2,7 +2,7 @@ from django import template
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.consequences import editable_consequences
-from ephios.core.signup import get_conflicting_shifts
+from ephios.core.signup import get_conflicting_participations
 
 register = template.Library()
 
@@ -41,4 +41,6 @@ def get_relevant_qualifications(qualification_queryset):
 
 @register.filter(name="conflicting_shifts")
 def participant_conflicting_shifts(participant, shift):
-    return get_conflicting_shifts(shift, participant).values_list("shift__event__title", flat=True)
+    return get_conflicting_participations(shift, participant).values_list(
+        "shift__event__title", flat=True
+    )
