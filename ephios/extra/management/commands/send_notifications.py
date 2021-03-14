@@ -1,3 +1,5 @@
+import traceback
+
 from django.core.mail import mail_admins
 from django.core.management import BaseCommand
 
@@ -17,6 +19,6 @@ class Command(BaseCommand):
                         notification.save()
                         mail_admins(
                             "Notification sending failed",
-                            f"Notification: {notification}\nException: {e}",
+                            f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
                         )
         Notification.objects.filter(failed=False).delete()

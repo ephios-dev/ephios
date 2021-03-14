@@ -18,7 +18,7 @@ from ephios.core.signup import LocalUserParticipant
 
 def all_notification_types():
     for _, handlers in register_notification_types.send(None):
-        yield from (h() for h in handlers)
+        yield from (h for h in handlers)
 
 
 def notification_type_from_slug(slug):

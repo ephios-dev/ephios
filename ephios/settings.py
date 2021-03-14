@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
+    "webpush",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -221,3 +222,11 @@ PWA_APP_ICONS = [
     {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
     {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
 ]
+
+# django-webpush
+if env.bool("WEBPUSH_ENABLED", False):
+    WEBPUSH_SETTINGS = {
+        "VAPID_PUBLIC_KEY": env.str("VAPID_PUBLIC_KEY"),
+        "VAPID_PRIVATE_KEY": env.str("VAPID_PRIVATE_KEY"),
+        "VAPID_ADMIN_EMAIL": ADMINS[0][1],
+    }

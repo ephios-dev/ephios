@@ -191,12 +191,12 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
         return self.render_to_response({"userprofile": self.object})
 
 
-class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
-    template_name = "core/userprofile_settings.html"
+class UserProfileNotificationsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/userprofile_notifications.html"
     success_message = _("Settings succesfully saved.")
 
     def get_success_url(self):
-        return reverse("core:profile")
+        return reverse("core:profile_notifications")
 
     def get_form_class(self, *args, **kwargs):
         form_class = user_preference_form_builder(

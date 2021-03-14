@@ -12,8 +12,8 @@ from ephios.core.views.accounts import (
     UserProfileCreateView,
     UserProfileDeleteView,
     UserProfileListView,
+    UserProfileNotificationsView,
     UserProfilePasswordResetView,
-    UserProfileSettingsView,
     UserProfileUpdateView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
@@ -156,7 +156,11 @@ urlpatterns = [
         name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
-    path("profile/settings", UserProfileSettingsView.as_view(), name="profile_settings"),
+    path(
+        "profile/notifications",
+        UserProfileNotificationsView.as_view(),
+        name="profile_notifications",
+    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete", GroupDeleteView.as_view(), name="group_delete"),

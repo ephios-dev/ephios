@@ -121,6 +121,6 @@ def register_core_notification_types(sender, **kwargs):
 
 @receiver(register_notification_backends)
 def register_core_notification_backends(sender, **kwargs):
-    from ephios.core.notifications.backends import EmailBackend
+    from ephios.core.notifications.backends import EmailBackend, WebPushBackend
 
-    return [EmailBackend]
+    return [EmailBackend, WebPushBackend]
