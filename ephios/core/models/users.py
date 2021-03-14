@@ -329,4 +329,7 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    data = models.JSONField(default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder)
+    failed = models.BooleanField(default=False)
+    data = models.JSONField(
+        blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )

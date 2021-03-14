@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load utils %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 
@@ -11,6 +12,8 @@
         <h1>{% trans "Settings" %}</h1>
     </div>
 
+    <h2>{% translate "Notifications" %}</h2>
+    <p>{% translate "You can configure whether you want to receive notifications for the following occasions:" %}</p>
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}

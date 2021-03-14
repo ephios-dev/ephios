@@ -11,13 +11,14 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
     TemplateView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users.views import UserPreferenceFormView
+from dynamic_preferences.users.forms import user_preference_form_builder
 
 from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.core.models import QualificationGrant, UserProfile
@@ -190,12 +191,22 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
         return self.render_to_response({"userprofile": self.object})
 
 
-class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
+class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/userprofile_settings.html"
     success_message = _("Settings succesfully saved.")
 
     def get_success_url(self):
         return reverse("core:profile")
+
+    def get_form_class(self, *args, **kwargs):
+        form_class = user_preference_form_builder(
+            instance=self.request.user, section="notifications"
+        )
+        return form_class
+
+    def form_valid(self, form):
+        form.update_preferences()
+        return super().form_valid(form)
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

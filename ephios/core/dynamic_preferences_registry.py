@@ -1,16 +1,17 @@
 from django.contrib.auth.models import Group
-from django.forms import CheckboxSelectMultiple
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.types import BooleanPreference, MultipleChoicePreference, StringPreference
+from dynamic_preferences.types import MultipleChoicePreference, StringPreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
 from ephios.core import plugins
-from ephios.core.models import EventType, QualificationCategory, UserProfile
+from ephios.core.models import QualificationCategory, UserProfile
+from ephios.core.notifications.backends import all_notification_backends
+from ephios.core.notifications.types import all_notification_types
 from ephios.core.registries import event_type_preference_registry
 from ephios.extra.preferences import CustomModelMultipleChoicePreference
 
@@ -57,60 +58,20 @@ class EnabledPlugins(MultipleChoicePreference):
         ]
 
 
-@user_preferences_registry.register
-class NewEventNotification(BooleanPreference):
-    name = "new_event"
-    verbose_name = _("Receive notifications for new events")
-    section = notifications_user_section
-    default = True
-
-
-@user_preferences_registry.register
-class ParticipationConfirmNotification(BooleanPreference):
-    name = "confirm_participation"
-    verbose_name = _("Receive notifications for a confirmed participation")
-    section = notifications_user_section
-    default = True
-
-
-@user_preferences_registry.register
-class ParticipationRejectNotification(BooleanPreference):
-    name = "reject_participation"
-    verbose_name = _("Receive notifications for a rejected participation")
-    section = notifications_user_section
-    default = True
-
-
-@user_preferences_registry.register
-class UserProfileUpdateNotification(BooleanPreference):
-    name = "userprofile_update"
-    verbose_name = _("Receive notifications for changes to your profile")
-    section = notifications_user_section
-    default = True
-
-
-@user_preferences_registry.register
-class ResponsibleRequestedParticipationNotification(CustomModelMultipleChoicePreference):
-    name = "requested_participation"
-    verbose_name = _(
-        "Receive notifications when a user requests a particpation for the following event types:"
-    )
-    section = responsible_notifications_user_section
-    model = EventType
-    default = EventType.objects.all()
-    field_kwargs = {"widget": CheckboxSelectMultiple}
-
-
-@user_preferences_registry.register
-class ResponsibleRejectedParticipationNotification(CustomModelMultipleChoicePreference):
-    name = "rejected_participation"
-    verbose_name = _(
-        "Receive notifications when a confirmed user rejects a particpation for the following event types:"
-    )
-    section = responsible_notifications_user_section
-    model = EventType
-    default = EventType.objects.all()
-    field_kwargs = {"widget": CheckboxSelectMultiple}
+for handler in all_notification_types():
+    if handler.unsubscribe_allowed:
+        class_dict = {
+            "name": handler.slug,
+            "verbose_name": handler.title,
+            "section": notifications_user_section,
+            "default": [],
+            "get_choices": lambda _: [
+                (backend.slug, backend.title) for backend in list(all_notification_backends())
+            ],
+        }
+        user_preferences_registry.register(
+            type(f"Notification_{handler.slug}", (MultipleChoicePreference,), class_dict)
+        )
 
 
 @event_type_preference_registry.register

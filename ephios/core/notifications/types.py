@@ -29,8 +29,14 @@ def notification_type_from_slug(slug):
 
 
 class AbstractNotificationHandler:
+    unsubscribe_allowed = True
+
     @property
     def slug(self):
+        return NotImplementedError
+
+    @property
+    def description(self):
         return NotImplementedError
 
     @classmethod
@@ -47,7 +53,8 @@ class AbstractNotificationHandler:
 
 
 class ProfileUpdateNotification(AbstractNotificationHandler):
-    slug = "ephios.profile_update"
+    slug = "ephios_profile_update"
+    title = _("Your profile has been edited")
 
     @classmethod
     def send(cls, user: UserProfile, **kwargs):
@@ -69,7 +76,9 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
 
 class NewProfileNotification(AbstractNotificationHandler):
-    slug = "ephios.new_profile"
+    slug = "ephios_new_profile"
+    title = "A new profile has been created"
+    unsubscribe_allowed = False
 
     @classmethod
     def send(cls, user: UserProfile, **kwargs):
@@ -104,7 +113,8 @@ class NewProfileNotification(AbstractNotificationHandler):
 
 
 class NewEventNotification(AbstractNotificationHandler):
-    slug = "ephios.new_event"
+    slug = "ephios_new_event"
+    title = "A new event has been added"
 
     @classmethod
     def send(cls, event: Event, **kwargs):
@@ -144,7 +154,8 @@ class NewEventNotification(AbstractNotificationHandler):
 
 
 class ParticipationConfirmedNotification(AbstractNotificationHandler):
-    slug = "ephios.participation_confirmed"
+    slug = "ephios_participation_confirmed"
+    title = "Your participation has been confirmed"
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -172,7 +183,8 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
 
 
 class ParticipationRejectedNotification(AbstractNotificationHandler):
-    slug = "ephios.participation_rejected"
+    slug = "ephios_participation_rejected"
+    title = "Your participation has been rejected"
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -202,7 +214,8 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
 
 
 class ResponsibleParticipationRequested(AbstractNotificationHandler):
-    slug = "ephios.participation_responsible_requested"
+    slug = "ephios_participation_responsible_requested"
+    title = "A participation has been requested for your event"
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -246,7 +259,9 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
 
 
 class EventReminderNotification(AbstractNotificationHandler):
-    slug = "ephios.event_reminder"
+    slug = "ephios_event_reminder"
+    title = "An event has vacant spots"
+    unsubscribe_allowed = False
 
     @classmethod
     def send(cls, event: Event):
@@ -281,7 +296,9 @@ class EventReminderNotification(AbstractNotificationHandler):
 
 
 class CustomParticipantNotification(AbstractNotificationHandler):
-    slug = "ephios.confirmed_participants"
+    slug = "ephios_confirmed_participants"
+    title = "Message to all participants"
+    unsubscribe_allowed = False
 
     @classmethod
     def send(cls, event: Event, content: str):

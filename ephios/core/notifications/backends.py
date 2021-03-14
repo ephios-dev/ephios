@@ -1,4 +1,3 @@
-from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 
 from ephios.core.models.users import Notification
@@ -12,30 +11,45 @@ def all_notification_backends():
 
 
 class AbstractBackend:
-    def can_send(self, notification):
+    @property
+    def slug(self):
+        return NotImplementedError
+
+    @property
+    def title(self):
+        return NotImplementedError
+
+    @classmethod
+    def can_send(cls, notification):
         return notification.user is not None
 
-    def send(self, notifications: list[Notification]):
+    @classmethod
+    def user_prefers_sending(cls, notification):
+        if notification.user is not None:
+            return cls.slug in notification.user.preferences[f"notifications__{notification.slug}"]
+        return True
+
+    @classmethod
+    def send(cls, notification: Notification):
         raise NotImplementedError
 
 
 class EmailBackend(AbstractBackend):
+    slug = "ephios_backend_email"
+    title = "via email"
+
     def can_send(self, notification):
         return notification.user is not None or "email" in notification.data
 
     def get_mailaddress(self, notification):
         return notification.user.email if notification.user else notification.data.get("email")
 
-    def send(self, notifications):
-        email_messages = []
-        for notification in notifications:
-            if self.can_send(notification):
-                handler = notification_type_from_slug(notification.slug)
-                email = EmailMultiAlternatives(
-                    to=[self.get_mailaddress(notification)],
-                    subject=handler.get_subject(notification),
-                    body=handler.as_plaintext(notification),
-                )
-                email.attach_alternative(handler.as_html(notification), "text/html")
-                email_messages.append(email)
-        mail.get_connection().send_messages(email_messages)
+    def send(self, notification):
+        handler = notification_type_from_slug(notification.slug)
+        email = EmailMultiAlternatives(
+            to=[self.get_mailaddress(notification)],
+            subject=handler.get_subject(notification),
+            body=handler.as_plaintext(notification),
+        )
+        email.attach_alternative(handler.as_html(notification), "text/html")
+        email.send()
