@@ -9,6 +9,7 @@ function handleForms(elem) {
     }).on("formAdded", "div", function (event) {
         handleForms($(event.target));
     });
+    $('form').trigger('reinitialize.areYouSure');
 }
 
 $(document).ready(function () {
@@ -43,10 +44,6 @@ $(document).ready(function () {
 
     // Confirm users wants to leave page with unsaved forms
     $('form').areYouSure();
-    // Listener for inputs that can dynamically add new forms and trigger a scan of the new form
-    $('.add-form').click(function() {
-        $('form').trigger('reinitialize.areYouSure');
-      });
 })
 
 // Initialize the service worker
