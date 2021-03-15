@@ -119,7 +119,7 @@ class NewEventNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, event: Event, **kwargs):
         notifications = []
-        for user in UserProfile.objects.all():
+        for user in get_users_with_perms(event, only_with_perms_in=["view_event"]):
             notifications.append(
                 Notification(slug=cls.slug, user=user, data=dict(event_id=event.id, **kwargs))
             )
