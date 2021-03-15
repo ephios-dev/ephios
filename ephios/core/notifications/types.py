@@ -242,19 +242,27 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("Participation requested")
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        participation_state = participation.get_state_display()
+        return _("Participation {state}").format(state=participation_state)
 
     @classmethod
     def as_plaintext(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        return _(
-            "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}"
-        ).format(
-            shift=participation.shift,
-            participant=participation.participant,
-            disposition_url=notification.data.get("disposition_url"),
+        if participation.shift.signup_method.uses_requested_state:
+            return _(
+                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}"
+            ).format(
+                shift=participation.shift,
+                participant=participation.participant,
+                disposition_url=notification.data.get("disposition_url"),
+            )
+        return _("{participant} signed up for {shift}").format(
+            participant=participation.participant, shift=participation.shift
         )
 
 

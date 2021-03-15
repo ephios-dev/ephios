@@ -362,9 +362,13 @@ class BaseSignupMethod:
         Configure a participation object for the given participant according to the method's configuration.
         `kwargs` may contain further instructions from e.g. a form.
         """
+        from ephios.core.notifications.types import ResponsibleParticipationRequested
+
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        return self.get_participation_for(participant)
+        participation = self.get_participation_for(participant)
+        ResponsibleParticipationRequested.send(participation)
+        return participation
 
     def perform_decline(self, participant, **kwargs):
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
