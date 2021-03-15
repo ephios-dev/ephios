@@ -42,7 +42,7 @@ class EmailBackend(AbstractBackend):
     title = _("via email")
 
     @classmethod
-    def can_send(self, notification):
+    def can_send(cls, notification):
         return notification.user is not None or "email" in notification.data
 
     @classmethod
@@ -65,6 +65,7 @@ class WebPushBackend(AbstractBackend):
     slug = "ephios_backend_webpush"
     title = _("via push notification")
 
+    @classmethod
     def send(cls, notification):
         notification_type = notification_type_from_slug(notification.slug)
         payload = {
