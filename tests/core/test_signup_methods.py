@@ -1,6 +1,10 @@
+from datetime import datetime, timedelta
+
 import pytest
 
-from ephios.core.signup import SignupStats
+from ephios.core.models import AbstractParticipation, Shift
+from ephios.core.signup import LocalParticipation, SignupStats, get_conflicting_participations
+from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 
 @pytest.mark.django_db
@@ -13,7 +17,64 @@ def test_signup_stats_addition(django_app):
 
 
 @pytest.mark.django_db
-def test_signup_conflicting_shifts(django_app, volunteer, event, conflicting_event):
+def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
     assert not conflicting_event.shifts.first().signup_method.can_sign_up(
         volunteer.as_participant()
     )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "a_times,b_times,conflict_expected",
+    [
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 8)),
+            False,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 10)),
+            True,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 12)),
+            True,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 10), datetime(2099, 1, 1, 18)),
+            True,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 11, 59), datetime(2099, 1, 1, 12)),
+            True,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 12), datetime(2099, 1, 1, 18)),
+            False,
+        ),
+    ],
+)
+def test_get_conflicting_shifts(a_times, b_times, conflict_expected, event, volunteer):
+    common = dict(signup_method_slug=InstantConfirmationSignupMethod.slug, event=event)
+    a = Shift.objects.create(
+        start_time=a_times[0],
+        end_time=a_times[1],
+        meeting_time=a_times[0] - timedelta(minutes=15),
+        **common
+    )
+    b = Shift.objects.create(
+        start_time=b_times[0],
+        end_time=b_times[1],
+        meeting_time=b_times[0] - timedelta(minutes=15),
+        **common
+    )
+    a_participation = LocalParticipation.objects.create(
+        shift=a, user=volunteer, state=AbstractParticipation.States.CONFIRMED
+    )
+    expected = {a_participation} if conflict_expected else set()
+    assert set(get_conflicting_participations(b, volunteer.as_participant())) == expected
