@@ -1,3 +1,4 @@
+import operator
 from datetime import date, datetime, timedelta
 
 import django.forms as forms
@@ -155,8 +156,12 @@ class ShiftForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        signup_methods = list(signup.enabled_signup_methods())
+        if self.instance and (method_slug := self.instance.signup_method_slug):
+            if method_slug not in map(operator.attrgetter("slug"), signup_methods):
+                signup_methods.append(self.instance.signup_method)
         self.fields["signup_method_slug"].widget = forms.Select(
-            choices=((method.slug, method.verbose_name) for method in signup.all_signup_methods())
+            choices=((method.slug, method.verbose_name) for method in signup_methods)
         )
 
     def clean(self):
