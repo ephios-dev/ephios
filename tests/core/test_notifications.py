@@ -3,6 +3,7 @@ from django.core.management import call_command
 from django.urls import reverse
 
 from ephios.core.models import Notification
+from ephios.core.notifications.backends import enabled_notification_backends
 from ephios.core.notifications.types import ProfileUpdateNotification, enabled_notification_types
 
 
@@ -27,5 +28,7 @@ class TestNotifications:
 
     def test_notification_sending(self, volunteer):
         ProfileUpdateNotification.send(volunteer)
+        preferences = volunteer.preferences["notifications__notifications"]
+        preferences["ephios_profile_update"] = enabled_notification_backends()
         call_command("send_notifications")
         assert Notification.objects.count() == 0
