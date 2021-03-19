@@ -282,7 +282,7 @@ class EventReminderNotification(AbstractNotificationHandler):
             pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
                 "localparticipation__user", flat=True
             )
-        )
+        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["view_event"]))
         notifications = []
         for user in users_not_participating:
             notifications.append(
