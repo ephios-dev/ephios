@@ -9,6 +9,7 @@ from django.views import View
 from django.views.generic import DeleteView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
+from ephios.core import signup
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.extra.mixins import CustomPermissionRequiredMixin
@@ -40,10 +41,31 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             from ephios.core.signup import signup_method_from_slug
 
             signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
-            configuration_form = signup_method.get_configuration_form(self.request.POST)
+        except KeyError as e:
+            if not list(signup.enabled_signup_methods()):
+                form.add_error(
+                    "signup_method_slug",
+                    _("You must enable plugins providing signup methods to continue."),
+                )
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
+                )
+            )
         except ValueError as e:
             raise ValidationError(e) from e
-        if form.is_valid() and configuration_form.is_valid():
+        else:
+            configuration_form = signup_method.get_configuration_form(self.request.POST)
+            if not all((form.is_valid(), configuration_form.is_valid())):
+                return self.render_to_response(
+                    self.get_context_data(
+                        form=form,
+                        configuration_form=signup_method.render_configuration_form(
+                            form=configuration_form
+                        ),
+                    )
+                )
+
             shift = form.save(commit=False)
             shift.event = self.event
             shift.signup_configuration = configuration_form.cleaned_data
@@ -61,12 +83,6 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             except ValidationError as e:
                 messages.error(self.request, e)
             return redirect(self.event.get_absolute_url())
-        return self.render_to_response(
-            self.get_context_data(
-                form=form,
-                configuration_form=signup_method.render_configuration_form(form=configuration_form),
-            )
-        )
 
 
 class ShiftConfigurationFormView(View):

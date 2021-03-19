@@ -31,13 +31,18 @@ from .disposition import BaseDispositionParticipationForm
 logger = logging.getLogger(__name__)
 
 
-def all_signup_methods():
+def installed_signup_methods():
+    for _, methods in register_signup_methods.send_to_all_plugins(None):
+        yield from methods
+
+
+def enabled_signup_methods():
     for _, methods in register_signup_methods.send(None):
         yield from methods
 
 
 def signup_method_from_slug(slug, shift=None):
-    for method in all_signup_methods():
+    for method in installed_signup_methods():
         if method.slug == slug:
             return method(shift)
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))

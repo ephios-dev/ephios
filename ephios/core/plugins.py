@@ -84,6 +84,12 @@ class PluginSignal(Signal):
             lambda rcv: is_receiver_path_enabled(rcv.__module__), super()._live_receivers(sender)
         )
 
+    def send_to_all_plugins(self, sender, **named):
+        return [
+            (receiver, receiver(signal=self, sender=sender, **named))
+            for receiver in super()._live_receivers(sender)
+        ]
+
 
 class PluginConfig(AppConfig):
     """Superclass for Plugin App Configs. Might use this in the future to implement new features."""
