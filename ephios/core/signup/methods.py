@@ -275,6 +275,8 @@ def check_conflicting_shifts(method, participant):
 
 
 class BaseSignupMethod:
+    # pylint: disable=too-many-public-methods
+
     @property
     def slug(self):
         raise NotImplementedError()
