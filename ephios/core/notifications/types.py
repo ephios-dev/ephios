@@ -82,7 +82,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
 class NewProfileNotification(AbstractNotificationHandler):
     slug = "ephios_new_profile"
-    title = "A new profile has been created"
+    title = _("A new profile has been created")
     unsubscribe_allowed = False
 
     @classmethod
@@ -119,7 +119,7 @@ class NewProfileNotification(AbstractNotificationHandler):
 
 class NewEventNotification(AbstractNotificationHandler):
     slug = "ephios_new_event"
-    title = "A new event has been added"
+    title = _("A new event has been added")
 
     @classmethod
     def send(cls, event: Event, **kwargs):
@@ -160,7 +160,7 @@ class NewEventNotification(AbstractNotificationHandler):
 
 class ParticipationConfirmedNotification(AbstractNotificationHandler):
     slug = "ephios_participation_confirmed"
-    title = "Your participation has been confirmed"
+    title = _("Your participation has been confirmed")
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -189,7 +189,7 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
 
 class ParticipationRejectedNotification(AbstractNotificationHandler):
     slug = "ephios_participation_rejected"
-    title = "Your participation has been rejected"
+    title = _("Your participation has been rejected")
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -220,7 +220,7 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
 
 class ResponsibleParticipationRequested(AbstractNotificationHandler):
     slug = "ephios_participation_responsible_requested"
-    title = "A participation has been requested for your event"
+    title = _("A participation has been requested for your event")
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -273,7 +273,7 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
 
 class EventReminderNotification(AbstractNotificationHandler):
     slug = "ephios_event_reminder"
-    title = "An event has vacant spots"
+    title = _("An event has vacant spots")
     unsubscribe_allowed = False
 
     @classmethod
@@ -310,7 +310,7 @@ class EventReminderNotification(AbstractNotificationHandler):
 
 class CustomParticipantNotification(AbstractNotificationHandler):
     slug = "ephios_confirmed_participants"
-    title = "Message to all participants"
+    title = _("Message to all participants")
     unsubscribe_allowed = False
 
     @classmethod

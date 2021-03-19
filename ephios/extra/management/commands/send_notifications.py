@@ -1,5 +1,6 @@
 import traceback
 
+from django.conf import settings
 from django.core.mail import mail_admins
 from django.core.management import BaseCommand
 
@@ -15,6 +16,8 @@ class Command(BaseCommand):
                     try:
                         backend.send(notification)
                     except Exception as e:
+                        if settings.DEBUG:
+                            raise e
                         notification.failed = True
                         notification.save()
                         mail_admins(
