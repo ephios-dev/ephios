@@ -31,7 +31,7 @@ class TestEventNotifications:
             pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
                 "localparticipation__user", flat=True
             )
-        )
+        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["view_event"]))
         assert Notification.objects.count() == users_not_participating.count()
 
     def test_mail_participants(self, django_app, event, volunteer, planner, groups):
