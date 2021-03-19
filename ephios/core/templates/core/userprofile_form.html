@@ -94,17 +94,18 @@
                 {% endescapescript %}
             </script>
         </div>
-            <a role="button" class="btn btn-secondary"
-               href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
-            {% if userprofile %}
-                <a class="btn btn-outline-secondary text-nowrap" href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-                    <span class="d-none d-md-inline">{% trans "Reset password" %}</span></a>
-                {% if perms.core.delete_userprofile %}
-                    <a role="button" class="btn btn-outline-danger"
+        <a role="button" class="btn btn-secondary mt-1"
+           href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
+        {% if userprofile %}
+            <a class="btn btn-outline-secondary text-nowrap mt-1"
+               href="{% url "core:userprofile_password_reset" userprofile.pk %}">
+                {% trans "Reset password" %}</a>
+            {% if perms.core.delete_userprofile %}
+                <a role="button" class="btn btn-outline-danger mt-1"
                    href="{% url "core:userprofile_delete" userprofile.pk %}">
                     <span class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
-                {% endif %}
             {% endif %}
-            <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-right">
+        {% endif %}
+        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-right mt-1">
     </form>
 {% endblock %}
