@@ -7,7 +7,12 @@ from ephios.core.notifications.types import notification_type_from_slug
 from ephios.core.signals import register_notification_backends
 
 
-def all_notification_backends():
+def installed_notification_backends():
+    for _, backends in register_notification_backends.send_to_all_plugins(None):
+        yield from (b() for b in backends)
+
+
+def enabled_notification_backends():
     for _, backends in register_notification_backends.send(None):
         yield from (b() for b in backends)
 
@@ -29,7 +34,11 @@ class AbstractBackend:
     def user_prefers_sending(cls, notification):
         notification_type = notification_type_from_slug(notification.slug)
         if notification_type.unsubscribe_allowed and notification.user is not None:
-            return cls.slug in notification.user.preferences[f"notifications__{notification.slug}"]
+            backends = notification.user.preferences["notifications__notifications"].get(
+                notification_type.slug
+            )
+            if backends is not None:
+                return cls.slug in backends
         return True
 
     @classmethod

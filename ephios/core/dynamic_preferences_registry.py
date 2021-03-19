@@ -10,10 +10,8 @@ from dynamic_preferences.users.registries import user_preferences_registry
 import ephios
 from ephios.core import plugins
 from ephios.core.models import QualificationCategory, UserProfile
-from ephios.core.notifications.backends import all_notification_backends
-from ephios.core.notifications.types import all_notification_types
 from ephios.core.registries import event_type_preference_registry
-from ephios.extra.preferences import CustomModelMultipleChoicePreference
+from ephios.extra.preferences import CustomModelMultipleChoicePreference, DictPreference
 
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
@@ -58,20 +56,12 @@ class EnabledPlugins(MultipleChoicePreference):
         ]
 
 
-for handler in all_notification_types():
-    if handler.unsubscribe_allowed:
-        class_dict = {
-            "name": handler.slug,
-            "verbose_name": handler.title,
-            "section": notifications_user_section,
-            "default": [],
-            "get_choices": lambda _: [
-                (backend.slug, backend.title) for backend in list(all_notification_backends())
-            ],
-        }
-        user_preferences_registry.register(
-            type(f"Notification_{handler.slug}", (MultipleChoicePreference,), class_dict)
-        )
+@user_preferences_registry.register
+class NotificationPreference(DictPreference):
+    name = "notifications"
+    verbose_name = _("Notification preferences")
+    section = notifications_user_section
+    default = dict()
 
 
 @event_type_preference_registry.register

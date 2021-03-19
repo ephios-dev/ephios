@@ -18,9 +18,13 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users.forms import user_preference_form_builder
 
-from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
+from ephios.core.forms.users import (
+    GroupForm,
+    QualificationGrantFormset,
+    UserNotificationPreferenceForm,
+    UserProfileForm,
+)
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
 from ephios.extra.mixins import CustomPermissionRequiredMixin
@@ -195,14 +199,11 @@ class UserProfileNotificationsView(LoginRequiredMixin, SuccessMessageMixin, Form
     template_name = "core/userprofile_notifications.html"
     success_message = _("Settings succesfully saved.")
 
+    def get_form(self, form_class=None):
+        return UserNotificationPreferenceForm(self.request.POST or None, user=self.request.user)
+
     def get_success_url(self):
         return reverse("core:profile_notifications")
-
-    def get_form_class(self, *args, **kwargs):
-        form_class = user_preference_form_builder(
-            instance=self.request.user, section="notifications"
-        )
-        return form_class
 
     def form_valid(self, form):
         form.update_preferences()

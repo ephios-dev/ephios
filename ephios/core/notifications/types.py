@@ -16,13 +16,18 @@ from ephios.core.signals import register_notification_types
 from ephios.core.signup import LocalUserParticipant
 
 
-def all_notification_types():
+def installed_notification_types():
+    for _, handlers in register_notification_types.send_to_all_plugins(None):
+        yield from (h for h in handlers)
+
+
+def enabled_notification_types():
     for _, handlers in register_notification_types.send(None):
         yield from (h for h in handlers)
 
 
 def notification_type_from_slug(slug):
-    for notification in all_notification_types():
+    for notification in installed_notification_types():
         if notification.slug == slug:
             return notification
     raise ValueError(_("Notification type '{slug}' was not found.").format(slug=slug))

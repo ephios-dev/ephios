@@ -4,12 +4,12 @@ from django.core.mail import mail_admins
 from django.core.management import BaseCommand
 
 from ephios.core.models.users import Notification
-from ephios.core.notifications.backends import all_notification_backends
+from ephios.core.notifications.backends import installed_notification_backends
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for backend in all_notification_backends():
+        for backend in installed_notification_backends():
             for notification in Notification.objects.filter(failed=False):
                 if backend.can_send(notification) and backend.user_prefers_sending(notification):
                     try:

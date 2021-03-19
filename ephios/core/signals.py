@@ -1,4 +1,4 @@
-from django.dispatch import Signal, receiver
+from django.dispatch import receiver
 
 from ephios.core.plugins import PluginSignal
 
@@ -46,14 +46,16 @@ Subclass `BaseEventPluginForm` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
-register_notification_types = Signal()
+register_notification_types = PluginSignal()
 """
-TODO
+This signal is sent out to get all notification types that can be sent out to a user or participant.
+Receivers should return a list of subclasses of ``ephios.core.notifications.types.AbstractNotificationHandler``
 """
 
-register_notification_backends = Signal()
+register_notification_backends = PluginSignal()
 """
-TODO
+This signal is sent out to get all backends that can handle sending out notifications.
+Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractBackend``
 """
 
 
