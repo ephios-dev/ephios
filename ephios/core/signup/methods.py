@@ -361,14 +361,17 @@ class BaseSignupMethod:
 
     def perform_signup(self, participant: AbstractParticipant, **kwargs) -> AbstractParticipation:
         """
-        Configure a participation object for the given participant according to the method's configuration.
-        `kwargs` may contain further instructions from e.g. a form.
+        Creates and/or configures a participation object for a given participant and sends out notifications.
+        Passes the participation and kwargs to configure_participation to do configuration specific to the signup method
         """
         from ephios.core.notifications.types import ResponsibleParticipationRequested
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        participation = self.get_participation_for(participant)
+        participation = self.configure_participation(
+            self.get_participation_for(participant), **kwargs
+        )
+        participation.save()
         ResponsibleParticipationRequested.send(participation)
         return participation
 
@@ -380,6 +383,15 @@ class BaseSignupMethod:
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
         return participation
+
+    def configure_participation(
+        self, participation: AbstractParticipation, **kwargs
+    ) -> AbstractParticipation:
+        """
+        Configure the given participation object for signup according to the method's configuration.
+        You need at least to set the participations state. `kwargs` may contain further instructions from e.g. a form.
+        """
+        return NotImplemented
 
     def get_configuration_fields(self):
         return OrderedDict(
