@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-03-20 18:23+0100\n"
-"PO-Revision-Date: 2021-03-02 14:00+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2021-03-20 18:54+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.5\n"
+"X-Generator: Weblate 4.5.2-dev\n"
 
 #: .\core\consequences.py:34
 #, python-brace-format
@@ -48,21 +48,19 @@ msgstr "(gültig bis {expires_str})"
 
 #: .\core\dynamic_preferences_registry.py:24
 msgid "Organization name"
-msgstr ""
+msgstr "Name der Organisation"
 
 #: .\core\dynamic_preferences_registry.py:36
 msgid "Relevant qualification categories (for user list and disposition view)"
-msgstr ""
+msgstr "Relevante Qualifikationskategorien (für Benutzliste und Disposition)"
 
 #: .\core\dynamic_preferences_registry.py:43
 msgid "Enabled plugins"
-msgstr ""
+msgstr "Aktivierte Plugins"
 
 #: .\core\dynamic_preferences_registry.py:62
-#, fuzzy
-#| msgid "Receive notifications for new events"
 msgid "Notification preferences"
-msgstr "Benachrichtigungen für neue Veranstaltungen erhalten"
+msgstr "Benachrichtigungseinstellungen"
 
 #: .\core\dynamic_preferences_registry.py:70
 msgid "Events of this type should by default be visible for"
@@ -122,28 +120,24 @@ msgstr ""
 "Veranstaltungen ab diesem Datum erstellt."
 
 #: .\core\forms\events.py:225
-#, fuzzy
-#| msgid "Receive notifications for new events"
 msgid "Send notification about new event to everyone"
-msgstr "Benachrichtigungen für neue Veranstaltungen erhalten"
+msgstr "Alle Benuter über die neue Veranstaltung benachrichtigen"
 
 #: .\core\forms\events.py:226
 msgid "Send reminder to everyone that is not participating"
-msgstr ""
+msgstr "Alle nicht teilnehmenden Benutzer an die Veranstaltung erinnern"
 
 #: .\core\forms\events.py:227
-#, fuzzy
-#| msgid "Required number of participants"
 msgid "Send a message to all participants"
-msgstr "Erforderliche Anzahl von Teilnehmenden"
+msgstr "Nachricht an alle Teilnehmenden senden"
 
 #: .\core\forms\events.py:240
 msgid "Send"
-msgstr ""
+msgstr "Senden"
 
 #: .\core\forms\events.py:248
 msgid "You cannot send an empty mail."
-msgstr ""
+msgstr "Sie können keine leere Nachricht versenden."
 
 #: .\core\forms\users.py:33 .\core\models\events.py:69
 msgid "Can view past events"
@@ -176,40 +170,30 @@ msgstr ""
 "Genehmigung von Arbeitsstunden entscheiden kann."
 
 #: .\core\forms\users.py:59
-#, fuzzy
-#| msgid "Can manage users"
 msgid "Can edit users"
-msgstr "Kann Benutzer verwalten"
+msgstr "Kann Benutzer bearbeiten"
 
 #: .\core\forms\users.py:61
-#, fuzzy
-#| msgid ""
-#| "If checked, users in this group can view, add, edit and delete users."
 msgid ""
 "If checked, users in this group can view, add, edit and delete users. They "
 "can also manage group memberships for their own groups."
 msgstr ""
 "Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
-"Benutzerprofile ansehen, bearbeiten und löschen."
+"Benutzerprofile ansehen, bearbeiten und löschen. Außerdem können "
+"Gruppenmitgliedschaften für die eigenen Gruppen verwaltet werden."
 
 #: .\core\forms\users.py:72
-#, fuzzy
-#| msgid "Can manage users"
 msgid "Can manage ephios"
-msgstr "Kann Benutzer verwalten"
+msgstr "Kann die ephios-Instanz verwalten"
 
 #: .\core\forms\users.py:74
-#, fuzzy
-#| msgid ""
-#| "If checked, users in this group can add and edit all groups, their "
-#| "permissions as well as group memberships."
 msgid ""
 "If checked, users in this group can manage users, groups, all group "
 "memberships, eventtypes and qualifications"
 msgstr ""
 "Falls diese Option aktiviert ist können Benutzer in dieser Gruppe andere "
-"Gruppen, Berechtigungen und Gruppenmitgliedschaften bearbeiten und "
-"hinzufügen."
+"Gruppen, Gruppenmitgliedschaften, Benutzer, Veranstaltungstypen und "
+"Qualifikationen bearbeiten und hinzufügen."
 
 #: .\core\forms\users.py:102 .\core\templates\core\userprofile_list.html:8
 #: .\core\templates\core\userprofile_list.html:13 .\templates\base.html:107
@@ -217,16 +201,12 @@ msgid "Users"
 msgstr "Benutzer"
 
 #: .\core\forms\users.py:129
-#, fuzzy
-#| msgid "Manage event"
 msgid "Management"
-msgstr "Veranstaltung verwalten"
+msgstr "Verwaltung"
 
 #: .\core\forms\users.py:134
-#, fuzzy
-#| msgid "Planners"
 msgid "Planning"
-msgstr "Planer"
+msgstr "Planung"
 
 #: .\core\forms\users.py:142
 #: .\core\templates\core\disposition\disposition.html:118
@@ -251,6 +231,8 @@ msgid ""
 "The user is also member of <b>{groups}</b>, but you are not allowed to "
 "manage memberships for those groups."
 msgstr ""
+"Der Benutzer ist außerdem Mitglied von <b>{groups}</b>, aber Sie haben keine "
+"Berechtigung, um Gruppenmitgliedschaften für diese Gruppen zu verwalten."
 
 #: .\core\forms\users.py:207
 msgid "Inactive users cannot log in and do not get any notifications."
@@ -452,23 +434,20 @@ msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
 #: .\core\notifications\backends.py:49
 msgid "via email"
-msgstr ""
+msgstr "via E-Mail"
 
 #: .\core\notifications\backends.py:72
 msgid "via push notification"
-msgstr ""
+msgstr "via Push-Benachrichtigung"
 
 #: .\core\notifications\types.py:33
-#, fuzzy, python-brace-format
-#| msgid "Signup Method '{slug}' was not found."
+#, python-brace-format
 msgid "Notification type '{slug}' was not found."
-msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
+msgstr "Benachrichtigungstyp '{slug}' wurde nicht gefunden."
 
 #: .\core\notifications\types.py:62
-#, fuzzy
-#| msgid "Your request has been submitted."
 msgid "Your profile has been edited"
-msgstr "Ihre Anfrage wurde abgeschickt."
+msgstr "Ihr Benutzerprofil wurde bearbeitet"
 
 #: .\core\notifications\types.py:70
 msgid "ephios account updated"
@@ -488,10 +467,8 @@ msgstr ""
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
 #: .\core\notifications\types.py:85
-#, fuzzy
-#| msgid "The event {title} has been saved."
 msgid "A new profile has been created"
-msgstr "Die Veranstaltung {title} wurde gespeichert."
+msgstr "Ein neues Benutzerprofil wurde erstellt"
 
 #: .\core\notifications\types.py:98 .\core\templates\core\home.html:17
 msgid "Welcome to ephios!"
@@ -511,10 +488,8 @@ msgstr ""
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}\n"
 
 #: .\core\notifications\types.py:122
-#, fuzzy
-#| msgid "The event {title} has been saved."
 msgid "A new event has been added"
-msgstr "Die Veranstaltung {title} wurde gespeichert."
+msgstr "Eine neue Veranstaltung wurde hinzugefügt"
 
 #: .\core\notifications\types.py:136
 #, python-brace-format
@@ -533,56 +508,43 @@ msgstr ""
 "Sie können die Veranstaltung hier ansehen: {url}"
 
 #: .\core\notifications\types.py:163
-#, fuzzy
-#| msgid "Your participation state changed"
 msgid "Your participation has been confirmed"
-msgstr "Der Status Ihrer Teilnahme hat sich geändert"
+msgstr "Ihre Teilnahme wurde bestätigt"
 
 #: .\core\notifications\types.py:183
-#, fuzzy, python-brace-format
-#| msgid "Participation was changed for your event"
+#, python-brace-format
 msgid "Participation confirmed for {event}"
-msgstr "Teilnahme an Ihrer Veranstaltung geändert"
+msgstr "Teilnahme bestätigt für {event}"
 
 #: .\core\notifications\types.py:190
-#, fuzzy, python-brace-format
-#| msgid "Your participation state changed"
+#, python-brace-format
 msgid "Your participation for {shift} is now confirmed."
-msgstr "Der Status Ihrer Teilnahme hat sich geändert"
+msgstr "Ihre Teilnahme an {shift} ist jetzt bestätigt."
 
 #: .\core\notifications\types.py:195
-#, fuzzy
-#| msgid "Your participation state changed"
 msgid "Your participation has been rejected"
-msgstr "Der Status Ihrer Teilnahme hat sich geändert"
+msgstr "Ihre Teilnahme wurde abgelehnt"
 
 #: .\core\notifications\types.py:215
-#, fuzzy, python-brace-format
-#| msgid "Participation was changed for your event"
+#, python-brace-format
 msgid "Participation rejected for {event}"
-msgstr "Teilnahme an Ihrer Veranstaltung geändert"
+msgstr "Teilnahme abgelehnt für {event}"
 
 #: .\core\notifications\types.py:222
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "The status for your participation for {shift} has changed. It is now "
-#| "{status}."
+#, python-brace-format
 msgid "Your participation for {shift} has been rejected by a responsible user."
 msgstr ""
-"Der Status Ihrer Teilnahme für {shift} hat sich geändert. Die Teilnahme ist "
-"nun {status}."
+"Ihre Teilnahme an {shift} wurde von einem verantwortlichen Benutzer "
+"abgelehnt."
 
 #: .\core\notifications\types.py:229
-#, fuzzy
-#| msgid "Participation was changed for your event"
 msgid "A participation has been requested for your event"
-msgstr "Teilnahme an Ihrer Veranstaltung geändert"
+msgstr "Eine Teilnahme für ihre Veranstaltung wurde angefragt"
 
 #: .\core\notifications\types.py:260
-#, fuzzy, python-brace-format
-#| msgid "Participation was changed for your event"
+#, python-brace-format
 msgid "Participation {state} for {event}"
-msgstr "Teilnahme an Ihrer Veranstaltung geändert"
+msgstr "Teilnahme {state} für {event}"
 
 #: .\core\notifications\types.py:271
 #, python-brace-format
@@ -590,21 +552,22 @@ msgid ""
 "{participant} has requested a participation for {shift}. You can decide "
 "about it at {disposition_url}"
 msgstr ""
+"{participant} hat eine Teilnahme an {shift} angefragt. Sie können unter "
+"{disposition_url} über die Teilnahme entscheiden"
 
 #: .\core\notifications\types.py:277
-#, fuzzy, python-brace-format
-#| msgid "You are bindingly signed up for {shift}."
+#, python-brace-format
 msgid "{participant} signed up for {shift}"
-msgstr "Sie sind verbindlich für {shift} eingeteilt."
+msgstr "{participant} nimmt teil an {shift}"
 
 #: .\core\notifications\types.py:284
 msgid "An event has vacant spots"
-msgstr ""
+msgstr "Für eine Veranstaltung werden noch Teilnehmende gesucht"
 
 #: .\core\notifications\types.py:304
 #, python-brace-format
 msgid "Help needed for {title}"
-msgstr ""
+msgstr "Unterstützung benötigt für {title}"
 
 #: .\core\notifications\types.py:310
 #, python-brace-format
@@ -612,15 +575,17 @@ msgid ""
 "Your support is needed for {title} ({start} - {end}). \n"
 "You can view the event here: {url}"
 msgstr ""
+"Ihre Unterstützung wird benötigt für {title} ({start} - {end}). \n"
+"Sie können die Veranstaltung hier ansehen: {url}"
 
 #: .\core\notifications\types.py:321
 msgid "Message to all participants"
-msgstr ""
+msgstr "Nachricht an alle Teilnehmenden"
 
 #: .\core\notifications\types.py:344
 #, python-brace-format
 msgid "Information for your participation at {title}"
-msgstr ""
+msgstr "Informationen für Ihre Teilnahme an {title}"
 
 #: .\core\pdf.py:62 .\core\pdf.py:129
 #: .\core\templates\core\event_archive.html:18
@@ -704,10 +669,10 @@ msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
 #: .\core\signup\methods.py:274
-#, fuzzy
-#| msgid "You are already signed up for {shift}."
 msgid "You are already confirmed for another shift at this time."
-msgstr "Sie sind bereits für {shift} eingeteilt."
+msgstr ""
+"Sie sind zu dieser Zeit bereits für eine andere Schicht verbindlich "
+"eingeteilt."
 
 #: .\core\signup\methods.py:291
 msgid "Sign up"
@@ -916,16 +881,12 @@ msgid "Download PDF"
 msgstr "PDF herunterladen"
 
 #: .\core\templates\core\event_detail.html:73
-#, fuzzy
-#| msgid "Required Qualifications"
 msgid "Send notifications"
-msgstr "Erforderliche Qualifikationen"
+msgstr "Benachrichtigungen senden"
 
 #: .\core\templates\core\event_detail.html:86
-#, fuzzy
-#| msgid "shifts"
 msgid "No shifts"
-msgstr "Schichten"
+msgstr "Keine Schichten"
 
 #: .\core\templates\core\event_form.html:11
 msgid "Create new event"
@@ -947,10 +908,8 @@ msgid "Create new %(title)s"
 msgstr "%(title)s hinzufügen"
 
 #: .\core\templates\core\event_form.html:38
-#, fuzzy
-#| msgid "Permission denied"
 msgid "Permissions"
-msgstr "Zugriff verweigert"
+msgstr "Berechtigungen"
 
 #: .\core\templates\core\event_form.html:60
 #: .\core\templates\core\userprofile_form.html:98
@@ -992,10 +951,8 @@ msgstr "Es gibt momentan keine Veranstaltungen."
 
 #: .\core\templates\core\event_notification.html:7
 #: .\core\templates\core\event_notification.html:16
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "Event notifications"
-msgstr "Kann Qualifikation gewähren"
+msgstr "Veranstaltungsbenachrichtigungen"
 
 #: .\core\templates\core\eventtype_confirm_delete.html:7
 #, python-format
@@ -1178,18 +1135,11 @@ msgstr ""
 
 #: .\core\templates\core\userprofile_confirm_password_reset.html:5
 #: .\core\templates\core\userprofile_confirm_password_reset.html:10
-#, fuzzy
-#| msgid "Reset password"
 msgid "Reset another user's password"
-msgstr "Passwort zurücksetzen"
+msgstr "Passwort für einen anderen Benutzer zurücksetzen"
 
 #: .\core\templates\core\userprofile_confirm_password_reset.html:12
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            Are you sure you want to delete the user %(name)s "
-#| "(%(userprofile)s)?\n"
-#| "        "
+#, python-format
 msgid ""
 "\n"
 "        Are you sure that you want to reset the password of the user "
@@ -1197,9 +1147,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"            Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich "
-"löschen?\n"
-"        "
+"        Möchten Sie das Passwort von %(name)s wirklich zurücksetzen?\n"
+"    "
 
 #: .\core\templates\core\userprofile_confirm_password_reset.html:20
 #: .\core\templates\core\userprofile_form.html:102
@@ -1313,22 +1262,20 @@ msgstr "Information"
 
 #: .\core\templates\core\userprofile_notifications.html:13
 #: .\templates\base.html:136
-#, fuzzy
-#| msgid "qualifications"
 msgid "Notifications"
-msgstr "Qualifikationen"
+msgstr "Benachrichtigungen"
 
 #: .\core\templates\core\userprofile_notifications.html:16
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
 msgstr ""
+"Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
+"möchten:"
 
 #: .\core\templates\core\userprofile_notifications.html:23
-#, fuzzy
-#| msgid "qualifications"
 msgid "Push notifications"
-msgstr "Qualifikationen"
+msgstr "Push-Benachrichtigungen"
 
 #: .\core\templates\core\userprofile_notifications.html:25
 msgid ""
@@ -1336,6 +1283,9 @@ msgid ""
 "above. You can manage if you want to receive push notifications on this "
 "device at all below."
 msgstr ""
+"Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
+"empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen empfangen "
+"können, steuern Sie über den Knopf unten."
 
 #: .\core\utils.py:12
 #, python-brace-format
@@ -1366,15 +1316,18 @@ msgid "The user {name} ({user}) was deleted."
 msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
 #: .\core\views\accounts.py:180
-#, fuzzy, python-brace-format
-#| msgid "Your password has been set. You may go ahead and log in now."
+#, python-brace-format
 msgid "The user's password has been reset. An email was sent to {email}."
-msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
+msgstr ""
+"Das Account-Passwort wurde zurückgesetzt. Eine Nachricht wurde an {email} "
+"geschickt."
 
 #: .\core\views\accounts.py:189
 #, python-brace-format
 msgid "No valid email address ({email}). The password has not been reset."
 msgstr ""
+"Keine valide E-Mail-Adresse ({email}). Das Passwort wurde nicht "
+"zurückgesetzt."
 
 #: .\core\views\accounts.py:200
 msgid "Settings succesfully saved."
@@ -1421,10 +1374,8 @@ msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
 #: .\core\views\event.py:307
-#, fuzzy
-#| msgid "Password set successfully"
 msgid "Notifications sent succesfully."
-msgstr "Passwort erfolgreich festgelegt"
+msgstr "Benachrichtigungen erfolgreich gesendet."
 
 #: .\core\views\eventtype.py:44
 #, python-brace-format
@@ -1453,14 +1404,14 @@ msgid "Event types"
 msgstr "Veranstaltungstypen"
 
 #: .\core\views\settings.py:39
-#, fuzzy
-#| msgid "Settings successfully saved."
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
 #: .\core\views\shift.py:48
 msgid "You must enable plugins providing signup methods to continue."
 msgstr ""
+"Um fortzufahren, müssen Sie Plugins aktivieren, die Anmeldeverfahren "
+"bereitstellen."
 
 #: .\core\views\shift.py:143
 #, python-brace-format
@@ -1477,7 +1428,7 @@ msgstr "Die Schicht wurde gelöscht."
 
 #: .\extra\bootstrap.py:13
 msgid "close"
-msgstr ""
+msgstr "schließen"
 
 #: .\extra\management\commands\setupdata.py:74
 msgid "Volunteers"
@@ -1528,14 +1479,12 @@ msgid "Radio"
 msgstr "Funk"
 
 #: .\plugins\basesignup\__init__.py:11
-#, fuzzy
-#| msgid "Signup until"
 msgid "Base Signup Plugin"
-msgstr "Anmelden bis"
+msgstr "Grundlegende Anmeldeverfahren"
 
 #: .\plugins\basesignup\__init__.py:13
 msgid "This plugins adds basic signup methods."
-msgstr ""
+msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
 #: .\plugins\basesignup\signup\common.py:30
 msgid "The maximum number of participants is reached."
@@ -1705,90 +1654,88 @@ msgid "You don't qualify for"
 msgstr "Sie sind nicht qualifiziert für"
 
 #: .\plugins\guests\__init__.py:11
-#, fuzzy
-#| msgid "Participants"
 msgid "Guest Participations"
-msgstr "Teilnehmende"
+msgstr "Gastteilnahmen"
 
 #: .\plugins\guests\__init__.py:14
 msgid ""
 "This plugins allows you to accept signups for individual events from people "
 "without an account, using a public signup form."
 msgstr ""
+"Dieses Plugin ermöglicht es, Anmeldungen von Gästen für einzelne "
+"Veranstaltungen zu erhalten. Diese müssen sich in einem öffentlichen "
+"Formular registrieren."
 
 #: .\plugins\guests\forms.py:11
 msgid "Allow guests"
-msgstr ""
+msgstr "Gäste erlauben"
 
 #: .\plugins\guests\forms.py:13
 msgid "Generate a new link when saving"
-msgstr ""
+msgstr "Beim Speichern einen neuen Link generieren"
 
 #: .\plugins\guests\forms.py:37
 #, python-brace-format
 msgid "Guests can sign up for this event <a href={href}>here</a>. "
 msgstr ""
+"Gäste können sich <a href={href}>hier</a> für die Veranstaltung anmelden. "
 
 #: .\plugins\guests\forms.py:46
-#, fuzzy
-#| msgid "Requests"
 msgid "Guests"
-msgstr "Anfragen"
+msgstr "Gäste"
 
 #: .\plugins\guests\templates\guests\guestuser_form.html:7
 #: .\plugins\guests\templates\guests\guestuser_form.html:16
 msgid "Register as guest"
-msgstr ""
+msgstr "Als Gast registrieren"
 
 #: .\plugins\guests\templates\guests\guestuser_form.html:24
 msgid "Continue"
-msgstr ""
+msgstr "Weiter"
 
 #: .\plugins\guests\views.py:50
 msgid "Log out to register as guest."
-msgstr ""
+msgstr "Melden Sie sich ab, um sich als Gast zu registrieren."
 
 #: .\plugins\guests\views.py:74
 msgid "You already registered as a guest for this event."
-msgstr ""
+msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert."
 
 #: .\plugins\guests\views.py:77
 msgid "Save the URL of this page to access this site later."
-msgstr ""
+msgstr "Speichern Sie die URL dieser Seite, um später zurückzukehren."
 
 #: .\plugins\guests\views.py:86
-#, fuzzy
-#| msgid "You don't have the permission to view this page."
 msgid "Log out to view the guest version of this page."
-msgstr "Sie haben keine Berechtigung, diese Seite aufzurufen."
+msgstr "Melden Sie sich ab, um die Besucheransicht dieser Seite zu sehen."
 
 #: .\plugins\pages\__init__.py:11
 msgid "Pages Plugin"
-msgstr ""
+msgstr "Seiten-Plugin"
 
 #: .\plugins\pages\__init__.py:14
 msgid ""
 "This plugins lets you write pages with arbitrary content and link them in "
 "the site footer. Useful for legal notices."
 msgstr ""
+"Dieses Plugin lässt Sie Seiten mit beliebigem Inhalt erstellen. Diese können "
+"in der Fußzeile verlinkt werden. Nützlich für ein Impressum."
 
 #: .\plugins\pages\signals.py:24
 msgid "Pages"
-msgstr ""
+msgstr "Seiten"
 
 #: .\plugins\pages\templates\pages\page_list.html:6
-#, fuzzy
-#| msgid "Add user"
 msgid "Add page"
-msgstr "Benutzer hinzufügen"
+msgstr "Seite hinzufügen"
 
 #: .\plugins\pages\templates\pages\page_list.html:8
 msgid "Currently, pages can only be edited"
-msgstr ""
+msgstr "Seiten bearbeiten ist aktuell nur möglich"
 
 #: .\plugins\pages\templates\pages\page_list.html:9
 msgid "here"
-msgstr ""
+msgstr "hier"
 
 #: .\templates\400.html:5 .\templates\400.html:9
 msgid "Bad request"
@@ -1856,16 +1803,16 @@ msgstr ""
 "                    "
 
 #: .\templates\offline.html:9
-#, fuzzy
-#| msgid "Section"
 msgid "No connection"
-msgstr "Abschnitt"
+msgstr "Keine Verbindung"
 
 #: .\templates\offline.html:10
 msgid ""
 "You are currently offline. Please check your internet connection and try "
 "again."
 msgstr ""
+"Sie sind offline. Prüfen Sie Ihre Internetverbindung und versuchen Sie es "
+"erneut."
 
 #: .\templates\registration\logged_out.html:5
 msgid "Logged out"
