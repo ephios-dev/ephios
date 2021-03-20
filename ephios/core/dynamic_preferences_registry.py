@@ -10,6 +10,8 @@ from dynamic_preferences.users.registries import user_preferences_registry
 import ephios
 from ephios.core import plugins
 from ephios.core.models import QualificationCategory, UserProfile
+from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
+from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.core.registries import event_type_preference_registry
 from ephios.extra.preferences import CustomModelMultipleChoicePreference, DictPreference
 
@@ -61,7 +63,13 @@ class NotificationPreference(DictPreference):
     name = "notifications"
     verbose_name = _("Notification preferences")
     section = notifications_user_section
-    default = dict()
+    default = dict(
+        zip(
+            [not_type.slug for not_type in CORE_NOTIFICATION_TYPES],
+            [[backend.slug for backend in CORE_NOTIFICATION_BACKENDS]]
+            * len(CORE_NOTIFICATION_TYPES),
+        )
+    )
 
 
 @event_type_preference_registry.register

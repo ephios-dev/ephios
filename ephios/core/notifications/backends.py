@@ -78,3 +78,6 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
             "body": notification.as_plaintext(),
         }
         send_user_notification(user=notification.user, payload=payload, ttl=1000)
+
+
+CORE_NOTIFICATION_BACKENDS = [EmailNotificationBackend, WebPushNotificationBackend]
