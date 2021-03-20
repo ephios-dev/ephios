@@ -61,7 +61,7 @@ Receivers should return a list of subclasses of ``ephios.core.notifications.back
 
 periodic_signal = PluginSignal()
 """
-This signal is called periodically.
+This signal is called periodically, at least every 15 minutes.
 """
 
 
