@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-03-20 18:23+0100\n"
 "PO-Revision-Date: 2021-03-20 18:54+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -1262,22 +1262,20 @@ msgstr "Information"
 
 #: .\core\templates\core\userprofile_notifications.html:13
 #: .\templates\base.html:136
-#, fuzzy
-#| msgid "qualifications"
 msgid "Notifications"
-msgstr "Qualifikationen"
+msgstr "Benachrichtigungen"
 
 #: .\core\templates\core\userprofile_notifications.html:16
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
 msgstr ""
+"Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
+"möchten:"
 
 #: .\core\templates\core\userprofile_notifications.html:23
-#, fuzzy
-#| msgid "qualifications"
 msgid "Push notifications"
-msgstr "Qualifikationen"
+msgstr "Push-Benachrichtigungen"
 
 #: .\core\templates\core\userprofile_notifications.html:25
 msgid ""
@@ -1285,6 +1283,9 @@ msgid ""
 "above. You can manage if you want to receive push notifications on this "
 "device at all below."
 msgstr ""
+"Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
+"empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen empfangen "
+"können, steuern Sie über den Knopf unten."
 
 #: .\core\utils.py:12
 #, python-brace-format
@@ -1315,15 +1316,18 @@ msgid "The user {name} ({user}) was deleted."
 msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
 #: .\core\views\accounts.py:180
-#, fuzzy, python-brace-format
-#| msgid "Your password has been set. You may go ahead and log in now."
+#, python-brace-format
 msgid "The user's password has been reset. An email was sent to {email}."
-msgstr "Ihr Passwort wurde gespeichert. Sie können sich nun anmelden."
+msgstr ""
+"Das Account-Passwort wurde zurückgesetzt. Eine Nachricht wurde an {email} "
+"geschickt."
 
 #: .\core\views\accounts.py:189
 #, python-brace-format
 msgid "No valid email address ({email}). The password has not been reset."
 msgstr ""
+"Keine valide E-Mail-Adresse ({email}). Das Passwort wurde nicht "
+"zurückgesetzt."
 
 #: .\core\views\accounts.py:200
 msgid "Settings succesfully saved."
@@ -1370,10 +1374,8 @@ msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
 #: .\core\views\event.py:307
-#, fuzzy
-#| msgid "Password set successfully"
 msgid "Notifications sent succesfully."
-msgstr "Passwort erfolgreich festgelegt"
+msgstr "Benachrichtigungen erfolgreich gesendet."
 
 #: .\core\views\eventtype.py:44
 #, python-brace-format
@@ -1408,6 +1410,8 @@ msgstr "Einstellungen erfolgreich gespeichert."
 #: .\core\views\shift.py:48
 msgid "You must enable plugins providing signup methods to continue."
 msgstr ""
+"Um fortzufahren, müssen Sie Plugins aktivieren, die Anmeldeverfahren "
+"bereitstellen."
 
 #: .\core\views\shift.py:143
 #, python-brace-format
@@ -1424,7 +1428,7 @@ msgstr "Die Schicht wurde gelöscht."
 
 #: .\extra\bootstrap.py:13
 msgid "close"
-msgstr ""
+msgstr "schließen"
 
 #: .\extra\management\commands\setupdata.py:74
 msgid "Volunteers"
@@ -1475,14 +1479,12 @@ msgid "Radio"
 msgstr "Funk"
 
 #: .\plugins\basesignup\__init__.py:11
-#, fuzzy
-#| msgid "Signup until"
 msgid "Base Signup Plugin"
-msgstr "Anmelden bis"
+msgstr "Grundlegende Anmeldeverfahren"
 
 #: .\plugins\basesignup\__init__.py:13
 msgid "This plugins adds basic signup methods."
-msgstr ""
+msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
 #: .\plugins\basesignup\signup\common.py:30
 msgid "The maximum number of participants is reached."
@@ -1652,90 +1654,88 @@ msgid "You don't qualify for"
 msgstr "Sie sind nicht qualifiziert für"
 
 #: .\plugins\guests\__init__.py:11
-#, fuzzy
-#| msgid "Participants"
 msgid "Guest Participations"
-msgstr "Teilnehmende"
+msgstr "Gastteilnahmen"
 
 #: .\plugins\guests\__init__.py:14
 msgid ""
 "This plugins allows you to accept signups for individual events from people "
 "without an account, using a public signup form."
 msgstr ""
+"Dieses Plugin ermöglicht es, Anmeldungen von Gästen für einzelne "
+"Veranstaltungen zu erhalten. Diese müssen sich in einem öffentlichen "
+"Formular registrieren."
 
 #: .\plugins\guests\forms.py:11
 msgid "Allow guests"
-msgstr ""
+msgstr "Gäste erlauben"
 
 #: .\plugins\guests\forms.py:13
 msgid "Generate a new link when saving"
-msgstr ""
+msgstr "Beim Speichern einen neuen Link generieren"
 
 #: .\plugins\guests\forms.py:37
 #, python-brace-format
 msgid "Guests can sign up for this event <a href={href}>here</a>. "
 msgstr ""
+"Gäste können sich <a href={href}>hier</a> für die Veranstaltung anmelden. "
 
 #: .\plugins\guests\forms.py:46
-#, fuzzy
-#| msgid "Requests"
 msgid "Guests"
-msgstr "Anfragen"
+msgstr "Gäste"
 
 #: .\plugins\guests\templates\guests\guestuser_form.html:7
 #: .\plugins\guests\templates\guests\guestuser_form.html:16
 msgid "Register as guest"
-msgstr ""
+msgstr "Als Gast registrieren"
 
 #: .\plugins\guests\templates\guests\guestuser_form.html:24
 msgid "Continue"
-msgstr ""
+msgstr "Weiter"
 
 #: .\plugins\guests\views.py:50
 msgid "Log out to register as guest."
-msgstr ""
+msgstr "Melden Sie sich ab, um sich als Gast zu registrieren."
 
 #: .\plugins\guests\views.py:74
 msgid "You already registered as a guest for this event."
-msgstr ""
+msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert."
 
 #: .\plugins\guests\views.py:77
 msgid "Save the URL of this page to access this site later."
-msgstr ""
+msgstr "Speichern Sie die URL dieser Seite, um später zurückzukehren."
 
 #: .\plugins\guests\views.py:86
-#, fuzzy
-#| msgid "You don't have the permission to view this page."
 msgid "Log out to view the guest version of this page."
-msgstr "Sie haben keine Berechtigung, diese Seite aufzurufen."
+msgstr "Melden Sie sich ab, um die Besucheransicht dieser Seite zu sehen."
 
 #: .\plugins\pages\__init__.py:11
 msgid "Pages Plugin"
-msgstr ""
+msgstr "Seiten-Plugin"
 
 #: .\plugins\pages\__init__.py:14
 msgid ""
 "This plugins lets you write pages with arbitrary content and link them in "
 "the site footer. Useful for legal notices."
 msgstr ""
+"Dieses Plugin lässt Sie Seiten mit beliebigem Inhalt erstellen. Diese können "
+"in der Fußzeile verlinkt werden. Nützlich für ein Impressum."
 
 #: .\plugins\pages\signals.py:24
 msgid "Pages"
-msgstr ""
+msgstr "Seiten"
 
 #: .\plugins\pages\templates\pages\page_list.html:6
-#, fuzzy
-#| msgid "Add user"
 msgid "Add page"
-msgstr "Benutzer hinzufügen"
+msgstr "Seite hinzufügen"
 
 #: .\plugins\pages\templates\pages\page_list.html:8
 msgid "Currently, pages can only be edited"
-msgstr ""
+msgstr "Seiten bearbeiten ist aktuell nur möglich"
 
 #: .\plugins\pages\templates\pages\page_list.html:9
 msgid "here"
-msgstr ""
+msgstr "hier"
 
 #: .\templates\400.html:5 .\templates\400.html:9
 msgid "Bad request"
@@ -1803,16 +1803,16 @@ msgstr ""
 "                    "
 
 #: .\templates\offline.html:9
-#, fuzzy
-#| msgid "Section"
 msgid "No connection"
-msgstr "Abschnitt"
+msgstr "Keine Verbindung"
 
 #: .\templates\offline.html:10
 msgid ""
 "You are currently offline. Please check your internet connection and try "
 "again."
 msgstr ""
+"Sie sind offline. Prüfen Sie Ihre Internetverbindung und versuchen Sie es "
+"erneut."
 
 #: .\templates\registration\logged_out.html:5
 msgid "Logged out"
