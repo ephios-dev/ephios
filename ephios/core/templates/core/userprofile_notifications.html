@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 {% load webpush_notifications %}
+{% load webpush_notifications %}
 {% load utils %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 
 {% block title %}
     {% translate "Settings" %}
+{% endblock %}
+
+{% block html_head %}
+    {% webpush_header %}
 {% endblock %}
 
 {% block content %}

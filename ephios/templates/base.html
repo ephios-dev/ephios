@@ -1,4 +1,3 @@
-{% load webpush_notifications %}
 {% load statici18n %}
 {% load i18n %}
 {% load static %}
@@ -41,8 +40,6 @@
         <meta name="msapplication-TileImage" content="{{ icon.src }}">
         <link rel="icon" sizes="{{ icon.sizes }}" href="{{ icon.src }}">
     {% endwith %}
-
-    {% webpush_header %}
 
     {% compress css %}
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">

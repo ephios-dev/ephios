@@ -1,8 +1,8 @@
 from django.core.management import BaseCommand
 
-from ephios.core.notifications.backends import send_all_notifications
+from ephios.core.signals import periodic_signal
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        send_all_notifications()
+        periodic_signal.send(self)

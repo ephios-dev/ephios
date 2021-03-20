@@ -346,3 +346,15 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def as_plaintext(cls, notification):
         return notification.data.get("content")
+
+
+CORE_NOTIFICATION_TYPES = [
+    ProfileUpdateNotification,
+    NewProfileNotification,
+    ParticipationRejectedNotification,
+    ParticipationConfirmedNotification,
+    ResponsibleParticipationRequested,
+    NewEventNotification,
+    EventReminderNotification,
+    CustomEventParticipantNotification,
+]

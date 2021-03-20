@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 
+from ephios.core.notifications.backends import send_all_notifications
 from ephios.core.plugins import PluginSignal
 
 # PluginSignals are only send out to enabled plugins.
@@ -58,6 +59,11 @@ This signal is sent out to get all backends that can handle sending out notifica
 Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractBackend``
 """
 
+periodic_signal = PluginSignal()
+"""
+This signal is called periodically, at least every 15 minutes.
+"""
+
 
 @receiver(
     register_consequence_handlers,
@@ -74,34 +80,18 @@ def register_base_consequence_handlers(sender, **kwargs):
 
 @receiver(register_notification_types)
 def register_core_notification_types(sender, **kwargs):
-    from ephios.core.notifications.types import (
-        CustomEventParticipantNotification,
-        EventReminderNotification,
-        NewEventNotification,
-        NewProfileNotification,
-        ParticipationConfirmedNotification,
-        ParticipationRejectedNotification,
-        ProfileUpdateNotification,
-        ResponsibleParticipationRequested,
-    )
+    from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
 
-    return [
-        ProfileUpdateNotification,
-        NewProfileNotification,
-        ParticipationRejectedNotification,
-        ParticipationConfirmedNotification,
-        ResponsibleParticipationRequested,
-        NewEventNotification,
-        EventReminderNotification,
-        CustomEventParticipantNotification,
-    ]
+    return CORE_NOTIFICATION_TYPES
 
 
 @receiver(register_notification_backends)
 def register_core_notification_backends(sender, **kwargs):
-    from ephios.core.notifications.backends import (
-        EmailNotificationBackend,
-        WebPushNotificationBackend,
-    )
+    from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
-    return [EmailNotificationBackend, WebPushNotificationBackend]
+    return CORE_NOTIFICATION_BACKENDS
+
+
+@receiver(periodic_signal)
+def send_notifications(sender, **kwargs):
+    send_all_notifications()
