@@ -275,8 +275,6 @@ def check_conflicting_shifts(method, participant):
 
 
 class BaseSignupMethod:
-    # pylint: disable=too-many-public-methods
-
     @property
     def slug(self):
         raise NotImplementedError()
@@ -317,7 +315,7 @@ class BaseSignupMethod:
         return self.signup_view_class.as_view(method=self, shift=self.shift)
 
     @property
-    def signup_checkers(self):
+    def _signup_checkers(self):
         return [
             check_event_is_active,
             check_participation_state_for_signup,
@@ -327,7 +325,7 @@ class BaseSignupMethod:
         ]
 
     @property
-    def decline_checkers(self):
+    def _decline_checkers(self):
         return [
             check_event_is_active,
             check_participation_state_for_decline,
@@ -338,7 +336,7 @@ class BaseSignupMethod:
     def get_signup_errors(self, participant) -> List[ParticipationError]:
         return [
             error
-            for checker in self.signup_checkers
+            for checker in self._signup_checkers
             if (error := checker(self, participant)) is not None
         ]
 
@@ -346,7 +344,7 @@ class BaseSignupMethod:
     def get_decline_errors(self, participant):
         return [
             error
-            for checker in self.decline_checkers
+            for checker in self._decline_checkers
             if (error := checker(self, participant)) is not None
         ]
 
@@ -370,7 +368,7 @@ class BaseSignupMethod:
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        participation = self.configure_participation(
+        participation = self._configure_participation(
             self.get_participation_for(participant), **kwargs
         )
         participation.save()
@@ -386,7 +384,7 @@ class BaseSignupMethod:
         participation.save()
         return participation
 
-    def configure_participation(
+    def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         """

@@ -6,7 +6,7 @@ from guardian.shortcuts import get_users_with_perms
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
 from ephios.core.notifications.backends import enabled_notification_backends
 from ephios.core.notifications.types import (
-    CustomParticipantNotification,
+    CustomEventParticipantNotification,
     EventReminderNotification,
     NewEventNotification,
     NewProfileNotification,
@@ -73,7 +73,7 @@ class TestNotifications:
         ParticipationConfirmedNotification.send(participation)
         ParticipationRejectedNotification.send(participation)
         ResponsibleParticipationRequested.send(participation)
-        CustomParticipantNotification.send(event, "hi")
+        CustomEventParticipantNotification.send(event, "hi")
         assert Notification.objects.count() == 3 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )

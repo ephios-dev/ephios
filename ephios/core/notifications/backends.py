@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
 from ephios.core.models.users import Notification
-from ephios.core.notifications.types import notification_type_from_slug
 from ephios.core.signals import register_notification_backends
 
 
@@ -17,7 +16,7 @@ def enabled_notification_backends():
         yield from (b() for b in backends)
 
 
-class AbstractBackend:
+class AbstractNotificationBackend:
     @property
     def slug(self):
         return NotImplementedError
@@ -32,10 +31,9 @@ class AbstractBackend:
 
     @classmethod
     def user_prefers_sending(cls, notification):
-        notification_type = notification_type_from_slug(notification.slug)
-        if notification_type.unsubscribe_allowed and notification.user is not None:
+        if notification.notification_type.unsubscribe_allowed and notification.user is not None:
             backends = notification.user.preferences["notifications__notifications"].get(
-                notification_type.slug
+                notification.slug
             )
             if backends is not None:
                 return cls.slug in backends
@@ -46,7 +44,7 @@ class AbstractBackend:
         raise NotImplementedError
 
 
-class EmailBackend(AbstractBackend):
+class EmailNotificationBackend(AbstractNotificationBackend):
     slug = "ephios_backend_email"
     title = _("via email")
 
@@ -60,25 +58,23 @@ class EmailBackend(AbstractBackend):
 
     @classmethod
     def send(cls, notification):
-        notification_type = notification_type_from_slug(notification.slug)
         email = EmailMultiAlternatives(
             to=[cls._get_mailaddress(notification)],
-            subject=notification_type.get_subject(notification),
-            body=notification_type.as_plaintext(notification),
+            subject=notification.subject,
+            body=notification.as_plaintext(),
         )
-        email.attach_alternative(notification_type.as_html(notification), "text/html")
+        email.attach_alternative(notification.as_html(), "text/html")
         email.send()
 
 
-class WebPushBackend(AbstractBackend):
+class WebPushNotificationBackend(AbstractNotificationBackend):
     slug = "ephios_backend_webpush"
     title = _("via push notification")
 
     @classmethod
     def send(cls, notification):
-        notification_type = notification_type_from_slug(notification.slug)
         payload = {
-            "head": str(notification_type.get_subject(notification)),
-            "body": notification_type.as_plaintext(notification),
+            "head": str(notification.subject),
+            "body": notification.as_plaintext(),
         }
         send_user_notification(user=notification.user, payload=payload, ttl=1000)

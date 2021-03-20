@@ -75,7 +75,7 @@ def register_base_consequence_handlers(sender, **kwargs):
 @receiver(register_notification_types)
 def register_core_notification_types(sender, **kwargs):
     from ephios.core.notifications.types import (
-        CustomParticipantNotification,
+        CustomEventParticipantNotification,
         EventReminderNotification,
         NewEventNotification,
         NewProfileNotification,
@@ -93,12 +93,15 @@ def register_core_notification_types(sender, **kwargs):
         ResponsibleParticipationRequested,
         NewEventNotification,
         EventReminderNotification,
-        CustomParticipantNotification,
+        CustomEventParticipantNotification,
     ]
 
 
 @receiver(register_notification_backends)
 def register_core_notification_backends(sender, **kwargs):
-    from ephios.core.notifications.backends import EmailBackend, WebPushBackend
+    from ephios.core.notifications.backends import (
+        EmailNotificationBackend,
+        WebPushNotificationBackend,
+    )
 
-    return [EmailBackend, WebPushBackend]
+    return [EmailNotificationBackend, WebPushNotificationBackend]

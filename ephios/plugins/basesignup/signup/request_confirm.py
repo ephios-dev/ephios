@@ -48,7 +48,7 @@ class RequestConfirmSignupMethod(
             }
         )
 
-    def configure_participation(
+    def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         participation.state = AbstractParticipation.States.REQUESTED

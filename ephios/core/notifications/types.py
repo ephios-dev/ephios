@@ -109,7 +109,7 @@ class NewProfileNotification(AbstractNotificationHandler):
     @classmethod
     def as_html(cls, notification):
         return render_to_string(
-            "core/new_account_email.html",
+            "core/mails/new_account_email.html",
             {
                 **{"site_url": settings.SITE_URL, "email": notification.user.email},
                 **notification.data,
@@ -177,7 +177,10 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("Participation confirmed")
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return _("Participation confirmed for {event}").format(event=event)
 
     @classmethod
     def as_plaintext(cls, notification):
@@ -206,7 +209,10 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("Participation rejected")
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return _("Participation rejected for {event}").format(event=event)
 
     @classmethod
     def as_plaintext(cls, notification):
@@ -251,7 +257,9 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
             id=notification.data.get("participation_id")
         )
         participation_state = participation.get_state_display()
-        return _("Participation {state}").format(state=participation_state)
+        return _("Participation {state} for {event}").format(
+            state=participation_state, event=participation.shift.event
+        )
 
     @classmethod
     def as_plaintext(cls, notification):
@@ -308,8 +316,8 @@ class EventReminderNotification(AbstractNotificationHandler):
         )
 
 
-class CustomParticipantNotification(AbstractNotificationHandler):
-    slug = "ephios_confirmed_participants"
+class CustomEventParticipantNotification(AbstractNotificationHandler):
+    slug = "ephios_custom_event_participant"
     title = _("Message to all participants")
     unsubscribe_allowed = False
 

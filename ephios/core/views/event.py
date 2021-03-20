@@ -31,7 +31,7 @@ from recurrence.forms import RecurrenceField
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
 from ephios.core.models import Event, EventType, Shift
 from ephios.core.notifications.types import (
-    CustomParticipantNotification,
+    CustomEventParticipantNotification,
     EventReminderNotification,
     NewEventNotification,
 )
@@ -303,6 +303,6 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
         elif action == form.REMINDER:
             EventReminderNotification.send(self.object)
         elif action == form.PARTICIPANTS:
-            CustomParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
+            CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())

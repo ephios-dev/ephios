@@ -240,11 +240,11 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             return ParticipationError(_("You are not qualified."))
 
     @property
-    def signup_checkers(self):
-        return super().signup_checkers + [self.check_qualification]
+    def _signup_checkers(self):
+        return super()._signup_checkers + [self.check_qualification]
 
     # pylint: disable=arguments-differ
-    def configure_participation(
+    def _configure_participation(
         self, participation: AbstractParticipation, preferred_section_uuid=None, **kwargs
     ) -> AbstractParticipation:
         participation.data["preferred_section_uuid"] = preferred_section_uuid

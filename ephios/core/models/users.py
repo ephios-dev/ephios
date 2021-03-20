@@ -1,3 +1,4 @@
+import functools
 import secrets
 import uuid
 from datetime import date
@@ -333,3 +334,19 @@ class Notification(Model):
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
+
+    @functools.cached_property
+    def notification_type(self):
+        from ephios.core.notifications.types import notification_type_from_slug
+
+        return notification_type_from_slug(self.slug)
+
+    @property
+    def subject(self):
+        return self.notification_type.get_subject(self)
+
+    def as_plaintext(self):
+        return self.notification_type.as_plaintext(self)
+
+    def as_html(self):
+        return self.notification_type.as_html(self)
