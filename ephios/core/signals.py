@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 
-from ephios.core.notifications.backends import dispatch
+from ephios.core.notifications.backends import send_all_notifications
 from ephios.core.plugins import PluginSignal
 
 # PluginSignals are only send out to enabled plugins.
@@ -94,4 +94,4 @@ def register_core_notification_backends(sender, **kwargs):
 
 @receiver(periodic_signal)
 def send_notifications(sender, **kwargs):
-    dispatch()
+    send_all_notifications()

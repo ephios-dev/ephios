@@ -22,7 +22,7 @@ def enabled_notification_backends():
         yield from (b() for b in backends)
 
 
-def dispatch():
+def send_all_notifications():
     for backend in installed_notification_backends():
         for notification in Notification.objects.filter(failed=False):
             if backend.can_send(notification) and backend.user_prefers_sending(notification):
