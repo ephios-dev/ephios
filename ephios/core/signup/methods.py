@@ -315,7 +315,7 @@ class BaseSignupMethod:
         return self.signup_view_class.as_view(method=self, shift=self.shift)
 
     @property
-    def signup_checkers(self):
+    def _signup_checkers(self):
         return [
             check_event_is_active,
             check_participation_state_for_signup,
@@ -325,7 +325,7 @@ class BaseSignupMethod:
         ]
 
     @property
-    def decline_checkers(self):
+    def _decline_checkers(self):
         return [
             check_event_is_active,
             check_participation_state_for_decline,
@@ -336,7 +336,7 @@ class BaseSignupMethod:
     def get_signup_errors(self, participant) -> List[ParticipationError]:
         return [
             error
-            for checker in self.signup_checkers
+            for checker in self._signup_checkers
             if (error := checker(self, participant)) is not None
         ]
 
@@ -344,7 +344,7 @@ class BaseSignupMethod:
     def get_decline_errors(self, participant):
         return [
             error
-            for checker in self.decline_checkers
+            for checker in self._decline_checkers
             if (error := checker(self, participant)) is not None
         ]
 
@@ -361,12 +361,19 @@ class BaseSignupMethod:
 
     def perform_signup(self, participant: AbstractParticipant, **kwargs) -> AbstractParticipation:
         """
-        Configure a participation object for the given participant according to the method's configuration.
-        `kwargs` may contain further instructions from e.g. a form.
+        Creates and/or configures a participation object for a given participant and sends out notifications.
+        Passes the participation and kwargs to configure_participation to do configuration specific to the signup method
         """
+        from ephios.core.notifications.types import ResponsibleParticipationRequested
+
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        return self.get_participation_for(participant)
+        participation = self._configure_participation(
+            self.get_participation_for(participant), **kwargs
+        )
+        participation.save()
+        ResponsibleParticipationRequested.send(participation)
+        return participation
 
     def perform_decline(self, participant, **kwargs):
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
@@ -376,6 +383,15 @@ class BaseSignupMethod:
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
         return participation
+
+    def _configure_participation(
+        self, participation: AbstractParticipation, **kwargs
+    ) -> AbstractParticipation:
+        """
+        Configure the given participation object for signup according to the method's configuration.
+        You need at least to set the participations state. `kwargs` may contain further instructions from e.g. a form.
+        """
+        return NotImplemented
 
     def get_configuration_fields(self):
         return OrderedDict(

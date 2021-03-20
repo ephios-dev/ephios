@@ -4,7 +4,9 @@ from email.utils import getaddresses
 from importlib import metadata
 
 import environ
+from cryptography.hazmat.primitives import serialization
 from django.contrib.messages import constants
+from py_vapid import Vapid, b64urlencode
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,6 +54,7 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
+    "webpush",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -221,3 +224,16 @@ PWA_APP_ICONS = [
     {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
     {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
 ]
+
+# django-webpush
+if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
+    vp = Vapid().from_file(vapid_private_key_path)
+    WEBPUSH_SETTINGS = {
+        "VAPID_PUBLIC_KEY": b64urlencode(
+            vp.public_key.public_bytes(
+                serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+            )
+        ),
+        "VAPID_PRIVATE_KEY": vp,
+        "VAPID_ADMIN_EMAIL": ADMINS[0][1],
+    }

@@ -48,8 +48,8 @@ class RequestConfirmSignupMethod(
             }
         )
 
-    def perform_signup(self, participant, **kwargs):
-        participation = super().perform_signup(participant, **kwargs)
+    def _configure_participation(
+        self, participation: AbstractParticipation, **kwargs
+    ) -> AbstractParticipation:
         participation.state = AbstractParticipation.States.REQUESTED
-        participation.save()
         return participation

@@ -24,6 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("select2/", include("django_select2.urls")),
+    path("webpush/", include("webpush.urls")),
     path("", include("ephios.core.urls")),
     path("jsi18n.js", JavaScriptCatalog.as_view(packages=["recurrence"]), name="jsi18n"),
 ]

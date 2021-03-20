@@ -1,8 +1,5 @@
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from ephios.core import mail
-from ephios.core.models import LocalParticipation
 from ephios.core.plugins import PluginSignal
 
 # PluginSignals are only send out to enabled plugins.
@@ -49,6 +46,18 @@ Subclass `BaseEventPluginForm` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
+register_notification_types = PluginSignal()
+"""
+This signal is sent out to get all notification types that can be sent out to a user or participant.
+Receivers should return a list of subclasses of ``ephios.core.notifications.types.AbstractNotificationHandler``
+"""
+
+register_notification_backends = PluginSignal()
+"""
+This signal is sent out to get all backends that can handle sending out notifications.
+Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractBackend``
+"""
+
 
 @receiver(
     register_consequence_handlers,
@@ -63,10 +72,36 @@ def register_base_consequence_handlers(sender, **kwargs):
     return [WorkingHoursConsequenceHandler, QualificationConsequenceHandler]
 
 
-@receiver(
-    post_save,
-    sender=LocalParticipation,
-    dispatch_uid="ephios.core.signals.send_participation_state_changed_mail",
-)
-def send_participation_state_changed_mail(sender, instance, **kwargs):
-    mail.participation_state_changed(instance)
+@receiver(register_notification_types)
+def register_core_notification_types(sender, **kwargs):
+    from ephios.core.notifications.types import (
+        CustomEventParticipantNotification,
+        EventReminderNotification,
+        NewEventNotification,
+        NewProfileNotification,
+        ParticipationConfirmedNotification,
+        ParticipationRejectedNotification,
+        ProfileUpdateNotification,
+        ResponsibleParticipationRequested,
+    )
+
+    return [
+        ProfileUpdateNotification,
+        NewProfileNotification,
+        ParticipationRejectedNotification,
+        ParticipationConfirmedNotification,
+        ResponsibleParticipationRequested,
+        NewEventNotification,
+        EventReminderNotification,
+        CustomEventParticipantNotification,
+    ]
+
+
+@receiver(register_notification_backends)
+def register_core_notification_backends(sender, **kwargs):
+    from ephios.core.notifications.backends import (
+        EmailNotificationBackend,
+        WebPushNotificationBackend,
+    )
+
+    return [EmailNotificationBackend, WebPushNotificationBackend]

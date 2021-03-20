@@ -11,17 +11,22 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
     TemplateView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users.views import UserPreferenceFormView
 
-from ephios.core import mail
-from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
+from ephios.core.forms.users import (
+    GroupForm,
+    QualificationGrantFormset,
+    UserNotificationPreferenceForm,
+    UserProfileForm,
+)
 from ephios.core.models import QualificationGrant, UserProfile
+from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -80,7 +85,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             if userprofile.is_active:
-                mail.send_account_creation_info_to_user(userprofile)
+                NewProfileNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
         return self.render_to_response(
             self.get_context_data(
@@ -126,11 +131,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            if (
-                userprofile.is_active
-                and userprofile.preferences["notifications__userprofile_update"]
-            ):
-                mail.send_account_update_info_to_user(userprofile)
+            ProfileUpdateNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
 
         return self.render_to_response(
@@ -194,12 +195,19 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
         return self.render_to_response({"userprofile": self.object})
 
 
-class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
-    template_name = "core/userprofile_settings.html"
+class UserProfileNotificationsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/userprofile_notifications.html"
     success_message = _("Settings succesfully saved.")
 
+    def get_form(self, form_class=None):
+        return UserNotificationPreferenceForm(self.request.POST or None, user=self.request.user)
+
     def get_success_url(self):
-        return reverse("core:profile")
+        return reverse("core:profile_notifications")
+
+    def form_valid(self, form):
+        form.update_preferences()
+        return super().form_valid(form)
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

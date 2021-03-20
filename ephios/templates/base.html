@@ -1,3 +1,4 @@
+{% load webpush_notifications %}
 {% load statici18n %}
 {% load i18n %}
 {% load static %}
@@ -40,6 +41,8 @@
         <meta name="msapplication-TileImage" content="{{ icon.src }}">
         <link rel="icon" sizes="{{ icon.sizes }}" href="{{ icon.src }}">
     {% endwith %}
+
+    {% webpush_header %}
 
     {% compress css %}
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
@@ -130,7 +133,7 @@
                                     <a class="dropdown-item"
                                        href="{% url "core:profile" %}">{% trans "Profile" %}</a>
                                     <a class="dropdown-item"
-                                       href="{% url "core:profile_settings" %}">{% trans "Settings" %}</a>
+                                       href="{% url "core:profile_notifications" %}">{% trans "Notifications" %}</a>
                                     <a class="dropdown-item"
                                        href="{% url "password_change" %}">{% trans "Change password" %}</a>
                                     <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>

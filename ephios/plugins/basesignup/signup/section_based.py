@@ -240,20 +240,19 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             return ParticipationError(_("You are not qualified."))
 
     @property
-    def signup_checkers(self):
-        return super().signup_checkers + [self.check_qualification]
+    def _signup_checkers(self):
+        return super()._signup_checkers + [self.check_qualification]
 
     # pylint: disable=arguments-differ
-    def perform_signup(
-        self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
-    ):
-        participation = super().perform_signup(participant, **kwargs)
+    def _configure_participation(
+        self, participation: AbstractParticipation, preferred_section_uuid=None, **kwargs
+    ) -> AbstractParticipation:
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice
             participation.data["dispatched_section_uuid"] = None
         participation.state = AbstractParticipation.States.REQUESTED
-        participation.save()
+        return participation
 
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)

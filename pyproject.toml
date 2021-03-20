@@ -30,6 +30,7 @@ django-compressor = "^2.4"
 django-statici18n = "^2.0.1"
 django-dynamic-preferences = "^1.10.1"
 django-crispy-forms = "^1.11.1"
+django-webpush = "^0.3.3"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
@@ -70,7 +71,7 @@ disable = """C0330, C0301,
 duplicate-code, attribute-defined-outside-init, missing-module-docstring, missing-class-docstring,
 no-member, invalid-name, import-outside-toplevel, unused-argument, too-many-ancestors, missing-function-docstring,
 too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsistent-return-statements,
-useless-object-inheritance
+useless-object-inheritance, logging-fstring-interpolation
 """
 
 [tool.pylint.format]

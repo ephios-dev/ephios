@@ -156,6 +156,22 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         formset = self.get_formset()
         if formset.is_valid():
             formset.save()
+
+            for participation, changed_fields in formset.changed_objects:
+                if "state" in changed_fields:
+                    if participation.state == AbstractParticipation.States.CONFIRMED:
+                        from ephios.core.notifications.types import (
+                            ParticipationConfirmedNotification,
+                        )
+
+                        ParticipationConfirmedNotification.send(participation)
+                    elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                        from ephios.core.notifications.types import (
+                            ParticipationRejectedNotification,
+                        )
+
+                        ParticipationRejectedNotification.send(participation)
+
             self.object.participations.filter(
                 state=AbstractParticipation.States.GETTING_DISPATCHED
             ).delete()

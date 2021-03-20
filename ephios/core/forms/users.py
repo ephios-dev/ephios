@@ -6,11 +6,13 @@ from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.forms import (
     CharField,
+    CheckboxSelectMultiple,
     DateField,
     DecimalField,
     Form,
     ModelForm,
     ModelMultipleChoiceField,
+    MultipleChoiceField,
     inlineformset_factory,
 )
 from django.utils.translation import gettext as _
@@ -19,6 +21,8 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile
+from ephios.core.notifications.backends import enabled_notification_backends
+from ephios.core.notifications.types import enabled_notification_types
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
@@ -264,3 +268,25 @@ class WorkingHourRequestForm(Form):
             hours=float(self.cleaned_data["hours"]),
             reason=self.cleaned_data["reason"],
         )
+
+
+class UserNotificationPreferenceForm(Form):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+        preferences = self.user.preferences["notifications__notifications"]
+        for notification_type in enabled_notification_types():
+            if notification_type.unsubscribe_allowed:
+                self.fields[notification_type.slug] = MultipleChoiceField(
+                    label=notification_type.title,
+                    choices=[
+                        (backend.slug, backend.title) for backend in enabled_notification_backends()
+                    ],
+                    initial=preferences.get(notification_type.slug, {}),
+                    widget=CheckboxSelectMultiple,
+                    required=False,
+                )
+
+    def update_preferences(self):
+        self.user.preferences["notifications__notifications"] = self.cleaned_data
