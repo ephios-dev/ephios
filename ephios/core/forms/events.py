@@ -143,10 +143,10 @@ class EventForm(forms.ModelForm):
 
 
 class ShiftForm(forms.ModelForm):
-    date = forms.DateField(widget=CustomDateInput(format="%Y-%m-%d"))
-    meeting_time = forms.TimeField(widget=CustomTimeInput)
-    start_time = forms.TimeField(widget=CustomTimeInput)
-    end_time = forms.TimeField(widget=CustomTimeInput)
+    date = forms.DateField(widget=CustomDateInput(format="%Y-%m-%d"), label=_("Date"))
+    meeting_time = forms.TimeField(widget=CustomTimeInput, label=_("Meeting time"))
+    start_time = forms.TimeField(widget=CustomTimeInput, label=_("Start time"))
+    end_time = forms.TimeField(widget=CustomTimeInput, label=_("End time"))
 
     field_order = ["date", "meeting_time", "start_time", "end_time", "signup_method_slug"]
 
@@ -190,6 +190,7 @@ class EventDuplicationForm(forms.Form):
         help_text=_(
             "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."
         ),
+        label=_("Start date"),
     )
     recurrence = RecurrenceField(required=False)
 
@@ -229,7 +230,7 @@ class EventNotificationForm(forms.Form):
         widget=forms.RadioSelect,
         label=False,
     )
-    mail_content = forms.CharField(required=False, widget=forms.Textarea)
+    mail_content = forms.CharField(required=False, widget=forms.Textarea, label=_("Mail content"))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
