@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 
+from ephios.core.notifications.backends import dispatch
 from ephios.core.plugins import PluginSignal
 
 # PluginSignals are only send out to enabled plugins.
@@ -58,6 +59,11 @@ This signal is sent out to get all backends that can handle sending out notifica
 Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractBackend``
 """
 
+periodic_signal = PluginSignal()
+"""
+This signal is called periodically.
+"""
+
 
 @receiver(
     register_consequence_handlers,
@@ -84,3 +90,8 @@ def register_core_notification_backends(sender, **kwargs):
     from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
     return CORE_NOTIFICATION_BACKENDS
+
+
+@receiver(periodic_signal)
+def send_notifications(sender, **kwargs):
+    dispatch()

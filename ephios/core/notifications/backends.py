@@ -1,9 +1,15 @@
-from django.core.mail import EmailMultiAlternatives
+import logging
+import traceback
+
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, mail_admins
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
 from ephios.core.models.users import Notification
 from ephios.core.signals import register_notification_backends
+
+logger = logging.getLogger(__name__)
 
 
 def installed_notification_backends():
@@ -14,6 +20,27 @@ def installed_notification_backends():
 def enabled_notification_backends():
     for _, backends in register_notification_backends.send(None):
         yield from (b() for b in backends)
+
+
+def dispatch():
+    for backend in installed_notification_backends():
+        for notification in Notification.objects.filter(failed=False):
+            if backend.can_send(notification) and backend.user_prefers_sending(notification):
+                try:
+                    backend.send(notification)
+                except Exception as e:  # pylint: disable=broad-except
+                    if settings.DEBUG:
+                        raise e
+                    notification.failed = True
+                    notification.save()
+                    mail_admins(
+                        "Notification sending failed",
+                        f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
+                    )
+                    logger.warning(
+                        f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
+                    )
+    Notification.objects.filter(failed=False).delete()
 
 
 class AbstractNotificationBackend:
