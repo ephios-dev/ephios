@@ -148,7 +148,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         group.user_set.set(self.cleaned_data["users"])
 
         remove_perm("publish_event_for_group", group, Group.objects.all())
-        if self.cleaned_data["is_planning_group"]:
+        if group.permissions.filter(codename="add_event").exists():
             assign_perm(
                 "publish_event_for_group", group, self.cleaned_data["publish_event_for_group"]
             )
