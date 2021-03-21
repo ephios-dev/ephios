@@ -38,7 +38,7 @@ class MinMaxParticipantsMixin(_Base):
     def get_configuration_fields(self):
         return OrderedDict(
             {
-                **super().get_configuration_fields(),
+                **super()._get_configuration_fields(),
                 "minimum_number_of_participants": {
                     "formfield": forms.IntegerField(min_value=0, required=False),
                     "default": None,
@@ -87,7 +87,7 @@ class QualificationsRequiredSignupMixin(_Base):
     def get_configuration_fields(self):
         return OrderedDict(
             {
-                **super().get_configuration_fields(),
+                **super()._get_configuration_fields(),
                 "required_qualification_ids": {
                     "formfield": forms.ModelMultipleChoiceField(
                         label=_("Required Qualifications"),

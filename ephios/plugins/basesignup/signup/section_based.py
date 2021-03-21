@@ -209,9 +209,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
-    def get_configuration_fields(self):
+    def _get_configuration_fields(self):
         return {
-            **super().get_configuration_fields(),
+            **super()._get_configuration_fields(),
             "choose_preferred_section": {
                 "formfield": forms.BooleanField(
                     label=_("Ask participants for a preferred section"),
