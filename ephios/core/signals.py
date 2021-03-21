@@ -56,7 +56,7 @@ Receivers should return a list of subclasses of ``ephios.core.notifications.type
 register_notification_backends = PluginSignal()
 """
 This signal is sent out to get all backends that can handle sending out notifications.
-Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractBackend``
+Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractNotificationBackend``
 """
 
 periodic_signal = PluginSignal()
