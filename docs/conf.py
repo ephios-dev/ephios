@@ -16,6 +16,7 @@
 
 
 # -- Project information -----------------------------------------------------
+import os
 
 project = "ephios"
 copyright = "2021, ephios-dev"
@@ -29,6 +30,7 @@ author = "ephios-dev"
 # ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -51,3 +53,10 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# -- Setup django stuff -----------------------------------------------------
+os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
+
+import django
+
+django.setup()

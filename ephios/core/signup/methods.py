@@ -293,12 +293,11 @@ class BaseSignupMethod:
     signup_error_message = _("Signing up failed: {error}")
     decline_success_message = _("You have successfully declined {shift}.")
     decline_error_message = _("Declining failed: {error}")
-
+    disposition_participation_form_class = BaseDispositionParticipationForm
     """
     This form will be used for participations in disposition.
     Set to None if you don't want to support the default disposition.
     """
-    disposition_participation_form_class = BaseDispositionParticipationForm
     uses_requested_state = True
 
     def __init__(self, shift):

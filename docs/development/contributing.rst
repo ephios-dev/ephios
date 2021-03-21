@@ -4,7 +4,7 @@ Contributing
 Contributions to ephios are welcome. If you want to see what we are currently up to, check the available
 `issues <https://github.com/ephios-dev/ephios/issues>`_.
 
-If you have an idea for new feature you should start by deciding whether you want to write a plugin (see :doc:`plugin`)
+If you have an idea for new feature you should start by deciding whether you want to write a plugin (see :doc:`plugins/index`)
 or to contribute the feature to the ephios core code. A plugin is usually suitable if the feature is very specific to
 a small set of users (e.g. a specific signup process only used in your local organisation) or the feature is not related
 to the core tasks of ephios (e.g. a system for stock management). If all ephios users could profit from your feature,
