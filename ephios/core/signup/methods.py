@@ -275,6 +275,8 @@ def check_conflicting_shifts(method, participant):
 
 
 class BaseSignupMethod:
+    # pylint: disable=too-many-public-methods
+
     @property
     def slug(self):
         raise NotImplementedError()
@@ -313,7 +315,7 @@ class BaseSignupMethod:
     def __init__(self, shift):
         self.shift = shift
         self.configuration = Namespace(
-            **{name: config["default"] for name, config in self._get_configuration_fields().items()}
+            **{name: config["default"] for name, config in self.get_configuration_fields().items()}
         )
         if shift is not None:
             for key, value in shift.signup_configuration.items():
@@ -402,7 +404,7 @@ class BaseSignupMethod:
         """
         return NotImplemented
 
-    def _get_configuration_fields(self):
+    def get_configuration_fields(self):
         return OrderedDict(
             {
                 "minimum_age": {
@@ -437,7 +439,7 @@ class BaseSignupMethod:
         """
         Return key/value pairs about the configuration to show in the shift info box.
         """
-        fields = self._get_configuration_fields()
+        fields = self.get_configuration_fields()
         return OrderedDict(
             {
                 label: field.get("format", str)(value)
@@ -495,7 +497,7 @@ class BaseSignupMethod:
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
         form = self.configuration_form_class(*args, **kwargs)
-        for name, config in self._get_configuration_fields().items():
+        for name, config in self.get_configuration_fields().items():
             form.fields[name] = config["formfield"]
         return form
 
