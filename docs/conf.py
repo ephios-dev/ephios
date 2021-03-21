@@ -18,6 +18,8 @@
 # -- Project information -----------------------------------------------------
 import os
 
+import environ
+
 project = "ephios"
 copyright = "2021, ephios-dev"
 author = "ephios-dev"
@@ -56,6 +58,7 @@ html_static_path = ["_static"]
 
 # -- Setup django stuff -----------------------------------------------------
 os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
+environ.Env.read_env(env_file="../.env")
 
 import django
 
