@@ -17,7 +17,6 @@
 
 # -- Project information -----------------------------------------------------
 import os
-from pathlib import Path
 
 import environ
 
@@ -59,7 +58,7 @@ html_static_path = ["_static"]
 
 # -- Setup django stuff -----------------------------------------------------
 os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
-environ.Env.read_env(env_file=str(Path(__file__).parent.parent.absolute() / ".env"))
+environ.Env.read_env(env_file=os.path.abspath("..") + ".env")
 
 import django
 
