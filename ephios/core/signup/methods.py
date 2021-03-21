@@ -283,9 +283,23 @@ class BaseSignupMethod:
     def verbose_name(self):
         raise NotImplementedError()
 
+    @property
+    def disposition_participation_form_class(self):
+        """
+        This form will be used for participations in disposition.
+        Set to None if you don't want to support the default disposition.
+        """
+        return BaseDispositionParticipationForm
+
+    @property
+    def configuration_form_class(self):
+        return forms.Form
+
+    @property
+    def signup_view_class(self):
+        return BaseSignupView
+
     description = """"""
-    signup_view_class = BaseSignupView
-    configuration_form_class = forms.Form
 
     # use _ == gettext_lazy!
     registration_button_text = _("Sign up")
@@ -293,11 +307,7 @@ class BaseSignupMethod:
     signup_error_message = _("Signing up failed: {error}")
     decline_success_message = _("You have successfully declined {shift}.")
     decline_error_message = _("Declining failed: {error}")
-    disposition_participation_form_class = BaseDispositionParticipationForm
-    """
-    This form will be used for participations in disposition.
-    Set to None if you don't want to support the default disposition.
-    """
+
     uses_requested_state = True
 
     def __init__(self, shift):

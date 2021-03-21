@@ -16,7 +16,7 @@ You can create your project by executing ``cookiecutter https://github.com/ephio
 Change to the newly created folder and make sure to follow the setup steps metioned in :doc:`/development/contributing/` but prefixed by ``python -m ephios`` instead of ``python manage.py`` to setup your local ephios instance for testing.
 
 You will find a (nearly) empty django app inside your project. This app will be listed in INSTALLED_APPS of ephios, so you can use all common django features likes migrations and URLs.
-You should register to some of the :doc:`signals` to get called by ephios. Please note that only activated plugins will receive signal calls.
+You should register to some of the :doc:`signals` to get called by ephios. Please note that with instances of ``PluginSignal``, only activated plugins will receive signal calls.
 
 
 Installing a plugin
