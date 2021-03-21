@@ -59,8 +59,7 @@ html_static_path = ["_static"]
 
 # -- Setup django stuff -----------------------------------------------------
 os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
-os.environ["DEBUG"] = False
-print(os.path.abspath(".."))
+os.environ["DEBUG"] = "False"
 environ.Env.read_env(env_file=str(Path(__file__).parent.parent.absolute() / ".env.example"))
 
 import django
