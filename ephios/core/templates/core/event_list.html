@@ -108,10 +108,10 @@ visible
                                 <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
                                     <p class="my-0 mr-1">
                                         <span class="fas fa-users"></span>
-                                        {% if event in events_user_can_change and events_user_can_change|has_requested_participations:event.pk %}
-                                            <span class="pending-indicator"></span>
-                                        {% endif %}
                                         {% with event.get_signup_stats as stats %}
+                                            {% if stats.requested_count > 0 %}
+                                                <span class="pending-indicator"></span>
+                                            {% endif %}
                                             {{ stats.signed_up_count }}
                                             {% if stats.max_count is not None %}
                                                 / {{ stats.max_count }}

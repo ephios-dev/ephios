@@ -77,8 +77,3 @@ def event_signup_state_counts(event, user):
                 counter[participation.state] += 1
                 break
     return counter
-
-
-@register.filter(name="has_requested_participations")
-def event_has_requested_participations(annotated_queryset, pk):
-    return annotated_queryset.get(pk=pk).has_requested_participations
