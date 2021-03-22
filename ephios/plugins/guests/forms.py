@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.forms.events import BaseEventPluginForm
+from ephios.core.forms.events import BaseEventPluginFormMixin
 from ephios.plugins.guests.models import EventGuestShare
 
 
-class EventAllowGuestsForm(BaseEventPluginForm):
+class EventAllowGuestsForm(BaseEventPluginFormMixin, forms.Form):
     active = forms.BooleanField(label=_("Allow guests"), required=False)
     link = forms.CharField(disabled=True, label="Link for guest registration", required=False)
     new_link = forms.BooleanField(label=_("Generate a new link when saving"), required=False)
@@ -44,3 +44,6 @@ class EventAllowGuestsForm(BaseEventPluginForm):
     @property
     def heading(self):
         return _("Guests")
+
+    def is_function_active(self):
+        return self.instance.active

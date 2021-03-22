@@ -22,20 +22,20 @@ from ephios.core.models import (
 from ephios.core.signals import register_consequence_handlers
 
 
-def all_consequence_handlers():
-    for _, handlers in register_consequence_handlers.send(None):
+def installed_consequence_handlers():
+    for _, handlers in register_consequence_handlers.send_to_all_plugins(None):
         yield from (h() for h in handlers)
 
 
 def consequence_handler_from_slug(slug):
-    for handler in all_consequence_handlers():
+    for handler in installed_consequence_handlers():
         if handler.slug == slug:
             return handler
     raise ValueError(_("Consequence Handler '{slug}' was not found.").format(slug=slug))
 
 
 def editable_consequences(user):
-    handlers = list(all_consequence_handlers())
+    handlers = list(installed_consequence_handlers())
     qs = Consequence.objects.all().select_related("user")
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)

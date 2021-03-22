@@ -71,6 +71,7 @@ CORE_PLUGINS = [
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
     "ephios.plugins.guests",
+    "ephios.plugins.eventautoqualification",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points().get("ephios.plugins", []):

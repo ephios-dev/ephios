@@ -213,7 +213,7 @@ class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
 
 
-class BaseEventPluginForm(forms.Form):
+class BaseEventPluginFormMixin:
     @property
     def heading(self):
         raise NotImplementedError
@@ -221,8 +221,9 @@ class BaseEventPluginForm(forms.Form):
     def render(self):
         return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
 
-    def save(self):
-        pass
+    def is_function_active(self):
+        """When building forms for additional features, return whether that feature is enabled for that event."""
+        return False
 
 
 class EventNotificationForm(forms.Form):
