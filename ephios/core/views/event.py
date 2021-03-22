@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import Exists, Max, Min, OuterRef, Prefetch
+from django.db.models import Max, Min, Prefetch
 from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -29,7 +29,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
-from ephios.core.models import AbstractParticipation, Event, EventType, Shift
+from ephios.core.models import Event, EventType, Shift
 from ephios.core.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
@@ -60,14 +60,7 @@ class EventListView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         kwargs.setdefault("eventtypes", EventType.objects.all())
         kwargs.setdefault(
-            "events_user_can_change",
-            get_objects_for_user(self.request.user, ["core.change_event"]).annotate(
-                has_requested_participations=Exists(
-                    AbstractParticipation.objects.filter(
-                        shift__event=OuterRef("pk"), state=AbstractParticipation.States.REQUESTED
-                    )
-                )
-            ),
+            "events_user_can_change", get_objects_for_user(self.request.user, ["core.change_event"])
         )
         return super().get_context_data(**kwargs)
 
