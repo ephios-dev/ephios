@@ -1,0 +1,22 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% translate "Delete page" %}
+{% endblock %}
+
+{% block settings_content %}
+    <div class="page-header">
+        <h2>{% translate "Delete page" %}</h2>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <p>{% blocktranslate with title=page.title %}
+            Are you sure you want to delete the page "{{ title }}"?
+        {% endblocktranslate %}</p>
+        <a role="button" class="btn btn-secondary" href="{% url "pages:settings_page_list" %}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
+    </form>
+
+{% endblock %}
