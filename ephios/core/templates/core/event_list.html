@@ -108,7 +108,7 @@ visible
                                     <p class="my-0 mr-1">
                                         <span class="fas fa-users"></span>
                                         {% with event.get_signup_stats as stats %}
-                                            {% if event in events_user_can_change and stats.requested_count > 0 %}
+                                            {% if event.can_change and stats.requested_count > 0 %}
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
                                             {{ stats.signed_up_count }}
