@@ -52,5 +52,5 @@ def participant_conflicting_shifts(participant, shift):
 def shifts_needing_disposition(user):
     return Shift.objects.filter(
         participations__state=AbstractParticipation.States.REQUESTED,
-        event__in=get_objects_for_user(user, perms=["core.change_event"])
+        event__in=get_objects_for_user(user, perms=["core.change_event"]),
     ).distinct()
