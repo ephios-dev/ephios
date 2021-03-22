@@ -23,6 +23,6 @@ def pages_settings_section(sender, request, **kwargs):
         {
             "label": _("Pages"),
             "url": reverse("pages:settings_page_list"),
-            "active": request.resolver_match.url_name == "settings_page_list",
+            "active": request.resolver_match.url_name.startswith("settings_page"),
         },
     ]
