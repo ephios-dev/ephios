@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import Max, Min, Prefetch, Exists, OuterRef
+from django.db.models import Exists, Max, Min, OuterRef, Prefetch
 from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -29,7 +29,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
-from ephios.core.models import Event, EventType, Shift, AbstractParticipation
+from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
