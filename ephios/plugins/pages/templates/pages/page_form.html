@@ -1,0 +1,19 @@
+{% extends "core/settings/settings_base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block settings_content %}
+    <div class="page-header">
+        {% if page %}
+            <h2>{% trans "Edit page" %}</h2>
+        {% else %}
+            <h2>{% trans "Create new page" %}</h2>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Save">
+    </form>
+{% endblock %}
