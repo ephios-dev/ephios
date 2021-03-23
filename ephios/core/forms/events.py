@@ -1,4 +1,5 @@
 import operator
+import re
 from datetime import date, datetime, timedelta
 
 import django.forms as forms
@@ -21,7 +22,7 @@ from ephios.core.models import Event, EventType, LocalParticipation, Shift, User
 from ephios.core.registries import event_type_preference_registry
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.extra.widgets import CustomDateInput, CustomTimeInput
+from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
 
 
 class EventForm(forms.ModelForm):
@@ -198,7 +199,14 @@ class EventDuplicationForm(forms.Form):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ["title", "can_grant_qualification"]
+        fields = ["title", "can_grant_qualification", "color"]
+        widgets = {"color": ColorInput()}
+
+    def clean_color(self):
+        regex = re.compile("#[a-fA-F\d]{6}")
+        if not regex.match(self.cleaned_data["color"]):
+            raise ValidationError(_("You need to enter a valid color"))
+        return self.cleaned_data["color"]
 
 
 class EventTypePreferenceForm(PreferenceForm):

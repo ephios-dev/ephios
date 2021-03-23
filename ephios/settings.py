@@ -102,6 +102,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.i18n",
                 "dynamic_preferences.processors.global_preferences",
+                "csp.context_processors.nonce",
                 "ephios.core.context.ephios_base_context",
             ],
         },
@@ -205,6 +206,8 @@ if DEBUG:
 # bootstrap v5 or v6. See https://github.com/twbs/bootstrap/issues/25394 for details on the problem and
 # https://security.stackexchange.com/a/167244 on why allowing data: is considered okay
 CSP_IMG_SRC = ("'self'", "data:")
+CSP_STYLE_SRC = ("'self'",)
+CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap4"
