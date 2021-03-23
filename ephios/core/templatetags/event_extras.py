@@ -84,10 +84,10 @@ def event_signup_state_counts(event, user):
 @register.simple_tag(name="event_bulk_actions")
 def event_bulk_actions():
     html = ""
-    for function, actions in register_event_bulk_action.send(None):
+    for _, actions in register_event_bulk_action.send(None):
         html += "".join(
             [
-                f"<button class='btn btn-secondary mr-1' type='submit' name='{function.__name__}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['title']}</button>"
+                f"<button class='btn btn-secondary mr-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['title']}</button>"
                 for action in actions
             ]
         )
