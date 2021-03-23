@@ -1,6 +1,5 @@
 import collections
 from datetime import datetime
-from functools import reduce
 
 from django import template
 from django.utils.html import format_html
@@ -84,10 +83,12 @@ def event_signup_state_counts(event, user):
 
 @register.simple_tag(name="event_bulk_actions")
 def event_bulk_actions():
-    return format_html(
-        reduce(
-            lambda result, item: result + "".join(item[1]),
-            register_event_bulk_action.send(None),
-            "",
+    html = ""
+    for function, actions in register_event_bulk_action.send(None):
+        html += "".join(
+            [
+                f"<button class='btn btn-secondary mr-1' type='submit' name='{function.__name__}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['title']}</button>"
+                for action in actions
+            ]
         )
-    )
+    return format_html(html)
