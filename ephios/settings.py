@@ -102,7 +102,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.i18n",
                 "dynamic_preferences.processors.global_preferences",
-                "csp.context_processors.nonce",
                 "ephios.core.context.ephios_base_context",
             ],
         },
