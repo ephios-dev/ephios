@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from django.urls import reverse
 from dynamic_preferences.registries import global_preferences_registry
@@ -56,43 +54,55 @@ def test_autoqualification_settings_flow(django_app, event, manager, qualificati
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "year,state,mode,consequence_expected",
+    "year,mode,signup_states,consequence_expected",
     [
         (
             2099,
-            AbstractParticipation.States.REQUESTED,
             EventAutoQualificationConfiguration.Modes.ANY_SHIFT,
+            [AbstractParticipation.States.REQUESTED, None],
             False,
         ),
         (
             2020,
-            AbstractParticipation.States.REQUESTED,
             EventAutoQualificationConfiguration.Modes.ANY_SHIFT,
+            [AbstractParticipation.States.REQUESTED, None],
             False,
         ),
         (
             2099,
-            AbstractParticipation.States.CONFIRMED,
             EventAutoQualificationConfiguration.Modes.ANY_SHIFT,
+            [AbstractParticipation.States.CONFIRMED, None],
             False,
         ),
         (
             2020,
-            AbstractParticipation.States.CONFIRMED,
             EventAutoQualificationConfiguration.Modes.ANY_SHIFT,
+            [AbstractParticipation.States.CONFIRMED, None],
             True,
         ),
         (
             2020,
-            AbstractParticipation.States.CONFIRMED,
             EventAutoQualificationConfiguration.Modes.LAST_SHIFT,
+            [AbstractParticipation.States.CONFIRMED, None],
             False,
         ),
         (
             2020,
-            AbstractParticipation.States.CONFIRMED,
+            EventAutoQualificationConfiguration.Modes.LAST_SHIFT,
+            [None, AbstractParticipation.States.CONFIRMED],
+            True,
+        ),
+        (
+            2020,
             EventAutoQualificationConfiguration.Modes.EVERY_SHIFT,
+            [None, AbstractParticipation.States.CONFIRMED],
             False,
+        ),
+        (
+            2020,
+            EventAutoQualificationConfiguration.Modes.EVERY_SHIFT,
+            [AbstractParticipation.States.CONFIRMED, AbstractParticipation.States.CONFIRMED],
+            True,
         ),
     ],
 )
@@ -103,8 +113,8 @@ def test_consequence_gets_created(
     qualifications,
     tz,
     year,
-    state,
     mode,
+    signup_states,
     consequence_expected,
 ):
     preferences = global_preferences_registry.manager()
@@ -115,12 +125,12 @@ def test_consequence_gets_created(
     EventAutoQualificationConfiguration.objects.create(
         event=multi_shift_event, qualification=qualifications.na, mode=mode
     )
-    shift = multi_shift_event.shifts.first()
-    LocalParticipation.objects.create(user=volunteer, shift=shift, state=state)
-
-    shift.start_time = datetime(year, 6, 30, 7, 0).astimezone(tz)
-    shift.end_time = datetime(year, 6, 30, 15, 0).astimezone(tz)
-    shift.save()
+    for wanted_state, shift in zip(signup_states, multi_shift_event.shifts.all()):
+        shift.start_time = shift.start_time.replace(year)
+        shift.end_time = shift.end_time.replace(year)
+        shift.save()
+        if wanted_state:
+            LocalParticipation.objects.create(user=volunteer, shift=shift, state=wanted_state)
 
     assert not Consequence.objects.exists()
     periodic_signal.send(None)
