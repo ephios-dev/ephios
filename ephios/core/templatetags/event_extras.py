@@ -84,13 +84,21 @@ def event_signup_state_counts(event, user):
 def eventtype_colors(request):
     html = f"<style nonce='{request.csp_nonce}'>"
     for eventtype in EventType.objects.all():
-        r, g, b = (
-            int(eventtype.color[1:3], 16),
-            int(eventtype.color[3:5], 16),
-            int(eventtype.color[5:7], 16),
+        rgb = (
+            int(eventtype.color[1:3], 16) / 255,
+            int(eventtype.color[3:5], 16) / 255,
+            int(eventtype.color[5:7], 16) / 255,
+        )
+        r, g, b = map(
+            lambda channel: channel / 12.92
+            if channel <= 0.03928
+            else ((channel + 0.055) / 1.055) ** 2.4,
+            rgb,
         )
         luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        contrast_color = "#000000" if luminance > sqrt(1.05 * 0.05) - 0.05 else "#ffffff"
-        html += f".badge-{eventtype.pk}-color{{background-color:{eventtype.color};color:{contrast_color}}}"
+        text_color = "#000000" if luminance > sqrt(1.05 * 0.05) - 0.05 else "#ffffff"
+        html += (
+            f".badge-{eventtype.pk}-color{{background-color:{eventtype.color};color:{text_color}}}"
+        )
     html += "</style>"
     return mark_safe(html)
