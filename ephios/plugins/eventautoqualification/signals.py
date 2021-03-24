@@ -10,7 +10,7 @@ from ephios.plugins.eventautoqualification.forms import EventAutoQualificationFo
     dispatch_uid="ephios.plugins.eventautoqualification.signals.configuration_form",
 )
 def configuration_form(sender, event, request, **kwargs):
-    if not request.user.has_perm("core:change_user"):
+    if not request.user.has_perm("core.change_userprofile"):
         return []
 
     return [EventAutoQualificationForm(request.POST or None, event=event)]

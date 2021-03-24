@@ -13,7 +13,7 @@
         <h1>{% trans "Users" %}</h1>
     </div>
     {% if perms.core.add_userprofile %}
-        <a class="btn btn-secondary" href="{% url "core:userprofile_create" %}"><span
+        <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
                 class="fa fa-plus"></span> {% trans "Add user" %}</a>
     {% endif %}
     {% with global_preferences.general__relevant_qualification_categories as relevant_qualification_categories %}

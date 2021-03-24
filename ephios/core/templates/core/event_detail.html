@@ -44,7 +44,7 @@
             {% get_obj_perms request.user for event as "event_perms" %}
         {% endif %}
         {% if "change_event" in event_perms %}
-            <div class="float-right d-inline">
+            <div class="float-right d-inline mb-3">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

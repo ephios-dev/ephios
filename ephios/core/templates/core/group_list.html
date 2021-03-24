@@ -11,7 +11,7 @@
         <h1>{% trans "Groups" %}</h1>
     </div>
     {% if perms.auth.add_group %}
-        <a class="btn btn-secondary" href="{% url "core:group_add" %}"><span
+        <a class="btn btn-secondary mb-3" href="{% url "core:group_add" %}"><span
                 class="fa fa-plus"></span> {% trans "Add group" %}</a>
     {% endif %}
     <table id="event_table" class="table table-striped display">
