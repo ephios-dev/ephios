@@ -2,7 +2,7 @@ import logging
 import operator
 from collections import Counter
 
-from django.utils import timezone
+from django.db.models import Q
 
 from ephios.core.consequences import QualificationConsequenceHandler
 from ephios.core.models import AbstractParticipation, LocalParticipation
@@ -28,13 +28,11 @@ def create_qualification_consequence(sender, participation, **kwargs):
             == sorted(event.shifts.all(), key=operator.attrgetter("end_time"))[-1]
         )
     elif mode == EventAutoQualificationConfiguration.Modes.EVERY_SHIFT:
-        # count participant hashes in confirmed participations in shifts that are in the past
+        # count participant hashes in finished participations (and this one)
         participant_hash_counter = Counter(
             hash(participation.participant)
             for participation in AbstractParticipation.objects.filter(
-                state=AbstractParticipation.States.CONFIRMED,
-                shift__event=event,
-                shift__end_time__lt=timezone.now(),
+                Q(finished=True) | Q(id=participation.id)
             )
         )
         # if the amount of this participant in confirmed past shifts is equal to the the count of all shifts
