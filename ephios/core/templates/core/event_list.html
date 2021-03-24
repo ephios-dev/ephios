@@ -30,9 +30,12 @@ visible
                         {% endfor %}
                     </div>
                 </div>
-                <button class="btn btn-danger m-1" type="submit" name="delete"
-                        formaction="{% url "core:event_bulk_delete" %}"><span
-                        class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                <div class="bulk-actions">
+                    <button class="btn btn-danger m-1" type="submit" name="delete"
+                            formaction="{% url "core:event_bulk_delete" %}"><span
+                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                    {% event_bulk_actions %}
+                </div>
             </div>
         {% endif %}
 
