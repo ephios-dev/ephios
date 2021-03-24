@@ -67,7 +67,7 @@ This signal is called periodically, at least every 15 minutes.
 register_event_bulk_action = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a list of events.
-Receivers should return a list of actions. Each action is represented by a dict with the keys ``url``, ``title`` and ``icon``.
+Receivers should return a list of actions. Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
 Once the user wants to perform the action, a POST request will be issued to this URL. The ``bulk_action`` field
 will contain a list of event ids on which the action should be performed.
 """
