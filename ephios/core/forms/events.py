@@ -203,7 +203,7 @@ class EventTypeForm(forms.ModelForm):
         widgets = {"color": ColorInput()}
 
     def clean_color(self):
-        regex = re.compile("#[a-fA-F\d]{6}")
+        regex = re.compile(r"#[a-fA-F\d]{6}")
         if not regex.match(self.cleaned_data["color"]):
             raise ValidationError(_("You need to enter a valid color"))
         return self.cleaned_data["color"]
