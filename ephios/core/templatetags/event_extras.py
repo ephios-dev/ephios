@@ -84,6 +84,7 @@ def event_signup_state_counts(event, user):
 def eventtype_colors(request):
     html = f"<style nonce='{request.csp_nonce}'>"
     for eventtype in EventType.objects.all():
+        # color calculation inspired by https://jfelix.info/blog/how-to-make-a-text-color-fit-any-background-color
         rgb = (
             int(eventtype.color[1:3], 16) / 255,
             int(eventtype.color[3:5], 16) / 255,
