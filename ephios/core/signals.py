@@ -4,6 +4,7 @@ from ephios.core.notifications.backends import send_all_notifications
 from ephios.core.plugins import PluginSignal
 
 # PluginSignals are only send out to enabled plugins.
+from ephios.core.utils import send_participation_finished
 
 register_consequence_handlers = PluginSignal()
 """
@@ -64,6 +65,12 @@ periodic_signal = PluginSignal()
 This signal is called periodically, at least every 15 minutes.
 """
 
+participation_finished = PluginSignal()
+"""
+This signal is sent out once for every confirmed participation after the participation ended.
+It's based on ``periodic_signal`` and provides a ``participation`` keyword argument.
+"""
+
 register_event_bulk_action = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a list of events.
@@ -86,20 +93,30 @@ def register_base_consequence_handlers(sender, **kwargs):
     return [WorkingHoursConsequenceHandler, QualificationConsequenceHandler]
 
 
-@receiver(register_notification_types)
+@receiver(
+    register_notification_types, dispatch_uid="ephios.core.signals.register_core_notification_types"
+)
 def register_core_notification_types(sender, **kwargs):
     from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
 
     return CORE_NOTIFICATION_TYPES
 
 
-@receiver(register_notification_backends)
+@receiver(
+    register_notification_backends,
+    dispatch_uid="ephios.core.signals.register_core_notification_backends",
+)
 def register_core_notification_backends(sender, **kwargs):
     from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
     return CORE_NOTIFICATION_BACKENDS
 
 
-@receiver(periodic_signal)
+@receiver(periodic_signal, dispatch_uid="ephios.core.signals.send_notifications")
 def send_notifications(sender, **kwargs):
     send_all_notifications()
+
+
+periodic_signal.connect(
+    send_participation_finished, dispatch_uid="ephios.core.signals.send_participation_finished"
+)

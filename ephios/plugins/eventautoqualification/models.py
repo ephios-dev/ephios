@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation, Event
+from ephios.core.models import Event
 from ephios.core.signup import Qualification
 
 
@@ -12,8 +12,6 @@ class EventAutoQualificationConfiguration(models.Model):
 
     qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
     expiration_date = models.DateField(verbose_name=_("Expiration date"), null=True, blank=True)
-
-    handled_for = models.ManyToManyField(AbstractParticipation)
 
     class Modes(models.IntegerChoices):
         ANY_SHIFT = 1, _("any shift")
@@ -32,7 +30,3 @@ class EventAutoQualificationConfiguration(models.Model):
     needs_confirmation = models.BooleanField(
         default=True, verbose_name=_("Qualification must be confirmed afterwards")
     )
-
-    def save(self, **kwargs):
-        self.dirty = True
-        super().save(**kwargs)
