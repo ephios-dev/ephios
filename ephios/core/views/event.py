@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import Max, Min, Prefetch
+from django.db.models import BooleanField, Case, Max, Min, Prefetch, When
 from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -49,6 +49,16 @@ class EventListView(LoginRequiredMixin, ListView):
             .annotate(
                 start_time=Min("shifts__start_time"),
                 end_time=Max("shifts__end_time"),
+            )
+            .annotate(
+                can_change=Case(
+                    When(
+                        id__in=get_objects_for_user(self.request.user, ["core.change_event"]),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=BooleanField(),
+                )
             )
             .filter(end_time__gte=timezone.now())
             .select_related("type")

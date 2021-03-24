@@ -1,7 +1,9 @@
 from django import template
 from dynamic_preferences.registries import global_preferences_registry
+from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences
+from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup import get_conflicting_participations
 
 register = template.Library()
@@ -44,3 +46,11 @@ def participant_conflicting_shifts(participant, shift):
     return get_conflicting_participations(shift, participant).values_list(
         "shift__event__title", flat=True
     )
+
+
+@register.filter(name="shifts_needing_disposition")
+def shifts_needing_disposition(user):
+    return Shift.objects.filter(
+        participations__state=AbstractParticipation.States.REQUESTED,
+        event__in=get_objects_for_user(user, perms=["core.change_event"]),
+    ).distinct()
