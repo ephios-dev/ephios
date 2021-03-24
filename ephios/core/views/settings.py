@@ -39,7 +39,7 @@ class GeneralSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewM
     success_message = _("Settings saved successfully.")
 
     def get_form_class(self):
-        return global_preference_form_builder()
+        return global_preference_form_builder(section="general")
 
     def form_valid(self, form):
         form.update_preferences()
