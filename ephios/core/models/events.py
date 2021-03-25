@@ -39,6 +39,7 @@ class ActiveManager(Manager):
 class EventType(Model):
     title = CharField(_("title"), max_length=254)
     can_grant_qualification = BooleanField(_("can grant qualification"))
+    color = CharField(_("color"), max_length=7, default="#343a40")
 
     class Meta:
         verbose_name = _("event type")

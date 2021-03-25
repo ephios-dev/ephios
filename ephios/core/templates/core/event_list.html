@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 {% load static %}
 {% load i18n %}
 {% load event_extras %}
@@ -40,6 +41,11 @@ visible
         {% endif %}
 
         {% if event_list %}
+            <style nonce="{{ request.csp_nonce }}">
+                {% cache 900 "eventtype_colors" %}
+                    {% eventtype_colors %}
+                {% endcache %}
+            </style>
             <div class="list-group list-group-flush">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">
@@ -87,7 +93,7 @@ visible
                                     <h5 class="mb-0">
                                         {{ event.title }}
                                         <small class="float-right mr-lg-3"><span
-                                                class="badge badge-dark">{{ event.type }}</span></small>
+                                                class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
                                     </h5>
                                     <span class="w-100 text-secondary">
                                     {{ event.location }}

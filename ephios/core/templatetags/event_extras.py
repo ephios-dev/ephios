@@ -1,13 +1,15 @@
 import collections
 from datetime import datetime
+from functools import reduce
 
 from django import template
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation, EventType, LocalParticipation
 from ephios.core.signals import register_event_bulk_action
 from ephios.core.views.signup import request_to_participant
+from ephios.extra.colors import get_eventtype_color_style
 
 register = template.Library()
 
@@ -92,3 +94,19 @@ def event_bulk_actions():
             ]
         )
     return format_html(html)
+
+
+@register.simple_tag(name="eventtype_colors")
+def eventtype_colors():
+    return mark_safe(
+        reduce(
+            lambda css, eventtype: css + get_eventtype_color_style(eventtype),
+            EventType.objects.all(),
+            "",
+        )
+    )
+
+
+@register.filter(name="color_css")
+def eventtype_color_css(eventtype):
+    return get_eventtype_color_style(eventtype)

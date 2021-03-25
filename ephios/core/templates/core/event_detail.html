@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load cache %}
+{% load event_extras %}
 {% load bootstrap %}
 {% load rich_text %}
 {% load guardian_tags %}
@@ -6,6 +8,14 @@
 
 {% block title %}
     {{ event.title }}
+{% endblock %}
+
+{% block html_head %}
+    <style nonce="{{ request.csp_nonce }}">
+        {% cache 900 "single_eventtype_color" event.type.pk %}
+            {{ event.type|color_css }}
+        {% endcache %}
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -24,7 +34,7 @@
     {% endif %}
     <div class="page-header clearfix">
         <h2>
-            <small class="float-right mr-lg-3"><span class="badge badge-dark">{{ event.type }}</span></small>
+            <small class="float-right mr-lg-3"><span class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
             {{ event.title }}
         </h2>
         <h4 class="text-muted">
