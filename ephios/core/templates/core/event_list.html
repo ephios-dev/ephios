@@ -38,9 +38,11 @@ visible
         {% endif %}
 
         {% if event_list %}
-            {% cache 900 "eventtype_colors" %}
-                {% eventtype_colors request %}
-            {% endcache %}
+            <style nonce="{{ request.csp_nonce }}">
+                {% cache 900 "eventtype_colors" %}
+                    {% eventtype_colors %}
+                {% endcache %}
+            </style>
             <div class="list-group list-group-flush">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">

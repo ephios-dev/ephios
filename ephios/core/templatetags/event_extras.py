@@ -1,12 +1,13 @@
 import collections
 from datetime import datetime
-from math import sqrt
+from functools import reduce
 
 from django import template
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, LocalParticipation
 from ephios.core.views.signup import request_to_participant
+from ephios.extra.colors import get_eventtype_color_style
 
 register = template.Library()
 
@@ -81,25 +82,16 @@ def event_signup_state_counts(event, user):
 
 
 @register.simple_tag(name="eventtype_colors")
-def eventtype_colors(request):
-    html = f"<style nonce='{request.csp_nonce}'>"
-    for eventtype in EventType.objects.all():
-        # color calculation inspired by https://jfelix.info/blog/how-to-make-a-text-color-fit-any-background-color
-        rgb = (
-            int(eventtype.color[1:3], 16) / 255,
-            int(eventtype.color[3:5], 16) / 255,
-            int(eventtype.color[5:7], 16) / 255,
+def eventtype_colors():
+    return mark_safe(
+        reduce(
+            lambda css, eventtype: css + get_eventtype_color_style(eventtype),
+            EventType.objects.all(),
+            "",
         )
-        r, g, b = map(
-            lambda channel: channel / 12.92
-            if channel <= 0.03928
-            else ((channel + 0.055) / 1.055) ** 2.4,
-            rgb,
-        )
-        luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        text_color = "#000000" if luminance > sqrt(1.05 * 0.05) - 0.05 else "#ffffff"
-        html += (
-            f".badge-{eventtype.pk}-color{{background-color:{eventtype.color};color:{text_color}}}"
-        )
-    html += "</style>"
-    return mark_safe(html)
+    )
+
+
+@register.filter(name="color_css")
+def eventtype_color_css(eventtype):
+    return get_eventtype_color_style(eventtype)
