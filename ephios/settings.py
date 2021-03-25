@@ -1,7 +1,11 @@
 import copy
 import os
 from email.utils import getaddresses
-from importlib import metadata
+
+try:
+    import importlib_metadata  # importlib is broken on python3.8, using backport
+except ImportError:
+    import importlib.metadata as importlib_metadata
 
 import environ
 from cryptography.hazmat.primitives import serialization
@@ -69,7 +73,7 @@ CORE_PLUGINS = [
     "ephios.plugins.guests",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
-for ep in metadata.entry_points().get("ephios.plugins", []):
+for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
 
 INSTALLED_APPS += PLUGINS
