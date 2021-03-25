@@ -1,5 +1,6 @@
 from django.forms import DateInput, MultiWidget, SplitDateTimeWidget, TimeInput
 from django.forms.utils import to_current_timezone
+from django.forms.widgets import Input
 
 
 class CustomDateInput(DateInput):
@@ -34,3 +35,7 @@ class CustomSplitDateTimeWidget(MultiWidget):
             value = to_current_timezone(value)
             return [value.date(), value.time()]
         return [None, None]
+
+
+class ColorInput(Input):
+    input_type = "color"
