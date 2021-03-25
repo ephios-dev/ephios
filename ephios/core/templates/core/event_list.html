@@ -31,9 +31,12 @@ visible
                         {% endfor %}
                     </div>
                 </div>
-                <button class="btn btn-danger m-1" type="submit" name="delete"
-                        formaction="{% url "core:event_bulk_delete" %}"><span
-                        class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                <div class="bulk-actions">
+                    <button class="btn btn-danger m-1" type="submit" name="delete"
+                            formaction="{% url "core:event_bulk_delete" %}"><span
+                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                    {% event_bulk_actions %}
+                </div>
             </div>
         {% endif %}
 
@@ -114,6 +117,9 @@ visible
                                     <p class="my-0 mr-1">
                                         <span class="fas fa-users"></span>
                                         {% with event.get_signup_stats as stats %}
+                                            {% if event.can_change and stats.requested_count > 0 %}
+                                                <span class="pending-indicator"></span>
+                                            {% endif %}
                                             {{ stats.signed_up_count }}
                                             {% if stats.max_count is not None %}
                                                 / {{ stats.max_count }}

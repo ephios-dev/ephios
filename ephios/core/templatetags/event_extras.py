@@ -3,9 +3,11 @@ from datetime import datetime
 from functools import reduce
 
 from django import template
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, LocalParticipation
+from ephios.core.signals import register_event_bulk_action
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
 
@@ -79,6 +81,19 @@ def event_signup_state_counts(event, user):
                 counter[participation.state] += 1
                 break
     return counter
+
+
+@register.simple_tag(name="event_bulk_actions")
+def event_bulk_actions():
+    html = ""
+    for _, actions in register_event_bulk_action.send(None):
+        html += "".join(
+            [
+                f"<button class='btn btn-secondary mr-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['label']}</button>"
+                for action in actions
+            ]
+        )
+    return format_html(html)
 
 
 @register.simple_tag(name="eventtype_colors")
