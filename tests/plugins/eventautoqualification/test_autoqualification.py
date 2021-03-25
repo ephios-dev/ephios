@@ -16,8 +16,11 @@ def test_planners_cant_edit_autoqualification(django_app, event, planner):
         "ephios.plugins.eventautoqualification",
     ]
 
-    assert "Automatic qualification" not in django_app.get(
-        reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner
+    assert (
+        "disabled"
+        in django_app.get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
+        .form["autoqualification-qualification"]
+        .attrs
     )
 
 

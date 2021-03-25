@@ -215,6 +215,7 @@ CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 # django.contrib.messages
 MESSAGE_TAGS = {

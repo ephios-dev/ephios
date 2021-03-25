@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("core", "0006_notification"),
+        ("core", "0007_eventtype_color"),
     ]
 
     operations = [

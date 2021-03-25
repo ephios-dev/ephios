@@ -218,6 +218,11 @@ class BaseEventPluginFormMixin:
         raise NotImplementedError
 
     def render(self):
+        try:
+            self.helper.form_tag = False
+        except AttributeError:
+            self.helper = FormHelper(self)
+            self.helper.form_tag = False
         return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
 
     def is_function_active(self):
