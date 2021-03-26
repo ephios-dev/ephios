@@ -26,7 +26,10 @@ from ephios.core.forms.users import (
     UserProfileForm,
 )
 from ephios.core.models import QualificationGrant, UserProfile
-from ephios.core.notifications.types import NewProfileNotification, ProfileUpdateNotification
+from ephios.core.services.notifications.types import (
+    NewProfileNotification,
+    ProfileUpdateNotification,
+)
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 

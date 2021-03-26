@@ -160,13 +160,13 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             for participation, changed_fields in formset.changed_objects:
                 if "state" in changed_fields:
                     if participation.state == AbstractParticipation.States.CONFIRMED:
-                        from ephios.core.notifications.types import (
+                        from ephios.core.services.notifications.types import (
                             ParticipationConfirmedNotification,
                         )
 
                         ParticipationConfirmedNotification.send(participation)
                     elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                        from ephios.core.notifications.types import (
+                        from ephios.core.services.notifications.types import (
                             ParticipationRejectedNotification,
                         )
 

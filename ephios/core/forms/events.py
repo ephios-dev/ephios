@@ -226,7 +226,10 @@ class BaseEventPluginFormMixin:
         return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
 
     def is_function_active(self):
-        """When building forms for additional features, return whether that feature is enabled for that event."""
+        """
+        When building forms for additional features, return whether that feature is enabled for the forms event instance.
+        With the default template, if this is True, the collapse is expanded on page load.
+        """
         return False
 
 

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.timezone import make_aware
 
 from ephios.core.models import Notification, UserProfile
-from ephios.core.notifications.types import NewProfileNotification
+from ephios.core.services.notifications.types import NewProfileNotification
 
 
 @pytest.mark.django_db

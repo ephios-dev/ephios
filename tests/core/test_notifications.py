@@ -4,8 +4,8 @@ from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
-from ephios.core.notifications.backends import enabled_notification_backends
-from ephios.core.notifications.types import (
+from ephios.core.services.notifications.backends import enabled_notification_backends
+from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
     NewEventNotification,

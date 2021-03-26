@@ -1,10 +1,8 @@
 from django.dispatch import receiver
 
-from ephios.core.notifications.backends import send_all_notifications
 from ephios.core.plugins import PluginSignal
-
-# PluginSignals are only send out to enabled plugins.
-from ephios.core.utils import send_participation_finished
+from ephios.core.services.notifications.backends import send_all_notifications
+from ephios.core.services.participation import send_participation_finished
 
 register_consequence_handlers = PluginSignal()
 """
@@ -67,8 +65,10 @@ This signal is called periodically, at least every 15 minutes.
 
 participation_finished = PluginSignal()
 """
-This signal is sent out once for every confirmed participation after the participation ended.
-It's based on ``periodic_signal`` and provides a ``participation`` keyword argument.
+This signal is sent out once for every confirmed participation after the participation ended and
+the ``finished`` flag is set to True. Changing the shift date to the future will not cause this to be called again.
+Exceptions in receivers are ignored, so make sure your code is robust enough to handle errors and retry if needed.
+This signal is based on ``periodic_signal`` and provides a ``participation`` keyword argument.
 """
 
 register_event_bulk_action = PluginSignal()
@@ -97,7 +97,7 @@ def register_base_consequence_handlers(sender, **kwargs):
     register_notification_types, dispatch_uid="ephios.core.signals.register_core_notification_types"
 )
 def register_core_notification_types(sender, **kwargs):
-    from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
+    from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 
     return CORE_NOTIFICATION_TYPES
 
@@ -107,7 +107,7 @@ def register_core_notification_types(sender, **kwargs):
     dispatch_uid="ephios.core.signals.register_core_notification_backends",
 )
 def register_core_notification_backends(sender, **kwargs):
-    from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
+    from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
     return CORE_NOTIFICATION_BACKENDS
 

@@ -30,7 +30,7 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
 from ephios.core.models import Event, EventType, Shift
-from ephios.core.notifications.types import (
+from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
     NewEventNotification,

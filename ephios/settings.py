@@ -136,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "ephios.core.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.core.services.password_reset.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",

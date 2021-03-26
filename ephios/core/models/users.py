@@ -337,7 +337,7 @@ class Notification(Model):
 
     @functools.cached_property
     def notification_type(self):
-        from ephios.core.notifications.types import notification_type_from_slug
+        from ephios.core.services.notifications.types import notification_type_from_slug
 
         return notification_type_from_slug(self.slug)
 

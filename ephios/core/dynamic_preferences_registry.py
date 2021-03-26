@@ -10,8 +10,8 @@ from dynamic_preferences.users.registries import user_preferences_registry
 import ephios
 from ephios.core import event_type_preference_registry, plugins
 from ephios.core.models import QualificationCategory, UserProfile
-from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
-from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
+from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
+from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.extra.preferences import CustomModelMultipleChoicePreference, DictPreference
 
 notifications_user_section = Section("notifications")

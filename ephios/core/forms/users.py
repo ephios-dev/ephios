@@ -21,8 +21,8 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile
-from ephios.core.notifications.backends import enabled_notification_backends
-from ephios.core.notifications.types import enabled_notification_types
+from ephios.core.services.notifications.backends import enabled_notification_backends
+from ephios.core.services.notifications.types import enabled_notification_types
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
