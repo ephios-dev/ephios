@@ -124,7 +124,13 @@ class AbstractParticipation(PolymorphicModel):
         "Shift", on_delete=models.CASCADE, verbose_name=_("shift"), related_name="participations"
     )
     state = IntegerField(_("state"), choices=States.choices)
-    data = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, verbose_name=_("Signup data"))
+
+    """
+    The finished flag is used to make sure the participation_finished signal is only sent out once, even
+    if the shift time is changed afterwards.
+    """
+    finished = models.BooleanField(default=False)
 
     @property
     def hours_value(self):

@@ -71,6 +71,7 @@ CORE_PLUGINS = [
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
     "ephios.plugins.guests",
+    "ephios.plugins.eventautoqualification",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
@@ -135,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "ephios.core.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.core.services.password_reset.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -214,6 +215,7 @@ CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 # django.contrib.messages
 MESSAGE_TAGS = {

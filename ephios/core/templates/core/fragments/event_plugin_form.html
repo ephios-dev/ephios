@@ -3,9 +3,9 @@
     <div class="card-header" data-toggle="collapse" data-target="#plugin-form-{{ form.prefix }}">
         <a href="#">{{ form.heading }}</a>
     </div>
-    <div id="plugin-form-{{ form.prefix }}" class="collapse">
+    <div id="plugin-form-{{ form.prefix }}" class="collapse{% if form.is_function_active %} show{% endif %}">
         <div class="card-body">
-            {{ form|crispy }}
+            {% crispy form %}
         </div>
     </div>
 </div>

@@ -17,9 +17,8 @@ from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
 from recurrence.forms import RecurrenceField
 
-from ephios.core import signup
+from ephios.core import event_type_preference_registry, signup
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
-from ephios.core.registries import event_type_preference_registry
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
@@ -213,16 +212,25 @@ class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
 
 
-class BaseEventPluginForm(forms.Form):
+class BaseEventPluginFormMixin:
     @property
     def heading(self):
         raise NotImplementedError
 
     def render(self):
+        try:
+            self.helper.form_tag = False
+        except AttributeError:
+            self.helper = FormHelper(self)
+            self.helper.form_tag = False
         return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
 
-    def save(self):
-        pass
+    def is_function_active(self):
+        """
+        When building forms for additional features, return whether that feature is enabled for the forms event instance.
+        With the default template, if this is True, the collapse is expanded on page load.
+        """
+        return False
 
 
 class EventNotificationForm(forms.Form):

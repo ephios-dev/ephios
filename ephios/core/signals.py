@@ -1,9 +1,8 @@
 from django.dispatch import receiver
 
-from ephios.core.notifications.backends import send_all_notifications
 from ephios.core.plugins import PluginSignal
-
-# PluginSignals are only send out to enabled plugins.
+from ephios.core.services.notifications.backends import send_all_notifications
+from ephios.core.services.participation import send_participation_finished
 
 register_consequence_handlers = PluginSignal()
 """
@@ -64,6 +63,14 @@ periodic_signal = PluginSignal()
 This signal is called periodically, at least every 15 minutes.
 """
 
+participation_finished = PluginSignal()
+"""
+This signal is sent out once for every confirmed participation after the participation ended and
+the ``finished`` flag is set to True. Changing the shift date to the future will not cause this to be called again.
+Exceptions in receivers are ignored, so make sure your code is robust enough to handle errors and retry if needed.
+This signal is based on ``periodic_signal`` and provides a ``participation`` keyword argument.
+"""
+
 register_event_bulk_action = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a list of events.
@@ -86,20 +93,30 @@ def register_base_consequence_handlers(sender, **kwargs):
     return [WorkingHoursConsequenceHandler, QualificationConsequenceHandler]
 
 
-@receiver(register_notification_types)
+@receiver(
+    register_notification_types, dispatch_uid="ephios.core.signals.register_core_notification_types"
+)
 def register_core_notification_types(sender, **kwargs):
-    from ephios.core.notifications.types import CORE_NOTIFICATION_TYPES
+    from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 
     return CORE_NOTIFICATION_TYPES
 
 
-@receiver(register_notification_backends)
+@receiver(
+    register_notification_backends,
+    dispatch_uid="ephios.core.signals.register_core_notification_backends",
+)
 def register_core_notification_backends(sender, **kwargs):
-    from ephios.core.notifications.backends import CORE_NOTIFICATION_BACKENDS
+    from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
     return CORE_NOTIFICATION_BACKENDS
 
 
-@receiver(periodic_signal)
+@receiver(periodic_signal, dispatch_uid="ephios.core.signals.send_notifications")
 def send_notifications(sender, **kwargs):
     send_all_notifications()
+
+
+periodic_signal.connect(
+    send_participation_finished, dispatch_uid="ephios.core.signals.send_participation_finished"
+)

@@ -375,7 +375,7 @@ class BaseSignupMethod:
         Creates and/or configures a participation object for a given participant and sends out notifications.
         Passes the participation and kwargs to configure_participation to do configuration specific to the signup method
         """
-        from ephios.core.notifications.types import ResponsibleParticipationRequested
+        from ephios.core.services.notifications.types import ResponsibleParticipationRequested
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)

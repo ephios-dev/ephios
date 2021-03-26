@@ -1,8 +1,12 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.password_validation import MinimumLengthValidator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
+
+logger = logging.getLogger(__name__)
 
 
 class CustomMinimumLengthValidator(MinimumLengthValidator):
