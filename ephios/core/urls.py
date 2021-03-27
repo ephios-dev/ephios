@@ -21,6 +21,7 @@ from ephios.core.views.consequences import ConsequenceUpdateView, WorkingHourReq
 from ephios.core.views.event import (
     EventActivateView,
     EventArchiveView,
+    EventCalendarView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
@@ -102,6 +103,7 @@ urlpatterns = [
         EventBulkDeleteView.as_view(),
         name="event_bulk_delete",
     ),
+    path("events/<int:year>/<int:month>/", EventCalendarView.as_view(), name="event_calendar"),
     path(
         "shifts/<int:pk>/signup-action/",
         LocalUserShiftActionView.as_view(),

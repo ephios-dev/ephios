@@ -1,5 +1,6 @@
 import functools
 import json
+from calendar import _nextmonth, _prevmonth
 from datetime import datetime, timedelta
 
 from django.contrib import messages
@@ -12,7 +13,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
+from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
@@ -28,6 +31,7 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 from recurrence.forms import RecurrenceField
 
+from ephios.core.calendar import ShiftCalendar
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
 from ephios.core.models import Event, EventType, Shift
 from ephios.core.services.notifications.types import (
@@ -316,3 +320,24 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
+
+
+class EventCalendarView(TemplateView):
+    template_name = "core/event_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        year, month = kwargs["year"], kwargs["month"]
+        shifts = Shift.objects.filter(start_time__month=month, start_time__year=year)
+        calendar = ShiftCalendar(shifts, locale=get_language())
+        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
+        nextyear, nextmonth = _nextmonth(year, month)
+        kwargs.setdefault(
+            "next_month_url",
+            reverse("core:event_calendar", kwargs=dict(year=nextyear, month=nextmonth)),
+        )
+        prevyear, prevmonth = _prevmonth(year, month)
+        kwargs.setdefault(
+            "previous_month_url",
+            reverse("core:event_calendar", kwargs=dict(year=prevyear, month=prevmonth)),
+        )
+        return super().get_context_data(**kwargs)

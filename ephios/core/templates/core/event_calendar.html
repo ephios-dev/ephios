@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load event_extras %}
+
+{% block title %}
+    {% translate "Events" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header mb-3">
+        <h1>{% trans "Events" %}</h1>
+    </div>
+    <div class="d-flex justify-content-between mb-2">
+        <a class="btn btn-outline-secondary" href="{{ previous_month_url }}">{% translate "Previous month" %}</a>
+        <a href="{% url "core:event_list" %}">{% translate "List view" %}</a>
+        <a class="btn btn-outline-secondary" href="{{ next_month_url }}">{% translate "Next month" %}</a>
+    </div>
+    {{ calendar }}
+{% endblock %}
