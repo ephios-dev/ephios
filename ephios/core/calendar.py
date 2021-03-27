@@ -8,19 +8,13 @@ class ShiftCalendar(LocaleHTMLCalendar):
 
     def __init__(self, shifts, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.shifts = self.group_by_day(shifts)
+        self.shifts = {
+            k: list(v) for (k, v) in groupby(shifts, lambda shift: shift.start_time.date().day)
+        }
 
     def formatmonth(self, theyear, themonth, withyear=True):
         self.year, self.month = theyear, themonth
         return super().formatmonth(theyear, themonth)
-
-    def group_by_day(self, shifts):
-        return dict(
-            [
-                (day, list(items))
-                for day, items in groupby(shifts, lambda shift: shift.start_time.date().day)
-            ]
-        )
 
     def formatday(self, day, weekday):
         if day != 0:
