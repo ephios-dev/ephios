@@ -63,7 +63,9 @@
         </div>
     </form>
 
-    {% include 'modellogging/logentries.html' with logged_object=object %}
+    {% if object %}
+        {% include 'modellogging/logentries.html' with logged_object=object %}
+    {% endif %}
 
 
 {% endblock %}

@@ -66,6 +66,7 @@ def _choice_to_display(field, choice):  # does not support nested choices
 def _field_actions_for_field(model, field_name, actions):
     field = None
     try:
+        # pylint: disable=protected-access
         field = model._meta.get_field(field_name)
     except FieldDoesNotExist:
         label = field_name
@@ -140,6 +141,7 @@ class LogEntry(models.Model):
         elif self.action_type == InstanceActionType.DELETE:
             message = _("A {cls} was deleted.")
 
+        # pylint: disable=protected-access
         return message.format(
             cls=capitalize_first(self.content_type.model_class()._meta.verbose_name),
             obj=f'"{str(self.content_object)}"' if self.content_object else "",
@@ -153,25 +155,58 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
         super().__init__(*args, **kwargs)
         self._logentry = None
 
-    def _as_dict(self):
+    def as_log_dict(self):
         """
         Return a dict mapping field names to values saved in this instance.
         Only include field names that are not to be ignored for logging and
         that don't name m2m fields.
         """
-        fields = [
-            field.name
-            for field in type(self)._meta.get_fields()
-            if field.name not in self.unlogged_fields and not field.many_to_many
-        ]
-        return model_to_dict(self, fields)
+        model_field_values = model_to_dict(
+            self,
+            [
+                field.name
+                for field in type(self)._meta.get_fields()
+                if field.name not in self.unlogged_fields and not field.many_to_many
+            ],
+        )
+
+        """{
+            str(label): [
+                *get_users_with_perms(self, with_group_users=False, only_with_perms_in=[codename]),
+                *get_groups_with_perms(self, only_with_perms_in=[codename]),
+            ]
+            for label, codename in self._permission_log_fields.items()
+        }"""
+
+        return {
+            **model_field_values,
+            **self._get_additional_log_fields(),
+        }
+
+    @property
+    def _permission_log_fields(self):
+        """
+        Return a dict of object permissions to keep track of in model logging.
+        Keys are labels, values the permission codename.
+        Remember that LogEntries are update on model save, but most of the times,
+        model permissins are updated seperatly. Call save(update_fields=[]) to
+        update the log entry.
+        """
+        return {}
+
+    def _get_additional_log_fields(self):
+        """
+        Hook into this to add custom fields+values to put into log entries.
+        Beware that currently, keys (=labels) are translated now rather than at display time.
+        """
+        return {}
 
     def _get_change_data(self, action_type: InstanceActionType):
         """
         Return a dict mapping field names to changes that happened in this model instance,
         depending on the action that is being done to the instance.
         """
-        self_dict = self._as_dict()
+        self_dict = self.as_log_dict()
         if action_type == InstanceActionType.CREATE:
             changes = {
                 field_name: {FieldActionType.INSTANCE_CREATE: [created_value]}
@@ -181,7 +216,7 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
         elif action_type == InstanceActionType.CHANGE:
             unchanged_clone = type(self)(id=self.id)
             unchanged_clone.refresh_from_db()
-            old_dict = unchanged_clone._as_dict()
+            old_dict = unchanged_clone.as_log_dict()
             changes = {
                 field_name: {FieldActionType.VALUE_CHANGE: [old_value, new_value]}
                 for field_name in {*old_dict.keys(), *self_dict.keys()}
@@ -191,7 +226,7 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
         elif action_type == InstanceActionType.DELETE:
             unchanged_clone = type(self)(id=self.id)
             unchanged_clone.refresh_from_db()
-            old_dict = unchanged_clone._as_dict()
+            old_dict = unchanged_clone.as_log_dict()
             changes = {
                 field_name: {FieldActionType.INSTANCE_DELETE: [deleted_value]}
                 for field_name, deleted_value in old_dict.items()
@@ -257,7 +292,7 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
     def save(self, *args, **kw):
         # Are we creating a new instance?
         # https://docs.djangoproject.com/en/3.0/ref/models/instances/#customizing-model-loading
-        if self._state.adding:
+        if self._state.adding or not self.pk:
             # we need to attach a logentry to an existing object, so we save this newly created instance first
             super().save(*args, **kw)
             self.log_instance_create()
@@ -323,7 +358,7 @@ def _m2m_changed(
     field_name = next(
         (
             field.name
-            for field in type(instance)._meta.many_to_many
+            for field in type(instance)._meta.many_to_many  # pylint: disable=protected-access
             if getattr(type(instance), field.name).through == sender
         ),
         None,

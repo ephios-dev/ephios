@@ -108,6 +108,10 @@ class Event(LoggedModelMixin, Model):
                 self.full_clean()
                 self.save()
 
+    @property
+    def _permission_log_fields(self):
+        return {_("visible for"): "view_event", _("responsible"): "change_event"}
+
 
 class AbstractParticipation(PolymorphicModel):
     class States(models.IntegerChoices):
@@ -199,9 +203,8 @@ class Shift(LoggedModelMixin, Model):
     def unlogged_fields(self):
         return ["id", "event", "signup_method_slug", "signup_configuration"]
 
-    def _as_dict(self):
+    def _get_additional_log_fields(self):
         return {
-            **super()._as_dict(),
             "signup_method_slug": str(self.signup_method.verbose_name),
             **{str(key): value for key, value in self.signup_method.get_signup_info().items()},
         }

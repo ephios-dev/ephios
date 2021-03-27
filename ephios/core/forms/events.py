@@ -97,7 +97,7 @@ class EventForm(forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.type = self.eventtype
-        event = super().save(commit=commit)
+        event: Event = super().save(commit=commit)
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
@@ -138,6 +138,8 @@ class EventForm(forms.ModelForm):
             ),
             event,
         )
+
+        event.save(update_fields=[])
 
         return event
 
