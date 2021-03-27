@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
     "webpush",
+    "ephios.modellogging",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -90,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "ephios.modellogging.middleware.LoggingRequestMiddleware",
 ]
 
 ROOT_URLCONF = "ephios.urls"

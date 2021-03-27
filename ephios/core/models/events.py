@@ -25,6 +25,7 @@ from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.modellogging.models import LoggedModelMixin
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
@@ -54,7 +55,7 @@ class EventType(Model):
         return str(self.title)
 
 
-class Event(Model):
+class Event(LoggedModelMixin, Model):
     title = CharField(_("title"), max_length=254)
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
@@ -151,7 +152,7 @@ class AbstractParticipation(PolymorphicModel):
             return super().__str__()
 
 
-class Shift(Model):
+class Shift(LoggedModelMixin, Model):
     event = ForeignKey(
         Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
     )
@@ -189,6 +190,21 @@ class Shift(Model):
 
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
+
+    @property
+    def object_to_attach_logentries_to(self):
+        return Event, self.event_id
+
+    @property
+    def unlogged_fields(self):
+        return ["id", "event", "signup_method_slug", "signup_configuration"]
+
+    def _as_dict(self):
+        return {
+            **super()._as_dict(),
+            "signup_method_slug": str(self.signup_method.verbose_name),
+            **{str(key): value for key, value in self.signup_method.get_signup_info().items()},
+        }
 
 
 class LocalParticipation(AbstractParticipation):

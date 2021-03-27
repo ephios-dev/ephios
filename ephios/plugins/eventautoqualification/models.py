@@ -3,14 +3,17 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Event
 from ephios.core.signup import Qualification
+from ephios.modellogging.models import LoggedModelMixin
 
 
-class EventAutoQualificationConfiguration(models.Model):
+class EventAutoQualificationConfiguration(LoggedModelMixin, models.Model):
     event = models.OneToOneField(
         Event, on_delete=models.CASCADE, related_name="auto_qualification_config"
     )
 
-    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
+    qualification = models.ForeignKey(
+        Qualification, on_delete=models.CASCADE, verbose_name=_("Qualification")
+    )
     expiration_date = models.DateField(verbose_name=_("Expiration date"), null=True, blank=True)
 
     class Modes(models.IntegerChoices):
@@ -21,7 +24,7 @@ class EventAutoQualificationConfiguration(models.Model):
     mode = models.IntegerField(
         choices=Modes.choices,
         default=Modes.ANY_SHIFT,
-        verbose_name=_("Which shifts must be attended to acquire the qualification?"),
+        verbose_name=_("Required attendance"),
     )
 
     extend_only = models.BooleanField(
@@ -30,3 +33,11 @@ class EventAutoQualificationConfiguration(models.Model):
     needs_confirmation = models.BooleanField(
         default=True, verbose_name=_("Qualification must be confirmed afterwards")
     )
+
+    @property
+    def object_to_attach_logentries_to(self):
+        return Event, self.event_id
+
+    @property
+    def unlogged_fields(self):
+        return ["id", "event"]
