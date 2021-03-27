@@ -6,24 +6,19 @@
 {% translate "<em>None</em>" as NONE %}
 
 <ul>
-    {% for field_name, actions in log.field_context_data.items %}
-        {% for action in actions %}
-            <li>
-                {% if action.type == "add" %}
-                    {{ action.label }} {% trans "added" %}: {{ action.items|join:", " }}
-                {% elif action.type == "remove" %}
-                    {{ action.label }} {% trans "removed" %}: {{ action.items|join:", " }}
-                {% elif action.type == "clear" %}
-                    {{ action.label }} {% trans "cleared" %}
-                {% elif action.type == "delete" %}
-                    {% blocktrans with label=action.label count count=action.items|length %}{{ label }} was{% plural %}{{ label }} were{% endblocktrans %}:
-                    {{ action.items|join:", " }}
-                {% elif action.type == "change" %}
-                    {{ action.label }}: {{ action.items.0|default_if_none:NONE }} &#8594; {{ action.items.1|default_if_none:NONE }}
-                {% elif action.type == "create" %}
-                    {{ action.label }}: {{ action.items.0 }}
-                {% endif %}
-            </li>
-        {% endfor %}
+    {% for record in log.records %}
+        {% if log.action_type == "change" %}
+            {% for statement in record.change_statements %}
+                <li>
+                    {{ statement }}
+                </li>
+            {% endfor %}
+        {% else %}
+            {% for statement in record.value_statements %}
+                <li>
+                    {{ statement }}
+                </li>
+            {% endfor %}
+        {% endif %}
     {% endfor %}
 </ul>
