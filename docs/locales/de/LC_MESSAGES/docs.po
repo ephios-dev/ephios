@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ephios \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-27 01:13+0100\n"
+"POT-Creation-Date: 2021-03-27 01:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,14 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
+
+#: ../../admin/index.rst:2
+msgid "Administration documentation"
+msgstr ""
+
+#: ../../admin/index.rst:4
+msgid "This section shows how to install ephios."
+msgstr ""
 
 #: ../../development/contributing.rst:2
 msgid "Contributing"
@@ -398,5 +406,26 @@ msgid ""
 "This signal is sent out to get all known signup methods. Receivers should"
 " return a list of subclasses of "
 "``ephios.core.signup.methods.BaseSignupMethod``."
+msgstr ""
+
+#: ../../index.rst:7
+msgid "Welcome to ephios's documentation!"
+msgstr ""
+
+#: ../../index.rst:9
+msgid ""
+"This documentation explains how to use, install or extend ephios. If you "
+"can't find what you're looking for in the corresponding section, feel "
+"free to contact us."
+msgstr ""
+
+#: ../../user/index.rst:2
+msgid "User Guide"
+msgstr ""
+
+#: ../../user/index.rst:4
+msgid ""
+"This section shows how to use ephios. This includes functionality for "
+"volunteers as well as for planners."
 msgstr ""
 
