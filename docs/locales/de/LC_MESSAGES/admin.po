@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ephios \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-18 16:44+0100\n"
+"POT-Creation-Date: 2021-03-27 01:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: ../../index.rst:7
-msgid "Welcome to ephios's documentation!"
+#: ../../admin/index.rst:2
+msgid "Administration documentation"
 msgstr ""
 
-#: ../../index.rst:9
-msgid ""
-"This documentation explains how to use, install or extend ephios. If you "
-"can't find what you're looking for in the corresponding section, feel "
-"free to contact us."
+#: ../../admin/index.rst:4
+msgid "This section shows how to install ephios."
 msgstr ""
 
