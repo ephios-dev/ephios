@@ -12,8 +12,8 @@
 
 {% block html_head %}
     <style nonce="{{ request.csp_nonce }}">
-        {% cache 900 "single_eventtype_color" event.type.pk %}
-            {{ event.type|color_css }}
+        {% cache 900 "eventtype_colors" %}
+            {% eventtype_colors %}
         {% endcache %}
     </style>
 {% endblock %}
