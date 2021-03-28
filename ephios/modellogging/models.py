@@ -80,7 +80,9 @@ class LogEntry(models.Model):
             )
         }
         return [
-            recorder_types[slug].deserialize(data, self.content_type.model_class())
+            recorder_types[slug].deserialize(
+                data, self.content_type.model_class(), self.action_type
+            )
             for data in self.data.values()
             if (slug := data.get("slug"))
         ]
@@ -112,12 +114,15 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._current_logentry = None
-        self.log_recorders = self.initial_log_recorders()
-        for recorder in self.log_recorders:
-            recorder.model_init(self)
+        self.log_recorders = []
+        for recorder in self.initial_log_recorders():
+            self.add_log_recorder(recorder)
+
+    def add_log_recorder(self, recorder):
+        self.log_recorders.append(recorder)
+        recorder.attached(self)
 
     def initial_log_recorders(self):
-        recorders = []
         opts = self._meta
         for f in itertools.chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
             if not getattr(f, "editable", False):
@@ -125,12 +130,12 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
             if f.name in self.unlogged_fields:
                 continue
             if f.many_to_many:
-                recorders.append(M2MLogRecorder(f))
+                yield M2MLogRecorder(f)
             else:
-                recorders.append(ModelFieldLogRecorder(f))
+                yield ModelFieldLogRecorder(f)
 
         # TODO add more recorders (Permissions, Derived)
-        return recorders
+        ...
 
     def _get_log_data(self, action_type):
         if action_type == InstanceActionType.CHANGE:
@@ -143,7 +148,7 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
             recorder.record(action_type, self, db_instance)
 
         return {
-            recorder.key: {**recorder.serialize(), "slug": recorder.slug}
+            recorder.key: {**recorder.serialize(action_type), "slug": recorder.slug}
             for recorder in self.log_recorders
             if recorder.is_changed() or action_type != InstanceActionType.CHANGE
         }

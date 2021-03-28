@@ -22,6 +22,7 @@ from ephios.core.models import Event, EventType, LocalParticipation, Shift, User
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
+from ephios.modellogging.recorders import PermissionLogRecorder
 
 
 class EventForm(forms.ModelForm):
@@ -98,6 +99,9 @@ class EventForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.type = self.eventtype
         event: Event = super().save(commit=commit)
+
+        event.add_log_recorder(PermissionLogRecorder("view_event", _("Visible for")))
+        event.add_log_recorder(PermissionLogRecorder("change_event", _("Responsibles")))
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)

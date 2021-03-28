@@ -1,14 +1,18 @@
 import itertools
 from enum import Enum
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import Signal, receiver
 from django.template.defaultfilters import yesno
 from django.utils.translation import gettext_lazy as _
+from guardian.shortcuts import get_users_with_perms
 
 # pylint: disable=protected-access
+from ephios.extra.permissions import get_groups_with_perms
 
 
 def capitalize_first(string):
@@ -38,7 +42,7 @@ class BaseLogRecorder:
 
     slug = NotImplemented
 
-    def model_init(self, instance):
+    def attached(self, instance):
         pass
 
     def is_changed(self):
@@ -54,7 +58,7 @@ class BaseLogRecorder:
         """
         raise NotImplementedError
 
-    def serialize(self):
+    def serialize(self, action_type: InstanceActionType):
         """
         dump this change to a dict
         """
@@ -103,7 +107,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
     def key(self):
         return f"field-{self.field.name}"
 
-    def serialize(self):
+    def serialize(self, action_type: InstanceActionType):
         data = {
             "field_name": self.field.name,
             "verbose_name": str(
@@ -134,7 +138,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         return choice
 
     @classmethod
-    def deserialize(cls, data, model):
+    def deserialize(cls, data, model, action_type: InstanceActionType):
         try:
             self = cls(model._meta.get_field(data["field_name"]))
         except FieldDoesNotExist:
@@ -200,7 +204,7 @@ class M2MLogRecorder(BaseLogRecorder):
     def key(self):
         return f"m2m-{self.field.name}"
 
-    def serialize(self):
+    def serialize(self, action_type: InstanceActionType):
         data = {
             "field_name": self.field.name,
             "verbose_name": str(
@@ -224,7 +228,7 @@ class M2MLogRecorder(BaseLogRecorder):
         return data
 
     @classmethod
-    def deserialize(cls, data, model):
+    def deserialize(cls, data, model, action_type: InstanceActionType):
 
         try:
             self = cls(model._meta.get_field(data["field_name"]))
@@ -257,15 +261,11 @@ class M2MLogRecorder(BaseLogRecorder):
         return self
 
     def change_statements(self):
-        statements = []
         for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
-            if (items := getattr(self, attr)) :
-                statements.append(
-                    "{label} {verb}: {items}".format(
-                        label=self.label, verb=verb, items=", ".join(items)
-                    )
+            if items := getattr(self, attr):
+                yield "{label} {verb}: {items}".format(
+                    label=self.label, verb=verb, items=", ".join(items)
                 )
-        return statements
 
     def value_statements(self):
         if not self.current:
@@ -302,6 +302,116 @@ def _m2m_changed(
             instance.update_log(InstanceActionType.CHANGE)
 
 
+class PermissionLogRecorder(BaseLogRecorder):
+    slug = "permission-recorder"
+
+    def __init__(self, codename, label):
+        self.codename = codename
+        self.label = label
+
+    def attached(self, instance):
+        self.old_users = set(
+            get_users_with_perms(
+                instance, with_group_users=False, only_with_perms_in=[self.codename]
+            )
+        )
+        self.old_groups = set(get_groups_with_perms(instance, only_with_perms_in=[self.codename]))
+
+    def record(self, action: InstanceActionType, instance, db_instance=None):
+        self.new_users = set(
+            get_users_with_perms(
+                instance, with_group_users=False, only_with_perms_in=[self.codename]
+            )
+        )
+        self.new_groups = set(get_groups_with_perms(instance, only_with_perms_in=[self.codename]))
+
+    def is_changed(self):
+        return self.new_groups != self.old_groups or self.new_users != self.old_users
+
+    @property
+    def key(self):
+        return f"permission-{self.codename}"
+
+    def serialize(self, action_type: InstanceActionType):
+        data = {
+            "label": str(self.label),
+            "codename": self.codename,
+        }
+
+        def pk_and_str(objects):
+            return [{"pk": obj.pk, "str": str(obj)} for obj in objects]
+
+        if action_type == InstanceActionType.CHANGE:
+            data["added_users"] = pk_and_str(self.new_users - self.old_users)
+            data["removed_users"] = pk_and_str(self.old_users - self.new_users)
+            data["added_groups"] = pk_and_str(self.new_groups - self.old_groups)
+            data["removed_groups"] = pk_and_str(self.old_groups - self.new_groups)
+        else:
+            data["users"] = pk_and_str(self.new_users)
+            data["groups"] = pk_and_str(self.old_groups)
+
+        return data
+
+    @classmethod
+    def deserialize(cls, data, model, action_type: InstanceActionType):
+        self = cls(data["codename"], data["label"])
+        if action_type == InstanceActionType.CHANGE:
+            related_users = {
+                user.pk: user
+                for user in get_user_model()._default_manager.filter(
+                    pk__in=[
+                        obj["pk"]
+                        for obj in itertools.chain(data["added_users"], data["removed_users"])
+                    ]
+                )
+            }
+            related_groups = {
+                group.pk: group
+                for group in Group._default_manager.filter(
+                    pk__in=[
+                        obj["pk"]
+                        for obj in itertools.chain(data["added_groups"], data["removed_groups"])
+                    ]
+                )
+            }
+            self.added = [
+                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["added_groups"]
+            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["added_users"]]
+            self.removed = [
+                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["removed_groups"]
+            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["removed_users"]]
+        else:
+            related_users = {
+                user.pk: user
+                for user in get_user_model()._default_manager.filter(
+                    pk__in=[obj["pk"] for obj in data["users"]]
+                )
+            }
+            related_groups = {
+                group.pk: group
+                for group in Group._default_manager.filter(
+                    pk__in=[obj["pk"] for obj in data["groups"]]
+                )
+            }
+            self.current = [
+                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["groups"]
+            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["users"]]
+
+        return self
+
+    def change_statements(self):
+        for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
+            if items := getattr(self, attr):
+                yield "{label} {verb}: {items}".format(
+                    label=self.label, verb=verb, items=", ".join(items)
+                )
+
+    def value_statements(self):
+        if not self.current:
+            return []
+        return "{label}: {items}".format(label=self.label, items=", ".join(self.current))
+
+
 register_log_recorders = Signal()
 
 
@@ -310,4 +420,5 @@ def _register_inbuilt_recorders(sender, **kwargs):
     return [
         ModelFieldLogRecorder,
         M2MLogRecorder,
+        PermissionLogRecorder,
     ]
