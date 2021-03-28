@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import QuerySet
 from django.utils.formats import localize
-from django.utils.functional import cached_property
+from django.utils.functional import SimpleLazyObject, cached_property
 from django.utils.translation import gettext_lazy as _
 
 from ephios.modellogging.recorders import (
@@ -36,6 +36,15 @@ class LogJSONEncoder(JSONEncoder):
         if isinstance(o, QuerySet):
             return list(o)
         return super().default(o)
+
+
+def recorder_types_by_slug(model):
+    return {
+        recorder.slug: recorder
+        for recorder in itertools.chain(
+            *(recorders for __, recorders in register_log_recorders.send(model))
+        )
+    }
 
 
 class LogEntry(models.Model):
@@ -68,17 +77,7 @@ class LogEntry(models.Model):
 
     @cached_property
     def records(self):
-        recorder_types = {
-            recorder.slug: recorder
-            for recorder in itertools.chain(
-                *(
-                    recorders
-                    for __, recorders in register_log_recorders.send(
-                        self.content_type.model_class()
-                    )
-                )
-            )
-        }
+        recorder_types = recorder_types_by_slug(self.content_type.model_class())
         return [
             recorder_types[slug].deserialize(
                 data, self.content_type.model_class(), self.action_type
@@ -134,13 +133,15 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
             else:
                 yield ModelFieldLogRecorder(f)
 
-        # TODO add more recorders (Permissions, Derived)
-        ...
-
     def _get_log_data(self, action_type):
         if action_type == InstanceActionType.CHANGE:
-            db_instance = type(self)(pk=self.pk)
-            db_instance.refresh_from_db()
+            # for this action, we provide a lazily fetched version of the instance as it is stored in the db.
+            def get_db_instance():
+                db_instance = type(self)(pk=self.pk)
+                db_instance.refresh_from_db()
+                return db_instance
+
+            db_instance = SimpleLazyObject(get_db_instance)
         else:
             db_instance = None
 
@@ -158,7 +159,7 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
         if not log_data:
             return
 
-        if not self._current_logentry:
+        if not self._current_logentry or action_type != self._current_logentry.action_type:
             try:
                 user = self.thread.request.user
                 request_id = self.thread.request_id
@@ -177,9 +178,18 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
                 data=log_data,
             )
         else:
-            ...
-            # TODO
-            # self._logentry.data.update(changes)
+            recorder_types = recorder_types_by_slug(type(self))
+            for key, new_data in log_data.items():
+                if (
+                    (old_data := self._current_logentry.data.get(key))
+                    and new_data["slug"] == old_data["slug"]
+                    and (recorder := recorder_types.get(new_data["slug"]))
+                ):
+                    self._current_logentry.data[key] = recorder.merge_data(
+                        old_data, new_data, self._current_logentry.action_type
+                    )
+                else:
+                    self._current_logentry.data[key] = new_data
 
         self._current_logentry.save()
 

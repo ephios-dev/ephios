@@ -1,5 +1,8 @@
+import copy
 import itertools
+import operator
 from enum import Enum
+from typing import Callable
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -8,11 +11,14 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import Signal, receiver
 from django.template.defaultfilters import yesno
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
 
 # pylint: disable=protected-access
 from ephios.extra.permissions import get_groups_with_perms
+
+STATEMENT_TEMPLATE_NAME = "modellogging/statement.html"
 
 
 def capitalize_first(string):
@@ -45,6 +51,12 @@ class BaseLogRecorder:
     def attached(self, instance):
         pass
 
+    def record(self, action: InstanceActionType, instance, db_instance=None):
+        """
+        Record changes for change action and field state for creation and deletion.
+        If action is CHANGE,``db_instance`` is set to an instance freshly fetched from the db.
+        """
+
     def is_changed(self):
         """
         Returns whether the values have changed and should be included in the log.
@@ -65,17 +77,19 @@ class BaseLogRecorder:
         raise NotImplementedError
 
     @classmethod
-    def deserialize(cls, data, model):
+    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
+        """
+        Merge two serialized recordings into one, keeping the old from the old and the new from the new.
+        The default implementation just discards the older and returns the newer data.
+        """
+        return new_data
+
+    @classmethod
+    def deserialize(cls, data, model, action_type: InstanceActionType):
         """
         load this change from a dict.
         """
         raise NotImplementedError
-
-    def record(self, action: InstanceActionType, instance, db_instance=None):
-        """
-        Record changes for change action and field state for creation and deletion.
-        If action is CHANGE,``db_instance`` is set to an instance freshly fetched from the db.
-        """
 
     def change_statements(self):
         """
@@ -88,6 +102,7 @@ class BaseLogRecorder:
         Return a single or multiple human readable statements about the current value.
         Used for reporting created and deleted instances.
         """
+        raise NotImplementedError
 
 
 class ModelFieldLogRecorder(BaseLogRecorder):
@@ -96,8 +111,10 @@ class ModelFieldLogRecorder(BaseLogRecorder):
     def __init__(self, field):
         self.field = field
 
+    def attached(self, instance):
+        self.old_value = self.field.value_from_object(instance)
+
     def record(self, action: InstanceActionType, instance, db_instance=None):
-        self.old_value = self.field.value_from_object(db_instance) if db_instance else None
         self.new_value = self.field.value_from_object(instance)
 
     def is_changed(self):
@@ -131,6 +148,13 @@ class ModelFieldLogRecorder(BaseLogRecorder):
                 pass
         return data
 
+    @classmethod
+    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
+        return {
+            **new_data,
+            **{key: old_data[key] for key in ("old_value", "old_value_sr") if key in old_data},
+        }
+
     def _choice_to_display(self, choice):  # does not support nested choices
         for key, label in self.field.choices:
             if key == choice:
@@ -160,7 +184,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
             try:
                 self.new_value = self.field.related_model._default_manager.get(pk=self.new_value)
             except self.field.related_model.DoesNotExist:
-                self.new_value = data["new_value_str"]
+                self.new_value = data.get("new_value_str")
         elif getattr(self.field, "choices", None):
             self.old_value = self._choice_to_display(self.old_value)
             self.new_value = self._choice_to_display(self.new_value)
@@ -171,10 +195,15 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         return self
 
     def change_statements(self):
-        return [f"{self.label}: {self.old_value} → {self.new_value}"]
+        yield render_to_string(
+            STATEMENT_TEMPLATE_NAME,
+            dict(label=self.label, value=self.new_value, old_value=self.old_value),
+        )
 
     def value_statements(self):
-        return [f"{self.label}: {self.new_value}"]
+        yield render_to_string(
+            STATEMENT_TEMPLATE_NAME, dict(label=self.label, value=self.new_value)
+        )
 
 
 class M2MLogRecorder(BaseLogRecorder):
@@ -225,6 +254,18 @@ class M2MLogRecorder(BaseLogRecorder):
         if current := getattr(self, "current", None):
             data["current"] = current
 
+        return data
+
+    @classmethod
+    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
+        data = copy.deepcopy(new_data)
+        for key in ("added", "removed", "current"):
+            if key in new_data and key in old_data:
+                data[key] += [
+                    obj
+                    for obj in old_data[key]
+                    if obj["pk"] not in map(operator.itemgetter("pk"), new_data[key])
+                ]
         return data
 
     @classmethod
@@ -353,6 +394,25 @@ class PermissionLogRecorder(BaseLogRecorder):
         return data
 
     @classmethod
+    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
+        data = copy.deepcopy(new_data)
+        for key in (
+            "added_users",
+            "removed_users",
+            "users",
+            "added_groups",
+            "removed_groups",
+            "groups",
+        ):
+            if key in new_data and key in old_data:
+                data[key] += [
+                    obj
+                    for obj in old_data[key]
+                    if obj["pk"] not in map(operator.itemgetter("pk"), new_data[key])
+                ]
+        return data
+
+    @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
         self = cls(data["codename"], data["label"])
         if action_type == InstanceActionType.CHANGE:
@@ -412,6 +472,61 @@ class PermissionLogRecorder(BaseLogRecorder):
         return "{label}: {items}".format(label=self.label, items=", ".join(self.current))
 
 
+class DerivedFieldsLogRecorder(BaseLogRecorder):
+    slug = "derived-fields"
+
+    def __init__(self, derive: Callable):
+        self.derive = derive
+
+    def attached(self, instance):
+        self.old_dict = self.derive(instance)
+
+    def record(self, action: InstanceActionType, instance, db_instance=None):
+        self.new_dict = self.derive(instance)
+
+    def is_changed(self):
+        return self.old_dict != self.new_dict
+
+    @property
+    def key(self):
+        return f"derived-{id(self.derive)}"
+
+    def serialize(self, action_type: InstanceActionType):
+        return dict(
+            changes={
+                str(key): [old_value, new_value]
+                for key in set(itertools.chain(self.old_dict.keys(), self.new_dict.keys()))
+                if (old_value := self.old_dict.get(key)) != (new_value := self.new_dict.get(key))
+            }
+        )
+
+    @classmethod
+    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
+        changes = {}
+        for key in set(itertools.chain(old_data["changes"].keys(), new_data["changes"].keys())):
+            if (old_value := old_data["changes"].get(key)) != (
+                new_value := new_data["changes"].get(key)
+            ):
+                changes[key] = [old_value, new_value]
+        return dict(changes=changes)
+
+    @classmethod
+    def deserialize(cls, data, model, action_type: InstanceActionType):
+        self = cls(None)
+        self.changes = data["changes"]
+        return self
+
+    def change_statements(self):
+        for label, (old_value, new_value) in self.changes.items():
+            yield render_to_string(
+                STATEMENT_TEMPLATE_NAME, dict(label=label, value=new_value, old_value=old_value)
+            )
+
+    def value_statements(self):
+        for label, (__, new_value) in self.changes.items():
+            yield render_to_string(STATEMENT_TEMPLATE_NAME, dict(label=label, value=new_value))
+
+
 register_log_recorders = Signal()
 
 
@@ -421,4 +536,5 @@ def _register_inbuilt_recorders(sender, **kwargs):
         ModelFieldLogRecorder,
         M2MLogRecorder,
         PermissionLogRecorder,
+        DerivedFieldsLogRecorder,
     ]

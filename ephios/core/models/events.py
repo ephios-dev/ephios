@@ -26,6 +26,7 @@ from polymorphic.models import PolymorphicModel
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.modellogging.models import LoggedModelMixin
+from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
@@ -107,10 +108,6 @@ class Event(LoggedModelMixin, Model):
                 self.active = True
                 self.full_clean()
                 self.save()
-
-    @property
-    def _permission_log_fields(self):
-        return {_("visible for"): "view_event", _("responsible"): "change_event"}
 
 
 class AbstractParticipation(PolymorphicModel):
@@ -203,11 +200,18 @@ class Shift(LoggedModelMixin, Model):
     def unlogged_fields(self):
         return ["id", "event", "signup_method_slug", "signup_configuration"]
 
-    def _get_additional_log_fields(self):
-        return {
-            "signup_method_slug": str(self.signup_method.verbose_name),
-            **{str(key): value for key, value in self.signup_method.get_signup_info().items()},
-        }
+    def initial_log_recorders(self):
+        yield from super().initial_log_recorders()
+        yield from [
+            DerivedFieldsLogRecorder(
+                lambda instance: {_("Signup method"): str(instance.signup_method.verbose_name)}
+            ),
+            DerivedFieldsLogRecorder(
+                lambda instance: {
+                    str(key): value for key, value in self.signup_method.get_signup_info().items()
+                }
+            ),
+        ]
 
 
 class LocalParticipation(AbstractParticipation):

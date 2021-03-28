@@ -1,0 +1,11 @@
+{% load i18n %}
+{% translate "<em>None</em>" as NONE %}
+{{ label }}{% if verb %} {{ verb }}{% endif %}:
+{% if items %}
+    {{ items|join:", " }}
+{% else %}
+    {% if old_value %}
+        {{ old_value|default_if_none:NONE }} →
+    {% endif %}
+    {{ value|default_if_none:NONE }}
+{% endif %}

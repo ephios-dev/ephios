@@ -3,8 +3,6 @@
 
 {{ log.message }}
 
-{% translate "<em>None</em>" as NONE %}
-
 <ul>
     {% for record in log.records %}
         {% if log.action_type == "change" %}
