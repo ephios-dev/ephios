@@ -48,7 +48,7 @@ class GuestUser(models.Model):
         )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}@{self.event}"
+        return f"{self.first_name} {self.last_name} @ {self.event}"
 
     class Meta:
         # there might be two people using the same email *sigh*
@@ -56,7 +56,9 @@ class GuestUser(models.Model):
 
 
 class GuestParticipation(AbstractParticipation):
-    guest_user = models.ForeignKey(GuestUser, on_delete=models.CASCADE)
+    guest_user = models.ForeignKey(
+        GuestUser, on_delete=models.CASCADE, verbose_name=_("guest participant")
+    )
 
     @property
     def participant(self) -> AbstractParticipant:

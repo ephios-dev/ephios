@@ -111,10 +111,12 @@ class ModelFieldLogRecorder(BaseLogRecorder):
     def __init__(self, field):
         self.field = field
 
-    def attached(self, instance):
-        self.old_value = self.field.value_from_object(instance)
-
     def record(self, action: InstanceActionType, instance, db_instance=None):
+        self.old_value = (
+            self.field.value_from_object(db_instance)
+            if action == InstanceActionType.CHANGE
+            else None
+        )
         self.new_value = self.field.value_from_object(instance)
 
     def is_changed(self):
@@ -478,10 +480,8 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
     def __init__(self, derive: Callable):
         self.derive = derive
 
-    def attached(self, instance):
-        self.old_dict = self.derive(instance)
-
     def record(self, action: InstanceActionType, instance, db_instance=None):
+        self.old_dict = self.derive(db_instance) if action == InstanceActionType.CHANGE else {}
         self.new_dict = self.derive(instance)
 
     def is_changed(self):

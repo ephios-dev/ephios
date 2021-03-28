@@ -110,7 +110,7 @@ class Event(LoggedModelMixin, Model):
                 self.save()
 
 
-class AbstractParticipation(PolymorphicModel):
+class AbstractParticipation(LoggedModelMixin, PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
         CONFIRMED = 1, _("confirmed")
@@ -132,7 +132,7 @@ class AbstractParticipation(PolymorphicModel):
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
     """
-    finished = models.BooleanField(default=False)
+    finished = models.BooleanField(default=False, verbose_name=_("finished"))
 
     @property
     def hours_value(self):
@@ -151,6 +151,14 @@ class AbstractParticipation(PolymorphicModel):
             return f"{self.participant} @ {self.shift}"
         except NotImplementedError:
             return super().__str__()
+
+    @property
+    def object_to_attach_logentries_to(self):
+        return Event, self.shift.event_id
+
+    @property
+    def unlogged_fields(self):
+        return ["id", "data", "abstractparticipation_ptr"]
 
 
 class Shift(LoggedModelMixin, Model):
@@ -206,16 +214,14 @@ class Shift(LoggedModelMixin, Model):
             DerivedFieldsLogRecorder(
                 lambda instance: {_("Signup method"): str(instance.signup_method.verbose_name)}
             ),
-            DerivedFieldsLogRecorder(
-                lambda instance: {
-                    str(key): value for key, value in self.signup_method.get_signup_info().items()
-                }
-            ),
+            DerivedFieldsLogRecorder(lambda instance: instance.signup_method.get_signup_info()),
         ]
 
 
 class LocalParticipation(AbstractParticipation):
-    user: "UserProfile" = ForeignKey("UserProfile", on_delete=models.CASCADE)
+    user: "UserProfile" = ForeignKey(
+        "UserProfile", on_delete=models.CASCADE, verbose_name=_("Participant")
+    )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

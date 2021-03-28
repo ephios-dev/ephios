@@ -162,6 +162,8 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
         if not self._current_logentry or action_type != self._current_logentry.action_type:
             try:
                 user = self.thread.request.user
+                if not user.is_authenticated:
+                    user = None
                 request_id = self.thread.request_id
             except AttributeError:
                 user = None
