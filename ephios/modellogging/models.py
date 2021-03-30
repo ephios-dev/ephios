@@ -1,18 +1,15 @@
 import itertools
 import threading
-from datetime import date, datetime, time
-from json import JSONEncoder
 from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import QuerySet
-from django.utils.formats import localize
 from django.utils.functional import SimpleLazyObject, cached_property
 from django.utils.translation import gettext_lazy as _
 
+from ephios.modellogging.json import LogJSONDecoder, LogJSONEncoder
 from ephios.modellogging.recorders import (
     InstanceActionType,
     M2MLogRecorder,
@@ -22,20 +19,6 @@ from ephios.modellogging.recorders import (
 )
 
 # pylint: disable=protected-access
-
-
-class LogJSONEncoder(JSONEncoder):
-    """
-    As JSON can't store datetime objects, we localize them to strings.
-    """
-
-    def default(self, o):
-        # o is the object to serialize -- we can't rename the argument in JSONEncoder
-        if isinstance(o, (date, time, datetime)):
-            return localize(o)
-        if isinstance(o, QuerySet):
-            return list(o)
-        return super().default(o)
 
 
 def recorder_types_by_slug(model):
@@ -70,7 +53,7 @@ class LogEntry(models.Model):
         max_length=255, choices=[(value, value) for value in InstanceActionType]
     )
     request_id = models.CharField(max_length=36, null=True, blank=True)
-    data = models.JSONField(default=dict, encoder=LogJSONEncoder)
+    data = models.JSONField(default=dict, encoder=LogJSONEncoder, decoder=LogJSONDecoder)
 
     class Meta:
         ordering = ("-datetime", "-id")

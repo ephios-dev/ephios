@@ -4,8 +4,6 @@ import operator
 from enum import Enum
 from typing import Callable
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -137,15 +135,11 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         }
         if self.field.one_to_one or self.field.many_to_one:
             try:
-                data["old_value_str"] = str(
-                    self.field.related_model._default_manager.get(pk=self.old_value)
-                )
+                data["old_value"] = self.field.related_model._base_manager.get(pk=self.old_value)
             except self.field.related_model.DoesNotExist:
                 pass
             try:
-                data["new_value_str"] = str(
-                    self.field.related_model._default_manager.get(pk=self.new_value)
-                )
+                data["new_value"] = self.field.related_model._base_manager.get(pk=self.new_value)
             except self.field.related_model.DoesNotExist:
                 pass
         return data
@@ -179,14 +173,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         if self.field is None:
             pass
         elif self.field.one_to_one or self.field.many_to_one:
-            try:
-                self.old_value = self.field.related_model._default_manager.get(pk=self.old_value)
-            except self.field.related_model.DoesNotExist:
-                self.old_value = data.get("old_value_str")
-            try:
-                self.new_value = self.field.related_model._default_manager.get(pk=self.new_value)
-            except self.field.related_model.DoesNotExist:
-                self.new_value = data.get("new_value_str")
+            pass
         elif getattr(self.field, "choices", None):
             self.old_value = self._choice_to_display(self.old_value)
             self.new_value = self._choice_to_display(self.new_value)
@@ -220,9 +207,7 @@ class M2MLogRecorder(BaseLogRecorder):
 
     def record(self, action: InstanceActionType, instance, db_instance=None):
         if action != InstanceActionType.CHANGE:
-            self.current = [
-                {"pk": obj.pk, "str": str(obj)} for obj in getattr(instance, self.field.name).all()
-            ]
+            self.current = list(getattr(instance, self.field.name).all())
 
     def record_clear(self, instance):
         self.added_pks = set()
@@ -245,13 +230,13 @@ class M2MLogRecorder(BaseLogRecorder):
 
         related_objects = {
             obj.pk: obj
-            for obj in self.field.related_model._default_manager.filter(
+            for obj in self.field.related_model._base_manager.filter(
                 pk__in={*self.added_pks, *self.removed_pks}
             )
         }
 
-        data["added"] = [{"pk": pk, "str": str(related_objects[pk])} for pk in self.added_pks]
-        data["removed"] = [{"pk": pk, "str": str(related_objects[pk])} for pk in self.removed_pks]
+        data["added"] = self.field.related_model._base_manager.filter(pk__in=self.added_pks)
+        data["removed"] = self.field.related_model._base_manager.filter(pk__in=self.removed_pks)
 
         if current := getattr(self, "current", None):
             data["current"] = current
@@ -272,35 +257,16 @@ class M2MLogRecorder(BaseLogRecorder):
 
     @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
-
         try:
             self = cls(model._meta.get_field(data["field_name"]))
         except FieldDoesNotExist:
             self = cls(None)
             self.label = data["verbose_name"]
-            self.added = [obj["str"] for obj in data["added"]]
-            self.removed = [obj["str"] for obj in data["removed"]]
-            self.current = [obj["str"] for obj in data.get("current", [])]
         else:
             self.label = getattr(self.field, "verbose_name", capitalize_first(self.field.name))
-            related_objects = {
-                obj.pk: obj
-                for obj in self.field.related_model._default_manager.filter(
-                    pk__in={
-                        obj["pk"]
-                        for obj in itertools.chain(
-                            data["added"], data["removed"], data.get("current", [])
-                        )
-                    }
-                )
-            }
-            self.added = [str(related_objects.get(obj["pk"], obj["str"])) for obj in data["added"]]
-            self.removed = [
-                str(related_objects.get(obj["pk"], obj["str"])) for obj in data["removed"]
-            ]
-            self.current = [
-                str(related_objects.get(obj["pk"], obj["str"])) for obj in data.get("current", [])
-            ]
+        self.added = data["added"]
+        self.removed = data["removed"]
+        self.current = data.get("current", [])
         return self
 
     def change_statements(self):
@@ -381,17 +347,14 @@ class PermissionLogRecorder(BaseLogRecorder):
             "codename": self.codename,
         }
 
-        def pk_and_str(objects):
-            return [{"pk": obj.pk, "str": str(obj)} for obj in objects]
-
         if action_type == InstanceActionType.CHANGE:
-            data["added_users"] = pk_and_str(self.new_users - self.old_users)
-            data["removed_users"] = pk_and_str(self.old_users - self.new_users)
-            data["added_groups"] = pk_and_str(self.new_groups - self.old_groups)
-            data["removed_groups"] = pk_and_str(self.old_groups - self.new_groups)
+            data["added_users"] = self.new_users - self.old_users
+            data["removed_users"] = self.old_users - self.new_users
+            data["added_groups"] = self.new_groups - self.old_groups
+            data["removed_groups"] = self.old_groups - self.new_groups
         else:
-            data["users"] = pk_and_str(self.new_users)
-            data["groups"] = pk_and_str(self.old_groups)
+            data["users"] = self.new_users
+            data["groups"] = self.old_groups
 
         return data
 
@@ -418,46 +381,12 @@ class PermissionLogRecorder(BaseLogRecorder):
     def deserialize(cls, data, model, action_type: InstanceActionType):
         self = cls(data["codename"], data["label"])
         if action_type == InstanceActionType.CHANGE:
-            related_users = {
-                user.pk: user
-                for user in get_user_model()._default_manager.filter(
-                    pk__in=[
-                        obj["pk"]
-                        for obj in itertools.chain(data["added_users"], data["removed_users"])
-                    ]
-                )
-            }
-            related_groups = {
-                group.pk: group
-                for group in Group._default_manager.filter(
-                    pk__in=[
-                        obj["pk"]
-                        for obj in itertools.chain(data["added_groups"], data["removed_groups"])
-                    ]
-                )
-            }
-            self.added = [
-                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["added_groups"]
-            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["added_users"]]
-            self.removed = [
-                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["removed_groups"]
-            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["removed_users"]]
+            self.added = list(map(str, itertools.chain(data["added_groups"], data["added_users"])))
+            self.removed = list(
+                map(str, itertools.chain(data["removed_groups"], data["removed_users"]))
+            )
         else:
-            related_users = {
-                user.pk: user
-                for user in get_user_model()._default_manager.filter(
-                    pk__in=[obj["pk"] for obj in data["users"]]
-                )
-            }
-            related_groups = {
-                group.pk: group
-                for group in Group._default_manager.filter(
-                    pk__in=[obj["pk"] for obj in data["groups"]]
-                )
-            }
-            self.current = [
-                str(related_groups.get(obj["pk"], obj["str"])) for obj in data["groups"]
-            ] + [str(related_users.get(obj["pk"], obj["str"])) for obj in data["users"]]
+            self.current = list(map(str, itertools.chain(data["groups"], data["users"])))
 
         return self
 
