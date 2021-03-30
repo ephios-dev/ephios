@@ -29,17 +29,22 @@ class InstanceActionType(str, Enum):
 
 class BaseLogRecorder:
     """
-    A field on a model that is incorporated into the Log.
-    can concretely be:
+    A Log Recorder is used to record changes made to a model instance that can later be included in a log entry.
+    A recorder follows a strict lifecycle:
+        - creation at model instance initialisation or later
+        - getting ``attached`` to an instance
+        - ``record``ing a change from an instance and the way it exists in the db, or just saving the current state
+        - ``is_changed`` is called to find out whether the recorder should be included in the log
+        - ``key`` is used to merge multiple recordings into one, should there be multiple ``save`` calls
+        - ``serialize`` is called to save the state into json. The ``slug`` is then added to later identify the corresponding Recorder class.
+        - ``merge_data`` lets you configure how multiple serialized recorders should be merged
+        - ``deserialize`` is called when we want to display a recorder's recordings after some time.
+          deserialized recorders will never be serialized again, as e.g. a model field might not exist anymore
+        - ``change_statements`` (for change action) and ``value_statements`` (for create and delete action)
+           then return dicts to be fed into a statement template.
 
-    - ModelLoggedChange: for a field that is directly derived from a model field
-    - M2MLoggedChange: for adds/removes to a m2m relationship
-    - DerivedLoggedChange: for a field that is derived from the instance (use to customize stuff)
-    - PermissionLoggedChange: for changes in users and groups having a certain permission on the logged object
-
-
-    unserializing must be available after model_save was called.
-    getting statements must be available after serializing was called.
+    Statement templates accept a ``label`` value, an optional ``verb``, and either an ``objects`` list or
+    a ``value`` with - optionally - an additional ``old_value``.
     """
 
     slug = NotImplemented
