@@ -8,9 +8,9 @@ from django.db.models import QuerySet
 from django.utils import dateparse
 from django.utils.functional import SimpleLazyObject
 
-"""
-These JSON En/Decoders are designed to handle querysets and model instances while falling back to their string representation.
-"""
+# These JSON En/Decoders are designed to handle querysets and model instances while falling back to their string representation.
+
+# pylint: disable=protected-access
 
 
 class LogJSONEncoder(DjangoJSONEncoder):
@@ -33,9 +33,9 @@ class LogJSONEncoder(DjangoJSONEncoder):
                     getattr(o, "model", type(next(iter(o))))
                 ).id,
             }
-        elif o == set():
+        if o == set():
             return []
-        elif isinstance(o, models.Model):
+        if isinstance(o, models.Model):
             return {
                 "__model__": "__instance__",
                 "pk": o.pk,

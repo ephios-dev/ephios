@@ -12,10 +12,9 @@ from django.template.defaultfilters import yesno
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
 
-# pylint: disable=protected-access
 from ephios.extra.permissions import get_groups_with_perms
 
-STATEMENT_TEMPLATE_NAME = "modellogging/statement.html"
+# pylint: disable=protected-access
 
 
 def capitalize_first(string):
@@ -220,17 +219,9 @@ class M2MLogRecorder(BaseLogRecorder):
             "verbose_name": str(
                 getattr(self.field, "verbose_name", capitalize_first(self.field.name))
             ),
+            "added": self.field.related_model._base_manager.filter(pk__in=self.added_pks),
+            "removed": self.field.related_model._base_manager.filter(pk__in=self.removed_pks),
         }
-
-        related_objects = {
-            obj.pk: obj
-            for obj in self.field.related_model._base_manager.filter(
-                pk__in={*self.added_pks, *self.removed_pks}
-            )
-        }
-
-        data["added"] = self.field.related_model._base_manager.filter(pk__in=self.added_pks)
-        data["removed"] = self.field.related_model._base_manager.filter(pk__in=self.removed_pks)
 
         if current := getattr(self, "current", None):
             data["current"] = current
@@ -303,6 +294,7 @@ def _m2m_changed(
 
 
 class PermissionLogRecorder(BaseLogRecorder):
+    # pylint: disable=too-many-instance-attributes
     slug = "permission-recorder"
 
     def __init__(self, codename, label):
@@ -387,7 +379,7 @@ class PermissionLogRecorder(BaseLogRecorder):
                 yield dict(label=self.label, verb=verb, objects=objects)
 
     def value_statements(self):
-        if self.current:
+        if hasattr(self, "current"):
             yield dict(label=self.label, objects=self.current)
 
 
