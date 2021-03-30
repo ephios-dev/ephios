@@ -90,16 +90,16 @@ class LogEntry(models.Model):
     def message(self):
         if self.action_type == InstanceActionType.CHANGE:
             if self.content_object:
-                message = _("The {cls} {obj} was changed.")
+                message = _("{cls} {obj} was changed.")
             else:  # content_object might be deleted
-                message = _("A {cls} was changed.")
+                message = _("{cls} was changed.")
         elif self.action_type == InstanceActionType.CREATE:
             if self.content_object:
-                message = _("The {cls} {obj} was created.")
+                message = _("{cls} {obj} was created.")
             else:
-                message = _("A {cls} was created.")
+                message = _("{cls} was created.")
         elif self.action_type == InstanceActionType.DELETE:
-            message = _("A {cls} was deleted.")
+            message = _("{cls} was deleted.")
 
         return message.format(
             cls=capitalize_first(self.content_type.model_class()._meta.verbose_name),
@@ -249,4 +249,4 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
     @property
     def unlogged_fields(self):
         """Specify a list of field names so that these fields don't get logged."""
-        return ["id", "order"]
+        return ["id"]

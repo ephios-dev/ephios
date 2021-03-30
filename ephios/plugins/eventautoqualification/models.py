@@ -34,6 +34,12 @@ class EventAutoQualificationConfiguration(LoggedModelMixin, models.Model):
         default=True, verbose_name=_("Qualification must be confirmed afterwards")
     )
 
+    def __str__(self):
+        return str(self.qualification or self.event)
+
+    class Meta:
+        verbose_name = _("event auto qualification configuration")
+
     @property
     def object_to_attach_logentries_to(self):
         return Event, self.event_id

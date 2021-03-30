@@ -10,10 +10,10 @@
                     {{ log_group.0.datetime|date:"SHORT_DATETIME_FORMAT" }}
                 </span>
                 {% if log_group.0.user %}
-                    {% if log_group.0.user.is_manager %}
+                    {% if log_group.0.user.is_superuser %}
                         <span class="far fa-id-card fa-fw"
                               data-toggle="tooltip"
-                              title="{% trans "This change was performed by a manager." %}">
+                              title="{% trans "This change was performed by a an admin user." %}">
                         </span>
                     {% else %}
                         <span class="fas fa-user fa-fw"></span>
