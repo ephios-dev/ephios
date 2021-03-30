@@ -8,13 +8,13 @@
         {% if log.action_type == "change" %}
             {% for statement in record.change_statements %}
                 <li>
-                    {{ statement }}
+                    {% include 'modellogging/statement.html' with statement=statement %}
                 </li>
             {% endfor %}
         {% else %}
             {% for statement in record.value_statements %}
                 <li>
-                    {{ statement }}
+                    {% include 'modellogging/statement.html' with statement=statement %}
                 </li>
             {% endfor %}
         {% endif %}

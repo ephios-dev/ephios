@@ -9,7 +9,6 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import Signal, receiver
 from django.template.defaultfilters import yesno
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
 
@@ -91,14 +90,14 @@ class BaseLogRecorder:
 
     def change_statements(self):
         """
-        Return a single or multiple human readable statements about the change.
+        Yield human readable statements for reporting about changes.
         """
         raise NotImplementedError
 
     def value_statements(self):
         """
-        Return a single or multiple human readable statements about the current value.
-        Used for reporting created and deleted instances.
+        Yield human readable statements about the current value.
+        Used for reporting about created and deleted instances.
         """
         raise NotImplementedError
 
@@ -184,15 +183,10 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         return self
 
     def change_statements(self):
-        yield render_to_string(
-            STATEMENT_TEMPLATE_NAME,
-            dict(label=self.label, value=self.new_value, old_value=self.old_value),
-        )
+        yield dict(label=self.label, value=self.new_value, old_value=self.old_value)
 
     def value_statements(self):
-        yield render_to_string(
-            STATEMENT_TEMPLATE_NAME, dict(label=self.label, value=self.new_value)
-        )
+        yield dict(label=self.label, value=self.new_value)
 
 
 class M2MLogRecorder(BaseLogRecorder):
@@ -271,15 +265,12 @@ class M2MLogRecorder(BaseLogRecorder):
 
     def change_statements(self):
         for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
-            if items := getattr(self, attr):
-                yield "{label} {verb}: {items}".format(
-                    label=self.label, verb=verb, items=", ".join(items)
-                )
+            if objects := getattr(self, attr):
+                yield dict(label=self.label, verb=verb, objects=objects)
 
     def value_statements(self):
-        if not self.current:
-            return []
-        return "{label}: {items}".format(label=self.label, items=", ".join(self.current))
+        if self.current:
+            yield dict(label=self.label, objects=self.current)
 
 
 @receiver(m2m_changed)
@@ -392,15 +383,12 @@ class PermissionLogRecorder(BaseLogRecorder):
 
     def change_statements(self):
         for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
-            if items := getattr(self, attr):
-                yield "{label} {verb}: {items}".format(
-                    label=self.label, verb=verb, items=", ".join(items)
-                )
+            if objects := getattr(self, attr):
+                yield dict(label=self.label, verb=verb, objects=objects)
 
     def value_statements(self):
-        if not self.current:
-            return []
-        return "{label}: {items}".format(label=self.label, items=", ".join(self.current))
+        if self.current:
+            yield dict(label=self.label, objects=self.current)
 
 
 class DerivedFieldsLogRecorder(BaseLogRecorder):
@@ -447,13 +435,11 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
 
     def change_statements(self):
         for label, (old_value, new_value) in self.changes.items():
-            yield render_to_string(
-                STATEMENT_TEMPLATE_NAME, dict(label=label, value=new_value, old_value=old_value)
-            )
+            yield dict(label=label, value=new_value, old_value=old_value)
 
     def value_statements(self):
         for label, (__, new_value) in self.changes.items():
-            yield render_to_string(STATEMENT_TEMPLATE_NAME, dict(label=label, value=new_value))
+            yield dict(label=label, value=new_value)
 
 
 register_log_recorders = Signal()

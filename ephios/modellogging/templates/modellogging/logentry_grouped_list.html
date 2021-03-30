@@ -24,7 +24,7 @@
 
             {% for log in log_group %}
                 <p>
-                    {% include "modellogging/changed_fields_entry.html" with log=log %}
+                    {% include "modellogging/logentry.html" with log=log %}
                 </p>
             {% endfor %}
         </li>
