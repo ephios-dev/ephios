@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from django import template
+from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
 
@@ -58,5 +57,5 @@ def shifts_needing_disposition(user):
             user,
             perms=["core.change_event"],
         ),
-        end_time__gt=datetime.now(),
+        end_time__gt=timezone.now(),
     ).distinct()
