@@ -1,1 +1,4 @@
-template: $CHANGES
+template: |
+  ## What’s Changed
+
+  $CHANGES
