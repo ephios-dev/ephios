@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import template
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
@@ -52,5 +54,9 @@ def participant_conflicting_shifts(participant, shift):
 def shifts_needing_disposition(user):
     return Shift.objects.filter(
         participations__state=AbstractParticipation.States.REQUESTED,
-        event__in=get_objects_for_user(user, perms=["core.change_event"]),
+        event__in=get_objects_for_user(
+            user,
+            perms=["core.change_event"],
+        ),
+        end_time__gt=datetime.now(),
     ).distinct()
