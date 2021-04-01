@@ -1,8 +1,8 @@
 import collections
-from datetime import datetime
 from functools import reduce
 
 from django import template
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -63,7 +63,7 @@ def decline_errors(request, shift):
 def confirmed_shifts(user):
     return (
         user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED])
-        .filter(end_time__gte=datetime.now())
+        .filter(end_time__gte=timezone.now())
         .order_by("start_time")
     )
 
