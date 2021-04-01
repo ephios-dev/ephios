@@ -155,18 +155,16 @@ class AbstractParticipation(PolymorphicModel):
         except NotImplementedError:
             return super().__str__()
 
-    @property
-    def object_to_attach_logentries_to(self):
-        return Event, self.shift.event_id
 
-    @property
-    def unlogged_fields(self):
-        return ["id", "data", "abstractparticipation_ptr"]
+PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
+    unlogged_fields=["id", "data", "abstractparticipation_ptr"],
+    attach_to_func=lambda instance: (Event, instance.shift.event_id),
+)
 
 
 class Shift(Model):
     event = ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
+        Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("event")
     )
     meeting_time = DateTimeField(_("meeting time"))
     start_time = DateTimeField(_("start time"))
@@ -206,9 +204,7 @@ class Shift(Model):
 
 class ShiftLogConfig(ModelFieldsLogConfig):
     def __init__(self):
-        super().__init__(
-            unlogged_fields=["id", "event", "signup_method_slug", "signup_configuration"]
-        )
+        super().__init__(unlogged_fields=["id", "signup_method_slug", "signup_configuration"])
 
     def object_to_attach_logentries_to(self, instance):
         return Event, instance.event_id
@@ -246,6 +242,9 @@ class LocalParticipation(AbstractParticipation):
 
     class Meta:
         db_table = "localparticipation"
+
+
+register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class EventTypePreference(PerInstancePreferenceModel):

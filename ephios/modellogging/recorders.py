@@ -178,20 +178,31 @@ class ModelFieldLogRecorder(BaseLogRecorder):
 class M2MLogRecorder(BaseLogRecorder):
     slug = "m2mfield"
 
-    def __init__(self, field):
-        self.field = field
-        if field and not field.many_to_many:
-            raise ValueError("field is not a many to many field")
+    def __init__(self, field, reverse=False, verbose_name=None):
+        if reverse and not verbose_name:
+            raise ValueError("You must provide a verbose name when reversing m2m relationships.")
 
+        self.field = field
+        self.reversed = reverse
+        self.verbose_name = verbose_name
+        if field and not self.verbose_name:
+            self.verbose_name = str(getattr(field, "verbose_name", capitalize_first(field.name)))
         self.added_pks, self.removed_pks = set(), set()
+
+    def attached(self, instance):
+        self.model = type(instance)
+
+    @property
+    def field_name(self):
+        return self.field.remote_field.related_name if self.reversed else self.field.name
 
     def record(self, action: InstanceActionType, instance, db_instance=None):
         if action != InstanceActionType.CHANGE:
-            self.current = list(getattr(instance, self.field.name).all())
+            self.current = list(getattr(instance, self.field_name).all())
 
     def record_clear(self, instance):
         self.added_pks = set()
-        self.removed_pks = {obj.pk for obj in getattr(instance, self.field.name).all()}
+        self.removed_pks = {obj.pk for obj in getattr(instance, self.field_name).all()}
 
     def is_changed(self):
         return bool(self.removed_pks) or bool(self.added_pks)
@@ -201,13 +212,12 @@ class M2MLogRecorder(BaseLogRecorder):
         return f"m2m-{self.field.name}"
 
     def serialize(self, action_type: InstanceActionType):
+        related_model = self.field.model if self.reversed else self.field.related_model
         data = {
-            "field_name": self.field.name,
-            "verbose_name": str(
-                getattr(self.field, "verbose_name", capitalize_first(self.field.name))
-            ),
-            "added": self.field.related_model._base_manager.filter(pk__in=self.added_pks),
-            "removed": self.field.related_model._base_manager.filter(pk__in=self.removed_pks),
+            "field_name": self.field_name,
+            "verbose_name": self.verbose_name,
+            "added": related_model._base_manager.filter(pk__in=self.added_pks),
+            "removed": related_model._base_manager.filter(pk__in=self.removed_pks),
         }
 
         if current := getattr(self, "current", None):
@@ -243,18 +253,19 @@ class M2MLogRecorder(BaseLogRecorder):
 def _m2m_changed(
     sender, instance, action, reverse, model, pk_set, **kwargs
 ):  # pylint: disable=unused-argument
-    from ephios.modellogging.log import LOGGED_MODELS, log_request_store, update_log
+    from ephios.modellogging.log import LOGGED_MODELS, update_log
 
-    if reverse:
+    if "pre" not in action:
         return
+
     if type(instance) not in LOGGED_MODELS:
         return
 
     hit = False
-    for recorder in log_request_store.recorders[instance]:
+    for recorder in instance._log_recorders:
         if recorder.slug != M2MLogRecorder.slug:
             continue
-        if getattr(type(instance), recorder.field.name).through == sender:
+        if getattr(type(instance), recorder.field_name).through == sender:
             if action == "pre_remove":
                 recorder.removed_pks |= set(pk_set)
                 hit = True

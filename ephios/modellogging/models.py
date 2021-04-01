@@ -17,12 +17,14 @@ from ephios.modellogging.recorders import (
 
 class LogEntry(models.Model):
     content_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, related_name="logs_about_me"
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name="logentries",
     )
     content_object_id = models.PositiveIntegerField(db_index=True)
     content_object = GenericForeignKey("content_type", "content_object_id")
     attached_to_object_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, related_name="logs_for_me"
+        ContentType, on_delete=models.CASCADE, related_name="associated_logentries"
     )
     attached_to_object_id = models.PositiveIntegerField(db_index=True)
     attached_to_object = GenericForeignKey("attached_to_object_type", "attached_to_object_id")

@@ -7,7 +7,7 @@ from itertools import chain
 import guardian.mixins
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import Group, PermissionsMixin
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -27,6 +27,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
+from ephios.modellogging.recorders import M2MLogRecorder
 
 
 class UserProfileManager(BaseUserManager):
@@ -86,10 +88,6 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "last_name",
         "date_of_birth",
     ]
-
-    @property
-    def unlogged_fields(self):
-        return {"id", "password", "calendar_token"}
 
     objects = UserProfileManager()
 
@@ -170,6 +168,23 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             workinghours.aggregate(Sum("hours"))["hours__sum"] or 0
         )
         return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
+
+
+register_model_for_logging(
+    UserProfile,
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "password", "calendar_token"},
+    ),
+)
+register_model_for_logging(
+    Group,
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "permissions"},
+        initial_recorders_func=lambda group: [
+            M2MLogRecorder(UserProfile.groups.field, reverse=True, verbose_name=_("Users"))
+        ],
+    ),
+)
 
 
 class QualificationCategory(Model):

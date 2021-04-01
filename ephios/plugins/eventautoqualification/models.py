@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Event
 from ephios.core.signup import Qualification
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
 class EventAutoQualificationConfiguration(models.Model):
@@ -39,10 +40,11 @@ class EventAutoQualificationConfiguration(models.Model):
     class Meta:
         verbose_name = _("event auto qualification configuration")
 
-    @property
-    def object_to_attach_logentries_to(self):
-        return Event, self.event_id
 
-    @property
-    def unlogged_fields(self):
-        return ["id", "event"]
+register_model_for_logging(
+    EventAutoQualificationConfiguration,
+    ModelFieldsLogConfig(
+        unlogged_fields=["id", "event"],
+        attach_to_func=lambda instance: (Event, instance.event_id),
+    ),
+)

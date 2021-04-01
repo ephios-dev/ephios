@@ -39,12 +39,20 @@ class BaseLogConfig:
 
 
 class ModelFieldsLogConfig(BaseLogConfig):
-    def __init__(self, unlogged_fields=None):
+    def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
         """Specify a list of field names so that these fields don't get logged. Other fields get logged."""
+        # TODO document keyword args
 
         if unlogged_fields is None:
             unlogged_fields = ["id"]
         self.unlogged_fields = unlogged_fields
+        self.attach_to_func = attach_to_func
+        self.initial_recorders_func = initial_recorders_func
+
+    def object_to_attach_logentries_to(self, instance):
+        if self.attach_to_func:
+            return self.attach_to_func(instance)
+        return super().object_to_attach_logentries_to(instance)
 
     def initial_log_recorders(self, instance):
         opts = instance._meta
@@ -57,6 +65,8 @@ class ModelFieldsLogConfig(BaseLogConfig):
                 yield M2MLogRecorder(f)
             else:
                 yield ModelFieldLogRecorder(f)
+        if self.initial_recorders_func:
+            yield from self.initial_recorders_func(instance)
 
 
 log_request_store = threading.local()
@@ -102,14 +112,11 @@ def update_log(instance, action_type: InstanceActionType):
 
     # log entries are merged if
     # * a log etnry for this object, from this request, already exists
-    # * they don't have any recorder keys in common
     # * action types match
 
     if (
-        (logentry := getattr(instance, "_current_logentry", None))
-        and action_type == logentry.action_type
-        and not (set(logentry.data.keys()) & set(log_data.keys()))
-    ):
+        logentry := getattr(instance, "_current_logentry", None)
+    ) and action_type == logentry.action_type:
         logentry.data.update(log_data)
     else:
         try:
@@ -140,6 +147,8 @@ def update_log(instance, action_type: InstanceActionType):
 def log_post_init(sender, instance, **kwargs):
     if config := LOGGED_MODELS.get(sender):
         instance._log_recorders = list(config.initial_log_recorders(instance))
+        for recorder in instance._log_recorders:
+            recorder.attached(instance)
 
 
 @receiver(pre_save)
@@ -158,4 +167,3 @@ def log_post_save(sender, instance, created, raw, **kwargs):
 def log_pre_delete(sender, instance, **kwargs):
     if config := LOGGED_MODELS.get(sender):
         update_log(instance, InstanceActionType.DELETE)
-        config.related_logentries(instance).delete()
