@@ -25,7 +25,7 @@ from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.modellogging.models import LoggedModelMixin
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class EventType(Model):
         return str(self.title)
 
 
-class Event(LoggedModelMixin, Model):
+class Event(Model):
     title = CharField(_("title"), max_length=254)
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
@@ -110,7 +110,10 @@ class Event(LoggedModelMixin, Model):
                 self.save()
 
 
-class AbstractParticipation(LoggedModelMixin, PolymorphicModel):
+register_model_for_logging(Event, ModelFieldsLogConfig())
+
+
+class AbstractParticipation(PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
         CONFIRMED = 1, _("confirmed")
@@ -161,7 +164,7 @@ class AbstractParticipation(LoggedModelMixin, PolymorphicModel):
         return ["id", "data", "abstractparticipation_ptr"]
 
 
-class Shift(LoggedModelMixin, Model):
+class Shift(Model):
     event = ForeignKey(
         Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
     )
@@ -200,22 +203,25 @@ class Shift(LoggedModelMixin, Model):
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
 
-    @property
-    def object_to_attach_logentries_to(self):
-        return Event, self.event_id
 
-    @property
-    def unlogged_fields(self):
-        return ["id", "event", "signup_method_slug", "signup_configuration"]
+class ShiftLogConfig(ModelFieldsLogConfig):
+    def __init__(self):
+        super().__init__(
+            unlogged_fields=["id", "event", "signup_method_slug", "signup_configuration"]
+        )
 
-    def initial_log_recorders(self):
-        yield from super().initial_log_recorders()
-        yield from [
-            DerivedFieldsLogRecorder(
-                lambda instance: {_("Signup method"): str(instance.signup_method.verbose_name)}
-            ),
-            DerivedFieldsLogRecorder(lambda instance: instance.signup_method.get_signup_info()),
-        ]
+    def object_to_attach_logentries_to(self, instance):
+        return Event, instance.event_id
+
+    def initial_log_recorders(self, instance):
+        yield from super().initial_log_recorders(instance)
+        yield DerivedFieldsLogRecorder(
+            lambda shift: {_("Signup method"): str(shift.signup_method.verbose_name)}
+        )
+        yield DerivedFieldsLogRecorder(lambda shift: shift.signup_method.get_signup_info())
+
+
+register_model_for_logging(Shift, ShiftLogConfig())
 
 
 class LocalParticipation(AbstractParticipation):

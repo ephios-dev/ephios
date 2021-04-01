@@ -3,10 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Event
 from ephios.core.signup import Qualification
-from ephios.modellogging.models import LoggedModelMixin
 
 
-class EventAutoQualificationConfiguration(LoggedModelMixin, models.Model):
+class EventAutoQualificationConfiguration(models.Model):
     event = models.OneToOneField(
         Event, on_delete=models.CASCADE, related_name="auto_qualification_config"
     )

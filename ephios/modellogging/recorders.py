@@ -1,6 +1,4 @@
-import copy
 import itertools
-import operator
 from enum import Enum
 from typing import Callable
 
@@ -35,9 +33,8 @@ class BaseLogRecorder:
         - getting ``attached`` to an instance
         - ``record``ing a change from an instance and the way it exists in the db, or just saving the current state
         - ``is_changed`` is called to find out whether the recorder should be included in the log
-        - ``key`` is used to merge multiple recordings into one, should there be multiple ``save`` calls
+        - ``key`` is used to merge multiple log entries into one, should there be multiple ``save`` calls
         - ``serialize`` is called to save the state into json. The ``slug`` is then added to later identify the corresponding Recorder class.
-        - ``merge_data`` lets you configure how multiple serialized recorders should be merged
         - ``deserialize`` is called when we want to display a recorder's recordings after some time.
           deserialized recorders will never be serialized again, as e.g. a model field might not exist anymore
         - ``change_statements`` (for change action) and ``value_statements`` (for create and delete action)
@@ -76,14 +73,6 @@ class BaseLogRecorder:
         dump this change to a dict
         """
         raise NotImplementedError
-
-    @classmethod
-    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
-        """
-        Merge two serialized recordings into one, keeping the old from the old and the new from the new.
-        The default implementation just discards the older and returns the newer data.
-        """
-        return new_data
 
     @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
@@ -146,13 +135,6 @@ class ModelFieldLogRecorder(BaseLogRecorder):
             except self.field.related_model.DoesNotExist:
                 pass
         return data
-
-    @classmethod
-    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
-        return {
-            **new_data,
-            **{key: old_data[key] for key in ("old_value", "old_value_sr") if key in old_data},
-        }
 
     def _choice_to_display(self, choice):  # does not support nested choices
         for key, label in self.field.choices:
@@ -234,14 +216,6 @@ class M2MLogRecorder(BaseLogRecorder):
         return data
 
     @classmethod
-    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
-        data = copy.deepcopy(new_data)
-        for key in ("added", "removed", "current"):
-            if key in new_data and key in old_data:
-                data[key] = {*old_data[key], *new_data[key]}
-        return data
-
-    @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
         try:
             self = cls(model._meta.get_field(data["field_name"]))
@@ -269,15 +243,15 @@ class M2MLogRecorder(BaseLogRecorder):
 def _m2m_changed(
     sender, instance, action, reverse, model, pk_set, **kwargs
 ):  # pylint: disable=unused-argument
-    from ephios.modellogging.models import LoggedModelMixin
+    from ephios.modellogging.log import LOGGED_MODELS, log_request_store, update_log
 
     if reverse:
         return
-    if not isinstance(instance, LoggedModelMixin):
+    if type(instance) not in LOGGED_MODELS:
         return
 
     hit = False
-    for recorder in instance.log_recorders:
+    for recorder in log_request_store.recorders[instance]:
         if recorder.slug != M2MLogRecorder.slug:
             continue
         if getattr(type(instance), recorder.field.name).through == sender:
@@ -291,7 +265,7 @@ def _m2m_changed(
                 recorder.record_clear(instance)
                 hit = True
         if hit:
-            instance.update_log(InstanceActionType.CHANGE)
+            update_log(instance, InstanceActionType.CHANGE)
 
 
 class PermissionLogRecorder(BaseLogRecorder):
@@ -340,25 +314,6 @@ class PermissionLogRecorder(BaseLogRecorder):
             data["users"] = self.new_users
             data["groups"] = self.old_groups
 
-        return data
-
-    @classmethod
-    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
-        data = copy.deepcopy(new_data)
-        for key in (
-            "added_users",
-            "removed_users",
-            "users",
-            "added_groups",
-            "removed_groups",
-            "groups",
-        ):
-            if key in new_data and key in old_data:
-                data[key] += [
-                    obj
-                    for obj in old_data[key]
-                    if obj["pk"] not in map(operator.itemgetter("pk"), new_data[key])
-                ]
         return data
 
     @classmethod
@@ -411,16 +366,6 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
         )
 
     @classmethod
-    def merge_data(cls, old_data, new_data, action_type: InstanceActionType):
-        changes = {}
-        for key in set(itertools.chain(old_data["changes"].keys(), new_data["changes"].keys())):
-            if (old_value := old_data["changes"].get(key)) != (
-                new_value := new_data["changes"].get(key)
-            ):
-                changes[key] = [old_value, new_value]
-        return dict(changes=changes)
-
-    @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
         self = cls(None)
         self.changes = data["changes"]
@@ -446,3 +391,12 @@ def _register_inbuilt_recorders(sender, **kwargs):
         PermissionLogRecorder,
         DerivedFieldsLogRecorder,
     ]
+
+
+def recorder_types_by_slug(model):
+    return {
+        recorder.slug: recorder
+        for recorder in itertools.chain(
+            *(recorders for __, recorders in register_log_recorders.send(model))
+        )
+    }
