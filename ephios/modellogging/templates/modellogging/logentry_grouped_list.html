@@ -1,8 +1,9 @@
+{% load logentries %}
 {% load static %}
 {% load i18n %}
 
 <ul class="list-group">
-    {% for log_group in logged_object.grouped_logentries %}
+    {% for log_group in logentries|group_logentries %}
         <li class="list-group-item">
             <p>
                 <span class="pr-3">

@@ -205,19 +205,6 @@ class LoggedModelMixin(models.Model if TYPE_CHECKING else object):
             attached_to_object_id=self.pk,
         )
 
-    def grouped_logentries(self):
-        """
-        Returns a list of lists of logentries for display. The order is not changed.
-        Logentries are grouped if they have a matching request_id.
-        """
-        yield from (
-            list(group)
-            for key, group in itertools.groupby(
-                self.related_logentries().select_related("user"),
-                lambda entry: entry.request_id or entry.pk,
-            )
-        )
-
     @property
     def object_to_attach_logentries_to(self):
         """

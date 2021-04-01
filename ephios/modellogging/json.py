@@ -30,7 +30,7 @@ class LogJSONEncoder(DjangoJSONEncoder):
                 "pks": pks,
                 "strs": strs,
                 "contenttype_id": ContentType.objects.get_for_model(
-                    getattr(o, "model", type(next(iter(o))))
+                    getattr(o, "model", None) or type(next(iter(o)))
                 ).id,
             }
         if o == set():

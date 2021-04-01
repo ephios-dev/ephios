@@ -238,11 +238,7 @@ class M2MLogRecorder(BaseLogRecorder):
         data = copy.deepcopy(new_data)
         for key in ("added", "removed", "current"):
             if key in new_data and key in old_data:
-                data[key] += [
-                    obj
-                    for obj in old_data[key]
-                    if obj["pk"] not in map(operator.itemgetter("pk"), new_data[key])
-                ]
+                data[key] = {*old_data[key], *new_data[key]}
         return data
 
     @classmethod

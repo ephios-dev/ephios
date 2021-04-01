@@ -27,6 +27,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.modellogging.models import LoggedModelMixin
 
 
 class UserProfileManager(BaseUserManager):
@@ -70,10 +71,12 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
+class UserProfile(
+    LoggedModelMixin, guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser
+):
     email = EmailField(_("email address"), unique=True)
-    is_active = BooleanField(default=True)
-    is_staff = BooleanField(default=False)
+    is_active = BooleanField(default=True, verbose_name=_("Active"))
+    is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
     date_of_birth = DateField(_("date of birth"))
@@ -86,6 +89,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "last_name",
         "date_of_birth",
     ]
+
+    @property
+    def unlogged_fields(self):
+        return {"id", "password", "calendar_token"}
 
     objects = UserProfileManager()
 
