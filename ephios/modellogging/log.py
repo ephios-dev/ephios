@@ -1,7 +1,5 @@
-import collections
 import itertools
 import threading
-import typing
 from typing import Dict
 
 from django.contrib.contenttypes.models import ContentType
@@ -11,12 +9,7 @@ from django.dispatch import receiver
 from django.utils.functional import SimpleLazyObject
 
 from ephios.modellogging.models import LogEntry
-from ephios.modellogging.recorders import (
-    BaseLogRecorder,
-    InstanceActionType,
-    M2MLogRecorder,
-    ModelFieldLogRecorder,
-)
+from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, ModelFieldLogRecorder
 
 
 class BaseLogConfig:
@@ -66,21 +59,7 @@ class ModelFieldsLogConfig(BaseLogConfig):
                 yield ModelFieldLogRecorder(f)
 
 
-class LogRequestStorage(threading.local):
-    def __init__(self):
-        self.clear()
-
-    def clear(self):
-        # mapping of model instances to their recorders
-        self.request_id = None
-        self.request = None
-        self.recorders: Dict[models.Model, typing.List[BaseLogRecorder]] = collections.defaultdict(
-            list
-        )
-        self.logentry: Dict[models.Model, LogEntry] = {}
-
-
-log_request_store = LogRequestStorage()
+log_request_store = threading.local()
 
 LOGGED_MODELS: Dict[models.Model, BaseLogConfig] = {}
 
@@ -90,7 +69,7 @@ def register_model_for_logging(model_class, config):
 
 
 def add_log_recorder(instance, recorder):
-    log_request_store.recorders[instance].append(recorder)
+    instance._log_recorders.append(recorder)
     recorder.attached(instance)
 
 
@@ -106,12 +85,12 @@ def _get_log_data(instance, action_type):
     else:
         db_instance = None
 
-    for recorder in log_request_store.recorders[instance]:
+    for recorder in instance._log_recorders:
         recorder.record(action_type, instance, db_instance)
 
     return {
         recorder.key: {**recorder.serialize(action_type), "slug": recorder.slug}
-        for recorder in log_request_store.recorders[instance]
+        for recorder in instance._log_recorders
         if recorder.is_changed() or action_type != InstanceActionType.CHANGE
     }
 
@@ -126,10 +105,8 @@ def update_log(instance, action_type: InstanceActionType):
     # * they don't have any recorder keys in common
     # * action types match
 
-    logentry = log_request_store.logentry.get(instance)
-
     if (
-        logentry
+        (logentry := getattr(instance, "_current_logentry", None))
         and action_type == logentry.action_type
         and not (set(logentry.data.keys()) & set(log_data.keys()))
     ):
@@ -156,12 +133,13 @@ def update_log(instance, action_type: InstanceActionType):
             data=log_data,
         )
     logentry.save()
+    instance._current_logentry = logentry
 
 
 @receiver(post_init)
 def log_post_init(sender, instance, **kwargs):
     if config := LOGGED_MODELS.get(sender):
-        log_request_store.recorders[instance].extend(config.initial_log_recorders(instance))
+        instance._log_recorders = list(config.initial_log_recorders(instance))
 
 
 @receiver(pre_save)

@@ -19,5 +19,6 @@ class LoggingRequestMiddleware:
 
         response = self.get_response(request)
 
-        log_request_store.clear()
+        del log_request_store.request
+        del log_request_store.request_id
         return response
