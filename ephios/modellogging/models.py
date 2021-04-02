@@ -48,15 +48,12 @@ class LogEntry(models.Model):
     @cached_property
     def records(self):
         recorder_types = recorder_types_by_slug(self.content_type.model_class())
-        return [
-            recorder_types[slug].deserialize(
+        for data in self.data.values():
+            yield recorder_types[data["slug"]].deserialize(
                 data, self.content_type.model_class(), self.action_type
             )
-            for data in self.data.values()
-            if (slug := data.get("slug"))
-        ]
 
-    @property
+    @cached_property
     def message(self):
         if self.action_type == InstanceActionType.CHANGE:
             if self.content_object:

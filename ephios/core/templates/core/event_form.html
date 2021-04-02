@@ -63,10 +63,4 @@
             {% endif %}
         </div>
     </form>
-
-    {% if object %}
-        {% include 'modellogging/logentry_grouped_list.html' with logentries=object|related_logentries %}
-    {% endif %}
-
-
 {% endblock %}
