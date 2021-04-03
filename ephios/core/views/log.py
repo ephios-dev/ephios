@@ -8,6 +8,7 @@ from django.views.generic import ListView
 from django_select2.forms import Select2Widget
 
 from ephios.core.models import UserProfile
+from ephios.core.widgets import UserProfileWidget
 from ephios.extra.mixins import StaffRequiredMixin
 from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.models import LogEntry
@@ -23,7 +24,7 @@ class LogFilterForm(forms.Form):
     object_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     user = forms.ModelChoiceField(
         queryset=UserProfile.objects.all(),
-        widget=Select2Widget,
+        widget=UserProfileWidget,
         required=False,
         label=_("Acting User"),
     )

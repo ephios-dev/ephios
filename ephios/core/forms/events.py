@@ -131,6 +131,8 @@ class EventForm(forms.ModelForm):
         # Assign view_event to responsible users  and to non-responsible users
         # that already have some sort of participation for the event
         # (-> they saw and interacted with it)
+        # We can't just do users that aren't included by group permissions,
+        # as they might get removed from that group.
         assign_perm(
             "view_event",
             UserProfile.objects.filter(

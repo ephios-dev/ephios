@@ -173,7 +173,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 register_model_for_logging(
     UserProfile,
     ModelFieldsLogConfig(
-        unlogged_fields={"id", "password", "calendar_token"},
+        unlogged_fields={"id", "password", "calendar_token", "last_login"},
     ),
 )
 register_model_for_logging(
