@@ -201,6 +201,9 @@ class Shift(Model):
         for participation in self.participations.filter(state__in=with_state_in):
             yield participation.participant
 
+    def get_absolute_url(self):
+        return f"{self.event.get_absolute_url()}#shift-{self.pk}"
+
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
 
