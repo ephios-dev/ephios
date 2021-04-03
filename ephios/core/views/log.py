@@ -1,7 +1,6 @@
-from typing import Sequence
-
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import QuerySet
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
@@ -20,6 +19,9 @@ class LogFilterForm(forms.Form):
         required=False,
         label=_("Concerns"),
         widget=Select2Widget,
+        error_messages={
+            "invalid_choice": _("%(value)s does not have any associated entries."),
+        },
     )
     object_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
     user = forms.ModelChoiceField(
@@ -36,7 +38,7 @@ class LogFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.content_types = {}
-        qs: Sequence[ContentType] = ContentType.objects.filter(
+        qs: QuerySet[ContentType] = ContentType.objects.filter(
             pk__in=LogEntry.objects.values_list("attached_to_object_type", flat=True)
         )
         for content_type in qs:
