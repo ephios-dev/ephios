@@ -184,7 +184,10 @@ class Shift(Model):
     def signup_method(self):
         from ephios.core.signup import signup_method_from_slug
 
-        return signup_method_from_slug(self.signup_method_slug, self)
+        try:
+            return signup_method_from_slug(self.signup_method_slug, self)
+        except ValueError:
+            return None
 
     def get_start_end_time_display(self):
         tz = pytz.timezone(settings.TIME_ZONE)
@@ -212,9 +215,15 @@ class ShiftLogConfig(ModelFieldsLogConfig):
     def initial_log_recorders(self, instance):
         yield from super().initial_log_recorders(instance)
         yield DerivedFieldsLogRecorder(
-            lambda shift: {_("Signup method"): str(shift.signup_method.verbose_name)}
+            lambda shift: {
+                _("Signup method"): str(method.verbose_name)
+                if (method := shift.signup_method)
+                else None
+            }
         )
-        yield DerivedFieldsLogRecorder(lambda shift: shift.signup_method.get_signup_info())
+        yield DerivedFieldsLogRecorder(
+            lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
+        )
 
 
 register_model_for_logging(Shift, ShiftLogConfig())

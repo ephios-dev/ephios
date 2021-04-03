@@ -49,7 +49,7 @@ class BaseLogRecorder:
     def attached(self, instance):
         pass
 
-    def record(self, action: InstanceActionType, instance, db_instance=None):
+    def record(self, action: InstanceActionType, instance):
         """
         Record changes for change action and field state for creation and deletion.
         If action is CHANGE,``db_instance`` is set to an instance freshly fetched from the db.
@@ -101,12 +101,11 @@ class ModelFieldLogRecorder(BaseLogRecorder):
     def __init__(self, field):
         self.field = field
 
-    def record(self, action: InstanceActionType, instance, db_instance=None):
-        self.old_value = (
-            self.field.value_from_object(db_instance)
-            if action == InstanceActionType.CHANGE
-            else None
-        )
+    def attached(self, instance):
+        self.old_value = self.field.value_from_object(instance)
+
+    def record(self, action: InstanceActionType, instance):
+        # self.old_value = (self.field.value_from_object(db_instance) if action == InstanceActionType.CHANGE else None)
         self.new_value = self.field.value_from_object(instance)
 
     def is_changed(self):
@@ -130,10 +129,15 @@ class ModelFieldLogRecorder(BaseLogRecorder):
                 data["old_value"] = self.field.related_model._base_manager.get(pk=self.old_value)
             except self.field.related_model.DoesNotExist:
                 pass
-            try:
-                data["new_value"] = self.field.related_model._base_manager.get(pk=self.new_value)
-            except self.field.related_model.DoesNotExist:
-                pass
+            if self.new_value == self.old_value:
+                data["new_value"] = data["old_value"]
+            else:
+                try:
+                    data["new_value"] = self.field.related_model._base_manager.get(
+                        pk=self.new_value
+                    )
+                except self.field.related_model.DoesNotExist:
+                    pass
         return data
 
     def _choice_to_display(self, choice):  # does not support nested choices
@@ -196,7 +200,7 @@ class M2MLogRecorder(BaseLogRecorder):
     def field_name(self):
         return self.field.remote_field.related_name if self.reversed else self.field.name
 
-    def record(self, action: InstanceActionType, instance, db_instance=None):
+    def record(self, action: InstanceActionType, instance):
         if action != InstanceActionType.CHANGE:
             self.current = list(getattr(instance, self.field_name).all())
 
@@ -295,7 +299,7 @@ class PermissionLogRecorder(BaseLogRecorder):
         )
         self.old_groups = set(get_groups_with_perms(instance, only_with_perms_in=[self.codename]))
 
-    def record(self, action: InstanceActionType, instance, db_instance=None):
+    def record(self, action: InstanceActionType, instance):
         self.new_users = set(
             get_users_with_perms(
                 instance, with_group_users=False, only_with_perms_in=[self.codename]
@@ -356,8 +360,10 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
     def __init__(self, derive: Callable):
         self.derive = derive
 
-    def record(self, action: InstanceActionType, instance, db_instance=None):
-        self.old_dict = self.derive(db_instance) if action == InstanceActionType.CHANGE else {}
+    def attached(self, instance):
+        self.old_dict = self.derive(instance)
+
+    def record(self, action: InstanceActionType, instance):
         self.new_dict = self.derive(instance)
 
     def is_changed(self):

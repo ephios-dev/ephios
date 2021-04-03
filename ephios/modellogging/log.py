@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from django.dispatch import receiver
-from django.utils.functional import SimpleLazyObject
 
 from ephios.modellogging.models import LogEntry
 from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, ModelFieldLogRecorder
@@ -84,19 +83,8 @@ def add_log_recorder(instance, recorder):
 
 
 def _get_log_data(instance, action_type):
-    if action_type == InstanceActionType.CHANGE:
-        # for this action, we provide a lazily fetched version of the instance as it is stored in the db.
-        def get_db_instance():
-            db_instance = type(instance)(pk=instance.pk)
-            db_instance.refresh_from_db()
-            return db_instance
-
-        db_instance = SimpleLazyObject(get_db_instance)
-    else:
-        db_instance = None
-
     for recorder in instance._log_recorders:
-        recorder.record(action_type, instance, db_instance)
+        recorder.record(action_type, instance)
 
     return {
         recorder.key: {**recorder.serialize(action_type), "slug": recorder.slug}
@@ -110,13 +98,7 @@ def update_log(instance, action_type: InstanceActionType):
     if not log_data:
         return
 
-    # log entries are merged if
-    # * a log etnry for this object, from this request, already exists
-    # * action types match
-
-    if (
-        logentry := getattr(instance, "_current_logentry", None)
-    ) and action_type == logentry.action_type:
+    if logentry := getattr(instance, "_current_logentry", None):
         logentry.data.update(log_data)
     else:
         try:
