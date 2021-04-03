@@ -250,6 +250,13 @@ class QualificationGrant(Model):
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
         db_table = "qualificationgrant"
+        verbose_name = _("Qualification grant")
+
+
+register_model_for_logging(
+    QualificationGrant,
+    ModelFieldsLogConfig(attach_to_func=lambda grant: (UserProfile, grant.user_id)),
+)
 
 
 class Consequence(Model):
@@ -271,7 +278,10 @@ class Consequence(Model):
         DENIED = "denied", _("denied")
 
     state = models.TextField(
-        max_length=31, choices=States.choices, default=States.NEEDS_CONFIRMATION
+        max_length=31,
+        choices=States.choices,
+        default=States.NEEDS_CONFIRMATION,
+        verbose_name=_("State"),
     )
     decided_by = models.ForeignKey(
         get_user_model(),
@@ -286,6 +296,7 @@ class Consequence(Model):
 
     class Meta:
         db_table = "consequence"
+        verbose_name = _("Consequence")
 
     @property
     def handler(self):
@@ -328,7 +339,15 @@ class Consequence(Model):
         return self.handler.render(self)
 
     def __str__(self):
-        return f"[{self.state}] {self.id} - {self.user!s} - {self.slug}"
+        return self.render()
+
+
+register_model_for_logging(
+    Consequence,
+    ModelFieldsLogConfig(
+        unlogged_fields=["id", "slug", "user", "data", "decided_by", "executed_at", "fail_reason"],
+    ),
+)
 
 
 class WorkingHours(Model):
