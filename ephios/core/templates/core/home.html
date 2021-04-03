@@ -22,15 +22,17 @@
         {% if confirmed_shifts|length > 0 %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">{% trans "Your upcoming events" %}</h5>
+                    <h5 class="card-title mb-0">{% trans "Your upcoming events" %}</h5>
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for shift in confirmed_shifts %}
                         <li class="list-group-item flex-column">
                             <div class="d-flex w-100 justify-content-between align-items-center">
                                 <span>{{ shift.event.title }} ({{ shift.get_start_end_time_display }})</span>
-                                <a class="btn btn-outline-primary btn-sm" href="{{ shift.event.get_absolute_url }}#shift-{{ shift.pk }}"><span
-                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View" %}</span></a>
+                                <a class="btn btn-outline-primary btn-sm"
+                                   href="{{ shift.event.get_absolute_url }}#shift-{{ shift.pk }}"><span
+                                        class="fa fa-eye"></span> <span
+                                        class="d-none d-md-inline">{% translate "View" %}</span></a>
                             </div>
                         </li>
                     {% endfor %}
@@ -43,7 +45,7 @@
         {% if shifts|length > 0 %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">{% trans "Events with requested participations" %}</h5>
+                    <h5 class="card-title mb-0">{% trans "Events with requested participations" %}</h5>
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for shift in shifts %}
@@ -51,10 +53,14 @@
                             <div class="d-flex w-100 justify-content-between align-items-center">
                                 <span>{{ shift.event.title }} ({{ shift.get_start_end_time_display }})</span>
                                 <div>
-                                    <a class="btn btn-outline-secondary btn-sm" href="{% url "core:event_detail" shift.event.pk shift.event.get_canonical_slug %}"><span
-                            class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View" %}</span></a>
-                                    <a class="btn btn-outline-primary btn-sm" href="{% url "core:shift_disposition" shift.pk %}"><span
-                            class="fas fa-hand-point-right"></span> <span class="d-none d-md-inline">{% translate "Disposition" %}</span></a>
+                                    <a class="btn btn-outline-secondary btn-sm"
+                                       href="{% url "core:event_detail" shift.event.pk shift.event.get_canonical_slug %}"><span
+                                            class="fa fa-eye"></span> <span
+                                            class="d-none d-md-inline">{% translate "View" %}</span></a>
+                                    <a class="btn btn-outline-primary btn-sm"
+                                       href="{% url "core:shift_disposition" shift.pk %}"><span
+                                            class="fas fa-hand-point-right"></span> <span
+                                            class="d-none d-md-inline">{% translate "Disposition" %}</span></a>
                                 </div>
                             </div>
                         </li>
@@ -65,5 +71,20 @@
     {% endwith %}
 
     {% include "core/fragments/approve_consequences.html" %}
+
+    {% if logentries %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title mb-0">
+                    {% trans "Edit History" %}
+                    <a class="btn btn-outline-primary btn-sm float-right" href="{% url "core:log" %}">
+                        <span class="fas fa-eye"></span>
+                        <span class="d-none d-md-inline">{% translate "View everything" %}</span>
+                    </a>
+                </h5>
+            </div>
+            {% include 'modellogging/logentry_grouped_list.html' with logentries=logentries %}
+        </div>
+    {% endif %}
 
 {% endblock %}

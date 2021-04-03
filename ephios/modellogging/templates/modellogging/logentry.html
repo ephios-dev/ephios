@@ -3,6 +3,42 @@
 
 {{ log.message }}
 
+{% with content_object_url=log.content_object.get_absolute_url %}
+    {% if log.action_type == "change" %}
+        {% if log.content_object and content_object_url %}
+            {% blocktranslate with class=log.content_object_classname object=log.content_object content_object_url=content_object_url %}
+                {{ class }} "<a href="{{ content_object_url }}">{{ object }}</a>" was changed.
+            {% endblocktranslate %}
+        {% elif log.content_object %}
+            {% blocktranslate with class=log.content_object_classname object=log.content_object %}
+                {{ class }} "{{ object }}" was changed.
+            {% endblocktranslate %}
+        {% else %}
+            {% blocktranslate with class=log.content_object_classname %}
+                {{ class }} was changed.
+            {% endblocktranslate %}
+        {% endif %}
+    {% elif log.action_type == "create" %}
+        {% if log.content_object and content_object_url %}
+            {% blocktranslate with class=log.content_object_classname object=log.content_object content_object_url=content_object_url %}
+                {{ class }} "<a href="{{ content_object_url }}">{{ object }}</a>" was created.
+            {% endblocktranslate %}
+        {% elif log.content_object %}
+            {% blocktranslate with class=log.content_object_classname object=log.content_object %}
+                {{ class }} "{{ object }}" was created.
+            {% endblocktranslate %}
+        {% else %}
+            {% blocktranslate with class=log.content_object_classname %}
+                {{ class }} was changed.
+            {% endblocktranslate %}
+        {% endif %}
+    {% elif log.action_type == "delete" %}
+        {% blocktranslate with class=log.content_object_classname %}
+            {{ class }} was deleted.
+        {% endblocktranslate %}
+    {% endif %}
+{% endwith %}
+
 <ul>
     {% for record in log.records %}
         {% if log.action_type == "change" %}

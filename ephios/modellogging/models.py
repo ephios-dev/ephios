@@ -3,7 +3,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
 
 from ephios.modellogging.json import LogJSONDecoder, LogJSONEncoder
 from ephios.modellogging.recorders import (
@@ -53,22 +52,6 @@ class LogEntry(models.Model):
                 data, self.content_type.model_class(), self.action_type
             )
 
-    @cached_property
-    def message(self):
-        if self.action_type == InstanceActionType.CHANGE:
-            if self.content_object:
-                message = _("{cls} {obj} was changed.")
-            else:  # content_object might be deleted
-                message = _("{cls} was changed.")
-        elif self.action_type == InstanceActionType.CREATE:
-            if self.content_object:
-                message = _("{cls} {obj} was created.")
-            else:
-                message = _("{cls} was created.")
-        elif self.action_type == InstanceActionType.DELETE:
-            message = _("{cls} was deleted.")
-
-        return message.format(
-            cls=capitalize_first(self.content_type.model_class()._meta.verbose_name),
-            obj=f'"{str(self.content_object)}"' if self.content_object else "",
-        )
+    @property
+    def content_object_classname(self):
+        return capitalize_first(self.content_type.model_class()._meta.verbose_name)
