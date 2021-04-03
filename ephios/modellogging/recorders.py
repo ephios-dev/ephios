@@ -397,6 +397,40 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
             yield dict(label=label, value=new_value)
 
 
+class FixedMessageLogRecorder(BaseLogRecorder):
+    slug = "fixed-message"
+
+    def __init__(self, label, message, show_change_statement=True, show_value_statement=False):
+        self.label = str(label)
+        self.message = str(message)
+        self.show_change_statement = show_change_statement
+        self.show_value_statement = show_value_statement
+
+    def is_changed(self):
+        return True
+
+    @property
+    def key(self):
+        return f"fixed-{id(self.label + self.message)}"
+
+    def serialize(self, action_type: InstanceActionType):
+        return self.__dict__
+
+    @classmethod
+    def deserialize(cls, data, model, action_type: InstanceActionType):
+        self = cls(None, None)
+        self.__dict__ = data
+        return self
+
+    def change_statements(self):
+        if self.show_change_statement:
+            yield dict(label=self.label, value=self.message)
+
+    def value_statements(self):
+        if self.show_value_statement:
+            yield dict(label=self.label, value=self.message)
+
+
 register_log_recorders = Signal()
 
 
@@ -407,6 +441,7 @@ def _register_inbuilt_recorders(sender, **kwargs):
         M2MLogRecorder,
         PermissionLogRecorder,
         DerivedFieldsLogRecorder,
+        FixedMessageLogRecorder,
     ]
 
 

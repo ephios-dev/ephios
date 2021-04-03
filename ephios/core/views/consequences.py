@@ -26,7 +26,10 @@ class ConsequenceUpdateView(LoginRequiredMixin, SingleObjectMixin, View):
 
         if request.is_ajax():
             return JsonResponse(
-                {"state": consequence.state, "fail_reason": consequence.fail_reason}
+                {
+                    "state": consequence.state,
+                    "fail_reason": getattr(consequence, "fail_reason", None),
+                }
             )
         if consequence.state == Consequence.States.FAILED:
             messages.error(request, _("There was an error performing that action."))

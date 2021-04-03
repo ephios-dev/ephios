@@ -27,8 +27,12 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
-from ephios.modellogging.recorders import M2MLogRecorder
+from ephios.modellogging.log import (
+    ModelFieldsLogConfig,
+    add_log_recorder,
+    register_model_for_logging,
+)
+from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
 
 
 class UserProfileManager(BaseUserManager):
@@ -283,16 +287,6 @@ class Consequence(Model):
         default=States.NEEDS_CONFIRMATION,
         verbose_name=_("State"),
     )
-    decided_by = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.SET_NULL,
-        verbose_name=_("confirmed by"),
-        null=True,
-        related_name="confirmed_consequences",
-        blank=True,
-    )
-    executed_at = models.DateTimeField(null=True, blank=True)
-    fail_reason = models.TextField(max_length=255, blank=True)
 
     class Meta:
         db_table = "consequence"
@@ -314,17 +308,22 @@ class Consequence(Model):
         }:
             raise ConsequenceError(_("Consequence was executed already."))
 
-        with transaction.atomic():
-            try:
-                self.decided_by = user
+        try:
+            with transaction.atomic():
                 self.handler.execute(self)
-            except Exception as e:  # pylint: disable=broad-except
-                self.state = self.States.FAILED
-                self.fail_reason = str(getattr(e, "message", repr(e)))
-            else:
-                self.state = self.States.EXECUTED
-                self.executed_at = timezone.now()
-            self.save()
+        except Exception as e:  # pylint: disable=broad-except
+            self.state = self.States.FAILED
+            self.fail_reason = str(e)
+            add_log_recorder(
+                self,
+                FixedMessageLogRecorder(
+                    label=_("Reason"),
+                    message=self.fail_reason,
+                ),
+            )
+        else:
+            self.state = self.States.EXECUTED
+        self.save()
 
     def deny(self, user):
         from ephios.core.consequences import ConsequenceError
@@ -332,7 +331,6 @@ class Consequence(Model):
         if self.state not in {self.States.NEEDS_CONFIRMATION, self.States.FAILED}:
             raise ConsequenceError(_("Consequence was executed or denied already."))
         self.state = self.States.DENIED
-        self.decided_by = user
         self.save()
 
     def render(self):
@@ -345,7 +343,7 @@ class Consequence(Model):
 register_model_for_logging(
     Consequence,
     ModelFieldsLogConfig(
-        unlogged_fields=["id", "slug", "user", "data", "decided_by", "executed_at", "fail_reason"],
+        unlogged_fields=["id", "slug", "user", "data"],
     ),
 )
 
