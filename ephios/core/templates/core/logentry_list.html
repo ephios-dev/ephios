@@ -18,7 +18,7 @@
 
     <form action="" method="get">
         <div class="row">
-            <div class="col-md">
+            <div class="col-md-3">
                 {% if filter_form.content_object %}
                     <div id="div_id_user" class="form-group">
                         <label for="id_user" class="">
@@ -43,11 +43,14 @@
                 {% endif %}
                 {{ filter_form.object_id }}
             </div>
-            <div class="col-md">
+            <div class="col-md-3">
                 {{ filter_form.user|as_crispy_field }}
             </div>
-            <div class="col-md">
+            <div class="col-md-2">
                 {{ filter_form.date|as_crispy_field }}
+            </div>
+            <div class="col-md">
+                {{ filter_form.search|as_crispy_field }}
             </div>
             <div class="col-md-auto pb-3 d-flex flex-column justify-content-center">
                 <button type="submit" class="btn btn-outline-info">{% translate "Filter" %}</button>

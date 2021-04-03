@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django.db.models import QuerySet
+from django.db.models.functions import Cast
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
@@ -33,6 +35,10 @@ class LogFilterForm(forms.Form):
     date = forms.DateField(
         widget=CustomDateInput(format="%Y-%m-%d"), required=False, label=_("Date")
     )
+    search = forms.CharField(
+        required=False,
+        label=_("Search"),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,7 +69,14 @@ class LogFilterForm(forms.Form):
         if date := self.cleaned_data.get("date"):
             kw["datetime__date"] = date
 
-        return queryset.filter(**kw)
+        queryset = queryset.filter(**kw)
+
+        if search := self.cleaned_data.get("search"):
+            queryset = queryset.annotate(
+                data_string=Cast("data", output_field=models.TextField()),
+            ).filter(data_string__contains=search)
+
+        return queryset
 
     @cached_property
     def content_object(self):
