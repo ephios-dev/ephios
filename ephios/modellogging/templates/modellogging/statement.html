@@ -1,11 +1,14 @@
+{% load logentries %}
 {% load i18n %}
 {% translate "<em>None</em>" as NONE %}
 {{ statement.label }}{% if statement.verb %} {{ statement.verb }}{% endif %}:
 {% if statement.objects %}
-    {{ statement.objects|join:", " }}
+    {% for obj in statement.objects %}
+        {% if not forloop.first %}, {% endif %}{{ obj|linkify_absolute_url }}
+    {% endfor %}
 {% else %}
     {% if statement.old_value %}
-        {{ statement.old_value|default_if_none:NONE }} →
+        {{ statement.old_value|linkify_absolute_url|default_if_none:NONE }} →
     {% endif %}
-    {{ statement.value|default_if_none:NONE }}
+    {{ statement.value|linkify_absolute_url|default_if_none:NONE }}
 {% endif %}

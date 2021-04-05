@@ -61,7 +61,7 @@ class Event(Model):
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
-    active = BooleanField(default=False)
+    active = BooleanField(default=False, verbose_name=_("active"))
 
     objects = ActiveManager()
     all_objects = Manager()

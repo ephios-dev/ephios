@@ -339,11 +339,17 @@ class Consequence(Model):
     def __str__(self):
         return self.render()
 
+    def attach_log_to_object(self):
+        if self.user_id:
+            return UserProfile, self.user_id
+        return Consequence, self.id
+
 
 register_model_for_logging(
     Consequence,
     ModelFieldsLogConfig(
         unlogged_fields=["id", "slug", "user", "data"],
+        attach_to_func=lambda consequence: consequence.attach_log_to_object(),
     ),
 )
 

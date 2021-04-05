@@ -37,7 +37,7 @@ class LogFilterForm(forms.Form):
     )
     search = forms.CharField(
         required=False,
-        label=_("Search"),
+        label=_("Contents"),
     )
 
     def __init__(self, *args, **kwargs):
@@ -91,7 +91,7 @@ class LogFilterForm(forms.Form):
 class LogView(StaffRequiredMixin, ListView):
     template_name = "core/logentry_list.html"
     model = LogEntry
-    paginate_by = 50
+    paginate_by = 20
 
     @cached_property
     def filter_form(self):

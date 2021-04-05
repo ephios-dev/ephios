@@ -2,7 +2,7 @@ import itertools
 from enum import Enum
 from typing import Callable
 
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import Signal, receiver
@@ -102,13 +102,22 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         self.field = field
 
     def attached(self, instance):
+        # is id for foreign keys
         self.old_value = self.field.value_from_object(instance)
 
     def record(self, action: InstanceActionType, instance):
-        # self.old_value = (self.field.value_from_object(db_instance) if action == InstanceActionType.CHANGE else None)
-        self.new_value = self.field.value_from_object(instance)
+        if self.field.one_to_one or self.field.many_to_one:
+            # actual object for foreign keys
+            try:
+                self.new_value = getattr(instance, self.field.name)
+            except ObjectDoesNotExist:
+                self.new_value = None
+        else:
+            self.new_value = self.field.value_from_object(instance)
 
     def is_changed(self):
+        if self.field.one_to_one or self.field.many_to_one:
+            return self.old_value != getattr(self.new_value, "pk", None)
         return self.old_value != self.new_value
 
     @property
@@ -125,16 +134,12 @@ class ModelFieldLogRecorder(BaseLogRecorder):
             "new_value": self.new_value,
         }
         if self.field.one_to_one or self.field.many_to_one:
-            try:
-                data["old_value"] = self.field.related_model._base_manager.get(pk=self.old_value)
-            except self.field.related_model.DoesNotExist:
-                pass
-            if self.new_value == self.old_value:
-                data["new_value"] = data["old_value"]
-            else:
+            if not self.is_changed():
+                data["old_value"] = self.new_value
+            elif self.old_value:
                 try:
-                    data["new_value"] = self.field.related_model._base_manager.get(
-                        pk=self.new_value
+                    data["old_value"] = self.field.related_model._base_manager.get(
+                        pk=self.old_value
                     )
                 except self.field.related_model.DoesNotExist:
                     pass

@@ -2,10 +2,20 @@ import itertools
 
 from django import template
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from ephios.modellogging.log import LOGGED_MODELS
 
 register = template.Library()
+
+
+@register.filter(name="linkify_absolute_url")
+def linkify_absolute_url(instance):
+    if hasattr(instance, "get_absolute_url"):
+        return mark_safe(
+            f'<a class="log-absolute-url" href="{instance.get_absolute_url()}">{str(instance)}</a>'
+        )
+    return instance
 
 
 @register.filter(name="related_logentries")
