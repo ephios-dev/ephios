@@ -38,7 +38,6 @@ from ephios.core.services.notifications.types import (
 from ephios.core.signals import event_forms
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.modellogging.models import LogEntry
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -295,14 +294,6 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "core/home.html"
-    LOGENTRY_COUNT = 5
-
-    def get_context_data(self, **kwargs):
-        if self.request.user.has_perm("modellogging.view_logentry"):
-            logentries = LogEntry.objects.all()[: self.LOGENTRY_COUNT]
-        else:
-            logentries = None
-        return super().get_context_data(logentries=logentries, **kwargs)
 
 
 class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):

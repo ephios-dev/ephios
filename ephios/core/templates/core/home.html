@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load logentries %}
 {% load user_extras %}
 {% load event_extras %}
 {% load i18n %}
@@ -72,19 +73,21 @@
 
     {% include "core/fragments/approve_consequences.html" %}
 
-    {% if logentries %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title mb-0">
-                    {% trans "Edit history" %}
-                    <a class="btn btn-outline-primary btn-sm float-right" href="{% url "core:log" %}">
-                        <span class="fas fa-eye"></span>
-                        <span class="d-none d-md-inline">{% translate "View everything" %}</span>
-                    </a>
-                </h5>
+    {% with logentries=request.user|visible_logentries %}
+        {% if logentries %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-0">
+                        {% trans "Edit history" %}
+                        <a class="btn btn-outline-primary btn-sm float-right" href="{% url "core:log" %}">
+                            <span class="fas fa-eye"></span>
+                            <span class="d-none d-md-inline">{% translate "View everything" %}</span>
+                        </a>
+                    </h5>
+                </div>
+                {% include 'modellogging/logentry_grouped_list.html' with logentries=logentries %}
             </div>
-            {% include 'modellogging/logentry_grouped_list.html' with logentries=logentries %}
-        </div>
-    {% endif %}
+        {% endif %}
+    {% endwith %}
 
 {% endblock %}

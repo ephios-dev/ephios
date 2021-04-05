@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 from ephios.modellogging.log import LOGGED_MODELS
+from ephios.modellogging.models import LogEntry
 
 register = template.Library()
 
@@ -21,6 +22,14 @@ def linkify_absolute_url(instance):
 @register.filter(name="related_logentries")
 def related_logentries(instance):
     return LOGGED_MODELS[type(instance)].related_logentries(instance)
+
+
+@register.filter(name="visible_logentries")
+def visible_logentries(user):
+    if user.has_perm("modellogging.view_logentry"):
+        return LogEntry.objects.all()[:5]
+    else:
+        return LogEntry.objects.none()
 
 
 @register.filter(name="group_logentries")
