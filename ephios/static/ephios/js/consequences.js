@@ -14,7 +14,8 @@ $(document).ready(function () {
                     btn.closest(".list-group-item").slideUp();
                 } else {
                     message("danger", "There was an error processing this: " + data.fail_reason)
-                    form.find(".btn-consequence").prop("disabled", false);
+                    btn.closest(".list-group-item").slideUp();
+                    // form.find(".btn-consequence").prop("disabled", false);
                 }
             }
         });

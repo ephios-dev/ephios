@@ -34,7 +34,8 @@
     {% endif %}
     <div class="page-header clearfix">
         <h2>
-            <small class="float-right mr-lg-3"><span class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
+            <small class="float-right mr-lg-3"><span
+                    class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
             {{ event.title }}
         </h2>
         <h4 class="text-muted">
@@ -81,6 +82,13 @@
                                href="{% url "core:event_notifications" event.pk %}">
                                 <span class="fas fa-envelope"></span>
                                 {% trans "Send notifications" %}
+                            </a>
+                        {% endif %}
+                        {% if perms.modellogging.view_logentry %}
+                            <a class="dropdown-item"
+                               href="{% url "core:log" %}?object_type=event&object_id={{ event.id }}">
+                                <span class="fas fa-clipboard-list"></span>
+                                {% trans "View edit history" %}
                             </a>
                         {% endif %}
                     </div>

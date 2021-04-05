@@ -8,7 +8,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Event
+from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup import AbstractParticipant, Qualification
+from ephios.modellogging.log import register_model_for_logging
 
 
 class EventGuestShare(models.Model):
@@ -48,7 +50,7 @@ class GuestUser(models.Model):
         )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}@{self.event}"
+        return f"{self.first_name} {self.last_name} @ {self.event}"
 
     class Meta:
         # there might be two people using the same email *sigh*
@@ -56,11 +58,16 @@ class GuestUser(models.Model):
 
 
 class GuestParticipation(AbstractParticipation):
-    guest_user = models.ForeignKey(GuestUser, on_delete=models.CASCADE)
+    guest_user = models.ForeignKey(
+        GuestUser, on_delete=models.CASCADE, verbose_name=_("guest participant")
+    )
 
     @property
     def participant(self) -> AbstractParticipant:
         return self.guest_user.as_participant()
+
+
+register_model_for_logging(GuestParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 @dataclasses.dataclass(frozen=True)

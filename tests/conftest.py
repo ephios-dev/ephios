@@ -9,6 +9,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
+from ephios.core.forms.users import MANAGEMENT_PERMISSIONS
 from ephios.core.models import (
     AbstractParticipation,
     Event,
@@ -131,14 +132,8 @@ def groups(superuser, manager, planner, volunteer):
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
     assign_perm("core.view_past_event", planners)
-    assign_perm("core.view_userprofile", managers)
-    assign_perm("core.add_userprofile", managers)
-    assign_perm("core.change_userprofile", managers)
-    assign_perm("core.delete_userprofile", managers)
-    assign_perm("auth.view_group", managers)
-    assign_perm("auth.add_group", managers)
-    assign_perm("auth.change_group", managers)
-    assign_perm("auth.delete_group", managers)
+    for perm in MANAGEMENT_PERMISSIONS:
+        assign_perm(perm, managers)
     return managers, planners, volunteers
 
 

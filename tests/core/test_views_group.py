@@ -92,6 +92,7 @@ class TestGroupView:
         form["users"].force_value([manager.id])
         form["can_view_past_event"] = False
         form["is_planning_group"] = False
+        form["is_management_group"] = False
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         response = form.submit()
         assert response.status_code == 302

@@ -7,7 +7,7 @@ from itertools import chain
 import guardian.mixins
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import Group, PermissionsMixin
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -27,6 +27,12 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.modellogging.log import (
+    ModelFieldsLogConfig,
+    add_log_recorder,
+    register_model_for_logging,
+)
+from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
 
 
 class UserProfileManager(BaseUserManager):
@@ -72,8 +78,8 @@ class UserProfileManager(BaseUserManager):
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
-    is_active = BooleanField(default=True)
-    is_staff = BooleanField(default=False)
+    is_active = BooleanField(default=True, verbose_name=_("Active"))
+    is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
     date_of_birth = DateField(_("date of birth"))
@@ -168,6 +174,25 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
 
 
+register_model_for_logging(
+    UserProfile,
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "password", "calendar_token", "last_login"},
+    ),
+)
+
+
+register_model_for_logging(
+    Group,
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "permissions"},
+        initial_recorders_func=lambda group: [
+            M2MLogRecorder(UserProfile.groups.field, reverse=True, verbose_name=_("Users")),
+        ],
+    ),
+)
+
+
 class QualificationCategory(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
@@ -226,11 +251,18 @@ class QualificationGrant(Model):
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
 
     def __str__(self):
-        return f"{self.qualification!s}, {self.user!s}"
+        return f"{self.qualification!s} {_('for')} {self.user!s}"
 
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
         db_table = "qualificationgrant"
+        verbose_name = _("Qualification grant")
+
+
+register_model_for_logging(
+    QualificationGrant,
+    ModelFieldsLogConfig(attach_to_func=lambda grant: (UserProfile, grant.user_id)),
+)
 
 
 class Consequence(Model):
@@ -252,21 +284,15 @@ class Consequence(Model):
         DENIED = "denied", _("denied")
 
     state = models.TextField(
-        max_length=31, choices=States.choices, default=States.NEEDS_CONFIRMATION
+        max_length=31,
+        choices=States.choices,
+        default=States.NEEDS_CONFIRMATION,
+        verbose_name=_("State"),
     )
-    decided_by = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.SET_NULL,
-        verbose_name=_("confirmed by"),
-        null=True,
-        related_name="confirmed_consequences",
-        blank=True,
-    )
-    executed_at = models.DateTimeField(null=True, blank=True)
-    fail_reason = models.TextField(max_length=255, blank=True)
 
     class Meta:
         db_table = "consequence"
+        verbose_name = _("Consequence")
 
     @property
     def handler(self):
@@ -284,16 +310,22 @@ class Consequence(Model):
         }:
             raise ConsequenceError(_("Consequence was executed already."))
 
-        with transaction.atomic():
-            try:
-                self.decided_by = user
+        try:
+            with transaction.atomic():
                 self.handler.execute(self)
-            except Exception as e:  # pylint: disable=broad-except
-                self.state = self.States.FAILED
-                self.fail_reason = str(getattr(e, "message", repr(e)))
-            else:
-                self.state = self.States.EXECUTED
-                self.executed_at = timezone.now()
+        except Exception as e:  # pylint: disable=broad-except
+            self.state = self.States.FAILED
+            add_log_recorder(
+                self,
+                FixedMessageLogRecorder(
+                    label=_("Reason"),
+                    message=str(e),
+                ),
+            )
+            raise ConsequenceError(str(e)) from e
+        else:
+            self.state = self.States.EXECUTED
+        finally:
             self.save()
 
     def deny(self, user):
@@ -302,14 +334,27 @@ class Consequence(Model):
         if self.state not in {self.States.NEEDS_CONFIRMATION, self.States.FAILED}:
             raise ConsequenceError(_("Consequence was executed or denied already."))
         self.state = self.States.DENIED
-        self.decided_by = user
         self.save()
 
     def render(self):
         return self.handler.render(self)
 
     def __str__(self):
-        return f"[{self.state}] {self.id} - {self.user!s} - {self.slug}"
+        return self.render()
+
+    def attach_log_to_object(self):
+        if self.user_id:
+            return UserProfile, self.user_id
+        return Consequence, self.id
+
+
+register_model_for_logging(
+    Consequence,
+    ModelFieldsLogConfig(
+        unlogged_fields=["id", "slug", "user", "data"],
+        attach_to_func=lambda consequence: consequence.attach_log_to_object(),
+    ),
+)
 
 
 class WorkingHours(Model):
