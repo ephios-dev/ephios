@@ -124,11 +124,12 @@ def _get_log_data(instance, action_type):
 
 
 def update_log(instance, action_type: InstanceActionType):
-    log_data = _get_log_data(instance, action_type)
+    logentry = getattr(instance, "_current_logentry", None)
+    log_data = _get_log_data(instance, logentry.action_type if logentry else action_type)
     if not log_data:
         return
 
-    if logentry := getattr(instance, "_current_logentry", None):
+    if logentry:
         logentry.data.update(log_data)
     else:
         try:
