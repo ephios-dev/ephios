@@ -367,6 +367,11 @@ class PermissionLogRecorder(BaseLogRecorder):
 
 
 class DerivedFieldsLogRecorder(BaseLogRecorder):
+    """
+    This recorder lets you provide a ``derive`` function you can use to derive fields for the log from the instance.
+    Return value must be a dict mapping human readable labels to values.
+    """
+
     slug = "derived-fields"
 
     def __init__(self, derive: Callable):

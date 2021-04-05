@@ -4,9 +4,9 @@ from .log import log_request_store
 
 
 class LoggingRequestMiddleware:
-    """Expose request to LoggedModel.
+    """
     This middleware sets request as a local thread variable, making it
-    available to the model-level utilities to allow tracking of the
+    available to the logging utilities to allow tracking of the
     authenticated user making a change.
     """
 
