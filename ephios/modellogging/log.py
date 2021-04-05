@@ -16,6 +16,11 @@ from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, Mo
 
 class BaseLogConfig:
     def initial_log_recorders(self, instance):
+        """
+        Initial log recorders are always added after model __init__.
+        Therefore, recorders added here should not do any db operations.
+        If you need those, add them manually, e.g. at the beginning of a form's save().
+        """
         return []
 
     def related_logentries(self, instance):
