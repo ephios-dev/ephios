@@ -26,6 +26,29 @@ from ephios.core.services.notifications.types import enabled_notification_types
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
+from ephios.modellogging.log import add_log_recorder
+from ephios.modellogging.recorders import DerivedFieldsLogRecorder
+
+
+def get_group_permission_log_fields(group):
+    # This lives here because it is closely related to the fields on GroupForm below
+    if not group.pk:
+        return {}
+    perms = set(group.permissions.values_list("codename", flat=True))
+
+    return {
+        _("Can view past events"): "view_past_event" in perms,
+        _("Can add events"): "add_event" in perms,
+        _("Can edit users"): "change_userprofile" in perms,
+        _("Can manage ephios"): "change_group" in perms,
+        # force evaluation of querysets
+        _("Can publish events for groups"): set(
+            get_objects_for_group(group, "publish_event_for_group", klass=Group)
+        ),
+        _("Can decide working hours for groups"): set(
+            get_objects_for_group(group, "decide_workinghours_for_group", klass=Group)
+        ),
+    }
 
 
 class GroupForm(PermissionFormMixin, ModelForm):
@@ -143,6 +166,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         )
 
     def save(self, commit=True):
+        add_log_recorder(self.instance, DerivedFieldsLogRecorder(get_group_permission_log_fields))
         group = super().save(commit)
 
         group.user_set.set(self.cleaned_data["users"])
@@ -161,6 +185,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 self.cleaned_data["decide_workinghours_for_group"],
             )
 
+        group.save()  # logging
         return group
 
 

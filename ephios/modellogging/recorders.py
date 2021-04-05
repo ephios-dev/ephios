@@ -1,6 +1,6 @@
 import itertools
 from enum import Enum
-from typing import Callable
+from typing import Callable, Collection
 
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
@@ -291,6 +291,11 @@ def _m2m_changed(
 
 
 class PermissionLogRecorder(BaseLogRecorder):
+    """
+    This recorder records users and groups that have object permissions for the logged instance.
+    If the logged model is User or Group, consider using the DerivedFieldsLogRecorder to record Permissions.
+    """
+
     # pylint: disable=too-many-instance-attributes
     slug = "permission-recorder"
 
@@ -394,6 +399,17 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
     def deserialize(cls, data, model, action_type: InstanceActionType):
         self = cls(None)
         self.changes = data["changes"]
+
+        def prettify(value):
+            if isinstance(value, bool):
+                return yesno(value)
+            if isinstance(value, Collection):
+                return ", ".join(map(str, value))
+            return value
+
+        for key in self.changes:
+            old, new = self.changes[key]
+            self.changes[key] = [prettify(old), prettify(new)]
         return self
 
     def change_statements(self):

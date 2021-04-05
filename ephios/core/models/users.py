@@ -180,12 +180,14 @@ register_model_for_logging(
         unlogged_fields={"id", "password", "calendar_token", "last_login"},
     ),
 )
+
+
 register_model_for_logging(
     Group,
     ModelFieldsLogConfig(
         unlogged_fields={"id", "permissions"},
         initial_recorders_func=lambda group: [
-            M2MLogRecorder(UserProfile.groups.field, reverse=True, verbose_name=_("Users"))
+            M2MLogRecorder(UserProfile.groups.field, reverse=True, verbose_name=_("Users")),
         ],
     ),
 )

@@ -52,20 +52,21 @@ def test_event_permission_changes_get_logged(django_app, event, superuser, quali
 
 
 @pytest.mark.django_db
-def test_group_membership_gets_logged(django_app, superuser, groups, qualified_volunteer):
+def test_group_logging(django_app, superuser, groups, qualified_volunteer):
     pre_count = LogEntry.objects.count()
     __, planners, __ = groups
     form = django_app.get(
         reverse("core:group_edit", kwargs={"pk": planners.id}), user=superuser
     ).form
     form["users"].force_value([qualified_volunteer.id])
+    form["is_planning_group"] = False
     users_before = list(planners.user_set.all())
     assert form.submit()
     assert LogEntry.objects.count() == pre_count + 1
     response = django_app.get(
         f'{reverse("core:log")}?object_type=group&object_id={planners.id}', user=superuser
     )
-    assert f"added: {qualified_volunteer}" in response
-    assert "removed" in response
-    for user in users_before:
-        assert str(user) in response
+    assert f"Users added: {qualified_volunteer}" in response
+    # there is a fixed ordering of related objects expected here, that might break
+    assert f"Users removed: {str(users_before[0])}, {str(users_before[1])}" in response
+    assert "Can add events: yes → no" in response
