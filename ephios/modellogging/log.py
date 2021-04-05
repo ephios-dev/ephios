@@ -3,6 +3,7 @@ import threading
 from typing import Dict
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from django.dispatch import receiver
@@ -86,11 +87,22 @@ def _get_log_data(instance, action_type):
     for recorder in instance._log_recorders:
         recorder.record(action_type, instance)
 
-    return {
-        recorder.key: {**recorder.serialize(action_type), "slug": recorder.slug}
-        for recorder in instance._log_recorders
-        if recorder.is_changed() or action_type != InstanceActionType.CHANGE
-    }
+    # __recorders__ maps recorder keys to the slug of the recorder type used
+    data = {"__recorders__": {}}
+    try:
+        data["__str__"] = str(instance)
+    except ObjectDoesNotExist:
+        # sometimes, when deleting objects, they are in an invalid state, so str fails
+        if not action_type == InstanceActionType.DELETE:
+            raise
+        data["__str__"] = None
+
+    for recorder in instance._log_recorders:
+        # log only changed recorders or all for non change action types
+        if recorder.is_changed() or action_type != InstanceActionType.CHANGE:
+            data[recorder.key] = recorder.serialize(action_type)
+            data["__recorders__"][recorder.key] = recorder.slug
+    return data if data["__recorders__"] else {}
 
 
 def update_log(instance, action_type: InstanceActionType):

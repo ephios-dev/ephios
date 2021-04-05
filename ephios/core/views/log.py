@@ -74,7 +74,7 @@ class LogFilterForm(forms.Form):
         if search := self.cleaned_data.get("search"):
             queryset = queryset.annotate(
                 data_string=Cast("data", output_field=models.TextField()),
-            ).filter(data_string__contains=search)
+            ).filter(data_string__icontains=search)
 
         return queryset
 

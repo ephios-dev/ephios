@@ -4,28 +4,16 @@
 
 {% with content_object_url=log.content_object.get_absolute_url %}
     {% if log.action_type == "change" %}
-        {% if log.content_object %}
-            {% blocktranslate with class=log.content_object_classname object=log.content_object|linkify_absolute_url %}
-                {{ class }} {{ object }} was changed.
-            {% endblocktranslate %}
-        {% else %}
-            {% blocktranslate with class=log.content_object_classname %}
-                {{ class }} was changed.
-            {% endblocktranslate %}
-        {% endif %}
+        {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+            {{ class }} {{ maybe_object }} was changed.
+        {% endblocktranslate %}
     {% elif log.action_type == "create" %}
-        {% if log.content_object %}
-            {% blocktranslate with class=log.content_object_classname object=log.content_object|linkify_absolute_url %}
-                {{ class }} {{ object }} was created.
-            {% endblocktranslate %}
-        {% else %}
-            {% blocktranslate with class=log.content_object_classname %}
-                {{ class }} was changed.
-            {% endblocktranslate %}
-        {% endif %}
+        {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+            {{ class }} {{ maybe_object }} was created.
+        {% endblocktranslate %}
     {% elif log.action_type == "delete" %}
-        {% blocktranslate with class=log.content_object_classname %}
-            {{ class }} was deleted.
+        {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+            {{ class }} {{ maybe_object }} was deleted.
         {% endblocktranslate %}
     {% endif %}
 {% endwith %}

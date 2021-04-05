@@ -50,11 +50,20 @@ class LogEntry(models.Model):
     @cached_property
     def records(self):
         recorder_types = recorder_types_by_slug(self.content_type.model_class())
-        for data in self.data.values():
-            yield recorder_types[data["slug"]].deserialize(
-                data, self.content_type.model_class(), self.action_type
+        for key, slug in self.data["__recorders__"].items():
+            yield recorder_types[slug].deserialize(
+                self.data[key], self.content_type.model_class(), self.action_type
             )
 
     @property
     def content_object_classname(self):
         return capitalize_first(self.content_type.model_class()._meta.verbose_name)
+
+    @property
+    def content_object_or_str(self):
+        return self.content_object or self.data.get("__str__")
+
+    def __str__(self):
+        if self.content_object:
+            return f"{self.action_type} {type(self.content_object)._meta.verbose_name} {str(self.content_object)}"
+        return f"{self.action_type} {self.content_type.model} {self.content_object_or_str}"

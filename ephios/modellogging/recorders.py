@@ -384,6 +384,7 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
                 str(key): [old_value, new_value]
                 for key in set(itertools.chain(self.old_dict.keys(), self.new_dict.keys()))
                 if (old_value := self.old_dict.get(key)) != (new_value := self.new_dict.get(key))
+                or action_type != InstanceActionType.CHANGE
             }
         )
 
@@ -423,9 +424,7 @@ class FixedMessageLogRecorder(BaseLogRecorder):
 
     @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
-        self = cls(None, None)
-        self.__dict__ = data
-        return self
+        return cls(**data)
 
     def change_statements(self):
         if self.show_change_statement:
