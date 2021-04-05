@@ -1,3 +1,5 @@
+import itertools
+
 import pytest
 from django.urls import reverse
 
@@ -67,6 +69,8 @@ def test_group_logging(django_app, superuser, groups, qualified_volunteer):
         f'{reverse("core:log")}?object_type=group&object_id={planners.id}', user=superuser
     )
     assert f"Users added: {qualified_volunteer}" in response
-    # there is a fixed ordering of related objects expected here, that might break
-    assert f"Users removed: {str(users_before[0])}, {str(users_before[1])}" in response
+    assert any(
+        f"Users removed: {str(user_a)}, {str(user_b)}" in response
+        for user_a, user_b in itertools.permutations(users_before)
+    )
     assert "Can add events: yes → no" in response
