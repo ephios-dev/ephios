@@ -87,8 +87,18 @@ def _get_log_data(instance, action_type):
     for recorder in instance._log_recorders:
         recorder.record(action_type, instance)
 
-    # __recorders__ maps recorder keys to the slug of the recorder type used
-    data = {"__recorders__": {}}
+    data = {
+        recorder.key: {
+            "slug": recorder.slug,
+            "data": recorder.serialize(action_type),
+        }
+        for recorder in instance._log_recorders
+        if recorder.is_changed() or action_type != InstanceActionType.CHANGE
+    }
+
+    if not data:
+        return {}
+
     try:
         data["__str__"] = str(instance)
     except ObjectDoesNotExist:
@@ -96,13 +106,7 @@ def _get_log_data(instance, action_type):
         if not action_type == InstanceActionType.DELETE:
             raise
         data["__str__"] = None
-
-    for recorder in instance._log_recorders:
-        # log only changed recorders or all for non change action types
-        if recorder.is_changed() or action_type != InstanceActionType.CHANGE:
-            data[recorder.key] = recorder.serialize(action_type)
-            data["__recorders__"][recorder.key] = recorder.slug
-    return data if data["__recorders__"] else {}
+    return data
 
 
 def update_log(instance, action_type: InstanceActionType):
