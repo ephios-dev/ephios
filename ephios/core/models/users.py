@@ -251,7 +251,7 @@ class QualificationGrant(Model):
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
 
     def __str__(self):
-        return f"{self.qualification!s}, {self.user!s}"
+        return f"{self.qualification!s} {_('for')} {self.user!s}"
 
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
