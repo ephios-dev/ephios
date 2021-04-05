@@ -216,6 +216,7 @@ class ShiftLogConfig(ModelFieldsLogConfig):
         return Event, instance.event_id
 
     def initial_log_recorders(self, instance):
+        # pylint: disable=undefined-variable
         yield from super().initial_log_recorders(instance)
         yield DerivedFieldsLogRecorder(
             lambda shift: {

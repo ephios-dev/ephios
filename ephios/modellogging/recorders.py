@@ -185,6 +185,8 @@ class ModelFieldLogRecorder(BaseLogRecorder):
 
 
 class M2MLogRecorder(BaseLogRecorder):
+    # pylint: disable=too-many-instance-attributes
+
     slug = "m2mfield"
 
     def __init__(self, field, reverse=False, verbose_name=None):

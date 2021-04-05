@@ -11,14 +11,14 @@ from django.dispatch import receiver
 from ephios.modellogging.models import LogEntry
 from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, ModelFieldLogRecorder
 
+# pylint: disable=protected-access
+
 
 class BaseLogConfig:
     def initial_log_recorders(self, instance):
         return []
 
     def related_logentries(self, instance):
-        from ephios.modellogging.models import LogEntry
-
         """
         Return a queryset with all logentries that should be shown with the instance.
         """
@@ -40,8 +40,17 @@ class BaseLogConfig:
 
 class ModelFieldsLogConfig(BaseLogConfig):
     def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
-        """Specify a list of field names so that these fields don't get logged. Other fields get logged."""
-        # TODO document keyword args
+        """
+        ``unlogged_fields``: Specify a list of field names so that these fields don't get logged.
+        Other fields get logged. Defaults to ['id']
+
+        ``attach_to_func``: Specify a function receiving an instance and returning a tuple
+        of model class and object pk to attach log entries to.
+        Defaults to the instance's class and its own pk.
+
+        ``initial_recorders_func``: Specify a function receiving an instance and returning
+        a list of additional log recorders.
+        """
 
         if unlogged_fields is None:
             unlogged_fields = ["id"]
@@ -163,5 +172,5 @@ def log_post_save(sender, instance, created, raw, **kwargs):
 
 @receiver(pre_delete)
 def log_pre_delete(sender, instance, **kwargs):
-    if config := LOGGED_MODELS.get(sender):
+    if sender in LOGGED_MODELS:
         update_log(instance, InstanceActionType.DELETE)
