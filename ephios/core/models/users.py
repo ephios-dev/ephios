@@ -315,17 +315,18 @@ class Consequence(Model):
                 self.handler.execute(self)
         except Exception as e:  # pylint: disable=broad-except
             self.state = self.States.FAILED
-            self.fail_reason = str(e)
             add_log_recorder(
                 self,
                 FixedMessageLogRecorder(
                     label=_("Reason"),
-                    message=self.fail_reason,
+                    message=str(e),
                 ),
             )
+            raise ConsequenceError(str(e)) from e
         else:
             self.state = self.States.EXECUTED
-        self.save()
+        finally:
+            self.save()
 
     def deny(self, user):
         from ephios.core.consequences import ConsequenceError

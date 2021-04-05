@@ -1,8 +1,6 @@
 {% load param_replace %}
 {% load i18n %}
 
-{# TODO add pretix license #}
-
 <nav aria-label="Pagination" class="mt-3">
     <ul class="pagination justify-content-center">
         {% if is_paginated %}
@@ -44,20 +42,6 @@
             </li>
         {% endif %}
     </ul>
-
-    {% if page_size %}
-        <div class="clearfix">
-            <small>
-                {% trans "Show per page:" %}
-            </small>
-            <a href="?{% param_replace page_size=25 page=1 %}">
-                {% if page_size == 25 %}<strong>{% endif %}25{% if page_size == 25 %}</strong>{% endif %}</a> |
-            <a href="?{% param_replace page_size=50 page=1 %}">
-                {% if page_size == 50 %}<strong>{% endif %}50{% if page_size == 50 %}</strong>{% endif %}</a> |
-            <a href="?{% param_replace page_size=100 page=1 %}">
-                {% if page_size == 100 %}<strong>{% endif %}100{% if page_size == 100 %}</strong>{% endif %}</a>
-        </div>
-    {% endif %}
 </nav>
 
 
