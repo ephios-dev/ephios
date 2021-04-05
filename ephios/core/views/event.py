@@ -298,7 +298,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
     LOGENTRY_COUNT = 5
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_staff:
+        if self.request.user.has_perm("modellogging.view_logentry"):
             logentries = LogEntry.objects.all()[: self.LOGENTRY_COUNT]
         else:
             logentries = None

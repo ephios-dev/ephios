@@ -74,3 +74,13 @@ def test_group_logging(django_app, superuser, groups, qualified_volunteer):
         for user_a, user_b in itertools.permutations(users_before)
     )
     assert "Can add events: yes → no" in response
+
+
+@pytest.mark.django_db
+def test_user_cant_access_log(django_app, qualified_volunteer):
+    django_app.get(reverse("core:log"), user=qualified_volunteer, status=403)
+
+
+@pytest.mark.django_db
+def test_managers_can_access_log(django_app, manager, groups):
+    django_app.get(reverse("core:log"), user=manager, status=200)

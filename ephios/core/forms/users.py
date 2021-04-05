@@ -29,6 +29,30 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
+MANAGEMENT_PERMISSIONS = [
+    "auth.add_group",
+    "auth.change_group",
+    "auth.delete_group",
+    "auth.view_group",
+    "core.add_userprofile",
+    "core.change_userprofile",
+    "core.delete_userprofile",
+    "core.view_userprofile",
+    "core.view_event",
+    "core.add_event",
+    "core.change_event",
+    "core.delete_event",
+    "core.view_eventtype",
+    "core.add_eventtype",
+    "core.change_eventtype",
+    "core.delete_eventtype",
+    "core.view_qualification",
+    "core.add_qualification",
+    "core.change_qualification",
+    "core.delete_qualification",
+    "modellogging.view_logentry",
+]
+
 
 def get_group_permission_log_fields(group):
     # This lives here because it is closely related to the fields on GroupForm below
@@ -96,28 +120,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
-        permissions=[
-            "auth.add_group",
-            "auth.change_group",
-            "auth.delete_group",
-            "auth.view_group",
-            "core.add_userprofile",
-            "core.change_userprofile",
-            "core.delete_userprofile",
-            "core.view_userprofile",
-            "core.view_event",
-            "core.add_event",
-            "core.change_event",
-            "core.delete_event",
-            "core.view_eventtype",
-            "core.add_eventtype",
-            "core.change_eventtype",
-            "core.delete_eventtype",
-            "core.view_qualification",
-            "core.add_qualification",
-            "core.change_qualification",
-            "core.delete_qualification",
-        ],
+        permissions=MANAGEMENT_PERMISSIONS,
         required=False,
     )
 

@@ -84,7 +84,7 @@
                                 {% trans "Send notifications" %}
                             </a>
                         {% endif %}
-                        {% if request.user.is_staff %}
+                        {% if perms.modellogging.view_logentry %}
                             <a class="dropdown-item"
                                href="{% url "core:log" %}?object_type=event&object_id={{ event.id }}">
                                 <span class="fas fa-clipboard-list"></span>

@@ -10,7 +10,7 @@ from django_select2.forms import Select2Widget
 
 from ephios.core.models import UserProfile
 from ephios.core.widgets import UserProfileWidget
-from ephios.extra.mixins import StaffRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.models import LogEntry
 
@@ -88,9 +88,10 @@ class LogFilterForm(forms.Form):
             return self.content_types[object_type].get_object_for_this_type(id=object_id)
 
 
-class LogView(StaffRequiredMixin, ListView):
+class LogView(CustomPermissionRequiredMixin, ListView):
     template_name = "core/logentry_list.html"
     model = LogEntry
+    permission_required = "modellogging.view_logentry"
     paginate_by = 20
 
     @cached_property
