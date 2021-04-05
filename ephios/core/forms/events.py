@@ -7,6 +7,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -200,6 +202,11 @@ class EventTypeForm(forms.ModelForm):
         model = EventType
         fields = ["title", "can_grant_qualification", "color"]
         widgets = {"color": ColorInput()}
+
+    def save(self, commit=True):
+        cache_key = make_template_fragment_key("eventtype_colors")
+        cache.delete(cache_key)
+        return super().save(commit)
 
     def clean_color(self):
         regex = re.compile(r"#[a-fA-F\d]{6}")
