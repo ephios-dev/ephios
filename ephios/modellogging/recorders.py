@@ -1,6 +1,6 @@
 import itertools
 from enum import Enum
-from typing import Callable, Collection
+from typing import Callable
 
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
@@ -403,7 +403,7 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
         def prettify(value):
             if isinstance(value, bool):
                 return yesno(value)
-            if isinstance(value, Collection):
+            if isinstance(value, (list, set)):
                 return ", ".join(map(str, value))
             return value
 
