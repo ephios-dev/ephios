@@ -51,7 +51,7 @@ isort = "^5.8.0"
 pylint = "^2.7.4"
 autoflake = "^1.4"
 Sphinx = "^3.5.3"
-sphinx-rtd-theme = "^0.5.1"
+sphinx-rtd-theme = "^0.5.2"
 sphinx-intl = "^2.0.1"
 sphinx-github-changelog = "^1.0.2"
 
