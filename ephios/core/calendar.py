@@ -20,7 +20,7 @@ class ShiftCalendar(LocaleHTMLCalendar):
         if day != 0:
             cssclass = self.cssclasses[weekday]
             if date.today() == date(self.year, self.month, day):
-                cssclass += " today"
+                cssclass += " calendar-today"
             if day in self.shifts:
                 cssclass += " filled"
                 body = ["<br />"]
