@@ -1,0 +1,35 @@
+{% load logentries %}
+{% load static %}
+{% load i18n %}
+
+{% if log.action_type == "change" %}
+    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+        {{ class }} {{ maybe_object }} was changed.
+    {% endblocktranslate %}
+{% elif log.action_type == "create" %}
+    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+        {{ class }} {{ maybe_object }} was created.
+    {% endblocktranslate %}
+{% elif log.action_type == "delete" %}
+    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+        {{ class }} {{ maybe_object }} was deleted.
+    {% endblocktranslate %}
+{% endif %}
+
+<ul>
+    {% for record in log.records %}
+        {% if log.action_type == "change" %}
+            {% for statement in record.change_statements %}
+                <li>
+                    {% include 'modellogging/statement.html' with statement=statement %}
+                </li>
+            {% endfor %}
+        {% else %}
+            {% for statement in record.value_statements %}
+                <li>
+                    {% include 'modellogging/statement.html' with statement=statement %}
+                </li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</ul>

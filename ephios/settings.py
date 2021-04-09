@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
     "webpush",
+    "ephios.modellogging",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -90,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "ephios.modellogging.middleware.LoggingRequestMiddleware",
 ]
 
 ROOT_URLCONF = "ephios.urls"
@@ -189,22 +191,25 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": True,
-    "handlers": {"mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}},
-    "loggers": {
-        "django": {
+if not DEBUG:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "handlers": {
+            "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["mail_admins"],
+                "level": "ERROR",
+                "propagate": False,
+            },
+        },
+        "root": {
             "handlers": ["mail_admins"],
             "level": "ERROR",
-            "propagate": False,
         },
-    },
-    "root": {
-        "handlers": ["mail_admins"],
-        "level": "ERROR",
-    },
-}
+    }
 
 
 # Guardian configuration

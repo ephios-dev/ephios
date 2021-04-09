@@ -21,7 +21,9 @@
                         {% if conflicting_shifts %}
                             <span class="fa fa-exclamation-triangle text-danger"
                                   data-toggle="tooltip"
-                                  title="{{ form.instance.participant }} already participates in {{ conflicting_shifts|join:", " }} at the same time."></span>
+                                  title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicting_shifts|join:", " %}
+                                      {{ participant }} already participates in {{ conflicts }} at the same time.
+                                  {% endblocktranslate %}"></span>
                         {% endif %}
                     {% endwith %}
                     {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}

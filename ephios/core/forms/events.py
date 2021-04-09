@@ -22,6 +22,8 @@ from ephios.core.models import Event, EventType, LocalParticipation, Shift, User
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
+from ephios.modellogging.log import add_log_recorder, update_log
+from ephios.modellogging.recorders import InstanceActionType, PermissionLogRecorder
 
 
 class EventForm(forms.ModelForm):
@@ -97,7 +99,10 @@ class EventForm(forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.type = self.eventtype
-        event = super().save(commit=commit)
+        event: Event = super().save(commit=commit)
+
+        add_log_recorder(event, PermissionLogRecorder("view_event", _("Visible for")))
+        add_log_recorder(event, PermissionLogRecorder("change_event", _("Responsibles")))
 
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
@@ -126,6 +131,8 @@ class EventForm(forms.ModelForm):
         # Assign view_event to responsible users  and to non-responsible users
         # that already have some sort of participation for the event
         # (-> they saw and interacted with it)
+        # We can't just do users that aren't included by group permissions,
+        # as they might get removed from that group.
         assign_perm(
             "view_event",
             UserProfile.objects.filter(
@@ -139,6 +146,7 @@ class EventForm(forms.ModelForm):
             event,
         )
 
+        update_log(event, InstanceActionType.CHANGE)
         return event
 
 

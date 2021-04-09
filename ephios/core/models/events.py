@@ -25,6 +25,8 @@ from guardian.shortcuts import assign_perm
 from polymorphic.models import PolymorphicModel
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
+from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
@@ -59,7 +61,7 @@ class Event(Model):
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
-    active = BooleanField(default=False)
+    active = BooleanField(default=False, verbose_name=_("active"))
 
     objects = ActiveManager()
     all_objects = Manager()
@@ -108,6 +110,9 @@ class Event(Model):
                 self.save()
 
 
+register_model_for_logging(Event, ModelFieldsLogConfig())
+
+
 class AbstractParticipation(PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
@@ -130,7 +135,7 @@ class AbstractParticipation(PolymorphicModel):
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
     """
-    finished = models.BooleanField(default=False)
+    finished = models.BooleanField(default=False, verbose_name=_("finished"))
 
     @property
     def hours_value(self):
@@ -151,9 +156,15 @@ class AbstractParticipation(PolymorphicModel):
             return super().__str__()
 
 
+PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
+    unlogged_fields=["id", "data", "abstractparticipation_ptr"],
+    attach_to_func=lambda instance: (Event, instance.shift.event_id),
+)
+
+
 class Shift(Model):
     event = ForeignKey(
-        Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("shifts")
+        Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("event")
     )
     meeting_time = DateTimeField(_("meeting time"))
     start_time = DateTimeField(_("start time"))
@@ -173,7 +184,10 @@ class Shift(Model):
     def signup_method(self):
         from ephios.core.signup import signup_method_from_slug
 
-        return signup_method_from_slug(self.signup_method_slug, self)
+        try:
+            return signup_method_from_slug(self.signup_method_slug, self)
+        except ValueError:
+            return None
 
     def get_start_end_time_display(self):
         tz = pytz.timezone(settings.TIME_ZONE)
@@ -187,12 +201,42 @@ class Shift(Model):
         for participation in self.participations.filter(state__in=with_state_in):
             yield participation.participant
 
+    def get_absolute_url(self):
+        return f"{self.event.get_absolute_url()}#shift-{self.pk}"
+
     def __str__(self):
         return f"{self.event.title} ({self.get_start_end_time_display()})"
 
 
+class ShiftLogConfig(ModelFieldsLogConfig):
+    def __init__(self):
+        super().__init__(unlogged_fields=["id", "signup_method_slug", "signup_configuration"])
+
+    def object_to_attach_logentries_to(self, instance):
+        return Event, instance.event_id
+
+    def initial_log_recorders(self, instance):
+        # pylint: disable=undefined-variable
+        yield from super().initial_log_recorders(instance)
+        yield DerivedFieldsLogRecorder(
+            lambda shift: {
+                _("Signup method"): str(method.verbose_name)
+                if (method := shift.signup_method)
+                else None
+            }
+        )
+        yield DerivedFieldsLogRecorder(
+            lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
+        )
+
+
+register_model_for_logging(Shift, ShiftLogConfig())
+
+
 class LocalParticipation(AbstractParticipation):
-    user: "UserProfile" = ForeignKey("UserProfile", on_delete=models.CASCADE)
+    user: "UserProfile" = ForeignKey(
+        "UserProfile", on_delete=models.CASCADE, verbose_name=_("Participant")
+    )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -211,6 +255,9 @@ class LocalParticipation(AbstractParticipation):
 
     class Meta:
         db_table = "localparticipation"
+
+
+register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class EventTypePreference(PerInstancePreferenceModel):

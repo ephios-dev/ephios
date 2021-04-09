@@ -8,7 +8,7 @@ from django.views.generic import FormView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
-from ephios.core.consequences import editable_consequences
+from ephios.core.consequences import ConsequenceError, editable_consequences
 from ephios.core.forms.users import WorkingHourRequestForm
 from ephios.core.models import Consequence
 
@@ -19,14 +19,21 @@ class ConsequenceUpdateView(LoginRequiredMixin, SingleObjectMixin, View):
 
     def post(self, request, *args, **kwargs):
         consequence = self.get_object()
+        fail_reason = None
         if request.POST["action"] == "deny":
             consequence.deny(request.user)
         elif request.POST["action"] == "confirm":
-            consequence.confirm(request.user)
+            try:
+                consequence.confirm(request.user)
+            except ConsequenceError as e:
+                fail_reason = str(e)
 
         if request.is_ajax():
             return JsonResponse(
-                {"state": consequence.state, "fail_reason": consequence.fail_reason}
+                {
+                    "state": consequence.state,
+                    "fail_reason": fail_reason,
+                }
             )
         if consequence.state == Consequence.States.FAILED:
             messages.error(request, _("There was an error performing that action."))

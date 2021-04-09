@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Event
 from ephios.core.signup import Qualification
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
 class EventAutoQualificationConfiguration(models.Model):
@@ -10,7 +11,9 @@ class EventAutoQualificationConfiguration(models.Model):
         Event, on_delete=models.CASCADE, related_name="auto_qualification_config"
     )
 
-    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
+    qualification = models.ForeignKey(
+        Qualification, on_delete=models.CASCADE, verbose_name=_("Qualification")
+    )
     expiration_date = models.DateField(verbose_name=_("Expiration date"), null=True, blank=True)
 
     class Modes(models.IntegerChoices):
@@ -21,7 +24,7 @@ class EventAutoQualificationConfiguration(models.Model):
     mode = models.IntegerField(
         choices=Modes.choices,
         default=Modes.ANY_SHIFT,
-        verbose_name=_("Which shifts must be attended to acquire the qualification?"),
+        verbose_name=_("Required attendance"),
     )
 
     extend_only = models.BooleanField(
@@ -30,3 +33,18 @@ class EventAutoQualificationConfiguration(models.Model):
     needs_confirmation = models.BooleanField(
         default=True, verbose_name=_("Qualification must be confirmed afterwards")
     )
+
+    def __str__(self):
+        return str(self.qualification or self.event)
+
+    class Meta:
+        verbose_name = _("event auto qualification configuration")
+
+
+register_model_for_logging(
+    EventAutoQualificationConfiguration,
+    ModelFieldsLogConfig(
+        unlogged_fields=["id", "event"],
+        attach_to_func=lambda instance: (Event, instance.event_id),
+    ),
+)
