@@ -57,7 +57,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
                     to_attr=f"qualifications_for_category_{category.pk}",
                 )
             )
-        return qs
+        return qs.order_by("last_name", "first_name")
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):

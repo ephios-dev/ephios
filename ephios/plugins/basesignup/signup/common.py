@@ -114,7 +114,9 @@ class QualificationsRequiredSignupMixin(_Base):
                 ", ".join(
                     participant.qualifications.filter(
                         category__in=relevant_qualification_categories
-                    ).values_list("title", flat=True)
+                    )
+                    .order_by("title")
+                    .values_list("title", flat=True)
                 ),
             ]
             for participant in self.shift.get_participants()
