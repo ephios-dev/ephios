@@ -115,7 +115,7 @@ class QualificationsRequiredSignupMixin(_Base):
                     participant.qualifications.filter(
                         category__in=relevant_qualification_categories
                     )
-                    .order_by("title")
+                    .order_by("category", "title")
                     .values_list("title", flat=True)
                 ),
             ]

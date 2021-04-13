@@ -276,7 +276,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                     participation.participant.qualifications.filter(
                         category__in=relevant_qualification_categories
                     )
-                    .order_by("abbreviation")
+                    .order_by("category", "abbreviation")
                     .values_list("abbreviation", flat=True)
                 ),
                 "uuid": dispatched_section_uuid,
