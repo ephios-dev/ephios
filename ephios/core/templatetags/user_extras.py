@@ -38,7 +38,7 @@ def get_relevant_qualifications(qualification_queryset):
     global_preferences = global_preferences_registry.manager()
     qs = qualification_queryset.filter(
         category__in=global_preferences["general__relevant_qualification_categories"]
-    )
+    ).order_by("category", "abbreviation")
     return qs.values_list("abbreviation", flat=True)
 
 

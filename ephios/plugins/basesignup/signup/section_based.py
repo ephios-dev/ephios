@@ -275,7 +275,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "relevant_qualifications": ", ".join(
                     participation.participant.qualifications.filter(
                         category__in=relevant_qualification_categories
-                    ).values_list("abbreviation", flat=True)
+                    )
+                    .order_by("category", "abbreviation")
+                    .values_list("abbreviation", flat=True)
                 ),
                 "uuid": dispatched_section_uuid,
             }
