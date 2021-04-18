@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-04-18 22:45+0200\n"
 "PO-Revision-Date: 2021-04-18 21:08+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -1515,19 +1515,15 @@ msgstr ""
 #: .\core\views\log.py:25
 #, python-format
 msgid "%(value)s does not have any associated entries."
-msgstr ""
+msgstr "%(value)s hat keine Einträge."
 
 #: .\core\views\log.py:33
-#, fuzzy
-#| msgid "Active user"
 msgid "Acting User"
-msgstr "Aktiver Benutzer"
+msgstr "Handelnder Benutzer"
 
 #: .\core\views\log.py:40
-#, fuzzy
-#| msgid "Continue"
 msgid "Contents"
-msgstr "Weiter"
+msgstr "Inhalte"
 
 #: .\core\views\settings.py:16
 msgid "General"
@@ -1614,15 +1610,15 @@ msgstr "Funk"
 
 #: .\modellogging\models.py:47
 msgid "Log entry"
-msgstr ""
+msgstr "Änderungseintrag"
 
 #: .\modellogging\models.py:48
 msgid "Log entries"
-msgstr ""
+msgstr "Änderungseinträge"
 
 #: .\modellogging\recorders.py:254 .\modellogging\recorders.py:360
 msgid "removed"
-msgstr ""
+msgstr "entfernt"
 
 #: .\modellogging\templates\modellogging\logentry.html:6
 #, python-format
@@ -1631,6 +1627,9 @@ msgid ""
 "        %(class)s %(maybe_object)s was changed.\n"
 "    "
 msgstr ""
+"\n"
+"        %(class)s %(maybe_object)s wurde geändert.\n"
+"    "
 
 #: .\modellogging\templates\modellogging\logentry.html:10
 #, python-format
@@ -1639,6 +1638,9 @@ msgid ""
 "        %(class)s %(maybe_object)s was created.\n"
 "    "
 msgstr ""
+"\n"
+"        %(class)s %(maybe_object)s wurde erstellt.\n"
+"    "
 
 #: .\modellogging\templates\modellogging\logentry.html:14
 #, python-format
@@ -1647,14 +1649,17 @@ msgid ""
 "        %(class)s %(maybe_object)s was deleted.\n"
 "    "
 msgstr ""
+"\n"
+"        %(class)s %(maybe_object)s wurde gelöscht.\n"
+"    "
 
 #: .\modellogging\templates\modellogging\logentry_grouped_list.html:17
 msgid "This change was performed by a an admin user."
-msgstr ""
+msgstr "Diese Änderung wurde von einem Administrator durchgeführt."
 
 #: .\modellogging\templates\modellogging\statement.html:3
 msgid "<em>None</em>"
-msgstr ""
+msgstr "<em>Nichts</em>"
 
 #: .\plugins\basesignup\__init__.py:11
 msgid "Base Signup Plugin"
@@ -1833,68 +1838,60 @@ msgstr "Sie sind nicht qualifiziert für"
 
 #: .\plugins\eventautoqualification\__init__.py:10
 #: .\plugins\eventautoqualification\forms.py:60
-#, fuzzy
-#| msgid "Add qualification"
 msgid "Automatic qualification"
-msgstr "Qualifikation hinzufügen"
+msgstr "Automatische Qualifikation"
 
 #: .\plugins\eventautoqualification\__init__.py:13
 msgid ""
 "This plugin lets you configure events in a way that participants "
 "automatically aquire a qualification after participating."
 msgstr ""
+"Dieses Plugin lässt Sie Veranstaltungen so einstellen, dass Teilnehmende im "
+"Nachhinein automatisch Qualifikationen erhalten."
 
 #: .\plugins\eventautoqualification\forms.py:42
 msgid ""
 "You don't have permission to grant qualifications, so you can't edit these "
 "settings."
 msgstr ""
+"Sie haben nicht die Berechtigung, Qualifikationen zu erteilen, sodass Sie "
+"diese Einstellungen nicht bearbeiten können."
 
 #: .\plugins\eventautoqualification\models.py:15
-#, fuzzy
-#| msgid "Qualifications"
 msgid "Qualification"
-msgstr "Qualifikationen"
+msgstr "Qualifikation"
 
 #: .\plugins\eventautoqualification\models.py:17
 msgid "Expiration date"
 msgstr "Ablaufdatum"
 
 #: .\plugins\eventautoqualification\models.py:20
-#, fuzzy
-#| msgid "shift"
 msgid "any shift"
-msgstr "Schicht"
+msgstr "irgendeine Schicht"
 
 #: .\plugins\eventautoqualification\models.py:21
-#, fuzzy
-#| msgid "Delete shift"
 msgid "every shift"
-msgstr "Schicht löschen"
+msgstr "jede Schicht"
 
 #: .\plugins\eventautoqualification\models.py:22
-#, fuzzy
-#| msgid "Delete shift"
 msgid "last shift"
-msgstr "Schicht löschen"
+msgstr "letzte Schicht"
 
 #: .\plugins\eventautoqualification\models.py:27
 msgid "Required attendance"
-msgstr ""
+msgstr "Erforderliche Anwesenheit"
 
 #: .\plugins\eventautoqualification\models.py:31
 msgid "Only extend or reactivate existing qualification"
-msgstr ""
+msgstr "nur bereits vorhandene Qualifikationen reaktivieren oder verlängern"
 
 #: .\plugins\eventautoqualification\models.py:34
-#, fuzzy
-#| msgid "Your participation has been confirmed"
 msgid "Qualification must be confirmed afterwards"
-msgstr "Ihre Teilnahme wurde bestätigt"
+msgstr "Qualifikation muss im Nachhinein bestätigt werden"
 
 #: .\plugins\eventautoqualification\models.py:41
 msgid "event auto qualification configuration"
-msgstr ""
+msgstr "Veranstaltungs-Autoqualifikations-Konfiguration"
 
 #: .\plugins\guests\__init__.py:11
 msgid "Guest Participations"
@@ -1928,10 +1925,8 @@ msgid "Guests"
 msgstr "Gäste"
 
 #: .\plugins\guests\models.py:62
-#, fuzzy
-#| msgid "Guest Participations"
 msgid "guest participant"
-msgstr "Gastteilnahmen"
+msgstr "Gastteilnehmender"
 
 #: .\plugins\guests\templates\guests\guestuser_form.html:7
 #: .\plugins\guests\templates\guests\guestuser_form.html:16
@@ -1976,55 +1971,40 @@ msgstr "Seiten"
 
 #: .\plugins\pages\templates\pages\page_confirm_delete.html:6
 #: .\plugins\pages\templates\pages\page_confirm_delete.html:11
-#, fuzzy
-#| msgid "Delete user"
 msgid "Delete page"
-msgstr "Benutzer löschen"
+msgstr "Seite löschen"
 
 #: .\plugins\pages\templates\pages\page_confirm_delete.html:15
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            Are you sure you want to delete the user %(name)s "
-#| "(%(userprofile)s)?\n"
-#| "        "
+#, python-format
 msgid ""
 "\n"
 "            Are you sure you want to delete the page \"%(title)s\"?\n"
 "        "
 msgstr ""
 "\n"
-"            Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich "
-"löschen?\n"
+"            Sind sie sicher, dass Sie die Seite \"%(title)s\" löschen "
+"möchten?\n"
 "        "
 
 #: .\plugins\pages\templates\pages\page_form.html:8
-#, fuzzy
-#| msgid "Add page"
 msgid "Edit page"
-msgstr "Seite hinzufügen"
+msgstr "Seite bearbeiten"
 
 #: .\plugins\pages\templates\pages\page_form.html:10
-#, fuzzy
-#| msgid "Create new event"
 msgid "Create new page"
-msgstr "Neue Veranstaltung anlegen"
+msgstr "Neue Seite anlegen"
 
 #: .\plugins\pages\templates\pages\page_list.html:6
 msgid "Add page"
 msgstr "Seite hinzufügen"
 
 #: .\plugins\pages\views.py:34 .\plugins\pages\views.py:43
-#, fuzzy
-#| msgid "Settings saved successfully."
 msgid "Page saved successfully."
-msgstr "Einstellungen erfolgreich gespeichert."
+msgstr "Seite gespeichert."
 
 #: .\plugins\pages\views.py:51
-#, fuzzy
-#| msgid "Logged out successfully."
 msgid "Page deleted successfully."
-msgstr "Erfolgreich abgemeldet."
+msgstr "Seite erfolgreich gelöscht."
 
 #: .\templates\400.html:5 .\templates\400.html:9
 msgid "Bad request"
