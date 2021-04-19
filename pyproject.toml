@@ -53,7 +53,7 @@ autoflake = "^1.4"
 Sphinx = "^3.5.4"
 sphinx-rtd-theme = "^0.5.2"
 sphinx-intl = "^2.0.1"
-sphinx-github-changelog = "^1.0.2"
+sphinx-github-changelog = "^1.0.8"
 
 [tool.black]
 line-length = 100
