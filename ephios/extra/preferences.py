@@ -1,5 +1,6 @@
 import json
 
+from django import forms
 from dynamic_preferences.types import (
     BasePreferenceType,
     BaseSerializer,
@@ -26,3 +27,5 @@ class DictSerializer(BaseSerializer):
 
 class DictPreference(BasePreferenceType):
     serializer = DictSerializer
+    field_class = forms.CharField
+    widget = forms.Textarea
