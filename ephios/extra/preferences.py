@@ -15,7 +15,7 @@ class CustomModelMultipleChoicePreference(ModelMultipleChoicePreference):
         pass
 
 
-class DictSerializer(BaseSerializer):
+class JSONSerializer(BaseSerializer):
     @classmethod
     def clean_to_db_value(cls, value):
         return json.dumps(value, cls=CustomJSONEncoder)
@@ -25,7 +25,7 @@ class DictSerializer(BaseSerializer):
         return json.loads(value, cls=CustomJSONDecoder)
 
 
-class DictPreference(BasePreferenceType):
-    serializer = DictSerializer
+class JSONPreference(BasePreferenceType):
+    serializer = JSONSerializer
     field_class = forms.CharField
     widget = forms.Textarea
