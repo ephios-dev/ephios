@@ -1,4 +1,5 @@
 import pytest
+from django.core import mail
 from django.core.management import call_command
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
@@ -79,3 +80,12 @@ class TestNotifications:
         )
         call_command("send_notifications")
         assert Notification.objects.count() == 0
+
+    def test_inactive_user(self, volunteer):
+        self._enable_all_notifications(volunteer)
+        volunteer.is_active = False
+        volunteer.save()
+        ProfileUpdateNotification.send(volunteer)
+        assert Notification.objects.count() == 1
+        call_command("send_notifications")
+        assert len(mail.outbox) == 0
