@@ -333,15 +333,21 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                 Notification(
                     slug=cls.slug,
                     user=user,
-                    data=dict(email=participant.email, event_id=event.id, content=content),
+                    data=dict(
+                        email=participant.email,
+                        event_id=event.id,
+                        content=content,
+                        event_title=event.title,
+                    ),
                 )
             )
         Notification.objects.bulk_create(notifications)
 
     @classmethod
     def get_subject(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("Information for your participation at {title}").format(title=event.title)
+        return _("Information for your participation at {title}").format(
+            title=notification.data.get("event_title")
+        )
 
     @classmethod
     def as_plaintext(cls, notification):
