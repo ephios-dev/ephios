@@ -62,8 +62,8 @@ jobs:
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          playbook: provision.yml
-          directory: ./uberspace/
+          playbook: uberspace/provision.yml
+          directory: ./
           key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
           options: |
             --inventory ephios/.github/ci/staging-inventory.yml
