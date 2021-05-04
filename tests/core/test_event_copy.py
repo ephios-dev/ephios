@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytest
 import recurrence
 from django.urls import reverse
 from guardian.shortcuts import assign_perm
@@ -9,7 +8,6 @@ from ephios.core.models import Event, Shift
 from ephios.extra.permissions import get_groups_with_perms
 
 
-@pytest.mark.django_db
 class TestEventCopy:
     def assert_dates(self, event, occurrences, volunteers, planners):
         for shift_date in occurrences:

@@ -1,11 +1,9 @@
 import re
 
-import pytest
 from django.urls import reverse
 from django.utils.formats import date_format
 
 
-@pytest.mark.django_db
 class TestUserProfileView:
     def test_no_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:profile"), user=volunteer)

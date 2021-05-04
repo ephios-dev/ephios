@@ -9,7 +9,6 @@ from ephios.core.models import Notification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
 
 
-@pytest.mark.django_db
 class TestUserProfileView:
     def test_userprofile_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_list"), user=volunteer, status=403)

@@ -5,7 +5,6 @@ from dynamic_preferences.registries import global_preferences_registry
 from ephios.plugins.guests.models import EventGuestShare, GuestParticipation, GuestUser
 
 
-@pytest.mark.django_db
 def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.guests"]
@@ -47,7 +46,6 @@ def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     django_app.get(participant.reverse_event_detail(event), status=403)
 
 
-@pytest.mark.django_db
 def test_guest_settings_flow(django_app, event, planner):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup"]
@@ -85,7 +83,6 @@ def test_guest_settings_flow(django_app, event, planner):
     assert not event.guest_share.active
 
 
-@pytest.mark.django_db
 def test_redirect_for_logged_in_users(django_app, event, volunteer):
     share = EventGuestShare.objects.create(event=event, active=True)
     assert (

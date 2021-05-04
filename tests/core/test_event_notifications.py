@@ -1,4 +1,3 @@
-import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
@@ -6,7 +5,6 @@ from ephios.core.forms.events import EventNotificationForm
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification, UserProfile
 
 
-@pytest.mark.django_db
 class TestEventNotifications:
     def test_mail_new_event(self, django_app, event, volunteer, planner, groups):
         form = django_app.get(

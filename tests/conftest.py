@@ -30,6 +30,12 @@ def csrf_exempt_django_app(django_app_factory):
     return django_app_factory(csrf_checks=False)
 
 
+def pytest_collection_modifyitems(items):
+    # mark all tests for use with django_db, as we basically need it everywhere
+    for item in items:
+        item.add_marker("django_db")
+
+
 @pytest.fixture(autouse=True)
 def enable_plugins():
     preferences = global_preferences_registry.manager()

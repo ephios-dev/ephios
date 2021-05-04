@@ -7,7 +7,6 @@ from ephios.core.signup import LocalParticipation, SignupStats, get_conflicting_
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 
-@pytest.mark.django_db
 def test_signup_stats_addition(django_app):
     a = SignupStats(4, 2, 3, None)
     b = SignupStats(5, 2, 3, 5)
@@ -16,14 +15,12 @@ def test_signup_stats_addition(django_app):
     assert b + c == SignupStats(8, 4, 3, 7)
 
 
-@pytest.mark.django_db
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
     assert not conflicting_event.shifts.first().signup_method.can_sign_up(
         volunteer.as_participant()
     )
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "a_times,b_times,conflict_expected",
     [

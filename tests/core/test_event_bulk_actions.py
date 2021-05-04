@@ -1,10 +1,8 @@
-import pytest
 from django.urls import reverse
 
 from ephios.core.models import Event
 
 
-@pytest.mark.django_db
 class TestEventBulkDelete:
     def test_empty_list(self, django_app, planner, event, groups):
         event_count = Event.objects.count()

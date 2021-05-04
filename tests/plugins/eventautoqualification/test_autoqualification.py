@@ -8,7 +8,6 @@ from ephios.core.signals import periodic_signal
 from ephios.plugins.eventautoqualification.models import EventAutoQualificationConfiguration
 
 
-@pytest.mark.django_db
 def test_planners_cant_edit_autoqualification(django_app, event, planner):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
@@ -24,7 +23,6 @@ def test_planners_cant_edit_autoqualification(django_app, event, planner):
     )
 
 
-@pytest.mark.django_db
 def test_autoqualification_settings_flow(django_app, event, manager, qualifications):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
@@ -55,7 +53,6 @@ def test_autoqualification_settings_flow(django_app, event, manager, qualificati
     assert not EventAutoQualificationConfiguration.objects.exists()
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "year,mode,signup_states,consequence_expected",
     [
