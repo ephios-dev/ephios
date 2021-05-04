@@ -1,0 +1,21 @@
+{% load i18n %}
+{% load user_extras %}
+
+{% with request.user|pending_consequences as pending_consequences %}
+    {% if pending_consequences|length > 0 %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "Your requests" %}</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for c in pending_consequences %}
+                    <li class="list-group-item">
+                        <i class="far fa-clock"></i>
+                        {{ c.render }}
+                    </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endwith %}

@@ -72,6 +72,7 @@
     {% endwith %}
 
     {% include "core/fragments/approve_consequences.html" %}
+    {% include "core/fragments/pending_consequences.html" %}
 
     {% with logentries=request.user|visible_logentries %}
         {% if logentries %}

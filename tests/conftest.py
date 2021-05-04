@@ -140,6 +140,7 @@ def groups(superuser, manager, planner, volunteer):
     assign_perm("core.view_past_event", planners)
     for perm in MANAGEMENT_PERMISSIONS:
         assign_perm(perm, managers)
+    assign_perm("decide_workinghours_for_group", managers, volunteers)
     return managers, planners, volunteers
 
 

@@ -3,7 +3,7 @@ from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
 
-from ephios.core.consequences import editable_consequences
+from ephios.core.consequences import editable_consequences, pending_consequences
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup import get_conflicting_participations
 
@@ -16,6 +16,9 @@ def editable_consequences_tag(user, states=None):
     if states:
         qs = qs.filter(state__in=states.split(" "))
     return qs
+
+
+register.filter(name="pending_consequences", filter_func=pending_consequences)
 
 
 @register.filter(name="workhour_items")

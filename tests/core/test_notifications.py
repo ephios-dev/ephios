@@ -6,6 +6,8 @@ from guardian.shortcuts import get_users_with_perms
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
 from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import (
+    ConsequenceApprovedNotification,
+    ConsequenceDeniedNotification,
     CustomEventParticipantNotification,
     EventReminderNotification,
     NewEventNotification,
@@ -87,3 +89,11 @@ class TestNotifications:
         assert Notification.objects.count() == 1
         call_command("send_notifications")
         assert len(mail.outbox) == 0
+
+    def test_consequence_notifications(self, volunteer, workinghours_consequence):
+        self._enable_all_notifications(volunteer)
+        ConsequenceApprovedNotification.send(workinghours_consequence)
+        ConsequenceDeniedNotification.send(workinghours_consequence)
+        assert Notification.objects.count() == 2
+        call_command("send_notifications")
+        assert Notification.objects.count() == 0

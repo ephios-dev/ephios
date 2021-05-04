@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
-from ephios.core.models.users import Notification
+from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
 from ephios.core.signup import LocalUserParticipant
 
@@ -354,6 +354,46 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
         return notification.data.get("content")
 
 
+class ConsequenceApprovedNotification(AbstractNotificationHandler):
+    slug = "ephios_consequence_approved"
+    title = _("Your request has been approved")
+
+    @classmethod
+    def send(cls, consequence: Consequence):
+        Notification.objects.create(
+            slug=cls.slug, user=consequence.user, data=dict(consequence_id=consequence.id)
+        )
+
+    @classmethod
+    def get_subject(cls, notification):
+        return _("Your request has been approved")
+
+    @classmethod
+    def as_plaintext(cls, notification):
+        consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
+        return _('"{consequence}" has been approved.').format(consequence=consequence)
+
+
+class ConsequenceDeniedNotification(AbstractNotificationHandler):
+    slug = "ephios_consequence_denied"
+    title = _("Your request has been denied")
+
+    @classmethod
+    def send(cls, consequence: Consequence):
+        Notification.objects.create(
+            slug=cls.slug, user=consequence.user, data=dict(consequence_id=consequence.id)
+        )
+
+    @classmethod
+    def get_subject(cls, notification):
+        return _("Your request has been denied")
+
+    @classmethod
+    def as_plaintext(cls, notification):
+        consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
+        return _('"{consequence}" has been denied.').format(consequence=consequence)
+
+
 CORE_NOTIFICATION_TYPES = [
     ProfileUpdateNotification,
     NewProfileNotification,
@@ -363,4 +403,6 @@ CORE_NOTIFICATION_TYPES = [
     NewEventNotification,
     EventReminderNotification,
     CustomEventParticipantNotification,
+    ConsequenceApprovedNotification,
+    ConsequenceDeniedNotification,
 ]
