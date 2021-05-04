@@ -9,7 +9,7 @@ from django.urls import reverse
 from ephios.core.consequences import (
     QualificationConsequenceHandler,
     editable_consequences,
-    my_pending_consequences,
+    pending_consequences,
 )
 from ephios.core.models import Consequence, Qualification
 
@@ -67,7 +67,7 @@ class TestQualificationConsequence:
         assert qualifications_consequence in editable_consequences(manager)
 
     def test_consequence_pends_for_user(self, volunteer, qualifications_consequence):
-        assert qualifications_consequence in my_pending_consequences(volunteer)
+        assert qualifications_consequence in pending_consequences(volunteer)
 
 
 class TestWorkingHourConsequence:
@@ -93,7 +93,7 @@ class TestWorkingHourConsequence:
         assert workinghours_consequence in editable_consequences(manager)
 
     def test_consequence_pends_for_user(self, volunteer, workinghours_consequence):
-        assert workinghours_consequence in my_pending_consequences(volunteer)
+        assert workinghours_consequence in pending_consequences(volunteer)
 
 
 def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualifications_consequence):

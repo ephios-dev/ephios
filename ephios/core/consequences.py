@@ -43,7 +43,7 @@ def editable_consequences(user):
     return qs.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
 
 
-def my_pending_consequences(user):
+def pending_consequences(user):
     qs = Consequence.objects.filter(user=user, state=Consequence.States.NEEDS_CONFIRMATION)
     return qs
 

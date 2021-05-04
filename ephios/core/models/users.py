@@ -313,6 +313,9 @@ class Consequence(Model):
         try:
             with transaction.atomic():
                 self.handler.execute(self)
+                from ephios.core.services.notifications.types import ConsequenceApprovedNotification
+
+                ConsequenceApprovedNotification.send(self)
         except Exception as e:  # pylint: disable=broad-except
             self.state = self.States.FAILED
             add_log_recorder(
@@ -335,6 +338,9 @@ class Consequence(Model):
             raise ConsequenceError(_("Consequence was executed or denied already."))
         self.state = self.States.DENIED
         self.save()
+        from ephios.core.services.notifications.types import ConsequenceDeniedNotification
+
+        ConsequenceDeniedNotification.send(self)
 
     def render(self):
         return self.handler.render(self)
