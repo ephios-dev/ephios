@@ -4,7 +4,6 @@ from django.urls import reverse
 from guardian.shortcuts import get_group_perms, get_objects_for_group
 
 
-@pytest.mark.django_db
 class TestGroupView:
     def test_group_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:group_list"), user=volunteer, status=403)

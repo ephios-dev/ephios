@@ -1,8 +1,6 @@
-import pytest
 from django.urls import reverse
 
 
-@pytest.mark.django_db
 class TestWorkingHours:
     def test_profile_without_hours(self, django_app, volunteer):
         response = django_app.get(reverse("core:profile"), user=volunteer)

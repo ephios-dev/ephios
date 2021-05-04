@@ -1,10 +1,8 @@
 from datetime import datetime
 
-import pytest
 from django.utils import timezone
 
 
-@pytest.mark.django_db
 def test_user_qualifications(qualified_volunteer, qualifications, tz):
     assert timezone.now().year < 2064  # update tests
     assert set(qualified_volunteer.qualifications) == {

@@ -1,10 +1,8 @@
-import pytest
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
 
 
-@pytest.mark.django_db
 def test_single_shift_pdf(django_app, planner, event, volunteer):
     response_no_participations = django_app.get(
         reverse("core:event_detail_pdf", kwargs=dict(pk=event.pk)),
@@ -21,7 +19,6 @@ def test_single_shift_pdf(django_app, planner, event, volunteer):
     assert response and response != response_no_participations
 
 
-@pytest.mark.django_db
 def test_multi_shift_pdf(django_app, planner, multi_shift_event, volunteer):
     response_no_participations = django_app.get(
         reverse("core:event_detail_pdf", kwargs=dict(pk=multi_shift_event.pk)),

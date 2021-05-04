@@ -1,6 +1,5 @@
 import itertools
 
-import pytest
 from django.urls import reverse
 
 from ephios.modellogging.log import add_log_recorder
@@ -8,7 +7,6 @@ from ephios.modellogging.models import LogEntry
 from ephios.modellogging.recorders import FixedMessageLogRecorder
 
 
-@pytest.mark.django_db
 def test_log_view(django_app, event, superuser):
     response = django_app.get(reverse("core:log"), user=superuser, status=200)
     assert response
@@ -16,7 +14,6 @@ def test_log_view(django_app, event, superuser):
     assert LogEntry.objects.count() > 5  # lots of entries for the fixtures
 
 
-@pytest.mark.django_db
 def test_log_for_event(django_app, event, superuser):
     response = django_app.get(event.get_absolute_url(), user=superuser, status=200).click(
         "View edit history"
@@ -26,7 +23,6 @@ def test_log_for_event(django_app, event, superuser):
         assert logentry.attached_to_object == event
 
 
-@pytest.mark.django_db
 def test_fixed_log_message(django_app, event, superuser):
     # need show_value_statement as the fixuture is still holding the creation logentry
     add_log_recorder(
@@ -40,7 +36,6 @@ def test_fixed_log_message(django_app, event, superuser):
     assert "a fixed message" in response
 
 
-@pytest.mark.django_db
 def test_event_permission_changes_get_logged(django_app, event, superuser, qualified_volunteer):
     event_form = django_app.get(
         reverse("core:event_edit", kwargs=dict(pk=event.pk)),
@@ -53,7 +48,6 @@ def test_event_permission_changes_get_logged(django_app, event, superuser, quali
     assert LogEntry.objects.count() == pre_count + 1
 
 
-@pytest.mark.django_db
 def test_group_logging(django_app, superuser, groups, qualified_volunteer):
     pre_count = LogEntry.objects.count()
     __, planners, __ = groups
@@ -76,11 +70,9 @@ def test_group_logging(django_app, superuser, groups, qualified_volunteer):
     assert "Can add events: yes → no" in response
 
 
-@pytest.mark.django_db
 def test_user_cant_access_log(django_app, qualified_volunteer):
     django_app.get(reverse("core:log"), user=qualified_volunteer, status=403)
 
 
-@pytest.mark.django_db
 def test_managers_can_access_log(django_app, manager, groups):
     django_app.get(reverse("core:log"), user=manager, status=200)

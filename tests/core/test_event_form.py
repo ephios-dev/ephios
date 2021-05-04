@@ -1,6 +1,5 @@
 from datetime import date, time
 
-import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
@@ -8,7 +7,6 @@ from ephios.core.signup import AbstractParticipation, LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
 
 
-@pytest.mark.django_db
 def test_create_event(django_app, planner, superuser, service_event_type, groups):
     managers, planners, volunteers = groups
 
@@ -43,7 +41,6 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     }  # superuser is in planner group
 
 
-@pytest.mark.django_db
 def test_edit_event_with_participating_responsible(
     django_app, planner, qualified_volunteer, event, groups
 ):
@@ -60,7 +57,6 @@ def test_edit_event_with_participating_responsible(
     event_form.submit()
 
 
-@pytest.mark.django_db
 def test_add_responsible_user_to_event(django_app, planner, event, responsible_user):
     response = django_app.get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
     # select2 selects must be forced as they don't have html options
@@ -71,7 +67,6 @@ def test_add_responsible_user_to_event(django_app, planner, event, responsible_u
     ) == {responsible_user}
 
 
-@pytest.mark.django_db
 def test_participating_users_can_see_otherwise_invisible_event(
     django_app, planner, event, responsible_user, volunteer
 ):

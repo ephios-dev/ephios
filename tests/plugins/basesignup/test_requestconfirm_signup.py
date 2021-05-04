@@ -1,11 +1,9 @@
-import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
 
 
-@pytest.mark.django_db
 def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     # request a participation as volunteer
     assert volunteer in get_users_with_perms(event, only_with_perms_in=["view_event"])
@@ -34,7 +32,6 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     )
 
 
-@pytest.mark.django_db
 def test_request_confirm_decline_flow(django_app, volunteer, planner, event):
     # decline a participation as volunteer
     assert volunteer in get_users_with_perms(event, only_with_perms_in=["view_event"])
@@ -50,7 +47,6 @@ def test_request_confirm_decline_flow(django_app, volunteer, planner, event):
     assert "already declined" in response
 
 
-@pytest.mark.django_db
 def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner, event):
     # confirm the participation as planner
     shift = event.shifts.first()

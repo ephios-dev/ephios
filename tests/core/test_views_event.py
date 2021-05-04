@@ -1,8 +1,6 @@
-import pytest
 from django.urls import reverse
 
 
-@pytest.mark.django_db
 def test_slug_redirect(django_app, volunteer, event):
     response = django_app.get(
         reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
@@ -13,7 +11,6 @@ def test_slug_redirect(django_app, volunteer, event):
     assert event.title in response
 
 
-@pytest.mark.django_db
 def test_unsaved_event_warning(django_app, planner, groups, service_event_type):
     event_form = django_app.get(
         reverse("core:event_create", kwargs=dict(type=service_event_type.pk)),
