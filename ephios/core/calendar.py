@@ -21,8 +21,8 @@ class ShiftCalendar(HTMLCalendar):
 
     def formatmonthname(self, theyear, themonth, withyear=True):
         dt = datetime(theyear, themonth, 1)
-        return '<tr><th colspan="7" class="month">{month} {year}</th></tr>'.format(
-            month=date_format(dt, format="b"), year=theyear
+        return '<tr><th colspan="7" class="month">{monthyear}</th></tr>'.format(
+            monthyear=date_format(dt, format="b Y")
         )
 
     def formatweekday(self, day):
