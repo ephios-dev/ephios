@@ -1,9 +1,12 @@
-from calendar import LocaleHTMLCalendar
-from datetime import date
+from calendar import HTMLCalendar, day_abbr
+from datetime import date, datetime
 from itertools import groupby
 
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _
 
-class ShiftCalendar(LocaleHTMLCalendar):
+
+class ShiftCalendar(HTMLCalendar):
     cssclass_month = "table table-fixed"
 
     def __init__(self, shifts, *args, **kwargs):
@@ -15,6 +18,17 @@ class ShiftCalendar(LocaleHTMLCalendar):
     def formatmonth(self, theyear, themonth, withyear=True):
         self.year, self.month = theyear, themonth
         return super().formatmonth(theyear, themonth)
+
+    def formatmonthname(self, theyear, themonth, withyear=True):
+        dt = datetime(theyear, themonth, 1)
+        return '<tr><th colspan="7" class="month">{month} {year}</th></tr>'.format(
+            month=date_format(dt, format="b"), year=theyear
+        )
+
+    def formatweekday(self, day):
+        return '<th class="{cssclasses}">{day}</th>'.format(
+            cssclasses=self.cssclasses[day], day=_(day_abbr[day])
+        )
 
     def formatday(self, day, weekday):
         if day != 0:

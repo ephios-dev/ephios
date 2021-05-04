@@ -15,7 +15,6 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
-from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
@@ -337,7 +336,7 @@ class EventCalendarView(TemplateView):
         year = int(self.request.GET.get("year", today.year))
         month = int(self.request.GET.get("month", today.month))
         shifts = Shift.objects.filter(start_time__month=month, start_time__year=year)
-        calendar = ShiftCalendar(shifts, locale=get_language())
+        calendar = ShiftCalendar(shifts)
         kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
         nextyear, nextmonth = _nextmonth(year, month)
         kwargs.setdefault(
