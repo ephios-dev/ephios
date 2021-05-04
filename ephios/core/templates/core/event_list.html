@@ -11,7 +11,17 @@ visible
 
 {% block content %}
     <div class="page-header">
-        <h1>{% translate "Events" %}</h1>
+        <h1>{% translate "Events" %}
+            <small class="float-right">
+                <form method="post" action="{% url "core:event_list_type_setting" %}">
+                    {% csrf_token %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-secondary"><span class="fa fa-list"></span></button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" name="event_list_view_type" value="calendar"><span class="fa fa-calendar"></span></button>
+                    </div>
+                </form>
+            </small>
+        </h1>
     </div>
     <form method="post">
         {% csrf_token %}

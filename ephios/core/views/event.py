@@ -24,6 +24,7 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
+    RedirectView,
     TemplateView,
     UpdateView,
 )
@@ -42,6 +43,12 @@ from ephios.core.services.notifications.types import (
 from ephios.core.signals import event_forms
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
 from ephios.extra.permissions import get_groups_with_perms
+
+
+def current_event_list_view(request):
+    if request.session.get("event_list_view_type", "calendar") == "calendar":
+        return EventCalendarView.as_view()(request)
+    return EventListView.as_view()(request)
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -326,18 +333,27 @@ class EventCalendarView(TemplateView):
     template_name = "core/event_calendar.html"
 
     def get_context_data(self, **kwargs):
-        year, month = kwargs["year"], kwargs["month"]
+        today = datetime.today()
+        year = int(self.request.GET.get("year", today.year))
+        month = int(self.request.GET.get("month", today.month))
         shifts = Shift.objects.filter(start_time__month=month, start_time__year=year)
         calendar = ShiftCalendar(shifts, locale=get_language())
         kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
         nextyear, nextmonth = _nextmonth(year, month)
         kwargs.setdefault(
-            "next_month_url",
-            reverse("core:event_calendar", kwargs=dict(year=nextyear, month=nextmonth)),
+            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
         )
         prevyear, prevmonth = _prevmonth(year, month)
         kwargs.setdefault(
-            "previous_month_url",
-            reverse("core:event_calendar", kwargs=dict(year=prevyear, month=prevmonth)),
+            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
         )
         return super().get_context_data(**kwargs)
+
+
+class EventListTypeSettingView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("core:event_list")
+
+    def post(self, request, *args, **kwargs):
+        request.session["event_list_view_type"] = request.POST.get("event_list_view_type")
+        return self.get(request, *args, **kwargs)
