@@ -46,7 +46,7 @@ from ephios.extra.permissions import get_groups_with_perms
 
 
 def current_event_list_view(request):
-    if request.session.get("event_list_view_type", "calendar") == "calendar":
+    if request.session.get("event_list_view_type", "list") == "calendar":
         return EventCalendarView.as_view()(request)
     return EventListView.as_view()(request)
 
