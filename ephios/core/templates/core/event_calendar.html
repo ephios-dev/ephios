@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load event_extras %}
+
+{% block title %}
+    {% translate "Events" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header mb-3">
+        <h1>{% trans "Events" %}
+            <small class="float-right">
+                <form method="post" action="{% url "core:event_list_type_setting" %}">
+                    {% csrf_token %}
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" name="event_list_view_type" value="list"><span class="fa fa-list"></span></button>
+                        <button type="button" class="btn btn-sm btn-secondary"><span class="fa fa-calendar"></span></button>
+                    </div>
+                </form>
+            </small>
+        </h1>
+    </div>
+    <div class="d-flex justify-content-between mb-2">
+        <a class="btn btn-outline-secondary" href="{{ previous_month_url }}">{% translate "Previous month" %}</a>
+        <a class="btn btn-outline-secondary" href="{{ next_month_url }}">{% translate "Next month" %}</a>
+    </div>
+    {{ calendar }}
+{% endblock %}

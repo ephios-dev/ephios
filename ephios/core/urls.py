@@ -25,11 +25,12 @@ from ephios.core.views.event import (
     EventCreateView,
     EventDeleteView,
     EventDetailView,
-    EventListView,
+    EventListTypeSettingView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
+    current_event_list_view,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -51,7 +52,7 @@ from ephios.core.views.signup import LocalUserShiftActionView
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="index"),
-    path("events/", EventListView.as_view(), name="event_list"),
+    path("events/", current_event_list_view, name="event_list"),
     path(
         "events/<int:pk>/edit/",
         EventUpdateView.as_view(),
@@ -205,4 +206,9 @@ urlpatterns = [
     path("manifest.json", manifest, name="pwa_manifest"),
     path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
+    path(
+        "events/list_type_setting",
+        EventListTypeSettingView.as_view(),
+        name="event_list_type_setting",
+    ),
 ]
