@@ -1,10 +1,8 @@
-import pytest
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation
 
 
-@pytest.mark.django_db
 def test_user_event_feed(django_app, qualified_volunteer, event):
     response = django_app.get(event.get_absolute_url(), user=qualified_volunteer)
     response.form.submit(name="signup_choice", value="sign_up")

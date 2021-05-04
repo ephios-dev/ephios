@@ -1,4 +1,3 @@
-import pytest
 from django.core import mail
 from django.core.management import call_command
 from django.urls import reverse
@@ -19,7 +18,6 @@ from ephios.core.services.notifications.types import (
 )
 
 
-@pytest.mark.django_db
 class TestNotifications:
     def _enable_all_notifications(self, user):
         preferences = {}
