@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.db.models import IntegerField, OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
+from django.template.defaultfilters import floatformat
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
@@ -40,6 +41,11 @@ def editable_consequences(user):
     for handler in handlers:
         qs = handler.filter_queryset(qs, user)
     return qs.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
+
+
+def pending_consequences(user):
+    qs = Consequence.objects.filter(user=user, state=Consequence.States.NEEDS_CONFIRMATION)
+    return qs
 
 
 class ConsequenceError(Exception):
@@ -103,9 +109,9 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} obtains {hours:.1f} working hours for {reason} on {date}").format(
+        return _("{user} obtains {hours} working hours for {reason} on {date}").format(
             user=consequence.user.get_full_name(),
-            hours=consequence.data.get("hours"),
+            hours=floatformat(consequence.data.get("hours"), arg=-2),
             reason=consequence.data.get("reason"),
             date=date_format(consequence.data.get("date")),
         )

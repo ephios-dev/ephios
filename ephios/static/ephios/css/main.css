@@ -23,6 +23,10 @@ footer {
     pointer-events: none;
 }
 
+.btn-consequence {
+    width: 31px;
+}
+
 .twoColumns {
     -webkit-column-gap: 20px;
     -moz-column-gap: 20px;
