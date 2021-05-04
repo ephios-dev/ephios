@@ -53,9 +53,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ephios
-      - name: Read ansible inventory
-        id: getinventory
-        run: echo "::set-output name=inventory::$(cat ephios/.github/ci/staging-inventory.yml)"
 
       - name: Checkout ansible repo
         uses: actions/checkout@v2
@@ -68,7 +65,7 @@ jobs:
           playbook: provision.yml
           directory: ./uberspace/
           key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
-          inventory: ${{ steps.getinventory.outputs.inventory }}
           options: |
+            --inventory ephios/.github/ci/staging-inventory.yml
             --extra-vars package_name="${{steps.getwheel.outputs.path}}"
             --verbose
