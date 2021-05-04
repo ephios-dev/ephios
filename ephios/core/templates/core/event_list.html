@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 {% load static %}
 {% load i18n %}
 {% load event_extras %}
@@ -30,13 +31,21 @@ visible
                         {% endfor %}
                     </div>
                 </div>
-                <button class="btn btn-danger m-1" type="submit" name="delete"
-                        formaction="{% url "core:event_bulk_delete" %}"><span
-                        class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                <div class="bulk-actions">
+                    <button class="btn btn-danger m-1" type="submit" name="delete"
+                            formaction="{% url "core:event_bulk_delete" %}"><span
+                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                    {% event_bulk_actions %}
+                </div>
             </div>
         {% endif %}
 
         {% if event_list %}
+            <style nonce="{{ request.csp_nonce }}">
+                {% cache 900 "eventtype_colors" %}
+                    {% eventtype_colors %}
+                {% endcache %}
+            </style>
             <div class="list-group list-group-flush">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">
@@ -78,13 +87,13 @@ visible
                             {% endif %}
                         </div>
                         <a class="list-group-item-action py-2 event-list-item-link"
-                           href="{% url "core:event_detail" event.id %}">
+                           href="{{ event.get_absolute_url }}">
                             <div class="row m-0 py-0 flex-grow-1">
                                 <div class="col-lg">
                                     <h5 class="mb-0">
                                         {{ event.title }}
                                         <small class="float-right mr-lg-3"><span
-                                                class="badge badge-dark">{{ event.type }}</span></small>
+                                                class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
                                     </h5>
                                     <span class="w-100 text-secondary">
                                     {{ event.location }}
@@ -108,6 +117,9 @@ visible
                                     <p class="my-0 mr-1">
                                         <span class="fas fa-users"></span>
                                         {% with event.get_signup_stats as stats %}
+                                            {% if event.can_change and stats.requested_count > 0 %}
+                                                <span class="pending-indicator"></span>
+                                            {% endif %}
                                             {{ stats.signed_up_count }}
                                             {% if stats.max_count is not None %}
                                                 / {{ stats.max_count }}

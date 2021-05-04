@@ -134,6 +134,7 @@ class SectionBasedConfigurationForm(forms.Form):
                 for key in ("title", "qualifications", "min_count", "uuid")
             }
             for form in self.sections_formset
+            if not form.cleaned_data.get("DELETE")
         ]
         return sections
 
@@ -153,7 +154,7 @@ class SectionBasedSignupView(FormView, BaseSignupView):
     @cached_property
     def sections_participant_qualifies_for(self):
         return sections_participant_qualifies_for(
-            self.method.configuration.sections, self.request.user.as_participant()
+            self.method.configuration.sections, self.participant
         )
 
     def get_form(self, form_class=None):
@@ -184,13 +185,13 @@ class SectionBasedSignupView(FormView, BaseSignupView):
             # do straight signup if choosing is not enabled
             return super().signup_pressed(**kwargs)
 
-        if not self.method.can_sign_up(self.request.user.as_participant()):
+        if not self.method.can_sign_up(self.participant):
             # redirect a misled request
             messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(reverse("core:event_detail", kwargs=dict(pk=self.shift.event_id)))
+            return redirect(self.participant.reverse_event_detail(self.shift.event))
 
         # all good, redirect to the form
-        return redirect(reverse("core:signup_action", kwargs=dict(pk=self.shift.pk)))
+        return redirect(self.participant.reverse_signup_action(self.shift))
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):
@@ -240,20 +241,19 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             return ParticipationError(_("You are not qualified."))
 
     @property
-    def signup_checkers(self):
-        return super().signup_checkers + [self.check_qualification]
+    def _signup_checkers(self):
+        return super()._signup_checkers + [self.check_qualification]
 
     # pylint: disable=arguments-differ
-    def perform_signup(
-        self, participant: AbstractParticipant, preferred_section_uuid=None, **kwargs
-    ):
-        participation = super().perform_signup(participant, **kwargs)
+    def _configure_participation(
+        self, participation: AbstractParticipation, preferred_section_uuid=None, **kwargs
+    ) -> AbstractParticipation:
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice
             participation.data["dispatched_section_uuid"] = None
         participation.state = AbstractParticipation.States.REQUESTED
-        participation.save()
+        return participation
 
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, **kwargs)
@@ -275,7 +275,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "relevant_qualifications": ", ".join(
                     participation.participant.qualifications.filter(
                         category__in=relevant_qualification_categories
-                    ).values_list("abbreviation", flat=True)
+                    )
+                    .order_by("category", "abbreviation")
+                    .values_list("abbreviation", flat=True)
                 ),
                 "uuid": dispatched_section_uuid,
             }

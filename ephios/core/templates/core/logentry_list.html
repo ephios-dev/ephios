@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load param_replace %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% load utils %}
+{% load user_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Log" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% trans "Edit history" %}</h1>
+    </div>
+
+    <form action="" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                {% if filter_form.content_object %}
+                    <div id="div_id_user" class="form-group">
+                        <label for="id_user" class="">
+                            {% trans "Concerns" %}
+                        </label>
+                        <div class="">
+                            <h4 class="text-info d-flex justify-content-between align-items-start">
+                                <div>
+                                    {{ filter_form.content_object }}
+                                </div>
+                                <a class="btn-outline-info btn-sm d-block ml-1" href="?{% param_replace object_id="" %}">
+                                    <span class="fas fa-times"></span>
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="d-none">
+                        {{ filter_form.object_type }}
+                    </div>
+                {% else %}
+                    {{ filter_form.object_type|as_crispy_field }}
+                {% endif %}
+                {{ filter_form.object_id }}
+            </div>
+            <div class="col-md-3">
+                {{ filter_form.user|as_crispy_field }}
+            </div>
+            <div class="col-md-2">
+                {{ filter_form.date|as_crispy_field }}
+            </div>
+            <div class="col-md">
+                {{ filter_form.search|as_crispy_field }}
+            </div>
+            <div class="col-md-auto pb-3 d-flex flex-column justify-content-center">
+                <button type="submit" class="btn btn-outline-info">{% translate "Filter" %}</button>
+                <a class="btn btn-outline-secondary mt-1" href="?">{% translate "Clear" %}</a>
+            </div>
+        </div>
+    </form>
+
+
+    {% include 'modellogging/logentry_grouped_list.html' with logentries=object_list %}
+
+    {% include 'core/pagination.html' %}
+
+{% endblock %}

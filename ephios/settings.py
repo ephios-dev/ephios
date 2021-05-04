@@ -1,9 +1,16 @@
+import copy
 import os
 from email.utils import getaddresses
-from importlib import metadata
+
+try:
+    import importlib_metadata  # importlib is broken on python3.8, using backport
+except ImportError:
+    import importlib.metadata as importlib_metadata
 
 import environ
+from cryptography.hazmat.primitives import serialization
 from django.contrib.messages import constants
+from py_vapid import Vapid, b64urlencode
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -51,6 +58,8 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
+    "webpush",
+    "ephios.modellogging",
 ]
 
 EPHIOS_CORE_MODULES = [
@@ -59,11 +68,14 @@ EPHIOS_CORE_MODULES = [
 ]
 INSTALLED_APPS += EPHIOS_CORE_MODULES
 
-PLUGINS = [
+CORE_PLUGINS = [
     "ephios.plugins.basesignup",
     "ephios.plugins.pages",
+    "ephios.plugins.guests",
+    "ephios.plugins.eventautoqualification",
 ]
-for ep in metadata.entry_points().get("ephios.plugins", []):
+PLUGINS = copy.copy(CORE_PLUGINS)
+for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
     PLUGINS.append(ep.module)
 
 INSTALLED_APPS += PLUGINS
@@ -79,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "ephios.modellogging.middleware.LoggingRequestMiddleware",
 ]
 
 ROOT_URLCONF = "ephios.urls"
@@ -111,6 +124,12 @@ WSGI_APPLICATION = "ephios.wsgi.application"
 
 DATABASES = {"default": env.db_url()}
 
+# Caches
+CACHES = {"default": env.cache_url(default="locmemcache://")}
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+DJANGO_REDIS_IGNORE_EXCEPTIONS = True
+DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -119,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "ephios.core.utils.CustomMinimumLengthValidator",
+        "NAME": "ephios.core.services.password_reset.CustomMinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -171,6 +190,28 @@ DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
+# logging
+if not DEBUG:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "handlers": {
+            "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["mail_admins"],
+                "level": "ERROR",
+                "propagate": False,
+            },
+        },
+        "root": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+        },
+    }
+
+
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
@@ -193,9 +234,12 @@ if DEBUG:
 # bootstrap v5 or v6. See https://github.com/twbs/bootstrap/issues/25394 for details on the problem and
 # https://security.stackexchange.com/a/167244 on why allowing data: is considered okay
 CSP_IMG_SRC = ("'self'", "data:")
+CSP_STYLE_SRC = ("'self'",)
+CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 # django.contrib.messages
 MESSAGE_TAGS = {
@@ -205,3 +249,23 @@ MESSAGE_TAGS = {
     constants.WARNING: "alert-warning",
     constants.ERROR: "alert-danger",
 }
+
+# PWA
+PWA_APP_ICONS = [
+    {"src": "/static/ephios/img/ephios-192x.png", "sizes": "192x192", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
+    {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
+]
+
+# django-webpush
+if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
+    vp = Vapid().from_file(vapid_private_key_path)
+    WEBPUSH_SETTINGS = {
+        "VAPID_PUBLIC_KEY": b64urlencode(
+            vp.public_key.public_bytes(
+                serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+            )
+        ),
+        "VAPID_PRIVATE_KEY": vp,
+        "VAPID_ADMIN_EMAIL": ADMINS[0][1],
+    }

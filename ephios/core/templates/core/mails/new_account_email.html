@@ -1,0 +1,10 @@
+{% extends "email_base.html" %}
+{% load i18n %}
+{% block content %}
+    {% trans "You're receiving this email because a new account has been created for you at ephios." %}
+    {% trans "Please go to the following page and choose a new password:" %}
+    {% block reset_link %}
+        <a href="{{ site_url }}{% url 'password_reset_confirm' uidb64=uidb64 token=token %}">{% trans "Set password" %}</a>
+    {% endblock %}
+    {% trans "Your username is your email address:" %} {{ email }}
+{% endblock %}

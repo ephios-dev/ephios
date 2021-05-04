@@ -16,6 +16,10 @@
 
 
 # -- Project information -----------------------------------------------------
+import os
+from pathlib import Path
+
+import environ
 
 project = "ephios"
 copyright = "2021, ephios-dev"
@@ -29,7 +33,10 @@ author = "ephios-dev"
 # ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
+    "sphinx_github_changelog",
 ]
+gettext_compact = "docs"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -51,3 +58,12 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# -- Setup django stuff -----------------------------------------------------
+os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
+os.environ["DEBUG"] = "False"
+environ.Env.read_env(env_file=str(Path(__file__).parent.parent.absolute() / ".env.example"))
+
+import django
+
+django.setup()

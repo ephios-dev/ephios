@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
@@ -10,18 +11,26 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
     TemplateView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users.views import UserPreferenceFormView
 
-from ephios.core import mail
-from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
+from ephios.core.forms.users import (
+    GroupForm,
+    QualificationGrantFormset,
+    UserNotificationPreferenceForm,
+    UserProfileForm,
+)
 from ephios.core.models import QualificationGrant, UserProfile
-from ephios.extra.permissions import CustomPermissionRequiredMixin
+from ephios.core.services.notifications.types import (
+    NewProfileNotification,
+    ProfileUpdateNotification,
+)
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
@@ -48,7 +57,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
                     to_attr=f"qualifications_for_category_{category.pk}",
                 )
             )
-        return qs
+        return qs.order_by("last_name", "first_name")
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
@@ -79,7 +88,7 @@ class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             if userprofile.is_active:
-                mail.send_account_creation_info_to_user(userprofile)
+                NewProfileNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
         return self.render_to_response(
             self.get_context_data(
@@ -125,11 +134,7 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            if (
-                userprofile.is_active
-                and userprofile.preferences["notifications__userprofile_update"]
-            ):
-                mail.send_account_update_info_to_user(userprofile)
+            ProfileUpdateNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
 
         return self.render_to_response(
@@ -154,12 +159,58 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
         return reverse("core:userprofile_list")
 
 
-class UserProfileSettingsView(LoginRequiredMixin, SuccessMessageMixin, UserPreferenceFormView):
-    template_name = "core/userprofile_settings.html"
+class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+    model = UserProfile
+    permission_required = "core.change_userprofile"
+    template_name = "core/userprofile_confirm_password_reset.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("confirm"):
+            form = PasswordResetForm(
+                {
+                    "email": self.object.email,
+                }
+            )
+            if form.is_valid():
+                form.save(request=request)
+                messages.info(
+                    request,
+                    _(
+                        "The user's password has been reset. An email was sent to {email}.".format(
+                            email=self.object.email
+                        )
+                    ),
+                )
+            else:
+                messages.error(
+                    request,
+                    _(
+                        "No valid email address ({email}). The password has not been reset.".format(
+                            email=self.object.email
+                        )
+                    ),
+                )
+            return redirect(reverse("core:userprofile_list"))
+        return self.render_to_response({"userprofile": self.object})
+
+
+class UserProfileNotificationsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/userprofile_notifications.html"
     success_message = _("Settings succesfully saved.")
 
+    def get_form(self, form_class=None):
+        return UserNotificationPreferenceForm(self.request.POST or None, user=self.request.user)
+
     def get_success_url(self):
-        return reverse("core:profile")
+        return reverse("core:profile_notifications")
+
+    def form_valid(self, form):
+        form.update_preferences()
+        return super().form_valid(form)
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

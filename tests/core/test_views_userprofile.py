@@ -2,16 +2,13 @@ from collections import OrderedDict
 from datetime import date, datetime
 
 import pytest
-from django.core import mail
 from django.urls import reverse
 from django.utils.timezone import make_aware
-from django.utils.translation import gettext as _
 
-from ephios.core.models import UserProfile
-from ephios.settings import SITE_URL
+from ephios.core.models import Notification, UserProfile
+from ephios.core.services.notifications.types import NewProfileNotification
 
 
-@pytest.mark.django_db
 class TestUserProfileView:
     def test_userprofile_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_list"), user=volunteer, status=403)
@@ -66,11 +63,8 @@ class TestUserProfileView:
         assert response.status_code == 302
         userprofile = UserProfile.objects.get(email=userprofile_email)
         assert userprofile.email == userprofile_email
-        assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == _("Welcome to ephios!")
-        assert SITE_URL in mail.outbox[0].body
-        assert userprofile_email in mail.outbox[0].body
-        assert mail.outbox[0].to == [userprofile_email]
+        assert Notification.objects.count() == 1
+        assert Notification.objects.first().slug == NewProfileNotification.slug
 
         assert userprofile.first_name == "testfirst"
         assert userprofile.last_name == "testlast"
@@ -113,3 +107,34 @@ class TestUserProfileView:
         assert response.status_code == 302
         with pytest.raises(UserProfile.DoesNotExist):
             UserProfile.objects.get(email=userprofile.email).exists()
+
+    def test_userprofile_password_reset(self, django_app, groups, volunteer, manager):
+        userprofile = volunteer
+        response = django_app.get(
+            reverse("core:userprofile_password_reset", kwargs={"pk": userprofile.id}),
+            user=manager,
+        )
+        assert response.status_code == 200
+        response.form.submit()
+        assert response.status_code == 200
+
+    def test_userprofile_edit_by_hr_allowed(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([volunteers.id])
+        response = form.submit()
+        assert response.status_code == 302
+        assert set(volunteer.groups.all()) == {volunteers}
+
+    def test_userprofile_edit_by_hr_forbidden(self, django_app, volunteer, hr_group, groups):
+        managers, planners, volunteers = groups
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
+        ).form
+        form["groups"].force_value([managers.id])
+        response = form.submit()
+        assert response.status_code == 200
+        assert set(volunteer.groups.all()) == {hr_group, volunteers}

@@ -14,7 +14,6 @@ from ephios.core.consequences import (
 from ephios.core.models import Consequence, Qualification
 
 
-@pytest.mark.django_db
 class TestQualificationConsequence:
     def test_render_qualification_granting(self, qualifications_consequence):
         assert qualifications_consequence.render()
@@ -71,7 +70,6 @@ class TestQualificationConsequence:
         assert qualifications_consequence in my_pending_consequences(volunteer)
 
 
-@pytest.mark.django_db
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
         form = django_app.get(reverse("core:request_workinghour"), user=volunteer).form
@@ -98,7 +96,6 @@ class TestWorkingHourConsequence:
         assert workinghours_consequence in my_pending_consequences(volunteer)
 
 
-@pytest.mark.django_db
 def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualifications_consequence):
     assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "confirm"}
@@ -111,7 +108,6 @@ def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualificati
     assert qualifications_consequence.state == Consequence.States.EXECUTED
 
 
-@pytest.mark.django_db
 def test_post_consequence_deny(csrf_exempt_django_app, superuser, qualifications_consequence):
     assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "deny"}

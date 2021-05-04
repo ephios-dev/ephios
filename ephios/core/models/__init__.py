@@ -8,6 +8,7 @@ from .events import (
 )
 from .users import (
     Consequence,
+    Notification,
     Qualification,
     QualificationCategory,
     QualificationGrant,

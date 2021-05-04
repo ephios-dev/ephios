@@ -1,0 +1,11 @@
+{% load crispy_forms_filters %}
+<div class="card mb-3">
+    <div class="card-header" data-toggle="collapse" data-target="#plugin-form-{{ form.prefix }}">
+        <a href="#">{{ form.heading }}</a>
+    </div>
+    <div id="plugin-form-{{ form.prefix }}" class="collapse{% if form.is_function_active %} show{% endif %}">
+        <div class="card-body">
+            {% crispy form %}
+        </div>
+    </div>
+</div>

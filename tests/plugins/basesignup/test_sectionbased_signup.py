@@ -41,7 +41,6 @@ def sectioned_shift(event, tz, qualifications):
     )
 
 
-@pytest.mark.django_db
 @pytest.mark.ignore_template_errors  # shift_form uses unbound object to look special for creation
 def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
     POST_DATA = OrderedDict(
@@ -86,12 +85,11 @@ def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
     assert len(shift.signup_method.configuration.sections) == 2
 
 
-@pytest.mark.django_db
 def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_shift):
     # request a participation as volunteer on *second* shift
     response = (
         django_app.get(
-            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
+            event.get_absolute_url(),
             user=qualified_volunteer,
         )
         .forms[1]
@@ -109,7 +107,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert (
         "You can not sign up for this shift."
         in django_app.get(
-            reverse("core:event_detail", kwargs=dict(pk=event.pk)),
+            event.get_absolute_url(),
             user=qualified_volunteer,
         )
         .forms[1]

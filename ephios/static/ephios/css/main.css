@@ -16,7 +16,7 @@ main {
 
 footer {
     height: 60px;
-    line-height: 3;
+    margin-top: 2rem;
 }
 
 .btn-disabled {
@@ -53,6 +53,22 @@ footer {
     text-align: left;
 }
 
+.unloading {
+    transition: filter 0.5s;
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+#unloading-spinner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -38vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+}
+
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
 @media (min-width: 992px) {
     .event-list-item-link {
@@ -70,4 +86,23 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
 */
 .select2 {
     width: 100% !important;
+}
+
+.no-display {
+    display: none;
+}
+
+.pending-indicator {
+    position: absolute;
+    top: 25px;
+    left: 28px;
+    z-index: 2;
+    display: block;
+    width: 10px;
+    height: 10px;
+    color: #ffffff;
+    background-image: linear-gradient(#54a3ff,#006eed);
+    background-clip: padding-box;
+    /*border: 1px solid #000000;*/
+    border-radius: 50%;
 }

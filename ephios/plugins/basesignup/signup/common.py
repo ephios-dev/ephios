@@ -15,7 +15,7 @@ _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 class MinMaxParticipantsMixin(_Base):
     @property
     def signup_checkers(self):
-        return super().signup_checkers + [self.check_maximum_number_of_participants]
+        return super()._signup_checkers + [self.check_maximum_number_of_participants]
 
     @staticmethod
     def check_maximum_number_of_participants(method, participant):
@@ -77,7 +77,7 @@ class QualificationsRequiredSignupMixin(_Base):
 
     @property
     def signup_checkers(self):
-        return super().signup_checkers + [self.check_qualification]
+        return super()._signup_checkers + [self.check_qualification]
 
     @staticmethod
     def check_qualification(method, participant):
@@ -114,7 +114,9 @@ class QualificationsRequiredSignupMixin(_Base):
                 ", ".join(
                     participant.qualifications.filter(
                         category__in=relevant_qualification_categories
-                    ).values_list("title", flat=True)
+                    )
+                    .order_by("category", "title")
+                    .values_list("title", flat=True)
                 ),
             ]
             for participant in self.shift.get_participants()

@@ -1,7 +1,12 @@
 from django.apps import AppConfig
-from dynamic_preferences.registries import global_preferences_registry, preference_models
+from dynamic_preferences.registries import PerInstancePreferenceRegistry, preference_models
 
-from .registries import event_type_preference_registry
+
+class EventTypeRegistry(PerInstancePreferenceRegistry):
+    pass
+
+
+event_type_preference_registry = EventTypeRegistry()
 
 
 class UserManagementConfig(AppConfig):

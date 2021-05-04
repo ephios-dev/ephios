@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Event notifications" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/event_notifications.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Event notifications" %}</h1>
+        <h4 class="text-muted">{{ event.title }} ({{ event.get_start_time }} - {{ event.get_end_time }})</h4>
+    </div>
+    {% crispy form %}
+{% endblock %}
