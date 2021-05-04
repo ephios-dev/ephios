@@ -18,10 +18,7 @@ def editable_consequences_tag(user, states=None):
     return qs
 
 
-@register.filter(name="pending_consequences")
-def pending_consequences_filter(user):
-    qs = pending_consequences(user)
-    return qs
+register.filter(name="pending_consequences", filter_func=pending_consequences)
 
 
 @register.filter(name="workhour_items")
