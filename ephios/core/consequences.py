@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.db.models import IntegerField, OuterRef, Q, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
-from django.utils.formats import date_format
+from django.utils.formats import date_format, number_format
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
 
@@ -108,9 +108,9 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} logs {hours:.1f} hours on {date}. Reason: {reason}").format(
+        return _("{user} logs {hours} hours on {date}. Reason: {reason}").format(
             user=consequence.user.get_full_name(),
-            hours=consequence.data.get("hours"),
+            hours=number_format(consequence.data.get("hours"), use_l10n=True, decimal_pos=2),
             reason=consequence.data.get("reason"),
             date=date_format(consequence.data.get("date")),
         )
