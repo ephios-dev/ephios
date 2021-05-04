@@ -12,7 +12,7 @@ from ephios.core import event_type_preference_registry, plugins
 from ephios.core.models import QualificationCategory, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
-from ephios.extra.preferences import CustomModelMultipleChoicePreference, DictPreference
+from ephios.extra.preferences import CustomModelMultipleChoicePreference, JSONPreference
 
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
@@ -58,7 +58,7 @@ class EnabledPlugins(MultipleChoicePreference):
 
 
 @user_preferences_registry.register
-class NotificationPreference(DictPreference):
+class NotificationPreference(JSONPreference):
     name = "notifications"
     verbose_name = _("Notification preferences")
     section = notifications_user_section

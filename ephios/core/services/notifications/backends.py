@@ -62,6 +62,8 @@ class AbstractNotificationBackend:
     @classmethod
     def user_prefers_sending(cls, notification):
         if notification.notification_type.unsubscribe_allowed and notification.user is not None:
+            if not notification.user.is_active:
+                return False
             backends = notification.user.preferences["notifications__notifications"].get(
                 notification.slug
             )
