@@ -11,56 +11,64 @@ jobs:
       matrix:
         python-version: [ 3.8 ]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: Gr1N/setup-poetry@v4
-    - name: Install dependencies
-      run: poetry install
-    - name: build
-      run: poetry build
-    - uses: actions/upload-artifact@v2
-      with:
-        name: ephios-dev-wheel
-        path: dist/ephios-*.whl
-        if-no-files-found: error
-        retention-days: 1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: Gr1N/setup-poetry@v4
+      - name: Install dependencies
+        run: poetry install
+      - name: build
+        run: poetry build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ephios-dev-wheel
+          path: dist/ephios-*.whl
+          if-no-files-found: error
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-20.04
     needs: build
     steps:
-    - uses: actions/download-artifact@v2
-      id: download
-      with:
-        name: ephios-dev-wheel
-        path: wheel
+      - uses: actions/download-artifact@v2
+        id: download
+        with:
+          name: ephios-dev-wheel
+          path: wheel
 
-    - name: get path to wheel
-      id: wheel
-      run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
+      - name: get path to wheel
+        id: getwheel
+        run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
 
-    - name: rsync wheel
-      run: |
-        echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > .staging-key
-        chmod 0600 .staging-key
-        rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel staghios@despina.uberspace.de:~
-        rm .staging-key
+      - name: rsync wheel
+        run: |
+          echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > .staging-key
+          chmod 0600 .staging-key
+          rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel staghios@despina.uberspace.de:~
+          rm .staging-key
 
-    - uses: actions/checkout@v2
-      with:
-        repository: 'ephios-dev/ephios-ansible'
 
-    - name: Run playbook
-      uses: dawidd6/action-ansible-playbook@v2
-      with:
-        playbook: deploy.yml
-        directory: ./uberspace/
-        key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
-        inventory: |
-          [servers]
-          despina.uberspace.de ansible_user=staghios domain=staging.ephios.de smtp_mailbox=noreply admin_email="Ephios Admins <admin@ephios.de>"
-        options: |
-          --extra-vars package_name="${{steps.wheel.outputs.path}}"
-          --verbose
+      - name: Checkout ephios repo
+        uses: actions/checkout@v2
+        with:
+          path: ephios
+      - name: Read ansible inventory
+        id: getinventory
+        run: echo "::set-output name=inventory::$(cat ephios/.github/ci/staging-inventory.yml)"
+
+      - name: Checkout ansible repo
+        uses: actions/checkout@v2
+        with:
+          repository: 'ephios-dev/ephios-ansible'
+
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: provision.yml
+          directory: ./uberspace/
+          key: ${{secrets.STAGING_SSH_PRIVATE_KEY}}
+          inventory: ${{ steps.getinventory.outputs.inventory }}
+          options: |
+            --extra-vars package_name="${{steps.getwheel.outputs.path}}"
+            --verbose
