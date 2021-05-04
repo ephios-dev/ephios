@@ -94,3 +94,6 @@ class TestNotifications:
         self._enable_all_notifications(volunteer)
         ConsequenceApprovedNotification.send(workinghours_consequence)
         ConsequenceDeniedNotification.send(workinghours_consequence)
+        assert Notification.objects.count() == 2
+        call_command("send_notifications")
+        assert Notification.objects.count() == 0
