@@ -1,5 +1,6 @@
 import functools
 import json
+from calendar import _nextmonth, _prevmonth
 from datetime import datetime, timedelta
 
 from django.contrib import messages
@@ -12,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
 from django.utils.translation import gettext as _
 from django.views import View
@@ -21,6 +23,7 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
+    RedirectView,
     TemplateView,
     UpdateView,
 )
@@ -28,6 +31,7 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 from recurrence.forms import RecurrenceField
 
+from ephios.core.calendar import ShiftCalendar
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
 from ephios.core.models import Event, EventType, Shift
 from ephios.core.services.notifications.types import (
@@ -38,6 +42,12 @@ from ephios.core.services.notifications.types import (
 from ephios.core.signals import event_forms
 from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
 from ephios.extra.permissions import get_groups_with_perms
+
+
+def current_event_list_view(request):
+    if request.session.get("event_list_view_type", "list") == "calendar":
+        return EventCalendarView.as_view()(request)
+    return EventListView.as_view()(request)
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -316,3 +326,33 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
+
+
+class EventCalendarView(TemplateView):
+    template_name = "core/event_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        today = datetime.today()
+        year = int(self.request.GET.get("year", today.year))
+        month = int(self.request.GET.get("month", today.month))
+        shifts = Shift.objects.filter(start_time__month=month, start_time__year=year)
+        calendar = ShiftCalendar(shifts)
+        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
+        nextyear, nextmonth = _nextmonth(year, month)
+        kwargs.setdefault(
+            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
+        )
+        prevyear, prevmonth = _prevmonth(year, month)
+        kwargs.setdefault(
+            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
+        )
+        return super().get_context_data(**kwargs)
+
+
+class EventListTypeSettingView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("core:event_list")
+
+    def post(self, request, *args, **kwargs):
+        request.session["event_list_view_type"] = request.POST.get("event_list_view_type")
+        return self.get(request, *args, **kwargs)
