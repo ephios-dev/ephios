@@ -27,7 +27,11 @@
                         <li>
                             {{ section.title }}
                             <small class="text-secondary float-right">
-                                {{ users|length }}/{{ section.min_count }}
+                                {% if section.max_count %}
+                                {{ users|length }}/{{ section.max_count }}&nbsp;&nbsp;
+                                {% else %}
+                                {{ users|length }}/{{ section.min_count }}+
+                                {% endif %}
                             </small>
                             <ul>
                                 {% for user in users %}
