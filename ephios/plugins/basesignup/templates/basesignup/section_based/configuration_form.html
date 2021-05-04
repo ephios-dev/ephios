@@ -16,19 +16,22 @@
                 {% for section_form in form.sections_formset %}
                     <div class="list-group-item" data-formset-form>
                         <div class="form-row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {{ section_form.title|as_crispy_field }}
                             </div>
                             <div class="col-md-2">
                                 {{ section_form.min_count|as_crispy_field }}
                             </div>
+                            <div class="col-md-2">
+                                {{ section_form.max_count|as_crispy_field }}
+                            </div>
                             <div class="col-md-4">
                                 {{ section_form.qualifications|as_crispy_field }}
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <button class="btn btn-link" type="button"
                                         data-formset-delete-button><span
-                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                        class="fas fa-trash-alt"></span></button>
                             </div>
                         </div>
                         <div class="d-none">{{ section_form.DELETE }}{{ section_form.uuid }}</div>

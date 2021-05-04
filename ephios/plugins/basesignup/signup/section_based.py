@@ -104,6 +104,7 @@ class SectionForm(forms.Form):
         required=False,
     )
     min_count = forms.IntegerField(label=_("min amount"), min_value=0, required=True)
+    max_count = forms.IntegerField(label=_("max amount"), min_value=1, required=False)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def clean_uuid(self):
@@ -131,7 +132,7 @@ class SectionBasedConfigurationForm(forms.Form):
         sections = [
             {
                 key: form.cleaned_data[key]
-                for key in ("title", "qualifications", "min_count", "uuid")
+                for key in ("title", "qualifications", "min_count", "max_count", "uuid")
             }
             for form in self.sections_formset
             if not form.cleaned_data.get("DELETE")
@@ -233,7 +234,15 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         }
 
     def get_participant_count_bounds(self):
-        return sum(section.get("min_count") or 0 for section in self.configuration.sections), None
+        return (
+            sum(section.get("min_count") or 0 for section in self.configuration.sections),
+            sum(
+                section.get("max_count") or section.get("min_count")
+                for section in self.configuration.sections
+            )
+            if all(section.get("max_count") for section in self.configuration.sections)
+            else None,
+        )
 
     @staticmethod
     def check_qualification(method, participant):
