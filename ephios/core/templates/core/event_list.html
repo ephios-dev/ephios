@@ -23,7 +23,7 @@ visible
             </small>
         </h1>
     </div>
-    <form method="post">
+    <form id="bulk_action_form" method="post">
         {% csrf_token %}
         {% if perms.core.add_event %}
             <div id="event-controls" class="d-flex flex-wrap">
