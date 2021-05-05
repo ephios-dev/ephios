@@ -30,6 +30,8 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     needs: build
+    env:
+      ANSIBLE_PIPELINING: True
     steps:
       - uses: actions/download-artifact@v2
         id: download
