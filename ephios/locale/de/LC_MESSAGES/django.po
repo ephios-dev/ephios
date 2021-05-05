@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: admin@ephios.de\n"
-"POT-Creation-Date: 2021-04-18 22:45+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-05 13:31+0200\n"
 "PO-Revision-Date: 2021-04-18 21:08+0000\n"
 "Last-Translator: Felix Rindt <felix@rindt.me>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
-"\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
+">\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,31 +19,32 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.6-dev\n"
 
-#: .\core\consequences.py:34
+#: .\core\consequences.py:35
 #, python-brace-format
 msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
-#: .\core\consequences.py:106
-#, python-brace-format
-msgid "{user} obtains {hours:.1f} working hours for {reason} on {date}"
+#: .\core\consequences.py:112
+#, fuzzy, python-brace-format
+#| msgid "{user} obtains {hours:.1f} working hours for {reason} on {date}"
+msgid "{user} obtains {hours} working hours for {reason} on {date}"
 msgstr ""
 "{user} bekommt {hours:.1f} Arbeitsstunden für {reason} am {date} "
 "gutgeschrieben"
 
-#: .\core\consequences.py:187
+#: .\core\consequences.py:193
 #, python-brace-format
 msgid "{user} acquires '{qualification}' after participating in {event}."
 msgstr ""
 "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
 "{event}."
 
-#: .\core\consequences.py:191
+#: .\core\consequences.py:197
 #, python-brace-format
 msgid "{user} acquires '{qualification}'."
 msgstr "{user} erhält die Qualifikation '{qualification}'."
 
-#: .\core\consequences.py:197
+#: .\core\consequences.py:203
 #, python-brace-format
 msgid "(valid until {expires_str})"
 msgstr "(gültig bis {expires_str})"
@@ -473,7 +474,7 @@ msgstr "Ablaufdatum"
 msgid "Qualification grant"
 msgstr "Qualifikationserteilung"
 
-#: .\core\models\users.py:275 .\core\models\users.py:375
+#: .\core\models\users.py:275 .\core\models\users.py:381
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
@@ -505,11 +506,11 @@ msgstr "Konsequenz"
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: .\core\models\users.py:321
+#: .\core\models\users.py:324
 msgid "Reason"
 msgstr "Anlass"
 
-#: .\core\models\users.py:335
+#: .\core\models\users.py:338
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
@@ -532,11 +533,11 @@ msgstr "Beschreibung"
 msgid "Participants"
 msgstr "Teilnehmende"
 
-#: .\core\services\notifications\backends.py:79
+#: .\core\services\notifications\backends.py:81
 msgid "via email"
 msgstr "via E-Mail"
 
-#: .\core\services\notifications\backends.py:102
+#: .\core\services\notifications\backends.py:104
 msgid "via push notification"
 msgstr "via Push-Benachrichtigung"
 
@@ -682,10 +683,36 @@ msgstr ""
 msgid "Message to all participants"
 msgstr "Nachricht an alle Teilnehmenden"
 
-#: .\core\services\notifications\types.py:344
+#: .\core\services\notifications\types.py:348
 #, python-brace-format
 msgid "Information for your participation at {title}"
 msgstr "Informationen für Ihre Teilnahme an {title}"
+
+#: .\core\services\notifications\types.py:359
+#: .\core\services\notifications\types.py:369
+#, fuzzy
+#| msgid "Your request has been submitted."
+msgid "Your request has been approved"
+msgstr "Ihre Anfrage wurde abgeschickt."
+
+#: .\core\services\notifications\types.py:374
+#, fuzzy, python-brace-format
+#| msgid "Consequence was executed already."
+msgid "\"{consequence}\" has been approved."
+msgstr "Konsequenz wurde bereits ausgeführt."
+
+#: .\core\services\notifications\types.py:379
+#: .\core\services\notifications\types.py:389
+#, fuzzy
+#| msgid "Your request has been submitted."
+msgid "Your request has been denied"
+msgstr "Ihre Anfrage wurde abgeschickt."
+
+#: .\core\services\notifications\types.py:394
+#, fuzzy, python-brace-format
+#| msgid "Consequence was executed or denied already."
+msgid "\"{consequence}\" has been denied."
+msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
 #: .\core\services\password_reset.py:16
 #, python-brace-format
@@ -826,7 +853,7 @@ msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
 #: .\core\templates\core\home.html:64
 #: .\plugins\basesignup\templates\basesignup\instant\fragment_state.html:17
 #: .\plugins\basesignup\templates\basesignup\request_confirm\fragment_state.html:37
-#: .\plugins\basesignup\templates\basesignup\section_based\fragment_state.html:48
+#: .\plugins\basesignup\templates\basesignup\section_based\fragment_state.html:52
 msgid "Disposition"
 msgstr "Disposition"
 
@@ -870,7 +897,7 @@ msgid "Action"
 msgstr "Aktion"
 
 #: .\core\templates\core\event_archive.html:33
-#: .\core\templates\core\event_list.html:134
+#: .\core\templates\core\event_list.html:144
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -911,12 +938,26 @@ msgstr "Zurück"
 #: .\core\templates\core\userprofile_form.html:89
 #: .\core\templates\core\userprofile_form.html:106
 #: .\core\templates\core\userprofile_list.html:52
-#: .\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:31
-#: .\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:63
+#: .\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:66
 #: .\plugins\pages\templates\pages\page_confirm_delete.html:19
 #: .\plugins\pages\templates\pages\page_list.html:27
 msgid "Delete"
 msgstr "Löschen"
+
+#: .\core\templates\core\event_calendar.html:6
+#: .\core\templates\core\event_calendar.html:11
+#: .\core\templates\core\event_list.html:9
+#: .\core\templates\core\event_list.html:14 .\templates\base.html:89
+msgid "Events"
+msgstr "Veranstaltungen"
+
+#: .\core\templates\core\event_calendar.html:24
+msgid "Previous month"
+msgstr ""
+
+#: .\core\templates\core\event_calendar.html:25
+msgid "Next month"
+msgstr ""
 
 #: .\core\templates\core\event_confirm_delete.html:6
 #: .\core\templates\core\event_confirm_delete.html:11
@@ -1022,32 +1063,27 @@ msgstr "Abbrechen"
 msgid "Next"
 msgstr "Weiter"
 
-#: .\core\templates\core\event_list.html:9
-#: .\core\templates\core\event_list.html:14 .\templates\base.html:89
-msgid "Events"
-msgstr "Veranstaltungen"
-
-#: .\core\templates\core\event_list.html:24
+#: .\core\templates\core\event_list.html:34
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: .\core\templates\core\event_list.html:29
+#: .\core\templates\core\event_list.html:39
 #, python-format
 msgid ""
 "Add\n"
 "                                    %(title)s"
 msgstr "%(title)s hinzufügen"
 
-#: .\core\templates\core\event_list.html:37
+#: .\core\templates\core\event_list.html:47
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
-#: .\core\templates\core\event_list.html:112
+#: .\core\templates\core\event_list.html:122
 #: .\plugins\guests\templates\guests\guestuser_form.html:14
 msgid "to"
 msgstr "bis"
 
-#: .\core\templates\core\event_list.html:144
+#: .\core\templates\core\event_list.html:154
 msgid "There are no events."
 msgstr "Es gibt momentan keine Veranstaltungen."
 
@@ -1083,6 +1119,12 @@ msgstr "Bearbeiten"
 #: .\core\templates\core\fragments\approve_consequences.html:8
 msgid "Confirm results"
 msgstr "Offene Anfragen"
+
+#: .\core\templates\core\fragments\pending_consequences.html:8
+#, fuzzy
+#| msgid "Bad request"
+msgid "Your requests"
+msgstr "Fehlerhafte Anfrage"
 
 #: .\core\templates\core\fragments\shift_box_big.html:60
 msgid "Decline"
@@ -1133,12 +1175,12 @@ msgstr "Anstehende Schichten"
 msgid "Events with requested participations"
 msgstr "Veranstaltungen mit angefragten Teilnahmen"
 
-#: .\core\templates\core\home.html:81
+#: .\core\templates\core\home.html:82
 #: .\core\templates\core\logentry_list.html:16
 msgid "Edit history"
 msgstr "Änderungsverlauf"
 
-#: .\core\templates\core\home.html:84
+#: .\core\templates\core\home.html:85
 msgid "View everything"
 msgstr "Alles ansehen"
 
@@ -1481,16 +1523,16 @@ msgstr "Beim Ausführen der Aktion ist ein Fehler aufgetreten."
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: .\core\views\event.py:169 .\core\views\shift.py:81
+#: .\core\views\event.py:179 .\core\views\shift.py:81
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: .\core\views\event.py:267
+#: .\core\views\event.py:277
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: .\core\views\event.py:317
+#: .\core\views\event.py:327
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -1693,7 +1735,7 @@ msgid "Required number of participants"
 msgstr "Erforderliche Anzahl von Teilnehmenden"
 
 #: .\plugins\basesignup\signup\common.py:85
-#: .\plugins\basesignup\signup\section_based.py:241
+#: .\plugins\basesignup\signup\section_based.py:250
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
@@ -1729,19 +1771,19 @@ msgstr ""
 "Verantwortliche Personen können die Teilnahme dann bestätigen."
 
 #: .\plugins\basesignup\signup\request_confirm.py:21
-#: .\plugins\basesignup\signup\section_based.py:204
+#: .\plugins\basesignup\signup\section_based.py:205
 #: .\plugins\basesignup\templates\basesignup\section_based\signup.html:24
 msgid "Request"
 msgstr "Anfragen"
 
 #: .\plugins\basesignup\signup\request_confirm.py:22
-#: .\plugins\basesignup\signup\section_based.py:205
+#: .\plugins\basesignup\signup\section_based.py:206
 #, python-brace-format
 msgid "You have successfully requested a participation for {shift}."
 msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
 
 #: .\plugins\basesignup\signup\request_confirm.py:23
-#: .\plugins\basesignup\signup\section_based.py:206
+#: .\plugins\basesignup\signup\section_based.py:207
 #, python-brace-format
 msgid "Requesting a participation failed: {error}"
 msgstr "Das Anfragen einer Teilnahme ist fehlgeschlagen: {error}"
@@ -1766,23 +1808,29 @@ msgstr "Sie müssen einen Abschnitt auswählen um diese Teilnahme zu bestätigen
 msgid "min amount"
 msgstr "Mindestanzahl"
 
-#: .\plugins\basesignup\signup\section_based.py:129
+#: .\plugins\basesignup\signup\section_based.py:107
+#, fuzzy
+#| msgid "min amount"
+msgid "max amount"
+msgstr "Mindestanzahl"
+
+#: .\plugins\basesignup\signup\section_based.py:130
 msgid "The sections aren't configured correctly."
 msgstr "Die Abschnitte sind nicht korrekt konfiguiert."
 
-#: .\plugins\basesignup\signup\section_based.py:144
+#: .\plugins\basesignup\signup\section_based.py:145
 msgid "Preferred Section"
 msgstr "Bevorzugter Abschnitt"
 
-#: .\plugins\basesignup\signup\section_based.py:190
+#: .\plugins\basesignup\signup\section_based.py:191
 msgid "You can not sign up for this shift."
 msgstr "Sie können sich für diese Schicht nicht anmelden."
 
-#: .\plugins\basesignup\signup\section_based.py:199
+#: .\plugins\basesignup\signup\section_based.py:200
 msgid "Apply for sections"
 msgstr "Bewerbung auf Abschnitte"
 
-#: .\plugins\basesignup\signup\section_based.py:201
+#: .\plugins\basesignup\signup\section_based.py:202
 msgid ""
 "This method lets you define sections for which people can choose from.\n"
 "        Sections contain qualifications that helpers need to fulfil."
@@ -1792,16 +1840,16 @@ msgstr ""
 "Abschnitte können Qualifikationen fordern, die die Teilnehmenden aufweisen "
 "müssen."
 
-#: .\plugins\basesignup\signup\section_based.py:218
+#: .\plugins\basesignup\signup\section_based.py:219
 msgid "Ask participants for a preferred section"
 msgstr "Teilnehmende nach einem bevorzugten Abschnitt fragen"
 
-#: .\plugins\basesignup\signup\section_based.py:219
+#: .\plugins\basesignup\signup\section_based.py:220
 msgid "This only makes sense if you configure multiple sections."
 msgstr ""
 "Diese Option ist nur sinnvoll wenn Sie mehrere Abschnitte konfigurieren."
 
-#: .\plugins\basesignup\signup\section_based.py:227
+#: .\plugins\basesignup\signup\section_based.py:228
 msgid "Structure"
 msgstr "Struktur"
 
@@ -1820,7 +1868,7 @@ msgstr "Anfragen"
 msgid "Sections"
 msgstr "Abschnitte"
 
-#: .\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:40
+#: .\plugins\basesignup\templates\basesignup\section_based\configuration_form.html:43
 msgid "Add section"
 msgstr "Abschnitt hinzufügen"
 
