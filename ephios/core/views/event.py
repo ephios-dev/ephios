@@ -335,7 +335,10 @@ class EventCalendarView(TemplateView):
         today = datetime.today()
         year = int(self.request.GET.get("year", today.year))
         month = int(self.request.GET.get("month", today.month))
-        shifts = Shift.objects.filter(start_time__month=month, start_time__year=year)
+        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+        shifts = Shift.objects.filter(
+            event__in=events, start_time__month=month, start_time__year=year
+        )
         calendar = ShiftCalendar(shifts)
         kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
         nextyear, nextmonth = _nextmonth(year, month)
