@@ -2,6 +2,8 @@ from django.urls import reverse
 
 
 def test_calendar_display(client, volunteer, event):
+    # we are using the django test client here because we couldn't get the session stuff to
+    # work with pytest. Don't copy this!
     session = client.session
     session["event_list_view_type"] = "calendar"
     session.save()
@@ -12,6 +14,8 @@ def test_calendar_display(client, volunteer, event):
 
 
 def test_calendar_display_restricitions(client, volunteer, event):
+    # we are using the django test client here because we couldn't get the session stuff to
+    # work with pytest. Don't copy this!
     volunteer.groups.set([])
     volunteer.save()
     session = client.session
