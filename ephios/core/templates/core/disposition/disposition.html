@@ -40,6 +40,10 @@
                             <div class="form-group">
                                 {{ add_user_form.user }}
                             </div>
+                            <p>{% translate "or" %}</p>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">{% translate "Add external" %}</button>
+                            </div>
                             <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
                                 {% for form in formset %}
