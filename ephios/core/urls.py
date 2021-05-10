@@ -100,7 +100,7 @@ urlpatterns = [
         name="event_list_past",
     ),
     path(
-        "events/delete",
+        "events/delete/",
         EventBulkDeleteView.as_view(),
         name="event_bulk_delete",
     ),
