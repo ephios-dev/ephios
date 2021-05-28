@@ -229,7 +229,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         for date in occurrences:
             event = self.get_object()
             start_date = event.get_start_time().date()
-            shifts = event.shifts.all()
+            shifts = list(event.shifts.all())
             event.pk = None
             event.save()
             assign_perm(
