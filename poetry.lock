@@ -358,7 +358,7 @@ django-jquery-js = "*"
 
 [[package]]
 name = "django-guardian"
-version = "2.3.0"
+version = "2.4.0"
 description = "Implementation of per object permissions for Django."
 category = "main"
 optional = false
@@ -1469,8 +1469,8 @@ django-formset-js-improved = [
     {file = "django-formset-js-improved-0.5.0.2.tar.gz", hash = "sha256:251649ca389144728359b57d5845c601b3420fdafa2e4634668de614e14953ce"},
 ]
 django-guardian = [
-    {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},
-    {file = "django_guardian-2.3.0-py3-none-any.whl", hash = "sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8"},
+    {file = "django-guardian-2.4.0.tar.gz", hash = "sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0"},
+    {file = "django_guardian-2.4.0-py3-none-any.whl", hash = "sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697"},
 ]
 django-ical = [
     {file = "django-ical-1.7.3.tar.gz", hash = "sha256:bd5c874d2eb81329f220174cc0dde7be385f4574ce6c8a2d1579d7fd564a94f3"},
