@@ -1,17 +1,4 @@
-[tool.poetry]
-name = "ephios"
-version = "0.8.0-dev"
-description = "ephios is a tool to manage shifts for medical services."
-authors = ["Julian Baumann <julian@ephios.de>", "Felix Rindt <felix@ephios.de>"]
-license = "MIT"
-readme = "README.md"
-homepage = "https://ephios.de"
-repository = "https://github.com/ephios-dev/ephios"
-documentation = "https://docs.ephios.de/en/stable/"
-
-[tool.poetry.dependencies]
-python = "^3.8"
-django = "^3.1"
+django = "~3.2"
 django-environ = "^0.4.5"
 django-guardian = "^2.3.0"
 django-ical = "^1.7.1"
