@@ -3,16 +3,26 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
-from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.registries import (
+    PerInstancePreferenceRegistry,
+    global_preferences_registry,
+)
 from dynamic_preferences.types import MultipleChoicePreference, StringPreference
 from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
-from ephios.core import event_type_preference_registry, plugins
+from ephios.core import plugins
 from ephios.core.models import QualificationCategory, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.extra.preferences import CustomModelMultipleChoicePreference, JSONPreference
+
+
+class EventTypeRegistry(PerInstancePreferenceRegistry):
+    pass
+
+
+event_type_preference_registry = EventTypeRegistry()
 
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
@@ -43,8 +53,8 @@ class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
     default = [
-        ephios.plugins.basesignup.PluginApp.__module__,
-        ephios.plugins.pages.PluginApp.__module__,
+        ephios.plugins.basesignup.apps.PluginApp.__module__,
+        ephios.plugins.pages.apps.PluginApp.__module__,
     ]
     section = general_global_section
     required = False
