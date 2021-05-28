@@ -157,11 +157,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 hours=ExpressionWrapper(
                     (
                         F("shift__end_time") - F("shift__start_time")
-                    )  # calculate length of shift in μs
-                    / 1000000  # convert microseconds to seconds
-                    / 3600,  # convert seconds to hours
-                    output_field=models.DecimalField(),
-                ),
+                    ),  # calculate length of shift in μs
+                    output_field=models.IntegerField(),
+                )
+                / 1000000
+                / 3600,  # convert microseconds to seconds to hours
                 date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
@@ -180,7 +180,6 @@ register_model_for_logging(
         unlogged_fields={"id", "password", "calendar_token", "last_login"},
     ),
 )
-
 
 register_model_for_logging(
     Group,
