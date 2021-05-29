@@ -369,7 +369,7 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-ical"
-version = "1.7.3"
+version = "1.8.0"
 description = "iCal feeds for Django based on Django's syndication feed framework."
 category = "main"
 optional = false
@@ -1473,8 +1473,8 @@ django-guardian = [
     {file = "django_guardian-2.4.0-py3-none-any.whl", hash = "sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697"},
 ]
 django-ical = [
-    {file = "django-ical-1.7.3.tar.gz", hash = "sha256:bd5c874d2eb81329f220174cc0dde7be385f4574ce6c8a2d1579d7fd564a94f3"},
-    {file = "django_ical-1.7.3-py2.py3-none-any.whl", hash = "sha256:6df4dc61eb4abc55816bd16a949e497bea99828c7de648438ace7f1f85eeb405"},
+    {file = "django-ical-1.8.0.tar.gz", hash = "sha256:0552d71595712129b78f104de175f6be6719c94b35f0e3b3679cf4e83938ec48"},
+    {file = "django_ical-1.8.0-py2.py3-none-any.whl", hash = "sha256:12a4e1dd9a0daeb57b4bee89cae0b597ef76192447e633257a8840d2e6da27fc"},
 ]
 django-jquery-js = [
     {file = "django-jquery-js-3.1.1.tar.gz", hash = "sha256:308e6472801f89be7c02fa3d06bea6470cfbcab8287db80c64b1093717b8eea9"},
