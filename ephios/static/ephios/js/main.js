@@ -9,6 +9,7 @@ function handleForms(elem) {
     }).on("formAdded", "div", function (event) {
         handleForms($(event.target));
     });
+    $('form').trigger('reinitialize.areYouSure');
 }
 
 $(document).ready(function () {
@@ -40,6 +41,9 @@ $(document).ready(function () {
             $('#unloading-spinner').removeClass("d-none")
         });
     }
+
+    // Confirm users wants to leave page with unsaved forms
+    $('form').areYouSure();
 })
 
 // Initialize the service worker
