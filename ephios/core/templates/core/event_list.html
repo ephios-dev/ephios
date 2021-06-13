@@ -12,7 +12,7 @@ visible
 {% block content %}
     <div class="page-header">
         <h1>{% translate "Events" %}
-            <small class="float-right">
+            <small class="float-end">
                 <form method="post" action="{% url "core:event_list_type_setting" %}">
                     {% csrf_token %}
                     <div class="btn-group">
@@ -85,7 +85,7 @@ visible
                                     {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
                                         <span class="text-danger fa fa-user-minus"></span>
                                     {% else %}
-                                        <span class="text-secondary far fa-user"></span>
+                                        <span class="text-muted far fa-user"></span>
                                     {% endif %}
                                 </div>
                             {% endwith %}
@@ -102,7 +102,7 @@ visible
                                 <div class="col-lg">
                                     <h5 class="mb-0">
                                         {{ event.title }}
-                                        <small class="float-right me-lg-3"><span
+                                        <small class="float-end me-lg-3"><span
                                                 class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
                                     </h5>
                                     <span class="w-100 text-muted">

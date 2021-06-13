@@ -9,7 +9,7 @@
 {% block content %}
     <div class="page-header mb-3">
         <h1>{% trans "Events" %}
-            <small class="float-right">
+            <small class="float-end">
                 <form method="post" action="{% url "core:event_list_type_setting" %}">
                     {% csrf_token %}
                     <div class="btn-group">

@@ -34,7 +34,7 @@
     {% endif %}
     <div class="page-header clearfix">
         <h2>
-            <small class="float-right me-lg-3"><span
+            <small class="float-end me-lg-3"><span
                     class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
             {{ event.title }}
         </h2>
@@ -45,7 +45,7 @@
             {% get_obj_perms request.user for event as "event_perms" %}
         {% endif %}
         {% if "change_event" in event_perms %}
-            <div class="float-right d-inline mb-3">
+            <div class="float-end d-inline mb-3">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

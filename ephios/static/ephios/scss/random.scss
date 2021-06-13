@@ -73,13 +73,11 @@ footer {
 @media (min-width: 992px) {
   .event-list-item-link {
     pointer-events: none;
+    text-decoration: none;
   }
 
   .event-list-item-button {
     pointer-events: auto;
-  }
-  a {
-    text-decoration: none;
   }
 }
 

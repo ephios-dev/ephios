@@ -7,7 +7,7 @@
             <span class="fa fa-calendar-alt"></span>
             {{ shift.get_start_end_time_display }}
             {% if not without_controls and "change_event" in event_perms %}
-                <small class="float-right">
+                <small class="float-end">
                     <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
                         {% trans "Edit" %}</a>
                     {% if shift.event.shifts.count > 1 %}
