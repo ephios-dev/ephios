@@ -5,8 +5,8 @@
 {% block body %}
     <h6 class="mb-0">
         <div class="row align-items-center no-gutters">
-            <div class="col-8 d-flex pr-3">
-                <div class="pr-1">
+            <div class="col-8 d-flex pe-3">
+                <div class="pe-1">
                     {{ form.instance.participant.icon }}
                     {{ form.instance.participant }}
                     {% if form.preferred_section %}
@@ -35,7 +35,7 @@
                 {% crispy_field form.section label_class="d-none" wrapper_class="d-inline-block mb-0" %}
 
                 {% if form.can_delete %}
-                    <button type="button" class="btn float-right btn-sm ml-1" data-formset-delete-button>
+                    <button type="button" class="btn float-right btn-sm ms-1" data-formset-delete-button>
                         <i class="fas fa-times"></i>
                     </button>
                 {% endif %}

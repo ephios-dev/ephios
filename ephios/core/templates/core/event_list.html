@@ -56,10 +56,10 @@ visible
                     {% eventtype_colors %}
                 {% endcache %}
             </style>
-            <div class="list-group list-group-flush">
+            <div class="list-group">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">
-                        <div class="pl-2">
+                        <div class="ps-2">
                             <input type="checkbox" id="checkall">
                         </div>
                     </div>
@@ -68,7 +68,7 @@ visible
                     <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
                         <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                             {% with event|event_signup_state_counts:request.user as counter %}
-                                <div class="pl-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
+                                <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
                                      {% if counter %}data-toggle="tooltip" data-placement="bottom" data-html="true"
                                      title="{% for state in counter %}<div>
 
@@ -90,7 +90,7 @@ visible
                                 </div>
                             {% endwith %}
                             {% if perms.core.add_event %}
-                                <div class="pl-lg-2 d-flex flex-row flex-lg-column justify-content-center">
+                                <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
                                     <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
                                            class="cb-element">
                                 </div>
@@ -102,10 +102,10 @@ visible
                                 <div class="col-lg">
                                     <h5 class="mb-0">
                                         {{ event.title }}
-                                        <small class="float-right mr-lg-3"><span
+                                        <small class="float-right me-lg-3"><span
                                                 class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
                                     </h5>
-                                    <span class="w-100 text-secondary">
+                                    <span class="w-100 text-muted">
                                     {{ event.location }}
                                 </span>
                                 </div>
@@ -124,7 +124,7 @@ visible
                                     {% endif %}
                                 </div>
                                 <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
-                                    <p class="my-0 mr-1">
+                                    <p class="my-0 me-1 position-relative">
                                         <span class="fas fa-users"></span>
                                         {% with event.get_signup_stats as stats %}
                                             {% if event.can_change and stats.requested_count > 0 %}

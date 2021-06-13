@@ -1,83 +1,86 @@
 header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .container-main {
-    min-height: calc(100vh - 60px);
-    display: flex;
-    flex-flow: column;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-flow: column;
 }
 
 main {
-    flex: 1;
+  flex: 1;
 }
 
 footer {
-    height: 60px;
-    margin-top: 2rem;
+  height: 60px;
+  margin-top: 2rem;
 }
 
 .btn-disabled {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .btn-consequence {
-    width: 31px;
+  width: 31px;
 }
 
 .twoColumns {
-    -webkit-column-gap: 20px;
-    -moz-column-gap: 20px;
-    column-gap: 20px;
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
-    column-count: 2;
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
 }
 
 .break-word {
-    word-break: break-word;
+  word-break: break-word;
 }
 
 .consequence-list {
-    max-height: 70vh;
-    overflow: auto;
+  max-height: 70vh;
+  overflow: auto;
 }
 
 .event-list-status-icon {
-    min-width: 28px;
+  min-width: 28px;
 }
 
 .tooltip-inner {
-    text-align: left;
+  text-align: left;
 }
 
 .unloading {
-    transition: filter 0.5s;
-    filter: blur(4px);
-    pointer-events: none;
+  transition: filter 0.5s;
+  filter: blur(4px);
+  pointer-events: none;
 }
 
 #unloading-spinner {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -38vh;
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -38vh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
 }
 
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
 @media (min-width: 992px) {
-    .event-list-item-link {
-        pointer-events: none;
-    }
+  .event-list-item-link {
+    pointer-events: none;
+  }
 
-    .event-list-item-button {
-        pointer-events: auto;
-    }
+  .event-list-item-button {
+    pointer-events: auto;
+  }
+  a {
+    text-decoration: none;
+  }
 }
 
 /*
@@ -85,36 +88,35 @@ When select2s are hidden on page load, they tend to have the wrong size.
 This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220#issuecomment-705855505
 */
 .select2 {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .no-display {
-    display: none;
+  display: none;
 }
 
 .pending-indicator {
-    position: absolute;
-    top: 25px;
-    left: 28px;
-    z-index: 2;
-    display: block;
-    width: 10px;
-    height: 10px;
-    color: #ffffff;
-    background-image: linear-gradient(#54a3ff,#006eed);
-    background-clip: padding-box;
-    /*border: 1px solid #000000;*/
-    border-radius: 50%;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 2;
+  display: block;
+  width: 10px;
+  height: 10px;
+  color: #ffffff;
+  background-image: linear-gradient(#54a3ff, #006eed);
+  background-clip: padding-box;
+  border-radius: 50%;
 }
 
 .table-fixed {
-    table-layout: fixed;
+  table-layout: fixed;
 }
 
 .calendar-row-height {
-    height: 100px;
+  height: 100px;
 }
 
 .calendar-today {
-    background-color: #cbcbcb;
+  background-color: #cbcbcb;
 }

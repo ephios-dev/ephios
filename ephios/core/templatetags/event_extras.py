@@ -89,7 +89,7 @@ def event_bulk_actions():
     for _, actions in register_event_bulk_action.send(None):
         html += "".join(
             [
-                f"<button class='btn btn-secondary mr-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['label']}</button>"
+                f"<button class='btn btn-secondary me-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['label']}</button>"
                 for action in actions
             ]
         )
