@@ -32,6 +32,7 @@ django-dynamic-preferences = "^1.10.1"
 django-crispy-forms = "^1.11.1"
 django-webpush = "^0.3.3"
 importlib-metadata = { version = ">=3.7.3,<5.0.0", python = "<3.9" }
+django-libsass = "^0.8"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]

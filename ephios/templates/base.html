@@ -42,9 +42,8 @@
     {% endwith %}
 
     {% compress css %}
-        <link type="text/css" media="screen" rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+        <link type="text/x-scss" href="{% static 'ephios/scss/main.scss' %}" rel="stylesheet" media="screen">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
-        <link type="text/css" media="screen" rel="stylesheet" href="{% static "ephios/css/main.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2.min.css" %}">
         {% block css %}{% endblock %}
     {% endcompress %}
