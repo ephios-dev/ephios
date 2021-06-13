@@ -42,6 +42,7 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         python-version: [ 3.8, 3.9 ]
         database: [ sqlite, mysql, postgres ]
@@ -100,5 +101,5 @@ jobs:
     - name: Coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: poetry run coveralls
+      run: poetry run coveralls --service=github
       if: matrix.python-version == '3.9' && matrix.database == 'sqlite'

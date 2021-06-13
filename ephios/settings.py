@@ -69,10 +69,10 @@ EPHIOS_CORE_MODULES = [
 INSTALLED_APPS += EPHIOS_CORE_MODULES
 
 CORE_PLUGINS = [
-    "ephios.plugins.basesignup",
-    "ephios.plugins.pages",
-    "ephios.plugins.guests",
-    "ephios.plugins.eventautoqualification",
+    "ephios.plugins.basesignup.apps.PluginApp",
+    "ephios.plugins.pages.apps.PluginApp",
+    "ephios.plugins.guests.apps.PluginApp",
+    "ephios.plugins.eventautoqualification.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
@@ -81,6 +81,8 @@ for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
 INSTALLED_APPS += PLUGINS
 
 INSTALLED_APPS += ["dynamic_preferences"]  # must come after our apps to collect preferences
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
