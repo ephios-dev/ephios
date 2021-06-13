@@ -279,7 +279,11 @@ class ForeignParticipation(AbstractParticipation):
         )
 
     def __str__(self):
-        return "hi"
+        return f"{self.first_name} {self.last_name} @ {self.shift}"
+
+
+# TODO: find out why saving a DispositionForm crashes when ForeignParticipation is not registered for modellogging
+register_model_for_logging(ForeignParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class EventTypePreference(PerInstancePreferenceModel):

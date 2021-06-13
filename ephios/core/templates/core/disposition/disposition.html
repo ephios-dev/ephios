@@ -19,7 +19,8 @@
     </div>
 
     <form method="post" class="d-none" id="add-user-form"
-          action="{% url "core:shift_disposition_add_user" pk=shift.pk %}">
+          action="{% url "core:shift_disposition_add_user" pk=shift.pk %}"
+          data-foreign-url="{% url "core:shift_disposition_add_foreign" pk=shift.pk %}">
         {% csrf_token %}
         {{ add_user_form.new_index }}
     </form>
@@ -39,10 +40,6 @@
                             </h5>
                             <div class="form-group">
                                 {{ add_user_form.user }}
-                            </div>
-                            <p>{% translate "or" %}</p>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary">{% translate "Add external" %}</button>
                             </div>
                             <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
