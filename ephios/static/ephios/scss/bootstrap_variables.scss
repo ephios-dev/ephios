@@ -1,0 +1,14 @@
+
+// ephios colors
+$blue:    #00B4FF;
+$red:     #FF033F;
+$yellow:  #FBEE77;
+$green:   #00C24A;
+
+$primary:       $green;
+$success:       shade-color($green, 40%);
+$danger:        shade-color($red, 40%);
+$secondary:     #EAECEE;
+$info:          #CDECFE;
+
+$link-decoration: none;
