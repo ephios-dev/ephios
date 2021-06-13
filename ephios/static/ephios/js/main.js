@@ -1,7 +1,7 @@
 function handleForms(elem) {
     // Configure the subtree specified by the root elem (jquery object) for use
     // with the various JS libs
-    elem.find('[data-toggle="tooltip"]').tooltip();
+    elem.find('[data-bs-toggle="tooltip"]').tooltip();
     elem.find(".django-select2").djangoSelect2()
     elem.find("[data-formset]").formset({
         animateForms: true,

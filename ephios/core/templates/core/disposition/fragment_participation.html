@@ -11,7 +11,7 @@
                 {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
                     {% if conflicting_shifts %}
                         <span class="fa fa-exclamation-triangle text-danger"
-                              data-toggle="tooltip"
+                              data-bs-toggle="tooltip"
                               title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicting_shifts|join:", " %}
                                   {{ participant }} already participates in {{ conflicts }} at the same time.
                               {% endblocktranslate %}"></span>

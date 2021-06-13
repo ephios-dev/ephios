@@ -29,7 +29,7 @@ visible
             <div id="event-controls" class="d-flex flex-wrap">
                 <div class="dropdown m-1">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="eventCreateButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="fa fa-plus"></span>
                         {% translate "Add event" %}
                     </button>
@@ -69,7 +69,7 @@ visible
                         <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                             {% with event|event_signup_state_counts:request.user as counter %}
                                 <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                     {% if counter %}data-toggle="tooltip" data-placement="bottom" data-html="true"
+                                     {% if counter %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                      title="{% for state in counter %}<div>
 
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
