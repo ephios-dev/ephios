@@ -37,7 +37,7 @@ class EventTypeUpdateView(
         form = EventTypeForm(self.request.POST or None, instance=self.object)
         preference_form = self.get_preference_form()
 
-        if form.is_valid() and preference_form.is_valid():
+        if all([form.is_valid(), preference_form.is_valid()]):
             event_type = form.save()
             preference_form.update_preferences()
             messages.success(

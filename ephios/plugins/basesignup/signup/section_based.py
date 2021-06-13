@@ -107,9 +107,6 @@ class SectionForm(forms.Form):
     max_count = forms.IntegerField(label=_("max amount"), min_value=1, required=False)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def full_clean(self):
-        super(SectionForm, self).full_clean()
-
     def clean_uuid(self):
         return self.cleaned_data.get("uuid") or uuid.uuid4()
 
