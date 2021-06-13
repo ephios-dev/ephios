@@ -26,9 +26,9 @@ visible
     <form id="bulk_action_form" method="post">
         {% csrf_token %}
         {% if perms.core.add_event %}
-            <div id="event-controls" class="d-flex flex-wrap">
-                <div class="dropdown m-1">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="eventCreateButton"
+            <div id="event-controls" class="d-flex flex-wrap pb-3">
+                <div class="dropdown m-1 ms-0">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="eventCreateButton"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="fa fa-plus"></span>
                         {% translate "Add event" %}
@@ -42,7 +42,7 @@ visible
                     </div>
                 </div>
                 <div class="bulk-actions">
-                    <button class="btn btn-danger m-1" type="submit" name="delete"
+                    <button class="btn btn-secondary m-1" type="submit" name="delete"
                             formaction="{% url "core:event_bulk_delete" %}"><span
                             class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                     {% event_bulk_actions %}

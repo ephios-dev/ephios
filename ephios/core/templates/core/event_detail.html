@@ -44,8 +44,11 @@
         {% if request.user.is_authenticated %}
             {% get_obj_perms request.user for event as "event_perms" %}
         {% endif %}
+    </div>
+    <div class="row">
+        <div class="col">{{ event.description|rich_text:"h1,h2" }}</div>
         {% if "change_event" in event_perms %}
-            <div class="float-end d-inline mb-3">
+            <div class="col-12 col-md-auto mb-3 ms-auto">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -96,7 +99,6 @@
             </div>
         {% endif %}
     </div>
-    <div>{{ event.description|rich_text:"h1,h2" }}</div>
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}

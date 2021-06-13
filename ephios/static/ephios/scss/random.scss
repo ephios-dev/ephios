@@ -92,10 +92,6 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   width: 100% !important;
 }
 
-.no-display {
-  display: none;
-}
-
 .pending-indicator {
   position: absolute;
   top: 15px;
@@ -110,6 +106,7 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   border-radius: 50%;
 }
 
+// Event Calendar classes
 .table-fixed {
   table-layout: fixed;
 }
