@@ -55,11 +55,9 @@
                 <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
                        value="{{ SITE_URL }}{% url "core:user_event_feed" userprofile.calendar_token %}"
                        readonly>
-                <div class="input-group-append">
-                    <button id="calendar-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"
-                            data-clipboard-target="#calendar-url" data-trigger="manual"
-                            title="Copied!">{% translate "Copy" %}</button>
-                </div>
+                <button id="calendar-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
+                        data-clipboard-target="#calendar-url" data-trigger="manual"
+                        title="Copied!">{% translate "Copy" %}</button>
             </div>
             </p>
         </div>
@@ -68,7 +66,8 @@
         <div class="card-body">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="card-title">{% translate "Working hours" %}</h5>
-                <a class="btn btn-outline-primary btn-sm" href="{% url "core:request_workinghour" %}">{% translate "Request working hours" %}</a>
+                <a class="btn btn-outline-primary btn-sm"
+                   href="{% url "core:request_workinghour" %}">{% translate "Request working hours" %}</a>
             </div>
         </div>
         <ul class="list-group list-group-flush">

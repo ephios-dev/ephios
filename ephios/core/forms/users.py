@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Fieldset, Layout, Submit
+from crispy_forms.layout import Button, Field, Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
@@ -165,7 +165,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
             ),
-            FormActions(Submit("submit", _("Save"))),
+            FormActions(Button("cancel", "Cancel"), Submit("submit", _("Save"))),
         )
 
     def save(self, commit=True):

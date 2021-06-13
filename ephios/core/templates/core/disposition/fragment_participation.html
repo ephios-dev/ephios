@@ -18,7 +18,7 @@
                     {% endif %}
                 {% endwith %}
                 {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
-                    <span class="badge badge-secondary">{{ qualification }}</span>
+                    <span class="badge bg-secondary">{{ qualification }}</span>
                 {% endfor %}
             </div>
             <div class="col-2 d-flex justify-content-between align-items-center">

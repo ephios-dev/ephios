@@ -28,8 +28,6 @@ $warning:       $yellow !default;
 $light:         $gray-100 !default;
 $dark:          $gray-900 !default;
 
-$submit: $green;
-
 $theme-colors: (
         "primary": $primary,
         "secondary": $secondary,
@@ -39,7 +37,6 @@ $theme-colors: (
         "danger": $danger,
         "light": $light,
         "dark": $dark,
-        "submit": $submit,
         "brand": $brand-color,
 );
 
