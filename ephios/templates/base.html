@@ -79,30 +79,22 @@
                         <ul class="navbar-nav me-auto">
                             {% with url_name=request.resolver_match.url_name %}
                                 <li class="nav-item {% if url_name == "index" %}active{% endif %}">
-                                    <a class="nav-link" href="{% url "core:index" %}">{% trans "Home" %}
-                                        <span
-                                                class="sr-only">(current)</span></a>
+                                    <a class="nav-link" href="{% url "core:index" %}">{% trans "Home" %}</a>
                                 </li>
                                 <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
                                     <a class="nav-link"
-                                       href="{% url "core:event_list" %}">{% trans "Events" %}
-                                        <span
-                                                class="sr-only">(current)</span></a>
+                                       href="{% url "core:event_list" %}">{% trans "Events" %}</a>
                                 </li>
                                 {% if perms.core.view_past_event %}
                                     <li class="nav-item {% if url_name == "event_list_past" %}active{% endif %}">
                                         <a class="nav-link"
-                                           href="{% url "core:event_list_past" %}">{% trans "Past events" %}
-                                            <span
-                                                    class="sr-only">(current)</span></a>
+                                           href="{% url "core:event_list_past" %}">{% trans "Past events" %}</a>
                                     </li>
                                 {% endif %}
                                 {% if perms.core.view_userprofile %}
                                     <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
                                         <a class="nav-link"
-                                           href="{% url "core:userprofile_list" %}">{% trans "Users" %}
-                                            <span
-                                                    class="sr-only">(current)</span></a>
+                                           href="{% url "core:userprofile_list" %}">{% trans "Users" %}</a>
                                     </li>
                                 {% endif %}
                                 {% if perms.auth.view_group %}
@@ -143,7 +135,7 @@
     </div>
     <div id="unloading-spinner" class="d-none">
         <div class="spinner-grow" role="status">
-            <span class="sr-only">Loading...</span>
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 </header>
