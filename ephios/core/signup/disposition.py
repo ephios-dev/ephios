@@ -42,6 +42,12 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
     def add_prefix(self, index):
         return "%s-%s" % (self.prefix, self._start_index + index)
 
+    def save_existing(self, form, instance, commit=True):
+        """Existing participation state overwrites the getting dispatched state."""
+        if form.instance.state == AbstractParticipation.States.GETTING_DISPATCHED:
+            form.instance.state = AbstractParticipation.objects.get(id=form.instance.id).state
+        return form.save(commit=commit)
+
     def delete_existing(self, obj, commit=True):
         # refresh from db as obj has the state from the post data
         db_obj = AbstractParticipation.objects.get(id=obj.id)

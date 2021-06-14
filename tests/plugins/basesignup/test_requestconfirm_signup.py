@@ -1,3 +1,4 @@
+import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
@@ -54,7 +55,7 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
         reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     ).forms["add-user-form"]
-    # can't user form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
+    # can't use form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
     response = django_app.post(
         form.action,
         user=planner,
@@ -66,3 +67,66 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
     )
     assert volunteer.first_name in response
     assert volunteer.as_participant().participation_for(shift) is not None
+
+
+def test_getting_dispatched_state_is_overwritten_by_participant_signup(
+    django_app, volunteer, planner, event
+):
+    shift = event.shifts.first()
+
+    # create participation in getting-dispatched state
+    participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    participation.state = AbstractParticipation.States.GETTING_DISPATCHED
+    participation.save()
+
+    # load to have the form in getting dispatched state
+    response = django_app.get(
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
+        user=planner,
+    )
+
+    # meanwhile, request a participation as volunteer
+    participation.state = AbstractParticipation.States.REQUESTED
+    participation.save()
+
+    # save the disposition, and assert that it doesn't overwrite the requested state
+    response.forms["participations-form"].submit()
+    assert (
+        LocalParticipation.objects.get(user=volunteer, shift=shift).state
+        == AbstractParticipation.States.REQUESTED
+    )
+
+
+def test_disposition_can_only_delete_participations_getting_dispatched(
+    django_app, volunteer, planner, event
+):
+    # setup a participation
+    shift = event.shifts.first()
+
+    volunteer_participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    volunteer_participation.state = AbstractParticipation.States.REQUESTED
+    volunteer_participation.save()
+
+    planner_participation = shift.signup_method.get_participation_for(planner.as_participant())
+    planner_participation.state = AbstractParticipation.States.GETTING_DISPATCHED
+    planner_participation.save()
+
+    # delete the getting dispatched participation
+    response = django_app.get(
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
+        user=planner,
+    )
+    form = response.forms["participations-form"]
+    form["participations-1-DELETE"] = True
+    form["participations-0-state"] = AbstractParticipation.States.RESPONSIBLE_REJECTED.value
+    form.submit()
+
+    # try to delete the rejected participation
+    response = django_app.get(
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
+        user=planner,
+    )
+    form = response.forms["participations-form"]
+    form["participations-0-DELETE"] = True
+    with pytest.raises(ValueError):
+        form.submit()
