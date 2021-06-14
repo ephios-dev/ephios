@@ -45,7 +45,8 @@
         <link type="text/x-scss" href="{% static 'ephios/scss/main.scss' %}" rel="stylesheet" media="screen">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
         <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2.min.css" %}">
-        <link type="text/css" media="screen" rel="stylesheet" href="{% static "select2/css/select2-bootstrap5.min.css" %}">
+        <link type="text/css" media="screen" rel="stylesheet"
+              href="{% static "select2/css/select2-bootstrap5.min.css" %}">
         {% block css %}{% endblock %}
     {% endcompress %}
     {% compress js %}
@@ -55,9 +56,10 @@
         <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/formset/formset.js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
-        <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
         {% block javascript %}{% endblock %}
     {% endcompress %}
+    {# as of 2021-06-14, the statici18n tag misbehaves with compression when 500 errors occur #}
+    <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
     {% block html_head %}
     {% endblock %}
 </head>
