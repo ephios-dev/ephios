@@ -59,11 +59,17 @@ class LogEntry(models.Model):
 
     @property
     def content_object_classname(self):
-        return capitalize_first(self.content_type.model_class()._meta.verbose_name)
+        try:
+            return capitalize_first(self.content_type.model_class()._meta.verbose_name)
+        except AttributeError:
+            return str(self.content_type)
 
     @property
     def content_object_or_str(self):
-        return self.content_object or self.data.get("__str__")
+        try:
+            return self.content_object
+        except AttributeError:
+            return self.data.get("__str__")
 
     def __str__(self):
         if self.content_object:
