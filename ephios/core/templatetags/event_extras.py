@@ -28,7 +28,7 @@ def shift_status(request, shift):
             AbstractParticipation.States.RESPONSIBLE_REJECTED: "text-danger",
             AbstractParticipation.States.REQUESTED: "text-warning",
             AbstractParticipation.States.CONFIRMED: "text-success",
-            AbstractParticipation.States.GETTING_DISPATCHED: "text-secondary",
+            AbstractParticipation.States.GETTING_DISPATCHED: "text-muted",
         }[participation.state]
         return mark_safe(f'<span class="{color}">{participation.get_state_display()}</span><br>')
     return ""
@@ -89,7 +89,7 @@ def event_bulk_actions():
     for _, actions in register_event_bulk_action.send(None):
         html += "".join(
             [
-                f"<button class='btn btn-secondary mr-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['label']}</button>"
+                f"<button class='btn btn-secondary me-1' type='submit' name='{action['url']}' formaction='{action['url']}'><span class='fa {action['icon']}'></span> {action['label']}</button>"
                 for action in actions
             ]
         )

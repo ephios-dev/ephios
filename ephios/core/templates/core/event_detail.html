@@ -34,7 +34,7 @@
     {% endif %}
     <div class="page-header clearfix">
         <h2>
-            <small class="float-right mr-lg-3"><span
+            <small class="float-end me-lg-3"><span
                     class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
             {{ event.title }}
         </h2>
@@ -44,11 +44,14 @@
         {% if request.user.is_authenticated %}
             {% get_obj_perms request.user for event as "event_perms" %}
         {% endif %}
+    </div>
+    <div class="row">
+        <div class="col">{{ event.description|rich_text:"h1,h2" }}</div>
         {% if "change_event" in event_perms %}
-            <div class="float-right d-inline mb-3">
+            <div class="col-12 col-md-auto mb-3 ms-auto">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% translate "Manage event" %}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdownButton">
@@ -96,7 +99,6 @@
             </div>
         {% endif %}
     </div>
-    <div>{{ event.description|rich_text:"h1,h2" }}</div>
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}

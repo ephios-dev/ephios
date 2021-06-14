@@ -1,6 +1,8 @@
+import functools
 from datetime import datetime, timedelta
 
 import pytest
+from django.utils.timezone import make_aware
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup import LocalParticipation, SignupStats, get_conflicting_participations
@@ -56,18 +58,19 @@ def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, con
         ),
     ],
 )
-def test_get_conflicting_shifts(a_times, b_times, conflict_expected, event, volunteer):
+def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, event, volunteer):
     common = dict(signup_method_slug=InstantConfirmationSignupMethod.slug, event=event)
+    aware = functools.partial(make_aware, timezone=tz)
     a = Shift.objects.create(
-        start_time=a_times[0],
-        end_time=a_times[1],
-        meeting_time=a_times[0] - timedelta(minutes=15),
+        start_time=aware(a_times[0]),
+        end_time=aware(a_times[1]),
+        meeting_time=aware(a_times[0]) - timedelta(minutes=15),
         **common
     )
     b = Shift.objects.create(
-        start_time=b_times[0],
-        end_time=b_times[1],
-        meeting_time=b_times[0] - timedelta(minutes=15),
+        start_time=aware(b_times[0]),
+        end_time=aware(b_times[1]),
+        meeting_time=aware(b_times[0]) - timedelta(minutes=15),
         **common
     )
     a_participation = LocalParticipation.objects.create(

@@ -155,7 +155,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
     def deserialize(cls, data, model, action_type: InstanceActionType):
         try:
             self = cls(model._meta.get_field(data["field_name"]))
-        except FieldDoesNotExist:
+        except (FieldDoesNotExist, AttributeError):
             self = cls(None)
             self.label = data["verbose_name"]
         else:

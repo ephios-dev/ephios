@@ -312,6 +312,9 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
     template_name = "core/event_notification.html"
     form_class = EventNotificationForm
 
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "event": self.object}
+
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
+    "crispy_bootstrap5",
     "webpush",
     "ephios.modellogging",
 ]
@@ -184,6 +185,8 @@ STATICFILES_FINDERS = (
     "compressor.finders.CompressorFinder",
 )
 COMPRESS_ENABLED = not DEBUG
+# https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
@@ -240,7 +243,8 @@ CSP_STYLE_SRC = ("'self'",)
 CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 # django.contrib.messages

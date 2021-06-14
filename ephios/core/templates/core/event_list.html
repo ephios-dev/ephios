@@ -12,7 +12,7 @@ visible
 {% block content %}
     <div class="page-header">
         <h1>{% translate "Events" %}
-            <small class="float-right">
+            <small class="float-end">
                 <form method="post" action="{% url "core:event_list_type_setting" %}">
                     {% csrf_token %}
                     <div class="btn-group">
@@ -26,10 +26,10 @@ visible
     <form id="bulk_action_form" method="post">
         {% csrf_token %}
         {% if perms.core.add_event %}
-            <div id="event-controls" class="d-flex flex-wrap">
-                <div class="dropdown m-1">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="eventCreateButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div id="event-controls" class="d-flex flex-wrap pb-3">
+                <div class="dropdown m-1 ms-0">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="eventCreateButton"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="fa fa-plus"></span>
                         {% translate "Add event" %}
                     </button>
@@ -42,7 +42,7 @@ visible
                     </div>
                 </div>
                 <div class="bulk-actions">
-                    <button class="btn btn-danger m-1" type="submit" name="delete"
+                    <button class="btn btn-secondary m-1 ms-0" type="submit" name="delete"
                             formaction="{% url "core:event_bulk_delete" %}"><span
                             class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                     {% event_bulk_actions %}
@@ -56,10 +56,10 @@ visible
                     {% eventtype_colors %}
                 {% endcache %}
             </style>
-            <div class="list-group list-group-flush">
+            <div class="list-group">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">
-                        <div class="pl-2">
+                        <div class="ps-2">
                             <input type="checkbox" id="checkall">
                         </div>
                     </div>
@@ -68,8 +68,8 @@ visible
                     <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
                         <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                             {% with event|event_signup_state_counts:request.user as counter %}
-                                <div class="pl-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                     {% if counter %}data-toggle="tooltip" data-placement="bottom" data-html="true"
+                                <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
+                                     {% if counter %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                      title="{% for state in counter %}<div>
 
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
@@ -77,20 +77,20 @@ visible
                                      {% endif %}
                                 >
                                     {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
-                                        <span class="text-success fa fa-user-check"></span>
+                                        <span class="text-success fa fa-user-check ps-2"></span>
                                     {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
-                                        <span class="text-warning fa fa-user-clock"></span>
+                                        <span class="text-warning fa fa-user-clock ps-2"></span>
                                     {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
-                                        <span class="text-danger fa fa-user-times"></span>
+                                        <span class="text-danger fa fa-user-times ps-2"></span>
                                     {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
-                                        <span class="text-danger fa fa-user-minus"></span>
+                                        <span class="text-danger fa fa-user-minus ps-2"></span>
                                     {% else %}
-                                        <span class="text-secondary far fa-user"></span>
+                                        <span class="text-muted far fa-user ps-2"></span>
                                     {% endif %}
                                 </div>
                             {% endwith %}
                             {% if perms.core.add_event %}
-                                <div class="pl-lg-2 d-flex flex-row flex-lg-column justify-content-center">
+                                <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
                                     <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
                                            class="cb-element">
                                 </div>
@@ -102,10 +102,10 @@ visible
                                 <div class="col-lg">
                                     <h5 class="mb-0">
                                         {{ event.title }}
-                                        <small class="float-right mr-lg-3"><span
+                                        <small class="float-end me-lg-3"><span
                                                 class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
                                     </h5>
-                                    <span class="w-100 text-secondary">
+                                    <span class="w-100 text-muted">
                                     {{ event.location }}
                                 </span>
                                 </div>
@@ -124,7 +124,7 @@ visible
                                     {% endif %}
                                 </div>
                                 <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
-                                    <p class="my-0 mr-1">
+                                    <p class="my-0 me-1 position-relative">
                                         <span class="fas fa-users"></span>
                                         {% with event.get_signup_stats as stats %}
                                             {% if event.can_change and stats.requested_count > 0 %}

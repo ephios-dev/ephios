@@ -1,8 +1,23 @@
 from crispy_forms.exceptions import CrispyError
 from crispy_forms.utils import TEMPLATE_PACK
 from django.forms import boundfield
-from django.template import Context
+from django.template import Context, Template
 from django.template.loader import get_template
+
+
+class AbortLink:
+    """
+    a-tag to cancel the form as a bootstrap button
+    """
+
+    def __init__(self, href):
+        self.href = href
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        context.update({"href": self.href})
+        return Template(
+            '{% load i18n %}<a role="button" class="btn btn-secondary mt-1" href="{{ href }}">{% trans "Cancel" %}</a>'
+        ).render(context)
 
 
 def as_crispy_field(

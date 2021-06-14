@@ -1,5 +1,5 @@
 import operator
-from datetime import datetime
+from datetime import date, datetime
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -88,7 +88,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
     def create(
         cls,
         user: UserProfile,
-        when: datetime,
+        when: date,
         hours: float,
         reason: str,
     ):

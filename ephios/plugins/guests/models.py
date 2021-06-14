@@ -100,5 +100,5 @@ class GuestParticipant(AbstractParticipant):
     @property
     def icon(self):
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Guest")}"></span>'
+            f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{_("Guest")}"></span>'
         )
