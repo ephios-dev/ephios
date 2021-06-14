@@ -33,7 +33,7 @@ class LogEntry(models.Model):
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="logging_entries",
     )
     action_type = models.CharField(
