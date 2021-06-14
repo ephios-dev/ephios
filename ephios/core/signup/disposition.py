@@ -48,15 +48,6 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
             form.instance.state = AbstractParticipation.objects.get(id=form.instance.id).state
         return form.save(commit=commit)
 
-    def delete_existing(self, obj, commit=True):
-        # refresh from db as obj has the state from the post data
-        db_obj = AbstractParticipation.objects.get(id=obj.id)
-        if db_obj.state != AbstractParticipation.States.GETTING_DISPATCHED:
-            raise ValueError(
-                "Deletion a participation is only allowed if it was just added through disposition."
-            )
-        super().delete_existing(obj, commit)
-
 
 def get_disposition_formset(form):
     return forms.modelformset_factory(

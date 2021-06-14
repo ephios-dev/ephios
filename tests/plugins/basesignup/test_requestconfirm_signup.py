@@ -1,4 +1,3 @@
-import pytest
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
@@ -97,7 +96,7 @@ def test_getting_dispatched_state_is_overwritten_by_participant_signup(
     )
 
 
-def test_disposition_can_only_delete_participations_getting_dispatched(
+def test_disposition_delete_participations_getting_dispatched(
     django_app, volunteer, planner, event
 ):
     # setup a participation
@@ -117,16 +116,10 @@ def test_disposition_can_only_delete_participations_getting_dispatched(
         user=planner,
     )
     form = response.forms["participations-form"]
-    form["participations-1-DELETE"] = True
     form["participations-0-state"] = AbstractParticipation.States.RESPONSIBLE_REJECTED.value
+    form["participations-1-DELETE"] = True
     form.submit()
 
-    # try to delete the rejected participation
-    response = django_app.get(
-        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
-        user=planner,
+    assert (
+        LocalParticipation.objects.get().state == AbstractParticipation.States.RESPONSIBLE_REJECTED
     )
-    form = response.forms["participations-form"]
-    form["participations-0-DELETE"] = True
-    with pytest.raises(ValueError):
-        form.submit()

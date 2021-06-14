@@ -41,7 +41,7 @@ def sectioned_shift(event, tz, qualifications):
     )
 
 
-@pytest.mark.ignore_template_errors  # shift_form uses unbound object to look special for creation
+@pytest.mark.ignore_template_errors  # shift_form uses unbound object to detect shift creation
 def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
     POST_DATA = OrderedDict(
         {
