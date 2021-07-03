@@ -1,14 +1,17 @@
 $(document).ready(function () {
     $("#id_user").djangoSelect2({
+        theme: "bootstrap5",
         insertTag: function (data, tag) {
             // Insert the tag at the end of the results
-            data.push(tag);
+            if (data.length === 0) {
+                data.push(tag);
+            }
         },
         createTag: function (params) {
-            console.log(params)
             return {
                 id: params.term,
-                text: params.term,
+                text: "Create \"" + params.term + "\" as placeholder",
+                userName: params.term,
                 guestUser: true
             }
         }
@@ -84,9 +87,8 @@ $(document).ready(function () {
 
     $("select#id_user[form='add-user-form']").on('select2:close', function (e) {
         // clear select2
-        const userSelect = $(this);
         setTimeout(() => {
-            userSelect.val(null).change()
+            $("#id_user").empty().trigger('change');
         });
 
         const spawn = $("[data-formset-spawn]");
@@ -96,7 +98,7 @@ $(document).ready(function () {
         if (e.params.originalSelect2Event && e.params.originalSelect2Event.data.guestUser) {
             const $spinner = showSpinner(spawn);
             const newIndex = $('#participations-form').formset('getOrCreate').totalFormCount();
-            const names = e.params.originalSelect2Event.data.text.split(" ");
+            const names = e.params.originalSelect2Event.data.userName.split(" ");
             const last_name = names.pop();
             const first_names = names.join(" ");
             $.ajax({

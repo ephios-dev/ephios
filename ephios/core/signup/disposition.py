@@ -150,9 +150,9 @@ class AddForeignParticipantView(DispositionBaseViewMixin, TemplateResponseMixin,
 
     def post(self, request, *args, **kwargs):
         shift = self.object
-        from ephios.core.signup import ForeignParticipant
+        from ephios.core.signup import PlaceholderParticipant
 
-        participant = ForeignParticipant(
+        participant = PlaceholderParticipant(
             request.POST["first_name"], request.POST["last_name"], [], datetime.date.min, None
         )
         instance = shift.signup_method.get_participation_for(participant)
@@ -207,7 +207,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
 
             self.object.participations.filter(
                 state=AbstractParticipation.States.GETTING_DISPATCHED
-            ).delete()
+            ).non_polymorphic().delete()
             return redirect(self.object.event.get_absolute_url())
         return self.get(request, *args, **kwargs, formset=formset)
 

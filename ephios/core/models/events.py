@@ -261,16 +261,16 @@ class LocalParticipation(AbstractParticipation):
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
 
 
-class ForeignParticipation(AbstractParticipation):
+class PlaceholderParticipation(AbstractParticipation):
     first_name = CharField(max_length=254)
     last_name = CharField(max_length=254)
 
     @property
     def participant(self) -> "AbstractParticipant":
         from ephios.core.models.users import Qualification
-        from ephios.core.signup.methods import ForeignParticipant
+        from ephios.core.signup.methods import PlaceholderParticipant
 
-        return ForeignParticipant(
+        return PlaceholderParticipant(
             first_name=self.first_name,
             last_name=self.last_name,
             date_of_birth=date.min,
@@ -282,8 +282,7 @@ class ForeignParticipation(AbstractParticipation):
         return f"{self.first_name} {self.last_name} @ {self.shift}"
 
 
-# TODO: find out why saving a DispositionForm crashes when ForeignParticipation is not registered for modellogging
-register_model_for_logging(ForeignParticipation, PARTICIPATION_LOG_CONFIG)
+register_model_for_logging(PlaceholderParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class EventTypePreference(PerInstancePreferenceModel):

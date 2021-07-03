@@ -25,7 +25,7 @@ from django.views import View
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
-from ..models.events import ForeignParticipation
+from ..models.events import PlaceholderParticipation
 from ..signals import participant_from_request, register_signup_methods
 from .disposition import BaseDispositionParticipationForm
 
@@ -128,33 +128,27 @@ class LocalUserParticipant(AbstractParticipant):
 
 
 @dataclasses.dataclass(frozen=True)
-class ForeignParticipant(AbstractParticipant):
+class PlaceholderParticipant(AbstractParticipant):
     def new_participation(self, shift):
-        return ForeignParticipation(
+        return PlaceholderParticipation(
             shift=shift, first_name=self.first_name, last_name=self.last_name
         )
 
     def participation_for(self, shift):
         try:
-            return ForeignParticipation.objects.get(
+            return PlaceholderParticipation.objects.get(
                 shift=shift, first_name=self.first_name, last_name=self.last_name
             )
-        except ForeignParticipation.DoesNotExist:
+        except PlaceholderParticipation.DoesNotExist:
             return None
 
     def all_participations(self):
         return AbstractParticipation.objects.none()
 
-    def reverse_signup_action(self, shift):
-        return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
-
-    def reverse_event_detail(self, event):
-        return event.get_absolute_url()
-
     @property
     def icon(self):
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("External")}"></span>'
+            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Placeholder")}"></span>'
         )
 
 
