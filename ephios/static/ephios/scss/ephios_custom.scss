@@ -69,10 +69,23 @@ footer {
   justify-content: center;
 }
 
+
+/* mannequins */
+
 .mannequin {
-  height: 20px;
-  width: 20px;
-  display: block;
+  border-radius: $card-border-radius;
+  display: inline-block;
+  aspect-ratio: 1;
+  width: auto;
+
+  img {
+    object-fit: contain;
+    height: 80%;
+  }
+}
+
+.mannequin-neutral {
+  background: $gray-200;
 }
 
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */

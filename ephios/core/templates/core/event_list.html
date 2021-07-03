@@ -111,7 +111,7 @@ visible
                                 </div>
                                 <div class="col col-lg-3">
                                     {{ event.start_time|date:"D" }},
-                                    {% if event.start_time.date == event.end_time.date %}
+                                    {% if not event.is_multi_day %}
                                         {{ event.start_time|date:"SHORT_DATE_FORMAT" }}<span class="d-lg-none">,</span>
                                         <span class="d-none d-lg-inline"><br></span>
                                         {{ event.start_time|date:"TIME_FORMAT" }} –

@@ -5,8 +5,8 @@ $brand-gray: #1c1c1c;
 
 $gray-100: #FCFDFD;
 //$gray-1: #F6F8F9;
-//$gray-2: #F3F5F6;
-$gray-200: #EAE5FB;
+$gray-200: #F3F5F6;
+//$gray-200: #EAECEE;
 //$gray-4: #DDE1E3;
 $gray-300: #CAD0D3;
 $gray-400: #B9C1C6;
@@ -31,7 +31,7 @@ $danger: shade-color($red, 40%);
 $secondary: $gray-300;
 $info: $blue;
 $warning:       $yellow;
-$light:         $gray-100;
+$light:         $gray-200;
 $dark:          $gray-900;
 
 $theme-colors: (
@@ -48,7 +48,11 @@ $theme-colors: (
 
 // Looks
 //$link-decoration: none;
-$body-bg: $gray-100;
+$body-bg: $gray-200;
+$card-bg: $gray-100;
+$card-cap-bg: $gray-100;
+
+$text-muted: $gray-500;
 
 
 // Shadow (navbar)

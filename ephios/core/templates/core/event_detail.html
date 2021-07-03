@@ -19,6 +19,9 @@
 {% endblock %}
 
 {% block content %}
+    {% if request.user.is_authenticated %}
+        {% get_obj_perms request.user for event as "event_perms" %}
+    {% endif %}
     {% if not event.active %}
         {% if event.shifts.exists %}
             {% trans "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
@@ -32,73 +35,91 @@
             {% render_alert no_shift_error "danger" %}
         {% endif %}
     {% endif %}
-    <div class="page-header clearfix">
-        <h2>
-            <small class="float-end me-lg-3"><span
-                    class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
-            {{ event.title }}
-        </h2>
-        <h4 class="text-muted">
-            {{ event.location }}
-        </h4>
-        {% if request.user.is_authenticated %}
-            {% get_obj_perms request.user for event as "event_perms" %}
-        {% endif %}
-    </div>
-    <div class="row">
-        <div class="col">{{ event.description|rich_text:"h1,h2" }}</div>
-        {% if "change_event" in event_perms %}
-            <div class="col-12 col-md-auto mb-3 ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdownButton"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% translate "Manage event" %}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionDropdownButton">
-                        <a class="dropdown-item"
-                           href="{% url "core:event_edit" event.pk %}">
-                            <span class="fas fa-edit"></span>
-                            {% trans "Edit event" %}
-                        </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_createshift" event.pk %}">
-                            <span class="fas fa-plus"></span>
-                            {% trans "Add another shift" %}
-                        </a>
-                        <a class="dropdown-item"
-                           href="{% url "core:event_delete" event.pk %}">
-                            <span class="fas fa-trash-alt"></span>
-                            {% trans "Delete event" %}
-                        </a>
-                        {% if event.active %}
-                            <a class="dropdown-item"
-                               href="{% url "core:event_copy" event.pk %}">
-                                <span class="fas fa-copy"></span>
-                                {% translate "Copy event" %}
-                            </a>
-                            <a class="dropdown-item"
-                               href="{% url "core:event_detail_pdf" event.pk %}">
-                                <span class="fas fa-file-pdf"></span>
-                                {% trans "Download PDF" %}
-                            </a>
-                            <a class="dropdown-item"
-                               href="{% url "core:event_notifications" event.pk %}">
-                                <span class="fas fa-envelope"></span>
-                                {% trans "Send notifications" %}
-                            </a>
-                        {% endif %}
-                        {% if perms.modellogging.view_logentry %}
-                            <a class="dropdown-item"
-                               href="{% url "core:log" %}?object_type=event&object_id={{ event.id }}">
-                                <span class="fas fa-clipboard-list"></span>
-                                {% trans "View edit history" %}
-                            </a>
-                        {% endif %}
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h1 class="card-title fw-bold fs-1">
+                {% if "change_event" in event_perms %}
+                    <div class="dropstart float-end">
+                        <button class="btn" type="button" id="actionDropdownButton"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionDropdownButton">
+                            <li><a class="dropdown-item"
+                               href="{% url "core:event_edit" event.pk %}">
+                                <span class="fas fa-edit"></span>
+                                {% trans "Edit event" %}
+                            </a></li>
+                            <li><a class="dropdown-item"
+                               href="{% url "core:event_createshift" event.pk %}">
+                                <span class="fas fa-plus"></span>
+                                {% trans "Add another shift" %}
+                            </a></li>
+                            <li><a class="dropdown-item"
+                               href="{% url "core:event_delete" event.pk %}">
+                                <span class="fas fa-trash-alt"></span>
+                                {% trans "Delete event" %}
+                            </a></li>
+                            {% if event.active %}
+                                <li><a class="dropdown-item"
+                                   href="{% url "core:event_copy" event.pk %}">
+                                    <span class="fas fa-copy"></span>
+                                    {% translate "Copy event" %}
+                                </a></li>
+                                <li><a class="dropdown-item"
+                                   href="{% url "core:event_detail_pdf" event.pk %}">
+                                    <span class="fas fa-file-pdf"></span>
+                                    {% trans "Download PDF" %}
+                                </a></li>
+                                <li><a class="dropdown-item"
+                                   href="{% url "core:event_notifications" event.pk %}">
+                                    <span class="fas fa-envelope"></span>
+                                    {% trans "Send notifications" %}
+                                </a></li>
+                            {% endif %}
+                            {% if perms.modellogging.view_logentry %}
+                                <li><a class="dropdown-item"
+                                   href="{% url "core:log" %}?object_type=event&object_id={{ event.id }}">
+                                    <span class="fas fa-clipboard-list"></span>
+                                    {% trans "View edit history" %}
+                                </a></li>
+                            {% endif %}
+                        </ul>
                     </div>
-                </div>
+                {% endif %}
+                {{ event.title }}
+            </h1>
+            <h5 class="card-subtitle mb-2 text-muted fw-bolder">
+                <span class="me-1 badge badge-{{ event.type.pk }}-color">{{ event.type }}</span>
+                <span class="text-muted me-1 d-inline-block">
+                    <i class="fas fa-map-marker-alt"></i>
+                                {{ event.location }}
+                </span>
+                {% with start_time=event.get_start_time end_time=event.get_end_time %}
+                    {% if start_time %}
+                        <span class="text-muted d-inline-block">
+                        <i class="far fa-calendar"></i>
+                        {{ start_time|date:"D" }},
+                            {% if not event.is_multi_day %}
+                                {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                                {{ start_time|date:"TIME_FORMAT" }} –
+                                {{ end_time|date:"TIME_FORMAT" }}
+                            {% else %}
+                                {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                                {% translate "to" %}
+                                {{ end_time|date:"SHORT_DATE_FORMAT" }}
+                            {% endif %}
+                    </span>
+                    {% endif %}
+                {% endwith %}
+            </h5>
+            <div class="card-text text-muted">
+                {{ event.description|rich_text:"h1,h2" }}
             </div>
-        {% endif %}
+        </div>
     </div>
+
     <div>
         {% for shift in event.shifts.all %}
             {% include "core/fragments/shift_box_big.html" with shift=shift %}
