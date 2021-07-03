@@ -20,7 +20,7 @@
 
     <form method="post" class="d-none" id="add-user-form"
           action="{% url "core:shift_disposition_add_user" pk=shift.pk %}"
-          data-foreign-url="{% url "core:shift_disposition_add_foreign" pk=shift.pk %}">
+          data-placeholder-url="{% url "core:shift_disposition_add_placeholder" pk=shift.pk %}">
         {% csrf_token %}
         {{ add_user_form.new_index }}
     </form>

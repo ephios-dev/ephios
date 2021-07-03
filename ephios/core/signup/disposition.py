@@ -142,7 +142,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         raise Http404()
 
 
-class AddForeignParticipantView(DispositionBaseViewMixin, TemplateResponseMixin, View):
+class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def get_template_names(self):
         return [
             self.object.signup_method.disposition_participation_form_class.disposition_participation_template

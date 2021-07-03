@@ -102,7 +102,7 @@ $(document).ready(function () {
             const last_name = names.pop();
             const first_names = names.join(" ");
             $.ajax({
-                url: $("#" + $(this)[0].form.id).data("foreign-url"),
+                url: $("#" + $(this)[0].form.id).data("placeholder-url"),
                 type: "post",
                 dataType: "html",
                 data: {
