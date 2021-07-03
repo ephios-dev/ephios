@@ -35,7 +35,7 @@
         {{ form.location|as_crispy_field }}
 
         <div class="card mb-3">
-            <div class="card-header" data-toggle="collapse" data-target="#advancedSettings">
+            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#advancedSettings">
                 <a href="#">{% translate "Permissions" %}</a>
             </div>
             <div id="advancedSettings" class="collapse">
@@ -55,11 +55,11 @@
             {% if event %}
                 <a role="button" class="btn btn-secondary"
                    href="{{ event.get_absolute_url }}">{% trans "Back" %}</a>
-                <button type="submit" class="btn btn-primary float-right">{% trans "Save" %}</button>
+                <button type="submit" class="btn btn-primary float-end">{% trans "Save" %}</button>
             {% else %}
                 <a role="button" class="btn btn-secondary"
                    href="{% url "core:event_list" %}">{% trans "Cancel" %}</a>
-                <button type="submit" class="btn btn-primary float-right">{% trans "Next" %}</button>
+                <button type="submit" class="btn btn-primary float-end">{% trans "Next" %}</button>
             {% endif %}
         </div>
     </form>

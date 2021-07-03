@@ -15,6 +15,7 @@ from django.forms import (
     MultipleChoiceField,
     inlineformset_factory,
 )
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
@@ -24,6 +25,7 @@ from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import enabled_notification_types
 from ephios.core.widgets import MultiUserProfileWidget
+from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
 from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
@@ -165,7 +167,10 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
             ),
-            FormActions(Submit("submit", _("Save"))),
+            FormActions(
+                Submit("submit", _("Save"), css_class="float-end"),
+                AbortLink(href=reverse("core:group_list")),
+            ),
         )
 
     def save(self, commit=True):
@@ -287,7 +292,15 @@ class WorkingHourRequestForm(Form):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", _("Submit")))
+        self.helper.layout = Layout(
+            Field("when"),
+            Field("hours"),
+            Field("reason"),
+            FormActions(
+                Submit("submit", _("Send"), css_class="float-end"),
+                AbortLink(href=reverse("core:profile")),
+            ),
+        )
 
     def create_consequence(self):
         WorkingHoursConsequenceHandler.create(

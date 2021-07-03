@@ -2,9 +2,10 @@ import operator
 import re
 from datetime import date, datetime, timedelta
 
-import django.forms as forms
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -21,6 +22,7 @@ from ephios.core import signup
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
 from ephios.core.widgets import MultiUserProfileWidget
+from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
 from ephios.modellogging.log import add_log_recorder, update_log
@@ -258,17 +260,21 @@ class EventNotificationForm(forms.Form):
     mail_content = forms.CharField(required=False, widget=forms.Textarea, label=_("Mail content"))
 
     def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Field("action"),
-            Field("mail_content", wrapper_class="no-display"),
-            Submit("submit", _("Send")),
+            Field("mail_content"),
+            FormActions(
+                Submit("submit", _("Send"), css_class="float-end"),
+                AbortLink(href=self.event.get_absolute_url()),
+            ),
         )
 
     def clean(self):
         if (
-            self.cleaned_data["action"] == self.PARTICIPANTS
+            self.cleaned_data.get("action") == self.PARTICIPANTS
             and not self.cleaned_data["mail_content"]
         ):
             raise ValidationError(_("You cannot send an empty mail."))

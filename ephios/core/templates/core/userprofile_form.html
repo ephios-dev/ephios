@@ -31,14 +31,14 @@
             {{ qualification_formset.management_form }}
             <div class="card mb-2">
                 <div class="card-body">
-                    <h3 class="card-title">{% translate "Qualifications" %}</h3>
+                    <h4 class="card-title">{% translate "Qualifications" %}</h4>
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for form in qualification_formset %}
                             <div class="list-group-item" data-formset-form>
                                 {{ form.id }}
-                                <div class="form-row">
+                                <div class="row align-items-center">
                                     <div class="col-md-5">
-                                        <div class="form-group row">
+                                        <div class="row">
                                             <label for="{{ form.qualification.id_for_label }}"
                                                    class="col-md-4 col-form-label">{{ form.qualification.label }}</label>
                                             <div class="col-md-8">
@@ -73,8 +73,8 @@
 
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
-                    <div class="list-group-item django-select2" data-formset-form>
-                        <div class="form-row">
+                    <div class="list-group-item" data-formset-form>
+                        <div class="row align-items-center">
                             <div class="col-md-5">
                                 {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
                             </div>
@@ -93,19 +93,21 @@
                     </div>
                 {% endescapescript %}
             </script>
+
+            {% if userprofile %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h4 class="card-title">{% translate "Password" %}</h4>
+                        <a class="btn btn-secondary text-nowrap mt-1"
+                           href="{% url "core:userprofile_password_reset" userprofile.pk %}">
+                            {% trans "Reset password" %}</a>
+
+                    </div>
+                </div>
+            {% endif %}
         </div>
+        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-end mt-1">
         <a role="button" class="btn btn-secondary mt-1"
            href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
-        {% if userprofile %}
-            <a class="btn btn-outline-secondary text-nowrap mt-1"
-               href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-                {% trans "Reset password" %}</a>
-            {% if perms.core.delete_userprofile %}
-                <a role="button" class="btn btn-outline-danger mt-1"
-                   href="{% url "core:userprofile_delete" userprofile.pk %}">
-                    <span class="fa fa-trash-alt"></span> {% trans "Delete" %}</a>
-            {% endif %}
-        {% endif %}
-        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-right mt-1">
     </form>
 {% endblock %}

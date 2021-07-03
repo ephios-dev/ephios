@@ -131,11 +131,11 @@ class SectionBasedConfigurationForm(forms.Form):
 
         sections = [
             {
-                key: form.cleaned_data[key]
+                key: cleaned_data[key]
                 for key in ("title", "qualifications", "min_count", "max_count", "uuid")
             }
-            for form in self.sections_formset
-            if not form.cleaned_data.get("DELETE")
+            for cleaned_data in self.sections_formset.cleaned_data
+            if cleaned_data and not cleaned_data.get("DELETE")
         ]
         return sections
 

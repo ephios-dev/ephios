@@ -7,7 +7,7 @@
             <span class="fa fa-calendar-alt"></span>
             {{ shift.get_start_end_time_display }}
             {% if not without_controls and "change_event" in event_perms %}
-                <small class="float-right">
+                <small class="float-end">
                     <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
                         {% trans "Edit" %}</a>
                     {% if shift.event.shifts.count > 1 %}
@@ -36,7 +36,7 @@
                                     {% with can_sign_up=request|can_sign_up:shift %}
                                         <span class="d-inline-block" tabindex="0"
                                                 {% if not can_sign_up %}
-                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
                                                  {% for error in request|signup_errors:shift %}
                                                      <div>{{ error.message }}</div>
                                                  {% endfor %}"
@@ -50,7 +50,7 @@
                                     {% with can_decline=request|can_decline:shift %}
                                         <span class="d-inline-block" tabindex="0"
                                                 {% if not can_decline %}
-                                              data-toggle="tooltip" data-html="true" data-placement="bottom" title="
+                                              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
                                                  {% for error in request|decline_errors:shift %}
                                                      <div>{{ error.message }}</div>
                                                  {% endfor %}"

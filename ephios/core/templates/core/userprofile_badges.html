@@ -1,9 +1,9 @@
 {% load i18n %}
 {% if userprofile.pk %}
     {% if userprofile.is_minor %}
-        <span class="badge badge-warning">{% trans "Minor" %}</span>
+        <span class="badge bg-warning">{% trans "Minor" %}</span>
     {% endif %}
     {% if not userprofile.is_active %}
-        <span class="badge badge-danger">{% trans "Inactive" %}</span>
+        <span class="badge bg-danger">{% trans "Inactive" %}</span>
     {% endif %}
 {% endif %}

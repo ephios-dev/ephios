@@ -5,25 +5,25 @@
 {% block body %}
     <h6 class="mb-0">
         <div class="row align-items-center no-gutters">
-            <div class="col-10 pr-3">
+            <div class="col-10 pe-3">
                 {{ form.instance.participant.icon }}
                 {{ form.instance.participant }}
                 {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
                     {% if conflicting_shifts %}
                         <span class="fa fa-exclamation-triangle text-danger"
-                              data-toggle="tooltip"
+                              data-bs-toggle="tooltip"
                               title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicting_shifts|join:", " %}
                                   {{ participant }} already participates in {{ conflicts }} at the same time.
                               {% endblocktranslate %}"></span>
                     {% endif %}
                 {% endwith %}
                 {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
-                    <span class="badge badge-secondary">{{ qualification }}</span>
+                    <span class="badge bg-secondary">{{ qualification }}</span>
                 {% endfor %}
             </div>
             <div class="col-2 d-flex justify-content-between align-items-center">
                 {% if form.can_delete %}
-                    <button type="button" class="btn float-right btn-sm ml-3" data-formset-delete-button>
+                    <button type="button" class="btn float-end btn-sm ms-3" data-formset-delete-button>
                         <i class="fas fa-times"></i>
                     </button>
                 {% endif %}
