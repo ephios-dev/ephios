@@ -145,6 +145,12 @@ class PlaceholderParticipant(AbstractParticipant):
     def all_participations(self):
         return AbstractParticipation.objects.none()
 
+    def reverse_signup_action(self, shift):
+        raise NotImplementedError
+
+    def reverse_event_detail(self, event):
+        raise NotImplementedError
+
     @property
     def icon(self):
         return mark_safe(
