@@ -412,7 +412,7 @@ Django = ">=1.4"
 
 [[package]]
 name = "django-libsass"
-version = "0.8"
+version = "0.9"
 description = "A django-compressor filter to compile SASS files using libsass"
 category = "main"
 optional = false
@@ -1279,7 +1279,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e79916f65bad79a130ec0fafc91ea72888af7ca170db65162fe3ce76586a83f8"
+content-hash = "373fe159ced356d6dca26cc16ac1f9d6c2487221f9a6fa75a8b28e8ec220e4ed"
 
 [metadata.files]
 alabaster = [
@@ -1528,8 +1528,8 @@ django-jquery-js = [
     {file = "django-jquery-js-3.1.1.tar.gz", hash = "sha256:308e6472801f89be7c02fa3d06bea6470cfbcab8287db80c64b1093717b8eea9"},
 ]
 django-libsass = [
-    {file = "django-libsass-0.8.tar.gz", hash = "sha256:38fab4ce1245542f3afd7248dc48f8a0b261f5f6c61e7cc43969a9c9079b5ffd"},
-    {file = "django_libsass-0.8-py3-none-any.whl", hash = "sha256:3e74fd8e75ac0e6ebc0443efc3e530167981bf279fecc2294094c820ae266fbb"},
+    {file = "django-libsass-0.9.tar.gz", hash = "sha256:bfbbb55a8950bb40fa04dd416605f92da34ad1f303b10a41abc3232386ec27b5"},
+    {file = "django_libsass-0.9-py3-none-any.whl", hash = "sha256:5234d29100889cac79e36a0f44207ec6d275adfd2da1acb6a94b55c89fe2bd97"},
 ]
 django-polymorphic = [
     {file = "django-polymorphic-3.0.0.tar.gz", hash = "sha256:9d886f19f031d26bb1391c055ed9be06fb226a04a4cec1842b372c58873b3caa"},
