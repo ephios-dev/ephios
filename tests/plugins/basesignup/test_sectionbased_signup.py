@@ -127,3 +127,31 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert participation.state == AbstractParticipation.States.CONFIRMED
     assert participation.data.get("preferred_section_uuid") == KTW_UUID
     assert participation.data.get("dispatched_section_uuid") == KTW_UUID
+
+
+def test_signup_methods(django_app, sectioned_shift, volunteer):
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.missing == 3
+    assert signup_stats.free is None
+    sectioned_shift.signup_configuration["sections"] = (
+        {
+            "title": "KTW",
+            "qualifications": [],
+            "min_count": 2,
+            "max_count": 3,
+            "uuid": KTW_UUID,
+        },
+    )
+    sectioned_shift.save()
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.missing == 2
+    assert signup_stats.free == 3
+    LocalParticipation.objects.create(
+        shift=sectioned_shift,
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+        data=dict(dispatched_section_uuid=KTW_UUID),
+    )
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.missing == 1
+    assert signup_stats.free == 2
