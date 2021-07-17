@@ -5,12 +5,14 @@
 
 <div id="shift-{{ shift.pk }}" class="card h-100">
     <div class="card-header d-flex">
-        {% with mannequin=request|shift_mannequin:shift %}
-            <div class="mannequin mannequin-{{ mannequin }}">
-                <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
-                     alt="mannequin icon"/>
-            </div>
-        {% endwith %}
+        {% if not without_controls %}
+            {% with mannequin=request|shift_mannequin:shift %}
+                <div class="mannequin mannequin-{{ mannequin }}">
+                    <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                         alt="mannequin icon"/>
+                </div>
+            {% endwith %}
+        {% endif %}
         <div class="lh-1 ms-2 flex-grow-1">
             <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
             <br/>
@@ -42,7 +44,7 @@
     </div>
     <div class="card-footer">
         {% if event.active and not without_controls %}
-            {% with can_sign_up=request|can_sign_up:shift   can_decline=request|can_decline:shift %}
+            {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift %}
                 <form method="POST" class="form"
                       action="{{ request|reverse_signup_action:shift }}">
                     {% csrf_token %}

@@ -316,14 +316,14 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
         unsorted_participations = []
         for participation in participations:
-            uuid = participation.data.get("dispatched_section_uuid") or participation.data.get(
-                "preferred_section_uuid"
-            )
-            if not uuid:
+            dispatched_uuid = participation.data.get(
+                "dispatched_section_uuid"
+            ) or participation.data.get("preferred_section_uuid")
+            if not dispatched_uuid:
                 unsorted_participations.append(participation)
             else:
-                sections[uuid]["participations"].append(participation)
-                sections[uuid]["missing"] -= 1
+                sections[dispatched_uuid]["participations"].append(participation)
+                sections[dispatched_uuid]["missing"] -= 1
 
         for section in sections.values():
             section["missing"] = range(max(0, section["missing"]))

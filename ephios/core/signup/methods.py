@@ -58,7 +58,7 @@ class AbstractParticipant:
     email: Optional[str]  # if set to None, no notifications are sent
 
     def get_age(self, today: date = None):
-        if self.qualifications is None:
+        if self.date_of_birth is None:
             return None
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))

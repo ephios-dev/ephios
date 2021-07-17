@@ -102,10 +102,9 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
         LocalParticipation.objects.get(user=qualified_volunteer, shift=sectioned_shift).state
         == AbstractParticipation.States.REQUESTED
     )
-
     # test we can't signup again
     assert (
-        "You can not sign up for this shift."
+        "You have already requested a participation."
         in django_app.get(
             event.get_absolute_url(),
             user=qualified_volunteer,
