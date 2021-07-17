@@ -241,19 +241,11 @@ def check_participation_state_for_signup(method, participant):
     participation = participant.participation_for(method.shift)
     if participation is not None:
         if participation.state == AbstractParticipation.States.REQUESTED:
-            return ParticipationError(
-                _("You have already requested your participation for {shift}").format(
-                    shift=method.shift
-                )
-            )
+            return ParticipationError(_("You have already requested a participation."))
         if participation.state == AbstractParticipation.States.CONFIRMED:
-            return ParticipationError(
-                _("You are already signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You are already signed up."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have not been accepted."))
 
 
 def check_participation_state_for_decline(method, participant):

@@ -74,13 +74,14 @@ footer {
 
 .mannequin {
   border-radius: $card-border-radius;
-  display: inline-block;
+  display: inline;
   aspect-ratio: 1;
-  width: auto;
+  width: 42px;
+  height: 42px;
+  padding: 5px;
 
   img {
-    object-fit: contain;
-    height: 80%;
+
   }
 }
 
