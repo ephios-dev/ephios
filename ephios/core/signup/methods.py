@@ -245,7 +245,7 @@ def check_participation_state_for_signup(method, participant):
         if participation.state == AbstractParticipation.States.CONFIRMED:
             return ParticipationError(_("You are already signed up."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(_("You have not been accepted."))
+            return ParticipationError(_("You have been rejected."))
 
 
 def check_participation_state_for_decline(method, participant):
@@ -255,17 +255,11 @@ def check_participation_state_for_decline(method, participant):
             participation.state == AbstractParticipation.States.CONFIRMED
             and not method.configuration.user_can_decline_confirmed
         ):
-            return ParticipationError(
-                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You cannot decline by yourself."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have been rejected."))
         if participation.state == AbstractParticipation.States.USER_DECLINED:
-            return ParticipationError(
-                _("You have already declined participating in {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have already declined participating."))
 
 
 def check_inside_signup_timeframe(method, participant):

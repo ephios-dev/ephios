@@ -3,12 +3,14 @@
 {% load i18n %}
 {% load humanize %}
 
-<div id="shift-{{ shift.pk }}" class="card mb-3">
+<div id="shift-{{ shift.pk }}" class="card h-100">
     <div class="card-header d-flex">
-        <div class="mannequin mannequin-neutral">
-            <img src="{% static 'ephios/img/mannequin_neutral.svg' %}"
-                 alt="mannequin icon"/>
-        </div>
+        {% with mannequin=request|shift_mannequin:shift %}
+            <div class="mannequin mannequin-{{ mannequin }}">
+                <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                     alt="mannequin icon"/>
+            </div>
+        {% endwith %}
         <div class="lh-1 ms-2 flex-grow-1">
             <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
             <br/>
@@ -52,7 +54,7 @@
                                 {{ shift.signup_method.configuration.signup_until | naturaltime }}.
                             </span>
                         </div>
-                    {% elif not can_sign_up %}
+                    {% elif not can_sign_up or not can_decline %}
                         <div class="text-muted mb-1">
                             {% for error in request|signup_errors:shift %}
                                 <span>{{ error.message }}</span>

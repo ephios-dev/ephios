@@ -74,19 +74,30 @@ footer {
 
 .mannequin {
   border-radius: $card-border-radius;
+  border: $card-border-width solid;
   display: inline;
   aspect-ratio: 1;
-  width: 42px;
-  height: 42px;
-  padding: 5px;
-
-  img {
-
-  }
+  width: 48px;
+  height: 48px;
+  padding: 8px;
 }
 
 .mannequin-neutral {
   background: $gray-200;
+  border-color: $gray-500;
+}
+
+.mannequin-confirmed {
+  background: #e0ffec;
+  border-color: #006627;
+}
+.mannequin-requested {
+  background: #fef6cd;
+  border-color: #aa8409;
+}
+.mannequin-rejected {
+  background: $gray-200;
+  border-color: #A30027;
 }
 
 /* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
