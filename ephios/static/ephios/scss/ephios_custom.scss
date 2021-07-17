@@ -95,13 +95,13 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
 .pending-indicator {
   position: absolute;
   top: 15px;
-  left: 15px;
+  left: -5px;
   z-index: 2;
   display: block;
   width: 10px;
   height: 10px;
   color: #ffffff;
-  background-image: linear-gradient(#54a3ff, #006eed);
+  background-image: linear-gradient(#87CFF8, #5FBDF2);
   background-clip: padding-box;
   border-radius: 50%;
 }
