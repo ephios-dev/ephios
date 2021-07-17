@@ -132,9 +132,9 @@ visible
                                             {% endif %}
                                             {{ stats.signed_up_count }}
                                             {% if stats.missing is not None and stats.missing > 0%}
-                                                ({{ stats.missing }} {% translate "missing" %})
+                                                <span class="fas fa-exclamation-triangle ms-1"></span> {{ stats.missing }}
                                             {% elif stats.free is not None and stats.free > 0 %}
-                                                ({{ stats.free }} {% translate "free" %})
+                                                <span class="fas fa-user-plus ms-1"></span> {{ stats.free }}
                                             {% elif stats.free is not None and stats.free == 0 %}
                                                 ({% translate "full" %})
                                             {% endif %}
