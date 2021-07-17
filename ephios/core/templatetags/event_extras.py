@@ -19,19 +19,18 @@ def reverse_signup_action(request, shift):
     return request_to_participant(request).reverse_signup_action(shift)
 
 
-@register.filter(name="shift_status")
-def shift_status(request, shift):
+@register.filter(name="shift_mannequin")
+def shift_mannequin(request, shift):
     participation = request_to_participant(request).participation_for(shift)
     if participation is not None:
-        color = {
-            AbstractParticipation.States.USER_DECLINED: "text-danger",
-            AbstractParticipation.States.RESPONSIBLE_REJECTED: "text-danger",
-            AbstractParticipation.States.REQUESTED: "text-warning",
-            AbstractParticipation.States.CONFIRMED: "text-success",
-            AbstractParticipation.States.GETTING_DISPATCHED: "text-muted",
+        return {
+            AbstractParticipation.States.USER_DECLINED: "rejected",
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: "rejected",
+            AbstractParticipation.States.REQUESTED: "requested",
+            AbstractParticipation.States.CONFIRMED: "confirmed",
+            AbstractParticipation.States.GETTING_DISPATCHED: "neutral",
         }[participation.state]
-        return mark_safe(f'<span class="{color}">{participation.get_state_display()}</span><br>')
-    return ""
+    return "neutral"
 
 
 @register.filter(name="can_sign_up")
@@ -46,17 +45,15 @@ def render_shift_state(request, shift):
 
 @register.filter(name="signup_errors")
 def signup_errors(request, shift):
-    return shift.signup_method.get_signup_errors(request_to_participant(request))
+    return set(
+        shift.signup_method.get_signup_errors(request_to_participant(request))
+        + shift.signup_method.get_decline_errors(request_to_participant(request))
+    )
 
 
 @register.filter(name="can_decline")
 def can_decline(request, shift):
     return shift.signup_method.can_decline(request_to_participant(request))
-
-
-@register.filter(name="decline_errors")
-def decline_errors(request, shift):
-    return shift.signup_method.get_decline_errors(request_to_participant(request))
 
 
 @register.filter(name="confirmed_shifts")

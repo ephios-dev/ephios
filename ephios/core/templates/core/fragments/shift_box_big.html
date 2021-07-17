@@ -1,77 +1,84 @@
+{% load static %}
 {% load event_extras %}
 {% load i18n %}
+{% load humanize %}
 
-<div id="shift-{{ shift.pk }}" class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">
-            <span class="fa fa-calendar-alt"></span>
-            {{ shift.get_start_end_time_display }}
-            {% if not without_controls and "change_event" in event_perms %}
-                <small class="float-end">
-                    <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>
-                        {% trans "Edit" %}</a>
+<div id="shift-{{ shift.pk }}" class="card h-100">
+    <div class="card-header d-flex">
+        {% if not without_controls %}
+            {% with mannequin=request|shift_mannequin:shift %}
+                <div class="mannequin mannequin-{{ mannequin }}">
+                    <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                         alt="mannequin icon"/>
+                </div>
+            {% endwith %}
+        {% endif %}
+        <div class="lh-1 ms-2 flex-grow-1">
+            <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
+            <br/>
+            <span class="fw-bold fs-2">{{ shift.start_time|time }} - {{ shift.end_time|time }}</span>
+            <small class="fw-bold text-muted d-inline-block">{{ shift.meeting_time|time }} {% translate "Meetup" %}</small>
+        </div>
+        {% if not without_controls and "change_event" in event_perms %}
+            <div class="dropstart">
+                <button class="btn" type="button" id="actionDropdownButton"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionDropdownButton">
+                    <li><a class="dropdown-item" href="{% url "core:shift_edit" shift.pk %}"><span
+                            class="fas fa-edit"></span>
+                        {% trans "Edit" %}</a></li>
                     {% if shift.event.shifts.count > 1 %}
-                        <a href="{% url "core:shift_delete" shift.pk %}"><span
+                        <a class="dropdown-item" href="{% url "core:shift_delete" shift.pk %}"><span
                                 class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
                     {% endif %}
-                </small>
-            {% endif %}
-        </h5>
-        <div class="card-body container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <dl>
-                        <dt>{% trans "Meeting time" %}</dt>
-                        <dd> {{ shift.meeting_time | time }}</dd>
-                        {% for label, value in shift.signup_method.get_signup_info.items %}
-                            <dt>{{ label }}</dt>
-                            <dd> {{ value }}</dd>
-                        {% endfor %}
-                        {% if event.active and not without_controls %}
-                            <form method="POST" class="form"
-                                  action="{{ request|reverse_signup_action:shift }}">
-                                {% csrf_token %}
-                                <dt>{{ request|shift_status:shift }}</dt>
-                                <dd>
-                                    {% with can_sign_up=request|can_sign_up:shift %}
-                                        <span class="d-inline-block" tabindex="0"
-                                                {% if not can_sign_up %}
-                                              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
-                                                 {% for error in request|signup_errors:shift %}
-                                                     <div>{{ error.message }}</div>
-                                                 {% endfor %}"
-                                                {% endif %}>
-                                            <button type="submit" name="signup_choice" value="sign_up"
-                                                    {% if can_sign_up %}class="btn btn-outline-success">{% else %}class="btn btn-outline-success btn-disabled" disabled>{% endif %}
-                                                {{ shift.signup_method.registration_button_text }}
-                                            </button>
-                                        </span>
-                                    {% endwith %}
-                                    {% with can_decline=request|can_decline:shift %}
-                                        <span class="d-inline-block" tabindex="0"
-                                                {% if not can_decline %}
-                                              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="
-                                                 {% for error in request|decline_errors:shift %}
-                                                     <div>{{ error.message }}</div>
-                                                 {% endfor %}"
-                                                {% endif %}>
-                                            <button type="submit" name="signup_choice" value="decline"
-                                                {% if can_decline %}class="btn btn-outline-danger">{% else %}class="btn btn-outline-danger btn-disabled" disabled>{% endif %}
-                                                {% trans "Decline" %}
-                                            </button>
-                                        </span>
-                                    {% endwith %}
-                                </dd>
-                            </form>
-                        {% endif %}
-                    </dl>
-                </div>
-                <div class="col-lg-8">
-                    {% if not without_controls %}
-                        {{ request|render_shift_state:shift }}
-                    {% endif %}
-                </div>
+                </ul>
             </div>
-        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if not without_controls %}
+            {{ request|render_shift_state:shift }}
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        {% if event.active and not without_controls %}
+            {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift %}
+                <form method="POST" class="form"
+                      action="{{ request|reverse_signup_action:shift }}">
+                    {% csrf_token %}
+                    {% if can_sign_up and shift.signup_method.configuration.signup_until %}
+                        <div class="text-success mb-1">
+                            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                  title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                                {% translate "Signup ends" %}
+                                {{ shift.signup_method.configuration.signup_until | naturaltime }}.
+                            </span>
+                        </div>
+                    {% elif not can_sign_up or not can_decline %}
+                        <div class="text-muted mb-1">
+                            {% for error in request|signup_errors:shift %}
+                                <span>{{ error.message }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if can_sign_up %}
+                        <span class="d-inline-block" tabindex="0">
+                            <button type="submit" name="signup_choice" value="sign_up" class="btn btn-success">
+                                    {{ shift.signup_method.registration_button_text }}
+                            </button>
+                        </span>
+                    {% endif %}
+                    {% if can_decline %}
+                        <span class="d-inline-block" tabindex="1">
+                            <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
+                                {% trans "Decline" %}
+                            </button>
+                        </span>
+                    {% endif %}
+                </form>
+            {% endwith %}
+        {% endif %}
     </div>
 </div>

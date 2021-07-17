@@ -1,6 +1,6 @@
 import functools
 import operator
-from datetime import date
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 import pytz
@@ -75,10 +75,28 @@ class Event(Model):
 
     def get_start_time(self):
         # use shifts.all() in case the shifts have been prefetched
-        return min(s.start_time for s in self.shifts.all()) if self.shifts.all() else None
+        return getattr(
+            self,
+            "start_time",
+            min(s.start_time for s in self.shifts.all()) if self.shifts.all() else None,
+        )
 
     def get_end_time(self):
-        return max(s.end_time for s in self.shifts.all()) if self.shifts.all() else None
+        return getattr(
+            self,
+            "end_time",
+            max(s.end_time for s in self.shifts.all()) if self.shifts.all() else None,
+        )
+
+    def is_multi_day(self):
+        """
+        Return whether the event is multi-day. Used to decide whether to show end time or end date.
+        """
+        start_time = self.get_start_time()
+        if start_time is None:
+            return False
+        # For DLT ambiguity reasons, we cap single-day at 23 hours
+        return self.get_end_time() - start_time >= timedelta(hours=23)
 
     def get_signup_stats(self) -> "SignupStats":
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
@@ -273,9 +291,9 @@ class PlaceholderParticipation(AbstractParticipation):
         return PlaceholderParticipant(
             first_name=self.first_name,
             last_name=self.last_name,
-            date_of_birth=date.min,
             qualifications=Qualification.objects.none(),
             email=None,
+            date_of_birth=None,
         )
 
     def __str__(self):

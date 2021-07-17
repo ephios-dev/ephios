@@ -73,7 +73,10 @@ visible
                                         {% if counter %}
                                      data-bs-toggle="tooltip" data-bs-placement="bottom"
                                      data-bs-html="true"
-                                     title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                     title="{% for state in counter %}<div>
+
+
+                                         {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                         {% endif %}
                                 >
                                     {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
@@ -97,18 +100,19 @@ visible
                             </div>
                             <a class="list-group-item-action py-2 event-list-item-link"
                                href="{{ event.get_absolute_url }}">
-                                <div class="row m-0 py-0">
-                                    <div class="col-9 col-lg order-0">
+                                <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
+                                    <div class="grid-title">
                                         <h5 class="mb-0">
                                             {{ event.title }}
-                                            <small class="float-end me-lg-3 d-lg-inline"><span
-                                                    class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
+
                                         </h5>
                                         <span class="w-100 text-muted">
-                                    {{ event.location }}
-                                </span>
+                                            {{ event.location }}
+                                        </span>
                                     </div>
-                                    <div class="col-3 col-lg-2 col-xl-1 order-1 order-lg-2 d-flex flex-column align-items-center justify-content-center">
+                                    <div class="grid-batch"><span
+                                            class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></div>
+                                    <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                         <div class="position-relative">
                                             <span class="fas fa-users"></span>
                                             {% if event.can_change and stats.requested_count > 0 %}
@@ -130,7 +134,7 @@ visible
                                             {% endif %}
                                         </div>
                                     </div>
-                                    <div class="col col-lg-2 order-2 order-lg-1">
+                                    <div class="grid-time">
                                         {{ event.start_time|date:"D" }},
                                         {% if event.start_time.date == event.end_time.date %}
                                             {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
@@ -145,7 +149,7 @@ visible
                                             {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
                                         {% endif %}
                                     </div>
-                                    <div class="col-lg-auto order-3 d-none d-lg-flex flex-column justify-content-center">
+                                    <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
                                         <div class="btn btn-outline-primary text-nowrap event-list-item-button">
                                             <span class="fa fa-eye"></span> {% translate "Show" %}
                                         </div>

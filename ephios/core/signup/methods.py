@@ -54,10 +54,12 @@ class AbstractParticipant:
     first_name: str
     last_name: str
     qualifications: QuerySet = dataclasses.field(hash=False)
-    date_of_birth: date
+    date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 
     def get_age(self, today: date = None):
+        if self.date_of_birth is None:
+            return None
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
@@ -241,19 +243,11 @@ def check_participation_state_for_signup(method, participant):
     participation = participant.participation_for(method.shift)
     if participation is not None:
         if participation.state == AbstractParticipation.States.REQUESTED:
-            return ParticipationError(
-                _("You have already requested your participation for {shift}").format(
-                    shift=method.shift
-                )
-            )
+            return ParticipationError(_("You have already requested a participation."))
         if participation.state == AbstractParticipation.States.CONFIRMED:
-            return ParticipationError(
-                _("You are already signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You are already signed up."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have been rejected."))
 
 
 def check_participation_state_for_decline(method, participant):
@@ -263,17 +257,11 @@ def check_participation_state_for_decline(method, participant):
             participation.state == AbstractParticipation.States.CONFIRMED
             and not method.configuration.user_can_decline_confirmed
         ):
-            return ParticipationError(
-                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You cannot decline by yourself."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have been rejected."))
         if participation.state == AbstractParticipation.States.USER_DECLINED:
-            return ParticipationError(
-                _("You have already declined participating in {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have already declined participating."))
 
 
 def check_inside_signup_timeframe(method, participant):
@@ -287,7 +275,8 @@ def check_inside_signup_timeframe(method, participant):
 def check_participant_age(method, participant):
     minimum_age = method.configuration.minimum_age
     day = method.shift.start_time.date()
-    if minimum_age is not None and participant.get_age(day) < minimum_age:
+    age = participant.get_age(day)
+    if minimum_age is not None and age is not None and age < minimum_age:
         return ParticipationError(
             _("You are too young. The minimum age is {age}.").format(age=minimum_age)
         )
@@ -469,7 +458,7 @@ class BaseSignupMethod:
 
     def get_signup_info(self):
         """
-        Return key/value pairs about the configuration to show in the shift info box.
+        Return key/value pairs about the configuration to show in exports etc.
         """
         fields = self.get_configuration_fields()
         return OrderedDict(
