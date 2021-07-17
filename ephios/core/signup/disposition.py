@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.http import Http404
 from django.shortcuts import redirect
@@ -76,7 +78,12 @@ class AddUserForm(forms.Form):
         widget=ModelSelect2Widget(
             model=UserProfile,
             search_fields=["first_name__icontains", "last_name__icontains"],
-            attrs={"form": "add-user-form", "data-placeholder": _("search")},
+            attrs={
+                "form": "add-user-form",
+                "data-placeholder": _("search"),
+                "data-tags": "true",
+                "data-token-separators": [],
+            },
         ),
         queryset=UserProfile.objects.none(),  # set using __init__
     )
@@ -135,6 +142,35 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         raise Http404()
 
 
+class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMixin, View):
+    def get_template_names(self):
+        return [
+            self.object.signup_method.disposition_participation_form_class.disposition_participation_template
+        ]
+
+    def post(self, request, *args, **kwargs):
+        shift = self.object
+        from ephios.core.signup import PlaceholderParticipant
+
+        participant = PlaceholderParticipant(
+            request.POST["first_name"], request.POST["last_name"], [], datetime.date.min, None
+        )
+        instance = shift.signup_method.get_participation_for(participant)
+        instance.state = AbstractParticipation.States.GETTING_DISPATCHED
+        instance.save()
+
+        DispositionParticipationFormset = get_disposition_formset(
+            self.object.signup_method.disposition_participation_form_class
+        )
+        formset = DispositionParticipationFormset(
+            queryset=AbstractParticipation.objects.filter(pk=instance.pk),
+            prefix="participations",
+            start_index=int(request.POST["new_index"]),
+        )
+        form = next(filter(lambda form: form.instance.id == instance.id, formset))
+        return self.render_to_response({"form": form, "shift": shift})
+
+
 class DispositionView(DispositionBaseViewMixin, TemplateView):
     template_name = "core/disposition/disposition.html"
 
@@ -171,7 +207,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
 
             self.object.participations.filter(
                 state=AbstractParticipation.States.GETTING_DISPATCHED
-            ).delete()
+            ).non_polymorphic().delete()
             return redirect(self.object.event.get_absolute_url())
         return self.get(request, *args, **kwargs, formset=formset)
 

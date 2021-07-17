@@ -1,5 +1,6 @@
 import functools
 import operator
+from datetime import date
 from typing import TYPE_CHECKING
 
 import pytz
@@ -258,6 +259,30 @@ class LocalParticipation(AbstractParticipation):
 
 
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
+
+
+class PlaceholderParticipation(AbstractParticipation):
+    first_name = CharField(max_length=254)
+    last_name = CharField(max_length=254)
+
+    @property
+    def participant(self) -> "AbstractParticipant":
+        from ephios.core.models.users import Qualification
+        from ephios.core.signup.methods import PlaceholderParticipant
+
+        return PlaceholderParticipant(
+            first_name=self.first_name,
+            last_name=self.last_name,
+            date_of_birth=date.min,
+            qualifications=Qualification.objects.none(),
+            email=None,
+        )
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} @ {self.shift}"
+
+
+register_model_for_logging(PlaceholderParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class EventTypePreference(PerInstancePreferenceModel):

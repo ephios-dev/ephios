@@ -13,6 +13,7 @@ from ephios.core.models import (
     Shift,
     WorkingHours,
 )
+from ephios.core.models.events import PlaceholderParticipation
 
 admin.site.register(Qualification)
 admin.site.register(QualificationGrant)
@@ -24,4 +25,5 @@ admin.site.register(Shift)
 admin.site.register(Event, GuardedModelAdmin)
 admin.site.register(EventType)
 admin.site.register(LocalParticipation)
+admin.site.register(PlaceholderParticipation)
 admin.site.register(Notification)
