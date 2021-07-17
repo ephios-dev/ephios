@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<div class="mb-3">
+    {% for participation in participations %}
+        {% include "basesignup/participation_card_inline.html" %}
+    {% endfor %}
+</div>
+
+<span data-bs-toggle="tooltip" data-bs-placement="top" title="{% translate 'Needed' %}: {{ shift.signup_method.get_participation_number_info }}"
+><strong>{{ confirmed_count }}</strong> {% translate "in total" %}</span>
+
+{% if disposition_url %}
+    <div class="mt-1">
+        <a href="{{ disposition_url }}" class="btn btn-sm btn-info"><span
+                class="fas fa-hand-point-right"></span> {% translate "Disposition" %}</a>
+    </div>
+{% endif %}

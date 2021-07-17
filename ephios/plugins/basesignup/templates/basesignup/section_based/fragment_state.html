@@ -1,53 +1,20 @@
 {% load i18n %}
 
-
-<div class="row">
-    <div class="col-lg-4">
-        <dl>
-            <dt>
-                {% translate "Requests" %}
-            </dt>
-            <dd>
-                <ul>
-                    {% for participation in requested_participations %}
-                        <li>{{ participation.participant }}
-                    {% endfor %}
-                </ul>
-            </dd>
-        </dl>
-    </div>
-    <div class="col-lg-8">
-        <dl>
-            <dt>
-                {% translate "Signed up" %}
-            </dt>
-            <dd>
-                <ul>
-                    {% for section, users in sections_with_users %}
-                        <li>
-                            {{ section.title }}
-                            <small class="text-muted float-end">
-                                {% if section.max_count %}
-                                {{ users|length }}/{{ section.max_count }}&nbsp;&nbsp;
-                                {% else %}
-                                {{ users|length }}/{{ section.min_count }}+
-                                {% endif %}
-                            </small>
-                            <ul>
-                                {% for user in users %}
-                                    <li>{{ user.0 }} ({{ user.1 }})</li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </dd>
-        </dl>
-    </div>
+<div class="mb-2">
+    {% for section in sections.values %}
+        <span><strong>{{ section.participations|length }}</strong> {{ section.title }}</span>
+        <div class="mb-1">
+            {% for participation in section.participations %}
+                {% include "basesignup/participation_card_inline.html" %}
+            {% endfor %}
+        </div>
+    {% endfor %}
 </div>
 
+<span><strong>{{ confirmed_count }}</strong> {% translate "in total" %}</span>
+
 {% if disposition_url %}
-    <div class="row float-end">
+    <div class="mt-1">
         <a href="{{ disposition_url }}" class="btn btn-info"><span
                 class="fas fa-hand-point-right"></span> {% translate "Disposition" %}</a>
     </div>

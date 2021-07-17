@@ -461,7 +461,7 @@ class BaseSignupMethod:
 
     def get_signup_info(self):
         """
-        Return key/value pairs about the configuration to show in the shift info box.
+        Return key/value pairs about the configuration to show in exports etc.
         """
         fields = self.get_configuration_fields()
         return OrderedDict(

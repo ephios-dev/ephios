@@ -1,0 +1,14 @@
+<span class="badge
+{% if participation.state == participation.States.CONFIRMED %}
+bg-secondary text-dark
+{% else %}
+bg-light text-muted
+{% endif %}
+">
+    {% if participation.state == participation.States.CONFIRMED %}
+        <i class="fas fa-check"></i>
+    {% else %}
+        <i class="far fa-clock"></i>
+    {% endif %}
+    {{ participation.participant }}
+</span>

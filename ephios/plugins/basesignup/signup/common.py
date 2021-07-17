@@ -2,6 +2,8 @@ import typing
 from collections import OrderedDict
 
 from django import forms
+from django.template.loader import get_template
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -50,21 +52,47 @@ class MinMaxParticipantsMixin(_Base):
             }
         )
 
-    def get_signup_info(self):
-        infos = super().get_signup_info()
+    def get_participation_number_info(self):
         min_count = self.configuration.minimum_number_of_participants
         max_count = self.configuration.maximum_number_of_participants
-        if min_count is not None or max_count is not None:
-            if min_count == max_count:
-                number_info = str(min_count)
-            elif min_count is not None and max_count is not None:
-                number_info = _("{min} to {max}").format(min=min_count, max=max_count)
-            elif min_count is not None:
-                number_info = _("at least {min}").format(min=min_count)
-            else:
-                number_info = _("at most {max}").format(max=max_count)
-            infos.update({_("Required number of participants"): number_info})
+        if min_count is None and max_count is None:
+            return None
+        if min_count == max_count:
+            return str(min_count)
+        if min_count is not None and max_count is not None:
+            return _("{min} to {max}").format(min=min_count, max=max_count)
+        if min_count is not None:
+            return _("at least {min}").format(min=min_count)
+        return _("at most {max}").format(max=max_count)
+
+    def get_signup_info(self):
+        infos = super().get_signup_info()
+        if number_info := self.get_participation_number_info():
+            infos[_("Required number of participants")] = number_info
         return infos
+
+    def render_shift_state(self, request):
+        participations = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
+        ).order_by("-state")
+        confirmed_count = len(
+            [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
+        )
+        return get_template("basesignup/fragment_state_common.html").render(
+            {
+                "shift": self.shift,
+                "participations": participations,
+                "confirmed_count": confirmed_count,
+                "disposition_url": (
+                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
+                    else None
+                ),
+            }
+        )
 
 
 class QualificationsRequiredSignupMixin(_Base):

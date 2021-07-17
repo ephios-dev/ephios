@@ -271,6 +271,53 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         )
         return template
 
+    def render_shift_state(self, request):
+
+        participations = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
+        ).order_by("-state")
+
+        sections = {
+            section["uuid"]: {
+                "title": section["title"],
+                "participations": [],
+            }
+            for section in self.configuration.sections
+        }
+
+        unsorted_participations = []
+        for participation in participations:
+            uuid = participation.data.get(
+                "dispatched_section_uuid", participation.data.get("preferred_section_uuid")
+            )
+            if not uuid:
+                unsorted_participations.append(participation)
+            else:
+                sections[uuid]["participations"].append(participation)
+        if unsorted_participations:
+            sections["other"] = {"title": _("other"), "participations": unsorted_participations}
+
+        return get_template("basesignup/section_based/fragment_state.html").render(
+            {
+                "shift": self.shift,
+                "sections": sections,
+                "confirmed_count": len(
+                    [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
+                ),
+                "disposition_url": (
+                    reverse(
+                        "core:shift_disposition",
+                        kwargs=dict(pk=self.shift.pk),
+                    )
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
+                    else None
+                ),
+            }
+        )
+
     def _get_sections_with_users(self):
         relevant_qualification_categories = global_preferences_registry.manager()[
             "general__relevant_qualification_categories"
@@ -309,25 +356,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         # add sections without participants
         sections_with_users += [(section, None) for section in section_by_uuid.values()]
         return sections_with_users
-
-    def render_shift_state(self, request):
-        return get_template("basesignup/section_based/fragment_state.html").render(
-            {
-                "shift": self.shift,
-                "requested_participations": (
-                    self.shift.participations.filter(state=AbstractParticipation.States.REQUESTED)
-                ),
-                "sections_with_users": self._get_sections_with_users(),
-                "disposition_url": (
-                    reverse(
-                        "core:shift_disposition",
-                        kwargs=dict(pk=self.shift.pk),
-                    )
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
 
     def get_participation_display(self):
         confirmed_sections_with_users = self._get_sections_with_users()
