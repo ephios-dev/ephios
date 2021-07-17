@@ -242,8 +242,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             p.state == AbstractParticipation.States.REQUESTED for p in participations
         )
         signup_stats = SignupStats(requested_count, 0, None, 0)
-        section_counter = Counter(p.data.get("dispatched_section_uuid) for p in participations
-        )
+        section_counter = Counter(p.data.get("dispatched_section_uuid") for p in participations)
         for section in self.configuration.sections:
             participation_count = section_counter[section["uuid"]]
             missing = (
