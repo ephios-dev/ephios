@@ -1,4 +1,5 @@
 import uuid
+from collections import Counter
 from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
@@ -233,16 +234,40 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             },
         }
 
-    def get_participant_count_bounds(self):
-        return (
-            sum(section.get("min_count") or 0 for section in self.configuration.sections),
-            sum(
-                section.get("max_count") or section.get("min_count")
-                for section in self.configuration.sections
-            )
-            if all(section.get("max_count") for section in self.configuration.sections)
-            else None,
+    def get_signup_stats(self):
+        from ephios.core.signup.methods import SignupStats
+
+        participations = list(self.shift.participations.all())
+        requested_count = sum(
+            p.state == AbstractParticipation.States.REQUESTED for p in participations
         )
+        confirmed_count = sum(
+            p.state == AbstractParticipation.States.CONFIRMED for p in participations
+        )
+        signup_stats = SignupStats(requested_count, 0, None, 0)
+        section_counter = Counter(p.data.get("dispatched_section_uuid") for p in participations)
+        for section in self.configuration.sections:
+            participation_count = section_counter[section["uuid"]]
+            missing = (
+                max(min_count - participation_count, 0)
+                if (min_count := section.get("min_count"))
+                else None
+            )
+            free = (
+                max(max_count - participation_count, 0)
+                if (max_count := section.get("max_count"))
+                else None
+            )
+            signup_stats += SignupStats(
+                requested_count=0,
+                signed_up_count=participation_count,
+                missing=missing,
+                free=free,
+            )
+        if (undispatched_participations := confirmed_count - signup_stats.signed_up_count) > 0:
+            signup_stats.free -= min(undispatched_participations, signup_stats.free)
+            signup_stats.missing -= min(undispatched_participations, signup_stats.missing)
+        return signup_stats
 
     @staticmethod
     def check_qualification(method, participant):
