@@ -16,7 +16,7 @@ _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 
 class MinMaxParticipantsMixin(_Base):
     @property
-    def signup_checkers(self):
+    def _signup_checkers(self):
         return super()._signup_checkers + [self.check_maximum_number_of_participants]
 
     @staticmethod
@@ -108,7 +108,7 @@ class QualificationsRequiredSignupMixin(_Base):
             )
 
     @property
-    def signup_checkers(self):
+    def _signup_checkers(self):
         return super()._signup_checkers + [self.check_qualification]
 
     @staticmethod
