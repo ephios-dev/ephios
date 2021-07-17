@@ -10,7 +10,7 @@ $(document).ready(function () {
         createTag: function (params) {
             return {
                 id: params.term,
-                text: "Create \"" + params.term + "\" as placeholder",
+                text: gettext("Create \"{userName}\" as placeholder").replace("{userName}", params.term),
                 userName: params.term,
                 guestUser: true
             }
