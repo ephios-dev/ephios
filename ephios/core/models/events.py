@@ -1,6 +1,6 @@
 import functools
 import operator
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 import pytz
@@ -291,9 +291,9 @@ class PlaceholderParticipation(AbstractParticipation):
         return PlaceholderParticipant(
             first_name=self.first_name,
             last_name=self.last_name,
-            date_of_birth=date.min,
             qualifications=Qualification.objects.none(),
             email=None,
+            date_of_birth=None,
         )
 
     def __str__(self):

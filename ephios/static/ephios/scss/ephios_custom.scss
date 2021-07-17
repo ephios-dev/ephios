@@ -102,7 +102,7 @@ footer {
   border-color: #A30027;
 }
 
-/* Make the event item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
+/* Make the event list item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
 @media (min-width: 992px) {
   .event-list-item-link {
     pointer-events: none;
@@ -201,4 +201,9 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
 
 .calendar-today {
   background-color: #cbcbcb;
+}
+
+// disable link badges underlining
+a.badge {
+    text-decoration: none;
 }

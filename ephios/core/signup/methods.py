@@ -54,10 +54,12 @@ class AbstractParticipant:
     first_name: str
     last_name: str
     qualifications: QuerySet = dataclasses.field(hash=False)
-    date_of_birth: date
+    date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 
     def get_age(self, today: date = None):
+        if self.qualifications is None:
+            return None
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
@@ -273,7 +275,8 @@ def check_inside_signup_timeframe(method, participant):
 def check_participant_age(method, participant):
     minimum_age = method.configuration.minimum_age
     day = method.shift.start_time.date()
-    if minimum_age is not None and participant.get_age(day) < minimum_age:
+    age = participant.get_age(day)
+    if minimum_age is not None and age is not None and age < minimum_age:
         return ParticipationError(
             _("You are too young. The minimum age is {age}.").format(age=minimum_age)
         )

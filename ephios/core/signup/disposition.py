@@ -1,5 +1,3 @@
-import datetime
-
 from django import forms
 from django.http import Http404
 from django.shortcuts import redirect
@@ -10,7 +8,7 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import ModelSelect2Widget
 
-from ephios.core.models import AbstractParticipation, Shift, UserProfile
+from ephios.core.models import AbstractParticipation, Qualification, Shift, UserProfile
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -153,7 +151,11 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
         from ephios.core.signup import PlaceholderParticipant
 
         participant = PlaceholderParticipant(
-            request.POST["first_name"], request.POST["last_name"], [], datetime.date.min, None
+            first_name=request.POST["first_name"],
+            last_name=request.POST["last_name"],
+            qualifications=Qualification.objects.none(),
+            email=None,
+            date_of_birth=None,
         )
         instance = shift.signup_method.get_participation_for(participant)
         instance.state = AbstractParticipation.States.GETTING_DISPATCHED
