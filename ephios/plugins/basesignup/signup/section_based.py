@@ -237,13 +237,12 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def get_signup_stats(self):
         from ephios.core.signup.methods import SignupStats
 
-        participations = self.shift.participations.all()
+        participations = list(self.shift.participations.all())
         requested_count = sum(
             p.state == AbstractParticipation.States.REQUESTED for p in participations
         )
         signup_stats = SignupStats(requested_count, 0, None, 0)
-        section_counter = Counter(
-            participations.values_list("data__dispatched_section_uuid", flat=True)
+        section_counter = Counter(p.data.get("dispatched_section_uuid) for p in participations
         )
         for section in self.configuration.sections:
             participation_count = section_counter[section["uuid"]]
