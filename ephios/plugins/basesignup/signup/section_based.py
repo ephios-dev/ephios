@@ -241,7 +241,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         requested_count = sum(
             p.state == AbstractParticipation.States.REQUESTED for p in participations
         )
-        signup_total_count = sum(
+        confirmed_count = sum(
             p.state == AbstractParticipation.States.CONFIRMED for p in participations
         )
         signup_stats = SignupStats(requested_count, 0, None, 0)
@@ -264,7 +264,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 missing=missing,
                 free=free,
             )
-        if (undispatched_participations := signup_total_count - signup_stats.signed_up_count) > 0:
+        if (undispatched_participations := confirmed_count - signup_stats.signed_up_count) > 0:
             signup_stats.free -= min(undispatched_participations, signup_stats.free)
             signup_stats.missing -= min(undispatched_participations, signup_stats.missing)
         return signup_stats
