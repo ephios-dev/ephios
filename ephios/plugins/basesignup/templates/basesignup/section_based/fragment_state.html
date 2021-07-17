@@ -1,11 +1,16 @@
 {% load i18n %}
 
-<div class="mb-2">
+<div class="">
     {% for section in sections.values %}
         <span><strong>{{ section.participations|length }}</strong> {{ section.title }}</span>
-        <div class="mb-1">
+        <div class="mb-3">
             {% for participation in section.participations %}
                 {% include "basesignup/participation_card_inline.html" %}
+            {% endfor %}
+            {% for i in section.missing %}
+                <span class="badge bg-light px-5">&nbsp;</span>
+            {% empty %}
+                <span class="badge bg-white px-5">&nbsp;</span>
             {% endfor %}
         </div>
     {% endfor %}
@@ -15,7 +20,6 @@
 
 {% if disposition_url %}
     <div class="mt-1">
-        <a href="{{ disposition_url }}" class="btn btn-info"><span
-                class="fas fa-hand-point-right"></span> {% translate "Disposition" %}</a>
+        <a href="{{ disposition_url }}" class="btn btn-sm btn-info">{% translate "Disposition" %}</a>
     </div>
 {% endif %}

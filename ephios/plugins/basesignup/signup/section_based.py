@@ -283,6 +283,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         sections = {
             section["uuid"]: {
                 "title": section["title"],
+                "missing": section.get("min_count") or 0,
                 "participations": [],
             }
             for section in self.configuration.sections
@@ -290,15 +291,23 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
         unsorted_participations = []
         for participation in participations:
-            uuid = participation.data.get(
-                "dispatched_section_uuid", participation.data.get("preferred_section_uuid")
+            uuid = participation.data.get("dispatched_section_uuid") or participation.data.get(
+                "preferred_section_uuid"
             )
             if not uuid:
                 unsorted_participations.append(participation)
             else:
                 sections[uuid]["participations"].append(participation)
+                sections[uuid]["missing"] -= 1
+
+        for section in sections.values():
+            section["missing"] = range(max(0, section["missing"]))
         if unsorted_participations:
-            sections["other"] = {"title": _("other"), "participations": unsorted_participations}
+            sections["other"] = {
+                "title": _("other"),
+                "participations": unsorted_participations,
+                "missing": [],
+            }
 
         return get_template("basesignup/section_based/fragment_state.html").render(
             {

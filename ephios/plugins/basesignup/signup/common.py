@@ -81,11 +81,15 @@ class MinMaxParticipantsMixin(_Base):
         confirmed_count = len(
             [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
         )
+        empty_spots = max(
+            0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
+        )
         return get_template("basesignup/fragment_state_common.html").render(
             {
                 "shift": self.shift,
                 "participations": participations,
                 "confirmed_count": confirmed_count,
+                "empty_spots": range(empty_spots),
                 "disposition_url": (
                     reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
                     if request.user.has_perm("core.change_event", obj=self.shift.event)
