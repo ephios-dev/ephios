@@ -131,10 +131,12 @@ visible
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
                                             {{ stats.signed_up_count }}
-                                            {% if stats.max_count is not None %}
-                                                / {{ stats.max_count }}
-                                            {% elif stats.min_count is not None %}
-                                                / {{ stats.min_count }}+
+                                            {% if stats.missing is not None and stats.missing > 0%}
+                                                ({{ stats.missing }} {% translate "missing" %})
+                                            {% elif stats.free is not None and stats.free > 0 %}
+                                                ({{ stats.free }} {% translate "free" %})
+                                            {% elif stats.free is not None and stats.free == 0 %}
+                                                ({% translate "full" %})
                                             {% endif %}
                                         {% endwith %}
                                     </p>

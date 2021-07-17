@@ -233,16 +233,37 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             },
         }
 
-    def get_participant_count_bounds(self):
-        return (
-            sum(section.get("min_count") or 0 for section in self.configuration.sections),
-            sum(
-                section.get("max_count") or section.get("min_count")
-                for section in self.configuration.sections
-            )
-            if all(section.get("max_count") for section in self.configuration.sections)
-            else None,
+    def get_signup_stats(self):
+        from ephios.core.signup.methods import SignupStats
+
+        participations = self.shift.participations.filter(
+            state=AbstractParticipation.States.CONFIRMED
         )
+        requested_count = self.shift.participations.filter(
+            state=AbstractParticipation.States.REQUESTED
+        ).count()
+        signup_stats = SignupStats(requested_count, 0, None, 0)
+        for section in self.configuration.sections:
+            participation_count = participations.filter(
+                data__dispatched_section_uuid=section["uuid"]
+            ).count()
+            missing = (
+                max(section.get("min_count") - participation_count, 0)
+                if section.get("min_count")
+                else None
+            )
+            free = (
+                max(section.get("max_count") - participation_count, 0)
+                if section.get("max_count")
+                else None
+            )
+            signup_stats = signup_stats + SignupStats(
+                requested_count=0,
+                signed_up_count=participation_count,
+                missing=missing,
+                free=free,
+            )
+        return signup_stats
 
     @staticmethod
     def check_qualification(method, participant):
