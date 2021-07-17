@@ -481,15 +481,16 @@ class BaseSignupMethod:
         """
         min_count, max_count = self.get_participant_count_bounds()
         participations = list(self.shift.participations.all())
+        signed_up_count = sum(
+            p.state == AbstractParticipation.States.CONFIRMED for p in participations
+        )
         return SignupStats(
             requested_count=sum(
                 p.state == AbstractParticipation.States.REQUESTED for p in participations
             ),
-            signed_up_count=sum(
-                p.state == AbstractParticipation.States.CONFIRMED for p in participations
-            ),
-            min_count=min_count,
-            max_count=max_count,
+            signed_up_count=signed_up_count,
+            missing=max(min_count - signed_up_count, 0) if min_count else None,
+            free=max(max_count - signed_up_count, 0) if max_count else None,
         )
 
     def render_shift_state(self, request):
@@ -531,21 +532,21 @@ class BaseSignupMethod:
 class SignupStats:
     requested_count: int
     signed_up_count: int
-    min_count: Optional[int]
-    max_count: Optional[int]
+    missing: Optional[int]
+    free: Optional[int]
 
     def __add__(self, other: "SignupStats"):
-        if self.min_count is not None or other.min_count is not None:
-            min_count = (self.min_count or 0) + (other.min_count or 0)
+        if self.missing is not None or other.missing is not None:
+            missing = (self.missing or 0) + (other.missing or 0)
         else:
-            min_count = None
-        if self.max_count is not None and other.max_count is not None:
-            max_count = (self.max_count or 0) + (other.max_count or 0)
+            missing = None
+        if self.free is not None and other.free is not None:
+            free = self.free + other.free
         else:
-            max_count = None
+            free = None
         return SignupStats(
             requested_count=self.requested_count + other.requested_count,
             signed_up_count=self.signed_up_count + other.signed_up_count,
-            min_count=min_count,
-            max_count=max_count,
+            missing=missing,
+            free=free,
         )

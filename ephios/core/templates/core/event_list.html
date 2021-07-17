@@ -17,7 +17,8 @@ visible
                     {% csrf_token %}
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-secondary"><span class="fa fa-list"></span></button>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary" name="event_list_view_type" value="calendar"><span class="fa fa-calendar"></span></button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" name="event_list_view_type"
+                                value="calendar"><span class="fa fa-calendar"></span></button>
                     </div>
                 </form>
             </small>
@@ -65,16 +66,15 @@ visible
                     </div>
                 {% endif %}
                 {% for event in event_list %}
-                    <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
-                        <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
-                            {% with event|event_signup_state_counts:request.user as counter %}
+                    {% with counter=event|event_signup_state_counts:request.user stats=event.get_signup_stats %}
+                        <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
+                            <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                 <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                     {% if counter %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                     title="{% for state in counter %}<div>
-
-                                         {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
-                                        <div>{% endfor %}"
-                                     {% endif %}
+                                        {% if counter %}
+                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                     data-bs-html="true"
+                                     title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                        {% endif %}
                                 >
                                     {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                         <span class="text-success fa fa-user-check ps-2"></span>
@@ -88,65 +88,72 @@ visible
                                         <span class="text-muted far fa-user ps-2"></span>
                                     {% endif %}
                                 </div>
-                            {% endwith %}
-                            {% if perms.core.add_event %}
-                                <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
-                                    <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
-                                           class="cb-element">
-                                </div>
-                            {% endif %}
-                        </div>
-                        <a class="list-group-item-action py-2 event-list-item-link"
-                           href="{{ event.get_absolute_url }}">
-                            <div class="row m-0 py-0 flex-grow-1">
-                                <div class="col-lg">
-                                    <h5 class="mb-0">
-                                        {{ event.title }}
-                                        <small class="float-end me-lg-3"><span
-                                                class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
-                                    </h5>
-                                    <span class="w-100 text-muted">
+                                {% if perms.core.add_event %}
+                                    <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
+                                        <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
+                                               class="cb-element">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <a class="list-group-item-action py-2 event-list-item-link"
+                               href="{{ event.get_absolute_url }}">
+                                <div class="row m-0 py-0">
+                                    <div class="col-9 col-lg order-0">
+                                        <h5 class="mb-0">
+                                            {{ event.title }}
+                                            <small class="float-end me-lg-3 d-lg-inline"><span
+                                                    class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span></small>
+                                        </h5>
+                                        <span class="w-100 text-muted">
                                     {{ event.location }}
                                 </span>
-                                </div>
-                                <div class="col col-lg-3">
-                                    {{ event.start_time|date:"D" }},
-                                    {% if not event.is_multi_day %}
-                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}<span class="d-lg-none">,</span>
-                                        <span class="d-none d-lg-inline"><br></span>
-                                        {{ event.start_time|date:"TIME_FORMAT" }} –
-                                        {{ event.end_time|date:"TIME_FORMAT" }}
-                                    {% else %}
-                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
-                                        <span class="d-none d-lg-inline"><br></span>
-                                        {% translate "to" %}
-                                        {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
-                                    {% endif %}
-                                </div>
-                                <div class="col-auto col-lg-2 d-flex flex-row align-items-center justify-content-between">
-                                    <p class="my-0 me-1 position-relative">
-                                        <span class="fas fa-users"></span>
-                                        {% with event.get_signup_stats as stats %}
+                                    </div>
+                                    <div class="col-3 col-lg-2 col-xl-1 order-1 order-lg-2 d-flex flex-column align-items-center justify-content-center">
+                                        <div class="position-relative">
+                                            <span class="fas fa-users"></span>
                                             {% if event.can_change and stats.requested_count > 0 %}
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
                                             {{ stats.signed_up_count }}
-                                            {% if stats.max_count is not None %}
-                                                / {{ stats.max_count }}
-                                            {% elif stats.min_count is not None %}
-                                                / {{ stats.min_count }}+
+                                        </div>
+                                        <div>
+                                            {% if stats.missing is not None and stats.missing > 0 %}
+                                                <span class="badge bg-light text-danger">{{ stats.missing }} {% translate "missing" %}</span>
+                                            {% else %}
+                                                {% if stats.free is not None and stats.free > 0 %}
+                                                    <span class="badge bg-light text-dark">{{ stats.free }} {% translate "open" %}</span>
+                                                {% elif stats.free is not None and stats.free == 0 %}
+                                                    <span class="badge bg-light text-dark">{% translate "full" %}</span>
+                                                {% else %}
+                                                    <span class="badge bg-light text-dark">{% translate "open" %}</span>
+                                                {% endif %}
                                             {% endif %}
-                                        {% endwith %}
-                                    </p>
-                                </div>
-                                <div class="col-lg-auto d-none d-lg-flex flex-column justify-content-center">
-                                    <div class="btn btn-outline-primary text-nowrap event-list-item-button">
-                                        <span class="fa fa-eye"></span> {% translate "Show" %}
+                                        </div>
+                                    </div>
+                                    <div class="col col-lg-2 order-2 order-lg-1">
+                                        {{ event.start_time|date:"D" }},
+                                        {% if event.start_time.date == event.end_time.date %}
+                                            {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                            <span class="d-lg-none">,</span>
+                                            <span class="d-none d-lg-inline"><br></span>
+                                            {{ event.start_time|date:"TIME_FORMAT" }} –
+                                            {{ event.end_time|date:"TIME_FORMAT" }}
+                                        {% else %}
+                                            {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                            <span class="d-none d-lg-inline"><br></span>
+                                            {% translate "to" %}
+                                            {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-lg-auto order-3 d-none d-lg-flex flex-column justify-content-center">
+                                        <div class="btn btn-outline-primary text-nowrap event-list-item-button">
+                                            <span class="fa fa-eye"></span> {% translate "Show" %}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
+                    {% endwith %}
                 {% endfor %}
             </div>
         {% else %}
