@@ -1,4 +1,5 @@
 import uuid
+from collections import Counter
 from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
@@ -236,28 +237,27 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def get_signup_stats(self):
         from ephios.core.signup.methods import SignupStats
 
-        participations = self.shift.participations.filter(
-            state=AbstractParticipation.States.CONFIRMED
+        participations = self.shift.participations.all()
+        requested_count = sum(
+            p.state == AbstractParticipation.States.REQUESTED for p in participations
         )
-        requested_count = self.shift.participations.filter(
-            state=AbstractParticipation.States.REQUESTED
-        ).count()
         signup_stats = SignupStats(requested_count, 0, None, 0)
+        section_counter = Counter(
+            participations.values_list("data__dispatched_section_uuid", flat=True)
+        )
         for section in self.configuration.sections:
-            participation_count = participations.filter(
-                data__dispatched_section_uuid=section["uuid"]
-            ).count()
+            participation_count = section_counter[section["uuid"]]
             missing = (
-                max(section.get("min_count") - participation_count, 0)
-                if section.get("min_count")
+                max(min_count - participation_count, 0)
+                if (min_count := section.get("min_count"))
                 else None
             )
             free = (
-                max(section.get("max_count") - participation_count, 0)
-                if section.get("max_count")
+                max(max_count - participation_count, 0)
+                if (max_count := section.get("max_count"))
                 else None
             )
-            signup_stats = signup_stats + SignupStats(
+            signup_stats += SignupStats(
                 requested_count=0,
                 signed_up_count=participation_count,
                 missing=missing,

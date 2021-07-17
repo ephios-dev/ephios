@@ -523,7 +523,7 @@ class SignupStats:
         else:
             missing = None
         if self.free is not None and other.free is not None:
-            free = (self.free or 0) + (other.free or 0)
+            free = self.free + other.free
         else:
             free = None
         return SignupStats(
