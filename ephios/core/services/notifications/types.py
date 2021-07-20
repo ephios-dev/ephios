@@ -56,6 +56,10 @@ class AbstractNotificationHandler:
     def as_html(cls, notification):
         return render_to_string("email_base.html", {"message_text": cls.as_plaintext(notification)})
 
+    @classmethod
+    def get_url(cls, notification):
+        return None
+
 
 class ProfileUpdateNotification(AbstractNotificationHandler):
     slug = "ephios_profile_update"
@@ -75,9 +79,11 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
             "You're receiving this email because your account at ephios has been updated.\n"
             "You can see the changes in your profile: {url}\n"
             "Your username is your email address: {email}\n"
-        ).format(
-            url=urljoin(settings.SITE_URL, reverse("core:profile")), email=notification.user.email
-        )
+        ).format(url=notification.get_url(), email=notification.user.email)
+
+    @classmethod
+    def get_url(cls, notification):
+        return urljoin(settings.SITE_URL, reverse("core:profile"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
@@ -147,7 +153,7 @@ class NewEventNotification(AbstractNotificationHandler):
             title=event.title,
             location=event.location,
             description=event.description,
-            url=urljoin(settings.SITE_URL, event.get_absolute_url()),
+            url=notification.get_url(),
         )
 
     @classmethod
@@ -156,6 +162,11 @@ class NewEventNotification(AbstractNotificationHandler):
         return render_to_string(
             "core/mails/new_event.html", {"event": event, "site_url": settings.SITE_URL}
         )
+
+    @classmethod
+    def get_url(cls, notification):
+        event = Event.objects.get(pk=notification.data.get("event_id"))
+        return urljoin(settings.SITE_URL, event.get_absolute_url())
 
 
 class ParticipationConfirmedNotification(AbstractNotificationHandler):
@@ -188,6 +199,13 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
             id=notification.data.get("participation_id")
         ).shift
         return _("Your participation for {shift} is now confirmed.").format(shift=shift)
+
+    @classmethod
+    def get_url(cls, notification):
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return urljoin(settings.SITE_URL, event.get_absolute_url())
 
 
 class ParticipationRejectedNotification(AbstractNotificationHandler):
@@ -222,6 +240,13 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
         return _("Your participation for {shift} has been rejected by a responsible user.").format(
             shift=shift
         )
+
+    @classmethod
+    def get_url(cls, notification):
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return urljoin(settings.SITE_URL, event.get_absolute_url())
 
 
 class ResponsibleParticipationRequested(AbstractNotificationHandler):
@@ -282,6 +307,10 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
             participant=participation.participant, shift=participation.shift
         )
 
+    @classmethod
+    def get_url(cls, notification):
+        return notification.data.get("disposition_url")
+
 
 class EventReminderNotification(AbstractNotificationHandler):
     slug = "ephios_event_reminder"
@@ -316,8 +345,13 @@ class EventReminderNotification(AbstractNotificationHandler):
             title=event.title,
             start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
             end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
-            url=urljoin(settings.SITE_URL, event.get_absolute_url()),
+            url=notification.get_url(),
         )
+
+    @classmethod
+    def get_url(cls, notification):
+        event = Event.objects.get(pk=notification.data.get("event_id"))
+        return urljoin(settings.SITE_URL, event.get_absolute_url())
 
 
 class CustomEventParticipantNotification(AbstractNotificationHandler):

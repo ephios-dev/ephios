@@ -109,6 +109,8 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
             "head": str(notification.subject),
             "body": notification.as_plaintext(),
         }
+        if url := notification.get_url():
+            payload["url"] = url
         send_user_notification(user=notification.user, payload=payload, ttl=1000)
 
 

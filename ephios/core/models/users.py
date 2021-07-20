@@ -402,3 +402,6 @@ class Notification(Model):
 
     def as_html(self):
         return self.notification_type.as_html(self)
+
+    def get_url(self):
+        return self.notification_type.get_url(self)
