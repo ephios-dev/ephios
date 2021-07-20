@@ -13,11 +13,9 @@
     {% endfor %}
 </div>
 
-<span class="pe-1" data-bs-toggle="tooltip" data-bs-placement="top"
-      title="{% translate 'Needed' %}: {{ shift.signup_method.get_participation_number_info }}"
-><strong>{{ confirmed_count }}</strong> {% translate "confirmed" %}</span>
-{% include "core/fragments/signup_stats_indicator.html" with stats=shift.signup_method.get_signup_stats %}
-
+{% with stats=shift.signup_method.get_signup_stats %}
+<span class="pe-1"><strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong> {% translate "Total" %}</span>
+{% endwith %}
 
 {% if disposition_url %}
     <div class="mt-1">

@@ -102,7 +102,7 @@ class Event(Model):
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
         from ephios.core.signup import SignupStats
 
-        default_for_no_shifts = SignupStats(0, 0, None, None)
+        default_for_no_shifts = SignupStats(0, 0, None, None, None, None)
 
         return functools.reduce(
             operator.add,

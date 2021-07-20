@@ -24,6 +24,8 @@ from ephios.core.signup import (
     ParticipationError,
 )
 
+NO_SECTION_UUID = "other"
+
 
 def sections_participant_qualifies_for(sections, participant: AbstractParticipant):
     available_qualification_ids = set(q.id for q in participant.collect_all_qualifications())
@@ -234,37 +236,52 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             },
         }
 
+    def _get_signup_stats_per_section(self, participations=None):
+        from ephios.core.signup.methods import SignupStats
+
+        if participations is None:
+            participations = list(self.shift.participations.all())
+        confirmed_counter = Counter()
+        requested_counter = Counter()
+        for p in participations:
+            if p.state == AbstractParticipation.States.CONFIRMED:
+                c = confirmed_counter
+            elif p.state == AbstractParticipation.States.REQUESTED:
+                c = requested_counter
+            else:
+                continue
+            c[p.data.get("dispatched_section_uuid", NO_SECTION_UUID)] += 1
+
+        d = {}
+        for section in self.configuration.sections + [dict(uuid=NO_SECTION_UUID)]:
+            uuid = section["uuid"]
+            min_count = section.get("min_count")
+            max_count = section.get("max_count")
+            d[uuid] = SignupStats(
+                requested_count=requested_counter[uuid],
+                confirmed_count=confirmed_counter[uuid],
+                missing=(max(min_count - confirmed_counter[uuid], 0) if min_count else 0),
+                free=(max(max_count - confirmed_counter[uuid], 0) if min_count else None),
+                min_count=min_count,
+                max_count=max_count,
+            )
+        return d
+
     def get_signup_stats(self):
         from ephios.core.signup.methods import SignupStats
 
         participations = list(self.shift.participations.all())
-        requested_count = sum(
-            p.state == AbstractParticipation.States.REQUESTED for p in participations
-        )
         confirmed_count = sum(
             p.state == AbstractParticipation.States.CONFIRMED for p in participations
         )
-        signup_stats = SignupStats(requested_count, 0, None, 0)
-        section_counter = Counter(p.data.get("dispatched_section_uuid") for p in participations)
+
+        signup_stats = SignupStats.ZERO
+
+        section_stats = self._get_signup_stats_per_section(participations)
         for section in self.configuration.sections:
-            participation_count = section_counter[section["uuid"]]
-            missing = (
-                max(min_count - participation_count, 0)
-                if (min_count := section.get("min_count"))
-                else None
-            )
-            free = (
-                max(max_count - participation_count, 0)
-                if (max_count := section.get("max_count"))
-                else None
-            )
-            signup_stats += SignupStats(
-                requested_count=0,
-                signed_up_count=participation_count,
-                missing=missing,
-                free=free,
-            )
-        if (undispatched_participations := confirmed_count - signup_stats.signed_up_count) > 0:
+            signup_stats += section_stats[section["uuid"]]
+
+        if (undispatched_participations := confirmed_count - signup_stats.confirmed_count) > 0:
             signup_stats.free -= min(undispatched_participations, signup_stats.free)
             signup_stats.missing -= min(undispatched_participations, signup_stats.missing)
         return signup_stats
@@ -305,15 +322,17 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             }
         ).order_by("-state")
 
+        section_stats = self._get_signup_stats_per_section(participations)
         sections = {
             section["uuid"]: {
                 "title": section["title"],
-                "missing": section.get("min_count") or 0,
+                "placeholder": section.get("min_count") or 0,
                 "qualifications_label": ", ".join(
                     q.abbreviation
                     for q in Qualification.objects.filter(id__in=section["qualifications"])
                 ),
                 "participations": [],
+                "stats": section_stats[section["uuid"]],
             }
             for section in self.configuration.sections
         }
@@ -323,28 +342,25 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             dispatched_uuid = participation.data.get(
                 "dispatched_section_uuid"
             ) or participation.data.get("preferred_section_uuid")
-            if not dispatched_uuid:
+            if dispatched_uuid not in sections:
                 unsorted_participations.append(participation)
             else:
                 sections[dispatched_uuid]["participations"].append(participation)
-                sections[dispatched_uuid]["missing"] -= 1
+                sections[dispatched_uuid]["placeholder"] -= 1
 
         for section in sections.values():
-            section["missing"] = list(range(max(0, section["missing"])))
+            section["placeholder"] = list(range(max(0, section["placeholder"])))
         if unsorted_participations:
-            sections["other"] = {
-                "title": _("other"),
+            sections[NO_SECTION_UUID] = {
+                "title": _("additionally"),
                 "participations": unsorted_participations,
-                "missing": [],
+                "placeholder": [],
             }
 
         return get_template("basesignup/section_based/fragment_state.html").render(
             {
                 "shift": self.shift,
                 "sections": sections,
-                "confirmed_count": len(
-                    [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
-                ),
                 "disposition_url": (
                     reverse(
                         "core:shift_disposition",

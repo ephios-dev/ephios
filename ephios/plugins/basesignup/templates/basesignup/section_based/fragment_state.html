@@ -2,13 +2,16 @@
 
 <div>
     {% for section in sections.values %}
-        <span><strong>{{ section.participations|length }}</strong> {{ section.title }}</span>
+        <span class="pe-1"><strong>
+            {{ section.stats.confirmed_count }}{% if section.stats.max_count %}/{{ section.stats.max_count }}{% endif %}
+        </strong> {{ section.title }}</span>
+
         <div class="mb-3">
             {% for participation in section.participations %}
                 {% include "basesignup/participation_card_inline.html" %}
             {% endfor %}
-            {% for i in section.missing %}
-                {% if section.qualifications_label %}
+            {% for i in section.placeholder %}
+                {% if False and section.qualifications_label %}
                     <span class="badge bg-light text-muted px-4">{{ section.qualifications_label }}</span>
                 {% else %}
                     <span class="badge bg-light px-5">&nbsp;</span>
@@ -21,8 +24,11 @@
     {% endfor %}
 </div>
 
-<span class="pe-1"><strong>{{ confirmed_count }}</strong> {% translate "confirmed" %}</span>
-{% include "core/fragments/signup_stats_indicator.html" with stats=shift.signup_method.get_signup_stats %}
+{% with stats=shift.signup_method.get_signup_stats %}
+    <span class="pe-1"><strong>
+        {{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}
+    </strong> {% translate "Total" %}</span>
+{% endwith %}
 
 {% if disposition_url %}
     <div class="mt-1">

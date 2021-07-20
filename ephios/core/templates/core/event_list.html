@@ -118,7 +118,7 @@ visible
                                             {% if event.can_change and stats.requested_count > 0 %}
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
-                                            {{ stats.signed_up_count }}
+                                            {{ stats.confirmed_count }}
                                         </div>
                                         <div>
                                             {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}

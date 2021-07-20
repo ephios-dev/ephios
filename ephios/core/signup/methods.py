@@ -17,7 +17,7 @@ from django.template import Context, Template
 from django.template.defaultfilters import yesno
 from django.urls import reverse
 from django.utils import formats, timezone
-from django.utils.functional import SimpleLazyObject, cached_property
+from django.utils.functional import SimpleLazyObject, cached_property, classproperty
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -484,16 +484,18 @@ class BaseSignupMethod:
         """
         min_count, max_count = self.get_participant_count_bounds()
         participations = list(self.shift.participations.all())
-        signed_up_count = sum(
+        confirmed_count = sum(
             p.state == AbstractParticipation.States.CONFIRMED for p in participations
         )
         return SignupStats(
             requested_count=sum(
                 p.state == AbstractParticipation.States.REQUESTED for p in participations
             ),
-            signed_up_count=signed_up_count,
-            missing=max(min_count - signed_up_count, 0) if min_count else None,
-            free=max(max_count - signed_up_count, 0) if max_count else None,
+            confirmed_count=confirmed_count,
+            missing=max(min_count - confirmed_count, 0) if min_count else None,
+            free=max(max_count - confirmed_count, 0) if max_count else None,
+            min_count=min_count,
+            max_count=max_count,
         )
 
     def render_shift_state(self, request):
@@ -534,22 +536,41 @@ class BaseSignupMethod:
 @dataclasses.dataclass()
 class SignupStats:
     requested_count: int
-    signed_up_count: int
-    missing: Optional[int]
-    free: Optional[int]
+    confirmed_count: int
+    missing: int
+    free: Optional[int]  # None means infinite free
+    min_count: Optional[int]  # None means no min specified
+    max_count: Optional[int]  # None means infinite max
+
+    @classproperty
+    def ZERO(cls):
+        return SignupStats(
+            requested_count=0,
+            confirmed_count=0,
+            missing=0,
+            free=0,
+            min_count=None,
+            max_count=0,
+        )
 
     def __add__(self, other: "SignupStats"):
-        if self.missing is not None or other.missing is not None:
-            missing = (self.missing or 0) + (other.missing or 0)
-        else:
-            missing = None
-        if self.free is not None and other.free is not None:
-            free = self.free + other.free
-        else:
-            free = None
+        free = self.free + other.free if self.free is not None and other.free is not None else None
+        missing = self.missing + other.missing
+        min_count = (
+            (self.min_count or 0) + (other.min_count or 0)
+            if self.min_count is not None or other.min_count is not None
+            else None
+        )
+        max_count = (
+            self.max_count + other.max_count
+            if self.max_count is not None and other.max_count is not None
+            else None
+        )
         return SignupStats(
             requested_count=self.requested_count + other.requested_count,
-            signed_up_count=self.signed_up_count + other.signed_up_count,
+            confirmed_count=self.confirmed_count + other.confirmed_count,
             missing=missing,
             free=free,
+            min_count=min_count,
+            max_count=max_count,
         )

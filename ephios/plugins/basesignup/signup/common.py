@@ -78,9 +78,6 @@ class MinMaxParticipantsMixin(_Base):
                 AbstractParticipation.States.CONFIRMED,
             }
         ).order_by("-state")
-        confirmed_count = len(
-            [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
-        )
         empty_spots = max(
             0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
         )
@@ -88,7 +85,6 @@ class MinMaxParticipantsMixin(_Base):
             {
                 "shift": self.shift,
                 "participations": participations,
-                "confirmed_count": confirmed_count,
                 "empty_spots": [self.get_empty_spot_label()] * empty_spots,
                 "disposition_url": (
                     reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
@@ -99,7 +95,7 @@ class MinMaxParticipantsMixin(_Base):
         )
 
     def get_empty_spot_label(self):
-        return ""
+        return ""  # FIXME: remove when not needed in this PR
 
 
 class QualificationsRequiredSignupMixin(_Base):
