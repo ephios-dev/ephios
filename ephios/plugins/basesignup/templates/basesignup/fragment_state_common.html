@@ -4,8 +4,12 @@
     {% for participation in participations %}
         {% include "basesignup/participation_card_inline.html" %}
     {% endfor %}
-    {% for i in empty_spots %}
-        <span class="badge bg-light px-5">&nbsp;</span>
+    {% for label in empty_spots %}
+        {% if label %}
+            <span class="badge bg-light text-muted">{{ label }}</span>
+        {% else %}
+            <span class="badge bg-light px-5">&nbsp;</span>
+        {% endif %}
     {% endfor %}
 </div>
 

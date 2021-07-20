@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="">
+<div>
     {% for section in sections.values %}
         <span><strong>{{ section.participations|length }}</strong> {{ section.title }}</span>
         <div class="mb-3">
@@ -8,8 +8,13 @@
                 {% include "basesignup/participation_card_inline.html" %}
             {% endfor %}
             {% for i in section.missing %}
-                <span class="badge bg-light px-5">&nbsp;</span>
+                {% if section.qualifications_label %}
+                    <span class="badge bg-light text-muted">{{ section.qualifications_label }}</span>
+                {% else %}
+                    <span class="badge bg-light px-5">&nbsp;</span>
+                {% endif %}
             {% empty %}
+                {# show a white box as vertical whitespace  #}
                 <span class="badge bg-white px-5">&nbsp;</span>
             {% endfor %}
         </div>

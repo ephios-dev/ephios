@@ -89,7 +89,7 @@ class MinMaxParticipantsMixin(_Base):
                 "shift": self.shift,
                 "participations": participations,
                 "confirmed_count": confirmed_count,
-                "empty_spots": range(empty_spots),
+                "empty_spots": [self.get_empty_spot_label()] * empty_spots,
                 "disposition_url": (
                     reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
                     if request.user.has_perm("core.change_event", obj=self.shift.event)
@@ -97,6 +97,9 @@ class MinMaxParticipantsMixin(_Base):
                 ),
             }
         )
+
+    def get_empty_spot_label(self):
+        return ""
 
 
 class QualificationsRequiredSignupMixin(_Base):
@@ -106,6 +109,9 @@ class QualificationsRequiredSignupMixin(_Base):
             self.configuration.required_qualifications = Qualification.objects.filter(
                 pk__in=self.configuration.required_qualification_ids
             )
+
+    def get_empty_spot_label(self):
+        return ", ".join(q.abbreviation for q in self.configuration.required_qualifications)
 
     @property
     def _signup_checkers(self):

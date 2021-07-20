@@ -309,6 +309,10 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             section["uuid"]: {
                 "title": section["title"],
                 "missing": section.get("min_count") or 0,
+                "qualifications_label": ", ".join(
+                    q.abbreviation
+                    for q in Qualification.objects.filter(id__in=section["qualifications"])
+                ),
                 "participations": [],
             }
             for section in self.configuration.sections
@@ -326,7 +330,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 sections[dispatched_uuid]["missing"] -= 1
 
         for section in sections.values():
-            section["missing"] = range(max(0, section["missing"]))
+            section["missing"] = list(range(max(0, section["missing"])))
         if unsorted_participations:
             sections["other"] = {
                 "title": _("other"),
