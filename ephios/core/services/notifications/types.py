@@ -239,16 +239,20 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
         )
         notifications = []
         for user in responsible_users:
-            notifications.append(
-                Notification(
-                    slug=cls.slug,
-                    user=user,
-                    data=dict(
-                        participation_id=participation.id,
-                        disposition_url=disposition_url,
-                    ),
+            if (
+                not participation.get_real_instance_class() == LocalParticipation
+                or user != participation.user
+            ):
+                notifications.append(
+                    Notification(
+                        slug=cls.slug,
+                        user=user,
+                        data=dict(
+                            participation_id=participation.id,
+                            disposition_url=disposition_url,
+                        ),
+                    )
                 )
-            )
         Notification.objects.bulk_create(notifications)
 
     @classmethod

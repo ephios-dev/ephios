@@ -193,7 +193,12 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             formset.save()
 
             for participation, changed_fields in formset.changed_objects:
-                if "state" in changed_fields:
+                from ephios.core.models import LocalParticipation
+
+                if "state" in changed_fields and (
+                    not participation.get_real_instance_class() == LocalParticipation
+                    or participation.user != request.user
+                ):
                     if participation.state == AbstractParticipation.States.CONFIRMED:
                         from ephios.core.services.notifications.types import (
                             ParticipationConfirmedNotification,
