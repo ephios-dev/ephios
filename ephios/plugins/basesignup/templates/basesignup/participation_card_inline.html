@@ -1,0 +1,36 @@
+{% load user_extras %}
+{% load i18n %}
+
+<div id="popover-title-{{ participation.id }}" class="d-none">
+    <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
+    {{ participation.participant }}{% if participation.participant.get_age is not None %},
+        {{ participation.participant.get_age }}
+    {% endif %}
+</div>
+
+<div id="popover-content-{{ participation.id }}" class="d-none">
+    {% for qualification in participation.participant.qualifications|get_relevant_qualifications %}
+        <span class='badge bg-secondary text-dark'>{{ qualification }}</span>
+    {% empty %}
+        <em>{% translate "none" %}</em>
+    {% endfor %}
+</div>
+
+<a class="badge
+{% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-muted{% endif %}
+"
+   tabindex="0"
+   data-bs-toggle="popover"
+   data-bs-trigger="focus"
+   data-title-ref="#popover-title-{{ participation.id }}"
+   data-bs-placement="bottom"
+   data-html="true"
+   data-bs-content-ref="#popover-content-{{ participation.id }}"
+>
+    {% if participation.state == participation.States.CONFIRMED %}
+        <i class="fas fa-check"></i>
+    {% else %}
+        <i class="far fa-clock"></i>
+    {% endif %}
+    {{ participation.participant }}
+</a>

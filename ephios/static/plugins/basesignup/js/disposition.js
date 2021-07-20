@@ -1,4 +1,22 @@
 $(document).ready(function () {
+    $("#id_user").djangoSelect2({
+        theme: "bootstrap5",
+        insertTag: function (data, tag) {
+            // Insert the tag at the end of the results
+            if (data.length === 0) {
+                data.push(tag);
+            }
+        },
+        createTag: function (params) {
+            return {
+                id: params.term,
+                text: gettext("Create \"{userName}\" as placeholder").replace("{userName}", params.term),
+                userName: params.term,
+                guestUser: true
+            }
+        }
+    });
+
     function handleDispositionForm($form, state, instant) {
         $form.find("[data-show-for-state]").each((index, el) => {
             el = $(el);
@@ -10,6 +28,36 @@ $(document).ready(function () {
                 el.hide();
             }
         });
+    }
+
+    function addForm(formset, form, newIndex, $spinner) {
+        // updating the formset is adapted from `addForm` in formset.js
+        formset.$managementForm('TOTAL_FORMS').val(newIndex + 1);
+        formset.$managementForm('INITIAL_FORMS').val(newIndex + 1);
+
+        // fade spinner into prepared form
+        const $newFormFragment = $($.parseHTML(form)).hide();
+        handleDispositionForm($newFormFragment, false, true);
+        $spinner.fadeOut("fast", function () {
+            $(this).replaceWith($newFormFragment);
+            handleForms($newFormFragment);
+            $newFormFragment.fadeIn("fast");
+        });
+
+        // register form with formset
+        const $newForm = $newFormFragment.filter(formset.opts.form);
+        formset.bindForm($newForm, newIndex);
+    }
+
+    function showSpinner(spawn) {
+        // Put a spinner. Height 55px is what the default template produces for the card about to be loaded.
+        const spinnerHtml = `<div class="list-group-item">
+                                     <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                                 </div></div>`;
+        const $spinner = $($.parseHTML(spinnerHtml)).hide().css("height", "55px");
+        spawn.append($spinner);
+        $spinner.slideDown("fast");
+        return $spinner;
     }
 
     $("[data-drop-to-state]").each(function (index, elem) {
@@ -37,15 +85,43 @@ $(document).ready(function () {
         handleDispositionForm($(elem), newState, true);
     });
 
-    $("select#id_user[form='add-user-form']").on('select2:close', function () {
+    $("select#id_user[form='add-user-form']").on('select2:close', function (e) {
         // clear select2
-        const userSelect = $(this);
         setTimeout(() => {
-            userSelect.val(null).change()
+            $("#id_user").empty().trigger('change');
         });
 
         const spawn = $("[data-formset-spawn]");
         const formset = $('#participations-form').formset('getOrCreate');
+
+        // handle guest users
+        if (e.params.originalSelect2Event && e.params.originalSelect2Event.data.guestUser) {
+            const $spinner = showSpinner(spawn);
+            const newIndex = $('#participations-form').formset('getOrCreate').totalFormCount();
+            const names = e.params.originalSelect2Event.data.userName.split(" ");
+            const last_name = names.pop();
+            const first_names = names.join(" ");
+            $.ajax({
+                url: $("#" + $(this)[0].form.id).data("placeholder-url"),
+                type: "post",
+                dataType: "html",
+                data: {
+                    "first_name": first_names,
+                    "last_name": last_name,
+                    "new_index": newIndex,
+                    "csrfmiddlewaretoken": getCookie("csrftoken"),
+                },
+                timeout: 10000,
+                success: (data) => addForm(formset, data, newIndex, $spinner),
+                error: () => {
+                    $spinner.slideUp();
+                    $spinner.remove();
+                    alert("Connection failed.");
+                },
+            })
+            return;
+        }
+
         // look for existing form with that participation
         const userId = $(this).val();
         if (!userId) {
@@ -73,13 +149,7 @@ $(document).ready(function () {
             }
         } else {
             // We want to load using ajax.
-            // Put a spinner. Height 55px is what the default template produces for the card about to be loaded.
-            const spinnerHtml = `<div class="list-group-item">
-                                     <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
-                                 </div></div>`;
-            const $spinner = $($.parseHTML(spinnerHtml)).hide().css("height", "55px");
-            spawn.append($spinner);
-            $spinner.slideDown("fast");
+            const $spinner = showSpinner(spawn)
 
             // get the new form from the server
             const addUserForm = $("#" + $(this)[0].form.id);
@@ -91,24 +161,7 @@ $(document).ready(function () {
                 dataType: 'html',
                 data: addUserForm.serialize(),
                 timeout: 10000,
-                success: function (data) {
-                    // updating the formset is adapted from `addForm` in formset.js
-                    formset.$managementForm('TOTAL_FORMS').val(newIndex + 1);
-                    formset.$managementForm('INITIAL_FORMS').val(newIndex + 1);
-
-                    // fade spinner into prepared form
-                    const $newFormFragment = $($.parseHTML(data)).hide();
-                    handleDispositionForm($newFormFragment, false, true);
-                    $spinner.fadeOut("fast", function () {
-                        $(this).replaceWith($newFormFragment);
-                        handleForms($newFormFragment);
-                        $newFormFragment.fadeIn("fast");
-                    });
-
-                    // register form with formset
-                    const $newForm = $newFormFragment.filter(formset.opts.form);
-                    formset.bindForm($newForm, newIndex);
-                },
+                success: (data) => addForm(formset, data, newIndex, $spinner),
                 error: () => {
                     $spinner.slideUp();
                     $spinner.remove();

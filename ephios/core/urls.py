@@ -2,7 +2,11 @@ from django.urls import path
 
 from ephios.core import pdf
 from ephios.core.ical import user_event_feed_view
-from ephios.core.signup.disposition import AddUserView, DispositionView
+from ephios.core.signup.disposition import (
+    AddPlaceholderParticipantView,
+    AddUserView,
+    DispositionView,
+)
 from ephios.core.views.accounts import (
     GroupCreateView,
     GroupDeleteView,
@@ -133,6 +137,11 @@ urlpatterns = [
         "shifts/<int:pk>/disposition/add-user/",
         AddUserView.as_view(),
         name="shift_disposition_add_user",
+    ),
+    path(
+        "shifts/<int:pk>/disposition/add-placeholder/",
+        AddPlaceholderParticipantView.as_view(),
+        name="shift_disposition_add_placeholder",
     ),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
     path(

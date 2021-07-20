@@ -25,6 +25,7 @@ from django.views import View
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
+from ..models.events import PlaceholderParticipation
 from ..signals import participant_from_request, register_signup_methods
 from .disposition import BaseDispositionParticipationForm
 
@@ -53,10 +54,12 @@ class AbstractParticipant:
     first_name: str
     last_name: str
     qualifications: QuerySet = dataclasses.field(hash=False)
-    date_of_birth: date
+    date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 
     def get_age(self, today: date = None):
+        if self.date_of_birth is None:
+            return None
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
@@ -124,6 +127,37 @@ class LocalUserParticipant(AbstractParticipant):
 
     def reverse_event_detail(self, event):
         return event.get_absolute_url()
+
+
+@dataclasses.dataclass(frozen=True)
+class PlaceholderParticipant(AbstractParticipant):
+    def new_participation(self, shift):
+        return PlaceholderParticipation(
+            shift=shift, first_name=self.first_name, last_name=self.last_name
+        )
+
+    def participation_for(self, shift):
+        try:
+            return PlaceholderParticipation.objects.get(
+                shift=shift, first_name=self.first_name, last_name=self.last_name
+            )
+        except PlaceholderParticipation.DoesNotExist:
+            return None
+
+    def all_participations(self):
+        return AbstractParticipation.objects.none()
+
+    def reverse_signup_action(self, shift):
+        raise NotImplementedError
+
+    def reverse_event_detail(self, event):
+        raise NotImplementedError
+
+    @property
+    def icon(self):
+        return mark_safe(
+            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Placeholder")}"></span>'
+        )
 
 
 class ParticipationError(ValidationError):
@@ -209,19 +243,11 @@ def check_participation_state_for_signup(method, participant):
     participation = participant.participation_for(method.shift)
     if participation is not None:
         if participation.state == AbstractParticipation.States.REQUESTED:
-            return ParticipationError(
-                _("You have already requested your participation for {shift}").format(
-                    shift=method.shift
-                )
-            )
+            return ParticipationError(_("You have already requested a participation."))
         if participation.state == AbstractParticipation.States.CONFIRMED:
-            return ParticipationError(
-                _("You are already signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You are already signed up."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have been rejected."))
 
 
 def check_participation_state_for_decline(method, participant):
@@ -231,17 +257,11 @@ def check_participation_state_for_decline(method, participant):
             participation.state == AbstractParticipation.States.CONFIRMED
             and not method.configuration.user_can_decline_confirmed
         ):
-            return ParticipationError(
-                _("You are bindingly signed up for {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You cannot decline by yourself."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return ParticipationError(
-                _("You are rejected from {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have been rejected."))
         if participation.state == AbstractParticipation.States.USER_DECLINED:
-            return ParticipationError(
-                _("You have already declined participating in {shift}.").format(shift=method.shift)
-            )
+            return ParticipationError(_("You have already declined participating."))
 
 
 def check_inside_signup_timeframe(method, participant):
@@ -255,7 +275,8 @@ def check_inside_signup_timeframe(method, participant):
 def check_participant_age(method, participant):
     minimum_age = method.configuration.minimum_age
     day = method.shift.start_time.date()
-    if minimum_age is not None and participant.get_age(day) < minimum_age:
+    age = participant.get_age(day)
+    if minimum_age is not None and age is not None and age < minimum_age:
         return ParticipationError(
             _("You are too young. The minimum age is {age}.").format(age=minimum_age)
         )
@@ -437,7 +458,7 @@ class BaseSignupMethod:
 
     def get_signup_info(self):
         """
-        Return key/value pairs about the configuration to show in the shift info box.
+        Return key/value pairs about the configuration to show in exports etc.
         """
         fields = self.get_configuration_fields()
         return OrderedDict(
@@ -463,15 +484,16 @@ class BaseSignupMethod:
         """
         min_count, max_count = self.get_participant_count_bounds()
         participations = list(self.shift.participations.all())
+        signed_up_count = sum(
+            p.state == AbstractParticipation.States.CONFIRMED for p in participations
+        )
         return SignupStats(
             requested_count=sum(
                 p.state == AbstractParticipation.States.REQUESTED for p in participations
             ),
-            signed_up_count=sum(
-                p.state == AbstractParticipation.States.CONFIRMED for p in participations
-            ),
-            min_count=min_count,
-            max_count=max_count,
+            signed_up_count=signed_up_count,
+            missing=max(min_count - signed_up_count, 0) if min_count else None,
+            free=max(max_count - signed_up_count, 0) if max_count else None,
         )
 
     def render_shift_state(self, request):
@@ -513,21 +535,21 @@ class BaseSignupMethod:
 class SignupStats:
     requested_count: int
     signed_up_count: int
-    min_count: Optional[int]
-    max_count: Optional[int]
+    missing: Optional[int]
+    free: Optional[int]
 
     def __add__(self, other: "SignupStats"):
-        if self.min_count is not None or other.min_count is not None:
-            min_count = (self.min_count or 0) + (other.min_count or 0)
+        if self.missing is not None or other.missing is not None:
+            missing = (self.missing or 0) + (other.missing or 0)
         else:
-            min_count = None
-        if self.max_count is not None and other.max_count is not None:
-            max_count = (self.max_count or 0) + (other.max_count or 0)
+            missing = None
+        if self.free is not None and other.free is not None:
+            free = self.free + other.free
         else:
-            max_count = None
+            free = None
         return SignupStats(
             requested_count=self.requested_count + other.requested_count,
             signed_up_count=self.signed_up_count + other.signed_up_count,
-            min_count=min_count,
-            max_count=max_count,
+            missing=missing,
+            free=free,
         )
