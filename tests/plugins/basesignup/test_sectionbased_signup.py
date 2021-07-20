@@ -132,7 +132,7 @@ def test_signup_methods(django_app, sectioned_shift, volunteer):
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
     assert signup_stats.missing == 3
     assert signup_stats.free is None
-    sectioned_shift.signup_configuration["sections"] = (
+    sectioned_shift.signup_configuration["sections"] = [
         {
             "title": "KTW",
             "qualifications": [],
@@ -140,7 +140,7 @@ def test_signup_methods(django_app, sectioned_shift, volunteer):
             "max_count": 3,
             "uuid": KTW_UUID,
         },
-    )
+    ]
     sectioned_shift.save()
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
     assert signup_stats.missing == 2

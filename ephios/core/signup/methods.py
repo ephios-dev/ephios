@@ -492,7 +492,7 @@ class BaseSignupMethod:
                 p.state == AbstractParticipation.States.REQUESTED for p in participations
             ),
             confirmed_count=confirmed_count,
-            missing=max(min_count - confirmed_count, 0) if min_count else None,
+            missing=max(min_count - confirmed_count, 0) if min_count else 0,
             free=max(max_count - confirmed_count, 0) if max_count else None,
             min_count=min_count,
             max_count=max_count,

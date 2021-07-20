@@ -261,7 +261,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 requested_count=requested_counter[uuid],
                 confirmed_count=confirmed_counter[uuid],
                 missing=(max(min_count - confirmed_counter[uuid], 0) if min_count else 0),
-                free=(max(max_count - confirmed_counter[uuid], 0) if min_count else None),
+                free=(max(max_count - confirmed_counter[uuid], 0) if max_count else None),
                 min_count=min_count,
                 max_count=max_count,
             )
