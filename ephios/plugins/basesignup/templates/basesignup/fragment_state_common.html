@@ -6,16 +6,18 @@
     {% endfor %}
     {% for label in empty_spots %}
         {% if label %}
-            <span class="badge bg-light text-muted">{{ label }}</span>
+            <span class="badge bg-light text-muted px-4">{{ label }}</span>
         {% else %}
             <span class="badge bg-light px-5">&nbsp;</span>
         {% endif %}
     {% endfor %}
 </div>
 
-<span data-bs-toggle="tooltip" data-bs-placement="top"
+<span class="pe-1" data-bs-toggle="tooltip" data-bs-placement="top"
       title="{% translate 'Needed' %}: {{ shift.signup_method.get_participation_number_info }}"
-><strong>{{ confirmed_count }}</strong> {% translate "in total" %}</span>
+><strong>{{ confirmed_count }}</strong> {% translate "confirmed" %}</span>
+{% include "core/fragments/signup_stats_indicator.html" with stats=shift.signup_method.get_signup_stats %}
+
 
 {% if disposition_url %}
     <div class="mt-1">

@@ -9,7 +9,7 @@
             {% endfor %}
             {% for i in section.missing %}
                 {% if section.qualifications_label %}
-                    <span class="badge bg-light text-muted">{{ section.qualifications_label }}</span>
+                    <span class="badge bg-light text-muted px-4">{{ section.qualifications_label }}</span>
                 {% else %}
                     <span class="badge bg-light px-5">&nbsp;</span>
                 {% endif %}
@@ -21,7 +21,8 @@
     {% endfor %}
 </div>
 
-<span><strong>{{ confirmed_count }}</strong> {% translate "in total" %}</span>
+<span class="pe-1"><strong>{{ confirmed_count }}</strong> {% translate "confirmed" %}</span>
+{% include "core/fragments/signup_stats_indicator.html" with stats=shift.signup_method.get_signup_stats %}
 
 {% if disposition_url %}
     <div class="mt-1">
