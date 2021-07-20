@@ -244,9 +244,6 @@ class ShiftLogConfig(ModelFieldsLogConfig):
                 else None
             }
         )
-        yield DerivedFieldsLogRecorder(
-            lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
-        )
 
 
 register_model_for_logging(Shift, ShiftLogConfig())
