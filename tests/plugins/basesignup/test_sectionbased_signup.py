@@ -128,7 +128,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert participation.data.get("dispatched_section_uuid") == KTW_UUID
 
 
-def test_signup_methods(django_app, sectioned_shift, volunteer):
+def test_signup_stats(django_app, sectioned_shift, volunteer):
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
     assert signup_stats.missing == 3
     assert signup_stats.free is None
@@ -154,3 +154,22 @@ def test_signup_methods(django_app, sectioned_shift, volunteer):
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
     assert signup_stats.missing == 1
     assert signup_stats.free == 2
+
+
+def test_sections_pdf(django_app, planner, sectioned_shift, volunteer):
+    response_no_participations = django_app.get(
+        reverse("core:event_detail_pdf", kwargs=dict(pk=sectioned_shift.event.pk)),
+        user=planner,
+    )
+    assert response_no_participations
+    LocalParticipation.objects.create(
+        shift=sectioned_shift,
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+        data=dict(dispatched_section_uuid=KTW_UUID),
+    )
+    response = django_app.get(
+        reverse("core:event_detail_pdf", kwargs=dict(pk=sectioned_shift.event.pk)),
+        user=planner,
+    )
+    assert response and response != response_no_participations

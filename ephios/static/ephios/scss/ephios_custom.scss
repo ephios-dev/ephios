@@ -99,7 +99,9 @@ footer {
 
 .mannequin-rejected {
   background: $gray-200;
-  border-color: #A30027;
+  border-color: #0000;
+  //border-color: $gray-800;
+  padding: 0;
 }
 
 /* Make the event list item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
