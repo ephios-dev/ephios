@@ -254,14 +254,14 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
         d = {}
         for section in self.configuration.sections + [dict(uuid=NO_SECTION_UUID)]:
-            uuid = section["uuid"]
+            section_uuid = section["uuid"]
             min_count = section.get("min_count")
             max_count = section.get("max_count")
-            d[uuid] = SignupStats(
-                requested_count=requested_counter[uuid],
-                confirmed_count=confirmed_counter[uuid],
-                missing=(max(min_count - confirmed_counter[uuid], 0) if min_count else 0),
-                free=(max(max_count - confirmed_counter[uuid], 0) if max_count else None),
+            d[section_uuid] = SignupStats(
+                requested_count=requested_counter[section_uuid],
+                confirmed_count=confirmed_counter[section_uuid],
+                missing=(max(min_count - confirmed_counter[section_uuid], 0) if min_count else 0),
+                free=(max(max_count - confirmed_counter[section_uuid], 0) if max_count else None),
                 min_count=min_count,
                 max_count=max_count,
             )

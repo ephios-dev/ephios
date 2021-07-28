@@ -543,7 +543,7 @@ class SignupStats:
     max_count: Optional[int]  # None means infinite max
 
     @classproperty
-    def ZERO(cls):
+    def ZERO(self):
         return SignupStats(
             requested_count=0,
             confirmed_count=0,
