@@ -2,20 +2,20 @@
 
 <div>
     {% for section in sections.values %}
-        <span class="pe-1"><strong>
+        <span class="pe-1">
+            <strong>
             {{ section.stats.confirmed_count }}{% if section.stats.max_count %}/{{ section.stats.max_count }}{% endif %}
-        </strong> {{ section.title }}</span>
+        </strong>
+            {{ section.title }}
+            <span class="text-muted float-end">{{ section.qualifications_label }}</span>
+        </span>
 
-        <div class="mb-3">
+        <div class="mb-4">
             {% for participation in section.participations %}
                 {% include "basesignup/participation_card_inline.html" %}
             {% endfor %}
-            {% for i in section.placeholder %}
-                {% if False and section.qualifications_label %}
-                    <span class="badge bg-light text-muted px-4">{{ section.qualifications_label }}</span>
-                {% else %}
-                    <span class="badge bg-light px-5">&nbsp;</span>
-                {% endif %}
+            {% for index in section.placeholder %}
+                <span class="badge bg-light px-5">&nbsp;</span>
             {% empty %}
                 {# show a white box as vertical whitespace  #}
                 <span class="badge bg-white px-5">&nbsp;</span>

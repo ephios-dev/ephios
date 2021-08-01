@@ -71,32 +71,6 @@ class MinMaxParticipantsMixin(_Base):
             infos[_("Required number of participants")] = number_info
         return infos
 
-    def render_shift_state(self, request):
-        participations = self.shift.participations.filter(
-            state__in={
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.CONFIRMED,
-            }
-        ).order_by("-state")
-        empty_spots = max(
-            0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
-        )
-        return get_template("basesignup/fragment_state_common.html").render(
-            {
-                "shift": self.shift,
-                "participations": participations,
-                "empty_spots": [self.get_empty_spot_label()] * empty_spots,
-                "disposition_url": (
-                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
-
-    def get_empty_spot_label(self):
-        return ""  # FIXME: remove when not needed in this PR
-
 
 class QualificationsRequiredSignupMixin(_Base):
     def __init__(self, shift):
@@ -105,9 +79,6 @@ class QualificationsRequiredSignupMixin(_Base):
             self.configuration.required_qualifications = Qualification.objects.filter(
                 pk__in=self.configuration.required_qualification_ids
             )
-
-    def get_empty_spot_label(self):
-        return ", ".join(q.abbreviation for q in self.configuration.required_qualifications)
 
     @property
     def _signup_checkers(self):
@@ -135,6 +106,40 @@ class QualificationsRequiredSignupMixin(_Base):
                         Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
                     ),
                 },
+            }
+        )
+
+
+class QualificationMinMaxBaseSignupMethod(
+    QualificationsRequiredSignupMixin, MinMaxParticipantsMixin, BaseSignupMethod
+):
+    @property
+    def slug(self):
+        raise NotImplementedError()
+
+    def render_shift_state(self, request):
+        participations = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
+        ).order_by("-state")
+        empty_spots = max(
+            0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
+        )
+        return get_template("basesignup/fragment_state_common.html").render(
+            {
+                "shift": self.shift,
+                "participations": participations,
+                "empty_spots": list(range(empty_spots)),
+                "required_qualification": ", ".join(
+                    q.abbreviation for q in self.configuration.required_qualifications
+                ),
+                "disposition_url": (
+                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
+                    else None
+                ),
             }
         )
 

@@ -4,17 +4,17 @@
     {% for participation in participations %}
         {% include "basesignup/participation_card_inline.html" %}
     {% endfor %}
-    {% for label in empty_spots %}
-        {% if label %}
-            <span class="badge bg-light text-muted px-4">{{ label }}</span>
-        {% else %}
-            <span class="badge bg-light px-5">&nbsp;</span>
-        {% endif %}
+    {% for index in empty_spots %}
+        <span class="badge bg-light px-5">&nbsp;</span>
     {% endfor %}
 </div>
 
 {% with stats=shift.signup_method.get_signup_stats %}
-<span class="pe-1"><strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong> {% translate "Total" %}</span>
+    <span class="pe-1">
+        <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
+        {% translate "Total" context "participation count" %}
+        <span class="text-muted float-end">{{ required_qualification }}</span>
+    </span>
 {% endwith %}
 
 {% if disposition_url %}
