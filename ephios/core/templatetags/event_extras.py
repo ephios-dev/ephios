@@ -24,8 +24,8 @@ def shift_mannequin(request, shift):
     participation = request_to_participant(request).participation_for(shift)
     if participation is not None:
         return {
-            AbstractParticipation.States.USER_DECLINED: "rejected",
-            AbstractParticipation.States.RESPONSIBLE_REJECTED: "rejected",
+            AbstractParticipation.States.USER_DECLINED: "denied",
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: "denied",
             AbstractParticipation.States.REQUESTED: "requested",
             AbstractParticipation.States.CONFIRMED: "confirmed",
             AbstractParticipation.States.GETTING_DISPATCHED: "neutral",
