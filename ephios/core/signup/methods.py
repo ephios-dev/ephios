@@ -478,7 +478,7 @@ class BaseSignupMethod:
         """
         return None, None
 
-    def get_signup_stats(self):
+    def get_signup_stats(self) -> "SignupStats":
         """
         Return an instance of SignupStats for the shift.
         """
