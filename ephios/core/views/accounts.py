@@ -134,7 +134,8 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
                     name=self.object.get_full_name(), user=self.object
                 ),
             )
-            ProfileUpdateNotification.send(userprofile)
+            if request.user != userprofile:
+                ProfileUpdateNotification.send(userprofile)
             return redirect(reverse("core:userprofile_list"))
 
         return self.render_to_response(

@@ -314,7 +314,8 @@ class Consequence(Model):
                 self.handler.execute(self)
                 from ephios.core.services.notifications.types import ConsequenceApprovedNotification
 
-                ConsequenceApprovedNotification.send(self)
+                if user != self.user:
+                    ConsequenceApprovedNotification.send(self)
         except Exception as e:  # pylint: disable=broad-except
             self.state = self.States.FAILED
             add_log_recorder(
@@ -339,7 +340,8 @@ class Consequence(Model):
         self.save()
         from ephios.core.services.notifications.types import ConsequenceDeniedNotification
 
-        ConsequenceDeniedNotification.send(self)
+        if user != self.user:
+            ConsequenceDeniedNotification.send(self)
 
     def render(self):
         return self.handler.render(self)
@@ -400,3 +402,6 @@ class Notification(Model):
 
     def as_html(self):
         return self.notification_type.as_html(self)
+
+    def get_url(self):
+        return self.notification_type.get_url(self)
