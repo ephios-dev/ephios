@@ -121,11 +121,6 @@ visible
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
                                             {{ stats.confirmed_count }}
-                                            {% if event.can_change and stats.requested_count > 0 %}
-                                                <span class="badge rounded-pill bg-warning">
-                                                    +{{ stats.requested_count }}
-                                                </span>
-                                            {% endif %}
                                         </div>
                                         <div>
                                             {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}

@@ -1,4 +1,5 @@
 from django import template
+from django.db.models import Count, Q
 from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
@@ -54,11 +55,19 @@ def participant_conflicting_shifts(participant, shift):
 
 @register.filter(name="shifts_needing_disposition")
 def shifts_needing_disposition(user):
-    return Shift.objects.filter(
-        participations__state=AbstractParticipation.States.REQUESTED,
-        event__in=get_objects_for_user(
-            user,
-            perms=["core.change_event"],
-        ),
-        end_time__gt=timezone.now(),
-    ).distinct()
+    return (
+        Shift.objects.filter(
+            event__in=get_objects_for_user(
+                user,
+                perms=["core.change_event"],
+            ),
+            end_time__gt=timezone.now(),
+        )
+        .annotate(
+            request_count=Count(
+                "participations",
+                filter=Q(participations__state=AbstractParticipation.States.REQUESTED),
+            )
+        )
+        .filter(request_count__gt=0)
+    )
