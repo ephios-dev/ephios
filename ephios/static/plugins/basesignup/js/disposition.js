@@ -90,15 +90,17 @@ $(document).ready(function () {
         setTimeout(() => {
             $("#id_user").empty().trigger('change');
         });
+    });
 
+    $("select#id_user[form='add-user-form']").on('select2:select', function (e) {
         const spawn = $("[data-formset-spawn]");
         const formset = $('#participations-form').formset('getOrCreate');
 
         // handle guest users
-        if (e.params.originalSelect2Event && e.params.originalSelect2Event.data.guestUser) {
+        if (e.params.data.guestUser) {
             const $spinner = showSpinner(spawn);
             const newIndex = $('#participations-form').formset('getOrCreate').totalFormCount();
-            const names = e.params.originalSelect2Event.data.userName.split(" ");
+            const names = e.params.data.userName.split(" ");
             const last_name = names.pop();
             const first_names = names.join(" ");
             $.ajax({
