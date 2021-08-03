@@ -147,7 +147,7 @@ def test_signup_stats(django_app, sectioned_shift, volunteer, planner):
     assert signup_stats.max_count == signup_stats.free == 3
     assert signup_stats.requested_count == signup_stats.confirmed_count == 0
 
-    LocalParticipation.objects.create(
+    unassigned_participation = LocalParticipation.objects.create(
         shift=sectioned_shift,
         user=planner,
         state=AbstractParticipation.States.REQUESTED,
@@ -158,6 +158,15 @@ def test_signup_stats(django_app, sectioned_shift, volunteer, planner):
     assert signup_stats.max_count == signup_stats.free == 3
     assert signup_stats.requested_count == 1
     assert signup_stats.confirmed_count == 0
+
+    # a confirmed unassigned participation does not change the missing/max values
+    unassigned_participation.state = AbstractParticipation.States.CONFIRMED
+    unassigned_participation.save()
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.min_count == signup_stats.missing == 2
+    assert signup_stats.max_count == signup_stats.free == 3
+    assert signup_stats.requested_count == 0
+    assert signup_stats.confirmed_count == 1
 
     LocalParticipation.objects.create(
         shift=sectioned_shift,
@@ -170,8 +179,8 @@ def test_signup_stats(django_app, sectioned_shift, volunteer, planner):
     assert signup_stats.missing == 1
     assert signup_stats.max_count == 3
     assert signup_stats.free == 2
-    assert signup_stats.requested_count == 1
-    assert signup_stats.confirmed_count == 1
+    assert signup_stats.requested_count == 0
+    assert signup_stats.confirmed_count == 2
 
 
 def test_sections_pdf(django_app, planner, sectioned_shift, volunteer):
