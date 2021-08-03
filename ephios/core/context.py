@@ -1,7 +1,6 @@
 import importlib
 
 from django.conf import settings
-from django.templatetags.static import static
 from django.utils.translation import get_language
 
 from ephios.core.models import AbstractParticipation
@@ -20,7 +19,6 @@ def ephios_base_context(request):
     return {
         "ParticipationStates": AbstractParticipation.States,
         "footer": footer,
-        "select2_translation_url": static(f"select2/js/i18n/{get_language()}.js"),
         "LANGUAGE_CODE": get_language(),
         "ephios_version": EPHIOS_VERSION,
         "SITE_URL": settings.SITE_URL,
