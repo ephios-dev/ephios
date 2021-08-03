@@ -71,33 +71,6 @@ class MinMaxParticipantsMixin(_Base):
             infos[_("Required number of participants")] = number_info
         return infos
 
-    def render_shift_state(self, request):
-        participations = self.shift.participations.filter(
-            state__in={
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.CONFIRMED,
-            }
-        ).order_by("-state")
-        confirmed_count = len(
-            [p for p in participations if p.state == AbstractParticipation.States.CONFIRMED]
-        )
-        empty_spots = max(
-            0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
-        )
-        return get_template("basesignup/fragment_state_common.html").render(
-            {
-                "shift": self.shift,
-                "participations": participations,
-                "confirmed_count": confirmed_count,
-                "empty_spots": range(empty_spots),
-                "disposition_url": (
-                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
-
 
 class QualificationsRequiredSignupMixin(_Base):
     def __init__(self, shift):
@@ -133,6 +106,40 @@ class QualificationsRequiredSignupMixin(_Base):
                         Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
                     ),
                 },
+            }
+        )
+
+
+class QualificationMinMaxBaseSignupMethod(
+    QualificationsRequiredSignupMixin, MinMaxParticipantsMixin, BaseSignupMethod
+):
+    @property
+    def slug(self):
+        raise NotImplementedError()
+
+    def render_shift_state(self, request):
+        participations = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
+        ).order_by("-state")
+        empty_spots = max(
+            0, (self.configuration.minimum_number_of_participants or 0) - len(participations)
+        )
+        return get_template("basesignup/fragment_state_common.html").render(
+            {
+                "shift": self.shift,
+                "participations": participations,
+                "empty_spots": list(range(empty_spots)),
+                "required_qualification": ", ".join(
+                    q.abbreviation for q in self.configuration.required_qualifications
+                ),
+                "disposition_url": (
+                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                    if request.user.has_perm("core.change_event", obj=self.shift.event)
+                    else None
+                ),
             }
         )
 

@@ -102,7 +102,7 @@ class Event(Model):
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
         from ephios.core.signup import SignupStats
 
-        default_for_no_shifts = SignupStats(0, 0, None, None)
+        default_for_no_shifts = SignupStats.ZERO
 
         return functools.reduce(
             operator.add,
@@ -243,9 +243,6 @@ class ShiftLogConfig(ModelFieldsLogConfig):
                 if (method := shift.signup_method)
                 else None
             }
-        )
-        yield DerivedFieldsLogRecorder(
-            lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
         )
 
 

@@ -128,11 +128,11 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
     assert participation.data.get("dispatched_section_uuid") == KTW_UUID
 
 
-def test_signup_methods(django_app, sectioned_shift, volunteer):
+def test_signup_stats(django_app, sectioned_shift, volunteer, planner):
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
     assert signup_stats.missing == 3
     assert signup_stats.free is None
-    sectioned_shift.signup_configuration["sections"] = (
+    sectioned_shift.signup_configuration["sections"] = [
         {
             "title": "KTW",
             "qualifications": [],
@@ -140,11 +140,34 @@ def test_signup_methods(django_app, sectioned_shift, volunteer):
             "max_count": 3,
             "uuid": KTW_UUID,
         },
-    )
+    ]
     sectioned_shift.save()
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
-    assert signup_stats.missing == 2
-    assert signup_stats.free == 3
+    assert signup_stats.min_count == signup_stats.missing == 2
+    assert signup_stats.max_count == signup_stats.free == 3
+    assert signup_stats.requested_count == signup_stats.confirmed_count == 0
+
+    unassigned_participation = LocalParticipation.objects.create(
+        shift=sectioned_shift,
+        user=planner,
+        state=AbstractParticipation.States.REQUESTED,
+        data=dict(dispatched_section_uuid=None),
+    )
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.min_count == signup_stats.missing == 2
+    assert signup_stats.max_count == signup_stats.free == 3
+    assert signup_stats.requested_count == 1
+    assert signup_stats.confirmed_count == 0
+
+    # a confirmed unassigned participation does not change the missing/max values
+    unassigned_participation.state = AbstractParticipation.States.CONFIRMED
+    unassigned_participation.save()
+    signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.min_count == signup_stats.missing == 2
+    assert signup_stats.max_count == signup_stats.free == 3
+    assert signup_stats.requested_count == 0
+    assert signup_stats.confirmed_count == 1
+
     LocalParticipation.objects.create(
         shift=sectioned_shift,
         user=volunteer,
@@ -152,5 +175,28 @@ def test_signup_methods(django_app, sectioned_shift, volunteer):
         data=dict(dispatched_section_uuid=KTW_UUID),
     )
     signup_stats = sectioned_shift.signup_method.get_signup_stats()
+    assert signup_stats.min_count == 2
     assert signup_stats.missing == 1
+    assert signup_stats.max_count == 3
     assert signup_stats.free == 2
+    assert signup_stats.requested_count == 0
+    assert signup_stats.confirmed_count == 2
+
+
+def test_sections_pdf(django_app, planner, sectioned_shift, volunteer):
+    response_no_participations = django_app.get(
+        reverse("core:event_detail_pdf", kwargs=dict(pk=sectioned_shift.event.pk)),
+        user=planner,
+    )
+    assert response_no_participations
+    LocalParticipation.objects.create(
+        shift=sectioned_shift,
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+        data=dict(dispatched_section_uuid=KTW_UUID),
+    )
+    response = django_app.get(
+        reverse("core:event_detail_pdf", kwargs=dict(pk=sectioned_shift.event.pk)),
+        user=planner,
+    )
+    assert response and response != response_no_participations

@@ -26,7 +26,11 @@ from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
 from ephios.modellogging.log import add_log_recorder, update_log
-from ephios.modellogging.recorders import InstanceActionType, PermissionLogRecorder
+from ephios.modellogging.recorders import (
+    DerivedFieldsLogRecorder,
+    InstanceActionType,
+    PermissionLogRecorder,
+)
 
 
 class EventForm(forms.ModelForm):
@@ -173,6 +177,14 @@ class ShiftForm(forms.ModelForm):
                 signup_methods.append(self.instance.signup_method)
         self.fields["signup_method_slug"].widget = forms.Select(
             choices=((method.slug, method.verbose_name) for method in signup_methods)
+        )
+        # this recorder may cause db queries, so it's added on Shift init, but here in the form
+        # pylint: disable=undefined-variable
+        add_log_recorder(
+            self.instance,
+            DerivedFieldsLogRecorder(
+                lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
+            ),
         )
 
     def clean(self):

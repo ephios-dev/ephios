@@ -76,6 +76,8 @@ visible
                                      title="{% for state in counter %}<div>
 
 
+
+
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                         {% endif %}
                                 >
@@ -118,20 +120,10 @@ visible
                                             {% if event.can_change and stats.requested_count > 0 %}
                                                 <span class="pending-indicator"></span>
                                             {% endif %}
-                                            {{ stats.signed_up_count }}
+                                            {{ stats.confirmed_count }}
                                         </div>
                                         <div>
-                                            {% if stats.missing is not None and stats.missing > 0 %}
-                                                <span class="badge bg-light text-danger">{{ stats.missing }} {% translate "missing" %}</span>
-                                            {% else %}
-                                                {% if stats.free is not None and stats.free > 0 %}
-                                                    <span class="badge bg-light text-dark">{{ stats.free }} {% translate "open" %}</span>
-                                                {% elif stats.free is not None and stats.free == 0 %}
-                                                    <span class="badge bg-light text-dark">{% translate "full" %}</span>
-                                                {% else %}
-                                                    <span class="badge bg-light text-dark">{% translate "open" %}</span>
-                                                {% endif %}
-                                            {% endif %}
+                                            {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
                                         </div>
                                     </div>
                                     <div class="grid-time">

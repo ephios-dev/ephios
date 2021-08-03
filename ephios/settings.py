@@ -229,7 +229,7 @@ SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""
 
 # django-debug-toolbar
-if DEBUG:
+if DEBUG and env.bool("DEBUG_TOOLBAR", True):
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")

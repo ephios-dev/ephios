@@ -10,11 +10,11 @@ from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMe
 
 
 def test_signup_stats_addition(django_app):
-    a = SignupStats(4, 2, 3, None)
-    b = SignupStats(5, 2, 3, 5)
-    c = SignupStats(3, 2, None, 2)
-    assert a + b == SignupStats(9, 4, 6, None)
-    assert b + c == SignupStats(8, 4, 3, 7)
+    a = SignupStats(4, 2, 3, None, 5, None)
+    b = SignupStats(5, 2, 3, 5, 5, 7)
+    c = SignupStats(3, 2, 0, 2, None, 4)
+    assert a + b == SignupStats(9, 4, 6, None, 10, None)
+    assert b + c == SignupStats(8, 4, 3, 7, 5, 11)
 
 
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):

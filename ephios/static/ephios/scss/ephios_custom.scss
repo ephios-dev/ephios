@@ -97,9 +97,9 @@ footer {
   border-color: #aa8409;
 }
 
-.mannequin-rejected {
-  background: $gray-200;
-  border-color: #A30027;
+.mannequin-denied {
+  background: #232c32;
+  border-color: #0000;
 }
 
 /* Make the event list item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
@@ -185,7 +185,7 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   width: 10px;
   height: 10px;
   color: #ffffff;
-  background-image: linear-gradient(#87CFF8, #5FBDF2);
+  background-image: linear-gradient($yellow-400, $yellow-500);
   background-clip: padding-box;
   border-radius: 50%;
 }

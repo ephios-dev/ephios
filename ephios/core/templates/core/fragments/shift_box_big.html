@@ -9,7 +9,7 @@
             {% with mannequin=request|shift_mannequin:shift %}
                 <div class="mannequin mannequin-{{ mannequin }}">
                     <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
-                         alt="mannequin icon"/>
+                         alt="{{ mannequin }} mannequin icon"/>
                 </div>
             {% endwith %}
         {% endif %}
