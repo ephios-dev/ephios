@@ -16,10 +16,11 @@
             {% endfor %}
             {% for index in section.placeholder %}
                 <span class="badge bg-light px-5">&nbsp;</span>
-            {% empty %}
+            {% endfor %}
+            {% if not section.participations and not section.placeholder %}
                 {# show a white box as vertical whitespace  #}
                 <span class="badge bg-white px-5">&nbsp;</span>
-            {% endfor %}
+            {% endif %}
         </div>
     {% endfor %}
 </div>
