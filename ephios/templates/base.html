@@ -49,6 +49,9 @@
               href="{% static "select2/css/select2-bootstrap5.min.css" %}">
         {% block css %}{% endblock %}
     {% endcompress %}
+
+    {# as of 2021-06-14, the statici18n tag misbehaves with compression when 500 errors occur #}
+    <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
     {% compress js %}
         <script type="text/javascript" src="{% static "jquery/js/jquery-3.5.1.min.js" %}"></script>
         <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
@@ -59,8 +62,6 @@
         <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
         {% block javascript %}{% endblock %}
     {% endcompress %}
-    {# as of 2021-06-14, the statici18n tag misbehaves with compression when 500 errors occur #}
-    <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
     {% block html_head %}
     {% endblock %}
 </head>
@@ -155,7 +156,7 @@
             {% block content %}{% endblock %}
         </div>
     </main>
-    <footer class="row blur-on-unload">
+    <footer class="row blur-on-unload mt-2">
         <div class="col-md-12 text-center">
             <small>
                 {% for label, url in footer.items %}

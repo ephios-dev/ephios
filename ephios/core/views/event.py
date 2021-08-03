@@ -87,9 +87,10 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
     permission_required = "core.view_event"
 
     def get_queryset(self):
+        base = Event.objects.all()
         if self.request.user.has_perm("core.add_event"):
-            return Event.all_objects.all()
-        return Event.objects.all()
+            base = Event.all_objects.all()
+        return base.prefetch_related("shifts", "shifts__participations")
 
 
 class EventEditMixin:
