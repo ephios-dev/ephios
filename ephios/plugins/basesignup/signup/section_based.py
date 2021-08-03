@@ -271,6 +271,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 max_count=max_count,
             )
 
+        # Participations not assigned to a section are extra, so max and free are explicitly zero.
+        # We do not offset missing places in other sections, as qualifications etc. might not match.
+        # Disposition will always be required to resolve unassigned participations.
         d[NO_SECTION_UUID] = SignupStats(
             requested_count=requested_counter[NO_SECTION_UUID],
             confirmed_count=confirmed_counter[NO_SECTION_UUID],
