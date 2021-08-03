@@ -25,9 +25,13 @@ class MinMaxParticipantsMixin(_Base):
             not method.uses_requested_state
             and method.configuration.maximum_number_of_participants is not None
         ):
-            current_count = AbstractParticipation.objects.filter(
-                shift=method.shift, state=AbstractParticipation.States.CONFIRMED
-            ).count()
+            current_count = len(
+                [
+                    participation
+                    for participation in method.shift.participations.all()
+                    if participation.state == AbstractParticipation.States.CONFIRMED
+                ]
+            )
             if current_count >= method.configuration.maximum_number_of_participants:
                 return ParticipationError(_("The maximum number of participants is reached."))
 

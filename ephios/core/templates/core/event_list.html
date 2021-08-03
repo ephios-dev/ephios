@@ -57,7 +57,7 @@ visible
                     {% eventtype_colors %}
                 {% endcache %}
             </style>
-            <div class="list-group">
+            <div class="list-group mb-3">
                 {% if perms.core.add_event %}
                     <div class="list-group-item px-0">
                         <div class="ps-2">
@@ -74,10 +74,6 @@ visible
                                      data-bs-toggle="tooltip" data-bs-placement="bottom"
                                      data-bs-html="true"
                                      title="{% for state in counter %}<div>
-
-
-
-
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                         {% endif %}
                                 >
@@ -153,9 +149,11 @@ visible
                 {% endfor %}
             </div>
         {% else %}
-            <h5 class="mt-5 text-center">
-                {% translate "There are no events." %}
-            </h5>
+            <div class="mb-3">
+                <h5 class="mt-5 text-center">
+                    {% translate "There are no events." %}
+                </h5>
+            </div>
         {% endif %}
 
     </form>

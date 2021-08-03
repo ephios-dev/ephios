@@ -3,9 +3,7 @@
 
 <div id="popover-title-{{ participation.id }}" class="d-none">
     <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
-    {{ participation.participant }}{% if participation.participant.get_age is not None %},
-        {{ participation.participant.get_age }}
-    {% endif %}
+    {{ participation.participant }}
 </div>
 
 <div id="popover-content-{{ participation.id }}" class="d-none">
