@@ -25,9 +25,10 @@
 </div>
 
 {% with stats=shift.signup_method.get_signup_stats %}
-    <span class="pe-1"><strong>
-        {{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}
-    </strong> {% translate "Total" %}</span>
+    <span class="pe-1">
+        <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
+        {% translate "Total" context "participation count" %}
+    </span>
 {% endwith %}
 
 {% if disposition_url %}

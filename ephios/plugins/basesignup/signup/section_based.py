@@ -250,7 +250,12 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 c = requested_counter
             else:
                 continue
-            c[p.data.get("dispatched_section_uuid") or NO_SECTION_UUID] += 1
+            section_uuid = p.data.get("dispatched_section_uuid")
+            if not section_uuid or section_uuid not in (
+                section["uuid"] for section in self.configuration.sections
+            ):
+                section_uuid = NO_SECTION_UUID
+            c[section_uuid] += 1
 
         d = {}
         for section in self.configuration.sections + [dict(uuid=NO_SECTION_UUID)]:
@@ -271,27 +276,11 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         from ephios.core.signup.methods import SignupStats
 
         participations = list(self.shift.participations.all())
+
         signup_stats = SignupStats.ZERO
+        for stats in self._get_signup_stats_per_section(participations).values():
+            signup_stats += stats
 
-        # min/max and free/missing values are derived by combining the individual sections
-        section_stats = self._get_signup_stats_per_section(participations)
-        for section in self.configuration.sections:
-            signup_stats += section_stats[section["uuid"]]
-
-        # Some participations may not be assigned to existing sections, e.g. after changing section setup.
-        # But: they are the ground truth for requested/confirmed counts, therefore that's overwritten here.
-        state_counter = Counter(participation.state for participation in participations)
-        section_assigned_confirmations = signup_stats.confirmed_count
-        signup_stats.confirmed_count = state_counter[AbstractParticipation.States.CONFIRMED]
-        signup_stats.requested_count = state_counter[AbstractParticipation.States.REQUESTED]
-
-        # Also, those unassociated confirmed participations are deducted from free/missing.
-        if (
-            unassigned_participations := signup_stats.confirmed_count
-            - section_assigned_confirmations
-        ) > 0:
-            signup_stats.free -= min(unassigned_participations, signup_stats.free)
-            signup_stats.missing -= min(unassigned_participations, signup_stats.missing)
         return signup_stats
 
     @staticmethod
@@ -360,7 +349,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             section["placeholder"] = list(range(max(0, section["placeholder"])))
         if unsorted_participations:
             sections[NO_SECTION_UUID] = {
-                "title": _("additionally"),
+                "title": _("unassigned"),
                 "participations": unsorted_participations,
                 "placeholder": [],
             }
