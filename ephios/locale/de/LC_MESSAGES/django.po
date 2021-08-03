@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-08-03 16:00+0200\n"
-"PO-Revision-Date: 2021-05-06 12:58+0000\n"
+"PO-Revision-Date: 2021-08-03 14:24+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.8-dev\n"
 
 #: ephios/core/consequences.py:35
 #, python-brace-format
@@ -740,34 +740,24 @@ msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
 #: ephios/core/signup/methods.py:246
-#, fuzzy
-#| msgid "You have already requested your participation for {shift}"
 msgid "You have already requested a participation."
-msgstr "Sie haben bereits eine Teilnahme für {shift} angefragt"
+msgstr "Sie haben bereits eine Teilnahme angefragt."
 
 #: ephios/core/signup/methods.py:248
-#, fuzzy
-#| msgid "You are already signed up for {shift}."
 msgid "You are already signed up."
-msgstr "Sie sind bereits für {shift} eingeteilt."
+msgstr "Sie sind bereits eingeteilt."
 
 #: ephios/core/signup/methods.py:250 ephios/core/signup/methods.py:262
-#, fuzzy
-#| msgid "Your participation has been rejected"
 msgid "You have been rejected."
-msgstr "Ihre Teilnahme wurde abgelehnt"
+msgstr "Ihre Teilnahme wurde abgelehnt."
 
 #: ephios/core/signup/methods.py:260
-#, fuzzy
-#| msgid "You can not sign up for this shift."
 msgid "You cannot decline by yourself."
-msgstr "Sie können sich für diese Schicht nicht anmelden."
+msgstr "Sie können sich nicht selbstständig abmelden."
 
 #: ephios/core/signup/methods.py:264
-#, fuzzy
-#| msgid "You have already declined participating in {shift}."
 msgid "You have already declined participating."
-msgstr "Sie haben bereits für {shift} abgesagt."
+msgstr "Sie haben bereits abgesagt."
 
 #: ephios/core/signup/methods.py:272
 msgid "The signup period is over."
@@ -1118,13 +1108,11 @@ msgstr "Ihre Anfragen"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:20
 msgid "Meetup"
-msgstr ""
+msgstr "Treffpunkt"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:55
-#, fuzzy
-#| msgid "Signup method"
 msgid "Signup ends"
-msgstr "Anmeldeverfahren"
+msgstr "Anmeldung endet"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:76
 msgid "Decline"
@@ -1136,19 +1124,17 @@ msgid "Shift"
 msgstr "Schicht"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:4
-#, fuzzy
-#| msgid "Permissions"
 msgid "missing"
-msgstr "Berechtigungen"
+msgstr "fehlen"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:7
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:11
 msgid "open"
-msgstr ""
+msgstr "frei"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:9
 msgid "full"
-msgstr ""
+msgstr "voll"
 
 #: ephios/core/templates/core/group_confirm_delete.html:6
 #: ephios/core/templates/core/group_confirm_delete.html:11
@@ -1775,11 +1761,9 @@ msgstr ""
 "angefordert wurde."
 
 #: ephios/plugins/basesignup/signup/instant.py:13
-#, fuzzy
-#| msgid "Participant"
 msgctxt "signup button text"
 msgid "Participate"
-msgstr "teilnehmende Person"
+msgstr "Teilnehmen"
 
 #: ephios/plugins/basesignup/signup/request_confirm.py:9
 msgid "Request and confirm"
@@ -1876,19 +1860,17 @@ msgstr "Struktur"
 
 #: ephios/plugins/basesignup/signup/section_based.py:365
 msgid "unassigned"
-msgstr ""
+msgstr "nicht zugeteilt"
 
 #: ephios/plugins/basesignup/templates/basesignup/fragment_state_common.html:15
 #: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:30
-#, fuzzy
-#| msgid "Total"
 msgctxt "participation count"
 msgid "Total"
-msgstr "Summe"
+msgstr "Gesamt"
 
 #: ephios/plugins/basesignup/templates/basesignup/participation_card_inline.html:15
 msgid "none"
-msgstr ""
+msgstr "keine"
 
 #: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:13
 msgid "Sections"
