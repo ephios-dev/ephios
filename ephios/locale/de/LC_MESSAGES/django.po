@@ -1124,22 +1124,22 @@ msgid "Shift"
 msgstr "Schicht"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:5
-#, fuzzy, python-format
+#, python-format
 #| msgid "%(count)s elements"
 msgctxt "signup stats"
 msgid "%(count)s missing"
 msgid_plural "%(count)s missing"
-msgstr[0] "%(count)s Elemente"
-msgstr[1] "%(count)s Elemente"
+msgstr[0] "%(count)s fehlt"
+msgstr[1] "%(count)s fehlen"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:14
-#, fuzzy, python-format
+#, python-format
 #| msgid "%(count)s elements"
 msgctxt "signup stats"
 msgid "%(count)s open"
 msgid_plural "%(count)s open"
-msgstr[0] "%(count)s Elemente"
-msgstr[1] "%(count)s Elemente"
+msgstr[0] "%(count)s frei"
+msgstr[1] "%(count)s frei"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:21
 msgid "full"
