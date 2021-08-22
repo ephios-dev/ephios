@@ -73,6 +73,7 @@ INSTALLED_APPS += EPHIOS_CORE_MODULES
 CORE_PLUGINS = [
     "ephios.plugins.basesignup.apps.PluginApp",
     "ephios.plugins.pages.apps.PluginApp",
+    "ephios.plugins.qualification_management.apps.PluginApp",
     "ephios.plugins.guests.apps.PluginApp",
     "ephios.plugins.eventautoqualification.apps.PluginApp",
 ]
@@ -152,10 +153,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "guardian.backends.ObjectPermissionBackend",
-)
+]
 
 AUTH_USER_MODEL = "core.UserProfile"
 LOGIN_REDIRECT_URL = "/"

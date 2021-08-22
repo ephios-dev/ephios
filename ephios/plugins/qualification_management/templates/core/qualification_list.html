@@ -1,0 +1,33 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+
+{% block settings_content %}
+    <table class="table table-striped display mt-2">
+        <thead>
+        <tr>
+            <th>{% translate "Title" %}</th>
+            <th>{% translate "Abbreviation" %}</th>
+            <th>{% translate "Category" %}</th>
+            <th>{% translate "Includes" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for qualification in qualification_list %}
+            <tr>
+                <td class="break-word">{{ qualification }}</td>
+                <td class="break-word">{{ qualification.abbreviation }}</td>
+                <td class="break-word">{{ qualification.category.title }}</td>
+                <td class="break-word">
+                    {% for included in qualification.included_qualifications.all %}
+                        {{ included }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="d-flex">
+                    ...
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
