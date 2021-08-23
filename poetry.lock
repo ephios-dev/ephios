@@ -214,7 +214,7 @@ yaml = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "crispy-bootstrap5"
-version = "0.4"
+version = "0.5"
 description = "Bootstrap5 template pack for django-crispy-forms"
 category = "main"
 optional = false
@@ -222,7 +222,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 django = ">=2.2"
-django-crispy-forms = ">=1.9.2"
+django-crispy-forms = ">=1.12.0"
 
 [package.extras]
 test = ["pytest", "pytest-django"]
@@ -1287,7 +1287,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "46bb416feb4568b6a3fe2ce3fa341a8167cd7009981d69b3047a70df04e44e2b"
+content-hash = "243ca0d43a10676d89d08de9ef5a996b80015eabbef9a7d68353f14ca7143be3"
 
 [metadata.files]
 alabaster = [
@@ -1464,8 +1464,8 @@ coveralls = [
     {file = "coveralls-3.2.0.tar.gz", hash = "sha256:15a987d9df877fff44cd81948c5806ffb6eafb757b3443f737888358e96156ee"},
 ]
 crispy-bootstrap5 = [
-    {file = "crispy-bootstrap5-0.4.tar.gz", hash = "sha256:04fad1dd060467278a62a3e5755b6b3dc15d4b1306db1de774a618e8dc5252a5"},
-    {file = "crispy_bootstrap5-0.4-py3-none-any.whl", hash = "sha256:6abe36a804d50d13bd20214e0c067c0b530c03074b64cf87c0cb5762b94c0779"},
+    {file = "crispy-bootstrap5-0.5.tar.gz", hash = "sha256:e0d4153ddc380a2d2fce3e2a85cd2f167a07ea9596b2c8011455d7627a49eb9e"},
+    {file = "crispy_bootstrap5-0.5-py3-none-any.whl", hash = "sha256:d00209d06b2dd24ff34ddf7f5f348ae0f2d0bf392a964e8c1fa21ee8cef7f849"},
 ]
 cryptography = [
     {file = "cryptography-3.4.7-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:3d8427734c781ea5f1b41d6589c293089704d4759e34597dce91014ac125aad1"},
