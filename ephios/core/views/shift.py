@@ -41,7 +41,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             from ephios.core.signup import signup_method_from_slug
 
             signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
-        except KeyError as e:
+        except KeyError:
             if not list(signup.enabled_signup_methods()):
                 form.add_error(
                     "signup_method_slug",
