@@ -124,7 +124,7 @@ class SectionBasedConfigurationForm(forms.Form):
         super().__init__(data, **kwargs)
         self.sections_formset = SectionsFormset(
             data=data,
-            initial=self.initial.get("sections", list()),
+            initial=self.initial.get("sections", []),
             prefix="sections",
         )
 
