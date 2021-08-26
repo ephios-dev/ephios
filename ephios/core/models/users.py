@@ -192,9 +192,16 @@ register_model_for_logging(
 )
 
 
+class QualificationCategoryManager(models.Manager):
+    def get_by_natural_key(self, uuid, *args):
+        return self.get(uuid=uuid)
+
+
 class QualificationCategory(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+
+    objects = QualificationCategoryManager()
 
     class Meta:
         verbose_name = _("qualification track")
@@ -203,6 +210,14 @@ class QualificationCategory(Model):
 
     def __str__(self):
         return str(self.title)
+
+    def natural_key(self):
+        return (self.uuid, self.title)
+
+
+class QualificationManager(models.Manager):
+    def get_by_natural_key(self, uuid, *args):
+        return self.get(uuid=uuid)
 
 
 class Qualification(Model):
@@ -219,6 +234,8 @@ class Qualification(Model):
         "self", related_name="included_by", symmetrical=False, blank=True
     )
 
+    objects = QualificationManager()
+
     def __eq__(self, other):
         return self.uuid == other.uuid if other else False
 
@@ -232,6 +249,9 @@ class Qualification(Model):
 
     def __str__(self):
         return str(self.title)
+
+    def natural_key(self):
+        return (self.uuid, self.title)
 
 
 class QualificationGrant(Model):
