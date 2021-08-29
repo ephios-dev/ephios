@@ -11,6 +11,7 @@ from ephios.plugins.qualification_management.importing import QualificationImpor
 
 class QualificationListView(StaffRequiredMixin, SettingsViewMixin, ListView):
     model = Qualification
+    ordering = ("category__title", "title")
 
 
 class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
@@ -23,3 +24,29 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+class PageCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
+    model = Qualification
+    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+
+    def get_success_url(self):
+        messages.success(self.request, _("Page saved successfully."))
+        return reverse("pages:settings_page_list")
+
+
+class PageEditView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+    model = Page
+    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+
+    def get_success_url(self):
+        messages.success(self.request, _("Page saved successfully."))
+        return reverse("pages:settings_page_list")
+
+
+class PageDeleteView(StaffRequiredMixin, SettingsViewMixin, DeleteView):
+    model = Page
+
+    def get_success_url(self):
+        messages.info(self.request, _("Page deleted successfully."))
+        return reverse("pages:settings_page_list")
