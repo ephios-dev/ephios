@@ -193,8 +193,8 @@ register_model_for_logging(
 
 
 class QualificationCategoryManager(models.Manager):
-    def get_by_natural_key(self, uuid, *args):
-        return self.get(uuid=uuid)
+    def get_by_natural_key(self, category_uuid, *args):
+        return self.get(uuid=category_uuid)
 
 
 class QualificationCategory(Model):
@@ -216,8 +216,8 @@ class QualificationCategory(Model):
 
 
 class QualificationManager(models.Manager):
-    def get_by_natural_key(self, uuid, *args):
-        return self.get(uuid=uuid)
+    def get_by_natural_key(self, qualification_uuid, *args):
+        return self.get(uuid=qualification_uuid)
 
 
 class Qualification(Model):

@@ -49,8 +49,7 @@ class QualificationGraph:
         if not expand_existing:
             if uuid in self.inclusions.keys():
                 raise ValueError("That uuid already exists.")
-            else:
-                self.inclusions[uuid] = inclusions
+            self.inclusions[uuid] = inclusions
         else:
             self.inclusions[uuid] |= inclusions
 
