@@ -221,7 +221,7 @@ class QualificationManager(models.Manager):
 
 
 class Qualification(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
     abbreviation = CharField(max_length=254)
     category = ForeignKey(

@@ -35,7 +35,7 @@ class PageCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
         return reverse("pages:settings_page_list")
 
 
-class PageEditView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+class PageUpdateView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
     model = Page
     fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
 
