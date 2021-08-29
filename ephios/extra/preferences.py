@@ -18,7 +18,7 @@ class CustomModelMultipleChoicePreference(ModelMultipleChoicePreference):
 class JSONSerializer(BaseSerializer):
     @classmethod
     def clean_to_db_value(cls, value):
-        return json.dumps(value, cls=CustomJSONEncoder)
+        return json.dumps(value, cls=CustomJSONEncoder, ensure_ascii=False)
 
     @classmethod
     def to_python(cls, value, **kwargs):

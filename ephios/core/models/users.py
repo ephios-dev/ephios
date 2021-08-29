@@ -229,6 +229,8 @@ class Qualification(Model):
         on_delete=models.CASCADE,
         related_name="qualifications",
         verbose_name=_("category"),
+        null=True,
+        blank=False,  # null=True is needed for import
     )
     included_qualifications = models.ManyToManyField(
         "self", related_name="included_by", symmetrical=False, blank=True
@@ -252,6 +254,8 @@ class Qualification(Model):
 
     def natural_key(self):
         return (self.uuid, self.title)
+
+    natural_key.dependencies = ["core.QualificationCategory"]
 
 
 class QualificationGrant(Model):

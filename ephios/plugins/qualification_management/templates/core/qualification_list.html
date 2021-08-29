@@ -2,6 +2,13 @@
 {% load i18n %}
 
 {% block settings_content %}
+    <div>
+        <a class="btn btn-secondary btn text-nowrap me-1"
+           href="{% url "qualification_management:settings_qualification_import" %}"><span
+                class="fa fa-cloud-download-alt"></span> <span>{% trans "Import" %}</span></a>
+
+    </div>
+
     <table class="table table-striped display mt-2">
         <thead>
         <tr>
