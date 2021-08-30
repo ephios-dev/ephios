@@ -2,6 +2,7 @@ from django.urls import path
 
 from ephios.plugins.qualification_management.views import (
     QualificationCreateView,
+    QualificationDeleteView,
     QualificationImportView,
     QualificationListView,
     QualificationUpdateView,
@@ -23,6 +24,11 @@ urlpatterns = [
         "settings/qualifications/<int:pk>/edit/",
         QualificationUpdateView.as_view(),
         name="settings_qualification_edit",
+    ),
+    path(
+        "settings/qualifications/<int:pk>/delete/",
+        QualificationDeleteView.as_view(),
+        name="settings_qualification_delete",
     ),
     path(
         "settings/qualifications/create/",

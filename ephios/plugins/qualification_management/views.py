@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, FormView, ListView, UpdateView
@@ -10,7 +11,10 @@ from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.mixins import StaffRequiredMixin
 
 # Templates in this plugin are under core/, because Qualification is a core model.
-from ephios.plugins.qualification_management.importing import QualificationImportForm
+from ephios.plugins.qualification_management.importing import (
+    QualificationChangeManager,
+    QualificationImportForm,
+)
 
 
 class QualificationListView(StaffRequiredMixin, SettingsViewMixin, ListView):
@@ -64,6 +68,17 @@ class QualificationDeleteView(StaffRequiredMixin, SettingsViewMixin, DeleteView)
     model = Qualification
 
     # TODO ask whether to fix inclusion graph and then implement that
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        # instead of plain `self.object.delete()`, we are graceful about qualification inclusions
+        manager = QualificationChangeManager()
+        manager.remove_qualifications_from_db_fixing_inclusion(self.object)
+        manager.commit()
+
+        return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
         messages.info(self.request, _("Qualification was deleted."))
