@@ -264,6 +264,7 @@ class QualificationImportForm(forms.Form):
                 required=False,
                 label=deserialized_object.object.title,
                 initial=uuid in existing_qualification_uuids,
+                disabled=uuid in existing_qualification_uuids,
             )
             category_uuid = maybe_deferred_category_uuid_from_deserialized_qualification(
                 deserialized_object
