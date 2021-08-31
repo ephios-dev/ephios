@@ -1,4 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
+{% load crispy_forms_filters %}
 {% load i18n %}
 {% load static %}
 
@@ -15,6 +16,7 @@
         <p>{% blocktranslate with title=qualification.title %}
             Are you sure you want to delete the qualification "{{ title }}"?
         {% endblocktranslate %}</p>
+        {{ form|crispy }}
         <a role="button" class="btn btn-secondary" href="{% url "qualification_management:settings_qualification_list" %}">{% translate "Back" %}</a>
         <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
     </form>
