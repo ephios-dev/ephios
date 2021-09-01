@@ -15,7 +15,7 @@ class QualificationManagementReposPreference(StringPreference):
     verbose_name = _("List of qualification repositories")
     help_text = _("To use multiple repositories, put URLs in separate lines.")
     section = general_global_section
-    default = ("https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/de/_all.json",)
+    default = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/de/_all.json"
     widget = forms.Textarea(attrs={"rows": 1})
 
     def validate(self, value):

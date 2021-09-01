@@ -1,0 +1,89 @@
+{% extends "core/settings/settings_base.html" %}
+{% load ephios_crispy %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load formset_tags %}
+
+{% block settings_content %}
+    <div class="page-header">
+        <h2>{% trans "Edit qualification categories" %}</h2>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.non_form_errors }}
+
+        <div class="formset" data-formset data-formset-prefix="{{ form.prefix }}">
+            {{ form.management_form }}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <ul class="list-group list-group-flush" data-formset-body>
+                        {% for category_form in form %}
+                            <div class="list-group-item" data-formset-form>
+                                {{ category_form.id }}
+                                <div class="row align-items-center">
+                                    <div class="col-lg-4">
+                                        {% crispy_field category_form.title label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                    </div>
+                                    <div class="col-lg-6">
+                                        {% crispy_field category_form.uuid label_class="col-lg-2" field_class="col-lg-10" wrapper_class="row" %}
+                                    </div>
+                                    <div class="col-lg-2">
+                                        {% if not category_form.fields.DELETE.disabled %}
+                                            <button class="btn btn-link" type="button"
+                                                    data-formset-delete-button><span
+                                                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                        {% else %}
+                                            <p class="text-muted">
+                                                {% translate "cannot delete, has qualifications" %}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="d-none">
+                                    {{ category_form.DELETE }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+
+                    <input class="btn btn-secondary mt-2" type="button"
+                           value="{% translate "Add category" %}"
+                           data-formset-add>
+                </div>
+            </div>
+
+            {% with category_form=form.empty_form %}
+                <script type="form-template" data-formset-empty-form>
+                    {% escapescript %}
+                        <div class="list-group-item" data-formset-form>
+                            {{ category_form.id }}
+                            <div class="row align-items-center">
+                                <div class="col-lg-4">
+                                    {% crispy_field category_form.title label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                </div>
+                                <div class="col-lg-6">
+                                    {% crispy_field category_form.uuid label_class="col-lg-2" field_class="col-lg-10" wrapper_class="row" %}
+                                </div>
+                                <div class="col-lg-1">
+                                    <button class="btn btn-link" type="button"
+                                            data-formset-delete-button><span
+                                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                </div>
+                            </div>
+                            <div class="d-none">
+                                {{ category_form.DELETE }}
+                            </div>
+                        </div>
+                    {% endescapescript %}
+                </script>
+            {% endwith %}
+
+
+            <a role="button" class="btn btn-secondary"
+               href="{% url "qualification_management:settings_qualification_list" %}">{% translate "Back" %}</a>
+            <input type="submit" class="btn btn-primary" value="Save">
+        </div>
+    </form>
+{% endblock %}

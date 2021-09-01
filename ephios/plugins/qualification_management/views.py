@@ -1,12 +1,14 @@
 from django.contrib import messages
+from django.db import transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, FormView, ListView, UpdateView
 
-from ephios.core.models import Qualification
+from ephios.core.models import Qualification, QualificationCategory
 from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.mixins import StaffRequiredMixin
 from ephios.plugins.qualification_management.forms import (
+    QualificationCategoryFormset,
     QualificationDeleteForm,
     QualificationForm,
     QualificationImportForm,
@@ -57,4 +59,21 @@ class QualificationDeleteView(StaffRequiredMixin, SettingsViewMixin, UpdateView)
 
     def get_success_url(self):
         messages.info(self.request, _("Qualification was deleted."))
+        return reverse("qualification_management:settings_qualification_list")
+
+
+class QualificationCategorySetUpdateView(StaffRequiredMixin, SettingsViewMixin, FormView):
+    form_class = QualificationCategoryFormset
+    template_name = "core/qualificationcategories_form.html"
+
+    def get_form_kwargs(self):
+        return {"queryset": QualificationCategory.objects.all(), **super().get_form_kwargs()}
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.info(self.request, _("Qualification categories saved."))
         return reverse("qualification_management:settings_qualification_list")

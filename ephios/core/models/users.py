@@ -198,7 +198,7 @@ class QualificationCategoryManager(models.Manager):
 
 
 class QualificationCategory(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
 
     objects = QualificationCategoryManager()

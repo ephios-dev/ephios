@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms.formsets import DELETION_FIELD_NAME
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -166,3 +167,25 @@ class QualificationImportForm(forms.Form):
             )
             self.categories_by_uuid[category_uuid]["field_names"].append(uuid)
             self.fields[uuid] = field
+
+
+class BaseQualificationCategoryFormset(forms.BaseModelFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        initial_form_count = self.initial_form_count()
+        if self.can_delete and (self.can_delete_extra or index < initial_form_count):
+            category: QualificationCategory = form.instance
+            form.fields[DELETION_FIELD_NAME] = forms.BooleanField(
+                label=_("Delete"),
+                required=False,
+                disabled=category.qualifications.exists(),
+            )
+
+
+QualificationCategoryFormset = forms.modelformset_factory(
+    QualificationCategory,
+    formset=BaseQualificationCategoryFormset,
+    can_delete=True,
+    extra=0,
+    fields=["title", "uuid"],
+)
