@@ -1,30 +1,26 @@
-import json
+from urllib.parse import urlparse
 
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.types import StringPreference
 
 from ephios.core.dynamic_preferences_registry import general_global_section
-from ephios.extra.preferences import JSONPreference
 
 
 @global_preferences_registry.register
-class QualificationManagementReposPreference(JSONPreference):
+class QualificationManagementReposPreference(StringPreference):
     name = "qualification_management_repos"
     verbose_name = _("List of qualification repositories")
+    help_text = _("To use multiple repositories, put URLs in separate lines.")
     section = general_global_section
-    default = json.dumps(
-        [
-            "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/de/_all.json",
-        ]
-    )
+    default = ("https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/de/_all.json",)
     widget = forms.Textarea(attrs={"rows": 1})
 
     def validate(self, value):
-        try:
-            json_value = json.loads(value)
-            if not isinstance(json_value, list) or not all(isinstance(v, str) for v in json_value):
-                raise ValidationError(_("The input is not a list of strings."))
-        except json.JSONDecodeError as e:
-            raise ValidationError(_("The input could not be parsed as json.")) from e
+        for repo_url in (line.strip() for line in value.split("\n")):
+            parts = urlparse(repo_url)
+            if parts.path.endswith(".json") and parts.scheme.startswith("http") and parts.netloc:
+                continue
+            raise ValidationError(_("'{url}' does not look like a repo url.").format(url=repo_url))
