@@ -18,6 +18,7 @@ class CustomSplitDateTimeInput(SplitDateTimeWidget):
 class CustomSplitDateTimeWidget(MultiWidget):
     """
     A widget that splits datetime input into two <input type="text"> boxes.
+    To be used with a SplitDateTimeField.
     """
 
     supports_microseconds = False

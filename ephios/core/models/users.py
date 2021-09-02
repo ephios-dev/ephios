@@ -256,6 +256,12 @@ class Qualification(Model):
     natural_key.dependencies = ["core.QualificationCategory"]
 
 
+class CustomQualificationGrantQuerySet(models.QuerySet):
+    # Available on both Manager and QuerySet.
+    def unexpired(self):
+        return self.exclude(expires__isnull=False, expires__lt=timezone.now())
+
+
 class QualificationGrant(Model):
     qualification = ForeignKey(
         Qualification,
@@ -270,6 +276,8 @@ class QualificationGrant(Model):
         verbose_name=_("user profile"),
     )
     expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+
+    objects = CustomQualificationGrantQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"

@@ -1,18 +1,20 @@
 from crispy_forms.bootstrap import FormActions, Tab, TabHolder
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
+from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Exists, OuterRef
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
-from django_select2.forms import Select2MultipleWidget
+from django_select2.forms import Select2MultipleWidget, Select2Widget
 
-from ephios.core.models import Qualification, QualificationCategory, QualificationGrant
+from ephios.core.models import Qualification, QualificationCategory, QualificationGrant, UserProfile
 from ephios.extra.crispy import AbortLink
+from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.qualification_management.importing import (
     QualificationChangeManager,
     fetch_qualification_repo_objects,
@@ -189,3 +191,64 @@ QualificationCategoryFormset = forms.modelformset_factory(
     extra=0,
     fields=["title", "uuid"],
 )
+
+
+class QualificationReassignmentForm(forms.Form):
+    current_qualifications = forms.ModelMultipleChoiceField(
+        label=_("current qualifications"),
+        queryset=Qualification.objects.all(),
+        help_text=_("Only users with all these qualifications will be selected."),
+        widget=Select2MultipleWidget,
+    )
+    new_qualification = forms.ModelChoiceField(
+        label=_("qualification to assign"),
+        queryset=Qualification.objects.all(),
+        widget=Select2Widget,
+    )
+    expires = forms.DateTimeField(
+        label=_("expires"),
+        required=False,
+        widget=CustomDateInput,
+        help_text=_(
+            "If empty, the new qualification will not expire. This will only be applied if a user does not already have the target qualification."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(_("User selection"), "current_qualifications"),
+            Fieldset(
+                _("New qualification"),
+                "new_qualification",
+                "expires",
+            ),
+            FormActions(
+                Submit("submit", _("Execute"), css_class="float-end"),
+                AbortLink(href=reverse("qualification_management:settings_qualification_list")),
+            ),
+        )
+
+    def perform_reassignment(self):
+        assert self.is_valid()
+        users = UserProfile.objects.filter(
+            *[
+                Exists(
+                    QualificationGrant.objects.unexpired().filter(
+                        qualification=qualification, user=OuterRef("pk")
+                    )
+                )
+                for qualification in self.cleaned_data["current_qualifications"]
+            ]
+        )
+        created_count = 0
+        for user in users:
+            obj, created = QualificationGrant.objects.get_or_create(
+                user=user,
+                qualification=self.cleaned_data["new_qualification"],
+                defaults=dict(expires=self.cleaned_data["expires"]),
+            )
+            created_count += int(created)
+        return created_count, len(users)
