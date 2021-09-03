@@ -22,10 +22,11 @@ def maybe_deferred_category_uuid_from_deserialized_qualification(deserialized_qu
 
 def fetch_qualification_repo_objects():
     repo_urls = (
-        url.strip()
+        stripped_url
         for url in global_preferences_registry.manager()
         .get("general__qualification_management_repos")
         .splitlines()
+        if (stripped_url := url.strip())
     )
     for repo_url in repo_urls:
         with urllib.request.urlopen(repo_url) as request:

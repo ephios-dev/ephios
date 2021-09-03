@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.db import transaction
+from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
+from django.views import View
 from django.views.generic import CreateView, FormView, ListView, UpdateView
 
 from ephios.core.models import Qualification, QualificationCategory
@@ -17,6 +19,7 @@ from ephios.plugins.qualification_management.forms import (
 )
 
 # Templates in this plugin are under core/, because Qualification is a core model.
+from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 
 class QualificationListView(StaffRequiredMixin, SettingsViewMixin, ListView):
@@ -106,3 +109,10 @@ class QualificationReassignmentView(StaffRequiredMixin, SettingsViewMixin, FormV
 
     def get_success_url(self):
         return reverse("qualification_management:settings_qualification_list")
+
+
+class QualificationExportFixtureView(StaffRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        qualifications = Qualification.objects.all()
+        serializer = QualificationFixtureSerializer(qualifications, many=True)
+        return JsonResponse(serializer.data, safe=False, json_dumps_params=dict(ensure_ascii=False))

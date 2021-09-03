@@ -4,6 +4,7 @@ from ephios.plugins.qualification_management.views import (
     QualificationCategorySetUpdateView,
     QualificationCreateView,
     QualificationDeleteView,
+    QualificationExportFixtureView,
     QualificationImportView,
     QualificationListView,
     QualificationReassignmentView,
@@ -46,5 +47,10 @@ urlpatterns = [
         "settings/qualifications/reassign/",
         QualificationReassignmentView.as_view(),
         name="settings_qualification_reassignment",
+    ),
+    path(
+        "settings/qualifications/export/",
+        QualificationExportFixtureView.as_view(),
+        name="settings_qualification_export",
     ),
 ]
