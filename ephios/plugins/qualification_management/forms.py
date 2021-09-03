@@ -17,8 +17,7 @@ from ephios.extra.crispy import AbortLink
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.qualification_management.importing import (
     QualificationChangeManager,
-    fetch_qualification_repo_objects,
-    maybe_deferred_category_uuid_from_deserialized_qualification,
+    fetch_deserialized_qualifications_from_repo,
 )
 
 # Templates in this plugin are under core/, because Qualification is a core model.
@@ -115,7 +114,7 @@ class QualificationImportForm(forms.Form):
         self.helper.layout = Layout(
             TabHolder(
                 *[
-                    Tab(category["deserialized_object"].object.title, *category["field_names"])
+                    Tab(category["object"].title, *category["field_names"])
                     for category in self.categories_by_uuid.values()
                 ]
             ),
@@ -130,8 +129,8 @@ class QualificationImportForm(forms.Form):
             raise ValidationError("Form is not valid")
 
         manager = QualificationChangeManager()
-        manager.add_deserialized_qualification_categories(
-            *[v["deserialized_object"] for v in self.categories_by_uuid.values()]
+        manager.add_qualification_categories(
+            *[v["object"] for v in self.categories_by_uuid.values()]
         )
         for uuid, deserialized_qualification in self.deserialized_qualifications_by_uuid.items():
             if self.cleaned_data[uuid]:
@@ -144,29 +143,26 @@ class QualificationImportForm(forms.Form):
         existing_qualification_uuids = {
             str(uuid) for uuid in Qualification.objects.all().values_list("uuid", flat=True)
         }
-        for deserialized_object in fetch_qualification_repo_objects():
-            if isinstance(deserialized_object.object, QualificationCategory):
-                self.categories_by_uuid[str(deserialized_object.object.uuid)] = {
-                    "deserialized_object": deserialized_object,
-                    "field_names": [],
-                }
-            else:
-                self.deserialized_qualifications_by_uuid[
-                    str(deserialized_object.object.uuid)
-                ] = deserialized_object
+        for deserialized_qualification in fetch_deserialized_qualifications_from_repo():
+            self.categories_by_uuid[str(deserialized_qualification.category.uuid)] = {
+                "object": deserialized_qualification.category,
+                "field_names": [],
+            }
+            self.deserialized_qualifications_by_uuid[
+                str(deserialized_qualification.object.uuid)
+            ] = deserialized_qualification
 
-        for deserialized_object in self.deserialized_qualifications_by_uuid.values():
-            uuid = str(deserialized_object.object.uuid)
+        for deserialized_qualification in self.deserialized_qualifications_by_uuid.values():
+            uuid = str(deserialized_qualification.object.uuid)
             field = forms.BooleanField(
                 required=False,
-                label=deserialized_object.object.title,
+                label=deserialized_qualification.object.title,
                 initial=uuid in existing_qualification_uuids,
                 disabled=uuid in existing_qualification_uuids,
             )
-            category_uuid = maybe_deferred_category_uuid_from_deserialized_qualification(
-                deserialized_object
-            )
-            self.categories_by_uuid[category_uuid]["field_names"].append(uuid)
+            self.categories_by_uuid[str(deserialized_qualification.category.uuid)][
+                "field_names"
+            ].append(uuid)
             self.fields[uuid] = field
 
 

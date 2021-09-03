@@ -3,24 +3,33 @@ import urllib
 from collections import defaultdict
 from typing import Dict
 
-from django.core import serializers
 from django.db import transaction
 from django.db.models import Count
 from dynamic_preferences.registries import global_preferences_registry
+from rest_framework.parsers import JSONParser
 
 from ephios.core.models import Qualification, QualificationCategory
+from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 
-def maybe_deferred_category_uuid_from_deserialized_qualification(deserialized_qualification):
-    # category foreign key is deferred as a natural key tuple of (uuid, title)
-    try:
-        return deserialized_qualification.deferred_fields[Qualification.category.field][0]
-    except KeyError:
-        # the category was not deferred as it already exists
-        return str(deserialized_qualification.object.category.uuid)
+class DeserializedQualification:
+    def __init__(self, validated_data):
+        self.m2m_data = {
+            "includes": validated_data["includes"],
+            "included_by": validated_data["included_by"],
+        }
+        self.object = Qualification(
+            **{key: validated_data[key] for key in ("title", "abbreviation", "uuid")},
+        )
+        self.category = QualificationCategory(
+            **{key: validated_data["category"][key] for key in ("title", "uuid")},
+        )
+
+    def __hash__(self):
+        return hash(self.object.uuid)
 
 
-def fetch_qualification_repo_objects():
+def fetch_deserialized_qualifications_from_repo():
     repo_urls = (
         stripped_url
         for url in global_preferences_registry.manager()
@@ -30,7 +39,11 @@ def fetch_qualification_repo_objects():
     )
     for repo_url in repo_urls:
         with urllib.request.urlopen(repo_url) as request:
-            yield from serializers.deserialize("json", request, handle_forward_references=True)
+            data = JSONParser().parse(request)
+            serializer = QualificationFixtureSerializer(data=data, many=True)
+            assert serializer.is_valid(raise_exception=True)
+            for validated_data in serializer.validated_data:
+                yield DeserializedQualification(validated_data)
 
 
 class QualificationGraph:
@@ -65,7 +78,7 @@ class QualificationGraph:
 
 class QualificationChangeManager:
     def __init__(self):
-        self.deserialized_qualification_categories = set()
+        self.qualification_categories = []
         self.deserialized_qualifications_to_add = set()
         self.inclusion_supporting_deserialized_qualifications = set()
         self.qualifications_to_delete_fixing_inclusion = set()
@@ -74,8 +87,8 @@ class QualificationChangeManager:
             str(obj.uuid): obj for obj in Qualification.objects.all()
         }
 
-    def add_deserialized_qualification_categories(self, *deserialized_qualification_categories):
-        self.deserialized_qualification_categories |= set(deserialized_qualification_categories)
+    def add_qualification_categories(self, *qualification_categories):
+        self.qualification_categories += qualification_categories
 
     def add_deserialized_qualifications_to_db(self, *deserialized_qualifications):
         self.deserialized_qualifications_to_add |= set(deserialized_qualifications)
@@ -86,17 +99,12 @@ class QualificationChangeManager:
     def remove_qualifications_from_db_fixing_inclusion(self, *qualifications):
         self.qualifications_to_delete_fixing_inclusion |= set(qualifications)
 
-    def _qualifications_by_pk(self, pk):
-        # this should probably be cached in some way
-        return {obj.id: obj for obj in self.existing_qualifications_by_uuid.values()}[pk]
-
     def _attach_deferred_categories_to_deserialized_qualifications(self):
         categories_by_uuid = {str(c.uuid): c for c in QualificationCategory.objects.all()}
-        for deserialized in self.deserialized_qualifications_to_add:
-            category_uuid = maybe_deferred_category_uuid_from_deserialized_qualification(
-                deserialized
-            )
-            deserialized.object.category = categories_by_uuid[category_uuid]
+        for deserialized_qualification in self.deserialized_qualifications_to_add:
+            deserialized_qualification.object.category = categories_by_uuid[
+                str(deserialized_qualification.category.uuid)
+            ]
 
     def _build_inclusion_graph(self):
         graph = QualificationGraph()
@@ -105,32 +113,22 @@ class QualificationChangeManager:
             self.deserialized_qualifications_to_add,
             self.inclusion_supporting_deserialized_qualifications,
         ):
-            # inclusions might be saved in m2m_data or deferred_fields, depending on whether referenced objects already exist
-            # deferred_fields contains a list of natural key tuples of (uuid, title)
-            inclusions = {
-                str(value[0])
-                for value in deserialized_qualification.deferred_fields.get(
-                    Qualification.includes.field, []
-                )
-            }
-            inclusions |= {
-                str(self._qualifications_by_pk(pk).uuid)
-                for pk in deserialized_qualification.m2m_data.get("included_qualifications", [])
-            }
-            graph.add_qualification(
-                uuid=str(deserialized_qualification.object.uuid), inclusions=inclusions
-            )
+            this_uuid = str(deserialized_qualification.object.uuid)
+            inclusions = set(deserialized_qualification.m2m_data["includes"])
+            graph.add_qualification(uuid=this_uuid, inclusions=inclusions)
+            for included_by in deserialized_qualification.m2m_data["included_by"]:
+                graph.add_qualification(uuid=str(included_by), inclusions={str(this_uuid)})
 
         # add existing qualifications and their inclusions
         repository_qualification_uuids = set(graph.inclusions.keys())
         for qualification in self.existing_qualifications_by_uuid.values():
-            uuid = str(qualification.uuid)
+            this_uuid = str(qualification.uuid)
             inclusions = {str(included.uuid) for included in qualification.includes.all()}
-            if uuid in repository_qualification_uuids:
+            if this_uuid in repository_qualification_uuids:
                 # This existing qualification is also part of the repo.
                 # Inclusions to other repo qualifications, that are originally not part of the repo should not be reproduced, so we don't add them.
                 inclusions -= repository_qualification_uuids
-            graph.add_qualification(uuid=uuid, inclusions=inclusions)
+            graph.add_qualification(uuid=this_uuid, inclusions=inclusions)
 
         # now remove supporting-only repo qualifications and explicitly removed ones, maintaining graph connectivity
         for deserialized_qualification in self.inclusion_supporting_deserialized_qualifications:
@@ -150,7 +148,7 @@ class QualificationChangeManager:
         for deserialized_qualification in self.deserialized_qualifications_to_add:
             uuid = str(deserialized_qualification.object.uuid)
             if uuid not in self.existing_qualifications_by_uuid:
-                deserialized_qualification.save(save_m2m=False)
+                deserialized_qualification.object.save()
                 self.existing_qualifications_by_uuid[uuid] = deserialized_qualification.object
 
         # Finally, set m2m inclusions
@@ -162,17 +160,22 @@ class QualificationChangeManager:
 
     def _prepare_qualification_category_db(self):
         uuid_of_used_categories = {
-            maybe_deferred_category_uuid_from_deserialized_qualification(deserialized_object)
-            for deserialized_object in self.deserialized_qualifications_to_add
+            str(deserialized_qualification.category.uuid)
+            for deserialized_qualification in self.deserialized_qualifications_to_add
         }
-        for deserialized_category in self.deserialized_qualification_categories:
-            if str(deserialized_category.object.uuid) in uuid_of_used_categories:
-                deserialized_category.save()
+        for category in self.qualification_categories:
+            if str(category.uuid) in uuid_of_used_categories:
+                QualificationCategory.objects.get_or_create(
+                    uuid=category.uuid,
+                    defaults=dict(
+                        title=category.title,
+                    ),
+                )
 
     def _delete_unneeded_qualification_categories(self):
         repo_categories_uuids = {
-            maybe_deferred_category_uuid_from_deserialized_qualification(deserialized_category)
-            for deserialized_category in itertools.chain(
+            str(deserialized_qualifications.category.uuid)
+            for deserialized_qualifications in itertools.chain(
                 self.deserialized_qualifications_to_add,
                 self.inclusion_supporting_deserialized_qualifications,
             )
