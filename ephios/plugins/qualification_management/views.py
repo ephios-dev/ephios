@@ -40,6 +40,12 @@ class QualificationCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView)
     model = Qualification
     form_class = QualificationForm
 
+    def get_form_kwargs(self):
+        return {
+            **super().get_form_kwargs(),
+            "instance": Qualification(is_imported=False),
+        }
+
     def get_success_url(self):
         messages.success(self.request, _("Qualification was saved."))
         return reverse("qualification_management:settings_qualification_list")

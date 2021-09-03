@@ -11,6 +11,14 @@
         {% endif %}
     </div>
 
+    {% if qualification.is_imported %}
+        <div class="alert alert-warning" role="alert">
+            {% blocktranslate %}
+                This qualification was imported. We advise to not change the UUID and meaning of this qualification.
+            {% endblocktranslate %}
+        </div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}

@@ -20,6 +20,8 @@
                 class="d-none d-md-inline">{% trans "Reassign qualifications" %}</span></a>
     </div>
 
+    <h3 class="mt-3">{% translate "All qualifications" %}</h3>
+
     <table class="table table-striped display mt-2">
         <thead>
         <tr>
@@ -33,7 +35,12 @@
         <tbody>
         {% for qualification in qualification_list %}
             <tr>
-                <td class="break-word">{{ qualification }}</td>
+                <td class="break-word">
+                    {{ qualification }}
+                    {% if not qualification.is_imported %}
+                        <span class="badge bg-warning float-end">{% translate "custom" %}</span>
+                    {% endif %}
+                </td>
                 <td class="break-word">{{ qualification.abbreviation }}</td>
                 <td class="break-word">{{ qualification.category.title }}</td>
                 <td class="break-word">

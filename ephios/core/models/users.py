@@ -233,6 +233,7 @@ class Qualification(Model):
     included_qualifications = models.ManyToManyField(
         "self", related_name="included_by", symmetrical=False, blank=True
     )
+    is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
     objects = QualificationManager()
 
