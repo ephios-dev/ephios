@@ -44,7 +44,7 @@
                 <td class="break-word">{{ qualification.abbreviation }}</td>
                 <td class="break-word">{{ qualification.category.title }}</td>
                 <td class="break-word">
-                    {% for included in qualification.included_qualifications.all %}
+                    {% for included in qualification.includes.all %}
                         {{ included }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </td>

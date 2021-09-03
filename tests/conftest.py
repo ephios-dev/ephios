@@ -297,7 +297,7 @@ def qualifications():
         abbreviation="NFS",
         uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
     )
-    q.nfs.included_qualifications.add(q.rs)
+    q.nfs.includes.add(q.rs)
 
     q.na = Qualification.objects.create(
         category=medical_category,
@@ -324,7 +324,7 @@ def qualifications():
         abbreviation="Fe BE",
         uuid=uuid.UUID("31529f69-09d7-44cc-84f6-19fbfd949faa"),
     )
-    q.be.included_qualifications.add(q.b)
+    q.be.includes.add(q.b)
 
     q.c1 = Qualification.objects.create(
         category=driverslicense_category,
@@ -332,7 +332,7 @@ def qualifications():
         abbreviation="Fe C1",
         uuid=uuid.UUID("c9898e6c-4ecf-4781-9c0a-884861e36a81"),
     )
-    q.c1.included_qualifications.add(q.b)
+    q.c1.includes.add(q.b)
 
     q.c = Qualification.objects.create(
         category=driverslicense_category,
@@ -340,7 +340,7 @@ def qualifications():
         abbreviation="Fe C",
         uuid=uuid.UUID("2d2fc932-5206-4c2c-bb63-0bc579acea6f"),
     )
-    q.c.included_qualifications.add(q.c1)
+    q.c.includes.add(q.c1)
 
     q.c1e = Qualification.objects.create(
         category=driverslicense_category,
@@ -348,8 +348,8 @@ def qualifications():
         abbreviation="Fe C1E",
         uuid=uuid.UUID("f5e3be89-59de-4b13-a92f-5949009f62d8"),
     )
-    q.c1e.included_qualifications.add(q.c1)
-    q.c1e.included_qualifications.add(q.be)
+    q.c1e.includes.add(q.c1)
+    q.c1e.includes.add(q.be)
 
     q.ce = Qualification.objects.create(
         category=driverslicense_category,
@@ -357,8 +357,8 @@ def qualifications():
         abbreviation="Fe CE",
         uuid=uuid.UUID("736ca05a-7ff9-423a-9fa4-8b4641fde29c"),
     )
-    q.ce.included_qualifications.add(q.c)
-    q.ce.included_qualifications.add(q.c1e)
+    q.ce.includes.add(q.c)
+    q.ce.includes.add(q.c1e)
 
     return q
 

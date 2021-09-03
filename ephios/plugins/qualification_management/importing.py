@@ -110,7 +110,7 @@ class QualificationChangeManager:
             inclusions = {
                 str(value[0])
                 for value in deserialized_qualification.deferred_fields.get(
-                    Qualification.included_qualifications.field, []
+                    Qualification.includes.field, []
                 )
             }
             inclusions |= {
@@ -125,9 +125,7 @@ class QualificationChangeManager:
         repository_qualification_uuids = set(graph.inclusions.keys())
         for qualification in self.existing_qualifications_by_uuid.values():
             uuid = str(qualification.uuid)
-            inclusions = {
-                str(included.uuid) for included in qualification.included_qualifications.all()
-            }
+            inclusions = {str(included.uuid) for included in qualification.includes.all()}
             if uuid in repository_qualification_uuids:
                 # This existing qualification is also part of the repo.
                 # Inclusions to other repo qualifications, that are originally not part of the repo should not be reproduced, so we don't add them.
@@ -158,7 +156,7 @@ class QualificationChangeManager:
         # Finally, set m2m inclusions
         for uuid, inclusions in self.graph.inclusions.items():
             qualification = self.existing_qualifications_by_uuid[uuid]
-            qualification.included_qualifications.set(
+            qualification.includes.set(
                 [self.existing_qualifications_by_uuid[inclusion] for inclusion in inclusions]
             )
 

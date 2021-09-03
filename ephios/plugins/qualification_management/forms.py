@@ -27,8 +27,8 @@ from ephios.plugins.qualification_management.importing import (
 class QualificationForm(forms.ModelForm):
     class Meta:
         model = Qualification
-        fields = ["title", "uuid", "abbreviation", "category", "included_qualifications"]
-        widgets = {"included_qualifications": Select2MultipleWidget}
+        fields = ["title", "uuid", "abbreviation", "category", "includes"]
+        widgets = {"includes": Select2MultipleWidget}
         help_texts = {
             "uuid": _(
                 "Used to identify qualifications accross the ephios ecosystem. Only change if you know what you are doing."
@@ -60,8 +60,7 @@ class QualificationDeleteForm(forms.Form):
             "If checked, superior qualifications ({superior}) will include inferior ({inferior}) qualifications."
         ).format(
             superior=", ".join(map(str, self.qualification.included_by.all())) or _("none"),
-            inferior=", ".join(map(str, self.qualification.included_qualifications.all()))
-            or _("none"),
+            inferior=", ".join(map(str, self.qualification.includes.all())) or _("none"),
         )
 
         self.fields["move_grants_to_other_qualification"].queryset = Qualification.objects.exclude(

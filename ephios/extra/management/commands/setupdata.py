@@ -157,7 +157,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="San A",
             uuid=uuid.UUID("cdb595e8-1dcb-46d2-8013-b915f818b321"),
         )
-        sana.included_qualifications.add(eh)
+        sana.includes.add(eh)
 
         sanb = Qualification.objects.create(
             category=medical_category,
@@ -165,7 +165,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="San B",
             uuid=uuid.UUID("3fc86c78-2b87-49f7-8721-af7f8d51747c"),
         )
-        sanb.included_qualifications.add(sana)
+        sanb.includes.add(sana)
 
         sanh = Qualification.objects.create(
             category=medical_category,
@@ -173,8 +173,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="SanH",
             uuid=uuid.UUID("b1faab38-2e7c-4507-b753-06d1e653412d"),
         )
-        sanh.included_qualifications.add(eh)
-        sanh.included_qualifications.add(sanb)
+        sanh.includes.add(eh)
+        sanh.includes.add(sanb)
 
         rh = Qualification.objects.create(
             category=medical_category,
@@ -182,7 +182,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="RH",
             uuid=uuid.UUID("de6c2449-a764-4c39-8f44-de276e99451b"),
         )
-        rh.included_qualifications.add(sanh)
+        rh.includes.add(sanh)
 
         rs = Qualification.objects.create(
             category=medical_category,
@@ -190,7 +190,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="RettSan",
             uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
         )
-        rs.included_qualifications.add(rh)
+        rs.includes.add(rh)
 
         ra = Qualification.objects.create(
             category=medical_category,
@@ -198,7 +198,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="RA",
             uuid=uuid.UUID("2a24e395-fa02-4b2e-8215-7763b04d85c8"),
         )
-        ra.included_qualifications.add(rs)
+        ra.includes.add(rs)
 
         nfs = Qualification.objects.create(
             category=medical_category,
@@ -206,7 +206,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="NFS",
             uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
         )
-        nfs.included_qualifications.add(ra)
+        nfs.includes.add(ra)
 
         na = Qualification.objects.create(
             category=medical_category,
@@ -248,7 +248,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe A1",
             uuid=uuid.UUID("d7e9da8f-8386-4e7d-8706-62103bfe78f1"),
         )
-        a1.included_qualifications.add(am)
+        a1.includes.add(am)
 
         a2 = Qualification.objects.create(
             category=driverslicense_category,
@@ -256,7 +256,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe A2",
             uuid=uuid.UUID("fe06530c-8216-40a0-81dd-2beaa8d803e1"),
         )
-        a2.included_qualifications.add(a1)
+        a2.includes.add(a1)
 
         a = Qualification.objects.create(
             category=driverslicense_category,
@@ -264,7 +264,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe A",
             uuid=uuid.UUID("4ff00daa-1501-41c0-8d89-2e54cb43f293"),
         )
-        a.included_qualifications.add(a2)
+        a.includes.add(a2)
 
         b = Qualification.objects.create(
             category=driverslicense_category,
@@ -272,8 +272,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe B",
             uuid=uuid.UUID("0715b687-877a-4fed-bde0-5ea06b1043fc"),
         )
-        b.included_qualifications.add(am)
-        b.included_qualifications.add(l)
+        b.includes.add(am)
+        b.includes.add(l)
 
         be = Qualification.objects.create(
             category=driverslicense_category,
@@ -281,7 +281,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe BE",
             uuid=uuid.UUID("31529f69-09d7-44cc-84f6-19fbfd949faa"),
         )
-        be.included_qualifications.add(b)
+        be.includes.add(b)
 
         c1 = Qualification.objects.create(
             category=driverslicense_category,
@@ -289,7 +289,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe C1",
             uuid=uuid.UUID("c9898e6c-4ecf-4781-9c0a-884861e36a81"),
         )
-        c1.included_qualifications.add(b)
+        c1.includes.add(b)
 
         c = Qualification.objects.create(
             category=driverslicense_category,
@@ -297,7 +297,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe C",
             uuid=uuid.UUID("2d2fc932-5206-4c2c-bb63-0bc579acea6f"),
         )
-        c.included_qualifications.add(c1)
+        c.includes.add(c1)
 
         c1e = Qualification.objects.create(
             category=driverslicense_category,
@@ -305,8 +305,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe C1E",
             uuid=uuid.UUID("f5e3be89-59de-4b13-a92f-5949009f62d8"),
         )
-        c1e.included_qualifications.add(c1)
-        c1e.included_qualifications.add(be)
+        c1e.includes.add(c1)
+        c1e.includes.add(be)
 
         ce = Qualification.objects.create(
             category=driverslicense_category,
@@ -314,8 +314,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe CE",
             uuid=uuid.UUID("736ca05a-7ff9-423a-9fa4-8b4641fde29c"),
         )
-        ce.included_qualifications.add(c)
-        ce.included_qualifications.add(c1e)
+        ce.includes.add(c)
+        ce.includes.add(c1e)
 
         d1 = Qualification.objects.create(
             category=driverslicense_category,
@@ -323,7 +323,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe D1",
             uuid=uuid.UUID("3df818c6-f4a7-400e-a5bf-64ed087f79ab"),
         )
-        d1.included_qualifications.add(b)
+        d1.includes.add(b)
 
         d = Qualification.objects.create(
             category=driverslicense_category,
@@ -331,7 +331,7 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe D",
             uuid=uuid.UUID("3238a892-afa8-4e76-b9b9-87d8765c5b72"),
         )
-        d.included_qualifications.add(d1)
+        d.includes.add(d1)
 
         d1e = Qualification.objects.create(
             category=driverslicense_category,
@@ -339,8 +339,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe D1E",
             uuid=uuid.UUID("5d0ab40e-fade-4d45-9882-0039118a2445"),
         )
-        d1e.included_qualifications.add(d1)
-        d1e.included_qualifications.add(be)
+        d1e.includes.add(d1)
+        d1e.includes.add(be)
 
         de = Qualification.objects.create(
             category=driverslicense_category,
@@ -348,8 +348,8 @@ class QualificationDataset(AbstractDataset):
             abbreviation="Fe DE",
             uuid=uuid.UUID("64495d88-3ec0-4bbe-bc2b-78b6e6cfbc25"),
         )
-        de.included_qualifications.add(d)
-        de.included_qualifications.add(d1e)
+        de.includes.add(d)
+        de.includes.add(d1e)
 
 
 @register_dataset
@@ -377,7 +377,7 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="ET1",
             uuid=uuid.UUID("52fc6a88-6e56-4af5-8021-b8a6412f405c"),
         )
-        taucher_1.included_qualifications.add(signal)
+        taucher_1.includes.add(signal)
 
         taucher_2 = Qualification.objects.create(
             category=diving_category,
@@ -385,7 +385,7 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="ET2",
             uuid=uuid.UUID("481fc9fb-e90a-4b83-8a07-456034aa0a33"),
         )
-        taucher_2.included_qualifications.add(taucher_1)
+        taucher_2.includes.add(taucher_1)
 
         tauchf = Qualification.objects.create(
             category=diving_category,
@@ -393,7 +393,7 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="TEF",
             uuid=uuid.UUID("a3c5a3a0-f577-4bf5-8b2f-84108022d793"),
         )
-        tauchf.included_qualifications.add(taucher_2)
+        tauchf.includes.add(taucher_2)
 
         boats_category = QualificationCategory.objects.create(
             title=_("Boats (DLRG)"),
@@ -428,14 +428,14 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="RS Silber",
             uuid=uuid.UUID("ef95a854-2eeb-431c-a795-bc291b341d49"),
         )
-        rettschw_silber.included_qualifications.add(rettschw_bronze)
+        rettschw_silber.includes.add(rettschw_bronze)
         rettschw_gold = Qualification.objects.create(
             category=drsa_category,
             title="Rettungsschwimmer Gold",
             abbreviation="RS Gold",
             uuid=uuid.UUID("b601a18b-cee8-4037-af33-dd7aabeac295"),
         )
-        rettschw_gold.included_qualifications.add(rettschw_silber)
+        rettschw_gold.includes.add(rettschw_silber)
 
         wr_category = QualificationCategory.objects.create(
             title=_("Water rescue (DLRG)"),
@@ -453,14 +453,14 @@ class DLRGQualificationDataset(AbstractDataset):
             abbreviation="Strömungsretter I",
             uuid=uuid.UUID("e1c1fac1-146d-4a52-935e-36455bcf0f87"),
         )
-        sr1.included_qualifications.add(wr)
+        sr1.includes.add(wr)
         sr2 = Qualification.objects.create(
             category=wr_category,
             title="Strömungsretter II (DLRG)",
             abbreviation="Strömungsretter II",
             uuid=uuid.UUID("9c506e7e-a456-4f22-8027-5365ab7dc58c"),
         )
-        sr2.included_qualifications.add(sr1)
+        sr2.includes.add(sr1)
 
         radio_category = QualificationCategory.objects.create(
             title=_("Radio"),

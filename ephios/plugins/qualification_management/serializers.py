@@ -10,9 +10,7 @@ class QualificationCategoryFixtureSerializer(serializers.ModelSerializer):
 
 
 class QualificationFixtureSerializer(serializers.ModelSerializer):
-    included_qualifications = serializers.SlugRelatedField(
-        many=True, read_only=True, slug_field="uuid"
-    )
+    includes = serializers.SlugRelatedField(many=True, read_only=True, slug_field="uuid")
     included_by = serializers.SlugRelatedField(many=True, read_only=True, slug_field="uuid")
     category = QualificationCategoryFixtureSerializer(read_only=True)
 
@@ -22,7 +20,7 @@ class QualificationFixtureSerializer(serializers.ModelSerializer):
             "uuid",
             "title",
             "abbreviation",
-            "included_qualifications",
+            "includes",
             "included_by",
             "category",
         ]
