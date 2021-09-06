@@ -1,6 +1,8 @@
+from urllib.error import HTTPError
+
 from django.contrib import messages
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
@@ -33,6 +35,18 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
 
     def get_success_url(self):
         return reverse("qualification_management:settings_qualification_list")
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except HTTPError:
+            messages.error(
+                request,
+                _(
+                    "There was an error fetching one of the qualification repos. Check the URLs, try again or contact support."
+                ),
+            )
+            return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
         form.save()
