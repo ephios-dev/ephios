@@ -53,14 +53,9 @@ class QualificationGraph:
         # inclusions is a dict where keys are nodes and values are lists of nodes the key node has an edge of inclusion to
         self.inclusions = defaultdict(set)
 
-    def add_qualification(self, uuid, inclusions, expand_existing=True):
+    def add_qualification(self, uuid, inclusions):
         """Add a new qualification to the graph."""
-        if not expand_existing:
-            if uuid in self.inclusions.keys():
-                raise ValueError("That uuid already exists.")
-            self.inclusions[uuid] = inclusions
-        else:
-            self.inclusions[uuid] |= inclusions
+        self.inclusions[uuid] |= inclusions
 
     def parents(self, child):
         for parent, children in self.inclusions.items():
@@ -78,7 +73,6 @@ class QualificationGraph:
 
 class QualificationChangeManager:
     def __init__(self):
-        self.qualification_categories = []
         self.deserialized_qualifications_to_add = set()
         self.inclusion_supporting_deserialized_qualifications = set()
         self.qualifications_to_delete_fixing_inclusion = set()
@@ -86,9 +80,6 @@ class QualificationChangeManager:
         self.existing_qualifications_by_uuid: Dict[str, Qualification] = {
             str(obj.uuid): obj for obj in Qualification.objects.all()
         }
-
-    def add_qualification_categories(self, *qualification_categories):
-        self.qualification_categories += qualification_categories
 
     def add_deserialized_qualifications_to_db(self, *deserialized_qualifications):
         self.deserialized_qualifications_to_add |= set(deserialized_qualifications)
@@ -159,12 +150,16 @@ class QualificationChangeManager:
             )
 
     def _prepare_qualification_category_db(self):
-        uuid_of_used_categories = {
+        uuids_of_used_categories = {
             str(deserialized_qualification.category.uuid)
             for deserialized_qualification in self.deserialized_qualifications_to_add
         }
-        for category in self.qualification_categories:
-            if str(category.uuid) in uuid_of_used_categories:
+        qualification_categories = {
+            deserialized_qualifcation.category.uuid: deserialized_qualifcation.category
+            for deserialized_qualifcation in self.deserialized_qualifications_to_add
+        }
+        for category in qualification_categories.values():
+            if str(category.uuid) in uuids_of_used_categories:
                 QualificationCategory.objects.get_or_create(
                     uuid=category.uuid,
                     defaults=dict(

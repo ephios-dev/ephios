@@ -276,13 +276,11 @@ def qualifications():
     """
     Subset of the qualifications of the setupdata fixture, returned as a namespace.
     """
-
+    q = Namespace()
     medical_category = QualificationCategory.objects.create(
         title="Medical",
         uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
     )
-
-    q = Namespace()
 
     q.rs = Qualification.objects.create(
         category=medical_category,
@@ -290,7 +288,6 @@ def qualifications():
         abbreviation="RS",
         uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
     )
-
     q.nfs = Qualification.objects.create(
         category=medical_category,
         title="Notfallsanitäter",
@@ -298,7 +295,6 @@ def qualifications():
         uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
     )
     q.nfs.includes.add(q.rs)
-
     q.na = Qualification.objects.create(
         category=medical_category,
         title="Notarzt",
@@ -310,14 +306,12 @@ def qualifications():
         title="License",
         uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
     )
-
     q.b = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse B",
         abbreviation="Fe B",
         uuid=uuid.UUID("0715b687-877a-4fed-bde0-5ea06b1043fc"),
     )
-
     q.be = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse BE",
@@ -325,7 +319,6 @@ def qualifications():
         uuid=uuid.UUID("31529f69-09d7-44cc-84f6-19fbfd949faa"),
     )
     q.be.includes.add(q.b)
-
     q.c1 = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1",
@@ -333,7 +326,6 @@ def qualifications():
         uuid=uuid.UUID("c9898e6c-4ecf-4781-9c0a-884861e36a81"),
     )
     q.c1.includes.add(q.b)
-
     q.c = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C",
@@ -341,7 +333,6 @@ def qualifications():
         uuid=uuid.UUID("2d2fc932-5206-4c2c-bb63-0bc579acea6f"),
     )
     q.c.includes.add(q.c1)
-
     q.c1e = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1E",
@@ -350,7 +341,6 @@ def qualifications():
     )
     q.c1e.includes.add(q.c1)
     q.c1e.includes.add(q.be)
-
     q.ce = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse CE",

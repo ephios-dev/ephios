@@ -7,7 +7,6 @@ from django.db.models import Exists, OuterRef
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -50,7 +49,7 @@ class QualificationDeleteForm(forms.Form):
 
     @cached_property
     def _active_grants(self):
-        return self.qualification.grants.exclude(expires__isnull=False, expires__lt=now())
+        return self.qualification.grants.unexpired()
 
     def __init__(self, *args, **kwargs):
         self.qualification = kwargs.pop("instance")
@@ -129,9 +128,6 @@ class QualificationImportForm(forms.Form):
             raise ValidationError("Form is not valid")
 
         manager = QualificationChangeManager()
-        manager.add_qualification_categories(
-            *[v["object"] for v in self.categories_by_uuid.values()]
-        )
         for uuid, deserialized_qualification in self.deserialized_qualifications_by_uuid.items():
             if self.cleaned_data[uuid]:
                 manager.add_deserialized_qualifications_to_db(deserialized_qualification)

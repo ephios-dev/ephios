@@ -79,18 +79,7 @@ class AbstractParticipant:
 
     @functools.lru_cache
     def collect_all_qualifications(self) -> set:
-        """We collect using breadth first search with one query for every layer of inclusion."""
-        all_qualifications = set(self.qualifications)
-        current = self.qualifications
-        while current:
-            new = (
-                Qualification.objects.filter(included_by__in=current)
-                .exclude(id__in=(q.id for q in all_qualifications))
-                .distinct()
-            )
-            all_qualifications |= set(new)
-            current = new
-        return all_qualifications
+        return Qualification.collect_all_included_qualifications(self.qualifications)
 
     def has_qualifications(self, qualifications):
         return set(qualifications) <= self.collect_all_qualifications()
