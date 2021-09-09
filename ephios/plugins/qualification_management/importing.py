@@ -83,12 +83,15 @@ class QualificationChangeManager:
 
     def add_deserialized_qualifications_to_db(self, *deserialized_qualifications):
         self.deserialized_qualifications_to_add |= set(deserialized_qualifications)
+        return self
 
     def add_inclusions_of_deserialized_qualifications(self, *deserialized_qualifications):
         self.inclusion_supporting_deserialized_qualifications |= set(deserialized_qualifications)
+        return self
 
     def remove_qualifications_from_db_fixing_inclusion(self, *qualifications):
         self.qualifications_to_delete_fixing_inclusion |= set(qualifications)
+        return self
 
     def _attach_deferred_categories_to_deserialized_qualifications(self):
         categories_by_uuid = {str(c.uuid): c for c in QualificationCategory.objects.all()}

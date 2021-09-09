@@ -236,7 +236,7 @@ class QualificationReassignmentForm(forms.Form):
         )
         created_count = 0
         for user in users:
-            obj, created = QualificationGrant.objects.get_or_create(
+            _, created = QualificationGrant.objects.get_or_create(
                 user=user,
                 qualification=self.cleaned_data["new_qualification"],
                 defaults=dict(expires=self.cleaned_data["expires"]),

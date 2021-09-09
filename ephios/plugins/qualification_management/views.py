@@ -110,7 +110,7 @@ class QualificationReassignmentView(StaffRequiredMixin, SettingsViewMixin, FormV
 
     def form_valid(self, form):
         with transaction.atomic():
-            created, total = form.perform_reassignment()
+            created, _ = form.perform_reassignment()
         messages.info(
             self.request,
             ngettext_lazy(
