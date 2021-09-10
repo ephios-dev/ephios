@@ -158,7 +158,7 @@ class EventForm(forms.ModelForm):
 
 
 class ShiftForm(forms.ModelForm):
-    date = forms.DateField(widget=CustomDateInput(format="%Y-%m-%d"), label=_("Date"))
+    date = forms.DateField(widget=CustomDateInput, label=_("Date"))
     meeting_time = forms.TimeField(widget=CustomTimeInput, label=_("Meeting time"))
     start_time = forms.TimeField(widget=CustomTimeInput, label=_("Start time"))
     end_time = forms.TimeField(widget=CustomTimeInput, label=_("End time"))
@@ -208,7 +208,7 @@ class ShiftForm(forms.ModelForm):
 
 class EventDuplicationForm(forms.Form):
     start_date = forms.DateField(
-        widget=CustomDateInput(format="%Y-%m-%d"),
+        widget=CustomDateInput,
         initial=date.today(),
         help_text=_(
             "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."

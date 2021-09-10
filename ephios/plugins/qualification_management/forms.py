@@ -12,6 +12,7 @@ from django_select2.forms import Select2MultipleWidget, Select2Widget
 
 from ephios.core.models import Qualification, QualificationCategory, QualificationGrant, UserProfile
 from ephios.extra.crispy import AbortLink
+from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.qualification_management.importing import (
     QualificationChangeManager,
@@ -193,7 +194,7 @@ class QualificationReassignmentForm(forms.Form):
         queryset=Qualification.objects.all(),
         widget=Select2Widget,
     )
-    expires = forms.DateTimeField(
+    expires = EndOfDayDateTimeField(
         label=_("expires"),
         required=False,
         widget=CustomDateInput,

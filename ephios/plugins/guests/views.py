@@ -36,7 +36,7 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
         fields=["email", "first_name", "last_name", "date_of_birth", "phone", "qualifications"],
         widgets={
             "qualifications": Select2MultipleWidget,
-            "date_of_birth": CustomDateInput(format="%Y-%m-%d"),
+            "date_of_birth": CustomDateInput,
         },
     )
 

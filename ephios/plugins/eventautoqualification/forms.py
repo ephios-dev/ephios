@@ -15,7 +15,7 @@ class EventAutoQualificationForm(BaseEventPluginFormMixin, forms.ModelForm):
         fields = ["qualification", "expiration_date", "mode", "extend_only", "needs_confirmation"]
         widgets = {
             "qualification": Select2Widget,
-            "expiration_date": CustomDateInput(format="%Y-%m-%d"),
+            "expiration_date": CustomDateInput,
         }
 
     def __init__(self, *args, event=None, edit_permission=False, **kwargs):

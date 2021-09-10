@@ -26,7 +26,9 @@ from django.db.models.functions import TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
@@ -276,6 +278,21 @@ class CustomQualificationGrantQuerySet(models.QuerySet):
         return self.exclude(expires__isnull=False, expires__lt=timezone.now())
 
 
+class ExpirationDateField(models.DateTimeField):
+    """
+    A model datetime field whose formfield is an EndOfDayDateTimeField
+    """
+
+    def formfield(self, **kwargs):
+        return super().formfield(
+            **{
+                "widget": CustomDateInput,
+                "form_class": EndOfDayDateTimeField,
+                **kwargs,
+            }
+        )
+
+
 class QualificationGrant(Model):
     qualification = ForeignKey(
         Qualification,
@@ -289,7 +306,7 @@ class QualificationGrant(Model):
         on_delete=models.CASCADE,
         verbose_name=_("user profile"),
     )
-    expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+    expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
 
     objects = CustomQualificationGrantQuerySet.as_manager()
 
