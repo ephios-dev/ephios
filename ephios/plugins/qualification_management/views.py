@@ -19,9 +19,9 @@ from ephios.plugins.qualification_management.forms import (
     QualificationImportForm,
     QualificationReassignmentForm,
 )
+from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 # Templates in this plugin are under core/, because Qualification is a core model.
-from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 
 class QualificationListView(StaffRequiredMixin, SettingsViewMixin, ListView):
@@ -43,7 +43,8 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
             messages.error(
                 request,
                 _(
-                    "There was an error fetching one of the qualification repos. Check the URLs, try again or contact support."
+                    "There was an error fetching one of the qualification repos. "
+                    "Check the URLs, try again or contact support."
                 ),
             )
             return HttpResponseRedirect(self.get_success_url())

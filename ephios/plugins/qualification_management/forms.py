@@ -2,7 +2,6 @@ from crispy_forms.bootstrap import FormActions, Tab, TabHolder
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
-from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.urls import reverse
@@ -40,7 +39,7 @@ class QualificationDeleteForm(forms.Form):
         initial=True,
         required=False,
     )
-    move_grants_to_other_qualification = forms.ModelMultipleChoiceField(
+    move_grants_to_other_qualifications = forms.ModelMultipleChoiceField(
         label=_("Migrate users to other qualification"),
         required=False,
         widget=Select2MultipleWidget,
@@ -61,7 +60,7 @@ class QualificationDeleteForm(forms.Form):
             inferior=", ".join(map(str, self.qualification.includes.all())) or _("none"),
         )
 
-        self.fields["move_grants_to_other_qualification"].queryset = Qualification.objects.exclude(
+        self.fields["move_grants_to_other_qualifications"].queryset = Qualification.objects.exclude(
             pk=self.qualification.pk
         )
         help_text = _(
@@ -76,11 +75,11 @@ class QualificationDeleteForm(forms.Form):
                 count,
             ).format(count=count)
 
-        self.fields["move_grants_to_other_qualification"].help_text = help_text
+        self.fields["move_grants_to_other_qualifications"].help_text = help_text
 
     def _move_users_to_other_qualifications(self):
         new_grants = []
-        for new_qualification in self.cleaned_data["move_grants_to_other_qualification"]:
+        for new_qualification in self.cleaned_data["move_grants_to_other_qualifications"]:
             for old_grant in self._active_grants:
                 new_grants.append(
                     QualificationGrant(
@@ -124,9 +123,7 @@ class QualificationImportForm(forms.Form):
         )
 
     def save(self):
-        if not self.is_valid():
-            raise ValidationError("Form is not valid")
-
+        assert self.is_valid()
         manager = QualificationChangeManager()
         for uuid, deserialized_qualification in self.deserialized_qualifications_by_uuid.items():
             if self.cleaned_data[uuid]:
