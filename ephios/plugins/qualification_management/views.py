@@ -1,4 +1,4 @@
-from urllib.error import HTTPError
+from urllib.error import URLError
 
 from django.contrib import messages
 from django.db import transaction
@@ -39,7 +39,7 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
-        except HTTPError:
+        except URLError:
             messages.error(
                 request,
                 _(
