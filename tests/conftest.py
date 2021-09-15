@@ -274,7 +274,7 @@ def multi_shift_event(groups, service_event_type, planner, tz):
 @pytest.fixture
 def qualifications():
     """
-    Subset of the qualifications of the setupdata fixture, returned as a namespace.
+    Some medical qualifications, returned as a namespace.
     """
     q = Namespace()
     medical_category = QualificationCategory.objects.create(
