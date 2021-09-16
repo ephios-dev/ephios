@@ -2,10 +2,12 @@ import itertools
 import urllib
 from collections import defaultdict
 from typing import Dict
+from urllib.error import URLError
 
 from django.db import transaction
 from django.db.models import Count
 from dynamic_preferences.registries import global_preferences_registry
+from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.parsers import JSONParser
 
 from ephios.core.models import Qualification, QualificationCategory
@@ -29,6 +31,10 @@ class DeserializedQualification:
         return hash(self.object.uuid)
 
 
+class RepoError(Exception):
+    pass
+
+
 def fetch_deserialized_qualifications_from_repo():
     repo_urls = (
         stripped_url
@@ -37,13 +43,15 @@ def fetch_deserialized_qualifications_from_repo():
         .splitlines()
         if (stripped_url := url.strip())
     )
-    for repo_url in repo_urls:
-        with urllib.request.urlopen(repo_url) as request:
-            data = JSONParser().parse(request)
-            serializer = QualificationFixtureSerializer(data=data, many=True)
-            assert serializer.is_valid(raise_exception=True)
-            for validated_data in serializer.validated_data:
-                yield DeserializedQualification(validated_data)
+    try:
+        for repo_url in repo_urls:
+            with urllib.request.urlopen(repo_url) as request:
+                data = JSONParser().parse(request)
+                serializer = QualificationFixtureSerializer(data=data, many=True)
+                assert serializer.is_valid(raise_exception=True)
+                yield from (DeserializedQualification(d) for d in serializer.validated_data)
+    except (URLError, RestValidationError) as e:
+        raise RepoError from e
 
 
 class QualificationGraph:

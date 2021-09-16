@@ -1,50 +1,7 @@
-from functools import wraps
-from urllib.error import URLError
-
 import pytest
 from django.urls import reverse
 
 from ephios.core.models import Qualification, QualificationCategory, QualificationGrant
-from ephios.plugins.qualification_management.importing import (
-    fetch_deserialized_qualifications_from_repo,
-)
-from tests.plugins.qualification_management.conftest import NOTSAN_UUID, SANH_UUID
-
-
-def skip_on_urlerror(test):
-    @wraps(test)
-    def decorated(*args, **kwargs):
-        try:
-            return test(*args, **kwargs)
-        except URLError:
-            pytest.skip("an URLError occurred")
-
-    return decorated
-
-
-@skip_on_urlerror
-def test_repo_fetch():
-    assert list(fetch_deserialized_qualifications_from_repo())
-
-
-@skip_on_urlerror
-def test_import_view(django_app, superuser):
-    form = django_app.get(
-        reverse("qualification_management:settings_qualification_import"),
-        user=superuser,
-        status=200,
-    ).form
-    form[SANH_UUID] = True
-    form[NOTSAN_UUID] = True
-    assert not Qualification.objects.exists()
-    form.submit().follow()
-    assert Qualification.objects.count() == 2
-    assert not Qualification.objects.exclude(uuid__in=[SANH_UUID, NOTSAN_UUID]).exists()
-    assert set(
-        Qualification.collect_all_included_qualifications(
-            [Qualification.objects.get(uuid=NOTSAN_UUID)]
-        )
-    ) == set(Qualification.objects.all())
 
 
 def test_qualification_reassignment(django_app, superuser, qualification_grant):

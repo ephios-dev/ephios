@@ -1,5 +1,3 @@
-from urllib.error import URLError
-
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
@@ -19,6 +17,7 @@ from ephios.plugins.qualification_management.forms import (
     QualificationImportForm,
     QualificationReassignmentForm,
 )
+from ephios.plugins.qualification_management.importing import RepoError
 from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 # Templates in this plugin are under core/, because Qualification is a core model.
@@ -39,7 +38,7 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
-        except URLError:
+        except RepoError:
             messages.error(
                 request,
                 _(
