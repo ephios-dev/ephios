@@ -1,10 +1,8 @@
 from django import forms
-from django.template.loader import get_template
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation
 from ephios.core.signup import BaseSignupMethod, ParticipationError
+from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
 
 
 class NoSelfserviceSignupMethod(BaseSignupMethod):
@@ -41,20 +39,4 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
         ]
 
     def render_shift_state(self, request):
-        participations = self.shift.participations.filter(
-            state__in={
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.CONFIRMED,
-            }
-        ).order_by("-state")
-        return get_template("basesignup/fragment_state_common.html").render(
-            {
-                "shift": self.shift,
-                "participations": participations,
-                "disposition_url": (
-                    reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
+        return render_basic_participation_pills_shift_state(self, request)

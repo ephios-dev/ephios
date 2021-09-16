@@ -85,11 +85,15 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             return redirect(self.event.get_absolute_url())
 
 
-class ShiftConfigurationFormView(View):
+class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
+    model = Event
+    permission_required = "core.change_event"
+    pk_url_kwarg = "event_id"
+
     def get(self, request, *args, **kwargs):
         from ephios.core.signup import signup_method_from_slug
 
-        signup_method = signup_method_from_slug(self.kwargs.get("slug"))
+        signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
         return HttpResponse(signup_method.render_configuration_form())
 
 
@@ -129,7 +133,9 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
         try:
             from ephios.core.signup import signup_method_from_slug
 
-            signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
+            signup_method = signup_method_from_slug(
+                self.request.POST["signup_method_slug"], shift=self.object
+            )
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
             raise ValidationError(e) from e

@@ -42,10 +42,10 @@ def enabled_signup_methods():
         yield from methods
 
 
-def signup_method_from_slug(slug, shift=None):
+def signup_method_from_slug(slug, shift=None, event=None):
     for method in installed_signup_methods():
         if method.slug == slug:
-            return method(shift)
+            return method(shift, event=event)
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
@@ -322,8 +322,9 @@ class BaseSignupMethod:
 
     uses_requested_state = True
 
-    def __init__(self, shift):
+    def __init__(self, shift, event=None):
         self.shift = shift
+        self.event = getattr(shift, "event", event)
         self.configuration = Namespace(
             **{name: config["default"] for name, config in self.get_configuration_fields().items()}
         )
