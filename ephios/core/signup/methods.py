@@ -412,7 +412,7 @@ class BaseSignupMethod:
         Configure the given participation object for signup according to the method's configuration.
         You need at least to set the participations state. `kwargs` may contain further instructions from e.g. a form.
         """
-        return NotImplemented
+        raise NotImplementedError
 
     def get_configuration_fields(self):
         return OrderedDict(
