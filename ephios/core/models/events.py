@@ -106,7 +106,11 @@ class Event(Model):
 
         return functools.reduce(
             operator.add,
-            [shift.signup_method.get_signup_stats() for shift in self.shifts.all()]
+            [
+                shift.signup_method.get_signup_stats()
+                for shift in self.shifts.all()
+                if shift.signup_method
+            ]
             or [default_for_no_shifts],
         )
 

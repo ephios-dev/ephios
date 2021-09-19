@@ -49,7 +49,7 @@ def as_crispy_field(
         attributes.update(helper.get_attributes(template_pack))
         template_path = helper.field_template
     if not template_path:
-        template_path = "%s/field.html" % template_pack
+        template_path = f"{template_pack}/field.html"
     template = get_template(template_path)
 
     c = Context(attributes).flatten()

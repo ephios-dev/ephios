@@ -21,14 +21,10 @@ class ShiftCalendar(HTMLCalendar):
 
     def formatmonthname(self, theyear, themonth, withyear=True):
         dt = datetime(theyear, themonth, 1)
-        return '<tr><th colspan="7" class="month">{monthyear}</th></tr>'.format(
-            monthyear=date_format(dt, format="b Y")
-        )
+        return f'<tr><th colspan="7" class="month">{date_format(dt, format="b Y")}</th></tr>'
 
     def formatweekday(self, day):
-        return '<th class="{cssclasses}">{day}</th>'.format(
-            cssclasses=self.cssclasses[day], day=_(day_abbr[day])
-        )
+        return f'<th class="{self.cssclasses[day]}">{_(day_abbr[day])}</th>'
 
     def formatday(self, day, weekday):
         if day != 0:
@@ -39,12 +35,12 @@ class ShiftCalendar(HTMLCalendar):
                 cssclass += " filled"
                 body = ["<br />"]
                 for shift in self.shifts[day]:
-                    body.append('<a href="%s">' % shift.event.get_absolute_url())
+                    body.append(f'<a href="{shift.event.get_absolute_url()}">')
                     body.append(shift.event.title)
                     body.append("</a><br />")
-                return self.day_cell(cssclass, "%d %s" % (day, "".join(body)))
+                return self.day_cell(cssclass, f"{day} {''.join(body)}")
             return self.day_cell(cssclass, day)
         return self.day_cell("noday", "&nbsp;")
 
     def day_cell(self, cssclass, body):
-        return '<td class="calendar-row-height p-1 break-word %s">%s</td>' % (cssclass, body)
+        return f'<td class="calendar-row-height p-1 break-word {cssclass}">{body}</td>'
