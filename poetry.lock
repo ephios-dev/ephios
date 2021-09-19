@@ -352,7 +352,7 @@ six = "*"
 
 [[package]]
 name = "django-environ"
-version = "0.6.0"
+version = "0.7.0"
 description = "A package that allows you to utilize 12factor inspired environment variables to configure your Django application."
 category = "main"
 optional = false
@@ -1331,7 +1331,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "605baa5bf196ec594987630b2df65a1c2208cf166b31e2cf1dc9c270b5194186"
+content-hash = "0690b72fc775a3094784ab8aabb4684711d5944517a82ebe614c1b3bccdc69d8"
 
 [metadata.files]
 alabaster = [
@@ -1560,8 +1560,8 @@ django-dynamic-preferences = [
     {file = "django_dynamic_preferences-1.10.1-py2.py3-none-any.whl", hash = "sha256:9419fa925fd2cbb665269ae72059eb3058bf080913d853419b827e4e7a141902"},
 ]
 django-environ = [
-    {file = "django-environ-0.6.0.tar.gz", hash = "sha256:6b3ce447f31c5a5144671d754baa0819c9bde2fb34dcdc05ba619a97f4567e5a"},
-    {file = "django_environ-0.6.0-py2.py3-none-any.whl", hash = "sha256:f63b6489ee2113239fe60cdf94efc93a2b42ac07aefb5b5182d401b4fa820374"},
+    {file = "django-environ-0.7.0.tar.gz", hash = "sha256:b99bd3704221f8b717c8517d8146e53fdee509d9e99056be560060003b92213e"},
+    {file = "django_environ-0.7.0-py2.py3-none-any.whl", hash = "sha256:20a5a3570333d3718c0a7ca834290ef850e2b96237ae4ca0a05823b3a0cb3363"},
 ]
 django-extensions = [
     {file = "django-extensions-3.1.3.tar.gz", hash = "sha256:5f0fea7bf131ca303090352577a9e7f8bfbf5489bd9d9c8aea9401db28db34a0"},
