@@ -40,7 +40,7 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
         super().__init__(*args, **kwargs)
 
     def add_prefix(self, index):
-        return "%s-%s" % (self.prefix, self._start_index + index)
+        return f"{self.prefix}-{self._start_index + index}"
 
     def save_existing(self, form, instance, commit=True):
         """Existing participation state overwrites the getting dispatched state."""

@@ -180,19 +180,15 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
                 form.save(request=request)
                 messages.info(
                     request,
-                    _(
-                        "The user's password has been reset. An email was sent to {email}.".format(
-                            email=self.object.email
-                        )
+                    _("The user's password has been reset. An email was sent to {email}.").format(
+                        email=self.object.email
                     ),
                 )
             else:
                 messages.error(
                     request,
-                    _(
-                        "No valid email address ({email}). The password has not been reset.".format(
-                            email=self.object.email
-                        )
+                    _("No valid email address ({email}). The password has not been reset.").format(
+                        email=self.object.email
                     ),
                 )
             return redirect(reverse("core:userprofile_list"))
