@@ -4,7 +4,7 @@
 {% block settings_content %}
     <a class="btn btn-secondary" href="{% url "pages:settings_page_create" %}"><span
             class="fa fa-plus"></span> {% trans "Add page" %}</a>
-    <table id="event_table" class="table table-striped display mt-2">
+    <table class="table table-striped display mt-2">
         <thead>
         <tr>
             <th>{% translate "Title" %}</th>
@@ -25,7 +25,6 @@
                     <a class="btn btn-secondary btn-sm text-nowrap me-1"
                        href="{% url "pages:settings_page_delete" page.pk %}"><span
                             class="fa fa-trash"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
-
                 </td>
             </tr>
         {% endfor %}

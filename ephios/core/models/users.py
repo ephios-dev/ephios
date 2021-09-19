@@ -26,7 +26,9 @@ from django.db.models.functions import TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
@@ -133,9 +135,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     @property
     def qualifications(self):
         return Qualification.objects.filter(
-            pk__in=self.qualification_grants.filter(
-                Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
-            ).values_list("qualification_id", flat=True)
+            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
         ).annotate(
             expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
         )
@@ -192,9 +192,16 @@ register_model_for_logging(
 )
 
 
+class QualificationCategoryManager(models.Manager):
+    def get_by_natural_key(self, category_uuid, *args):
+        return self.get(uuid=category_uuid)
+
+
 class QualificationCategory(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+
+    objects = QualificationCategoryManager()
 
     class Meta:
         verbose_name = _("qualification track")
@@ -204,9 +211,17 @@ class QualificationCategory(Model):
     def __str__(self):
         return str(self.title)
 
+    def natural_key(self):
+        return (self.uuid, self.title)
+
+
+class QualificationManager(models.Manager):
+    def get_by_natural_key(self, qualification_uuid, *args):
+        return self.get(uuid=qualification_uuid)
+
 
 class Qualification(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
     abbreviation = CharField(max_length=254)
     category = ForeignKey(
@@ -215,9 +230,12 @@ class Qualification(Model):
         related_name="qualifications",
         verbose_name=_("category"),
     )
-    included_qualifications = models.ManyToManyField(
+    includes = models.ManyToManyField(
         "self", related_name="included_by", symmetrical=False, blank=True
     )
+    is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
+
+    objects = QualificationManager()
 
     def __eq__(self, other):
         return self.uuid == other.uuid if other else False
@@ -233,6 +251,47 @@ class Qualification(Model):
     def __str__(self):
         return str(self.title)
 
+    def natural_key(self):
+        return (self.uuid, self.title)
+
+    natural_key.dependencies = ["core.QualificationCategory"]
+
+    @classmethod
+    def collect_all_included_qualifications(cls, given_qualifications) -> set:
+        """We collect using breadth first search with one query for every layer of inclusion."""
+        all_qualifications = set(given_qualifications)
+        current = set(given_qualifications)
+        while current:
+            new = (
+                Qualification.objects.filter(included_by__in=current)
+                .exclude(id__in=(q.id for q in all_qualifications))
+                .distinct()
+            )
+            all_qualifications |= set(new)
+            current = new
+        return all_qualifications
+
+
+class CustomQualificationGrantQuerySet(models.QuerySet):
+    # Available on both Manager and QuerySet.
+    def unexpired(self):
+        return self.exclude(expires__isnull=False, expires__lt=timezone.now())
+
+
+class ExpirationDateField(models.DateTimeField):
+    """
+    A model datetime field whose formfield is an EndOfDayDateTimeField
+    """
+
+    def formfield(self, **kwargs):
+        return super().formfield(
+            **{
+                "widget": CustomDateInput,
+                "form_class": EndOfDayDateTimeField,
+                **kwargs,
+            }
+        )
+
 
 class QualificationGrant(Model):
     qualification = ForeignKey(
@@ -247,7 +306,9 @@ class QualificationGrant(Model):
         on_delete=models.CASCADE,
         verbose_name=_("user profile"),
     )
-    expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+    expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
+
+    objects = CustomQualificationGrantQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"

@@ -73,9 +73,9 @@ class TestUserProfileView:
         assert userprofile.is_active
         assert set(userprofile.groups.all()) == {volunteers}
         assert set(userprofile.qualifications) == {qualifications.rs, qualifications.na}
-        assert userprofile.qualifications.get(id=qualifications.rs.id).expires == None
+        assert userprofile.qualifications.get(id=qualifications.rs.id).expires is None
         assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
-            datetime(2030, 1, 1)
+            datetime.max.replace(2030, 1, 1)
         )
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):

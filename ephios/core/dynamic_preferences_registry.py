@@ -64,6 +64,7 @@ class EnabledPlugins(MultipleChoicePreference):
         return [
             (plugin.module, mark_safe(f"<strong>{plugin.name}</strong>: {plugin.description}"))
             for plugin in plugins.get_all_plugins()
+            if getattr(plugin, "visible", True)
         ]
 
 

@@ -235,7 +235,7 @@ class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
         fields = ["email", "first_name", "last_name", "date_of_birth", "phone", "is_active"]
-        widgets = {"date_of_birth": CustomDateInput(format="%Y-%m-%d")}
+        widgets = {"date_of_birth": CustomDateInput}
         help_texts = {
             "is_active": _("Inactive users cannot log in and do not get any notifications.")
         }
@@ -257,7 +257,7 @@ class QualificationGrantForm(ModelForm):
 
     class Meta:
         fields = ["qualification", "expires"]
-        widgets = {"qualification": Select2Widget, "expires": CustomDateInput(format="%Y-%m-%d")}
+        widgets = {"qualification": Select2Widget}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

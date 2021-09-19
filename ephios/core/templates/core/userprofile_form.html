@@ -5,6 +5,7 @@
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load static %}
+{% load formset_tags %}
 
 {% block title %}
     {% if userprofile %}
@@ -25,7 +26,6 @@
     <form method="post" class="form">
         {% csrf_token %}
         {{ userprofile_form|crispy }}
-        {% load formset_tags %}
 
         <div class="formset" data-formset data-formset-prefix="{{ qualification_formset.prefix }}">
             {{ qualification_formset.management_form }}

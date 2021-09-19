@@ -1,0 +1,67 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+
+{% block settings_content %}
+    <div>
+        <a class="btn btn-secondary btn text-nowrap me-1"
+           href="{% url "qualification_management:settings_qualification_import" %}"><span
+                class="fa fa-cloud-download-alt"></span> <span>{% trans "Import" %}</span></a>
+        <a class="btn btn-secondary btn text-nowrap me-1"
+           href="{% url "qualification_management:settings_qualification_create" %}"><span
+                class="fa fa-plus"></span> <span
+                class="d-none d-md-inline">{% trans "Create custom qualification" %}</span></a>
+        <a class="btn btn-secondary btn text-nowrap me-1"
+           href="{% url "qualification_management:settings_qualification_categories" %}"><span
+                class="fa fa-edit"></span> <span
+                class="d-none d-md-inline">{% trans "Manage categories" %}</span></a>
+        <a class="btn btn-secondary btn text-nowrap me-1"
+           href="{% url "qualification_management:settings_qualification_reassignment" %}"><span
+                class="fa fa-random"></span> <span
+                class="d-none d-md-inline">{% trans "Reassign qualifications" %}</span></a>
+    </div>
+
+    <h3 class="mt-3">{% translate "All qualifications" %}</h3>
+
+    <table class="table table-striped display mt-2">
+        <thead>
+        <tr>
+            <th>{% translate "Title" %}</th>
+            <th>{% translate "Abbreviation" %}</th>
+            <th>{% translate "Category" %}</th>
+            <th>{% translate "Includes" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for qualification in qualification_list %}
+            <tr>
+                <td class="break-word">
+                    {{ qualification }}
+                    {% if not qualification.is_imported %}
+                        <span class="badge bg-warning float-end">{% translate "custom" %}</span>
+                    {% endif %}
+                </td>
+                <td class="break-word">{{ qualification.abbreviation }}</td>
+                <td class="break-word">{{ qualification.category.title }}</td>
+                <td class="break-word">
+                    {% for included in qualification.includes.all %}
+                        {{ included }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="">
+                    <div class="d-flex">
+                        <a class="btn btn-secondary btn-sm text-nowrap"
+                           href="{% url "qualification_management:settings_qualification_edit" qualification.pk %}"><span
+                                class="fa fa-edit"></span> <span
+                                class="d-none d-md-inline">{% trans "Edit" %}</span></a>
+                        <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                           href="{% url "qualification_management:settings_qualification_delete" qualification.pk %}"><span
+                                class="fa fa-trash"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

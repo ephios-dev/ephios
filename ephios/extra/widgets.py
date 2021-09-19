@@ -6,6 +6,10 @@ from django.forms.widgets import Input
 class CustomDateInput(DateInput):
     template_name = "core/fragments/custom_date_input.html"
 
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("format", "%Y-%m-%d")
+        super().__init__(*args, **kwargs)
+
 
 class CustomTimeInput(TimeInput):
     template_name = "core/fragments/custom_time_input.html"
@@ -18,6 +22,7 @@ class CustomSplitDateTimeInput(SplitDateTimeWidget):
 class CustomSplitDateTimeWidget(MultiWidget):
     """
     A widget that splits datetime input into two <input type="text"> boxes.
+    To be used with a SplitDateTimeField.
     """
 
     supports_microseconds = False

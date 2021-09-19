@@ -274,15 +274,13 @@ def multi_shift_event(groups, service_event_type, planner, tz):
 @pytest.fixture
 def qualifications():
     """
-    Subset of the qualifications of the setupdata fixture, returned as a namespace.
+    Some medical qualifications, returned as a namespace.
     """
-
+    q = Namespace()
     medical_category = QualificationCategory.objects.create(
         title="Medical",
         uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
     )
-
-    q = Namespace()
 
     q.rs = Qualification.objects.create(
         category=medical_category,
@@ -290,15 +288,13 @@ def qualifications():
         abbreviation="RS",
         uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
     )
-
     q.nfs = Qualification.objects.create(
         category=medical_category,
         title="Notfallsanitäter",
         abbreviation="NFS",
         uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
     )
-    q.nfs.included_qualifications.add(q.rs)
-
+    q.nfs.includes.add(q.rs)
     q.na = Qualification.objects.create(
         category=medical_category,
         title="Notarzt",
@@ -310,55 +306,49 @@ def qualifications():
         title="License",
         uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
     )
-
     q.b = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse B",
         abbreviation="Fe B",
         uuid=uuid.UUID("0715b687-877a-4fed-bde0-5ea06b1043fc"),
     )
-
     q.be = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse BE",
         abbreviation="Fe BE",
         uuid=uuid.UUID("31529f69-09d7-44cc-84f6-19fbfd949faa"),
     )
-    q.be.included_qualifications.add(q.b)
-
+    q.be.includes.add(q.b)
     q.c1 = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1",
         abbreviation="Fe C1",
         uuid=uuid.UUID("c9898e6c-4ecf-4781-9c0a-884861e36a81"),
     )
-    q.c1.included_qualifications.add(q.b)
-
+    q.c1.includes.add(q.b)
     q.c = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C",
         abbreviation="Fe C",
         uuid=uuid.UUID("2d2fc932-5206-4c2c-bb63-0bc579acea6f"),
     )
-    q.c.included_qualifications.add(q.c1)
-
+    q.c.includes.add(q.c1)
     q.c1e = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1E",
         abbreviation="Fe C1E",
         uuid=uuid.UUID("f5e3be89-59de-4b13-a92f-5949009f62d8"),
     )
-    q.c1e.included_qualifications.add(q.c1)
-    q.c1e.included_qualifications.add(q.be)
-
+    q.c1e.includes.add(q.c1)
+    q.c1e.includes.add(q.be)
     q.ce = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse CE",
         abbreviation="Fe CE",
         uuid=uuid.UUID("736ca05a-7ff9-423a-9fa4-8b4641fde29c"),
     )
-    q.ce.included_qualifications.add(q.c)
-    q.ce.included_qualifications.add(q.c1e)
+    q.ce.includes.add(q.c)
+    q.ce.includes.add(q.c1e)
 
     return q
 
