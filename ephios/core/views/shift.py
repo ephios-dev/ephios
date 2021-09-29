@@ -40,7 +40,9 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
         try:
             from ephios.core.signup import signup_method_from_slug
 
-            signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
+            signup_method = signup_method_from_slug(
+                self.request.POST["signup_method_slug"], event=self.event
+            )
         except KeyError:
             if not list(signup.enabled_signup_methods()):
                 form.add_error(
@@ -70,6 +72,9 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             shift.event = self.event
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
+            shift.refresh_from_db(
+                fields=["signup_configuration"]
+            )  # get the configuration in the serialized/deserialized form
             if "addAnother" in self.request.POST:
                 return redirect(
                     reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})

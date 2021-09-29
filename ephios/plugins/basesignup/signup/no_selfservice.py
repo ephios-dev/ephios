@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from ephios.core.models import AbstractParticipation
 from ephios.core.signup import BaseSignupMethod, ParticipationError
 from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
 
@@ -21,6 +22,11 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
                 "default": _("Signup for this shift is disabled."),
             },
         }
+
+    def _configure_participation(
+        self, participation: AbstractParticipation, **kwargs
+    ) -> AbstractParticipation:
+        raise TypeError(f"{self.__class__} does not support signup")
 
     @staticmethod
     def signup_is_disabled(method, participant):
