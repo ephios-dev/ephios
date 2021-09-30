@@ -11,5 +11,5 @@ def render_alert(content, alert_type=None, dismissible=True):
     if dismissible:
         css_classes.append("alert-dismissible")
         close = _("close")
-        button = f'<button type="button" class="close" data-dismiss="alert" aria-label="{close}">&times;</button>'
-    return mark_safe(f"<div class='{' '.join(css_classes)}' role='alert'>{button}{content}</div>")
+        button = f'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{close}"></button>'
+    return mark_safe(f"<div class='{' '.join(css_classes)}' role='alert'>{content}{button}</div>")

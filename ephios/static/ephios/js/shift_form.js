@@ -5,7 +5,7 @@ function isEmpty(el) {
 $(document).ready(function () {
     $('select[name="signup_method_slug"]').on('change', function () {
         $.ajax({
-            url: JSON.parse(document.getElementById('configuration_form_url').textContent).url.replace("slug", this.value),
+            url: JSON.parse(document.getElementById('configuration_form_url').textContent).url.replace("METHOD_SLUG", this.value),
             type: 'GET',
 
             success: function (data) {
