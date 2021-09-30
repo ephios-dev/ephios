@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-09-30 21:56+0200\n"
 "PO-Revision-Date: 2021-09-30 20:42+0000\n"
-"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -456,7 +456,7 @@ msgstr "Kategorie"
 
 #: ephios/core/models/users.py:236
 msgid "imported"
-msgstr ""
+msgstr "importiert"
 
 #: ephios/core/models/users.py:247 ephios/core/models/users.py:300
 msgid "qualification"
@@ -1751,24 +1751,20 @@ msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:16
-#, fuzzy
-#| msgid "Add another shift"
 msgid "coupled to another shift"
-msgstr "Weitere Schicht hinzufügen"
+msgstr "an andere Schicht gekoppelt"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:17
 msgid "This method mirrors signup from another shift."
-msgstr ""
+msgstr "Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:24
 msgid "shift to mirror participation from"
-msgstr ""
+msgstr "Teilnahmen werden gespiegelt von"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:53
-#, fuzzy
-#| msgid "Participation confirmed for {event}"
 msgid "Participation is coupled to {}."
-msgstr "Teilnahme bestätigt für {event}"
+msgstr "Teilnahme ist gekoppelt an {}."
 
 #: ephios/plugins/basesignup/signup/instant.py:10
 msgid "Instant Confirmation"
@@ -1787,23 +1783,19 @@ msgstr "Teilnehmen"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:11
 msgid "No Signup (only disposition)"
-msgstr ""
+msgstr "Keine Anmeldung (nur Disposition)"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:12
 msgid "This method allows no signup by users."
-msgstr ""
+msgstr "Dieses Anmeldeverfahren erlaubt keine Anmeldung durch Benutzer."
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:19
-#, fuzzy
-#| msgid "location"
 msgid "Explanation"
-msgstr "Ort"
+msgstr "Begründung"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:35
-#, fuzzy
-#| msgid "You can not sign up for this shift."
 msgid "Signup for this shift is disabled."
-msgstr "Sie können sich für diese Schicht nicht anmelden."
+msgstr "Die Anmeldung für diese Schicht ist deaktiviert."
 
 #: ephios/plugins/basesignup/signup/request_confirm.py:9
 msgid "Request and confirm"
@@ -2105,45 +2097,42 @@ msgid "Page deleted successfully."
 msgstr "Seite erfolgreich gelöscht."
 
 #: ephios/plugins/qualification_management/apps.py:10
-#, fuzzy
-#| msgid "Qualification grant"
 msgid "Qualification Management"
-msgstr "Qualifikationserteilung"
+msgstr "Qualifikationsverwaltung"
 
 #: ephios/plugins/qualification_management/apps.py:12
 msgid "This plugins lets you add and edit qualifications."
 msgstr ""
+"Dieses Plugin ermöglicht das Hinzufügen und Verwalten von Qualifikationen."
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:15
-#, fuzzy
-#| msgid "qualification tracks"
 msgid "List of qualification repositories"
-msgstr "Qualifikationskategorien"
+msgstr "Liste der Qualifikationsrepositories"
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:16
 msgid "To use multiple repositories, put URLs in separate lines."
-msgstr ""
+msgstr "URLs durch Zeilenumbruch trennen um mehrere Repositories zu verwenden."
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:26
 #, python-brace-format
 msgid "'{url}' does not look like a repo url."
-msgstr ""
+msgstr "'{url}' scheint keine Repository-URL zu sein."
 
 #: ephios/plugins/qualification_management/forms.py:32
 msgid ""
 "Used to identify qualifications accross the ephios ecosystem. Only change if "
 "you know what you are doing."
 msgstr ""
+"Wird benötigt, um Qualifikationen im ephios-Ökosystem zu identifizieren. "
+"Bitte nur ändern, wenn Sie die Konsequenz der Änderung verstehen."
 
 #: ephios/plugins/qualification_management/forms.py:39
 msgid "Maintain transitive inclusion"
-msgstr ""
+msgstr "Transitive Inklusion beibehalten"
 
 #: ephios/plugins/qualification_management/forms.py:44
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "Migrate users to other qualification"
-msgstr "Kann Qualifikation gewähren"
+msgstr "Benutzer zu einer anderen Qualifikation migrieren"
 
 #: ephios/plugins/qualification_management/forms.py:58
 #, python-brace-format
@@ -2151,19 +2140,23 @@ msgid ""
 "If checked, superior qualifications ({superior}) will include inferior "
 "({inferior}) qualifications."
 msgstr ""
+"Falls der Haken gesetzt ist beinhalten die übergeordneten Qualifikationen "
+"({superior}) die untergeordneten Qualifikationen ({inferior})."
 
 #: ephios/plugins/qualification_management/forms.py:68
 msgid ""
 "Select qualifications to apply to users with the qualification about to be "
 "deleted. Expiration dates will be kept."
 msgstr ""
+"Wählen Sie Qualifikationen aus, die Nutzern mit der zu löschenden "
+"Qualifikation erteilt werden soll. Ablaufdaten werden beibehalten."
 
 #: ephios/plugins/qualification_management/forms.py:74
 #, python-brace-format
 msgid "There is {count} user with this qualification."
 msgid_plural "There are {count} users with this qualification."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Es gibt {count} Nutzer mit dieser Qualifikation."
+msgstr[1] "Es gibt {count} Nutzer mit dieser Qualifikation."
 
 #: ephios/plugins/qualification_management/forms.py:187
 msgid "current qualifications"
