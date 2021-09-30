@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-03 17:45+0200\n"
+"POT-Creation-Date: 2021-09-30 21:56+0200\n"
 "PO-Revision-Date: 2021-08-03 14:24+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -59,19 +59,19 @@ msgstr "Relevante Qualifikationskategorien (für Benutzliste und Disposition)"
 msgid "Enabled plugins"
 msgstr "Aktivierte Plugins"
 
-#: ephios/core/dynamic_preferences_registry.py:73
+#: ephios/core/dynamic_preferences_registry.py:74
 msgid "Notification preferences"
 msgstr "Benachrichtigungseinstellungen"
 
-#: ephios/core/dynamic_preferences_registry.py:87
+#: ephios/core/dynamic_preferences_registry.py:88
 msgid "Events of this type should by default be visible for"
 msgstr "Veranstaltungen diesen Typs sind standardmäßig sichtbar für"
 
-#: ephios/core/dynamic_preferences_registry.py:96
+#: ephios/core/dynamic_preferences_registry.py:97
 msgid "Users that are responsible for this event type by default"
 msgstr "Benutzer die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:105
+#: ephios/core/dynamic_preferences_registry.py:106
 msgid "Groups that are responsible for this event type by default"
 msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
@@ -115,7 +115,7 @@ msgstr "Verantwortliche"
 #: ephios/core/pdf.py:64 ephios/core/pdf.py:130
 #: ephios/core/templates/core/event_archive.html:19
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
-#: ephios/core/views/log.py:36
+#: ephios/core/views/log.py:35
 msgid "Date"
 msgstr "Datum"
 
@@ -260,6 +260,7 @@ msgstr "Planung"
 #: ephios/core/templates/core/shift_form.html:43
 #: ephios/core/templates/core/userprofile_form.html:109
 #: ephios/core/templates/core/userprofile_notifications.html:25
+#: ephios/plugins/qualification_management/forms.py:121
 msgid "Save"
 msgstr "Speichern"
 
@@ -296,7 +297,7 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: ephios/core/models/events.py:43 ephios/core/models/events.py:61
-#: ephios/core/models/users.py:197 ephios/core/models/users.py:210
+#: ephios/core/models/users.py:202 ephios/core/models/users.py:225
 msgid "title"
 msgstr "Titel"
 
@@ -328,7 +329,7 @@ msgstr "Ort"
 msgid "active"
 msgstr "aktiv"
 
-#: ephios/core/models/events.py:71 ephios/core/models/events.py:186
+#: ephios/core/models/events.py:71 ephios/core/models/events.py:190
 msgid "event"
 msgstr "Veranstaltung"
 
@@ -336,176 +337,180 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: ephios/core/models/events.py:137
+#: ephios/core/models/events.py:141
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:138
+#: ephios/core/models/events.py:142
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: ephios/core/models/events.py:139
+#: ephios/core/models/events.py:143
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: ephios/core/models/events.py:140
+#: ephios/core/models/events.py:144
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: ephios/core/models/events.py:141
+#: ephios/core/models/events.py:145
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:148 ephios/core/models/events.py:197
+#: ephios/core/models/events.py:152 ephios/core/models/events.py:201
 msgid "shift"
 msgstr "Schicht"
 
-#: ephios/core/models/events.py:150
+#: ephios/core/models/events.py:154
 msgid "state"
 msgstr "Status"
 
-#: ephios/core/models/events.py:151
+#: ephios/core/models/events.py:155
 msgid "Signup data"
 msgstr "Anmeldungsdaten"
 
-#: ephios/core/models/events.py:157
+#: ephios/core/models/events.py:161
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: ephios/core/models/events.py:188
+#: ephios/core/models/events.py:192
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/models/events.py:189
+#: ephios/core/models/events.py:193
 msgid "start time"
 msgstr "Beginn"
 
-#: ephios/core/models/events.py:190
+#: ephios/core/models/events.py:194
 msgid "end time"
 msgstr "Ende"
 
-#: ephios/core/models/events.py:191
+#: ephios/core/models/events.py:195
 msgid "signup method"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:198
+#: ephios/core/models/events.py:202
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:242
+#: ephios/core/models/events.py:246
 #: ephios/core/templates/core/fragments/shift_box_small.html:21
 msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:254
+#: ephios/core/models/events.py:258
 msgid "Participant"
 msgstr "teilnehmende Person"
 
-#: ephios/core/models/users.py:80 ephios/plugins/guests/models.py:32
+#: ephios/core/models/users.py:82 ephios/plugins/guests/models.py:32
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: ephios/core/models/users.py:81
+#: ephios/core/models/users.py:83
 msgid "Active"
 msgstr "Aktiv"
 
-#: ephios/core/models/users.py:82
+#: ephios/core/models/users.py:84
 msgid "Staff user"
 msgstr "Mitarbeiter"
 
-#: ephios/core/models/users.py:83 ephios/plugins/guests/models.py:33
+#: ephios/core/models/users.py:85 ephios/plugins/guests/models.py:33
 msgid "first name"
 msgstr "Vorname"
 
-#: ephios/core/models/users.py:84 ephios/plugins/guests/models.py:34
+#: ephios/core/models/users.py:86 ephios/plugins/guests/models.py:34
 msgid "last name"
 msgstr "Nachname"
 
-#: ephios/core/models/users.py:85 ephios/plugins/guests/models.py:35
+#: ephios/core/models/users.py:87 ephios/plugins/guests/models.py:35
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: ephios/core/models/users.py:86 ephios/plugins/guests/models.py:36
+#: ephios/core/models/users.py:88 ephios/plugins/guests/models.py:36
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: ephios/core/models/users.py:87
+#: ephios/core/models/users.py:89
 msgid "calendar token"
 msgstr "Kalender-Token"
 
-#: ephios/core/models/users.py:99 ephios/core/models/users.py:248
+#: ephios/core/models/users.py:101 ephios/core/models/users.py:307
 msgid "user profile"
 msgstr "Benutzerprofil"
 
-#: ephios/core/models/users.py:100
+#: ephios/core/models/users.py:102
 msgid "user profiles"
 msgstr "Benutzerprofile"
 
-#: ephios/core/models/users.py:200
+#: ephios/core/models/users.py:207
 msgid "qualification track"
 msgstr "Qualifikationskategorie"
 
-#: ephios/core/models/users.py:201
+#: ephios/core/models/users.py:208
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
-#: ephios/core/models/users.py:216
+#: ephios/core/models/users.py:231
 msgid "category"
 msgstr "Kategorie"
 
-#: ephios/core/models/users.py:229 ephios/core/models/users.py:241
+#: ephios/core/models/users.py:236
+msgid "imported"
+msgstr ""
+
+#: ephios/core/models/users.py:247 ephios/core/models/users.py:300
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: ephios/core/models/users.py:230
+#: ephios/core/models/users.py:248
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: ephios/core/models/users.py:250
+#: ephios/core/models/users.py:309
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
-#: ephios/core/models/users.py:258
+#: ephios/core/models/users.py:319
 msgid "Qualification grant"
 msgstr "Qualifikationserteilung"
 
-#: ephios/core/models/users.py:274 ephios/core/models/users.py:382
+#: ephios/core/models/users.py:335 ephios/core/models/users.py:443
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
-#: ephios/core/models/users.py:280
+#: ephios/core/models/users.py:341
 msgid "needs confirmation"
 msgstr "benötigt Bestätigung"
 
-#: ephios/core/models/users.py:281
+#: ephios/core/models/users.py:342
 msgid "executed"
 msgstr "ausgeführt"
 
-#: ephios/core/models/users.py:282
+#: ephios/core/models/users.py:343
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: ephios/core/models/users.py:283
+#: ephios/core/models/users.py:344
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:289
+#: ephios/core/models/users.py:350
 msgid "State"
 msgstr "Status"
 
-#: ephios/core/models/users.py:294
+#: ephios/core/models/users.py:355
 msgid "Consequence"
 msgstr "Konsequenz"
 
-#: ephios/core/models/users.py:310
+#: ephios/core/models/users.py:371
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: ephios/core/models/users.py:324
+#: ephios/core/models/users.py:385
 msgid "Reason"
 msgstr "Anlass"
 
-#: ephios/core/models/users.py:338
+#: ephios/core/models/users.py:399
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
@@ -730,91 +735,91 @@ msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 msgid "Signup Method '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: ephios/core/signup/methods.py:208
+#: ephios/core/signup/methods.py:197
 #, python-brace-format
 msgid "'{choice}' is not a valid signup action."
 msgstr "'{choice}' ist keinen gültige Anmeldeaktion."
 
-#: ephios/core/signup/methods.py:239
+#: ephios/core/signup/methods.py:228
 msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
-#: ephios/core/signup/methods.py:246
+#: ephios/core/signup/methods.py:235
 msgid "You have already requested a participation."
 msgstr "Sie haben bereits eine Teilnahme angefragt."
 
-#: ephios/core/signup/methods.py:248
+#: ephios/core/signup/methods.py:237
 msgid "You are already signed up."
 msgstr "Sie sind bereits eingeteilt."
 
-#: ephios/core/signup/methods.py:250 ephios/core/signup/methods.py:262
+#: ephios/core/signup/methods.py:239 ephios/core/signup/methods.py:251
 msgid "You have been rejected."
 msgstr "Ihre Teilnahme wurde abgelehnt."
 
-#: ephios/core/signup/methods.py:260
+#: ephios/core/signup/methods.py:249
 msgid "You cannot decline by yourself."
 msgstr "Sie können sich nicht selbstständig abmelden."
 
-#: ephios/core/signup/methods.py:264
+#: ephios/core/signup/methods.py:253
 msgid "You have already declined participating."
 msgstr "Sie haben bereits abgesagt."
 
-#: ephios/core/signup/methods.py:272
+#: ephios/core/signup/methods.py:261
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: ephios/core/signup/methods.py:281
+#: ephios/core/signup/methods.py:270
 #, python-brace-format
 msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
-#: ephios/core/signup/methods.py:295
+#: ephios/core/signup/methods.py:284
 msgid "You are already confirmed for another shift at this time."
 msgstr ""
 "Sie sind zu dieser Zeit bereits für eine andere Schicht verbindlich "
 "eingeteilt."
 
-#: ephios/core/signup/methods.py:328
+#: ephios/core/signup/methods.py:317
 msgid "Sign up"
 msgstr "Anmelden"
 
-#: ephios/core/signup/methods.py:329
+#: ephios/core/signup/methods.py:318
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: ephios/core/signup/methods.py:330
+#: ephios/core/signup/methods.py:319
 #, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
-#: ephios/core/signup/methods.py:331
+#: ephios/core/signup/methods.py:320
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: ephios/core/signup/methods.py:332
+#: ephios/core/signup/methods.py:321
 #, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
 
-#: ephios/core/signup/methods.py:434
+#: ephios/core/signup/methods.py:424
 msgid "Minimum age"
 msgstr "Mindestalter"
 
-#: ephios/core/signup/methods.py:441
+#: ephios/core/signup/methods.py:431
 msgid "Signup until"
 msgstr "Anmelden bis"
 
-#: ephios/core/signup/methods.py:448
+#: ephios/core/signup/methods.py:438
 msgid "Confirmed users can decline by themselves"
 msgstr "Bestätigte Nutzer können selbstständig absagen"
 
-#: ephios/core/signup/methods.py:450
+#: ephios/core/signup/methods.py:440
 msgid "only if the signup timeframe has not ended"
 msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: ephios/core/signup/methods.py:453
+#: ephios/core/signup/methods.py:443
 msgid "Can decline after confirmation"
 msgstr "Kann nach Bestätigung absagen"
 
@@ -865,6 +870,7 @@ msgstr "Typ"
 #: ephios/core/templates/core/eventtype_list.html:10
 #: ephios/plugins/basesignup/signup/section_based.py:102
 #: ephios/plugins/pages/templates/pages/page_list.html:10
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:28
 msgid "Title"
 msgstr "Titel"
 
@@ -878,6 +884,7 @@ msgstr "bis"
 #: ephios/core/templates/core/group_list.html:21
 #: ephios/core/templates/core/userprofile_list.html:30
 #: ephios/plugins/pages/templates/pages/page_list.html:11
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:32
 msgid "Action"
 msgstr "Aktion"
 
@@ -905,6 +912,9 @@ msgstr "Möchten Sie die folgenden Veranstaltungen wirklich löschen?"
 #: ephios/core/templates/core/userprofile_confirm_delete.html:18
 #: ephios/core/templates/core/userprofile_confirm_password_reset.html:19
 #: ephios/plugins/pages/templates/pages/page_confirm_delete.html:18
+#: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:20
+#: ephios/plugins/qualification_management/templates/core/qualification_form.html:26
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:85
 msgid "Back"
 msgstr "Zurück"
 
@@ -924,6 +934,11 @@ msgstr "Zurück"
 #: ephios/core/templates/core/userprofile_list.html:52
 #: ephios/plugins/pages/templates/pages/page_confirm_delete.html:19
 #: ephios/plugins/pages/templates/pages/page_list.html:27
+#: ephios/plugins/qualification_management/forms.py:170
+#: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:21
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:59
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:36
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:72
 msgid "Delete"
 msgstr "Löschen"
 
@@ -1095,6 +1110,7 @@ msgstr "Veranstaltungstyp hinzufügen"
 #: ephios/core/templates/core/shift_form.html:64
 #: ephios/core/templates/core/userprofile_list.html:47
 #: ephios/plugins/pages/templates/pages/page_list.html:24
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:56
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1125,7 +1141,6 @@ msgstr "Schicht"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:5
 #, python-format
-#| msgid "%(count)s elements"
 msgctxt "signup stats"
 msgid "%(count)s missing"
 msgid_plural "%(count)s missing"
@@ -1134,7 +1149,6 @@ msgstr[1] "%(count)s fehlen"
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:14
 #, python-format
-#| msgid "%(count)s elements"
 msgctxt "signup stats"
 msgid "%(count)s open"
 msgid_plural "%(count)s open"
@@ -1378,6 +1392,7 @@ msgstr "Telefonnummer"
 
 #: ephios/core/templates/core/userprofile_detail.html:33
 #: ephios/core/templates/core/userprofile_form.html:34
+#: ephios/plugins/qualification_management/signals.py:15
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
@@ -1421,13 +1436,13 @@ msgstr "Stunden"
 msgid "Total"
 msgstr "Summe"
 
-#: ephios/core/templates/core/userprofile_form.html:11
-#: ephios/core/templates/core/userprofile_form.html:20
+#: ephios/core/templates/core/userprofile_form.html:12
+#: ephios/core/templates/core/userprofile_form.html:21
 msgid "Edit user"
 msgstr "Benutzer bearbeiten"
 
-#: ephios/core/templates/core/userprofile_form.html:13
-#: ephios/core/templates/core/userprofile_form.html:22
+#: ephios/core/templates/core/userprofile_form.html:14
+#: ephios/core/templates/core/userprofile_form.html:23
 msgid "Add new user"
 msgstr "Neuen Benutzer anlegen"
 
@@ -1493,35 +1508,35 @@ msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 msgid "The user {name} ({user}) was deleted."
 msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
-#: ephios/core/views/accounts.py:184
+#: ephios/core/views/accounts.py:183
 #, python-brace-format
 msgid "The user's password has been reset. An email was sent to {email}."
 msgstr ""
 "Das Account-Passwort wurde zurückgesetzt. Eine Nachricht wurde an {email} "
 "geschickt."
 
-#: ephios/core/views/accounts.py:193
+#: ephios/core/views/accounts.py:190
 #, python-brace-format
 msgid "No valid email address ({email}). The password has not been reset."
 msgstr ""
 "Keine valide E-Mail-Adresse ({email}). Das Passwort wurde nicht "
 "zurückgesetzt."
 
-#: ephios/core/views/accounts.py:204
+#: ephios/core/views/accounts.py:200
 msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/accounts.py:233
+#: ephios/core/views/accounts.py:229
 #, python-brace-format
 msgid "Group \"{group}\" created successfully."
 msgstr "Gruppe \"{group}\" erfolgreich erstellt."
 
-#: ephios/core/views/accounts.py:246
+#: ephios/core/views/accounts.py:242
 #, python-brace-format
 msgid "Group \"{group}\" updated successfully."
 msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 
-#: ephios/core/views/accounts.py:257
+#: ephios/core/views/accounts.py:253
 #, python-brace-format
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
@@ -1538,16 +1553,16 @@ msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: ephios/core/views/event.py:179 ephios/core/views/shift.py:81
+#: ephios/core/views/event.py:180 ephios/core/views/shift.py:83
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:277
+#: ephios/core/views/event.py:278
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:330
+#: ephios/core/views/event.py:331
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -1578,7 +1593,7 @@ msgstr "%(value)s hat keine Einträge."
 msgid "Acting User"
 msgstr "Handelnder Benutzer"
 
-#: ephios/core/views/log.py:40
+#: ephios/core/views/log.py:38
 msgid "Contents"
 msgstr "Inhalte"
 
@@ -1594,22 +1609,22 @@ msgstr "Veranstaltungstypen"
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/shift.py:48
+#: ephios/core/views/shift.py:50
 msgid "You must enable plugins providing signup methods to continue."
 msgstr ""
 "Um fortzufahren, müssen Sie Plugins aktivieren, die Anmeldeverfahren "
 "bereitstellen."
 
-#: ephios/core/views/shift.py:143
+#: ephios/core/views/shift.py:151
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: ephios/core/views/shift.py:164
+#: ephios/core/views/shift.py:172
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: ephios/core/views/shift.py:169
+#: ephios/core/views/shift.py:177
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -1617,53 +1632,25 @@ msgstr "Die Schicht wurde gelöscht."
 msgid "close"
 msgstr "schließen"
 
-#: ephios/extra/management/commands/setupdata.py:74
+#: ephios/extra/management/commands/devdata.py:27
 msgid "Volunteers"
 msgstr "Helfer"
 
-#: ephios/extra/management/commands/setupdata.py:78
+#: ephios/extra/management/commands/devdata.py:31
 msgid "Planners"
 msgstr "Planer"
 
-#: ephios/extra/management/commands/setupdata.py:82
+#: ephios/extra/management/commands/devdata.py:35
 msgid "Managers"
 msgstr "Manager"
 
-#: ephios/extra/management/commands/setupdata.py:99
+#: ephios/extra/management/commands/devdata.py:52
 msgid "Service"
 msgstr "Dienst"
 
-#: ephios/extra/management/commands/setupdata.py:100
+#: ephios/extra/management/commands/devdata.py:53
 msgid "Training"
 msgstr "Ausbildung"
-
-#: ephios/extra/management/commands/setupdata.py:143
-msgid "Medical"
-msgstr "Medizinisch"
-
-#: ephios/extra/management/commands/setupdata.py:219
-msgid "License"
-msgstr "Führerschein"
-
-#: ephios/extra/management/commands/setupdata.py:363
-msgid "Diving"
-msgstr "Tauchen"
-
-#: ephios/extra/management/commands/setupdata.py:399
-msgid "Boats (DLRG)"
-msgstr "Bootsführerscheine (DLRG)"
-
-#: ephios/extra/management/commands/setupdata.py:416
-msgid "DRSA"
-msgstr "DRSA"
-
-#: ephios/extra/management/commands/setupdata.py:441
-msgid "Water rescue (DLRG)"
-msgstr "Wasserrettung (DLRG)"
-
-#: ephios/extra/management/commands/setupdata.py:466
-msgid "Radio"
-msgstr "Funk"
 
 #: ephios/modellogging/models.py:47
 msgid "Log entry"
@@ -1726,42 +1713,62 @@ msgstr "Grundlegende Anmeldeverfahren"
 msgid "This plugins adds basic signup methods."
 msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
-#: ephios/plugins/basesignup/signup/common.py:32
+#: ephios/plugins/basesignup/signup/common.py:36
 msgid "The maximum number of participants is reached."
 msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
-#: ephios/plugins/basesignup/signup/common.py:63
+#: ephios/plugins/basesignup/signup/common.py:67
 #, python-brace-format
 msgid "{min} to {max}"
 msgstr "{min} bis {max}"
 
-#: ephios/plugins/basesignup/signup/common.py:65
+#: ephios/plugins/basesignup/signup/common.py:69
 #, python-brace-format
 msgid "at least {min}"
 msgstr "mindestens {min}"
 
-#: ephios/plugins/basesignup/signup/common.py:66
+#: ephios/plugins/basesignup/signup/common.py:70
 #, python-brace-format
 msgid "at most {max}"
 msgstr "höchstens {max}"
 
-#: ephios/plugins/basesignup/signup/common.py:71
+#: ephios/plugins/basesignup/signup/common.py:75
 msgid "Required number of participants"
 msgstr "Erforderliche Anzahl von Teilnehmenden"
 
-#: ephios/plugins/basesignup/signup/common.py:90
+#: ephios/plugins/basesignup/signup/common.py:94
 #: ephios/plugins/basesignup/signup/section_based.py:302
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
-#: ephios/plugins/basesignup/signup/common.py:98
+#: ephios/plugins/basesignup/signup/common.py:102
 #: ephios/plugins/basesignup/signup/section_based.py:104
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/basesignup/signup/common.py:104
+#: ephios/plugins/basesignup/signup/common.py:108
 msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:16
+#, fuzzy
+#| msgid "Add another shift"
+msgid "coupled to another shift"
+msgstr "Weitere Schicht hinzufügen"
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:17
+msgid "This method mirrors signup from another shift."
+msgstr ""
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:24
+msgid "shift to mirror participation from"
+msgstr ""
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:53
+#, fuzzy
+#| msgid "Participation confirmed for {event}"
+msgid "Participation is coupled to {}."
+msgstr "Teilnahme bestätigt für {event}"
 
 #: ephios/plugins/basesignup/signup/instant.py:10
 msgid "Instant Confirmation"
@@ -1777,6 +1784,26 @@ msgstr ""
 msgctxt "signup button text"
 msgid "Participate"
 msgstr "Teilnehmen"
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:11
+msgid "No Signup (only disposition)"
+msgstr ""
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:12
+msgid "This method allows no signup by users."
+msgstr ""
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:19
+#, fuzzy
+#| msgid "location"
+msgid "Explanation"
+msgstr "Ort"
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:35
+#, fuzzy
+#| msgid "You can not sign up for this shift."
+msgid "Signup for this shift is disabled."
+msgstr "Sie können sich für diese Schicht nicht anmelden."
 
 #: ephios/plugins/basesignup/signup/request_confirm.py:9
 msgid "Request and confirm"
@@ -1882,6 +1909,8 @@ msgid "Total"
 msgstr "Gesamt"
 
 #: ephios/plugins/basesignup/templates/basesignup/participation_card_inline.html:13
+#: ephios/plugins/qualification_management/forms.py:60
+#: ephios/plugins/qualification_management/forms.py:61
 msgid "none"
 msgstr "keine"
 
@@ -1926,39 +1955,39 @@ msgstr ""
 "Sie haben nicht die Berechtigung, Qualifikationen zu erteilen, sodass Sie "
 "diese Einstellungen nicht bearbeiten können."
 
-#: ephios/plugins/eventautoqualification/models.py:15
+#: ephios/plugins/eventautoqualification/models.py:16
 msgid "Qualification"
 msgstr "Qualifikation"
 
-#: ephios/plugins/eventautoqualification/models.py:17
+#: ephios/plugins/eventautoqualification/models.py:18
 msgid "Expiration date"
 msgstr "Ablaufdatum"
 
-#: ephios/plugins/eventautoqualification/models.py:20
+#: ephios/plugins/eventautoqualification/models.py:21
 msgid "any shift"
 msgstr "irgendeine Schicht"
 
-#: ephios/plugins/eventautoqualification/models.py:21
+#: ephios/plugins/eventautoqualification/models.py:22
 msgid "every shift"
 msgstr "jede Schicht"
 
-#: ephios/plugins/eventautoqualification/models.py:22
+#: ephios/plugins/eventautoqualification/models.py:23
 msgid "last shift"
 msgstr "letzte Schicht"
 
-#: ephios/plugins/eventautoqualification/models.py:27
+#: ephios/plugins/eventautoqualification/models.py:28
 msgid "Required attendance"
 msgstr "Erforderliche Anwesenheit"
 
-#: ephios/plugins/eventautoqualification/models.py:31
+#: ephios/plugins/eventautoqualification/models.py:32
 msgid "Only extend or reactivate existing qualification"
 msgstr "nur bereits vorhandene Qualifikationen reaktivieren oder verlängern"
 
-#: ephios/plugins/eventautoqualification/models.py:34
+#: ephios/plugins/eventautoqualification/models.py:35
 msgid "Qualification must be confirmed afterwards"
 msgstr "Qualifikation muss im Nachhinein bestätigt werden"
 
-#: ephios/plugins/eventautoqualification/models.py:41
+#: ephios/plugins/eventautoqualification/models.py:42
 msgid "event auto qualification configuration"
 msgstr "Veranstaltungs-Autoqualifikations-Konfiguration"
 
@@ -2074,6 +2103,258 @@ msgstr "Seite gespeichert."
 #: ephios/plugins/pages/views.py:51
 msgid "Page deleted successfully."
 msgstr "Seite erfolgreich gelöscht."
+
+#: ephios/plugins/qualification_management/apps.py:10
+#, fuzzy
+#| msgid "Qualification grant"
+msgid "Qualification Management"
+msgstr "Qualifikationserteilung"
+
+#: ephios/plugins/qualification_management/apps.py:12
+msgid "This plugins lets you add and edit qualifications."
+msgstr ""
+
+#: ephios/plugins/qualification_management/dynamic_preferences_registry.py:15
+#, fuzzy
+#| msgid "qualification tracks"
+msgid "List of qualification repositories"
+msgstr "Qualifikationskategorien"
+
+#: ephios/plugins/qualification_management/dynamic_preferences_registry.py:16
+msgid "To use multiple repositories, put URLs in separate lines."
+msgstr ""
+
+#: ephios/plugins/qualification_management/dynamic_preferences_registry.py:26
+#, python-brace-format
+msgid "'{url}' does not look like a repo url."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:32
+msgid ""
+"Used to identify qualifications accross the ephios ecosystem. Only change if "
+"you know what you are doing."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:39
+msgid "Maintain transitive inclusion"
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:44
+#, fuzzy
+#| msgid "can grant qualification"
+msgid "Migrate users to other qualification"
+msgstr "Kann Qualifikation gewähren"
+
+#: ephios/plugins/qualification_management/forms.py:58
+#, python-brace-format
+msgid ""
+"If checked, superior qualifications ({superior}) will include inferior "
+"({inferior}) qualifications."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:68
+msgid ""
+"Select qualifications to apply to users with the qualification about to be "
+"deleted. Expiration dates will be kept."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:74
+#, python-brace-format
+msgid "There is {count} user with this qualification."
+msgid_plural "There are {count} users with this qualification."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ephios/plugins/qualification_management/forms.py:187
+#, fuzzy
+#| msgid "can grant qualification"
+msgid "current qualifications"
+msgstr "Kann Qualifikation gewähren"
+
+#: ephios/plugins/qualification_management/forms.py:189
+msgid "Only users with all these qualifications will be selected."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:193
+#, fuzzy
+#| msgid "qualification tracks"
+msgid "qualification to assign"
+msgstr "Qualifikationskategorien"
+
+#: ephios/plugins/qualification_management/forms.py:198
+msgid "expires"
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:202
+msgid ""
+"If empty, the new qualification will not expire. This will only be applied "
+"if a user does not already have the target qualification."
+msgstr ""
+
+#: ephios/plugins/qualification_management/forms.py:211
+#, fuzzy
+#| msgid "Add section"
+msgid "User selection"
+msgstr "Abschnitt hinzufügen"
+
+#: ephios/plugins/qualification_management/forms.py:213
+#, fuzzy
+#| msgid "qualification"
+msgid "New qualification"
+msgstr "Qualifikation"
+
+#: ephios/plugins/qualification_management/forms.py:218
+#, fuzzy
+#| msgid "executed"
+msgid "Execute"
+msgstr "ausgeführt"
+
+#: ephios/plugins/qualification_management/templates/core/import.html:8
+#, fuzzy
+#| msgid "Qualification grant"
+msgid "Qualification import"
+msgstr "Qualifikationserteilung"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:7
+#: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:12
+#, fuzzy
+#| msgid "qualification"
+msgid "Delete qualification"
+msgstr "Qualifikation"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:16
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "            Are you sure you want to delete the page \"%(title)s\"?\n"
+#| "        "
+msgid ""
+"\n"
+"            Are you sure you want to delete the qualification \"%(title)s"
+"\"?\n"
+"        "
+msgstr ""
+"\n"
+"            Sind sie sicher, dass Sie die Seite \"%(title)s\" löschen "
+"möchten?\n"
+"        "
+
+#: ephios/plugins/qualification_management/templates/core/qualification_form.html:8
+#, fuzzy
+#| msgid "Add qualification"
+msgid "Edit qualification"
+msgstr "Qualifikation hinzufügen"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_form.html:10
+#, fuzzy
+#| msgid "can grant qualification"
+msgid "Create new qualification"
+msgstr "Kann Qualifikation gewähren"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_form.html:16
+msgid ""
+"\n"
+"                This qualification was imported. We advise to not change the "
+"UUID and meaning of this qualification.\n"
+"            "
+msgstr ""
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:8
+msgid "Import"
+msgstr ""
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:12
+#, fuzzy
+#| msgid "Automatic qualification"
+msgid "Create custom qualification"
+msgstr "Automatische Qualifikation"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:16
+#, fuzzy
+#| msgid "Managers"
+msgid "Manage categories"
+msgstr "Manager"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:20
+#, fuzzy
+#| msgid "qualifications"
+msgid "Reassign qualifications"
+msgstr "Qualifikationen"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:23
+#, fuzzy
+#| msgid "qualifications"
+msgid "All qualifications"
+msgstr "Qualifikationen"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
+msgid "Abbreviation"
+msgstr ""
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:30
+#, fuzzy
+#| msgid "category"
+msgid "Category"
+msgstr "Kategorie"
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:31
+msgid "Includes"
+msgstr ""
+
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:41
+msgid "custom"
+msgstr ""
+
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:9
+#, fuzzy
+#| msgid "qualification tracks"
+msgid "Edit qualification categories"
+msgstr "Qualifikationskategorien"
+
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:39
+#, fuzzy
+#| msgid "can grant qualification"
+msgid "cannot delete, has qualifications"
+msgstr "Kann Qualifikation gewähren"
+
+#: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:52
+#, fuzzy
+#| msgid "category"
+msgid "Add category"
+msgstr "Kategorie"
+
+#: ephios/plugins/qualification_management/views.py:45
+msgid ""
+"There was an error fetching one of the qualification repos. Check the URLs, "
+"try again or contact support."
+msgstr ""
+
+#: ephios/plugins/qualification_management/views.py:67
+#: ephios/plugins/qualification_management/views.py:76
+#, fuzzy
+#| msgid "Qualifications"
+msgid "Qualification was saved."
+msgstr "Qualifikationen"
+
+#: ephios/plugins/qualification_management/views.py:86
+#, fuzzy
+#| msgid "Qualification grant"
+msgid "Qualification was deleted."
+msgstr "Qualifikationserteilung"
+
+#: ephios/plugins/qualification_management/views.py:103
+#, fuzzy
+#| msgid "Qualification grant"
+msgid "Qualification categories saved."
+msgstr "Qualifikationserteilung"
+
+#: ephios/plugins/qualification_management/views.py:117
+#, fuzzy, python-brace-format
+#| msgid "{user} acquires '{qualification}'."
+msgid "One user had '{qualification}' assigned."
+msgid_plural "{count} users had '{qualification}' assigned."
+msgstr[0] "{user} erhält die Qualifikation '{qualification}'."
+msgstr[1] "{user} erhält die Qualifikation '{qualification}'."
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
@@ -2224,6 +2505,27 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Medical"
+#~ msgstr "Medizinisch"
+
+#~ msgid "License"
+#~ msgstr "Führerschein"
+
+#~ msgid "Diving"
+#~ msgstr "Tauchen"
+
+#~ msgid "Boats (DLRG)"
+#~ msgstr "Bootsführerscheine (DLRG)"
+
+#~ msgid "DRSA"
+#~ msgstr "DRSA"
+
+#~ msgid "Water rescue (DLRG)"
+#~ msgstr "Wasserrettung (DLRG)"
+
+#~ msgid "Radio"
+#~ msgstr "Funk"
 
 #~ msgid "missing"
 #~ msgstr "fehlen"

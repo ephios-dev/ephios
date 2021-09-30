@@ -17,9 +17,9 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
             "no_selfservice_explanation": {
                 "formfield": forms.CharField(
                     label=_("Explanation"),
-                    required=True,
+                    required=False,
                 ),
-                "default": _("Signup for this shift is disabled."),
+                "default": "",
             },
         }
 
@@ -30,7 +30,10 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
 
     @staticmethod
     def signup_is_disabled(method, participant):
-        return ParticipationError(method.configuration.no_selfservice_explanation)
+        return ParticipationError(
+            method.configuration.no_selfservice_explanation
+            or _("Signup for this shift is disabled.")
+        )
 
     @property
     def _signup_checkers(self):
