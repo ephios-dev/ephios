@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-09-30 21:56+0200\n"
-"PO-Revision-Date: 2021-09-30 20:44+0000\n"
+"PO-Revision-Date: 2021-09-30 21:07+0000\n"
 "Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
@@ -2168,7 +2168,7 @@ msgstr "Nur Nutzer mit all diesen Qualifikationen werden ausgewählt."
 
 #: ephios/plugins/qualification_management/forms.py:193
 msgid "qualification to assign"
-msgstr "Neue Qualifikationen"
+msgstr "Zielqualifikation"
 
 #: ephios/plugins/qualification_management/forms.py:198
 msgid "expires"
