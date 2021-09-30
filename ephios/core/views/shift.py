@@ -72,9 +72,6 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             shift.event = self.event
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
-            shift.refresh_from_db(
-                fields=["signup_configuration"]
-            )  # get the configuration in the serialized/deserialized form
             if "addAnother" in self.request.POST:
                 return redirect(
                     reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})
