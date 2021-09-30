@@ -28,7 +28,7 @@
             {% trans "Save" as save_trans %}
             <form method='POST' class='form' action='{% url "core:event_activate" event.pk %}'>
                 {% csrf_token %}
-                {% render_alert not_active_error|add:"<button type='submit' class='btn btn-primary'>"|add:save_trans|add:"</button>"|safe "warning" %}
+                {% render_alert not_active_error|add:"<button type='submit' class='btn btn-primary ms-3'>"|add:save_trans|add:"</button>"|safe "warning" %}
             </form>
         {% else %}
             {% trans "This event has not been saved! Please add a shift to save this event." as no_shift_error %}

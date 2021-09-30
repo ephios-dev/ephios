@@ -6,7 +6,7 @@ from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.plugins.basesignup.signup.coupled_signup import CoupledSignupMethod
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def create_coupled_shift(event, tz):
     leader_shift_id = event.shifts.first().id
 
