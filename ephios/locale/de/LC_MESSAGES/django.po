@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-09-30 21:56+0200\n"
-"PO-Revision-Date: 2021-09-30 20:42+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"PO-Revision-Date: 2021-09-30 20:44+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -2179,8 +2179,8 @@ msgid ""
 "If empty, the new qualification will not expire. This will only be applied "
 "if a user does not already have the target qualification."
 msgstr ""
-"Wenn leer, wird die neue Qualifikation nicht ablaufen. Das gilt nur, wenn "
-"der Nutzer die Zielqualifikation nicht bereits hat."
+"Wenn leer, wird die Zielqualifikation nicht ablaufen. Das gilt nur, wenn der "
+"Nutzer die Zielqualifikation nicht bereits hat."
 
 #: ephios/plugins/qualification_management/forms.py:211
 msgid "User selection"
@@ -2188,7 +2188,7 @@ msgstr "Nutzerauswahl"
 
 #: ephios/plugins/qualification_management/forms.py:213
 msgid "New qualification"
-msgstr "Neue Qualifikation"
+msgstr "Zielqualifikation"
 
 #: ephios/plugins/qualification_management/forms.py:218
 msgid "Execute"
