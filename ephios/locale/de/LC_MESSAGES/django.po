@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2021-09-30 21:56+0200\n"
-"PO-Revision-Date: 2021-08-03 14:24+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2021-09-30 20:44+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: ephios/core/consequences.py:35
 #, python-brace-format
@@ -456,7 +456,7 @@ msgstr "Kategorie"
 
 #: ephios/core/models/users.py:236
 msgid "imported"
-msgstr ""
+msgstr "importiert"
 
 #: ephios/core/models/users.py:247 ephios/core/models/users.py:300
 msgid "qualification"
@@ -1751,24 +1751,20 @@ msgid "Required Qualification"
 msgstr "Erforderliche Qualifikation"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:16
-#, fuzzy
-#| msgid "Add another shift"
 msgid "coupled to another shift"
-msgstr "Weitere Schicht hinzufügen"
+msgstr "an andere Schicht gekoppelt"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:17
 msgid "This method mirrors signup from another shift."
-msgstr ""
+msgstr "Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:24
 msgid "shift to mirror participation from"
-msgstr ""
+msgstr "Teilnahmen werden gespiegelt von"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:53
-#, fuzzy
-#| msgid "Participation confirmed for {event}"
 msgid "Participation is coupled to {}."
-msgstr "Teilnahme bestätigt für {event}"
+msgstr "Teilnahme ist gekoppelt an {}."
 
 #: ephios/plugins/basesignup/signup/instant.py:10
 msgid "Instant Confirmation"
@@ -1787,23 +1783,19 @@ msgstr "Teilnehmen"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:11
 msgid "No Signup (only disposition)"
-msgstr ""
+msgstr "Keine Anmeldung (nur Disposition)"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:12
 msgid "This method allows no signup by users."
-msgstr ""
+msgstr "Dieses Anmeldeverfahren erlaubt keine Anmeldung durch Benutzer."
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:19
-#, fuzzy
-#| msgid "location"
 msgid "Explanation"
-msgstr "Ort"
+msgstr "Begründung"
 
 #: ephios/plugins/basesignup/signup/no_selfservice.py:35
-#, fuzzy
-#| msgid "You can not sign up for this shift."
 msgid "Signup for this shift is disabled."
-msgstr "Sie können sich für diese Schicht nicht anmelden."
+msgstr "Die Anmeldung für diese Schicht ist deaktiviert."
 
 #: ephios/plugins/basesignup/signup/request_confirm.py:9
 msgid "Request and confirm"
@@ -2105,45 +2097,42 @@ msgid "Page deleted successfully."
 msgstr "Seite erfolgreich gelöscht."
 
 #: ephios/plugins/qualification_management/apps.py:10
-#, fuzzy
-#| msgid "Qualification grant"
 msgid "Qualification Management"
-msgstr "Qualifikationserteilung"
+msgstr "Qualifikationsverwaltung"
 
 #: ephios/plugins/qualification_management/apps.py:12
 msgid "This plugins lets you add and edit qualifications."
 msgstr ""
+"Dieses Plugin ermöglicht das Hinzufügen und Verwalten von Qualifikationen."
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:15
-#, fuzzy
-#| msgid "qualification tracks"
 msgid "List of qualification repositories"
-msgstr "Qualifikationskategorien"
+msgstr "Liste der Qualifikationsrepositories"
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:16
 msgid "To use multiple repositories, put URLs in separate lines."
-msgstr ""
+msgstr "URLs durch Zeilenumbruch trennen um mehrere Repositories zu verwenden."
 
 #: ephios/plugins/qualification_management/dynamic_preferences_registry.py:26
 #, python-brace-format
 msgid "'{url}' does not look like a repo url."
-msgstr ""
+msgstr "'{url}' scheint keine Repository-URL zu sein."
 
 #: ephios/plugins/qualification_management/forms.py:32
 msgid ""
 "Used to identify qualifications accross the ephios ecosystem. Only change if "
 "you know what you are doing."
 msgstr ""
+"Wird benötigt, um Qualifikationen im ephios-Ökosystem zu identifizieren. "
+"Bitte nur ändern, wenn Sie die Konsequenz der Änderung verstehen."
 
 #: ephios/plugins/qualification_management/forms.py:39
 msgid "Maintain transitive inclusion"
-msgstr ""
+msgstr "Transitive Inklusion beibehalten"
 
 #: ephios/plugins/qualification_management/forms.py:44
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "Migrate users to other qualification"
-msgstr "Kann Qualifikation gewähren"
+msgstr "Benutzer zu einer anderen Qualifikation migrieren"
 
 #: ephios/plugins/qualification_management/forms.py:58
 #, python-brace-format
@@ -2151,83 +2140,71 @@ msgid ""
 "If checked, superior qualifications ({superior}) will include inferior "
 "({inferior}) qualifications."
 msgstr ""
+"Falls der Haken gesetzt ist beinhalten die übergeordneten Qualifikationen "
+"({superior}) die untergeordneten Qualifikationen ({inferior})."
 
 #: ephios/plugins/qualification_management/forms.py:68
 msgid ""
 "Select qualifications to apply to users with the qualification about to be "
 "deleted. Expiration dates will be kept."
 msgstr ""
+"Wählen Sie Qualifikationen aus, die Nutzern mit der zu löschenden "
+"Qualifikation erteilt werden soll. Ablaufdaten werden beibehalten."
 
 #: ephios/plugins/qualification_management/forms.py:74
 #, python-brace-format
 msgid "There is {count} user with this qualification."
 msgid_plural "There are {count} users with this qualification."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Es gibt {count} Nutzer mit dieser Qualifikation."
+msgstr[1] "Es gibt {count} Nutzer mit dieser Qualifikation."
 
 #: ephios/plugins/qualification_management/forms.py:187
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "current qualifications"
-msgstr "Kann Qualifikation gewähren"
+msgstr "momentane Qualifikationen"
 
 #: ephios/plugins/qualification_management/forms.py:189
 msgid "Only users with all these qualifications will be selected."
-msgstr ""
+msgstr "Nur Nutzer mit all diesen Qualifikationen werden ausgewählt."
 
 #: ephios/plugins/qualification_management/forms.py:193
-#, fuzzy
-#| msgid "qualification tracks"
 msgid "qualification to assign"
-msgstr "Qualifikationskategorien"
+msgstr "Neue Qualifikationen"
 
 #: ephios/plugins/qualification_management/forms.py:198
 msgid "expires"
-msgstr ""
+msgstr "Ablaufdatum"
 
 #: ephios/plugins/qualification_management/forms.py:202
 msgid ""
 "If empty, the new qualification will not expire. This will only be applied "
 "if a user does not already have the target qualification."
 msgstr ""
+"Wenn leer, wird die Zielqualifikation nicht ablaufen. Das gilt nur, wenn der "
+"Nutzer die Zielqualifikation nicht bereits hat."
 
 #: ephios/plugins/qualification_management/forms.py:211
-#, fuzzy
-#| msgid "Add section"
 msgid "User selection"
-msgstr "Abschnitt hinzufügen"
+msgstr "Nutzerauswahl"
 
 #: ephios/plugins/qualification_management/forms.py:213
-#, fuzzy
-#| msgid "qualification"
 msgid "New qualification"
-msgstr "Qualifikation"
+msgstr "Zielqualifikation"
 
 #: ephios/plugins/qualification_management/forms.py:218
-#, fuzzy
-#| msgid "executed"
 msgid "Execute"
-msgstr "ausgeführt"
+msgstr "Ausführen"
 
 #: ephios/plugins/qualification_management/templates/core/import.html:8
-#, fuzzy
-#| msgid "Qualification grant"
 msgid "Qualification import"
-msgstr "Qualifikationserteilung"
+msgstr "Qualifikationsimport"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:7
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:12
-#, fuzzy
-#| msgid "qualification"
 msgid "Delete qualification"
-msgstr "Qualifikation"
+msgstr "Qualifikation löschen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:16
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            Are you sure you want to delete the page \"%(title)s\"?\n"
-#| "        "
+#, python-format
 msgid ""
 "\n"
 "            Are you sure you want to delete the qualification \"%(title)s"
@@ -2235,21 +2212,17 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"            Sind sie sicher, dass Sie die Seite \"%(title)s\" löschen "
-"möchten?\n"
+"            Sind sie sicher, dass Sie die Qualifikation \"%(title)s\" "
+"löschen möchten?\n"
 "        "
 
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:8
-#, fuzzy
-#| msgid "Add qualification"
 msgid "Edit qualification"
-msgstr "Qualifikation hinzufügen"
+msgstr "Qualifikation bearbeiten"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:10
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "Create new qualification"
-msgstr "Kann Qualifikation gewähren"
+msgstr "Qualifikation hinzufügen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:16
 msgid ""
@@ -2258,103 +2231,86 @@ msgid ""
 "UUID and meaning of this qualification.\n"
 "            "
 msgstr ""
+"\n"
+"                Diese Qualifikation wurde importiert. Wir empfehlen, die "
+"UUID und Bedeutung dieser Qualifikation nicht zu ändern.\n"
+"            "
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:8
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:12
-#, fuzzy
-#| msgid "Automatic qualification"
 msgid "Create custom qualification"
-msgstr "Automatische Qualifikation"
+msgstr "Benutzerdefinierte Qualifikation hinzufügen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:16
-#, fuzzy
-#| msgid "Managers"
 msgid "Manage categories"
-msgstr "Manager"
+msgstr "Kategorien bearbeiten"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:20
-#, fuzzy
-#| msgid "qualifications"
 msgid "Reassign qualifications"
-msgstr "Qualifikationen"
+msgstr "Qualifikationen neu zuweisen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:23
-#, fuzzy
-#| msgid "qualifications"
 msgid "All qualifications"
-msgstr "Qualifikationen"
+msgstr "Alle Qualifikationen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
 msgid "Abbreviation"
-msgstr ""
+msgstr "Abkürzung"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:30
-#, fuzzy
-#| msgid "category"
 msgid "Category"
 msgstr "Kategorie"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:31
 msgid "Includes"
-msgstr ""
+msgstr "Enthaltene"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:41
 msgid "custom"
-msgstr ""
+msgstr "benutzerdefiniert"
 
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:9
-#, fuzzy
-#| msgid "qualification tracks"
 msgid "Edit qualification categories"
-msgstr "Qualifikationskategorien"
+msgstr "Qualifikationskategorien bearbeiten"
 
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:39
-#, fuzzy
-#| msgid "can grant qualification"
 msgid "cannot delete, has qualifications"
-msgstr "Kann Qualifikation gewähren"
+msgstr "kann nicht löschen, hat Qualifikationen"
 
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:52
-#, fuzzy
-#| msgid "category"
 msgid "Add category"
-msgstr "Kategorie"
+msgstr "Kategorie hinzufügen"
 
 #: ephios/plugins/qualification_management/views.py:45
 msgid ""
 "There was an error fetching one of the qualification repos. Check the URLs, "
 "try again or contact support."
 msgstr ""
+"Beim Holen der Qualifikations-Repositories trat ein Fehler auf. Prüfen Sie "
+"die URLs, versuchen Sie es erneut oder wenden Sie sich an den support."
 
 #: ephios/plugins/qualification_management/views.py:67
 #: ephios/plugins/qualification_management/views.py:76
-#, fuzzy
-#| msgid "Qualifications"
 msgid "Qualification was saved."
-msgstr "Qualifikationen"
+msgstr "Qualifikation wurde gespeichert."
 
 #: ephios/plugins/qualification_management/views.py:86
-#, fuzzy
-#| msgid "Qualification grant"
 msgid "Qualification was deleted."
-msgstr "Qualifikationserteilung"
+msgstr "Qualifikation wurde gelöscht."
 
 #: ephios/plugins/qualification_management/views.py:103
-#, fuzzy
-#| msgid "Qualification grant"
 msgid "Qualification categories saved."
-msgstr "Qualifikationserteilung"
+msgstr "Qualifikationskategorien wurden gespeichert."
 
 #: ephios/plugins/qualification_management/views.py:117
-#, fuzzy, python-brace-format
-#| msgid "{user} acquires '{qualification}'."
+#, python-brace-format
 msgid "One user had '{qualification}' assigned."
 msgid_plural "{count} users had '{qualification}' assigned."
-msgstr[0] "{user} erhält die Qualifikation '{qualification}'."
-msgstr[1] "{user} erhält die Qualifikation '{qualification}'."
+msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
+msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
