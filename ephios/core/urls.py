@@ -124,7 +124,7 @@ urlpatterns = [
         name="shift_delete",
     ),
     path(
-        "signup_methods/<slug:slug>/configuration_form/",
+        "signup_method_configuration_form/<int:event_id>/<slug:slug>/",
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
     ),
