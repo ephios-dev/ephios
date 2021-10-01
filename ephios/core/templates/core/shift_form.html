@@ -82,6 +82,8 @@
         </div>
     </div>
     <script type="application/json" id="configuration_form_url">{"url": "{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}"}</script>
-    <script type="text/javascript" src="{% static "ephios/js/shift_form.js" %}"></script>
+{% endblock %}
 
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/shift_form.js" %}"></script>
 {% endblock %}
