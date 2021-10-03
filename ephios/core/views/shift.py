@@ -88,7 +88,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
 
 
 class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
-    model = Event
+    queryset = Event.all_objects
     permission_required = "core.change_event"
     pk_url_kwarg = "event_id"
 
