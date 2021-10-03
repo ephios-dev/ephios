@@ -18,11 +18,13 @@ from django.db.models import (
     SlugField,
     TextField,
 )
+from django.db.models.functions import Coalesce
 from django.utils import formats
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
+from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
@@ -138,6 +140,18 @@ class Event(Model):
 register_model_for_logging(Event, ModelFieldsLogConfig())
 
 
+class ParticipationManager(PolymorphicManager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                start_time=Coalesce("individual_start_time", "shift__start_time"),
+                end_time=Coalesce("individual_end_time", "shift__end_time"),
+            )
+        )
+
+
 class AbstractParticipation(PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
@@ -157,10 +171,18 @@ class AbstractParticipation(PolymorphicModel):
     data = models.JSONField(default=dict, verbose_name=_("Signup data"))
 
     """
+    Overwrites shift time. Use `start_time` and `end_time` to get the applicable time (implemented with a custom manager).
+    """
+    individual_start_time = DateTimeField(_("start time"), null=True)
+    individual_end_time = DateTimeField(_("end time"), null=True)
+
+    """
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
     """
     finished = models.BooleanField(default=False, verbose_name=_("finished"))
+
+    objects = ParticipationManager()
 
     @property
     def hours_value(self):
