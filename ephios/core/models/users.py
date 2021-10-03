@@ -155,13 +155,16 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 hours=ExpressionWrapper(
-                    (
-                        F("shift__end_time") - F("shift__start_time")
-                    ),  # calculate length of shift in μs
-                    output_field=models.IntegerField(),
-                )
-                / 1000000
-                / 3600,  # convert microseconds to seconds to hours
+                    ExpressionWrapper(
+                        (
+                            F("shift__end_time") - F("shift__start_time")
+                        ),  # calculate length of shift in μs
+                        output_field=models.DecimalField(),
+                    )
+                    / 1000000.0
+                    / 3600.0,  # convert microseconds to seconds to hours
+                    output_field=models.DecimalField(),
+                ),
                 date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )

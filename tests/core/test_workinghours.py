@@ -14,3 +14,12 @@ class TestWorkingHours:
         assert response.html.find(text=workinghours[1].reason)
         total_hours = workinghours[0].hours + workinghours[1].hours
         assert response.html.find(text=f"{floatformat(total_hours, arg=2)} hours")
+
+    def test_workinghour_rounding(self, django_app, volunteer, event):
+        from ephios.core.models import AbstractParticipation, LocalParticipation
+
+        LocalParticipation.objects.create(
+            user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+        )
+        hour_sum, workinghour_list = volunteer.get_workhour_items()
+        assert hour_sum == 12.5
