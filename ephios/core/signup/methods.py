@@ -390,9 +390,13 @@ class BaseSignupMethod:
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        participation = self._configure_participation(
-            self.get_participation_for(participant), **kwargs
-        )
+        participation = self.get_participation_for(participant)
+
+        for attr in ("start_time", "end_time"):
+            if attr in kwargs:
+                setattr(participation, f"individual_{attr}", kwargs.pop(attr))
+
+        participation = self._configure_participation(participation, **kwargs)
         participation.save()
         ResponsibleParticipationRequested.send(participation)
         return participation
@@ -533,7 +537,7 @@ class SignupStats:
     max_count: Optional[int]  # None means infinite max
 
     @classproperty
-    def ZERO(self):
+    def ZERO(cls):  # pylint: disable=no-self-argument
         return SignupStats(
             requested_count=0,
             confirmed_count=0,
