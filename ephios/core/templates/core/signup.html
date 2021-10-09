@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% translate "Signup" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ view.shift }}</h1>
+    </div>
+
+    {% crispy form %}
+{% endblock %}

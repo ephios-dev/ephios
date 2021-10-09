@@ -11,7 +11,6 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
@@ -152,7 +151,7 @@ class SectionSignupForm(forms.Form):
     )
 
 
-class SectionBasedSignupView(FormView, BaseSignupView):
+class SectionBasedSignupView(BaseSignupView):
     template_name = "basesignup/section_based/signup.html"
 
     @cached_property

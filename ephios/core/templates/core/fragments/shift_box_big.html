@@ -64,11 +64,17 @@
                         </div>
                     {% endif %}
                     {% if can_sign_up %}
-                        <span class="d-inline-block" tabindex="0">
-                            <button type="submit" name="signup_choice" value="sign_up" class="btn btn-success">
-                                    {{ shift.signup_method.registration_button_text }}
+                        <div class="btn-group">
+                            <button type="submit" name="signup_choice" value="sign_up" class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                            <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <span class="visually-hidden">{% translate "Toggle Dropdown" %}</span>
                             </button>
-                        </span>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a></li>
+                            </ul>
+                        </div>
                     {% endif %}
                     {% if can_decline %}
                         <span class="d-inline-block" tabindex="1">

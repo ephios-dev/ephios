@@ -49,8 +49,8 @@ def create_objects():
     assign_perm("auth.change_group", managers)
     assign_perm("auth.delete_group", managers)
 
-    service_type = EventType.objects.create(title=_("Service"), can_grant_qualification=False)
-    EventType.objects.create(title=_("Training"), can_grant_qualification=True)
+    service_type = EventType.objects.create(title=_("Service"))
+    EventType.objects.create(title=_("Training"))
 
     user = UserProfile(
         email="user@localhost",
