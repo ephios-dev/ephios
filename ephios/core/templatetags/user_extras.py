@@ -6,7 +6,7 @@ from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup import get_conflicting_participations
+from ephios.core.signup.methods import get_conflicting_participations
 
 register = template.Library()
 

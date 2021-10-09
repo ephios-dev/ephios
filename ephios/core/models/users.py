@@ -131,7 +131,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         return self.age < 18
 
     def as_participant(self):
-        from ephios.core.signup import LocalUserParticipant
+        from ephios.core.signup.participants import LocalUserParticipant
 
         return LocalUserParticipant(
             first_name=self.first_name,

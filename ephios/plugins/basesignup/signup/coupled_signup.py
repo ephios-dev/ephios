@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
 from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
 
 

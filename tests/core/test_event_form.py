@@ -3,7 +3,7 @@ from datetime import date, time
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.core.signup import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
 
 

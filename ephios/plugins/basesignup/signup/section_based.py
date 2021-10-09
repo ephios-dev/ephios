@@ -15,13 +15,13 @@ from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup import (
-    AbstractParticipant,
+from ephios.core.signup.methods import (
     BaseDispositionParticipationForm,
     BaseSignupMethod,
     BaseSignupView,
     ParticipationError,
 )
+from ephios.core.signup.participants import AbstractParticipant
 
 NO_SECTION_UUID = "other"
 

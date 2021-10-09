@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 
-from ephios.core.signup import register_signup_methods
+from ephios.core.signup.methods import register_signup_methods
 from ephios.plugins.basesignup.signup.coupled_signup import CoupledSignupMethod
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 from ephios.plugins.basesignup.signup.no_selfservice import NoSelfserviceSignupMethod

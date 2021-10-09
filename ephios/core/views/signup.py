@@ -2,14 +2,14 @@ from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.models import Shift
-from ephios.core.signup import get_nonlocal_participant_from_session
+from ephios.core.signup.methods import get_nonlocal_participant_from_request
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 def request_to_participant(request):
     if request.user.is_authenticated:
         return request.user.as_participant()
-    return get_nonlocal_participant_from_session(request)
+    return get_nonlocal_participant_from_request(request)
 
 
 class BaseShiftActionView(SingleObjectMixin, View):

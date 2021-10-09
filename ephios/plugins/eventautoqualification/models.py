@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import Event
+from ephios.core.models import Event, Qualification
 from ephios.core.models.users import ExpirationDateField
-from ephios.core.signup import Qualification
 from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
