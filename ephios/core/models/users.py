@@ -161,9 +161,9 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                         ),  # calculate length of shift in μs
                         output_field=models.IntegerField(),
                     )
-                    / 1000000.0
-                    / 3600.0,  # convert microseconds to seconds to hours
-                    output_field=models.DecimalField(),
+                    / float(1000000)
+                    / float(3600),  # convert microseconds to seconds to hours
+                    output_field=models.FloatField(),
                 ),
                 date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
@@ -172,7 +172,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         )
         workinghours = self.workinghours_set.all().values("hours", "date", "reason")
         hour_sum = (participation.aggregate(Sum("hours"))["hours__sum"] or 0) + (
-            workinghours.aggregate(Sum("hours"))["hours__sum"] or 0
+            float(workinghours.aggregate(Sum("hours"))["hours__sum"] or 0)
         )
         return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
 
