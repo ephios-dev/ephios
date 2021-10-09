@@ -221,7 +221,7 @@ class EventDuplicationForm(forms.Form):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ["title", "can_grant_qualification", "color"]
+        fields = ["title", "color"]
         widgets = {"color": ColorInput()}
 
     def clean_color(self):

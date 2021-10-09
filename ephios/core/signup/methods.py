@@ -6,6 +6,9 @@ from collections import OrderedDict
 from datetime import date
 from typing import List, Optional
 
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import HTML, Field, Layout
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -20,7 +23,7 @@ from django.utils import formats, timezone
 from django.utils.functional import SimpleLazyObject, cached_property, classproperty
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.views import View
+from django.views.generic import FormView
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
@@ -170,37 +173,82 @@ def get_nonlocal_participant_from_session(request):
     raise PermissionDenied
 
 
-class BaseSignupView(View):
+class BaseSignupForm(forms.Form):
+    start_time = forms.SplitDateTimeField(
+        label=_("Start time"), widget=CustomSplitDateTimeWidget, required=False
+    )
+    end_time = forms.SplitDateTimeField(
+        label=_("End time"),
+        widget=CustomSplitDateTimeWidget,
+        required=False,
+    )
+    comment = forms.CharField(label=_("Comment"), required=False)
+
+    def get_field_layout(self):
+        return Layout(*(Field(name) for name in self.fields))
+
+    def __init__(self, *args, **kwargs):
+        self.method = kwargs.pop("method")
+        self.participant: AbstractParticipant = kwargs.pop("participant")
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            self.get_field_layout(),
+            FormActions(
+                HTML(
+                    f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="sign_up">{self.method.registration_button_text}</button>'
+                ),
+                HTML(
+                    f'<a class="btn btn-secondary mt-1 float-end" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
+                ),
+                HTML(
+                    f'<button class="btn btn-secondary mt-1 me-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
+                ),
+            ),
+        )
+
+
+class BaseSignupView(FormView):
     """
     This View reacts to the signup or decline buttons being pressed using a POST request.
-    It can be modified to not directly create a participation, but show a form first, then
-    create the participation.
-
     Beware that request.user might be anonymous. You should only act on participants acquired
     using `get_participant`.
     """
 
     shift: Shift = ...
     method: "BaseSignupMethod" = ...
+    form_class = BaseSignupForm
+    template_name = "core/signup.html"
+
+    def get_initial(self):
+        return {
+            "start_time": self.shift.start_time,
+            "end_time": self.shift.end_time,
+        }
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"method": self.method, "participant": self.participant})
+        return kwargs
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.participant: AbstractParticipant = kwargs["participant"]
         prevent_getting_participant_from_request_user(request)
 
-    def dispatch(self, request, *args, **kwargs):
-        if (choice := request.POST.get("signup_choice")) is not None:
+    def form_valid(self, form):
+        if (choice := self.request.POST.get("signup_choice")) is not None:
             if choice == "sign_up":
-                return self.signup_pressed()
+                return self.signup_pressed(form)
             if choice == "decline":
-                return self.decline_pressed()
-            raise ValueError(_("'{choice}' is not a valid signup action.").format(choice=choice))
-        return super().dispatch(request, *args, **kwargs)
+                return self.decline_pressed(form)
+        return self.form_invalid(form)
 
-    def signup_pressed(self, **signup_kwargs):
+    def signup_pressed(self, form):
         try:
             with transaction.atomic():
-                self.method.perform_signup(self.participant, **signup_kwargs)
+                self.method.perform_signup(self.participant, **form.cleaned_data)
                 messages.success(
                     self.request,
                     self.method.signup_success_message.format(shift=self.shift),
@@ -210,10 +258,10 @@ class BaseSignupView(View):
                 messages.error(self.request, self.method.signup_error_message.format(error=error))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
-    def decline_pressed(self, **decline_kwargs):
+    def decline_pressed(self, form):
         try:
             with transaction.atomic():
-                self.method.perform_decline(self.participant, **decline_kwargs)
+                self.method.perform_decline(self.participant, **form.cleaned_data)
                 messages.info(
                     self.request, self.method.decline_success_message.format(shift=self.shift)
                 )

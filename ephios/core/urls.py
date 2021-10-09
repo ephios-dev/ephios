@@ -110,7 +110,7 @@ urlpatterns = [
         name="event_bulk_delete",
     ),
     path(
-        "shifts/<int:pk>/signup-action/",
+        "shifts/<int:pk>/signup/",
         LocalUserShiftActionView.as_view(),
         name="signup_action",
     ),

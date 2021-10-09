@@ -120,7 +120,7 @@ def responsible_user():
 
 @pytest.fixture
 def service_event_type():
-    return EventType.objects.create(title="Service", can_grant_qualification=False)
+    return EventType.objects.create(title="Service")
 
 
 @pytest.fixture
