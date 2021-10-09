@@ -33,7 +33,8 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup import AbstractParticipant, SignupStats
+    from ephios.core.signup import SignupStats
+    from ephios.core.signup.participants import AbstractParticipant
 
 
 class ActiveManager(Manager):
@@ -103,7 +104,7 @@ class Event(Model):
 
     def get_signup_stats(self) -> "SignupStats":
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
-        from ephios.core.signup import SignupStats
+        from ephios.core.signup.methods import SignupStats
 
         default_for_no_shifts = SignupStats.ZERO
 
@@ -228,7 +229,7 @@ class Shift(Model):
 
     @property
     def signup_method(self):
-        from ephios.core.signup import signup_method_from_slug
+        from ephios.core.signup.methods import signup_method_from_slug
 
         try:
             return signup_method_from_slug(self.signup_method_slug, self)
@@ -310,7 +311,7 @@ class PlaceholderParticipation(AbstractParticipation):
     @property
     def participant(self) -> "AbstractParticipant":
         from ephios.core.models.users import Qualification
-        from ephios.core.signup.methods import PlaceholderParticipant
+        from ephios.core.signup.participants import PlaceholderParticipant
 
         return PlaceholderParticipant(
             first_name=self.first_name,

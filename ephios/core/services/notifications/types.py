@@ -13,7 +13,7 @@ from guardian.shortcuts import get_users_with_perms
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
-from ephios.core.signup import LocalUserParticipant
+from ephios.core.signup.participants import LocalUserParticipant
 
 
 def installed_notification_types():

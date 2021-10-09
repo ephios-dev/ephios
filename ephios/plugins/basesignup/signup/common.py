@@ -9,7 +9,7 @@ from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
 
 _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 

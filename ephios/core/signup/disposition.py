@@ -148,7 +148,7 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
 
     def post(self, request, *args, **kwargs):
         shift = self.object
-        from ephios.core.signup import PlaceholderParticipant
+        from ephios.core.signup.participants import PlaceholderParticipant
 
         participant = PlaceholderParticipant(
             first_name=request.POST["first_name"],

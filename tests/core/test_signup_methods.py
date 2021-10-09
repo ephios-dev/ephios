@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import pytest
 from django.utils.timezone import make_aware
 
-from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup import LocalParticipation, SignupStats, get_conflicting_participations
+from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
+from ephios.core.signup.methods import SignupStats, get_conflicting_participations
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 
