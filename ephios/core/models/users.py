@@ -1,3 +1,4 @@
+import datetime
 import functools
 import secrets
 import uuid
@@ -151,27 +152,27 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     def get_workhour_items(self):
         from ephios.core.models import AbstractParticipation
 
-        participation = (
+        participations = (
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
-                hours=ExpressionWrapper(
-                    (
-                        F("shift__end_time") - F("shift__start_time")
-                    ),  # calculate length of shift in μs
-                    output_field=models.IntegerField(),
-                )
-                / 1000000
-                / 3600,  # convert microseconds to seconds to hours
+                duration=ExpressionWrapper(
+                    (F("shift__end_time") - F("shift__start_time")),
+                    output_field=models.DurationField(),
+                ),
                 date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
-            .values("hours", "date", "reason")
+            .values("duration", "date", "reason")
         )
-        workinghours = self.workinghours_set.all().values("hours", "date", "reason")
-        hour_sum = (participation.aggregate(Sum("hours"))["hours__sum"] or 0) + (
-            workinghours.aggregate(Sum("hours"))["hours__sum"] or 0
+        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
+            "duration", "date", "reason"
         )
-        return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
+        hour_sum = (
+            participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
+        ) + datetime.timedelta(
+            hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
+        )
+        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
 
 
 register_model_for_logging(
