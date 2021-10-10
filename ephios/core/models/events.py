@@ -235,7 +235,7 @@ class Shift(Model):
         from ephios.core.signup.methods import signup_method_from_slug
 
         try:
-            return signup_method_from_slug(self.signup_method_slug, self)
+            return signup_method_from_slug(self.signup_method_slug, self, event=self.event)
         except ValueError:
             return None
 
@@ -268,13 +268,17 @@ class ShiftLogConfig(ModelFieldsLogConfig):
     def initial_log_recorders(self, instance):
         # pylint: disable=undefined-variable
         yield from super().initial_log_recorders(instance)
-        yield DerivedFieldsLogRecorder(
-            lambda shift: {
-                _("Signup method"): str(method.verbose_name)
-                if (method := shift.signup_method)
-                else None
-            }
-        )
+
+        def get_signup_method_name_mapping(shift):
+            from ephios.core.signup.methods import installed_signup_methods
+
+            v = None
+            for method in installed_signup_methods():
+                if method.slug == shift.signup_method_slug:
+                    v = str(method.verbose_name)
+            return {_("Signup method"): v}
+
+        yield DerivedFieldsLogRecorder(get_signup_method_name_mapping)
 
 
 register_model_for_logging(Shift, ShiftLogConfig())
