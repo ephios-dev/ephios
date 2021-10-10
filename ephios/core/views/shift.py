@@ -132,9 +132,9 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-        try:
-            from ephios.core.signup import signup_method_from_slug
+        from ephios.core.signup.methods import signup_method_from_slug
 
+        try:
             signup_method = signup_method_from_slug(
                 self.request.POST["signup_method_slug"], shift=self.object
             )

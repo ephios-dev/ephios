@@ -38,6 +38,11 @@ def can_sign_up(request, shift):
     return shift.signup_method.can_sign_up(request_to_participant(request))
 
 
+@register.filter(name="can_customize_signup")
+def can_sign_up(request, shift):
+    return shift.signup_method.can_customize_signup(request_to_participant(request))
+
+
 @register.filter(name="render_shift_state")
 def render_shift_state(request, shift):
     return shift.signup_method.render_shift_state(request)

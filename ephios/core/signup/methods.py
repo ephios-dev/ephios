@@ -83,25 +83,41 @@ class BaseSignupForm(forms.Form):
     def get_field_layout(self):
         return Layout(*(Field(name) for name in self.fields))
 
+    def _get_main_submit_label(self):
+        if (p := self.participant.participation_for(self.method.shift)) is not None and p.state in (
+            AbstractParticipation.States.REQUESTED,
+            AbstractParticipation.States.CONFIRMED,
+        ):
+            return _("Save")
+        return self.method.registration_button_text
+
+    def _get_buttons(self):
+        buttons = [
+            HTML(
+                f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="sign_up">{self._get_main_submit_label()}</button>'
+            ),
+            HTML(
+                f'<a class="btn btn-secondary mt-1 float-end" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
+            ),
+        ]
+        if self.method.can_decline(self.participant):
+            buttons.append(
+                HTML(
+                    f'<button class="btn btn-secondary mt-1 me-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
+                )
+            )
+        return buttons
+
     def __init__(self, *args, **kwargs):
         self.method = kwargs.pop("method")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+
         self.helper.layout = Layout(
             self.get_field_layout(),
-            FormActions(
-                HTML(
-                    f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="sign_up">{self.method.registration_button_text}</button>'
-                ),
-                HTML(
-                    f'<a class="btn btn-secondary mt-1 float-end" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
-                ),
-                HTML(
-                    f'<button class="btn btn-secondary mt-1 me-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
-                ),
-            ),
+            FormActions(*self._get_buttons()),
         )
 
 
@@ -175,10 +191,6 @@ def check_event_is_active(method, participant):
 def check_participation_state_for_signup(method, participant):
     participation = participant.participation_for(method.shift)
     if participation is not None:
-        if participation.state == AbstractParticipation.States.REQUESTED:
-            return ParticipationError(_("You have already requested a participation."))
-        if participation.state == AbstractParticipation.States.CONFIRMED:
-            return ParticipationError(_("You are already signed up."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
             return ParticipationError(_("You have been rejected."))
 
@@ -224,7 +236,7 @@ def get_conflicting_participations(shift, participant):
 
 
 def check_conflicting_shifts(method, participant):
-    if get_conflicting_participations(method.shift, participant).exists():
+    if get_conflicting_participations(method.shift, participant).exists():  # TODO
         return ParticipationError(_("You are already confirmed for another shift at this time."))
 
 
@@ -315,10 +327,36 @@ class BaseSignupMethod:
         ]
 
     def can_decline(self, participant):
+        """
+        Return whether the participant is allowed to decline.
+        """
         return not self.get_decline_errors(participant)
 
     def can_sign_up(self, participant):
-        return not self.get_signup_errors(participant)
+        """
+        Return whether the participant is allowed to perform signup.
+        Note that this should also return True for participants allowed to customize their participation.
+        """
+        valid_state = (p := participant.participation_for(self.shift)) is None or p.state not in (
+            AbstractParticipation.States.CONFIRMED,
+            AbstractParticipation.States.REQUESTED,
+        )
+        return valid_state and not self.get_signup_errors(participant)
+
+    def can_customize_signup(self, participant):
+        """
+        Return whether the participant gets shown the option to customize their participation.
+        """
+        # We check for decline as well in case the participation is already requested/confirmed.
+        declineable_state = (
+            p := participant.participation_for(self.shift)
+        ) is not None and p.state in (
+            AbstractParticipation.States.CONFIRMED,
+            AbstractParticipation.States.REQUESTED,
+        )
+        return not self.get_signup_errors(participant) and (
+            not declineable_state or self.can_decline(participant)
+        )
 
     def get_participation_for(self, participant):
         return participant.participation_for(self.shift) or participant.new_participation(
