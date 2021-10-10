@@ -176,6 +176,9 @@ class AbstractParticipation(PolymorphicModel):
     individual_start_time = DateTimeField(_("start time"), null=True)
     individual_end_time = DateTimeField(_("end time"), null=True)
 
+    # human readable comment
+    comment = models.CharField(_("Comment"), max_length=255, blank=True)
+
     """
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
