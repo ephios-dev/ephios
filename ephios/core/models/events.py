@@ -173,8 +173,8 @@ class AbstractParticipation(PolymorphicModel):
     """
     Overwrites shift time. Use `start_time` and `end_time` to get the applicable time (implemented with a custom manager).
     """
-    individual_start_time = DateTimeField(_("start time"), null=True)
-    individual_end_time = DateTimeField(_("end time"), null=True)
+    individual_start_time = DateTimeField(_("individual start time"), null=True)
+    individual_end_time = DateTimeField(_("individual end time"), null=True)
 
     # human readable comment
     comment = models.CharField(_("Comment"), max_length=255, blank=True)
