@@ -173,7 +173,7 @@ def event(groups, service_event_type, planner, tz):
         event=event,
         meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
         start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
+        end_time=datetime(2099, 6, 30, 20, 30).astimezone(tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
