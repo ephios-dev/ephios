@@ -16,7 +16,7 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     )
 
     response = django_app.get(event.get_absolute_url(), user=volunteer)
-    assert "already requested" in response
+    assert "mannequin_requested" in response
 
     # confirm the participation as planner
     response = django_app.get(
