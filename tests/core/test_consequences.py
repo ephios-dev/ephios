@@ -90,7 +90,9 @@ class TestWorkingHourConsequence:
     def test_confirm_workinghours(self, volunteer, superuser, workinghours_consequence):
         assert volunteer.get_workhour_items()[0] == datetime.timedelta(0)
         workinghours_consequence.confirm(superuser)
-        assert volunteer.get_workhour_items()[0] == workinghours_consequence.data.get("duration")
+        assert volunteer.get_workhour_items()[0] == datetime.timedelta(
+            hours=workinghours_consequence.data.get("hours")
+        )
 
     def test_consequence_to_decide_appears(self, groups, manager, workinghours_consequence):
         assert workinghours_consequence in editable_consequences(manager)
