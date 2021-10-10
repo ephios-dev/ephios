@@ -167,7 +167,7 @@ class AbstractParticipation(PolymorphicModel):
     shift = ForeignKey(
         "Shift", on_delete=models.CASCADE, verbose_name=_("shift"), related_name="participations"
     )
-    state = IntegerField(_("state"), choices=States.choices)
+    state = IntegerField(_("state"), choices=States.choices, default=States.GETTING_DISPATCHED)
     data = models.JSONField(default=dict, verbose_name=_("Signup data"))
 
     """
@@ -235,7 +235,11 @@ class Shift(Model):
         from ephios.core.signup.methods import signup_method_from_slug
 
         try:
-            return signup_method_from_slug(self.signup_method_slug, self, event=self.event)
+            event = self.event
+        except Event.DoesNotExist:
+            event = None
+        try:
+            return signup_method_from_slug(self.signup_method_slug, self, event=event)
         except ValueError:
             return None
 
