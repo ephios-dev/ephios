@@ -79,6 +79,9 @@ class BaseSignupForm(forms.ModelForm):
         required=False,
     )
 
+    # TODO: Logging
+    # TODO: validation (time subset of shift time etc?!)
+
     class Meta:
         model = AbstractParticipation
         fields = ["individual_start_time", "individual_end_time", "comment"]
@@ -159,17 +162,16 @@ class BaseSignupView(FormView):
     def form_valid(self, form):
         if (choice := self.request.POST.get("signup_choice")) is not None:
             if choice == "sign_up":
-                form.save()
-                return self.signup_pressed(**form.cleaned_data)
+                return self.signup_pressed(form)
             if choice == "decline":
-                form.save()
-                return self.decline_pressed(**form.cleaned_data)
+                return self.decline_pressed(form)
         return self.form_invalid(form)
 
-    def signup_pressed(self, **signup_kwargs):
+    def signup_pressed(self, form):
         try:
             with transaction.atomic():
-                self.method.perform_signup(self.participant, **signup_kwargs)
+                form.save()
+                self.method.perform_signup(self.participant, **form.cleaned_data)
                 messages.success(
                     self.request,
                     self.method.signup_success_message.format(shift=self.shift),
@@ -179,10 +181,11 @@ class BaseSignupView(FormView):
                 messages.error(self.request, self.method.signup_error_message.format(error=error))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
-    def decline_pressed(self, **signup_kwargs):
+    def decline_pressed(self, form):
         try:
             with transaction.atomic():
-                self.method.perform_decline(self.participant, **signup_kwargs)
+                form.save()
+                self.method.perform_decline(self.participant, **form.cleaned_data)
                 messages.info(
                     self.request, self.method.decline_success_message.format(shift=self.shift)
                 )
