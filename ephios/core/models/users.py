@@ -162,11 +162,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
-            .values("hours", "date", "reason")
+            .values("duration", "date", "reason")
         )
         workinghours = self.workinghours_set.all().values("hours", "date", "reason")
         hour_sum = (participation.aggregate(Sum("duration"))["duration__sum"] or 0) + (
-            datetime.timedelta(hours=float(workinghours.aggregate(Sum("hours"))["hours__sum"]) or 0)
+            datetime.timedelta(hours=float(workinghours.aggregate(Sum("hours"))["hours__sum"] or 0))
         )
         return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
 
