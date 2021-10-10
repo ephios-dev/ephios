@@ -23,7 +23,7 @@ from django.db.models import (
     Q,
     Sum,
 )
-from django.db.models.functions import TruncDate
+from django.db.models.functions import Cast, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -152,7 +152,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     def get_workhour_items(self):
         from ephios.core.models import AbstractParticipation
 
-        participation = (
+        participations = (
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 duration=ExpressionWrapper(
@@ -164,11 +164,16 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             )
             .values("duration", "date", "reason")
         )
-        workinghours = self.workinghours_set.all().values("hours", "date", "reason")
-        hour_sum = (participation.aggregate(Sum("duration"))["duration__sum"] or 0) + (
-            datetime.timedelta(hours=float(workinghours.aggregate(Sum("hours"))["hours__sum"] or 0))
-        )
-        return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
+        workinghours = self.workinghours_set.annotate(
+            duration=ExpressionWrapper(
+                Cast("hours", output_field=models.DurationField()) * datetime.timedelta(hours=1),
+                output_field=models.DurationField(),
+            )
+        ).values("duration", "date", "reason")
+        hour_sum = (
+            participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
+        ) + (workinghours.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta())
+        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
 
 
 register_model_for_logging(

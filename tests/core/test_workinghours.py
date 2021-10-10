@@ -1,3 +1,5 @@
+import datetime
+
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 
@@ -22,4 +24,4 @@ class TestWorkingHours:
             user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
         )
         hour_sum, workinghour_list = volunteer.get_workhour_items()
-        assert hour_sum == 12.5
+        assert hour_sum == datetime.timedelta(hours=12.5)
