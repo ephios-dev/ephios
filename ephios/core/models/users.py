@@ -23,7 +23,7 @@ from django.db.models import (
     Q,
     Sum,
 )
-from django.db.models.functions import Cast, TruncDate
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -166,7 +166,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         )
         workinghours = self.workinghours_set.annotate(
             duration=ExpressionWrapper(
-                Cast("hours", output_field=models.DurationField()) * datetime.timedelta(hours=1),
+                F("hours") * datetime.timedelta(hours=1),
                 output_field=models.DurationField(),
             )
         ).values("duration", "date", "reason")
