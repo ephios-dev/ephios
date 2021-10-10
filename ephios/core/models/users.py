@@ -164,15 +164,16 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             )
             .values("duration", "date", "reason")
         )
-        workinghours = self.workinghours_set.annotate(
-            duration=ExpressionWrapper(
-                F("hours") * datetime.timedelta(hours=1),
-                output_field=models.DurationField(),
-            )
-        ).values("duration", "date", "reason")
+        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
+            "duration", "date", "reason"
+        )
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
-        ) + (workinghours.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta())
+        ) + (
+            datetime.timedelta(
+                hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"]) or 0
+            )
+        )
         return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
 
 

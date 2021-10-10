@@ -23,4 +23,8 @@ def _getattr(obj, key):
 
 @register.filter(name="timedelta_in_hours")
 def timedelta_in_hours(delta):
-    return floatformat(delta / datetime.timedelta(hours=1), 2)
+    return (
+        floatformat(delta / datetime.timedelta(hours=1), 2)
+        if isinstance(delta, datetime.timedelta)
+        else delta
+    )
