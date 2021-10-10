@@ -79,7 +79,6 @@ class BaseSignupForm(forms.ModelForm):
         required=False,
     )
 
-    # TODO: Logging
     # TODO: validation (time subset of shift time etc?!)
 
     class Meta:

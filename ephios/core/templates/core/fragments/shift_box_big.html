@@ -1,5 +1,5 @@
-{% load static %}
 {% load event_extras %}
+{% load static %}
 {% load i18n %}
 {% load humanize %}
 
@@ -67,22 +67,17 @@
                         <div class="btn-group">
                             <button type="submit" name="signup_choice" value="sign_up"
                                     class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
-                            <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                <span class="visually-hidden">{% translate "Toggle Dropdown" %}</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item"
-                                       href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
-                                </li>
-                            </ul>
+                            <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
+                                <i class="fas fa-cog"></i>
+                                <span class="visually-hidden">{% translate "Customize" %}</span>
+                            </a>
                         </div>
                     {% elif can_sign_up and not can_customize_signup %}
                         <button type="submit" name="signup_choice" value="sign_up"
                                 class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
                     {% elif not can_sign_up and can_customize_signup %}
-                        <a class="btn btn-secondary" href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
+                        <a class="btn btn-secondary"
+                           href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
                     {% endif %}
                     {% if can_decline %}
                         <span class="d-inline-block" tabindex="1">
