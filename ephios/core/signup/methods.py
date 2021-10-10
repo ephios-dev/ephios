@@ -69,16 +69,19 @@ def get_nonlocal_participant_from_request(request):
     raise PermissionDenied
 
 
-class BaseSignupForm(forms.Form):
-    start_time = forms.SplitDateTimeField(
+class BaseSignupForm(forms.ModelForm):
+    individual_start_time = forms.SplitDateTimeField(
         label=_("Start time"), widget=CustomSplitDateTimeWidget, required=False
     )
-    end_time = forms.SplitDateTimeField(
+    individual_end_time = forms.SplitDateTimeField(
         label=_("End time"),
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
-    comment = forms.CharField(label=_("Comment"), required=False)
+
+    class Meta:
+        model = AbstractParticipation
+        fields = ["individual_start_time", "individual_end_time", "comment"]
 
     def get_field_layout(self):
         return Layout(*(Field(name) for name in self.fields))
@@ -112,9 +115,7 @@ class BaseSignupForm(forms.Form):
         self.method = kwargs.pop("method")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
-
         self.helper.layout = Layout(
             self.get_field_layout(),
             FormActions(*self._get_buttons()),
@@ -135,13 +136,19 @@ class BaseSignupView(FormView):
 
     def get_initial(self):
         return {
-            "start_time": self.shift.start_time,
-            "end_time": self.shift.end_time,
+            "individual_start_time": self.shift.start_time,
+            "individual_end_time": self.shift.end_time,
         }
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs.update({"method": self.method, "participant": self.participant})
+        kwargs.update(
+            {
+                "method": self.method,
+                "participant": self.participant,
+                "instance": self.method.get_participation_for(self.participant),
+            }
+        )
         return kwargs
 
     def setup(self, request, *args, **kwargs):
@@ -152,8 +159,10 @@ class BaseSignupView(FormView):
     def form_valid(self, form):
         if (choice := self.request.POST.get("signup_choice")) is not None:
             if choice == "sign_up":
+                form.save()
                 return self.signup_pressed(**form.cleaned_data)
             if choice == "decline":
+                form.save()
                 return self.decline_pressed(**form.cleaned_data)
         return self.form_invalid(form)
 
@@ -373,11 +382,6 @@ class BaseSignupMethod:
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
         participation = self.get_participation_for(participant)
-
-        for attr in ("start_time", "end_time"):
-            if attr in kwargs:
-                setattr(participation, f"individual_{attr}", kwargs.pop(attr))
-
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
         ResponsibleParticipationRequested.send(participation)
