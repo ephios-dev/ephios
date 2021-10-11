@@ -218,7 +218,6 @@ if not DEBUG:
         },
     }
 
-
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
@@ -277,3 +276,25 @@ if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
         "VAPID_PRIVATE_KEY": vp,
         "VAPID_ADMIN_EMAIL": ADMINS[0][1],
     }
+
+# TODO remove recurrence, as it is unmaintained and incompatible to django 4.0
+import django.utils.translation
+
+django.utils.translation.ugettext = django.utils.translation.gettext
+django.utils.translation.ugettext_lazy = django.utils.translation.gettext_lazy
+
+# TODO compressor is broken
+django.utils.encoding.smart_text = django.utils.encoding.smart_str
+
+# TODO remove dynamic-preferences, because it's really buggy?!
+
+# TODO wait for https://github.com/django-polymorphic/django-polymorphic/pull/499 for django 4.0 compatibility
+import django.utils.encoding
+
+django.utils.encoding.force_text = django.utils.encoding.force_str
+
+# TODO django-webpush (GPL-licenced...) is also broken: https://github.com/safwanrahman/django-webpush/issues/101
+import django.conf.urls
+from django.urls import path
+
+django.conf.urls.url = path
