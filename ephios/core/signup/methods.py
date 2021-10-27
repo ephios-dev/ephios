@@ -25,7 +25,6 @@ from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 from ...extra.utils import format_anything
 from ..signals import participant_from_request, register_signup_methods
-from .disposition import BaseDispositionParticipationForm
 from .participants import AbstractParticipant
 
 logger = logging.getLogger(__name__)
@@ -69,7 +68,7 @@ def get_nonlocal_participant_from_request(request):
     raise PermissionDenied
 
 
-class BaseSignupForm(forms.ModelForm):
+class BaseParticipationForm(forms.ModelForm):
     individual_start_time = forms.SplitDateTimeField(
         label=_("Individual start time"), widget=CustomSplitDateTimeWidget, required=False
     )
@@ -81,12 +80,12 @@ class BaseSignupForm(forms.ModelForm):
 
     # TODO: any validation (time subset of shift time etc?!)
     def clean_individual_start_time(self):
-        if self.cleaned_data["individual_start_time"] == self.method.shift.start_time:
+        if self.cleaned_data["individual_start_time"] == self.shift.start_time:
             return None
         return self.cleaned_data["individual_start_time"]
 
     def clean_individual_end_time(self):
-        if self.cleaned_data["individual_end_time"] == self.method.shift.end_time:
+        if self.cleaned_data["individual_end_time"] == self.shift.end_time:
             return None
         return self.cleaned_data["individual_end_time"]
 
@@ -94,6 +93,8 @@ class BaseSignupForm(forms.ModelForm):
         model = AbstractParticipation
         fields = ["individual_start_time", "individual_end_time", "comment"]
 
+
+class BaseSignupForm(BaseParticipationForm):
     def get_field_layout(self):
         return Layout(*(Field(name) for name in self.fields))
 
@@ -124,6 +125,7 @@ class BaseSignupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.method = kwargs.pop("method")
+        self.shift = self.method.shift
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -261,7 +263,7 @@ def get_conflicting_participations(shift, participant: AbstractParticipant):
 
 
 def check_conflicting_shifts(method, participant):
-    if get_conflicting_participations(method.shift, participant).exists():  # TODO tests
+    if get_conflicting_participations(method.shift, participant).exists():
         return ParticipationError(_("You are already confirmed for another shift at this time."))
 
 
@@ -299,6 +301,8 @@ class BaseSignupMethod:
         This form will be used for participations in disposition.
         Set to None if you don't want to support the default disposition.
         """
+        from .disposition import BaseDispositionParticipationForm
+
         return BaseDispositionParticipationForm
 
     configuration_form_class = BaseSignupMethodConfigurationForm

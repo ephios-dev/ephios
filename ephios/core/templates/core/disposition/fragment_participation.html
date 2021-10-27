@@ -8,6 +8,8 @@
             <div class="col-10 pe-3">
                 {{ form.instance.participant.icon }}
                 {{ form.instance.participant }}
+                {{ form.individual_start_time }}
+                {{ form.individual_end_time }}
                 {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
                     {% if conflicting_shifts %}
                         <span class="fa fa-exclamation-triangle text-danger"
