@@ -165,10 +165,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 duration=ExpressionWrapper(
-                    (F("shift__end_time") - F("shift__start_time")),
+                    (F("end_time") - F("start_time")),
                     output_field=models.DurationField(),
                 ),
-                date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
+                date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
             .values("duration", "date", "reason")
