@@ -8,11 +8,18 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import ModelSelect2Widget
 
-from ephios.core.models import AbstractParticipation, Qualification, Shift, UserProfile
+from ephios.core.models import (
+    AbstractParticipation,
+    LocalParticipation,
+    Qualification,
+    Shift,
+    UserProfile,
+)
+from ephios.core.signup.methods import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
-class BaseDispositionParticipationForm(forms.ModelForm):
+class BaseDispositionParticipationForm(BaseParticipationForm):
     disposition_participation_template = "core/disposition/fragment_participation.html"
 
     def __init__(self, **kwargs):
@@ -23,9 +30,8 @@ class BaseDispositionParticipationForm(forms.ModelForm):
         except AttributeError as e:
             raise ValueError(f"{type(self)} must be initialized with an instance.") from e
 
-    class Meta:
-        model = AbstractParticipation
-        fields = ["state"]
+    class Meta(BaseParticipationForm.Meta):
+        fields = ["state", "individual_start_time", "individual_end_time", "comment"]
         widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
 
 
@@ -188,35 +194,30 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         return formset
 
     def post(self, request, *args, **kwargs):
+        from ephios.core.services.notifications.types import (
+            ParticipationConfirmedNotification,
+            ParticipationRejectedNotification,
+        )
+
         formset = self.get_formset()
-        if formset.is_valid():
-            formset.save()
+        if not formset.is_valid():
+            return self.get(request, *args, **kwargs, formset=formset)
 
-            for participation, changed_fields in formset.changed_objects:
-                from ephios.core.models import LocalParticipation
+        formset.save()
+        for participation, changed_fields in formset.changed_objects:
+            if "state" in changed_fields and (
+                not participation.get_real_instance_class() == LocalParticipation
+                or participation.user != request.user
+            ):
+                if participation.state == AbstractParticipation.States.CONFIRMED:
+                    ParticipationConfirmedNotification.send(participation)
+                elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                    ParticipationRejectedNotification.send(participation)
 
-                if "state" in changed_fields and (
-                    not participation.get_real_instance_class() == LocalParticipation
-                    or participation.user != request.user
-                ):
-                    if participation.state == AbstractParticipation.States.CONFIRMED:
-                        from ephios.core.services.notifications.types import (
-                            ParticipationConfirmedNotification,
-                        )
-
-                        ParticipationConfirmedNotification.send(participation)
-                    elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                        from ephios.core.services.notifications.types import (
-                            ParticipationRejectedNotification,
-                        )
-
-                        ParticipationRejectedNotification.send(participation)
-
-            self.object.participations.filter(
-                state=AbstractParticipation.States.GETTING_DISPATCHED
-            ).non_polymorphic().delete()
-            return redirect(self.object.event.get_absolute_url())
-        return self.get(request, *args, **kwargs, formset=formset)
+        self.object.participations.filter(
+            state=AbstractParticipation.States.GETTING_DISPATCHED
+        ).non_polymorphic().delete()
+        return redirect(self.object.event.get_absolute_url())
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault("formset", self.get_formset())
