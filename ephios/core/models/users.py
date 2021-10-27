@@ -79,9 +79,15 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
+class VisibleUserProfileManager(BaseUserManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_visible=True)
+
+
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
     is_active = BooleanField(default=True, verbose_name=_("Active"))
+    is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
@@ -96,12 +102,15 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "date_of_birth",
     ]
 
-    objects = UserProfileManager()
+    objects = VisibleUserProfileManager()
+    all_objects = UserProfileManager()
 
     class Meta:
         verbose_name = _("user profile")
         verbose_name_plural = _("user profiles")
         db_table = "userprofile"
+        base_manager_name = "all_objects"
+        default_manager_name = "all_objects"
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
