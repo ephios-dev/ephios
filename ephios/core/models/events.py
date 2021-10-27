@@ -187,6 +187,9 @@ class AbstractParticipation(PolymorphicModel):
 
     objects = ParticipationManager()
 
+    def has_customized_signup(self):
+        return bool(self.individual_start_time or self.individual_end_time or self.comment)
+
     @property
     def hours_value(self):
         td = self.shift.end_time - self.shift.start_time

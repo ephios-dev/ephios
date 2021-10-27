@@ -93,6 +93,16 @@ class BaseParticipationForm(forms.ModelForm):
         model = AbstractParticipation
         fields = ["individual_start_time", "individual_end_time", "comment"]
 
+    def __init__(self, *args, **kwargs):
+        instance = kwargs["instance"]
+        shift = getattr(self, "shift", instance.shift)
+        kwargs["initial"] = {
+            **kwargs.get("initial", {}),
+            "individual_start_time": instance.individual_start_time or shift.start_time,
+            "individual_end_time": instance.individual_end_time or shift.end_time,
+        }
+        super().__init__(*args, **kwargs)
+
 
 class BaseSignupForm(BaseParticipationForm):
     def get_field_layout(self):
@@ -149,17 +159,11 @@ class BaseSignupView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        instance = self.method.get_participation_for(self.participant)
-        initial = {
-            "individual_start_time": instance.individual_start_time or self.shift.start_time,
-            "individual_end_time": instance.individual_end_time or self.shift.end_time,
-        }
         kwargs.update(
             {
                 "method": self.method,
                 "participant": self.participant,
                 "instance": self.method.get_participation_for(self.participant),
-                "initial": initial,
             }
         )
         return kwargs

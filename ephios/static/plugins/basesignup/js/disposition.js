@@ -69,6 +69,8 @@ $(document).ready(function () {
             },
             sort: true,
             draggable: ".draggable",
+            filter: ".do-not-drag",
+            preventOnFilter: false,
             emptyInsertThreshold: 20,
             fallbackTolerance: 5,
             animation: 150,

@@ -1,15 +1,15 @@
 {% extends "core/disposition/base_participation.html" %}
+{% load crispy_forms_filters %}
 {% load user_extras %}
 {% load i18n %}
 
 {% block body %}
+
     <h6 class="mb-0">
-        <div class="row align-items-center no-gutters">
-            <div class="col-10 pe-3">
+        <div class="row align-items-start no-gutters">
+            <div class="col-10 pe-3 pt-2 pb-1">
                 {{ form.instance.participant.icon }}
                 {{ form.instance.participant }}
-                {{ form.individual_start_time }}
-                {{ form.individual_end_time }}
                 {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
                     {% if conflicting_shifts %}
                         <span class="fa fa-exclamation-triangle text-danger"
@@ -22,8 +22,26 @@
                 {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
                     <span class="badge bg-secondary text-dark">{{ qualification }}</span>
                 {% endfor %}
+                <div class="collapse mt-3 do-not-drag card bg-light" data-bs-parent="#participations-form" id="participation-collapse-{{ form.instance.id }}">
+                    <div class="card-body">
+                        {{ form.individual_start_time|as_crispy_field }}
+                        {{ form.individual_end_time|as_crispy_field }}
+                        {{ form.comment|as_crispy_field }}
+                    </div>
+                </div>
             </div>
             <div class="col-2 d-flex justify-content-between align-items-center">
+                <button class="btn" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
+                        aria-controls="collapseExample">
+                    <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
+                        <i class="fas fa-cog"></i>
+                        {% if form.instance.has_customized_signup %}
+                            <i class="fas fa-exclamation"></i>
+                        {% endif %}
+                    </span>
+                    <span class="visually-hidden">{% translate "Customize" %}</span>
+                </button>
                 {% if form.can_delete %}
                     <button type="button" class="btn float-end btn-sm ms-3" data-formset-delete-button>
                         <i class="fas fa-times"></i>
