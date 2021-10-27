@@ -17,5 +17,11 @@ def test_no_selfservice_renders(django_app, volunteer, event, no_selfservice_shi
 
 
 def test_no_selfservice_does_not_allow_signup(django_app, volunteer, event, no_selfservice_shift):
-    response = django_app.get(event.get_absolute_url(), user=volunteer)
-    response.form.submit(name="signup_choice", value="sign_up", status=405)  # method not allowed
+    event_detail = django_app.get(event.get_absolute_url(), user=volunteer)
+    # django webtest would ignore a `signup_choice` on the event_detail view, so we just get the default sign up view
+    signup_view = event_detail.form.submit()
+    # from there though, signup will not be possible
+    assert (
+        "Signup for this shift is disabled"
+        in signup_view.form.submit(name="signup_choice", value="sign_up").follow()
+    )

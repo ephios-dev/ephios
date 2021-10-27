@@ -189,13 +189,14 @@ class BaseSignupView(FormView):
             with transaction.atomic():
                 participation = form.save()
                 self.method.perform_signup(self.participant, participation, **form.cleaned_data)
-                messages.success(
-                    self.request,
-                    self.method.signup_success_message.format(shift=self.shift),
-                )
         except ParticipationError as errors:
             for error in errors:
                 messages.error(self.request, self.method.signup_error_message.format(error=error))
+        else:
+            messages.success(
+                self.request,
+                self.method.signup_success_message.format(shift=self.shift),
+            )
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     def decline_pressed(self, form):
@@ -203,12 +204,13 @@ class BaseSignupView(FormView):
             with transaction.atomic():
                 participation = form.save()
                 self.method.perform_decline(self.participant, participation, **form.cleaned_data)
-                messages.info(
-                    self.request, self.method.decline_success_message.format(shift=self.shift)
-                )
         except ParticipationError as errors:
             for error in errors:
                 messages.error(self.request, self.method.decline_error_message.format(error=error))
+        else:
+            messages.info(
+                self.request, self.method.decline_success_message.format(shift=self.shift)
+            )
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
 
