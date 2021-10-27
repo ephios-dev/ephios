@@ -12,6 +12,7 @@ from django.views.generic.detail import SingleObjectMixin
 from ephios.core import signup
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
+from ephios.core.signup.methods import signup_method_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -132,7 +133,6 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-        from ephios.core.signup.methods import signup_method_from_slug
 
         try:
             signup_method = signup_method_from_slug(
