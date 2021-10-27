@@ -43,6 +43,7 @@
                             </div>
                             <div data-formset-spawn class="list-group sortable-reject-put list-group-flush flex-grow-1"
                                  data-drop-to-state="{{ states.GETTING_DISPATCHED }}">
+
                                 {% for form in formset %}
                                     {% if form.instance.state == states.GETTING_DISPATCHED %}
                                         {% include participant_template %}
@@ -118,5 +119,6 @@
         </div>
         <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
     </form>
+
 
 {% endblock %}

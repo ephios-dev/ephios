@@ -8,7 +8,9 @@ function handleForms(elem) {
         new bootstrap.Popover(el, {
             html: true,
             content: function () {
-                return $(el.getAttribute("data-bs-content-ref")).html();
+                const query = el.getAttribute("data-bs-content-ref");
+                console.log(query);
+                return $(query).html();
             },
             title: function () {
                 return $(el.getAttribute("data-title-ref")).html();
