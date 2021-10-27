@@ -141,7 +141,7 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
             raise ValidationError(e) from e
-        if form.is_valid() and configuration_form.is_valid():
+        if all([form.is_valid(), configuration_form.is_valid()]):
             shift = form.save(commit=False)
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
