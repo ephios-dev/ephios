@@ -1,5 +1,4 @@
 import typing
-from collections import OrderedDict
 
 from django import forms
 from django.template.loader import get_template
@@ -41,39 +40,17 @@ class MinMaxParticipantsMixin(_Base):
             self.configuration.maximum_number_of_participants,
         )
 
-    def get_configuration_fields(self):
-        return OrderedDict(
-            {
-                **super().get_configuration_fields(),
-                "minimum_number_of_participants": {
-                    "formfield": forms.IntegerField(min_value=0, required=False),
-                    "default": None,
-                },
-                "maximum_number_of_participants": {
-                    "formfield": forms.IntegerField(min_value=1, required=False),
-                    "default": None,
-                },
-            }
-        )
+    @property
+    def configuration_form_class(self):
+        class ConfigurationForm(super().configuration_form_class):
+            minimum_number_of_participants = forms.IntegerField(
+                label=_("Minimum number of participants"), min_value=0, required=False
+            )
+            maximum_number_of_participants = forms.IntegerField(
+                label=_("Maximum number of participants"), min_value=1, required=False
+            )
 
-    def get_participation_number_info(self):
-        min_count = self.configuration.minimum_number_of_participants
-        max_count = self.configuration.maximum_number_of_participants
-        if min_count is None and max_count is None:
-            return None
-        if min_count == max_count:
-            return str(min_count)
-        if min_count is not None and max_count is not None:
-            return _("{min} to {max}").format(min=min_count, max=max_count)
-        if min_count is not None:
-            return _("at least {min}").format(min=min_count)
-        return _("at most {max}").format(max=max_count)
-
-    def get_signup_info(self):
-        infos = super().get_signup_info()
-        if number_info := self.get_participation_number_info():
-            infos[_("Required number of participants")] = number_info
-        return infos
+        return ConfigurationForm
 
 
 class QualificationsRequiredSignupMixin(_Base):
@@ -93,25 +70,24 @@ class QualificationsRequiredSignupMixin(_Base):
         if not participant.has_qualifications(method.configuration.required_qualifications):
             return ParticipationError(_("You are not qualified."))
 
-    def get_configuration_fields(self):
-        return OrderedDict(
-            {
-                **super().get_configuration_fields(),
-                "required_qualification_ids": {
-                    "formfield": forms.ModelMultipleChoiceField(
-                        label=_("Required Qualifications"),
-                        queryset=Qualification.objects.all(),
-                        widget=Select2MultipleWidget,
-                        required=False,
-                    ),
-                    "default": [],
-                    "publish_with_label": _("Required Qualification"),
-                    "format": lambda ids: ", ".join(
-                        Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
-                    ),
-                },
-            }
-        )
+    @property
+    def configuration_form_class(self):
+        class ConfigurationForm(super().configuration_form_class):
+            required_qualification_ids = forms.ModelMultipleChoiceField(
+                label=_("Required Qualifications"),
+                queryset=Qualification.objects.all(),
+                widget=Select2MultipleWidget,
+                required=False,
+                initial=[],
+            )
+
+            @staticmethod
+            def format_required_qualification_ids(ids):
+                return ", ".join(
+                    Qualification.objects.filter(id__in=ids).values_list("title", flat=True)
+                )
+
+        return ConfigurationForm
 
 
 def render_basic_participation_pills_shift_state(method, request, additional_context=None):

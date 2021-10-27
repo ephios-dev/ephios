@@ -118,7 +118,20 @@ SectionsFormset = forms.formset_factory(
 )
 
 
-class SectionBasedConfigurationForm(forms.Form):
+class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
+    choose_preferred_section = forms.BooleanField(
+        label=_("Ask participants for a preferred section"),
+        help_text=_("This only makes sense if you configure multiple sections."),
+        widget=forms.CheckboxInput,
+        required=False,
+        initial=False,
+    )
+    sections = forms.Field(
+        label=_("Structure"),
+        widget=forms.HiddenInput,
+        required=False,
+    )
+
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
         self.sections_formset = SectionsFormset(
@@ -140,6 +153,10 @@ class SectionBasedConfigurationForm(forms.Form):
             if cleaned_data and not cleaned_data.get("DELETE")
         ]
         return sections
+
+    @staticmethod
+    def format_sections(value):
+        return ", ".join(section["title"] for section in value)
 
 
 class SectionSignupForm(forms.Form):
@@ -207,33 +224,10 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     registration_button_text = _("Request")
     signup_success_message = _("You have successfully requested a participation for {shift}.")
     signup_error_message = _("Requesting a participation failed: {error}")
-
-    configuration_form_class = SectionBasedConfigurationForm
     signup_view_class = SectionBasedSignupView
-
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
-    def get_configuration_fields(self):
-        return {
-            **super().get_configuration_fields(),
-            "choose_preferred_section": {
-                "formfield": forms.BooleanField(
-                    label=_("Ask participants for a preferred section"),
-                    help_text=_("This only makes sense if you configure multiple sections."),
-                    widget=forms.CheckboxInput,
-                    required=False,
-                ),
-                "default": False,
-            },
-            "sections": {
-                "formfield": forms.Field(
-                    label=_("Structure"),
-                    widget=forms.HiddenInput,
-                    required=False,
-                ),
-                "default": [],
-            },
-        }
+    configuration_form_class = SectionBasedConfigurationForm
 
     def _get_signup_stats_per_section(self, participations=None):
         from ephios.core.signup.methods import SignupStats

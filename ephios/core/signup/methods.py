@@ -15,8 +15,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.template import Context, Template
-from django.template.defaultfilters import yesno
-from django.utils import formats, timezone
+from django.utils import timezone
 from django.utils.functional import SimpleLazyObject, cached_property, classproperty
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
@@ -24,6 +23,7 @@ from django.views.generic import FormView
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
+from ...extra.utils import format_anything
 from ..signals import participant_from_request, register_signup_methods
 from .disposition import BaseDispositionParticipationForm
 from .participants import AbstractParticipant
@@ -71,15 +71,24 @@ def get_nonlocal_participant_from_request(request):
 
 class BaseSignupForm(forms.ModelForm):
     individual_start_time = forms.SplitDateTimeField(
-        label=_("Start time"), widget=CustomSplitDateTimeWidget, required=False
+        label=_("Individual start time"), widget=CustomSplitDateTimeWidget, required=False
     )
     individual_end_time = forms.SplitDateTimeField(
-        label=_("End time"),
+        label=_("Individual end time"),
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
 
-    # TODO: validation (time subset of shift time etc?!)
+    # TODO: any validation (time subset of shift time etc?!)
+    def clean_individual_start_time(self):
+        if self.cleaned_data["individual_start_time"] == self.method.shift.start_time:
+            return None
+        return self.cleaned_data["individual_start_time"]
+
+    def clean_individual_end_time(self):
+        if self.cleaned_data["individual_end_time"] == self.method.shift.end_time:
+            return None
+        return self.cleaned_data["individual_end_time"]
 
     class Meta:
         model = AbstractParticipation
@@ -136,19 +145,19 @@ class BaseSignupView(FormView):
     form_class = BaseSignupForm
     template_name = "core/signup.html"
 
-    def get_initial(self):
-        return {
-            "individual_start_time": self.shift.start_time,
-            "individual_end_time": self.shift.end_time,
-        }
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        instance = self.method.get_participation_for(self.participant)
+        initial = {
+            "individual_start_time": instance.individual_start_time or self.shift.start_time,
+            "individual_end_time": instance.individual_end_time or self.shift.end_time,
+        }
         kwargs.update(
             {
                 "method": self.method,
                 "participant": self.participant,
                 "instance": self.method.get_participation_for(self.participant),
+                "initial": initial,
             }
         )
         return kwargs
@@ -169,8 +178,8 @@ class BaseSignupView(FormView):
     def signup_pressed(self, form):
         try:
             with transaction.atomic():
-                form.save()
-                self.method.perform_signup(self.participant, **form.cleaned_data)
+                participation = form.save()
+                self.method.perform_signup(self.participant, participation, **form.cleaned_data)
                 messages.success(
                     self.request,
                     self.method.signup_success_message.format(shift=self.shift),
@@ -183,8 +192,8 @@ class BaseSignupView(FormView):
     def decline_pressed(self, form):
         try:
             with transaction.atomic():
-                form.save()
-                self.method.perform_decline(self.participant, **form.cleaned_data)
+                participation = form.save()
+                self.method.perform_decline(self.participant, participation, **form.cleaned_data)
                 messages.info(
                     self.request, self.method.decline_success_message.format(shift=self.shift)
                 )
@@ -251,6 +260,23 @@ def check_conflicting_shifts(method, participant):
         return ParticipationError(_("You are already confirmed for another shift at this time."))
 
 
+class BaseSignupMethodConfigurationForm(forms.Form):
+    minimum_age = forms.IntegerField(
+        required=False, min_value=1, max_value=999, initial=None, label=_("Minimum age")
+    )
+    signup_until = forms.SplitDateTimeField(
+        required=False,
+        widget=CustomSplitDateTimeWidget,
+        initial=None,
+        label=_("Signup until"),
+    )
+    user_can_decline_confirmed = forms.BooleanField(
+        label=_("Confirmed users can decline by themselves"),
+        required=False,
+        help_text=_("only if the signup timeframe has not ended"),
+    )
+
+
 class BaseSignupMethod:
     # pylint: disable=too-many-public-methods
 
@@ -270,9 +296,7 @@ class BaseSignupMethod:
         """
         return BaseDispositionParticipationForm
 
-    @property
-    def configuration_form_class(self):
-        return forms.Form
+    configuration_form_class = BaseSignupMethodConfigurationForm
 
     @property
     def signup_view_class(self):
@@ -292,8 +316,12 @@ class BaseSignupMethod:
     def __init__(self, shift, event=None):
         self.shift = shift
         self.event = getattr(shift, "event", event)
+
         self.configuration = Namespace(
-            **{name: config["default"] for name, config in self.get_configuration_fields().items()}
+            **{
+                name: field.initial
+                for name, field in self.configuration_form_class.base_fields.items()
+            }
         )
         if shift is not None:
             for key, value in shift.signup_configuration.items():
@@ -369,12 +397,14 @@ class BaseSignupMethod:
             not declineable_state or self.can_decline(participant)
         )
 
-    def get_participation_for(self, participant):
+    def get_participation_for(self, participant) -> AbstractParticipation:
         return participant.participation_for(self.shift) or participant.new_participation(
             self.shift
         )
 
-    def perform_signup(self, participant: AbstractParticipant, **kwargs) -> AbstractParticipation:
+    def perform_signup(
+        self, participant: AbstractParticipant, participation=None, **kwargs
+    ) -> AbstractParticipation:
         """
         Creates and/or configures a participation object for a given participant and sends out notifications.
         Passes the participation and kwargs to configure_participation to do configuration specific to the signup method
@@ -383,17 +413,17 @@ class BaseSignupMethod:
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        participation = self.get_participation_for(participant)
+        participation = participation or self.get_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
         ResponsibleParticipationRequested.send(participation)
         return participation
 
-    def perform_decline(self, participant, **kwargs):
+    def perform_decline(self, participant, participation=None, **kwargs):
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
         if errors := self.get_decline_errors(participant):
             raise ParticipationError(errors)
-        participation = self.get_participation_for(participant)
+        participation = participation or self.get_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
         return participation
@@ -407,48 +437,16 @@ class BaseSignupMethod:
         """
         raise NotImplementedError
 
-    def get_configuration_fields(self):
-        return OrderedDict(
-            {
-                "minimum_age": {
-                    "formfield": forms.IntegerField(required=False, min_value=1, max_value=999),
-                    "default": 16,
-                    "publish_with_label": _("Minimum age"),
-                },
-                "signup_until": {
-                    "formfield": forms.SplitDateTimeField(
-                        required=False, widget=CustomSplitDateTimeWidget
-                    ),
-                    "default": None,
-                    "publish_with_label": _("Signup until"),
-                    "format": functools.partial(
-                        formats.date_format, format="SHORT_DATETIME_FORMAT"
-                    ),
-                },
-                "user_can_decline_confirmed": {
-                    "formfield": forms.BooleanField(
-                        label=_("Confirmed users can decline by themselves"),
-                        required=False,
-                        help_text=_("only if the signup timeframe has not ended"),
-                    ),
-                    "default": False,
-                    "publish_with_label": _("Can decline after confirmation"),
-                    "format": yesno,
-                },
-            }
-        )
-
     def get_signup_info(self):
         """
         Return key/value pairs about the configuration to show in exports etc.
         """
-        fields = self.get_configuration_fields()
+        form_class = self.configuration_form_class
         return OrderedDict(
             {
-                label: field.get("format", str)(value)
-                for key, field in fields.items()
-                if (label := field.get("publish_with_label", False))
-                and (value := getattr(self.configuration, key))
+                label: getattr(form_class, f"format_{name}", format_anything)(value)
+                for name, field in form_class.base_fields.items()
+                if (label := field.label) and (value := getattr(self.configuration, name))
             }
         )
 
@@ -503,8 +501,6 @@ class BaseSignupMethod:
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
         form = self.configuration_form_class(*args, **kwargs)
-        for name, config in self.get_configuration_fields().items():
-            form.fields[name] = config["formfield"]
         return form
 
     def render_configuration_form(self, *args, form=None, **kwargs):

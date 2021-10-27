@@ -12,16 +12,16 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
     description = _("""This method allows no signup by users.""")
     uses_requested_state = False
 
-    def get_configuration_fields(self):
-        return {
-            "no_selfservice_explanation": {
-                "formfield": forms.CharField(
-                    label=_("Explanation"),
-                    required=False,
-                ),
-                "default": "",
-            },
-        }
+    @property
+    def configuration_form_class(self):
+        class ConfigurationForm(super().configuration_form_class):
+            no_selfservice_explanation = forms.CharField(
+                label=_("Explanation"),
+                required=False,
+                initial="",
+            )
+
+        return ConfigurationForm
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs

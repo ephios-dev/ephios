@@ -17,20 +17,23 @@ class CoupledSignupMethod(BaseSignupMethod):
     description = _("""This method mirrors signup from another shift.""")
     uses_requested_state = True
 
-    def get_configuration_fields(self):
-        return {
-            "leader_shift_id": {
-                "formfield": forms.ModelChoiceField(
-                    label=_("shift to mirror participation from"),
-                    required=True,
-                    queryset=self.event.shifts.exclude(
-                        Q(pk__in=[self.shift.id] if self.shift else [])
-                        | Q(signup_method_slug=self.slug)  # no chaining/no cycles!
-                    ),
+    @property
+    def configuration_form_class(self):
+        class ConfigurationForm(super().configuration_form_class):
+            leader_shift_id = forms.ModelChoiceField(
+                label=_("shift to mirror participation from"),
+                required=True,
+                queryset=self.event.shifts.exclude(
+                    Q(pk__in=[self.shift.id] if self.shift else [])
+                    | Q(signup_method_slug=self.slug)  # no chaining/no cycles!
                 ),
-                "default": None,
-            },
-        }
+            )
+
+            @staticmethod
+            def format_leader_shift_id(value):
+                return str(Shift.objects.get(id=value) if isinstance(value, int) else value)
+
+        return ConfigurationForm
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
