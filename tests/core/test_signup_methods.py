@@ -78,3 +78,17 @@ def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, event, 
     )
     expected = {a_participation} if conflict_expected else set()
     assert set(get_conflicting_participations(b, volunteer.as_participant())) == expected
+
+
+def test_get_conflicting_shift_with_individual_time(tz, volunteer, multi_shift_event):
+    shift_a, shift_b = multi_shift_event.shifts.order_by("start_time")
+    a_participation = LocalParticipation.objects.create(
+        shift=shift_a,
+        user=volunteer,
+        state=AbstractParticipation.States.CONFIRMED,
+        individual_start_time=shift_a.start_time,
+        individual_end_time=shift_b.start_time + timedelta(minutes=30),
+    )
+    assert set(get_conflicting_participations(shift_b, volunteer.as_participant())) == {
+        a_participation
+    }
