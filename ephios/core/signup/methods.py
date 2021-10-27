@@ -143,6 +143,9 @@ class BaseSignupForm(BaseParticipationForm):
             self.get_field_layout(),
             FormActions(*self._get_buttons()),
         )
+        if not self.shift.signup_method.configuration.user_can_customize_signup_times:
+            self.fields["individual_start_time"].disabled = True
+            self.fields["individual_end_time"].disabled = True
 
 
 class BaseSignupView(FormView):
@@ -285,6 +288,11 @@ class BaseSignupMethodConfigurationForm(forms.Form):
         label=_("Confirmed users can decline by themselves"),
         required=False,
         help_text=_("only if the signup timeframe has not ended"),
+    )
+    user_can_customize_signup_times = forms.BooleanField(
+        label=_("Users can provide individual start and end times"),
+        required=False,
+        initial=True,
     )
 
 
