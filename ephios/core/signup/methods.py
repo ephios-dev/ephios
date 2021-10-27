@@ -108,23 +108,27 @@ class BaseSignupForm(BaseParticipationForm):
     def get_field_layout(self):
         return Layout(*(Field(name) for name in self.fields))
 
-    def _get_main_submit_label(self):
+    def _get_buttons(self):
         if (p := self.participant.participation_for(self.method.shift)) is not None and p.state in (
             AbstractParticipation.States.REQUESTED,
             AbstractParticipation.States.CONFIRMED,
         ):
-            return _("Save")
-        return self.method.registration_button_text
-
-    def _get_buttons(self):
-        buttons = [
-            HTML(
-                f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="sign_up">{self._get_main_submit_label()}</button>'
-            ),
+            buttons = [
+                HTML(
+                    f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="customize">{_("Save")}</button>'
+                )
+            ]
+        else:
+            buttons = [
+                HTML(
+                    f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="sign_up">{self.method.registration_button_text}</button>'
+                )
+            ]
+        buttons.append(
             HTML(
                 f'<a class="btn btn-secondary mt-1 float-end" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
-            ),
-        ]
+            )
+        )
         if self.method.can_decline(self.participant):
             buttons.append(
                 HTML(
@@ -166,10 +170,14 @@ class BaseSignupView(FormView):
             {
                 "method": self.method,
                 "participant": self.participant,
-                "instance": self.method.get_participation_for(self.participant),
+                "instance": self.participation,
             }
         )
         return kwargs
+
+    @cached_property
+    def participation(self):
+        return self.method.get_participation_for(self.participant)
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -178,11 +186,22 @@ class BaseSignupView(FormView):
 
     def form_valid(self, form):
         if (choice := self.request.POST.get("signup_choice")) is not None:
-            if choice == "sign_up":
+            if choice == "sign_up" and self.method.can_sign_up(self.participant):
                 return self.signup_pressed(form)
+            if choice == "customize" and self.method.can_customize_signup(self.participant):
+                return self.customize_pressed(form)
             if choice == "decline":
                 return self.decline_pressed(form)
         return self.form_invalid(form)
+
+    def customize_pressed(self, form):
+        form.save()
+        # TODO:
+        # If saving this results in the participation being so different that it should be reconfirmed:
+        # * set the state to REQUESTED
+        # * send out a yet-to-be-created ConfirmedParticipantDeclinedNotification
+        messages.success(self.request, _("Your participation was saved."))
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     def signup_pressed(self, form):
         try:
@@ -339,7 +358,6 @@ class BaseSignupMethod:
     def __init__(self, shift, event=None):
         self.shift = shift
         self.event = getattr(shift, "event", event)
-
         self.configuration = Namespace(
             **{
                 name: field.initial
@@ -430,7 +448,7 @@ class BaseSignupMethod:
     ) -> AbstractParticipation:
         """
         Creates and/or configures a participation object for a given participant and sends out notifications.
-        Passes the participation and kwargs to configure_participation to do configuration specific to the signup method
+        Passes the participation and kwargs to configure_participation to do configuration specific to the signup method.
         """
         from ephios.core.services.notifications.types import ResponsibleParticipationRequested
 
@@ -456,7 +474,8 @@ class BaseSignupMethod:
     ) -> AbstractParticipation:
         """
         Configure the given participation object for signup according to the method's configuration.
-        You need at least to set the participations state. `kwargs` may contain further instructions from e.g. a form.
+        You need at least to set the participations state, as that is not done with the participation form.
+        `kwargs` contains the signup form's cleaned_data.
         """
         raise NotImplementedError
 

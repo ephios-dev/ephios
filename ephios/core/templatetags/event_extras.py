@@ -39,7 +39,7 @@ def can_sign_up(request, shift):
 
 
 @register.filter(name="can_customize_signup")
-def can_sign_up(request, shift):
+def can_customize_signup(request, shift):
     return shift.signup_method.can_customize_signup(request_to_participant(request))
 
 
