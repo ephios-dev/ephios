@@ -83,7 +83,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_url(cls, notification):
-        return urljoin(settings.SITE_URL, reverse("core:profile"))
+        return urljoin(settings.GET_SITE_URL(), reverse("core:profile"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
@@ -110,14 +110,14 @@ class NewProfileNotification(AbstractNotificationHandler):
             "You're receiving this email because a new account has been created for you at ephios.\n"
             "Please go to the following page and choose a password: {url}\n"
             "Your username is your email address: {email}\n"
-        ).format(url=urljoin(settings.SITE_URL, reset_link), email=notification.user.email)
+        ).format(url=urljoin(settings.GET_SITE_URL(), reset_link), email=notification.user.email)
 
     @classmethod
     def as_html(cls, notification):
         return render_to_string(
             "core/mails/new_account_email.html",
             {
-                **{"site_url": settings.SITE_URL, "email": notification.user.email},
+                **{"site_url": settings.GET_SITE_URL(), "email": notification.user.email},
                 **notification.data,
             },
         )
@@ -160,13 +160,13 @@ class NewEventNotification(AbstractNotificationHandler):
     def as_html(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
         return render_to_string(
-            "core/mails/new_event.html", {"event": event, "site_url": settings.SITE_URL}
+            "core/mails/new_event.html", {"event": event, "site_url": settings.GET_SITE_URL()}
         )
 
     @classmethod
     def get_url(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return urljoin(settings.SITE_URL, event.get_absolute_url())
+        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
 class ParticipationConfirmedNotification(AbstractNotificationHandler):
@@ -205,7 +205,7 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
         event = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift.event
-        return urljoin(settings.SITE_URL, event.get_absolute_url())
+        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
 class ParticipationRejectedNotification(AbstractNotificationHandler):
@@ -246,7 +246,7 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
         event = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift.event
-        return urljoin(settings.SITE_URL, event.get_absolute_url())
+        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
 class ResponsibleParticipationRequested(AbstractNotificationHandler):
@@ -259,7 +259,7 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
             participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         disposition_url = urljoin(
-            settings.SITE_URL,
+            settings.GET_SITE_URL(),
             reverse("core:shift_disposition", kwargs=dict(pk=participation.shift.pk)),
         )
         notifications = []
@@ -351,7 +351,7 @@ class EventReminderNotification(AbstractNotificationHandler):
     @classmethod
     def get_url(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return urljoin(settings.SITE_URL, event.get_absolute_url())
+        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
 class CustomEventParticipantNotification(AbstractNotificationHandler):
