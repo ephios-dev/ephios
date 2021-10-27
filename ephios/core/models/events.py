@@ -72,6 +72,8 @@ class Event(Model):
         verbose_name_plural = _("events")
         permissions = [("view_past_event", _("Can view past events"))]
         db_table = "event"
+        base_manager_name = "all_objects"
+        default_manager_name = "all_objects"
 
     def get_start_time(self):
         # use shifts.all() in case the shifts have been prefetched
