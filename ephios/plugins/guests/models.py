@@ -23,7 +23,7 @@ class EventGuestShare(models.Model):
 
     @property
     def url(self):
-        return settings.SITE_URL + reverse(
+        return settings.GET_SITE_URL() + reverse(
             "guests:register", kwargs=dict(public_signup_token=self.token, event_id=self.event.id)
         )
 
