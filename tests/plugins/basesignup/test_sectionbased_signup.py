@@ -94,24 +94,12 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, sectioned_
         )
         .forms[1]
         .submit(name="signup_choice", value="sign_up")
-        .follow()
     )
-    response.form["section"] = KTW_UUID
-    response.form.submit()
+    response.form["preferred_section_uuid"] = KTW_UUID
+    response.form.submit(name="signup_choice", value="sign_up").follow()
     assert (
         LocalParticipation.objects.get(user=qualified_volunteer, shift=sectioned_shift).state
         == AbstractParticipation.States.REQUESTED
-    )
-    # test we can't signup again
-    assert (
-        "You have already requested a participation."
-        in django_app.get(
-            event.get_absolute_url(),
-            user=qualified_volunteer,
-        )
-        .forms[1]
-        .submit(name="signup_choice", value="sign_up")
-        .follow()
     )
 
     # confirm the participation as planner

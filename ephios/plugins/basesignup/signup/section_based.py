@@ -5,9 +5,7 @@ from itertools import groupby
 from operator import itemgetter
 
 from django import forms
-from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +13,13 @@ from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup.methods import BaseSignupMethod, BaseSignupView, ParticipationError
+from ephios.core.signup.disposition import BaseDispositionParticipationForm
+from ephios.core.signup.methods import (
+    BaseSignupForm,
+    BaseSignupMethod,
+    BaseSignupView,
+    ParticipationError,
+)
 from ephios.core.signup.participants import AbstractParticipant
 
 NO_SECTION_UUID = "other"
@@ -30,8 +34,8 @@ def sections_participant_qualifies_for(sections, participant: AbstractParticipan
     ]
 
 
-class SectionBasedDispositionParticipationForm(forms.ModelForm):
-    disposition_participation_template = "basesignup/section_based/fragment_participant.html"
+class SectionBasedDispositionParticipationForm(BaseDispositionParticipationForm):
+    disposition_participation_template = "basesignup/section_based/fragment_participation.html"
 
     section = forms.ChoiceField(
         label=_("Section"),
@@ -115,7 +119,7 @@ SectionsFormset = forms.formset_factory(
 
 class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
     choose_preferred_section = forms.BooleanField(
-        label=_("Ask participants for a preferred section"),
+        label=_("Participants must provide a preferred section"),
         help_text=_("This only makes sense if you configure multiple sections."),
         widget=forms.CheckboxInput,
         required=False,
@@ -154,17 +158,36 @@ class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
         return ", ".join(section["title"] for section in value)
 
 
-class SectionSignupForm(forms.Form):
-    section = forms.ChoiceField(
+class SectionSignupForm(BaseSignupForm):
+    preferred_section_uuid = forms.ChoiceField(
         label=_("Preferred Section"),
         widget=forms.RadioSelect,
         required=False,
-        # choices are set as (uuid, title) of section
+        # choices are later set as (uuid, title) of section
     )
 
-
-class SectionBasedSignupView(BaseSignupView):
-    template_name = "basesignup/section_based/signup.html"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["preferred_section_uuid"].initial = self.instance.data.get(
+            "preferred_section_uuid"
+        )
+        self.fields["preferred_section_uuid"].required = (
+            self.data.get("signup_choice") == "sign_up"
+            and self.method.configuration.choose_preferred_section
+        )
+        self.fields["preferred_section_uuid"].choices = [
+            (section["uuid"], section["title"])
+            for section in self.sections_participant_qualifies_for
+        ]
+        unqualified = [
+            section
+            for section in self.method.configuration.sections
+            if section not in self.sections_participant_qualifies_for
+        ]
+        if unqualified:
+            self.fields["preferred_section_uuid"].help_text = _(
+                "You don't qualify for {qualifications}."
+            ).format(qualifications=", ".join(str(section["title"]) for section in unqualified))
 
     @cached_property
     def sections_participant_qualifies_for(self):
@@ -172,41 +195,9 @@ class SectionBasedSignupView(BaseSignupView):
             self.method.configuration.sections, self.participant
         )
 
-    def get_form(self, form_class=None):
-        form = SectionSignupForm(self.request.POST)
-        form.fields["section"].choices = [
-            (section["uuid"], section["title"])
-            for section in self.sections_participant_qualifies_for
-        ]
-        return form
 
-    def get_context_data(self, **kwargs):
-        kwargs.setdefault("shift", self.shift)
-        kwargs.setdefault(
-            "unqualified_sections",
-            [
-                section["title"]
-                for section in self.method.configuration.sections
-                if section not in self.sections_participant_qualifies_for
-            ],
-        )
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        return super().signup_pressed(preferred_section_uuid=form.cleaned_data.get("section"))
-
-    def signup_pressed(self, **kwargs):
-        if not self.method.configuration.choose_preferred_section:
-            # do straight signup if choosing is not enabled
-            return super().signup_pressed(**kwargs)
-
-        if not self.method.can_sign_up(self.participant):
-            # redirect a misled request
-            messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(self.participant.reverse_event_detail(self.shift.event))
-
-        # all good, redirect to the form
-        return redirect(self.participant.reverse_signup_action(self.shift))
+class SectionBasedSignupView(BaseSignupView):
+    form_class = SectionSignupForm
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):
@@ -295,8 +286,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
     # pylint: disable=arguments-differ
     def _configure_participation(
-        self, participation: AbstractParticipation, preferred_section_uuid=None, **kwargs
+        self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
+        preferred_section_uuid = kwargs.pop("preferred_section_uuid")
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice
@@ -305,6 +297,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         return participation
 
     def render_configuration_form(self, *args, form=None, **kwargs):
+        """We overwrite the template to render the formset."""
         form = form or self.get_configuration_form(*args, **kwargs)
         template = get_template("basesignup/section_based/configuration_form.html").render(
             {"form": form}
