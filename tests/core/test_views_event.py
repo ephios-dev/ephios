@@ -29,3 +29,10 @@ def test_unsaved_event_warning(django_app, planner, groups, service_event_type):
     response = response.click("View")
     assert "This event has not been saved"
     assert not response.context["event"].active
+
+
+def test_unsaved_event_not_in_event_list(django_app, planner, event):
+    event.active = False
+    event.save()
+    event_list = django_app.get(reverse("core:event_list"), user=planner)
+    assert event.title not in event_list
