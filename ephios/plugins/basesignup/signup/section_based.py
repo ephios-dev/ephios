@@ -289,6 +289,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         preferred_section_uuid = kwargs.pop("preferred_section_uuid")
+        # TODO move this to configure
         participation.data["preferred_section_uuid"] = preferred_section_uuid
         if preferred_section_uuid:
             # reset dispatch decision, as that would have overwritten the preferred choice

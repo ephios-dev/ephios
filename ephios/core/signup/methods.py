@@ -192,6 +192,8 @@ class BaseSignupView(FormView):
                 return self.customize_pressed(form)
             if choice == "decline":
                 return self.decline_pressed(form)
+            messages.error(self.request, _("This action is not allowed."))
+            return redirect(self.participant.reverse_event_detail(self.shift.event))
         return self.form_invalid(form)
 
     def customize_pressed(self, form):

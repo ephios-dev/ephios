@@ -22,6 +22,6 @@ def test_no_selfservice_does_not_allow_signup(django_app, volunteer, event, no_s
     signup_view = event_detail.form.submit()
     # from there though, signup will not be possible
     assert (
-        "Signup for this shift is disabled"
+        "This action is not allowed"
         in signup_view.form.submit(name="signup_choice", value="sign_up").follow()
     )
