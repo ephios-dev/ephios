@@ -19,10 +19,27 @@ def reverse_signup_action(request, shift):
     return request_to_participant(request).reverse_signup_action(shift)
 
 
-@register.filter(name="shift_mannequin")
-def shift_mannequin(request, shift):
-    participation = request_to_participant(request).participation_for(shift)
-    if participation is not None:
+@register.filter(name="participation_from_request")
+def participation_from_request(request, shift):
+    return request_to_participant(request).participation_for(shift)
+
+
+@register.filter(name="participation_css_style")
+def participation_css_style(participation):
+    if participation:
+        return {
+            AbstractParticipation.States.USER_DECLINED: "danger",
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: "danger",
+            AbstractParticipation.States.REQUESTED: "warning",
+            AbstractParticipation.States.CONFIRMED: "success",
+            AbstractParticipation.States.GETTING_DISPATCHED: "(invalid)",
+        }[participation.state]
+    return "(invalid)"
+
+
+@register.filter(name="participation_mannequin_style")
+def participation_mannequin_style(participation):
+    if participation:
         return {
             AbstractParticipation.States.USER_DECLINED: "denied",
             AbstractParticipation.States.RESPONSIBLE_REJECTED: "denied",
