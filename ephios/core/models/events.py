@@ -208,6 +208,10 @@ class AbstractParticipation(PolymorphicModel):
         except NotImplementedError:
             return super().__str__()
 
+    def get_start_end_time_display(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+        return f"{formats.time_format(self.start_time.astimezone(tz))} - {formats.time_format(self.end_time.astimezone(tz))}"
+
 
 PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
     unlogged_fields=["id", "data", "abstractparticipation_ptr"],
