@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django_ical.views import ICalFeed
 from guardian.shortcuts import get_users_with_perms
@@ -48,9 +49,17 @@ class UserEventFeed(EventFeed):
         super().__init__()
         self.user = user
 
+    def item_start_datetime(self, item):
+        return item.participations.all()[0].start_time
+
+    def item_end_datetime(self, item):
+        return item.participations.all()[0].end_time
+
     def items(self):
         return self.user.get_shifts(
             with_participation_state_in=[AbstractParticipation.States.CONFIRMED]
+        ).prefetch_related(
+            Prefetch("participations", queryset=self.user.localparticipation_set.all())
         )
 
 
