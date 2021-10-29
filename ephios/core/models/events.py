@@ -212,6 +212,9 @@ class AbstractParticipation(PolymorphicModel):
         tz = pytz.timezone(settings.TIME_ZONE)
         return f"{formats.time_format(self.start_time.astimezone(tz))} - {formats.time_format(self.end_time.astimezone(tz))}"
 
+    def is_in_positive_state(self):
+        return self.state in {self.States.CONFIRMED, self.States.REQUESTED}
+
 
 PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
     unlogged_fields=["id", "data", "abstractparticipation_ptr"],

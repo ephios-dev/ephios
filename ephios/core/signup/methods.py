@@ -109,10 +109,9 @@ class BaseSignupForm(BaseParticipationForm):
         return Layout(*(Field(name) for name in self.fields))
 
     def _get_buttons(self):
-        if (p := self.participant.participation_for(self.method.shift)) is not None and p.state in (
-            AbstractParticipation.States.REQUESTED,
-            AbstractParticipation.States.CONFIRMED,
-        ):
+        if (
+            p := self.participant.participation_for(self.method.shift)
+        ) is not None and p.is_in_positive_state():
             buttons = [
                 HTML(
                     f'<button class="btn btn-success mt-1 me-1" type="submit" name="signup_choice" value="customize">{_("Save")}</button>'
@@ -432,10 +431,7 @@ class BaseSignupMethod:
         # We check for decline as well in case the participation is already requested/confirmed.
         declineable_state = (
             p := participant.participation_for(self.shift)
-        ) is not None and p.state in (
-            AbstractParticipation.States.CONFIRMED,
-            AbstractParticipation.States.REQUESTED,
-        )
+        ) is not None and p.is_in_positive_state()
         return not self.get_signup_errors(participant) and (
             not declineable_state or self.can_decline(participant)
         )
