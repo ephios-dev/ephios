@@ -136,7 +136,7 @@ class MultipleShiftEventExporter(BasePDFExporter):
 
         for shift in self.event.shifts.all():
             story.append(Spacer(height=1 * cm, width=19 * cm))
-            story.append(Paragraph(shift.get_start_end_time_display(), self.style["Heading2"]))
+            story.append(Paragraph(shift.get_datetime_display(), self.style["Heading2"]))
             data = [
                 [_("Meeting time"), formats.time_format(shift.meeting_time.astimezone(tz))],
             ] + [

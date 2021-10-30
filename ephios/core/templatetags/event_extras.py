@@ -50,6 +50,17 @@ def participation_mannequin_style(participation):
     return "neutral"
 
 
+@register.simple_tag
+def setvar(value=None):
+    """
+    as an alternative to using with blocks and template, use
+    `{% setvar value|filter:param as var %}` to save a value to a variable in a template.
+    The builtin `firstof` doesn't work, because it converts values to strings.
+    From here: https://pythoncircle.com/post/701/how-to-set-a-variable-in-django-template/
+    """
+    return value
+
+
 @register.filter(name="can_sign_up")
 def can_sign_up(request, shift):
     return shift.signup_method.can_sign_up(request_to_participant(request))
@@ -78,12 +89,13 @@ def can_decline(request, shift):
     return shift.signup_method.can_decline(request_to_participant(request))
 
 
-@register.filter(name="confirmed_shifts")
-def confirmed_shifts(user):
+@register.filter(name="confirmed_participations")
+def confirmed_participations(user):
     return (
-        user.get_shifts(with_participation_state_in=[AbstractParticipation.States.CONFIRMED])
+        user.participations.filter(state=AbstractParticipation.States.CONFIRMED)
         .filter(end_time__gte=timezone.now())
         .order_by("start_time")
+        .select_related("shift", "shift__event")
     )
 
 

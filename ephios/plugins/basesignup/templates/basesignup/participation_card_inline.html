@@ -15,7 +15,7 @@
     {% if participation.individual_start_time or participation.individual_end_time %}
         <div class="mb-3">
             <i class="fas fa-user-clock"></i>
-            <strong>{{ participation.get_start_end_time_display }}</strong>
+            <strong>{{ participation.get_time_display }}</strong>
         </div>
     {% endif %}
     {% if participation.comment %}
