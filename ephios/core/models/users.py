@@ -150,19 +150,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
         )
 
-    def get_shifts(self, with_participation_state_in):
-        from ephios.core.models import Shift
-
-        shift_ids = self.localparticipation_set.filter(
-            state__in=with_participation_state_in
-        ).values_list("shift", flat=True)
-        return Shift.objects.filter(pk__in=shift_ids).select_related("event")
-
     def get_workhour_items(self):
         from ephios.core.models import AbstractParticipation
 
         participations = (
-            self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
+            self.participations.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),

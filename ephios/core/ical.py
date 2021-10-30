@@ -56,10 +56,13 @@ class UserEventFeed(EventFeed):
         return item.participations.all()[0].end_time
 
     def items(self):
-        return self.user.get_shifts(
-            with_participation_state_in=[AbstractParticipation.States.CONFIRMED]
-        ).prefetch_related(
-            Prefetch("participations", queryset=self.user.localparticipation_set.all())
+        shift_ids = self.user.participations.filter(
+            state=AbstractParticipation.States.CONFIRMED
+        ).values_list("shift", flat=True)
+        return (
+            Shift.objects.filter(pk__in=shift_ids)
+            .select_related("event")
+            .prefetch_related(Prefetch("participations", queryset=self.user.participations.all()))
         )
 
 

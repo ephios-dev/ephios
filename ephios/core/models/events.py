@@ -152,7 +152,26 @@ class ParticipationManager(PolymorphicManager):
         )
 
 
-class AbstractParticipation(PolymorphicModel):
+class DatetimeDisplayMixin:
+    """
+    Date and time formatting utilities used for start_time and end_time attributes
+    in AbstractParticipation and Shift.
+    """
+
+    def get_date_display(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+        start_time = self.start_time.astimezone(tz)
+        return f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}"
+
+    def get_time_display(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+        return f"{formats.time_format(self.start_time.astimezone(tz))} - {formats.time_format(self.end_time.astimezone(tz))}"
+
+    def get_datetime_display(self):
+        return f"{self.get_date_display()}, {self.get_time_display()}"
+
+
+class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
         CONFIRMED = 1, _("confirmed")
@@ -208,10 +227,6 @@ class AbstractParticipation(PolymorphicModel):
         except NotImplementedError:
             return super().__str__()
 
-    def get_start_end_time_display(self):
-        tz = pytz.timezone(settings.TIME_ZONE)
-        return f"{formats.time_format(self.start_time.astimezone(tz))} - {formats.time_format(self.end_time.astimezone(tz))}"
-
     def is_in_positive_state(self):
         return self.state in {self.States.CONFIRMED, self.States.REQUESTED}
 
@@ -222,7 +237,7 @@ PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
 )
 
 
-class Shift(Model):
+class Shift(DatetimeDisplayMixin, Model):
     event = ForeignKey(
         Event, on_delete=models.CASCADE, related_name="shifts", verbose_name=_("event")
     )
@@ -253,14 +268,6 @@ class Shift(Model):
         except ValueError:
             return None
 
-    def get_start_end_time_display(self):
-        tz = pytz.timezone(settings.TIME_ZONE)
-        start_time = self.start_time.astimezone(tz)
-        return (
-            f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}, "
-            + f"{formats.time_format(start_time)} - {formats.time_format(self.end_time.astimezone(tz))}"
-        )
-
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
             yield participation.participant
@@ -269,7 +276,7 @@ class Shift(Model):
         return f"{self.event.get_absolute_url()}#shift-{self.pk}"
 
     def __str__(self):
-        return f"{self.event.title} ({self.get_start_end_time_display()})"
+        return f"{self.event.title} ({self.get_datetime_display()})"
 
 
 class ShiftLogConfig(ModelFieldsLogConfig):
@@ -300,7 +307,10 @@ register_model_for_logging(Shift, ShiftLogConfig())
 
 class LocalParticipation(AbstractParticipation):
     user: "UserProfile" = ForeignKey(
-        "UserProfile", on_delete=models.CASCADE, verbose_name=_("Participant")
+        "UserProfile",
+        on_delete=models.CASCADE,
+        verbose_name=_("Participant"),
+        related_name="participations",
     )
 
     def save(self, *args, **kwargs):

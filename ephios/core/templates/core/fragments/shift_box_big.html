@@ -1,4 +1,5 @@
 {% load event_extras %}
+{% load event_extras %}
 {% load static %}
 {% load i18n %}
 {% load humanize %}
@@ -6,46 +7,51 @@
 <div id="shift-{{ shift.pk }}" class="card h-100">
     <div class="card-header d-flex">
 
-        {% with participation=request|participation_from_request:shift %}
-            {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
-                {% if not without_controls %}
-                    <div class="mannequin mannequin-{{ mannequin }}">
-                        <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
-                             alt="{{ mannequin }} mannequin icon"/>
-                    </div>
-                {% endif %}
-                <div class="lh-1 ms-2 flex-grow-1">
-                    <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
-                    <br/>
-                    <span class="fw-bold fs-2">
+        {% if not without_controls %}
+            {% setvar request|participation_from_request:shift as participation %}
+        {% else %}
+            {% setvar as participation %}
+        {% endif %}
+        {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
+            {% if not without_controls %}
+                <div class="mannequin mannequin-{{ mannequin }}">
+                    <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                         alt="{{ mannequin }} mannequin icon"/>
+                </div>
+            {% endif %}
+            <div class="lh-1 ms-2 flex-grow-1">
+                <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
+                <br/>
+                <span class="fw-bold fs-2">
                         {% if participation.individual_start_time and participation.is_in_positive_state %}
-                            <span class="text-{{ style }}">{{ participation.start_time|time }}</span>
+                            <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                  title="{% translate "originally" %} {{ shift.start_time|time }}">{{ participation.start_time|time }}</span>
                         {% else %}
                             {{ shift.start_time|time }}
                         {% endif %}
-                        -
-                        {% if participation.individual_end_time and participation.is_in_positive_state %}
-                            <span class="text-{{ style }}">{{ participation.end_time|time }}</span>
-                        {% else %}
-                            {{ shift.end_time|time }}
-                        {% endif %}
+                    -
+                    {% if participation.individual_end_time and participation.is_in_positive_state %}
+                        <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                              title="{% translate "originally" %} {{ shift.end_time|time }}">{{ participation.end_time|time }}</span>
+                    {% else %}
+                        {{ shift.end_time|time }}
+                    {% endif %}
                     </span>
-                    <small class="fw-bold text-muted d-inline-block">
-                        {% if participation.is_in_positive_state %}
-                            {% if participation.individual_start_time or participation.individual_end_time %}
-                                <span class="d-inline-block">
+                <small class="fw-bold text-muted d-inline-block">
+                    {% if participation.is_in_positive_state %}
+                        {% if participation.individual_start_time or participation.individual_end_time %}
+                            <span class="d-inline-block">
                                     {% blocktranslate trimmed with start_time=shift.start_time|time end_time=shift.end_time|time %}
                                         originally {{ start_time }} - {{ end_time }}
                                     {% endblocktranslate %},
                                 </span>
-                            {% endif %}
                         {% endif %}
-                        <span class="d-inline-block">
+                    {% endif %}
+                    <span class="d-inline-block">
                             {{ shift.meeting_time|time }} {% translate "Meetup" %}
                         </span>
-                    </small>
-                </div>
-            {% endwith %}
+                </small>
+            </div>
         {% endwith %}
 
         {% if not without_controls and "change_event" in event_perms %}
