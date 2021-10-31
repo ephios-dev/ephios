@@ -9,10 +9,9 @@ from django.views import View
 from django.views.generic import DeleteView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
-from ephios.core import signup
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
-from ephios.core.signup.methods import signup_method_from_slug
+from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -45,7 +44,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
                 self.request.POST["signup_method_slug"], event=self.event
             )
         except KeyError:
-            if not list(signup.enabled_signup_methods()):
+            if not list(enabled_signup_methods()):
                 form.add_error(
                     "signup_method_slug",
                     _("You must enable plugins providing signup methods to continue."),

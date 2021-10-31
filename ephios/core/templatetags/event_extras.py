@@ -1,4 +1,5 @@
 import collections
+import operator
 from functools import reduce
 
 from django import template
@@ -6,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation, EventType, LocalParticipation
+from ephios.core.models import AbstractParticipation, EventType, LocalParticipation, UserProfile
 from ephios.core.signals import register_event_bulk_action
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
@@ -90,12 +91,14 @@ def can_decline(request, shift):
 
 
 @register.filter(name="confirmed_participations")
-def confirmed_participations(user):
-    return (
+def confirmed_participations(user: UserProfile):
+    # can't use order_by, as postgres gets confused when using the
+    # `start_time` coalesce, the shift select related and order_by on start_time at the same time.
+    return sorted(
         user.participations.filter(state=AbstractParticipation.States.CONFIRMED)
         .filter(end_time__gte=timezone.now())
-        .order_by("start_time")
-        .select_related("shift", "shift__event")
+        .select_related("shift", "shift__event"),
+        key=operator.attrgetter("start_time", "end_time"),
     )
 
 
