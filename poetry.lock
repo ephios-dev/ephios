@@ -478,7 +478,7 @@ redis = ">=3.0.0"
 
 [[package]]
 name = "django-select2"
-version = "7.7.3"
+version = "7.8.1"
 description = "Select2 option fields for Django"
 category = "main"
 optional = false
@@ -1611,8 +1611,8 @@ django-redis = [
     {file = "django_redis-5.0.0-py3-none-any.whl", hash = "sha256:97739ca9de3f964c51412d1d7d8aecdfd86737bb197fce6e1ff12620c63c97ee"},
 ]
 django-select2 = [
-    {file = "django-select2-7.7.3.tar.gz", hash = "sha256:063d29df5598ec6549a4d49cc4beb85d585987a4e470224592034aff2d4f0a3f"},
-    {file = "django_select2-7.7.3-py2.py3-none-any.whl", hash = "sha256:7bf5b35595624a3318f46d69f639e38dafb123fa4a6f82d63a6a1ac6d532317d"},
+    {file = "django-select2-7.8.1.tar.gz", hash = "sha256:17f1f8baa1e049215597e47d7629571c794c40514be5bd41d3ff57fda34d8f0a"},
+    {file = "django_select2-7.8.1-py2.py3-none-any.whl", hash = "sha256:42bc1bb763f616c854be5ca33f0b35cf07ba1ea9ccdf582f29aa22ce8b7016f7"},
 ]
 django-statici18n = [
     {file = "django-statici18n-2.1.1.tar.gz", hash = "sha256:5c85192fa95e3ef3727517ac104add8959fc0a54be3d13440a8a3319fddbc778"},
@@ -1884,6 +1884,8 @@ pre-commit = [
     {file = "pre_commit-2.15.0.tar.gz", hash = "sha256:3c25add78dbdfb6a28a651780d5c311ac40dd17f160eb3954a0c59da40a505a7"},
 ]
 psycopg2 = [
+    {file = "psycopg2-2.9.1-cp310-cp310-win32.whl", hash = "sha256:25615574419dd9bda6fdfdcd58afb22e721f5b807cb3d5e62f488c8acf8cb754"},
+    {file = "psycopg2-2.9.1-cp310-cp310-win_amd64.whl", hash = "sha256:e5a8ed9dbfca8dc162c4ada5ab017e10d5a66c542b4c73569f103fa5f342f498"},
     {file = "psycopg2-2.9.1-cp36-cp36m-win32.whl", hash = "sha256:7f91312f065df517187134cce8e395ab37f5b601a42446bdc0f0d51773621854"},
     {file = "psycopg2-2.9.1-cp36-cp36m-win_amd64.whl", hash = "sha256:830c8e8dddab6b6716a4bf73a09910c7954a92f40cf1d1e702fb93c8a919cc56"},
     {file = "psycopg2-2.9.1-cp37-cp37m-win32.whl", hash = "sha256:89409d369f4882c47f7ea20c42c5046879ce22c1e4ea20ef3b00a4dfc0a7f188"},
