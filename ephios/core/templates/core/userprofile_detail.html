@@ -46,29 +46,33 @@
             </ul>
         </div>
     </div>
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">{% trans "Calendar feed" %}</h5>
-            <p class="card-text">
-                {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
-                <br> <br>
-            <div class="input-group mb-3">
-                <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
-                       value="{{ SITE_URL }}{% url "core:user_event_feed" userprofile.calendar_token %}"
-                       readonly>
-                <button id="calendar-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
-                        data-clipboard-target="#calendar-url" data-trigger="manual"
-                        title="Copied!">{% translate "Copy" %}</button>
+    {% if own_profile %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "Calendar feed" %}</h5>
+                <p class="card-text">
+                    {% translate "You can subscribe to a calendar containing all events that you participate in. Most calendars (e.g. Google Calendar) offer this feature. This allows you to see all events in your personal calendar. To activate this, you need to copy the address of the following link and subscribe to the URL." %}
+                    <br> <br>
+                <div class="input-group mb-3">
+                    <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
+                           value="{{ SITE_URL }}{% url "core:user_event_feed" userprofile.calendar_token %}"
+                           readonly>
+                    <button id="calendar-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
+                            data-clipboard-target="#calendar-url" data-trigger="manual"
+                            title="Copied!">{% translate "Copy" %}</button>
+                </div>
+                </p>
             </div>
-            </p>
         </div>
-    </div>
+    {% endif %}
     <div class="card">
         <div class="card-body">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="card-title">{% translate "Working hours" %}</h5>
-                <a class="btn btn-outline-primary btn-sm"
-                   href="{% url "core:request_workinghour" %}">{% translate "Request working hours" %}</a>
+                {% if own_profile %}
+                    <a class="btn btn-outline-primary btn-sm"
+                       href="{% url "core:request_workinghour" %}">{% translate "Request working hours" %}</a>
+                {% endif %}
             </div>
         </div>
         <ul class="list-group list-group-flush">

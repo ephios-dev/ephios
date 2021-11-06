@@ -15,6 +15,7 @@ from ephios.core.views.accounts import (
     ProfileView,
     UserProfileCreateView,
     UserProfileDeleteView,
+    UserProfileDetailView,
     UserProfileListView,
     UserProfileNotificationsView,
     UserProfilePasswordResetView,
@@ -200,6 +201,11 @@ urlpatterns = [
         "users/create/",
         UserProfileCreateView.as_view(),
         name="userprofile_create",
+    ),
+    path(
+        "users/<int:pk>",
+        UserProfileDetailView.as_view(),
+        name="userprofile_view",
     ),
     path(
         "consequences/<int:pk>/edit",
