@@ -205,7 +205,7 @@ urlpatterns = [
     path(
         "users/<int:pk>",
         UserProfileDetailView.as_view(),
-        name="userprofile_view",
+        name="userprofile_detail",
     ),
     path(
         "consequences/<int:pk>/edit",

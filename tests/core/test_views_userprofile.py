@@ -33,7 +33,7 @@ class TestUserProfileView:
 
     def test_view_other_profile(self, django_app, superuser, volunteer, workinghours):
         response = django_app.get(
-            reverse("core:userprofile_view", kwargs={"pk": volunteer.id}), user=superuser
+            reverse("core:userprofile_detail", kwargs={"pk": volunteer.id}), user=superuser
         )
         assert response.html.find("dd", text=volunteer.email)
         assert response.html.find("span", text=floatformat(volunteer.get_workhour_items()[0]))
