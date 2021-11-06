@@ -449,6 +449,7 @@ class Notification(Model):
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @functools.cached_property
     def notification_type(self):
