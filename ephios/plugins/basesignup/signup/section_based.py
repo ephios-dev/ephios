@@ -189,6 +189,10 @@ class SectionSignupForm(BaseSignupForm):
                 "You don't qualify for {qualifications}."
             ).format(qualifications=", ".join(str(section["title"]) for section in unqualified))
 
+    def save(self, commit=True):
+        self.instance.data["preferred_section_uuid"] = self.cleaned_data["preferred_section_uuid"]
+        return super().save(commit)
+
     @cached_property
     def sections_participant_qualifies_for(self):
         return sections_participant_qualifies_for(
@@ -288,12 +292,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
-        preferred_section_uuid = kwargs.pop("preferred_section_uuid")
-        # TODO move this to configure
-        participation.data["preferred_section_uuid"] = preferred_section_uuid
-        if preferred_section_uuid:
-            # reset dispatch decision, as that would have overwritten the preferred choice
-            participation.data["dispatched_section_uuid"] = None
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
 
