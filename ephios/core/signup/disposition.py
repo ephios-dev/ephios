@@ -208,7 +208,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             if "state" in changed_fields and (
                 not participation.get_real_instance_class() == LocalParticipation
                 or participation.user != request.user
-            ):  # TODO also trigger for changed individual times
+            ):  # TODO also inform users of disposition changed their individual times
                 if participation.state == AbstractParticipation.States.CONFIRMED:
                     ParticipationConfirmedNotification.send(participation)
                 elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:

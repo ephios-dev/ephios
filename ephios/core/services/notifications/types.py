@@ -249,36 +249,44 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
         return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
-class ResponsibleParticipationRequested(AbstractNotificationHandler):
-    slug = "ephios_participation_responsible_requested"
-    title = _("A participation has been requested for your event")
-
+class ResponsibleMixin:
     @classmethod
-    def send(cls, participation: AbstractParticipation):
-        responsible_users = get_users_with_perms(
+    def responsible_users(cls, participation: AbstractParticipation):
+        users = get_users_with_perms(
             participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
-        disposition_url = urljoin(
+        for user in users:
+            if (
+                participation.get_real_instance_class() != LocalParticipation
+                or user != participation.user
+            ):
+                yield user
+
+    @classmethod
+    def get_data(cls, participation: AbstractParticipation, **kwargs):
+        kwargs["disposition_url"] = urljoin(
             settings.GET_SITE_URL(),
             reverse("core:shift_disposition", kwargs=dict(pk=participation.shift.pk)),
         )
-        notifications = []
-        for user in responsible_users:
-            if (
-                not participation.get_real_instance_class() == LocalParticipation
-                or user != participation.user
-            ):
-                notifications.append(
-                    Notification(
-                        slug=cls.slug,
-                        user=user,
-                        data=dict(
-                            participation_id=participation.id,
-                            disposition_url=disposition_url,
-                        ),
-                    )
+        kwargs["participation_id"] = participation.id
+        return kwargs
+
+    @classmethod
+    def get_url(cls, notification):
+        return notification.data.get("disposition_url")
+
+    @classmethod
+    def send(cls, participation: AbstractParticipation):
+        Notification.objects.bulk_create(
+            [
+                Notification(
+                    slug=cls.slug,
+                    user=user,
+                    data=cls.get_data(participation),
                 )
-        Notification.objects.bulk_create(notifications)
+                for user in cls.responsible_users(participation)
+            ]
+        )
 
     @classmethod
     def get_subject(cls, notification):
@@ -289,6 +297,11 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
         return _("Participation {state} for {event}").format(
             state=participation_state, event=participation.shift.event
         )
+
+
+class ResponsibleParticipationRequested(ResponsibleMixin, AbstractNotificationHandler):
+    slug = "ephios_participation_responsible_requested"
+    title = _("A participation has been requested for your event")
 
     @classmethod
     def as_plaintext(cls, notification):
@@ -307,9 +320,21 @@ class ResponsibleParticipationRequested(AbstractNotificationHandler):
             participant=participation.participant, shift=participation.shift
         )
 
+
+class ResponsibleParticipationDeclinedAfterConfirmation(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_responsible_Declined"
+    title = _("A participant declined after having been confirmed for your event")
+
     @classmethod
-    def get_url(cls, notification):
-        return notification.data.get("disposition_url")
+    def as_plaintext(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return _("{participant} declined their participation in {shift}.").format(
+            participant=participation.participant, shift=participation.shift
+        )
 
 
 class EventReminderNotification(AbstractNotificationHandler):
@@ -438,6 +463,7 @@ CORE_NOTIFICATION_TYPES = [
     ParticipationRejectedNotification,
     ParticipationConfirmedNotification,
     ResponsibleParticipationRequested,
+    ResponsibleParticipationDeclinedAfterConfirmation,
     NewEventNotification,
     EventReminderNotification,
     CustomEventParticipantNotification,

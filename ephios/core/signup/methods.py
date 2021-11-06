@@ -24,6 +24,7 @@ from ephios.core.models import AbstractParticipation, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 from ...extra.utils import format_anything
+from ..services.notifications.types import ResponsibleParticipationDeclinedAfterConfirmation
 from ..signals import participant_from_request, register_signup_methods
 from .participants import AbstractParticipant
 
@@ -79,6 +80,7 @@ class BaseParticipationForm(forms.ModelForm):
     )
 
     # TODO: any validation (time subset of shift time etc?!)
+    # maybe build that together with a nicer widget
     def clean_individual_start_time(self):
         if self.cleaned_data["individual_start_time"] == self.shift.start_time:
             return None
@@ -198,9 +200,8 @@ class BaseSignupView(FormView):
     def customize_pressed(self, form):
         form.save()
         # TODO:
-        # If saving this results in the participation being so different that it should be reconfirmed:
-        # * set the state to REQUESTED
-        # * send out a yet-to-be-created ConfirmedParticipantDeclinedNotification
+        # If the form decides it has been changed significantly, we should tell responsibles about it.
+        # * send out a yet-to-be-created ConfirmedParticipantDeclinedNotification and also integrate that into the normal decline workflow
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -436,6 +437,14 @@ class BaseSignupMethod:
             not declineable_state or self.can_decline(participant)
         )
 
+    def has_customized_signup(self, participation):
+        """
+        Return whether the participation was customized in a way specific to this signup method.
+        """
+        # This method should most likely check the participation's data attribute for modifications it has done.
+        # 'Customized' in this context means that the dispositioning person should give special attention to this participation.
+        return False
+
     def get_participation_for(self, participant) -> AbstractParticipation:
         return participant.participation_for(self.shift) or participant.new_participation(
             self.shift
@@ -465,6 +474,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
+        ResponsibleParticipationDeclinedAfterConfirmation.send(participation)
         return participation
 
     def _configure_participation(

@@ -207,7 +207,12 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     objects = ParticipationManager()
 
     def has_customized_signup(self):
-        return bool(self.individual_start_time or self.individual_end_time or self.comment)
+        return bool(
+            self.individual_start_time
+            or self.individual_end_time
+            or self.comment
+            or self.shift.signup_method.has_customized_signup(self)
+        )
 
     @property
     def hours_value(self):
