@@ -1,3 +1,4 @@
+from typing import List
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -250,43 +251,43 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
 
 
 class ResponsibleMixin:
-    @classmethod
-    def responsible_users(cls, participation: AbstractParticipation):
+    def __init__(self, participation: AbstractParticipation):
+        self.participation = participation
+
+    def responsible_users(self):
         users = get_users_with_perms(
-            participation.shift.event, only_with_perms_in=["change_event"]
+            self.participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         for user in users:
             if (
-                participation.get_real_instance_class() != LocalParticipation
-                or user != participation.user
+                self.participation.get_real_instance_class() != LocalParticipation
+                or user != self.participation.user
             ):
                 yield user
 
-    @classmethod
-    def get_data(cls, participation: AbstractParticipation, **kwargs):
+    def get_data(self, **kwargs):
         kwargs["disposition_url"] = urljoin(
             settings.GET_SITE_URL(),
-            reverse("core:shift_disposition", kwargs=dict(pk=participation.shift.pk)),
+            reverse("core:shift_disposition", kwargs=dict(pk=self.participation.shift.pk)),
         )
-        kwargs["participation_id"] = participation.id
+        kwargs["participation_id"] = self.participation.id
         return kwargs
+
+    def send(self):
+        Notification.objects.bulk_create(
+            [
+                Notification(
+                    slug=self.slug,
+                    user=user,
+                    data=self.get_data(),
+                )
+                for user in self.responsible_users()
+            ]
+        )
 
     @classmethod
     def get_url(cls, notification):
         return notification.data.get("disposition_url")
-
-    @classmethod
-    def send(cls, participation: AbstractParticipation):
-        Notification.objects.bulk_create(
-            [
-                Notification(
-                    slug=cls.slug,
-                    user=user,
-                    data=cls.get_data(participation),
-                )
-                for user in cls.responsible_users(participation)
-            ]
-        )
 
     @classmethod
     def get_subject(cls, notification):
@@ -299,7 +300,7 @@ class ResponsibleMixin:
         )
 
 
-class ResponsibleParticipationRequested(ResponsibleMixin, AbstractNotificationHandler):
+class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNotificationHandler):
     slug = "ephios_participation_responsible_requested"
     title = _("A participation has been requested for your event")
 
@@ -321,10 +322,10 @@ class ResponsibleParticipationRequested(ResponsibleMixin, AbstractNotificationHa
         )
 
 
-class ResponsibleParticipationDeclinedAfterConfirmation(
+class ResponsibleConfirmedParticipationDeclinedNotification(
     ResponsibleMixin, AbstractNotificationHandler
 ):
-    slug = "ephios_participation_responsible_Declined"
+    slug = "ephios_participation_responsible_confirmed_declined"
     title = _("A participant declined after having been confirmed for your event")
 
     @classmethod
@@ -335,6 +336,38 @@ class ResponsibleParticipationDeclinedAfterConfirmation(
         return _("{participant} declined their participation in {shift}.").format(
             participant=participation.participant, shift=participation.shift
         )
+
+
+class ResponsibleConfirmedParticipationCustomizedNotification(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_responsible_confirmed_customized"
+    title = _("A confirmed participant altered their participation")
+
+    @classmethod
+    def get_subject(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return _("Participation altered for {event}").format(event=participation.shift.event)
+
+    def __init__(self, participation: AbstractParticipation, claims: List[str]):
+        super().__init__(participation)
+        self.claims = claims
+
+    def get_data(self, **kwargs):
+        return super().get_data(claims=self.claims)
+
+    @classmethod
+    def as_plaintext(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        message = _("{participant} altered their participation in {shift}.").format(
+            participant=participation.participant, shift=participation.shift
+        )
+        message += "\n\n" + "\n".join(f"- {claim}" for claim in notification.data.get("claims", []))
+        return message
 
 
 class EventReminderNotification(AbstractNotificationHandler):
@@ -462,8 +495,9 @@ CORE_NOTIFICATION_TYPES = [
     NewProfileNotification,
     ParticipationRejectedNotification,
     ParticipationConfirmedNotification,
-    ResponsibleParticipationRequested,
-    ResponsibleParticipationDeclinedAfterConfirmation,
+    ResponsibleParticipationRequestedNotification,
+    ResponsibleConfirmedParticipationDeclinedNotification,
+    ResponsibleConfirmedParticipationCustomizedNotification,
     NewEventNotification,
     EventReminderNotification,
     CustomEventParticipantNotification,

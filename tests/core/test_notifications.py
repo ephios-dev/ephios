@@ -15,7 +15,8 @@ from ephios.core.services.notifications.types import (
     ParticipationConfirmedNotification,
     ParticipationRejectedNotification,
     ProfileUpdateNotification,
-    ResponsibleParticipationRequested,
+    ResponsibleConfirmedParticipationCustomizedNotification,
+    ResponsibleParticipationRequestedNotification,
     enabled_notification_types,
 )
 
@@ -73,11 +74,39 @@ class TestNotifications:
         )
         ParticipationConfirmedNotification.send(participation)
         ParticipationRejectedNotification.send(participation)
-        ResponsibleParticipationRequested.send(participation)
+        ResponsibleParticipationRequestedNotification(participation).send()
         CustomEventParticipantNotification.send(event, "hi")
         assert Notification.objects.count() == 3 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
+        call_command("send_notifications")
+        assert Notification.objects.count() == 0
+
+    def test_responsible_confirmed_participation_customized_notification(
+        self, django_app, event, planner, qualified_volunteer
+    ):
+        self._enable_all_notifications(planner)
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=qualified_volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        # change individual start time
+        form = django_app.get(
+            reverse("core:signup_action", kwargs=dict(pk=participation.shift.pk)),
+            user=qualified_volunteer,
+        ).form
+        form["individual_start_time_1"] = "07:42"
+        form.submit(name="signup_choice", value="customize").follow()
+
+        # assert only notification of the correct type exist
+        assert set(Notification.objects.all().values_list("slug", flat=True)) == {
+            ResponsibleConfirmedParticipationCustomizedNotification.slug
+        }
+        plaintext = ResponsibleConfirmedParticipationCustomizedNotification.as_plaintext(
+            Notification.objects.first()
+        )
+        assert "7:42" in plaintext
         call_command("send_notifications")
         assert Notification.objects.count() == 0
 
