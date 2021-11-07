@@ -1,18 +1,9 @@
 import json
 
 from django import forms
-from dynamic_preferences.types import (
-    BasePreferenceType,
-    BaseSerializer,
-    ModelMultipleChoicePreference,
-)
+from dynamic_preferences.types import BasePreferenceType, BaseSerializer
 
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-
-
-class CustomModelMultipleChoicePreference(ModelMultipleChoicePreference):
-    def _setup_signals(self):
-        pass
 
 
 class JSONSerializer(BaseSerializer):
