@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.template import Context, Template
 from django.utils import timezone
+from django.utils.formats import date_format
 from django.utils.functional import SimpleLazyObject, cached_property, classproperty
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
@@ -24,7 +25,10 @@ from ephios.core.models import AbstractParticipation, Shift
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 from ...extra.utils import format_anything
-from ..services.notifications.types import ResponsibleParticipationDeclinedAfterConfirmation
+from ..services.notifications.types import (
+    ResponsibleConfirmedParticipationCustomizedNotification,
+    ResponsibleConfirmedParticipationDeclinedNotification,
+)
 from ..signals import participant_from_request, register_signup_methods
 from .participants import AbstractParticipant
 
@@ -104,6 +108,21 @@ class BaseParticipationForm(forms.ModelForm):
             "individual_end_time": instance.individual_end_time or shift.end_time,
         }
         super().__init__(*args, **kwargs)
+
+    def get_responsible_notification_info(self):
+        """Return a list of human readable messages for changed participation attributes responsibles should be informed about."""
+        assert self.is_valid()
+        info = []
+        for name in ["individual_start_time", "individual_end_time"]:
+            if name in self.changed_data:
+                info.append(
+                    _("{label} was changed from {initial} to {current}.").format(
+                        label=self.fields[name].label,
+                        initial=date_format(self.initial[name], format="SHORT_DATETIME_FORMAT"),
+                        current=date_format(self.cleaned_data[name], format="TIME_FORMAT"),
+                    )
+                )
+        return info
 
 
 class BaseSignupForm(BaseParticipationForm):
@@ -195,13 +214,13 @@ class BaseSignupView(FormView):
                 return self.decline_pressed(form)
             messages.error(self.request, _("This action is not allowed."))
             return redirect(self.participant.reverse_event_detail(self.shift.event))
+        form.add_error(None, _("Form submission is missing the mode of signup."))
         return self.form_invalid(form)
 
     def customize_pressed(self, form):
         form.save()
-        # TODO:
-        # If the form decides it has been changed significantly, we should tell responsibles about it.
-        # * send out a yet-to-be-created ConfirmedParticipantDeclinedNotification and also integrate that into the normal decline workflow
+        if claims := form.get_responsible_notification_info():
+            ResponsibleConfirmedParticipationCustomizedNotification(form.instance, claims).send()
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -457,14 +476,16 @@ class BaseSignupMethod:
         Creates and/or configures a participation object for a given participant and sends out notifications.
         Passes the participation and kwargs to configure_participation to do configuration specific to the signup method.
         """
-        from ephios.core.services.notifications.types import ResponsibleParticipationRequested
+        from ephios.core.services.notifications.types import (
+            ResponsibleParticipationRequestedNotification,
+        )
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
         participation = participation or self.get_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
-        ResponsibleParticipationRequested.send(participation)
+        ResponsibleParticipationRequestedNotification(participation).send()
         return participation
 
     def perform_decline(self, participant, participation=None, **kwargs):
@@ -474,7 +495,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
-        ResponsibleParticipationDeclinedAfterConfirmation.send(participation)
+        ResponsibleConfirmedParticipationDeclinedNotification(participation).send()
         return participation
 
     def _configure_participation(
