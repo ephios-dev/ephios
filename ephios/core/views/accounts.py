@@ -37,6 +37,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(own_profile=True, **kwargs)
+
+
+class UserProfileDetailView(CustomPermissionRequiredMixin, DetailView):
+    model = UserProfile
+    permission_required = "core.view_userprofile"
+
 
 class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
