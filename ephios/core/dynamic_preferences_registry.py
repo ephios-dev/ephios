@@ -7,7 +7,11 @@ from dynamic_preferences.registries import (
     PerInstancePreferenceRegistry,
     global_preferences_registry,
 )
-from dynamic_preferences.types import MultipleChoicePreference, StringPreference
+from dynamic_preferences.types import (
+    ModelMultipleChoicePreference,
+    MultipleChoicePreference,
+    StringPreference,
+)
 from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
@@ -15,7 +19,7 @@ from ephios.core import plugins
 from ephios.core.models import QualificationCategory, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
-from ephios.extra.preferences import CustomModelMultipleChoicePreference, JSONPreference
+from ephios.extra.preferences import JSONPreference
 
 
 class EventTypeRegistry(PerInstancePreferenceRegistry):
@@ -39,7 +43,7 @@ class OrganizationName(StringPreference):
 
 
 @global_preferences_registry.register
-class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
+class RelevantQualificationCategories(ModelMultipleChoicePreference):
     name = "relevant_qualification_categories"
     section = general_global_section
     model = QualificationCategory
@@ -83,7 +87,7 @@ class NotificationPreference(JSONPreference):
 
 
 @event_type_preference_registry.register
-class VisibleForPreference(CustomModelMultipleChoicePreference):
+class VisibleForPreference(ModelMultipleChoicePreference):
     name = "visible_for"
     verbose_name = _("Events of this type should by default be visible for")
     model = Group
@@ -92,7 +96,7 @@ class VisibleForPreference(CustomModelMultipleChoicePreference):
 
 
 @event_type_preference_registry.register
-class ResponsibleUsersPreference(CustomModelMultipleChoicePreference):
+class ResponsibleUsersPreference(ModelMultipleChoicePreference):
     name = "responsible_users"
     verbose_name = _("Users that are responsible for this event type by default")
     model = UserProfile
@@ -101,7 +105,7 @@ class ResponsibleUsersPreference(CustomModelMultipleChoicePreference):
 
 
 @event_type_preference_registry.register
-class ResponsibleGroupsPreference(CustomModelMultipleChoicePreference):
+class ResponsibleGroupsPreference(ModelMultipleChoicePreference):
     name = "responsible_groups"
     verbose_name = _("Groups that are responsible for this event type by default")
     model = Group
