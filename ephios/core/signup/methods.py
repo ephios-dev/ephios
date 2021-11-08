@@ -82,8 +82,6 @@ class BaseParticipationForm(forms.ModelForm):
         required=False,
     )
 
-    # TODO: any validation (time subset of shift time etc?!)
-    # maybe build that together with a nicer widget
     def clean_individual_start_time(self):
         if self.cleaned_data["individual_start_time"] == self.shift.start_time:
             return None
@@ -93,6 +91,14 @@ class BaseParticipationForm(forms.ModelForm):
         if self.cleaned_data["individual_end_time"] == self.shift.end_time:
             return None
         return self.cleaned_data["individual_end_time"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data["individual_start_time"] or self.shift.start_time
+        end = cleaned_data["individual_end_time"] or self.shift.end_time
+        if end < start:
+            self.add_error("individual_end_time", _("End time must not be before start time."))
+        return cleaned_data
 
     class Meta:
         model = AbstractParticipation
