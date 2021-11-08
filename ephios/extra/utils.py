@@ -29,10 +29,6 @@ def format_anything(value):
         return yesno(value)
     if isinstance(value, datetime.datetime):
         return formats.date_format(value, format="SHORT_DATETIME_FORMAT")
-    if isinstance(value, models.Model):
-        return str(value)
-    if isinstance(value, models.Model):
-        return str(value)
     if isinstance(value, models.QuerySet):
         return ", ".join(str(e) for e in value)
     if value is None:

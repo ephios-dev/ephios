@@ -15,6 +15,11 @@ from ephios.core.models import (
     Shift,
     UserProfile,
 )
+from ephios.core.services.notifications.types import (
+    ParticipationConfirmedNotification,
+    ParticipationCustomizationNotification,
+    ParticipationRejectedNotification,
+)
 from ephios.core.signup.methods import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
@@ -193,26 +198,33 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         )
         return formset
 
-    def post(self, request, *args, **kwargs):
-        from ephios.core.services.notifications.types import (
-            ParticipationConfirmedNotification,
-            ParticipationRejectedNotification,
-        )
+    def send_participant_notifications(self, formset):
+        for participation, changed_fields in formset.changed_objects:
+            if (
+                participation.get_real_instance_class() != LocalParticipation
+                or participation.user != self.request.user
+            ):
+                if "state" in changed_fields:
+                    # send state updates
+                    if participation.state == AbstractParticipation.States.CONFIRMED:
+                        ParticipationConfirmedNotification.send(participation)
+                    elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                        ParticipationRejectedNotification.send(participation)
+                elif participation.state == AbstractParticipation.States.CONFIRMED:
+                    form: BaseParticipationForm = next(
+                        filter(lambda f, p=participation: f.instance == p, formset.forms)
+                    )
+                    if claims := form.get_customization_notification_info():
+                        # If state didn't change, but confirmed participation was customized, notify about that.
+                        ParticipationCustomizationNotification.send(participation, claims)
 
+    def post(self, request, *args, **kwargs):
         formset = self.get_formset()
         if not formset.is_valid():
             return self.get(request, *args, **kwargs, formset=formset)
 
         formset.save()
-        for participation, changed_fields in formset.changed_objects:
-            if "state" in changed_fields and (
-                not participation.get_real_instance_class() == LocalParticipation
-                or participation.user != request.user
-            ):  # TODO also inform users of disposition changed their individual times
-                if participation.state == AbstractParticipation.States.CONFIRMED:
-                    ParticipationConfirmedNotification.send(participation)
-                elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                    ParticipationRejectedNotification.send(participation)
+        self.send_participant_notifications(formset)
 
         self.object.participations.filter(
             state=AbstractParticipation.States.GETTING_DISPATCHED

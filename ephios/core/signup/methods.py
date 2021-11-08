@@ -18,6 +18,7 @@ from django.template import Context, Template
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.functional import SimpleLazyObject, cached_property, classproperty
+from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
@@ -114,19 +115,29 @@ class BaseParticipationForm(forms.ModelForm):
         }
         super().__init__(*args, **kwargs)
 
-    def get_responsible_notification_info(self):
-        """Return a list of human readable messages for changed participation attributes responsibles should be informed about."""
+    def get_customization_notification_info(self):
+        """
+        Return a list of human readable messages for changed participation attributes responsibles should be informed about.
+        This should not include the participation state, but customization aspects such as individual times, detailed disposition information, etc.
+        """
         assert self.is_valid()
         info = []
-        for name in ["individual_start_time", "individual_end_time"]:
-            if name in self.changed_data:
+        for time in ["start_time", "end_time"]:
+            if (field_name := f"individual_{time}") in self.changed_data:
                 info.append(
                     _("{label} was changed from {initial} to {current}.").format(
-                        label=self.fields[name].label,
-                        initial=date_format(self.initial[name], format="SHORT_DATETIME_FORMAT"),
-                        current=date_format(self.cleaned_data[name], format="TIME_FORMAT"),
+                        label=self.fields[field_name].label,
+                        initial=date_format(
+                            localtime(self.initial[field_name].astimezone()),
+                            format="SHORT_DATETIME_FORMAT",
+                        ),
+                        current=date_format(
+                            localtime(self.cleaned_data[field_name] or getattr(self.shift, time)),
+                            format="TIME_FORMAT",
+                        ),
                     )
                 )
+
         return info
 
 
@@ -224,7 +235,7 @@ class BaseSignupView(FormView):
 
     def customize_pressed(self, form):
         form.save()
-        if claims := form.get_responsible_notification_info():
+        if claims := form.get_customization_notification_info():
             ResponsibleConfirmedParticipationCustomizedNotification(form.instance, claims).send()
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
