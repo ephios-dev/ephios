@@ -22,15 +22,14 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.extra.widgets import CustomSplitDateTimeWidget
-
-from ...extra.utils import format_anything
-from ..services.notifications.types import (
+from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
     ResponsibleConfirmedParticipationDeclinedNotification,
 )
-from ..signals import participant_from_request, register_signup_methods
-from .participants import AbstractParticipant
+from ephios.core.signals import participant_from_request, register_signup_methods
+from ephios.core.signup.participants import AbstractParticipant
+from ephios.extra.utils import format_anything
+from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 logger = logging.getLogger(__name__)
 
@@ -101,11 +100,11 @@ class BaseParticipationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs["instance"]
-        shift = getattr(self, "shift", instance.shift)
+        self.shift = getattr(self, "shift", instance.shift)
         kwargs["initial"] = {
             **kwargs.get("initial", {}),
-            "individual_start_time": instance.individual_start_time or shift.start_time,
-            "individual_end_time": instance.individual_end_time or shift.end_time,
+            "individual_start_time": instance.individual_start_time or self.shift.start_time,
+            "individual_end_time": instance.individual_end_time or self.shift.end_time,
         }
         super().__init__(*args, **kwargs)
 
