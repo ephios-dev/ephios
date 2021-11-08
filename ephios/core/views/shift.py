@@ -37,7 +37,6 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
 
     def post(self, *args, **kwargs):
         form = self.get_shift_form()
-        from ephios.core.signup.methods import signup_method_from_slug
 
         try:
             signup_method = signup_method_from_slug(
@@ -93,8 +92,6 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
     pk_url_kwarg = "event_id"
 
     def get(self, request, *args, **kwargs):
-        from ephios.core.signup.methods import signup_method_from_slug
-
         signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
         return HttpResponse(signup_method.render_configuration_form())
 

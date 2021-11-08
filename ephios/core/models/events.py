@@ -3,8 +3,6 @@ import operator
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-import pytz
-from django.conf import settings
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -21,6 +19,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils import formats
 from django.utils.text import slugify
+from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
@@ -159,13 +158,11 @@ class DatetimeDisplayMixin:
     """
 
     def get_date_display(self):
-        tz = pytz.timezone(settings.TIME_ZONE)
-        start_time = self.start_time.astimezone(tz)
+        start_time = localtime(self.start_time)
         return f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}"
 
     def get_time_display(self):
-        tz = pytz.timezone(settings.TIME_ZONE)
-        return f"{formats.time_format(self.start_time.astimezone(tz))} - {formats.time_format(self.end_time.astimezone(tz))}"
+        return f"{formats.time_format(localtime(self.start_time))} - {formats.time_format(localtime(self.end_time))}"
 
     def get_datetime_display(self):
         return f"{self.get_date_display()}, {self.get_time_display()}"

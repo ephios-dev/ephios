@@ -13,6 +13,7 @@ from ephios.core.services.notifications.types import (
     NewEventNotification,
     NewProfileNotification,
     ParticipationConfirmedNotification,
+    ParticipationCustomizationNotification,
     ParticipationRejectedNotification,
     ProfileUpdateNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
@@ -104,6 +105,34 @@ class TestNotifications:
             ResponsibleConfirmedParticipationCustomizedNotification.slug
         }
         plaintext = ResponsibleConfirmedParticipationCustomizedNotification.as_plaintext(
+            Notification.objects.first()
+        )
+        assert "7:42" in plaintext
+        call_command("send_notifications")
+        assert Notification.objects.count() == 0
+
+    def test_participant_participation_customized_notification(
+        self, django_app, event, planner, qualified_volunteer
+    ):
+        self._enable_all_notifications(qualified_volunteer)
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=qualified_volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        # change individual start time
+        response = django_app.get(
+            reverse("core:shift_disposition", kwargs=dict(pk=participation.shift.pk)),
+            user=planner,
+        )
+        form = response.forms["participations-form"]
+        form["participations-0-individual_start_time_1"] = "07:42"
+        form.submit()
+
+        # assert only notification of the correct type exist
+        assert Notification.objects.get().slug == ParticipationCustomizationNotification.slug
+
+        plaintext = ParticipationCustomizationNotification.as_plaintext(
             Notification.objects.first()
         )
         assert "7:42" in plaintext

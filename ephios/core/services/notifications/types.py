@@ -170,9 +170,13 @@ class NewEventNotification(AbstractNotificationHandler):
         return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
 
 
-class ParticipationConfirmedNotification(AbstractNotificationHandler):
-    slug = "ephios_participation_confirmed"
-    title = _("Your participation has been confirmed")
+class ParticipationMixin:
+    @classmethod
+    def get_url(cls, notification):
+        shift = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift
+        return urljoin(settings.GET_SITE_URL(), shift.get_absolute_url())
 
     @classmethod
     def send(cls, participation: AbstractParticipation):
@@ -186,6 +190,11 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
             user=user,
             data=dict(participation_id=participation.id, email=participation.participant.email),
         )
+
+
+class ParticipationConfirmedNotification(ParticipationMixin, AbstractNotificationHandler):
+    slug = "ephios_participation_confirmed"
+    title = _("Your participation has been confirmed")
 
     @classmethod
     def get_subject(cls, notification):
@@ -196,35 +205,20 @@ class ParticipationConfirmedNotification(AbstractNotificationHandler):
 
     @classmethod
     def as_plaintext(cls, notification):
-        shift = AbstractParticipation.objects.get(
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
-        ).shift
-        return _("Your participation for {shift} is now confirmed.").format(shift=shift)
-
-    @classmethod
-    def get_url(cls, notification):
-        event = AbstractParticipation.objects.get(
-            id=notification.data.get("participation_id")
-        ).shift.event
-        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
+        )
+        message = _("Your participation for {shift} is now confirmed.").format(
+            shift=participation.shift
+        )
+        if participation.has_customized_signup():
+            message += f'\n\n{_("Your time is")} {participation.get_time_display()}'
+        return message
 
 
-class ParticipationRejectedNotification(AbstractNotificationHandler):
+class ParticipationRejectedNotification(ParticipationMixin, AbstractNotificationHandler):
     slug = "ephios_participation_rejected"
     title = _("Your participation has been rejected")
-
-    @classmethod
-    def send(cls, participation: AbstractParticipation):
-        user = (
-            participation.user
-            if participation.get_real_instance_class() == LocalParticipation
-            else None
-        )
-        Notification.objects.create(
-            slug=cls.slug,
-            user=user,
-            data=dict(participation_id=participation.id, email=participation.participant.email),
-        )
 
     @classmethod
     def get_subject(cls, notification):
@@ -242,12 +236,47 @@ class ParticipationRejectedNotification(AbstractNotificationHandler):
             shift=shift
         )
 
+
+class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotificationHandler):
+    slug = "ephios_participation_customized"
+    title = _("A confirmed participation of yours has been tweaked by a responsible")
+
     @classmethod
-    def get_url(cls, notification):
-        event = AbstractParticipation.objects.get(
+    def send(
+        cls, participation: AbstractParticipation, claims: List[str]
+    ):  # pylint: disable=arguments-differ
+        user = (
+            participation.user
+            if participation.get_real_instance_class() == LocalParticipation
+            else None
+        )
+        Notification.objects.create(
+            slug=cls.slug,
+            user=user,
+            data=dict(
+                participation_id=participation.id,
+                email=participation.participant.email,
+                claims=claims,
+            ),
+        )
+
+    @classmethod
+    def get_subject(cls, notification):
+        shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
-        ).shift.event
-        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
+        ).shift
+        return _("Participation tweaked for {shift}").format(shift=shift)
+
+    @classmethod
+    def as_plaintext(cls, notification):
+        shift = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift
+        message = _(
+            "Your participation for {shift} has been tweaked by a responsible user."
+        ).format(shift=shift)
+        message += "\n\n" + "\n".join(f"- {claim}" for claim in notification.data.get("claims", []))
+        return message
 
 
 class ResponsibleMixin:
@@ -495,6 +524,7 @@ CORE_NOTIFICATION_TYPES = [
     NewProfileNotification,
     ParticipationRejectedNotification,
     ParticipationConfirmedNotification,
+    ParticipationCustomizationNotification,
     ResponsibleParticipationRequestedNotification,
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
