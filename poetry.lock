@@ -478,7 +478,7 @@ redis = ">=3.0.0"
 
 [[package]]
 name = "django-select2"
-version = "7.8.1"
+version = "7.9.0"
 description = "Select2 option fields for Django"
 category = "main"
 optional = false
@@ -1605,8 +1605,8 @@ django-redis = [
     {file = "django_redis-5.0.0-py3-none-any.whl", hash = "sha256:97739ca9de3f964c51412d1d7d8aecdfd86737bb197fce6e1ff12620c63c97ee"},
 ]
 django-select2 = [
-    {file = "django-select2-7.8.1.tar.gz", hash = "sha256:17f1f8baa1e049215597e47d7629571c794c40514be5bd41d3ff57fda34d8f0a"},
-    {file = "django_select2-7.8.1-py2.py3-none-any.whl", hash = "sha256:42bc1bb763f616c854be5ca33f0b35cf07ba1ea9ccdf582f29aa22ce8b7016f7"},
+    {file = "django-select2-7.9.0.tar.gz", hash = "sha256:4494cf5fa13333ddbd34e4dbeca4b44a22ed6367342cccd24f6f122f6ef4a20b"},
+    {file = "django_select2-7.9.0-py2.py3-none-any.whl", hash = "sha256:40d42643b459f79c31598fa5645f5f7e8edda8350a78761ab6c06105ca588872"},
 ]
 django-statici18n = [
     {file = "django-statici18n-2.1.1.tar.gz", hash = "sha256:5c85192fa95e3ef3727517ac104add8959fc0a54be3d13440a8a3319fddbc778"},
