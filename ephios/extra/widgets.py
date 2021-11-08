@@ -4,7 +4,7 @@ from django.forms.widgets import Input
 
 
 class CustomDateInput(DateInput):
-    template_name = "core/fragments/custom_date_input.html"
+    template_name = "extra/widgets/custom_date_input.html"
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("format", "%Y-%m-%d")
@@ -12,7 +12,7 @@ class CustomDateInput(DateInput):
 
 
 class CustomTimeInput(TimeInput):
-    template_name = "core/fragments/custom_time_input.html"
+    template_name = "extra/widgets/custom_time_input.html"
 
 
 class CustomSplitDateTimeInput(SplitDateTimeWidget):
@@ -26,7 +26,7 @@ class CustomSplitDateTimeWidget(MultiWidget):
     """
 
     supports_microseconds = False
-    template_name = "core/fragments/custom_split_date_time_widget.html"
+    template_name = "extra/widgets/custom_split_date_time_widget.html"
 
     def __init__(self, *args, **kwargs):
         widgets = (
