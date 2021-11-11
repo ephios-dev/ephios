@@ -113,6 +113,7 @@ TEMPLATES = [
                 "dynamic_preferences.processors.global_preferences",
                 "ephios.core.context.ephios_base_context",
             ],
+            "debug": DEBUG,
         },
     },
 ]
