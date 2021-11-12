@@ -211,14 +211,14 @@ toml = ["tomli"]
 
 [[package]]
 name = "coveralls"
-version = "3.3.0"
+version = "3.3.1"
 description = "Show coverage stats online via coveralls.io"
 category = "dev"
 optional = false
 python-versions = ">= 3.5"
 
 [package.dependencies]
-coverage = ">=4.1,<7.0"
+coverage = ">=4.1,<6.0.0 || >6.1,<6.1.1 || >6.1.1,<7.0"
 docopt = ">=0.6.1"
 requests = ">=1.0.0"
 
@@ -1343,7 +1343,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "0836ad6f36fe06bade72dbfdcfbd7f201a948f5fe5bb46ac4e4d6b49125c5a55"
+content-hash = "7a347cd9158e4ca5eb3090446701bf5f38033ce5d99f4834b85694d8fb8c54d0"
 
 [metadata.files]
 alabaster = [
@@ -1506,8 +1506,8 @@ coverage = [
     {file = "coverage-6.1.2.tar.gz", hash = "sha256:d9a635114b88c0ab462e0355472d00a180a5fbfd8511e7f18e4ac32652e7d972"},
 ]
 coveralls = [
-    {file = "coveralls-3.3.0-py2.py3-none-any.whl", hash = "sha256:f3c2142c9117c6dd04bc721cc733e59cdb9fd516924c551f98a458d16f8facf0"},
-    {file = "coveralls-3.3.0.tar.gz", hash = "sha256:4508b8f18344b421a736a276b813daddfdbbe45928c3f878fa72bf54442ea641"},
+    {file = "coveralls-3.3.1-py2.py3-none-any.whl", hash = "sha256:f42015f31d386b351d4226389b387ae173207058832fbf5c8ec4b40e27b16026"},
+    {file = "coveralls-3.3.1.tar.gz", hash = "sha256:b32a8bb5d2df585207c119d6c01567b81fba690c9c10a753bfe27a335bfc43ea"},
 ]
 crispy-bootstrap5 = [
     {file = "crispy-bootstrap5-0.6.tar.gz", hash = "sha256:e8c50daaf266d6127c7414f5669d5f2467b640d08b045ed9dd57e351d30609ae"},
