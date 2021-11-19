@@ -442,7 +442,7 @@ libsass = ">=0.7.0,<1"
 
 [[package]]
 name = "django-polymorphic"
-version = "3.0.0"
+version = "3.1.0"
 description = "Seamless polymorphic inheritance for Django models"
 category = "main"
 optional = false
@@ -1597,8 +1597,8 @@ django-libsass = [
     {file = "django_libsass-0.9-py3-none-any.whl", hash = "sha256:5234d29100889cac79e36a0f44207ec6d275adfd2da1acb6a94b55c89fe2bd97"},
 ]
 django-polymorphic = [
-    {file = "django-polymorphic-3.0.0.tar.gz", hash = "sha256:9d886f19f031d26bb1391c055ed9be06fb226a04a4cec1842b372c58873b3caa"},
-    {file = "django_polymorphic-3.0.0-py2.py3-none-any.whl", hash = "sha256:73b75eb44ea302bd32820f8661e469509d245ce7f7ff09cd2ad149e5c42034ff"},
+    {file = "django-polymorphic-3.1.0.tar.gz", hash = "sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8"},
+    {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
 ]
 django-recurrence = [
     {file = "django-recurrence-1.10.3.tar.gz", hash = "sha256:715f681f6af029ff3a8d73c7b1460abd8cbc5d5a5001efcb127032e84d9cb963"},
