@@ -1,5 +1,6 @@
 import dataclasses
 import functools
+import itertools
 import logging
 from argparse import Namespace
 from collections import OrderedDict
@@ -175,7 +176,8 @@ class BaseSignupForm(BaseParticipationForm):
 
     def __init__(self, *args, **kwargs):
         self.method = kwargs.pop("method")
-        self.shift = self.method.shift
+        self.target_state = kwargs.pop("target_state")
+        self.shift: Shift = self.method.shift
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -183,9 +185,34 @@ class BaseSignupForm(BaseParticipationForm):
             self.get_field_layout(),
             FormActions(*self._get_buttons()),
         )
+
         if not self.shift.signup_method.configuration.user_can_customize_signup_times:
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self._validate_signup_form_conflicting_participations(self, self.target_state)
+        self.shift.signup_method.validate_signup_form(self, self.target_state)
+        return cleaned_data
+
+    def _validate_signup_form_conflicting_participations(self, form, target_state):
+        if target_state != AbstractParticipation.States.CONFIRMED:
+            return
+        if conflicts := get_conflicting_participations(
+            participant=form.instance.participant,
+            start_time=form.cleaned_data["individual_start_time"] or self.shift.start_time,
+            end_time=form.cleaned_data["individual_end_time"] or self.shift.end_time,
+            shift=self.shift,
+            total=False,
+        ):
+            form.add_error("individual_start_time", "")
+            form.add_error(
+                "individual_end_time",
+                _("You are already confirmed for other shifts at this time: {shifts}.").format(
+                    shifts=", ".join(str(shift) for shift in conflicts)
+                ),
+            )
 
 
 class BaseSignupView(FormView):
@@ -207,6 +234,10 @@ class BaseSignupView(FormView):
                 "method": self.method,
                 "participant": self.participant,
                 "instance": self.participation,
+                "target_state": {
+                    "sign_up": AbstractParticipation.States.CONFIRMED,
+                    "decline": AbstractParticipation.States.USER_DECLINED,
+                }.get(self.request.POST.get("signup_choice"), None),
             }
         )
         return kwargs
@@ -314,22 +345,44 @@ def check_participant_age(method, participant):
         )
 
 
-def get_conflicting_participations(shift, participant: AbstractParticipant):
-    self_start_time = shift.start_time
-    self_end_time = shift.end_time
-    if self_participation := participant.participation_for(shift):
-        self_start_time = self_participation.start_time
-        self_end_time = self_participation.end_time
-    return participant.all_participations().filter(
+def get_conflicting_participations(
+    participant: AbstractParticipant, shift: Shift, start_time=None, end_time=None, total=False
+):
+    """
+    Return a queryset of participations of `participant` that are in conflict with `start_time` and `end_time` of a participation at `shift`.
+    If `total` is True, filter for conflicts that can't be resolved by adjusting the times inside the shift timeframe.
+    """
+    start_time = start_time or shift.start_time
+    end_time = end_time or shift.end_time
+    qs = participant.all_participations().filter(
         ~Q(shift=shift)
         & Q(state=AbstractParticipation.States.CONFIRMED)
-        & Q(start_time__lt=self_end_time, end_time__gt=self_start_time)
+        & Q(start_time__lt=end_time, end_time__gt=start_time)
     )
+    if total:
+        qs = qs.filter(start_time__lte=shift.start_time, end_time__gte=shift.end_time)
+    return qs
 
 
-def check_conflicting_shifts(method, participant):
-    if get_conflicting_participations(method.shift, participant).exists():
-        return ParticipationError(_("You are already confirmed for another shift at this time."))
+def check_conflicting_participations(method, participant):
+    start_time, end_time = method.shift.start_time, method.shift.end_time
+    if participation := participant.participation_for(method.shift):
+        start_time, end_time = participation.start_time, participation.end_time
+
+    # if users can provide individual times, only total conflicts should block signup
+    total = getattr(method.configuration, "user_can_customize_signup_times", False)
+    if conflicts := get_conflicting_participations(
+        participant=participant,
+        shift=method.shift,
+        start_time=start_time,
+        end_time=end_time,
+        total=total,
+    ):
+        return ParticipationError(
+            _("You are already confirmed for other shifts at this time: {shifts}.").format(
+                shifts=", ".join(str(shift) for shift in conflicts)
+            )
+        )
 
 
 class BaseSignupMethodConfigurationForm(forms.Form):
@@ -411,37 +464,50 @@ class BaseSignupMethod:
 
     @property
     def _signup_checkers(self):
+        """Return a list of methods that check if the participant can sign up for the shift."""
         return [
             check_event_is_active,
             check_participation_state_for_signup,
             check_inside_signup_timeframe,
+            check_conflicting_participations,
+        ]
+
+    @property
+    def _participant_checkers(self):
+        """Return a list of methods that check if shift and participant are compatible."""
+        return [
             check_participant_age,
-            check_conflicting_shifts,
         ]
 
     @property
     def _decline_checkers(self):
+        """Return a list of methods that check if the participant can decline the shift."""
         return [
             check_event_is_active,
             check_participation_state_for_decline,
             check_inside_signup_timeframe,
         ]
 
+    def _run_checkers(self, participant, checkers) -> List[ParticipationError]:
+        return [error for checker in checkers if (error := checker(self, participant)) is not None]
+
     @functools.lru_cache()
     def get_signup_errors(self, participant) -> List[ParticipationError]:
-        return [
-            error
-            for checker in self._signup_checkers
-            if (error := checker(self, participant)) is not None
-        ]
+        return self._run_checkers(
+            participant, itertools.chain(self._signup_checkers, self._participant_checkers)
+        )
 
     @functools.lru_cache()
     def get_decline_errors(self, participant):
-        return [
-            error
-            for checker in self._decline_checkers
-            if (error := checker(self, participant)) is not None
-        ]
+        return self._run_checkers(participant, self._decline_checkers)
+
+    @functools.lru_cache()
+    def get_participant_errors(self, participant) -> List[ParticipationError]:
+        """
+        Return errors for whether the participant fulfills the requirements set by the signup methods for participation.
+        This runs a subset of the check for `get_signup_errors`.
+        """
+        return self._run_checkers(participant, self._participant_checkers)
 
     def can_decline(self, participant):
         """
@@ -454,11 +520,10 @@ class BaseSignupMethod:
         Return whether the participant is allowed to perform signup.
         Note that this should also return True for participants allowed to customize their participation.
         """
-        valid_state = (p := participant.participation_for(self.shift)) is None or p.state not in (
-            AbstractParticipation.States.CONFIRMED,
-            AbstractParticipation.States.REQUESTED,
-        )
-        return valid_state and not self.get_signup_errors(participant)
+        signupable_state = (
+            p := participant.participation_for(self.shift)
+        ) is None or not p.is_in_positive_state()
+        return signupable_state and not self.get_signup_errors(participant)
 
     def can_customize_signup(self, participant):
         """
@@ -468,9 +533,8 @@ class BaseSignupMethod:
         declineable_state = (
             p := participant.participation_for(self.shift)
         ) is not None and p.is_in_positive_state()
-        return not self.get_signup_errors(participant) and (
-            not declineable_state or self.can_decline(participant)
-        )
+        can_sign_up_again = not self.get_signup_errors(participant)
+        return can_sign_up_again and (not declineable_state or self.can_decline(participant))
 
     def has_customized_signup(self, participation):
         """
@@ -479,6 +543,9 @@ class BaseSignupMethod:
         # This method should most likely check the participation's data attribute for modifications it has done.
         # 'Customized' in this context means that the dispositioning person should give special attention to this participation.
         return False
+
+    def validate_signup_form(self, form, target_state):
+        """Validate a signup form. Use `form.add_error()` based on cleaned_data to add errors."""
 
     def get_participation_for(self, participant) -> AbstractParticipation:
         return participant.participation_for(self.shift) or participant.new_participation(

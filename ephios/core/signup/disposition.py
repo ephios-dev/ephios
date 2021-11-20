@@ -198,7 +198,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         )
         return formset
 
-    def send_participant_notifications(self, formset):
+    def _send_participant_notifications(self, formset):
         for participation, changed_fields in formset.changed_objects:
             if (
                 participation.get_real_instance_class() != LocalParticipation
@@ -224,7 +224,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             return self.get(request, *args, **kwargs, formset=formset)
 
         formset.save()
-        self.send_participant_notifications(formset)
+        self._send_participant_notifications(formset)
 
         self.object.participations.filter(
             state=AbstractParticipation.States.GETTING_DISPATCHED

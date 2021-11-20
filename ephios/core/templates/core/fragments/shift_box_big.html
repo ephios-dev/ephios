@@ -20,7 +20,16 @@
                 </div>
             {% endif %}
             <div class="lh-1 ms-2 flex-grow-1">
-                <small class="fw-bold">{{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}</small>
+                <small class="fw-bold">
+                    {% if participation.start_time|date:"SHORT_DATE_FORMAT" != shift.start_time|date:"SHORT_DATE_FORMAT" and participation.is_in_positive_state %}
+                        <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="{% translate "originally" %} {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}">
+                              {{ participation.start_time|date:"l" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}
+                        </span>
+                    {% else %}
+                        {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}
+                    {% endif %}
+                </small>
                 <br/>
                 <span class="fw-bold fs-2">
                         {% if participation.individual_start_time and participation.is_in_positive_state %}
@@ -84,6 +93,13 @@
             {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
                 <form method="POST" class="form"
                       action="{{ request|reverse_signup_action:shift }}">
+
+                    {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
+                    <input type="hidden" name="individual_start_time_0" value="{{ shift.start_time|date:"Y-m-d" }}">
+                    <input type="hidden" name="individual_start_time_1" value="{{ shift.start_time|time:"H:i" }}">
+                    <input type="hidden" name="individual_end_time_0" value="{{ shift.end_time|date:"Y-m-d" }}">
+                    <input type="hidden" name="individual_end_time_1" value="{{ shift.end_time|time:"H:i" }}">
+
                     {% csrf_token %}
                     {% if can_sign_up and shift.signup_method.configuration.signup_until %}
                         <div class="text-success mb-1">

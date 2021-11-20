@@ -204,7 +204,7 @@ def conflicting_event(event, service_event_type, volunteer, groups):
     )
 
     LocalParticipation.objects.create(
-        shift=event.shifts.first(),
+        shift=conflicting_event.shifts.first(),
         user=volunteer,
         state=AbstractParticipation.States.CONFIRMED,
     )

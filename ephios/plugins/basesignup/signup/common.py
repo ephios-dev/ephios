@@ -62,8 +62,8 @@ class QualificationsRequiredSignupMixin(_Base):
             )
 
     @property
-    def _signup_checkers(self):
-        return super()._signup_checkers + [self.check_qualification]
+    def _participant_checkers(self):
+        return super()._participant_checkers + [self.check_qualification]
 
     @staticmethod
     def check_qualification(method, participant):

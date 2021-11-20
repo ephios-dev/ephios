@@ -46,11 +46,14 @@ def get_relevant_qualifications(qualification_queryset):
     return qs.values_list("abbreviation", flat=True)
 
 
-@register.filter(name="conflicting_shifts")
-def participant_conflicting_shifts(participant, shift):
-    return get_conflicting_participations(shift, participant).values_list(
-        "shift__event__title", flat=True
-    )
+@register.filter(name="conflicting_participations")
+def participation_conflicts(participation):
+    return get_conflicting_participations(
+        participant=participation.participant,
+        shift=participation.shift,
+        start_time=participation.start_time,
+        end_time=participation.end_time,
+    ).values_list("shift__event__title", flat=True)
 
 
 @register.filter(name="shifts_needing_disposition")

@@ -23,42 +23,83 @@ def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, con
     )
 
 
+def test_partially_conflicting_shift_results_in_invalid_signup_form(
+    django_app, volunteer, event, conflicting_event
+):
+    assert "already confirmed" in django_app.get(
+        event.get_absolute_url(),
+        user=volunteer,
+    )
+    # make the conflicting shift not cover the shift we want to participate in
+    shift_b = conflicting_event.shifts.first()
+    shift_b.end_time -= timedelta(hours=1)
+    shift_b.save()
+    response = django_app.get(
+        event.get_absolute_url(),
+        user=volunteer,
+    ).form.submit(name="signup_choice", value="sign_up")
+    assert "You are already confirmed for other shifts at this time" in response
+    response.form["individual_start_time_1"] = "18:42"
+    assert (
+        "successfully requested a participation"
+        in response.form.submit(name="signup_choice", value="sign_up").follow()
+    )
+
+
 @pytest.mark.parametrize(
-    "a_times,b_times,conflict_expected",
+    "a_times,b_times,conflict_expected,total",
     [
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 8)),
+            False,
             False,
         ),
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 10)),
             True,
+            False,
         ),
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 12)),
             True,
+            False,
         ),
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 10), datetime(2099, 1, 1, 18)),
             True,
+            False,
         ),
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 11, 59), datetime(2099, 1, 1, 12)),
             True,
+            False,
         ),
         (
             (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
             (datetime(2099, 1, 1, 12), datetime(2099, 1, 1, 18)),
             False,
+            False,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 11), datetime(2099, 1, 1, 14)),
+            False,
+            True,
+        ),
+        (
+            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
+            (datetime(2099, 1, 1, 10), datetime(2099, 1, 1, 11)),
+            True,
+            True,
         ),
     ],
 )
-def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, event, volunteer):
+def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, total, event, volunteer):
     common = dict(signup_method_slug=InstantConfirmationSignupMethod.slug, event=event)
     aware = functools.partial(make_aware, timezone=tz)
     a = Shift.objects.create(
@@ -77,7 +118,16 @@ def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, event, 
         shift=a, user=volunteer, state=AbstractParticipation.States.CONFIRMED
     )
     expected = {a_participation} if conflict_expected else set()
-    assert set(get_conflicting_participations(b, volunteer.as_participant())) == expected
+    assert (
+        set(
+            get_conflicting_participations(
+                participant=volunteer.as_participant(),
+                shift=b,
+                total=total,
+            )
+        )
+        == expected
+    )
 
 
 def test_get_conflicting_shift_with_individual_time(tz, volunteer, multi_shift_event):
@@ -89,6 +139,6 @@ def test_get_conflicting_shift_with_individual_time(tz, volunteer, multi_shift_e
         individual_start_time=shift_a.start_time,
         individual_end_time=shift_b.start_time + timedelta(minutes=30),
     )
-    assert set(get_conflicting_participations(shift_b, volunteer.as_participant())) == {
+    assert set(get_conflicting_participations(volunteer.as_participant(), shift_b)) == {
         a_participation
     }
