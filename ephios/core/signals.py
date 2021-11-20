@@ -16,6 +16,13 @@ This signal is sent out to get all known signup methods. Receivers should return
 subclasses of ``ephios.core.signup.methods.BaseSignupMethod``.
 """
 
+check_participant = PluginSignal()
+"""
+This signal is sent out so receivers can prevent signup for a shift or provide feedback for dispatchers.
+Receivers will receive a ``participant`` and ``method`` keyword argument and
+should return an instance of the fitting! subclass of ``ephios.core.signup.methods.ParticipationError`` or None.
+"""
+
 footer_link = PluginSignal()
 """
 This signal is sent out to get links for that page footer. Receivers should return a dict of

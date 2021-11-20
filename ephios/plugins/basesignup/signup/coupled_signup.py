@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
 
 
@@ -52,11 +52,11 @@ class CoupledSignupMethod(BaseSignupMethod):
     @staticmethod
     def signup_is_disabled(method, participant):
         if method.leader_shift:
-            return ParticipationError(
+            return ActionDisallowedError(
                 _("Participation is coupled to {}.").format(method.leader_shift)
             )
         # This is red as it requires responsibles to update the shift configuration.
-        return ParticipationError(
+        return ActionDisallowedError(
             mark_safe(
                 f'<span class="text-danger">{_("Participation is coupled to another shift, but the leading shift is missing.")}</span>'
             )

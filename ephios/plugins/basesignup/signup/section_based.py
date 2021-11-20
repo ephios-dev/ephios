@@ -18,7 +18,7 @@ from ephios.core.signup.methods import (
     BaseSignupForm,
     BaseSignupMethod,
     BaseSignupView,
-    ParticipationError,
+    ParticipantUnfitError,
 )
 from ephios.core.signup.participants import AbstractParticipant
 
@@ -282,7 +282,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     @staticmethod
     def check_qualification(method, participant):
         if not sections_participant_qualifies_for(method.configuration.sections, participant):
-            return ParticipationError(_("You are not qualified."))
+            return ParticipantUnfitError(_("You are not qualified."))
 
     @property
     def _signup_checkers(self):

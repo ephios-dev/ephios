@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
 
 
@@ -30,7 +30,7 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
 
     @staticmethod
     def signup_is_disabled(method, participant):
-        return ParticipationError(
+        return ActionDisallowedError(
             method.configuration.no_selfservice_explanation
             or _("Signup for this shift is disabled.")
         )
