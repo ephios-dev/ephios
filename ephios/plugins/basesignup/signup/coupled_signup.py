@@ -75,12 +75,8 @@ class CoupledSignupMethod(BaseSignupMethod):
         ]
 
     def render_shift_state(self, request):
-        """If leader shift is available, copy that. Otherwise do the basic pills with a warning."""
-        if self.leader_shift:
-            return self.leader_shift.signup_method.render_shift_state(request)
-        return render_basic_participation_pills_shift_state(
-            self, request, {"disposition_url": None}
-        )
+        """Do the basic pills. A notice about the coupling is printed below."""
+        return render_basic_participation_pills_shift_state(self, request)
 
 
 @receiver(pre_save)
