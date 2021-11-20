@@ -11,11 +11,11 @@
                 {{ form.instance.participant.icon }}
                 {{ form.instance.participant }}
             </h6>
-            {% with form.instance.participant|conflicting_shifts:shift as conflicting_shifts %}
-                {% if conflicting_shifts %}
+            {% with form.instance|conflicting_participations as conflicts %}
+                {% if conflicts %}
                     <span class="fa fa-exclamation-triangle text-danger"
                           data-bs-toggle="tooltip"
-                          title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicting_shifts|join:", " %}
+                          title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicts|join:", " %}
                                   {{ participant }} already participates in {{ conflicts }} at the same time.
                               {% endblocktranslate %}"></span>
                 {% endif %}

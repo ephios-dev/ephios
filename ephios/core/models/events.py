@@ -32,7 +32,7 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup import SignupStats
+    from ephios.core.signup.methods import BaseSignupMethod, SignupStats
     from ephios.core.signup.participants import AbstractParticipant
 
 
@@ -258,7 +258,7 @@ class Shift(DatetimeDisplayMixin, Model):
         db_table = "shift"
 
     @property
-    def signup_method(self):
+    def signup_method(self) -> "BaseSignupMethod":
         from ephios.core.signup.methods import signup_method_from_slug
 
         try:
