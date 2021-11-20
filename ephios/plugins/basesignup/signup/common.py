@@ -8,7 +8,11 @@ from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import (
+    BaseSignupMethod,
+    ParticipantUnfitError,
+    SignupDisallowedError,
+)
 
 _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 
@@ -32,7 +36,7 @@ class MinMaxParticipantsMixin(_Base):
                 ]
             )
             if current_count >= method.configuration.maximum_number_of_participants:
-                return ParticipationError(_("The maximum number of participants is reached."))
+                return SignupDisallowedError(_("The maximum number of participants is reached."))
 
     def get_participant_count_bounds(self):
         return (
@@ -68,7 +72,7 @@ class QualificationsRequiredSignupMixin(_Base):
     @staticmethod
     def check_qualification(method, participant):
         if not participant.has_qualifications(method.configuration.required_qualifications):
-            return ParticipationError(_("You are not qualified."))
+            return ParticipantUnfitError(_("You are not qualified."))
 
     @property
     def configuration_form_class(self):

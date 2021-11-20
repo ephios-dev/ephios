@@ -2,6 +2,7 @@ import functools
 from datetime import datetime, timedelta
 
 import pytest
+from django.utils import timezone
 from django.utils.timezone import make_aware
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
@@ -15,6 +16,16 @@ def test_signup_stats_addition(django_app):
     c = SignupStats(3, 2, 0, 2, None, 4)
     assert a + b == SignupStats(9, 4, 6, None, 10, None)
     assert b + c == SignupStats(8, 4, 3, 7, 5, 11)
+
+
+def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_volunteer):
+    shift: Shift = event.shifts.first()
+    shift.signup_configuration["signup_until"] = timezone.make_aware(
+        datetime.min.replace(year=2020)
+    )
+    shift.save()
+    assert not shift.signup_method.get_participant_errors(qualified_volunteer.as_participant())
+    assert shift.signup_method.get_signup_errors(qualified_volunteer.as_participant())
 
 
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
