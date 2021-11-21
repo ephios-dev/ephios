@@ -9,7 +9,6 @@ function handleForms(elem) {
             html: true,
             content: function () {
                 const query = el.getAttribute("data-bs-content-ref");
-                console.log(query);
                 return $(query).html();
             },
             title: function () {
