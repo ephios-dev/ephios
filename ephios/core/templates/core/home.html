@@ -29,7 +29,7 @@
                     {% for participation in confirmed_participations %}
                         <li class="list-group-item flex-column">
                             <div class="d-flex w-100 justify-content-between align-items-center">
-                                <span>{{ participation.shift.event.title }} ({{ participation.shift.get_date_display }}, {{participation.get_time_display }})</span>
+                                <span>{{ participation.shift.event.title }} ({{ participation.get_date_display }}, {{participation.get_time_display }})</span>
                                 <a class="btn btn-outline-primary btn-sm"
                                    href="{{ participation.shift.get_absolute_url }}"><span
                                         class="fa fa-eye"></span> <span

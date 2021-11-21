@@ -47,18 +47,9 @@
                     {% endif %}
                     </span>
                 <small class="fw-bold text-muted d-inline-block">
-                    {% if participation.is_in_positive_state %}
-                        {% if participation.individual_start_time or participation.individual_end_time %}
-                            <span class="d-inline-block">
-                                    {% blocktranslate trimmed with start_time=shift.start_time|time end_time=shift.end_time|time %}
-                                        originally {{ start_time }} - {{ end_time }}
-                                    {% endblocktranslate %},
-                                </span>
-                        {% endif %}
-                    {% endif %}
                     <span class="d-inline-block">
-                            {{ shift.meeting_time|time }} {% translate "Meetup" %}
-                        </span>
+                        {{ shift.meeting_time|time }} {% translate "Meetup" %}
+                    </span>
                 </small>
             </div>
         {% endwith %}

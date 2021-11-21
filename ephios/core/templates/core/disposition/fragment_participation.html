@@ -51,7 +51,9 @@
         <div class="card-body">
             {{ form.individual_start_time|as_crispy_field }}
             {{ form.individual_end_time|as_crispy_field }}
-            {{ form.comment|as_crispy_field }}
+            {% if form.comment.initial %}
+                {{ form.comment|as_crispy_field }}
+            {% endif %}
             {% block participation_form %}
             {% endblock %}
             <div class="mb-n3"></div>

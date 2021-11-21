@@ -30,6 +30,7 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
+        self.fields["comment"].disabled = True
         try:
             self.shift = self.instance.shift
         except AttributeError as e:

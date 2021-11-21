@@ -16,7 +16,7 @@ This signal is sent out to get all known signup methods. Receivers should return
 subclasses of ``ephios.core.signup.methods.BaseSignupMethod``.
 """
 
-check_participant = PluginSignal()
+check_participant_signup = PluginSignal()
 """
 This signal is sent out so receivers can prevent signup for a shift or provide feedback for dispatchers.
 Receivers will receive a ``participant`` and ``method`` keyword argument and
