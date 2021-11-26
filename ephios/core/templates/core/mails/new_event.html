@@ -3,12 +3,25 @@
 
 {% block content %}
     <h1>{{ event.type }} {% translate "added" %}: {{ event.title }}</h1>
+    {% with start_time=event.get_start_time end_time=event.get_end_time %}
+        {% if start_time %}
+            <h2>
+                {{ start_time|date:"D" }},
+                {% if not event.is_multi_day %}
+                    {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                    {{ start_time|date:"TIME_FORMAT" }} –
+                    {{ end_time|date:"TIME_FORMAT" }}
+                {% else %}
+                    {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                    {% translate "to" %}
+                    {{ end_time|date:"SHORT_DATE_FORMAT" }}
+                {% endif %}
+            </h2>
+        {% endif %}
+    {% endwith %}
     <div>
-        {{ event.description }}
-        {% translate "Location" %}: {{ event.location }}
+        {{ event.description }}<br/>
+        {% translate "Location" %}: {{ event.location }}<br/>
         <a href="{{ site_url }}{{ event.get_absolute_url }}">{% translate "View" %}</a>
     </div>
-    {% for shift in event.shifts.all %}
-        {% include "core/fragments/../fragments/shift_box_big.html" with shift=shift without_controls=True %}
-    {% endfor %}
 {% endblock %}

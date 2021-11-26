@@ -7,18 +7,12 @@
 <div id="shift-{{ shift.pk }}" class="card h-100">
     <div class="card-header d-flex">
 
-        {% if not without_controls %}
-            {% setvar request|participation_from_request:shift as participation %}
-        {% else %}
-            {% setvar as participation %}
-        {% endif %}
+        {% setvar request|participation_from_request:shift as participation %}
         {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
-            {% if not without_controls %}
-                <div class="mannequin mannequin-{{ mannequin }}">
-                    <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
-                         alt="{{ mannequin }} mannequin icon"/>
-                </div>
-            {% endif %}
+            <div class="mannequin mannequin-{{ mannequin }}">
+                <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                     alt="{{ mannequin }} mannequin icon"/>
+            </div>
             <div class="lh-1 ms-2 flex-grow-1">
                 <small class="fw-bold">
                     {% if participation.start_time|date:"SHORT_DATE_FORMAT" != shift.start_time|date:"SHORT_DATE_FORMAT" and participation.is_in_positive_state %}
@@ -54,7 +48,7 @@
             </div>
         {% endwith %}
 
-        {% if not without_controls and "change_event" in event_perms %}
+        {% if "change_event" in event_perms %}
             <div class="dropstart">
                 <button class="btn" type="button" id="actionDropdownButton"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -74,13 +68,11 @@
     </div>
 
     <div class="card-body">
-        {% if not without_controls %}
-            {{ request|render_shift_state:shift }}
-        {% endif %}
+        {{ request|render_shift_state:shift }}
     </div>
 
     <div class="card-footer">
-        {% if event.active and not without_controls %}
+        {% if event.active %}
             {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
                 <form method="POST" class="form"
                       action="{{ request|reverse_signup_action:shift }}">

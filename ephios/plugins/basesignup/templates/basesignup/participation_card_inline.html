@@ -2,10 +2,6 @@
 {% load user_extras %}
 {% load i18n %}
 
-{% if request.user.is_authenticated %}
-    {% get_obj_perms request.user for event as "event_perms" %}
-{% endif %}
-
 <div id="popover-title-{{ participation.id }}" class="d-none">
     <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
     {{ participation.participant }}
@@ -19,10 +15,12 @@
         </div>
     {% endif %}
     {% if participation.comment %}
-        <div class="mb-3">
-            <i class="fas fa-comment"></i>
-            <span>{{ participation.comment }}</span>
-        </div>
+        {% if disposition_url or request.user == participation.user %}
+            <div class="mb-3">
+                <i class="fas fa-comment"></i>
+                <span>{{ participation.comment }}</span>
+            </div>
+        {% endif %}
     {% endif %}
     <div>
         {% for qualification in participation.participant.qualifications|get_relevant_qualifications %}

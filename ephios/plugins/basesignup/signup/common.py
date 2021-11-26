@@ -117,6 +117,7 @@ def render_basic_participation_pills_shift_state(method, request, additional_con
                 if request.user.has_perm("core.change_event", obj=method.shift.event)
                 else None
             ),
+            "request": request,
             **additional_context,
         }
     )
