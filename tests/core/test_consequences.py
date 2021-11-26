@@ -54,6 +54,8 @@ class TestQualificationConsequence:
     def test_extend_qualification(
         self, django_app, qualified_volunteer, qualifications_consequence, qualifications
     ):
+        qualifications_consequence.user = qualified_volunteer
+        qualifications_consequence.save()
         with pytest.raises(Qualification.DoesNotExist):
             qualified_volunteer.qualifications.get(
                 pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")

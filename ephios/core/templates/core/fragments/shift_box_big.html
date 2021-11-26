@@ -68,7 +68,7 @@
     </div>
 
     <div class="card-body">
-        {{ request|render_shift_state:shift }}
+        {% include shift.signup_method with own_participation=participation %}
     </div>
 
     <div class="card-footer">

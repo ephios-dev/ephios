@@ -1,8 +1,6 @@
 import typing
 
 from django import forms
-from django.template.loader import get_template
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -56,6 +54,17 @@ class MinMaxParticipantsMixin(_Base):
 
         return ConfigurationForm
 
+    def get_shift_state_context_data(self, request, **kwargs):
+        context_data = super().get_shift_state_context_data(request, **kwargs)
+        context_data["empty_spots"] = range(
+            max(
+                0,
+                (getattr(self.configuration, "minimum_number_of_participants", None) or 0)
+                - len(context_data["participations"]),
+            )
+        )
+        return context_data
+
 
 class QualificationsRequiredSignupMixin(_Base):
     def __init__(self, shift, **kwargs):
@@ -93,53 +102,29 @@ class QualificationsRequiredSignupMixin(_Base):
 
         return ConfigurationForm
 
-
-def render_basic_participation_pills_shift_state(method, request, additional_context=None):
-    participations = method.shift.participations.filter(
-        state__in={
-            AbstractParticipation.States.REQUESTED,
-            AbstractParticipation.States.CONFIRMED,
-        }
-    ).order_by("-state")
-    empty_spots = max(
-        0,
-        (getattr(method.configuration, "minimum_number_of_participants", None) or 0)
-        - len(participations),
-    )
-    additional_context = additional_context or {}
-    return get_template("basesignup/fragment_state_common.html").render(
-        {
-            "shift": method.shift,
-            "participations": participations,
-            "empty_spots": list(range(empty_spots)),
-            "disposition_url": (
-                reverse("core:shift_disposition", kwargs=dict(pk=method.shift.pk))
-                if request.user.has_perm("core.change_event", obj=method.shift.event)
-                else None
+    def get_shift_state_context_data(self, request, **kwargs):
+        return super().get_shift_state_context_data(
+            request,
+            **kwargs,
+            required_qualification=", ".join(
+                q.abbreviation for q in self.configuration.required_qualifications
             ),
-            "request": request,
-            **additional_context,
-        }
-    )
+        )
+
+
+class RenderParticipationPillsShiftStateMixin:
+    shift_state_template_name = "basesignup/fragment_participation_pills_shift_state.html"
 
 
 class QualificationMinMaxBaseSignupMethod(
-    QualificationsRequiredSignupMixin, MinMaxParticipantsMixin, BaseSignupMethod
+    RenderParticipationPillsShiftStateMixin,
+    QualificationsRequiredSignupMixin,
+    MinMaxParticipantsMixin,
+    BaseSignupMethod,
 ):
     @property
     def slug(self):
         raise NotImplementedError()
-
-    def render_shift_state(self, request):
-        return render_basic_participation_pills_shift_state(
-            self,
-            request,
-            {
-                "required_qualification": ", ".join(
-                    q.abbreviation for q in self.configuration.required_qualifications
-                ),
-            },
-        )
 
     def get_participation_display(self):
         relevant_qualification_categories = global_preferences_registry.manager()[
