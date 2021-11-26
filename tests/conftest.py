@@ -361,9 +361,9 @@ def qualifications():
 
 
 @pytest.fixture
-def qualifications_consequence(qualified_volunteer, qualifications, event, tz):
+def qualifications_consequence(volunteer, qualifications, event, tz):
     return QualificationConsequenceHandler.create(
-        user=qualified_volunteer,
+        user=volunteer,
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
         expires=datetime(2065, 4, 1).astimezone(tz),

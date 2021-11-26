@@ -8,10 +8,10 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
-from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
+from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
 
 
-class CoupledSignupMethod(BaseSignupMethod):
+class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = "coupled"
     verbose_name = _("coupled to another shift")
     description = _("""This method mirrors signup from another shift.""")
@@ -73,10 +73,6 @@ class CoupledSignupMethod(BaseSignupMethod):
         return [
             self.signup_is_disabled,
         ]
-
-    def render_shift_state(self, request):
-        """Do the basic pills. A notice about the coupling is printed below."""
-        return render_basic_participation_pills_shift_state(self, request)
 
 
 @receiver(pre_save)

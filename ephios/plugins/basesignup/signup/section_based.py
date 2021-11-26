@@ -7,7 +7,6 @@ from operator import itemgetter
 from django import forms
 from django.core.exceptions import ValidationError
 from django.template.loader import get_template
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -218,6 +217,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
     configuration_form_class = SectionBasedConfigurationForm
+    shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
     def _get_signup_stats_per_section(self, participations=None):
         from ephios.core.signup.methods import SignupStats
@@ -303,15 +303,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         )
         return template
 
-    def render_shift_state(self, request):
-
-        participations = self.shift.participations.filter(
-            state__in={
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.CONFIRMED,
-            }
-        ).order_by("-state")
-
+    def get_shift_state_context_data(self, request, **kwargs):
+        context_data = super().get_shift_state_context_data(request)
+        participations = context_data["participations"]
         section_stats = self._get_signup_stats_per_section(participations)
         sections = {
             section["uuid"]: {
@@ -347,21 +341,8 @@ class SectionBasedSignupMethod(BaseSignupMethod):
                 "placeholder": [],
             }
 
-        return get_template("basesignup/section_based/fragment_state.html").render(
-            {
-                "shift": self.shift,
-                "sections": sections,
-                "request": request,
-                "disposition_url": (
-                    reverse(
-                        "core:shift_disposition",
-                        kwargs=dict(pk=self.shift.pk),
-                    )
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
+        context_data["sections"] = sections
+        return context_data
 
     def _get_sections_with_users(self):
         relevant_qualification_categories = global_preferences_registry.manager()[

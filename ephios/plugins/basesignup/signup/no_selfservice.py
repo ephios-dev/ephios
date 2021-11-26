@@ -3,10 +3,10 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
-from ephios.plugins.basesignup.signup.common import render_basic_participation_pills_shift_state
+from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
 
 
-class NoSelfserviceSignupMethod(BaseSignupMethod):
+class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = "no_selfservice"
     verbose_name = _("No Signup (only disposition)")
     description = _("""This method allows no signup by users.""")
@@ -46,6 +46,3 @@ class NoSelfserviceSignupMethod(BaseSignupMethod):
         return [
             self.signup_is_disabled,
         ]
-
-    def render_shift_state(self, request):
-        return render_basic_participation_pills_shift_state(self, request)

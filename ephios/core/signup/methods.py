@@ -15,6 +15,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.template import Context, Template
+from django.template.loader import get_template
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.functional import SimpleLazyObject, cached_property, classproperty
@@ -477,6 +479,10 @@ class BaseSignupMethod:
     def signup_view_class(self):
         return BaseSignupView
 
+    @property
+    def shift_state_template_name(self):
+        raise NotImplementedError
+
     description = """"""
 
     # use _ == gettext_lazy!
@@ -681,7 +687,36 @@ class BaseSignupMethod:
             max_count=max_count,
         )
 
-    def render_shift_state(self, request):
+    def render(self, context):
+        """
+        Render the state/participations of the shift.
+        Match the signature of template.render for use with the include template tag:
+        {% include shift.signup_method %}
+        By default, this loads `shift_state_template_name` and renders it using context from `get_shift_state_context_data`.
+        """
+        with context.update(self.get_shift_state_context_data(context.request)):
+            return get_template(self.shift_state_template_name).template.render(context)
+
+    def get_shift_state_context_data(self, request, **kwargs):
+        """
+        Additionally to the context of the event detail view, provide context for rendering `shift_state_template_name`.
+        """
+        kwargs["shift"] = self.shift
+        kwargs["participations"] = self.shift.participations.filter(
+            state__in={
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.CONFIRMED,
+            }
+        ).order_by("-state")
+        if self.disposition_participation_form_class is not None:
+            kwargs["disposition_url"] = (
+                reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                if request.user.has_perm("core.change_event", obj=self.shift.event)
+                else None
+            )
+        return kwargs
+
+    def render_shift_state(self, context):
         """
         Render html that will be shown in the shift info box.
         Use it to inform about the current state of the shift and participations.
