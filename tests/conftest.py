@@ -94,7 +94,14 @@ def volunteer():
 
 
 @pytest.fixture
-def qualified_volunteer(volunteer, qualifications, tz):
+def qualified_volunteer(qualifications, tz):
+    volunteer = UserProfile.objects.create(
+        first_name="Marianne",
+        last_name="Medizinfrau",
+        email="marianne@localhost",
+        date_of_birth=date(1985, 1, 1),
+        password="dummy",
+    )
     QualificationGrant.objects.create(
         user=volunteer,
         qualification=qualifications.nfs,
@@ -124,7 +131,7 @@ def service_event_type():
 
 
 @pytest.fixture
-def groups(superuser, manager, planner, volunteer):
+def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers = Group.objects.create(name="Managers")
     planners = Group.objects.create(name="Planners")
     volunteers = Group.objects.create(name="Volunteers")
@@ -132,7 +139,7 @@ def groups(superuser, manager, planner, volunteer):
     managers.user_set.add(superuser)
     managers.user_set.add(manager)
     planners.user_set.add(superuser, planner)
-    volunteers.user_set.add(superuser, planner, volunteer)
+    volunteers.user_set.add(superuser, planner, volunteer, qualified_volunteer)
 
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
@@ -354,9 +361,9 @@ def qualifications():
 
 
 @pytest.fixture
-def qualifications_consequence(volunteer, qualifications, event, tz):
+def qualifications_consequence(qualified_volunteer, qualifications, event, tz):
     return QualificationConsequenceHandler.create(
-        user=volunteer,
+        user=qualified_volunteer,
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
         expires=datetime(2065, 4, 1).astimezone(tz),

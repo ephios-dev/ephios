@@ -157,12 +157,18 @@ class DatetimeDisplayMixin:
     in AbstractParticipation and Shift.
     """
 
+    def get_start_time(self):
+        return self.start_time
+
+    def get_end_time(self):
+        return self.end_time
+
     def get_date_display(self):
-        start_time = localtime(self.start_time)
+        start_time = localtime(self.get_start_time())
         return f"{formats.date_format(start_time, 'l')}, {formats.date_format(start_time, 'SHORT_DATE_FORMAT')}"
 
     def get_time_display(self):
-        return f"{formats.time_format(localtime(self.start_time))} - {formats.time_format(localtime(self.end_time))}"
+        return f"{formats.time_format(localtime(self.get_start_time()))} - {formats.time_format(localtime(self.get_end_time()))}"
 
     def get_datetime_display(self):
         return f"{self.get_date_display()}, {self.get_time_display()}"

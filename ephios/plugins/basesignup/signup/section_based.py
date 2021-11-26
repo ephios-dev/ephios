@@ -351,6 +351,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
             {
                 "shift": self.shift,
                 "sections": sections,
+                "request": request,
                 "disposition_url": (
                     reverse(
                         "core:shift_disposition",

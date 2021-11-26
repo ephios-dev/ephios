@@ -99,8 +99,8 @@
                 {% with start_time=event.get_start_time end_time=event.get_end_time %}
                     {% if start_time %}
                         <span class="text-muted d-inline-block">
-                        <i class="far fa-calendar"></i>
-                        {{ start_time|date:"D" }},
+                            <i class="far fa-calendar"></i>
+                            {{ start_time|date:"D" }},
                             {% if not event.is_multi_day %}
                                 {{ start_time|date:"SHORT_DATE_FORMAT" }}
                                 {{ start_time|date:"TIME_FORMAT" }} –
@@ -110,7 +110,7 @@
                                 {% translate "to" %}
                                 {{ end_time|date:"SHORT_DATE_FORMAT" }}
                             {% endif %}
-                    </span>
+                        </span>
                     {% endif %}
                 {% endwith %}
             </h5>
