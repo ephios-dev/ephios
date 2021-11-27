@@ -69,6 +69,12 @@
 
     <div class="card-body">
         {% include shift.signup_method with own_participation=participation %}
+        <div class="shift-plugin-content mt-1">
+            {% shift_plugin_content shift request as plugin_content %}
+            {% for item in plugin_content %}
+                <div>{{ item }}</div>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="card-footer">

@@ -27,6 +27,11 @@
                 <div id="configuration_form">
                     {{ configuration_form }}
                 </div>
+                <div class="plugin-forms">
+                    {% for plugin_form in plugin_forms %}
+                        {{ plugin_form.render }}
+                    {% endfor %}
+                </div>
 
                 <div class="form-group">
                     {% if object or event.active %}

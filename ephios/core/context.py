@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signals import footer_link
+from ephios.core.signals import footer_link, nav_link
 
 # suggested in https://github.com/python-poetry/poetry/issues/273
 EPHIOS_VERSION = "v" + importlib_metadata.version("ephios")
@@ -19,8 +19,14 @@ def ephios_base_context(request):
         for label, url in result.items():
             footer[label] = url
 
+    menu = {}
+    for _, result in nav_link.send(None, request=request):
+        for label, url in result.items():
+            menu[label] = url
+
     return {
         "ParticipationStates": AbstractParticipation.States,
+        "menu": menu,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": EPHIOS_VERSION,

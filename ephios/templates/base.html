@@ -108,6 +108,13 @@
                                     </a>
                                 </li>
                             {% endif %}
+                            {% for label, url in menu.items %}
+                                <li class="nav-item {% if url_name == url %}active{% endif %}">
+                                    <a class="nav-link"
+                                       href="{{ url }}">{{ label }}
+                                    </a>
+                                </li>
+                            {% endfor %}
                         {% endwith %}
                     </ul>
                     <ul class="navbar-nav ms-auto">

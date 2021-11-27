@@ -3,12 +3,19 @@ import operator
 from functools import reduce
 
 from django import template
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, LocalParticipation, UserProfile
-from ephios.core.signals import register_event_bulk_action
+from ephios.core.signals import (
+    event_info,
+    homepage_info,
+    register_event_action,
+    register_event_bulk_action,
+    shift_info,
+)
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
 
@@ -144,3 +151,34 @@ def eventtype_colors():
 @register.filter(name="color_css")
 def eventtype_color_css(eventtype):
     return get_eventtype_color_style(eventtype)
+
+
+@register.simple_tag(name="event_plugin_content")
+def event_plugin_content(event, request):
+    results = event_info.send(None, event=event, request=request)
+    return list(map(lambda item: format_html(item[1]), results))
+
+
+@register.simple_tag(name="shift_plugin_content")
+def shift_plugin_content(shift, request):
+    results = shift_info.send(None, shift=shift, request=request)
+    return list(map(lambda item: format_html(item[1]), results))
+
+
+@register.simple_tag(name="homepage_plugin_content")
+def homepage_plugin_content(request):
+    results = homepage_info.send(None, request=request)
+    return list(map(lambda item: format_html(item[1]), results))
+
+
+@register.simple_tag(name="event_plugin_actions")
+def event_plugin_actions(event):
+    html = ""
+    for _, actions in register_event_action.send(None):
+        html += "".join(
+            [
+                f"<li><a class='dropdown-item' href='{reverse(action['url'], kwargs=dict(pk=event.id))}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
+                for action in actions
+            ]
+        )
+    return format_html(html)

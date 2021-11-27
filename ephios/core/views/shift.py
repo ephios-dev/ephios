@@ -11,11 +11,12 @@ from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
+from ephios.core.signals import shift_forms
 from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
-from ephios.extra.mixins import CustomPermissionRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
-class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
+class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateView):
     permission_required = "core.change_event"
     template_name = "core/shift_form.html"
 
@@ -35,8 +36,14 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
         kwargs.setdefault("configuration_form", "")
         return super().get_context_data(**kwargs)
 
+    def get_plugin_forms(self):
+        return shift_forms.send(
+            sender=None, shift=getattr(self, "object", None), request=self.request
+        )
+
     def post(self, *args, **kwargs):
         form = self.get_shift_form()
+        self.object = form.instance
 
         try:
             signup_method = signup_method_from_slug(
@@ -57,7 +64,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             raise ValidationError(e) from e
         else:
             configuration_form = signup_method.get_configuration_form(self.request.POST)
-            if not all((form.is_valid(), configuration_form.is_valid())):
+            if not all((self.is_valid(form), configuration_form.is_valid())):
                 return self.render_to_response(
                     self.get_context_data(
                         form=form,
@@ -71,6 +78,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             shift.event = self.event
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
+            self.save_plugin_forms()
             if "addAnother" in self.request.POST:
                 return redirect(
                     reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})
@@ -96,7 +104,9 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
         return HttpResponse(signup_method.render_configuration_form())
 
 
-class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class ShiftUpdateView(
+    CustomPermissionRequiredMixin, PluginFormMixin, SingleObjectMixin, TemplateView
+):
     model = Shift
     template_name = "core/shift_form.html"
     permission_required = "core.change_event"
@@ -126,6 +136,9 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
         kwargs.setdefault("configuration_form", self.get_configuration_form())
         return super().get_context_data(**kwargs)
 
+    def get_plugin_forms(self):
+        return shift_forms.send(sender=None, shift=self.object, request=self.request)
+
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
@@ -137,10 +150,11 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
             raise ValidationError(e) from e
-        if all([form.is_valid(), configuration_form.is_valid()]):
+        if all([self.is_valid(form), configuration_form.is_valid()]):
             shift = form.save(commit=False)
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
+            self.save_plugin_forms()
             if "addAnother" in self.request.POST:
                 return redirect(reverse("core:event_createshift", kwargs={"pk": shift.event.pk}))
             messages.success(

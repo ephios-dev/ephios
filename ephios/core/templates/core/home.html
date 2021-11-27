@@ -91,4 +91,13 @@
         {% endif %}
     {% endwith %}
 
+    {% homepage_plugin_content request as plugin_content %}
+    {% for item in plugin_content %}
+        <div class="card mb-3">
+            <div class="card-body">
+                {{ item }}
+            </div>
+        </div>
+    {% endfor %}
+
 {% endblock %}
