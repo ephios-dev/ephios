@@ -466,7 +466,7 @@ pytz = "*"
 
 [[package]]
 name = "django-redis"
-version = "5.0.0"
+version = "5.1.0"
 description = "Full featured redis cache backend for Django."
 category = "main"
 optional = true
@@ -474,7 +474,10 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 Django = ">=2.2"
-redis = ">=3.0.0"
+redis = ">=3,<4"
+
+[package.extras]
+hiredis = ["redis[hiredis] (>=3,<4)"]
 
 [[package]]
 name = "django-select2"
@@ -1605,8 +1608,8 @@ django-recurrence = [
     {file = "django_recurrence-1.10.3-py3-none-any.whl", hash = "sha256:9053b44b78b7fbfe3530673edfdd6d2f562105f8a192bc6a4b906a3df4f95f59"},
 ]
 django-redis = [
-    {file = "django-redis-5.0.0.tar.gz", hash = "sha256:048f665bbe27f8ff2edebae6aa9c534ab137f1e8fa7234147ef470df3f3aa9b8"},
-    {file = "django_redis-5.0.0-py3-none-any.whl", hash = "sha256:97739ca9de3f964c51412d1d7d8aecdfd86737bb197fce6e1ff12620c63c97ee"},
+    {file = "django-redis-5.1.0.tar.gz", hash = "sha256:98fb3d31633a1addea1aeb558a647359908bbcf78c0833f99496c5348fe3c1b4"},
+    {file = "django_redis-5.1.0-py3-none-any.whl", hash = "sha256:bf75bce0d6f65c3a6165dd6789506c8d22238f3bfaf7c4ad447e55afbc5b68cb"},
 ]
 django-select2 = [
     {file = "django-select2-7.9.0.tar.gz", hash = "sha256:4494cf5fa13333ddbd34e4dbeca4b44a22ed6367342cccd24f6f122f6ef4a20b"},
