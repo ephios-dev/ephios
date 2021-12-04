@@ -240,6 +240,13 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             self.object.signup_method.disposition_participation_form_class.disposition_participation_template,
         )
         kwargs.setdefault(
+            "render_requested_state",
+            self.object.signup_method.uses_requested_state
+            or self.object.participations.filter(
+                state=AbstractParticipation.States.REQUESTED
+            ).exists(),
+        )
+        kwargs.setdefault(
             "add_user_form",
             AddUserForm(user_queryset=addable_users(self.object)),
         )
