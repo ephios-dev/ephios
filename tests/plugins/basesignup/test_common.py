@@ -1,6 +1,7 @@
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
+from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 
 def test_getting_dispatched_state_is_overwritten_by_participant_signup(
@@ -29,6 +30,25 @@ def test_getting_dispatched_state_is_overwritten_by_participant_signup(
         LocalParticipation.objects.get(user=volunteer, shift=shift).state
         == AbstractParticipation.States.REQUESTED
     )
+
+
+def test_requested_participations_are_always_rendered(django_app, volunteer, planner, event):
+    """
+    regression test for https://github.com/ephios-dev/ephios/issues/633
+    InstantConfirmationSignupMethod doesn't use the requested state, but a requested participation exists. Test that.
+    """
+    shift = event.shifts.first()
+    shift.signup_method_slug = InstantConfirmationSignupMethod.slug
+    shift.save()
+
+    participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    participation.state = AbstractParticipation.States.REQUESTED
+    participation.save()
+
+    django_app.get(
+        reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
+        user=planner,
+    ).forms["participations-form"].submit()
 
 
 def test_disposition_delete_participations_getting_dispatched(
