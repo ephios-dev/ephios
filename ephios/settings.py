@@ -277,7 +277,7 @@ if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
 
 
 def GET_SITE_URL():
-    site_url = env.str("SITE_URL")
+    site_url = env.str("SITE_URL", ALLOWED_HOSTS[0])
     if site_url.endswith("/"):
         site_url = site_url[:-1]
     return site_url
