@@ -1,0 +1,15 @@
+changelog:
+  exclude:
+    labels:
+      - dependencies
+  categories:
+    - title: Features
+      labels:
+        - "[C] feature"
+        - "[C] enhancement"
+    - title: Bugfixes
+      labels:
+        - "[C] bug"
+    - title: Other Changes
+      labels:
+        - "*"
