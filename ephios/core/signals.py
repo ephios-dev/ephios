@@ -32,8 +32,8 @@ Receivers will receive a ``request`` keyword argument.
 
 nav_link = PluginSignal()
 """
-This signal is sent out to get links for the main navbar. Receivers should return a dict of
-with keys being the text and values being the url to link to.
+This signal is sent out to get links for the main navbar. Receivers should return a list of dicts
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
 Receivers will receive a ``request`` keyword argument.
 """
 
@@ -125,7 +125,7 @@ displayed in the dropdown menu on the event detail view. Each action is represen
 homepage_info = PluginSignal()
 """
 This signal is sent out to get additional information to display on the homepage.
-Receivers receive a ``request`` keyword argument. Receivers should return html that is rendered inside a card.
+Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
 """
 
 

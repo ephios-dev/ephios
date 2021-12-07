@@ -19,14 +19,13 @@ def ephios_base_context(request):
         for label, url in result.items():
             footer[label] = url
 
-    menu = {}
+    nav = []
     for _, result in nav_link.send(None, request=request):
-        for label, url in result.items():
-            menu[label] = url
+        nav += result
 
     return {
         "ParticipationStates": AbstractParticipation.States,
-        "menu": menu,
+        "nav": nav,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": EPHIOS_VERSION,

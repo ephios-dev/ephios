@@ -108,10 +108,10 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% for label, url in menu.items %}
-                                <li class="nav-item {% if url_name == url %}active{% endif %}">
+                            {% for item in nav %}
+                                <li class="nav-item {% if item.active %}active{% endif %}">
                                     <a class="nav-link"
-                                       href="{{ url }}">{{ label }}
+                                       href="{{ item.url }}">{{ item.label }}
                                     </a>
                                 </li>
                             {% endfor %}

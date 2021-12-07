@@ -156,19 +156,19 @@ def eventtype_color_css(eventtype):
 @register.simple_tag(name="event_plugin_content")
 def event_plugin_content(event, request):
     results = event_info.send(None, event=event, request=request)
-    return list(map(lambda item: format_html(item[1]), results))
+    return list(map(lambda item: mark_safe(item[1]), results))
 
 
 @register.simple_tag(name="shift_plugin_content")
 def shift_plugin_content(shift, request):
     results = shift_info.send(None, shift=shift, request=request)
-    return list(map(lambda item: format_html(item[1]), results))
+    return list(map(lambda item: mark_safe(item[1]), results))
 
 
 @register.simple_tag(name="homepage_plugin_content")
 def homepage_plugin_content(request):
     results = homepage_info.send(None, request=request)
-    return list(map(lambda item: format_html(item[1]), results))
+    return list(map(lambda item: mark_safe(item[1]), results))
 
 
 @register.simple_tag(name="event_plugin_actions")
@@ -181,4 +181,4 @@ def event_plugin_actions(event):
                 for action in actions
             ]
         )
-    return format_html(html)
+    return mark_safe(html)
