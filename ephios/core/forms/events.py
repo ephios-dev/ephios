@@ -235,7 +235,7 @@ class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
 
 
-class BaseEventPluginFormMixin:
+class BasePluginFormMixin:
     @property
     def heading(self):
         raise NotImplementedError
@@ -246,11 +246,11 @@ class BaseEventPluginFormMixin:
         except AttributeError:
             self.helper = FormHelper(self)
             self.helper.form_tag = False
-        return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
+        return render_to_string("core/fragments/plugin_form.html", context={"form": self})
 
     def is_function_active(self):
         """
-        When building forms for additional features, return whether that feature is enabled for the forms event instance.
+        When building forms for additional features, return whether that feature is enabled for the form instance.
         With the default template, if this is True, the collapse is expanded on page load.
         """
         return False

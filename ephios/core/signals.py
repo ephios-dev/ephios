@@ -30,6 +30,13 @@ with keys being the text and values being the url to link to.
 Receivers will receive a ``request`` keyword argument.
 """
 
+nav_link = PluginSignal()
+"""
+This signal is sent out to get links for the main navbar. Receivers should return a list of dicts
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
+Receivers will receive a ``request`` keyword argument.
+"""
+
 administration_settings_section = PluginSignal()
 """
 This signal is sent out to get sections for administration settings. Receivers should return a list of dicts
@@ -49,7 +56,29 @@ event_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the event create and update views.
 You receive an `event` and `request` keyword arg you should use to create an instance of your form.
-Subclass `BaseEventPluginForm` to customize the rendering behavior.
+Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
+If all forms are valid, `save` will be called on your form.
+"""
+
+event_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display in the general section of the event
+detail view. Receivers will receive an `event` and `request` keyword arg to generate the information.
+Receivers should return html that is added below the event description.
+"""
+
+shift_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display in the shift box of the event
+detail view. Receivers will receive a `shift` and `request` keyword arg to generate the information.
+Receivers should return html that is added below the participations.
+"""
+
+shift_forms = PluginSignal()
+"""
+This signal is sent out to get a list of form instances to show on the shift create and update views.
+You receive a `shift` and `request` keyword arg you should use to create an instance of your form.
+Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
@@ -84,6 +113,19 @@ This signal is sent out to get a list of actions that a user can perform on a li
 Receivers should return a list of actions. Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
 Once the user wants to perform the action, a POST request will be issued to this URL. The ``bulk_action`` field
 will contain a list of event ids on which the action should be performed.
+"""
+
+register_event_action = PluginSignal()
+"""
+This signal is sent out to get a list of actions that a user can perform on a single event. The actions are
+displayed in the dropdown menu on the event detail view. Each action is represented by a dict with the keys
+``url``, ``label`` and ``icon``. The given url will be called with a ``pk`` parameter containing the id of the event.
+"""
+
+homepage_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display on the homepage.
+Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
 """
 
 

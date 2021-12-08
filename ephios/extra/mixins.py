@@ -1,3 +1,5 @@
+import functools
+
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import resolve
@@ -119,3 +121,31 @@ class CanonicalSlugDetailMixin:
         object class. In that case, this method will never be called.
         """
         return self.get_object().slug
+
+
+class PluginFormMixin:
+    @functools.cached_property
+    def plugin_forms(self):
+        forms = []
+        for __, resp in self.get_plugin_forms():
+            forms.extend(resp)
+        return forms
+
+    def get_context_data(self, **kwargs):
+        kwargs["plugin_forms"] = self.plugin_forms
+        return super().get_context_data(**kwargs)
+
+    def is_valid(self, form):
+        return form.is_valid() and all(plugin_form.is_valid() for plugin_form in self.plugin_forms)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.save_plugin_forms()
+        return response
+
+    def save_plugin_forms(self):
+        for plugin_form in self.plugin_forms:
+            plugin_form.save()
+
+    def get_plugin_forms(self):
+        raise NotImplementedError

@@ -85,6 +85,7 @@
                                     {% trans "View edit history" %}
                                 </a></li>
                             {% endif %}
+                            {% event_plugin_actions event %}
                         </ul>
                     </div>
                 {% endif %}
@@ -116,6 +117,12 @@
             </h5>
             <div class="card-text text-muted">
                 {{ event.description|rich_text:"h1,h2" }}
+            </div>
+            <div class="event-plugin-content">
+                {% event_plugin_content event request as plugin_content %}
+                {% for item in plugin_content %}
+                    <div>{{ item }}</div>
+                {% endfor %}
             </div>
         </div>
     </div>
