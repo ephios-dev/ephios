@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ephios"
-version = "0.10.1"
+version = "0.10.2"
 description = "ephios is a tool to manage shifts for medical services."
 authors = ["Julian Baumann <julian@ephios.de>", "Felix Rindt <felix@ephios.de>"]
 license = "MIT"
