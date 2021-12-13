@@ -227,6 +227,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         formset.save()
         self._send_participant_notifications(formset)
 
+        # non_polymorphic() needed because of https://github.com/django-polymorphic/django-polymorphic/issues/34
         self.object.participations.filter(
             state=AbstractParticipation.States.GETTING_DISPATCHED
         ).non_polymorphic().delete()
