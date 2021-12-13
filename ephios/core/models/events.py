@@ -174,6 +174,11 @@ class DatetimeDisplayMixin:
         return f"{self.get_date_display()}, {self.get_time_display()}"
 
 
+# https://github.com/django-polymorphic/django-polymorphic/issues/229#issuecomment-398434412
+def NON_POLYMORPHIC_CASCADE(collector, field, sub_objs, using):
+    return models.CASCADE(collector, field, sub_objs.non_polymorphic(), using)
+
+
 class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
@@ -187,7 +192,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
             return dict(zip(cls.values, cls.labels))
 
     shift = ForeignKey(
-        "Shift", on_delete=models.CASCADE, verbose_name=_("shift"), related_name="participations"
+        "Shift",
+        on_delete=NON_POLYMORPHIC_CASCADE,
+        verbose_name=_("shift"),
+        related_name="participations",
     )
     state = IntegerField(_("state"), choices=States.choices, default=States.GETTING_DISPATCHED)
     data = models.JSONField(default=dict, verbose_name=_("Signup data"))
