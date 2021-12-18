@@ -1,7 +1,10 @@
 from django.dispatch import receiver
 
 from ephios.core.plugins import PluginSignal
-from ephios.core.services.notifications.backends import send_all_notifications
+from ephios.core.services.notifications.backends import (
+    delete_old_notifications,
+    send_all_notifications,
+)
 from ephios.core.services.participation import send_participation_finished
 
 register_consequence_handlers = PluginSignal()
@@ -164,6 +167,11 @@ def register_core_notification_backends(sender, **kwargs):
 @receiver(periodic_signal, dispatch_uid="ephios.core.signals.send_notifications")
 def send_notifications(sender, **kwargs):
     send_all_notifications()
+
+
+@receiver(periodic_signal, dispatch_uid="ephios.core.signals.delete_notifications")
+def delete_notifications(sender, **kwargs):
+    delete_old_notifications()
 
 
 periodic_signal.connect(

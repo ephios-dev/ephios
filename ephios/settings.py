@@ -160,6 +160,10 @@ AUTH_USER_MODEL = "core.UserProfile"
 LOGIN_REDIRECT_URL = "/"
 PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 
+# Store notifications for 14 days after creation
+NOTIFICATION_RETENTION_SECONDS = 14 * 24 * 60 * 60
+NOTIFICATION_SENDING_PROCESS_COUNT = 1 if DEBUG else 4
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 

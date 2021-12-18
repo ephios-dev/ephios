@@ -446,6 +446,8 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     title = _("Message to all participants")
     unsubscribe_allowed = False
 
+    # FIXME: check that is only send once per participant and not once per participation
+
     @classmethod
     def send(cls, event: Event, content: str):
         participants = set()

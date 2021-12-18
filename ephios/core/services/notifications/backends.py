@@ -1,8 +1,13 @@
+import datetime
 import logging
+import multiprocessing
 import traceback
+from typing import List
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, mail_admins
+from django.db import transaction
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
@@ -11,7 +16,7 @@ from ephios.core.models.users import Notification
 logger = logging.getLogger(__name__)
 
 
-def installed_notification_backends():
+def installed_notification_backends() -> List["AbstractNotificationBackend"]:
     from ephios.core.signals import register_notification_backends
 
     for _, backends in register_notification_backends.send_to_all_plugins(None):
@@ -25,25 +30,55 @@ def enabled_notification_backends():
         yield from (b() for b in backends)
 
 
+def send_a_notification(backend):
+    with transaction.atomic():
+        # grab an untried notification and mark it
+        if (
+            notification := Notification.objects.exclude(backends_tried__has_key=backend.slug)
+            .exclude(backends_tried__has_key=backend.slug)
+            .first()
+        ) is None:
+            return
+        notification.backends_tried[backend.slug] = False
+        notification.save()
+
+    # send it
+    if backend.can_send(notification) and backend.user_prefers_sending(notification):
+        try:
+            backend.send(notification)
+        except Exception as e:  # pylint: disable=broad-except
+            if settings.DEBUG:
+                raise e
+            message = f"Notification {notification.pk}: {notification}\nException: {e}\n{traceback.format_exc()}"
+            notification.errors[backend.slug] = message
+            notification.save()
+            mail_admins(f"Sending notification failed using {backend.slug}", message)
+            logger.warning(
+                f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
+            )
+        else:
+            notification.backends_tried[backend.slug] = True
+            notification.save()
+
+
 def send_all_notifications():
-    for backend in installed_notification_backends():
-        for notification in Notification.objects.filter(failed=False):
-            if backend.can_send(notification) and backend.user_prefers_sending(notification):
-                try:
-                    backend.send(notification)
-                except Exception as e:  # pylint: disable=broad-except
-                    if settings.DEBUG:
-                        raise e
-                    notification.failed = True
-                    notification.save()
-                    mail_admins(
-                        "Notification sending failed",
-                        f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
-                    )
-                    logger.warning(
-                        f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
-                    )
-    Notification.objects.filter(failed=False).delete()
+    def iter_backend_tries():
+        for backend in installed_notification_backends():
+            notifications = Notification.objects.exclude(backends_tried__has_key=backend.slug)
+            for _ in range(
+                notifications.count()
+            ):  # count is limited to initial amount of notifications
+                yield backend
+
+    with multiprocessing.Pool(processes=settings.NOTIFICATION_SENDING_PROCESS_COUNT) as pool:
+        pool.map(send_a_notification, iter_backend_tries())
+
+
+def delete_old_notifications():
+    some_time_ago = timezone.now() - datetime.timedelta(
+        seconds=settings.NOTIFICATION_RETENTION_SECONDS
+    )
+    Notification.objects.filter(created_at__lt=some_time_ago).delete()
 
 
 class AbstractNotificationBackend:

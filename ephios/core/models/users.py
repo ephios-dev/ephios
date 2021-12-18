@@ -445,11 +445,24 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    failed = models.BooleanField(default=False)
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    backends_tried = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_(
+            "dict of notification backend slugs for which sending the "
+            "notification was tried and whether sending succeeded"
+        ),
+    )
+    errors = models.JSONField(
+        default=dict, blank=True, help_text=_("dict of error message for each backend tried")
+    )
+
+    def __str__(self):
+        return f"{self.notification_type.slug} for {self.user}"
 
     @functools.cached_property
     def notification_type(self):
