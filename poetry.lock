@@ -296,7 +296,7 @@ django = "*"
 
 [[package]]
 name = "django-compressor"
-version = "3.0"
+version = "3.1"
 description = "Compresses linked and inline JavaScript or CSS into single cached files."
 category = "main"
 optional = false
@@ -1566,8 +1566,8 @@ django-appconf = [
     {file = "django_appconf-1.0.5-py3-none-any.whl", hash = "sha256:ae9f864ee1958c815a965ed63b3fba4874eec13de10236ba063a788f9a17389d"},
 ]
 django-compressor = [
-    {file = "django_compressor-3.0-py2.py3-none-any.whl", hash = "sha256:12958fd95b4135cae7b704deeeb5c26da12692b85a2765f1bd30a70c05d5825c"},
-    {file = "django_compressor-3.0.tar.gz", hash = "sha256:68955b7baffc3607a4dc44523dcff622238121b307f46fecddaeb8de986ca086"},
+    {file = "django_compressor-3.1-py2.py3-none-any.whl", hash = "sha256:89f7ba86777b30672c2f9c7557bf2aff87c5890903c73b1fa3ae38acd143e855"},
+    {file = "django_compressor-3.1.tar.gz", hash = "sha256:c4a87bf65f9a534cfaf1c321a000a229c24e50c6d62ba6ab089482db42e819d9"},
 ]
 django-coverage-plugin = [
     {file = "django_coverage_plugin-2.0.2-py3-none-any.whl", hash = "sha256:4206c85ffba0301f83aecc38e5b01b1b9a4b45a545d9456a827e3fabea18d952"},
