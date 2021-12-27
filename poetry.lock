@@ -506,7 +506,7 @@ test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-statici18n"
-version = "2.1.1"
+version = "2.1.2"
 description = "A Django app that provides helper for generating Javascript catalog to static files."
 category = "main"
 optional = false
@@ -1632,8 +1632,8 @@ django-select2 = [
     {file = "django_select2-7.9.0-py2.py3-none-any.whl", hash = "sha256:40d42643b459f79c31598fa5645f5f7e8edda8350a78761ab6c06105ca588872"},
 ]
 django-statici18n = [
-    {file = "django-statici18n-2.1.1.tar.gz", hash = "sha256:5c85192fa95e3ef3727517ac104add8959fc0a54be3d13440a8a3319fddbc778"},
-    {file = "django_statici18n-2.1.1-py2.py3-none-any.whl", hash = "sha256:7b7af03d86053653f249cce9a4239bbb069889b59fff09f112674d8d6a115571"},
+    {file = "django-statici18n-2.1.2.tar.gz", hash = "sha256:603add0758da2dd17d8e2fca35d0b3dcb703873db6d1c1603470bdd96be2a30c"},
+    {file = "django_statici18n-2.1.2-py2.py3-none-any.whl", hash = "sha256:e248b9f3d7cd2d7b666b9e23a9ce018a5c1d33ac429c269e852b80e33826efdb"},
 ]
 django-webpush = [
     {file = "django-webpush-0.3.3.tar.gz", hash = "sha256:14e3ecdd400d12eab9018206a40691bc549e78130ff2de36716b118fd80cf680"},
