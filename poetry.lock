@@ -529,7 +529,7 @@ pywebpush = "1.9.4"
 
 [[package]]
 name = "django-webtest"
-version = "1.9.8"
+version = "1.9.9"
 description = "Instant integration of Ian Bicking's WebTest (http://docs.pylonsproject.org/projects/webtest/) with Django's testing framework."
 category = "dev"
 optional = false
@@ -1355,7 +1355,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "1d9c7e76ce3d949bab6e4671bfd185b87882c34c14a9dcc6271de759a1383d14"
+content-hash = "085b8527343c542e2e31303f245c416b01af8b0ebb82f81cd398dc5dbfb169d6"
 
 [metadata.files]
 alabaster = [
@@ -1640,8 +1640,8 @@ django-webpush = [
     {file = "django_webpush-0.3.3-py3-none-any.whl", hash = "sha256:09d315a0268eb56fba2d89f7a3298d647f0a82febf5428721dd1576e38c960ae"},
 ]
 django-webtest = [
-    {file = "django-webtest-1.9.8.tar.gz", hash = "sha256:4ee691a90f5f14ba1902f03564aecce62276aab6a1559955bb9c02dea33fe6c0"},
-    {file = "django_webtest-1.9.8-py2.py3-none-any.whl", hash = "sha256:5f304e5ffc897242c78e2783080ec49661bccfe1d030c31bc9c00913d5ebae72"},
+    {file = "django-webtest-1.9.9.tar.gz", hash = "sha256:7b6eab091ba4cb1d6c0aa1059247f181255ffce99e7b976ec391fea04a215c94"},
+    {file = "django_webtest-1.9.9-py3-none-any.whl", hash = "sha256:32daef3db0e851d832fe06dbbde70f3a878201086266281fad338eea50f5efc3"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},
