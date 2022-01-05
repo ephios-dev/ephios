@@ -24,7 +24,6 @@ if not os.path.exists(DATA_DIR):
 
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
-FAIL_LOUDLY = DEBUG  # disable error supression mechanisms for e.g. failed notifications or unavailable signup methods
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 if not DEBUG:
@@ -197,25 +196,43 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
-if not DEBUG:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": True,
-        "handlers": {
-            "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {"format": "%(levelname)s %(asctime)s %(name)s %(module)s %(message)s"},
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
         },
-        "loggers": {
-            "django": {
-                "handlers": ["mail_admins"],
-                "level": "ERROR",
-                "propagate": False,
-            },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
         },
-        "root": {
-            "handlers": ["mail_admins"],
+    },
+    "handlers": {
+        "mail_admins": {
             "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
         },
-    }
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["mail_admins", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["mail_admins", "console"],
+    },
+}
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
