@@ -58,21 +58,6 @@ def signup_method_from_slug(slug, shift=None, event=None):
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
-def catch_signup_method_fails(default=None):
-    def decorator(f):
-        @functools.wraps(f)
-        def decorated(*args, **kwargs):
-            try:
-                return f(*args, **kwargs)
-            except Exception:  # pylint: disable=broad-except
-                logger.exception(f"Function {f} in {f.__module__} errored")
-                return default() if callable(default) else default
-
-        return decorated
-
-    return decorator
-
-
 class ParticipationError(ValidationError):
     """Superclass of errors used in the signup mechanism."""
 
