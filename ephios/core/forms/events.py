@@ -20,7 +20,7 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
-from ephios.core.signup.methods import enabled_signup_methods
+from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
@@ -172,9 +172,15 @@ class ShiftForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         signup_methods = list(enabled_signup_methods())
+
+        # make sure that if a shift uses a disabled but installed method, it is also available in the list
         if self.instance and (method_slug := self.instance.signup_method_slug):
             if method_slug not in map(operator.attrgetter("slug"), signup_methods):
-                signup_methods.append(self.instance.signup_method)
+                try:
+                    signup_methods.append(signup_method_from_slug(method_slug, self.instance))
+                except ValueError:  # not installed
+                    pass
+
         self.fields["signup_method_slug"].widget = forms.Select(
             choices=((method.slug, method.verbose_name) for method in signup_methods)
         )

@@ -1,4 +1,5 @@
 import functools
+import logging
 import operator
 from datetime import timedelta
 from typing import TYPE_CHECKING
@@ -34,6 +35,7 @@ if TYPE_CHECKING:
     from ephios.core.models import UserProfile
     from ephios.core.signup.methods import BaseSignupMethod, SignupStats
     from ephios.core.signup.participants import AbstractParticipant
+logger = logging.getLogger(__name__)
 
 
 class ActiveManager(Manager):
@@ -282,7 +284,10 @@ class Shift(DatetimeDisplayMixin, Model):
         try:
             return signup_method_from_slug(self.signup_method_slug, self, event=event)
         except ValueError:
-            return None
+            logger.warning(f"signup method {self.signup_method_slug} was not found")
+            from ephios.core.signup.fallback import FallbackSignupMethod
+
+            return FallbackSignupMethod(self, event=event)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
