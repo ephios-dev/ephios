@@ -153,3 +153,13 @@ def test_get_conflicting_shift_with_individual_time(tz, volunteer, multi_shift_e
     assert set(get_conflicting_participations(volunteer.as_participant(), shift_b)) == {
         a_participation
     }
+
+
+def test_event_detail_renders_with_missing_signup_method(django_app, event, volunteer):
+    shift: Shift = event.shifts.first()
+    shift.signup_method_slug = "some_missing_slug_that_doesnt_exist"
+    shift.save()
+    assert "invalid" in django_app.get(
+        event.get_absolute_url(),
+        user=volunteer,
+    )
