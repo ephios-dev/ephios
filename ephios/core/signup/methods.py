@@ -9,7 +9,6 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
-from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -36,7 +35,6 @@ from ephios.core.signals import (
     register_signup_methods,
 )
 from ephios.core.signup.participants import AbstractParticipant
-from ephios.extra.logging import report_exception
 from ephios.extra.utils import format_anything
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
@@ -66,15 +64,8 @@ def catch_signup_method_fails(default=None):
         def decorated(*args, **kwargs):
             try:
                 return f(*args, **kwargs)
-            except Exception as e:  # pylint: disable=broad-except
-                report_exception(
-                    logger,
-                    e,
-                    "Signup method error",
-                    object=dict(args=args, kwargs=kwargs, function=f"{f} in {f.__module__}"),
-                )
-                if settings.FAIL_LOUDLY:
-                    raise e
+            except Exception:  # pylint: disable=broad-except
+                logger.exception(f"Function {f} in {f.__module__} errored")
                 return default() if callable(default) else default
 
         return decorated
@@ -729,9 +720,7 @@ class BaseSignupMethod:
             with context.update(self.get_shift_state_context_data(context.request)):
                 return get_template(self.shift_state_template_name).template.render(context)
         except Exception as e:  # pylint: disable=broad-except
-            if settings.FAIL_LOUDLY:
-                raise e
-            report_exception(logger, e, "Shift state render failed", object=self.shift)
+            logger.exception(f"Shift #{self.shift.pk} state render failed")
             with context.update(dict(exception_message=getattr(e, "message", None))):
                 return get_template("core/fragments/signup_method_missing.html").template.render(
                     context

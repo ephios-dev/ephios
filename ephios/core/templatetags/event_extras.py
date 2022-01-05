@@ -24,14 +24,6 @@ from ephios.extra.colors import get_eventtype_color_style
 register = template.Library()
 
 
-def get_signup_method_failed_error_list():
-    return [
-        ImproperlyConfiguredError(
-            mark_safe(f'<span class="text-danger">{_("Signup configuration is invalid!")}</span>')
-        )
-    ]
-
-
 @register.filter(name="reverse_signup_action")
 def reverse_signup_action(request, shift):
     return request_to_participant(request).reverse_signup_action(shift)
@@ -91,8 +83,16 @@ def can_customize_signup(request, shift):
     return shift.signup_method.can_customize_signup(request_to_participant(request))
 
 
+def _get_signup_method_failed_error_list():
+    return [
+        ImproperlyConfiguredError(
+            mark_safe(f'<span class="text-danger">{_("Signup configuration is invalid!")}</span>')
+        )
+    ]
+
+
 @register.filter(name="signup_errors")
-@catch_signup_method_fails(default=get_signup_method_failed_error_list)
+@catch_signup_method_fails(default=_get_signup_method_failed_error_list)
 def signup_errors(request, shift):
     return set(
         shift.signup_method.get_signup_errors(request_to_participant(request))
