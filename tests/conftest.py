@@ -1,3 +1,4 @@
+import logging
 import uuid
 from argparse import Namespace
 from datetime import date, datetime
@@ -23,6 +24,13 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
+
+
+@pytest.fixture(autouse=True)
+def check_log_for_exceptions(caplog):
+    caplog.set_level(logging.ERROR)
+    yield
+    assert caplog.get_records("call") == []
 
 
 @pytest.fixture
