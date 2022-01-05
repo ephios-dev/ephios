@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, EventType, LocalParticipation, UserProfile
 from ephios.core.signals import (
@@ -16,10 +17,19 @@ from ephios.core.signals import (
     register_event_bulk_action,
     shift_info,
 )
+from ephios.core.signup.methods import ImproperlyConfiguredError, catch_signup_method_fails
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
 
 register = template.Library()
+
+
+def get_signup_method_failed_error_list():
+    return [
+        ImproperlyConfiguredError(
+            mark_safe(f'<span class="text-danger">{_("Signup configuration is invalid!")}</span>')
+        )
+    ]
 
 
 @register.filter(name="reverse_signup_action")
@@ -70,21 +80,19 @@ def setvar(value=None):
 
 
 @register.filter(name="can_sign_up")
+@catch_signup_method_fails(default=False)
 def can_sign_up(request, shift):
     return shift.signup_method.can_sign_up(request_to_participant(request))
 
 
 @register.filter(name="can_customize_signup")
+@catch_signup_method_fails(default=False)
 def can_customize_signup(request, shift):
     return shift.signup_method.can_customize_signup(request_to_participant(request))
 
 
-@register.filter(name="render_shift_state")
-def render_shift_state(request, shift):
-    return shift.signup_method.render_shift_state(request)
-
-
 @register.filter(name="signup_errors")
+@catch_signup_method_fails(default=get_signup_method_failed_error_list)
 def signup_errors(request, shift):
     return set(
         shift.signup_method.get_signup_errors(request_to_participant(request))
@@ -93,6 +101,7 @@ def signup_errors(request, shift):
 
 
 @register.filter(name="can_decline")
+@catch_signup_method_fails(default=False)
 def can_decline(request, shift):
     return shift.signup_method.can_decline(request_to_participant(request))
 

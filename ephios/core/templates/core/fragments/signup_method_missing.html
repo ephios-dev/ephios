@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load rich_text %}
+
+<p class="text-muted">
+    {% translate "There is a problem displaying the state of the shift." %}
+</p>
+{% if request.user.is_superuser %}
+    <p class="text-muted">
+        Here's what we know:
+        {{ exception_message }}
+    </p>
+{% endif %}

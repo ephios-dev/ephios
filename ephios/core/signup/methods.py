@@ -9,6 +9,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -35,6 +36,7 @@ from ephios.core.signals import (
     register_signup_methods,
 )
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.extra.logging import report_exception
 from ephios.extra.utils import format_anything
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
@@ -56,6 +58,28 @@ def signup_method_from_slug(slug, shift=None, event=None):
         if method.slug == slug:
             return method(shift, event=event)
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
+
+
+def catch_signup_method_fails(default=None):
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except Exception as e:  # pylint: disable=broad-except
+                report_exception(
+                    logger,
+                    e,
+                    "Signup method error",
+                    object=dict(args=args, kwargs=kwargs, function=f"{f} in {f.__module__}"),
+                )
+                if settings.FAIL_LOUDLY:
+                    raise e
+                return default() if callable(default) else default
+
+        return decorated
+
+    return decorator
 
 
 class ParticipationError(ValidationError):
@@ -81,6 +105,13 @@ class ParticipantUnfitError(ParticipationError):
     """
     Error to return if the participant is unfit for a shift,
     regardless of participation state or situation.
+    """
+
+
+class ImproperlyConfiguredError(ParticipationError):
+    """
+    Error to return if signup cannot be performed for
+    technical or configuration reasons.
     """
 
 
@@ -694,8 +725,17 @@ class BaseSignupMethod:
         {% include shift.signup_method %}
         By default, this loads `shift_state_template_name` and renders it using context from `get_shift_state_context_data`.
         """
-        with context.update(self.get_shift_state_context_data(context.request)):
-            return get_template(self.shift_state_template_name).template.render(context)
+        try:
+            with context.update(self.get_shift_state_context_data(context.request)):
+                return get_template(self.shift_state_template_name).template.render(context)
+        except Exception as e:  # pylint: disable=broad-except
+            if settings.FAIL_LOUDLY:
+                raise e
+            report_exception(logger, e, "Shift state render failed", object=self.shift)
+            with context.update(dict(exception_message=getattr(e, "message", None))):
+                return get_template("core/fragments/signup_method_missing.html").template.render(
+                    context
+                )
 
     def get_shift_state_context_data(self, request, **kwargs):
         """
@@ -715,13 +755,6 @@ class BaseSignupMethod:
                 else None
             )
         return kwargs
-
-    def render_shift_state(self, context):
-        """
-        Render html that will be shown in the shift info box.
-        Use it to inform about the current state of the shift and participations.
-        """
-        return ""
 
     def get_participation_display(self):
         """

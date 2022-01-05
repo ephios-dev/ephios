@@ -24,6 +24,7 @@ if not os.path.exists(DATA_DIR):
 
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
+FAIL_LOUDLY = DEBUG  # disable error supression mechanisms for e.g. failed notifications or unavailable signup methods
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 if not DEBUG:
@@ -215,7 +216,6 @@ if not DEBUG:
             "level": "ERROR",
         },
     }
-
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
