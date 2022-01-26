@@ -416,15 +416,15 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-ical"
-version = "1.8.2"
+version = "1.8.3"
 description = "iCal feeds for Django based on Django's syndication feed framework."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Django = ">=2.2"
-django-recurrence = ">=1.10.0"
+django = ">=2.2"
+django-recurrence = ">=1.11.1"
 icalendar = ">=4.0.3"
 
 [[package]]
@@ -463,16 +463,15 @@ Django = ">=2.1"
 
 [[package]]
 name = "django-recurrence"
-version = "1.10.3"
+version = "1.11.1"
 description = "Django utility wrapping dateutil.rrule"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 
 [package.dependencies]
-Django = "*"
+django = ">=2.2"
 python-dateutil = "*"
-pytz = "*"
 
 [[package]]
 name = "django-redis"
@@ -1603,8 +1602,8 @@ django-guardian = [
     {file = "django_guardian-2.4.0-py3-none-any.whl", hash = "sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697"},
 ]
 django-ical = [
-    {file = "django-ical-1.8.2.tar.gz", hash = "sha256:e5b853047b5d6ac052e827b2c7adb1aa2534266dc863c5173451105a2a4cef18"},
-    {file = "django_ical-1.8.2-py3-none-any.whl", hash = "sha256:47d57bfd4a8c7789c38b1cad437a1d48763cbeaf8a4acb75f1948f89f6ed2d0f"},
+    {file = "django-ical-1.8.3.tar.gz", hash = "sha256:0d5595c5bc954e401b59b27a9a86962557f0d3b965e9f5860244cd6bc450e8ab"},
+    {file = "django_ical-1.8.3-py3-none-any.whl", hash = "sha256:d3f97d163c03ea795e0722d5031e7f3806037ac913c814b0cfee54464f06978e"},
 ]
 django-jquery-js = [
     {file = "django-jquery-js-3.1.1.tar.gz", hash = "sha256:308e6472801f89be7c02fa3d06bea6470cfbcab8287db80c64b1093717b8eea9"},
@@ -1618,8 +1617,8 @@ django-polymorphic = [
     {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
 ]
 django-recurrence = [
-    {file = "django-recurrence-1.10.3.tar.gz", hash = "sha256:715f681f6af029ff3a8d73c7b1460abd8cbc5d5a5001efcb127032e84d9cb963"},
-    {file = "django_recurrence-1.10.3-py3-none-any.whl", hash = "sha256:9053b44b78b7fbfe3530673edfdd6d2f562105f8a192bc6a4b906a3df4f95f59"},
+    {file = "django-recurrence-1.11.1.tar.gz", hash = "sha256:9c89444e651a78c587f352c5f63eda48ab2f53996347b9fcdff2d248f4fcff70"},
+    {file = "django_recurrence-1.11.1-py3-none-any.whl", hash = "sha256:0c65f30872599b5813a9bab6952dada23c55894f28674490a753ada559f14bc5"},
 ]
 django-redis = [
     {file = "django-redis-5.2.0.tar.gz", hash = "sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de"},
