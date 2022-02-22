@@ -146,7 +146,6 @@ class BaseParticipationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs["instance"]
-        self.shift = getattr(self, "shift", instance.shift)
         kwargs["initial"] = {
             **kwargs.get("initial", {}),
             "individual_start_time": instance.individual_start_time or self.shift.start_time,
