@@ -1,6 +1,7 @@
 from django import forms
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
@@ -24,17 +25,22 @@ from ephios.core.signup.methods import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
+class MissingParticipation(ValueError):
+    pass
+
+
 class BaseDispositionParticipationForm(BaseParticipationForm):
     disposition_participation_template = "core/disposition/fragment_participation.html"
 
     def __init__(self, **kwargs):
+        try:
+            self.shift = kwargs["instance"].shift
+        except (AttributeError, KeyError) as e:
+            raise MissingParticipation("an instance must be provided") from e
+
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
         self.fields["comment"].disabled = True
-        try:
-            self.shift = self.instance.shift
-        except AttributeError as e:
-            raise ValueError(f"{type(self)} must be initialized with an instance.") from e
 
     class Meta(BaseParticipationForm.Meta):
         fields = ["state", "individual_start_time", "individual_end_time", "comment"]
@@ -50,6 +56,24 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
     def __init__(self, *args, start_index=0, **kwargs):
         self._start_index = start_index
         super().__init__(*args, **kwargs)
+
+    @cached_property
+    def forms(self):
+        """
+        This formset is meant to only work with existing participation objects.
+        If a user submits a formset including a form for a deleted participation
+        (e.g. due to getting dispatched being deleted), we need to not include them.
+        BaseDispositionParticipationForm raises MissingParticipation if instantiated
+        without an instance.
+        """
+        # taken from super().forms
+        forms = []
+        for i in range(self.total_form_count()):
+            try:
+                forms.append(self._construct_form(i, **self.get_form_kwargs(i)))
+            except MissingParticipation:
+                pass
+        return forms
 
     def add_prefix(self, index):
         return f"{self.prefix}-{self._start_index + index}"
