@@ -67,13 +67,13 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
         without an instance.
         """
         # taken from super().forms
-        forms = []
+        forms_with_instance = []
         for i in range(self.total_form_count()):
             try:
-                forms.append(self._construct_form(i, **self.get_form_kwargs(i)))
+                forms_with_instance.append(self._construct_form(i, **self.get_form_kwargs(i)))
             except MissingParticipation:
                 pass
-        return forms
+        return forms_with_instance
 
     def add_prefix(self, index):
         return f"{self.prefix}-{self._start_index + index}"
