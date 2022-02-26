@@ -794,7 +794,7 @@ msgstr "Ersatz für fehlende Anmeldeverfahren"
 #: ephios/core/signup/fallback.py:41
 msgid ""
 "This method is used when the original signup method is not installed anymore."
-msgstr ""
+msgstr "Dieses Anmeldeverfahren wird genutzt, wenn das eigentlich vorgesehene Verfahren nicht mehr installiert ist."
 
 #: ephios/core/signup/methods.py:58
 #, python-brace-format
