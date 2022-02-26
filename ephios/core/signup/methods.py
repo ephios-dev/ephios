@@ -755,7 +755,7 @@ class BaseSignupMethod:
         return template
 
 
-@dataclasses.dataclass()
+@dataclasses.dataclass(frozen=True)
 class SignupStats:
     requested_count: int
     confirmed_count: int

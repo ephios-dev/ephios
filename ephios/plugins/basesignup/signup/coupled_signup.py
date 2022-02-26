@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from django import forms
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_save
@@ -7,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
+from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod, SignupStats
 from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
 
 
@@ -73,6 +75,14 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
         return [
             self.signup_is_disabled,
         ]
+
+    def get_signup_stats(self) -> "SignupStats":
+        raw_signupstats = super().get_signup_stats()
+        return replace(
+            SignupStats.ZERO,
+            requested_count=raw_signupstats.requested_count,
+            confirmed_count=raw_signupstats.confirmed_count,
+        )
 
 
 @receiver(pre_save)
