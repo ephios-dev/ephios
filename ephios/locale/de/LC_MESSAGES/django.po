@@ -789,7 +789,7 @@ msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 
 #: ephios/core/signup/fallback.py:39
 msgid "Fallback for missing signup methods"
-msgstr ""
+msgstr "Ersatz für fehlende Anmeldeverfahren"
 
 #: ephios/core/signup/fallback.py:41
 msgid ""
