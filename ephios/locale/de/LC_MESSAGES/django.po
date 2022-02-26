@@ -1271,7 +1271,7 @@ msgstr "Schicht"
 
 #: ephios/core/templates/core/fragments/signup_method_missing.html:4
 msgid "We're sorry! There is a problem displaying the state of the shift."
-msgstr ""
+msgstr "Leider gibt es ein Problem beim Anzeigen des Schichtzustandes."
 
 #: ephios/core/templates/core/fragments/signup_stats_indicator.html:5
 #, python-format
