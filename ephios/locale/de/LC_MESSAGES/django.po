@@ -2593,18 +2593,6 @@ msgid ""
 "\">                                    %(title)s"
 msgstr ""
 
-#~ msgid "Internal server error"
-#~ msgstr "Serverfehler"
-
-#~ msgid ""
-#~ "An error occurred while processing your request. The administrators have "
-#~ "been informed about the error."
-#~ msgstr ""
-#~ "Beim Bearbeiten Ihrer Anfrage ist ein Fehler aufgetreten. Die "
-#~ "Administratoren wurden über den Fehler informiert."
-
-#~ msgid "can grant qualification"
-#~ msgstr "Kann Qualifikation gewähren"
 
 #, python-brace-format
 #~ msgid "'{choice}' is not a valid signup action."
