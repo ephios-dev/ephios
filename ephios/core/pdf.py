@@ -1,9 +1,8 @@
 import io
 
-import pytz
-from django.conf import settings
 from django.http import FileResponse
 from django.utils import formats
+from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
@@ -55,7 +54,7 @@ class SingleShiftEventExporter(BasePDFExporter):
         ]
 
         shift = self.event.shifts.first()
-        tz = pytz.timezone(settings.TIME_ZONE)
+        tz = get_default_timezone()
         start_time = shift.start_time.astimezone(tz)
         data = (
             [
@@ -116,7 +115,7 @@ class MultipleShiftEventExporter(BasePDFExporter):
             Spacer(height=0.5 * cm, width=19 * cm),
         ]
 
-        tz = pytz.timezone(settings.TIME_ZONE)
+        tz = get_default_timezone()
         start_time = self.event.get_start_time().astimezone(tz)
         end_time = self.event.get_end_time().astimezone(tz)
         end_date = (
