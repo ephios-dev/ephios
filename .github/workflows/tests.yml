@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [ 3.9 ]
+        python-version: [ "3.10" ]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -21,9 +21,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
-        key: ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-
+        key: ephios-${{ runner.os }}-poetry-v1-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
     - name: Install dependencies
       run: poetry install
     - name: check format with black
@@ -63,9 +61,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
-        key: ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          ephios-${{ runner.os }}-poetry-py${{ matrix.python-version }}-
+        key: ephios-${{ runner.os }}-poetry-v1-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
     - name: Install dependencies
       # always install all -E extras to use a single cache
       run: |
