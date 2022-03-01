@@ -177,11 +177,11 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         if self.object.event.shifts.count() == 1:
             messages.error(self.request, _("You cannot delete the last shift!"))
             return redirect(self.object.event.get_absolute_url())
-        return super().delete(request, *args, **kwargs)
+        return super().form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, _("The shift has been deleted."))
