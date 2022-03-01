@@ -4,8 +4,8 @@ from argparse import Namespace
 from datetime import date, datetime
 
 import pytest
-import pytz
 from django.contrib.auth.models import Group
+from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
@@ -52,7 +52,7 @@ def enable_plugins():
 
 @pytest.fixture
 def tz():
-    return pytz.timezone("Europe/Berlin")
+    return get_default_timezone()
 
 
 @pytest.fixture
