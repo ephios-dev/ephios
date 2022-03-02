@@ -246,7 +246,7 @@ class BaseSignupForm(BaseParticipationForm):
             form.add_error(
                 "individual_end_time",
                 _("You are already confirmed for other shifts at this time: {shifts}.").format(
-                    shifts=", ".join(str(shift) for shift in conflicts)
+                    shifts=", ".join(str(participation.shift) for participation in conflicts)
                 ),
             )
 
