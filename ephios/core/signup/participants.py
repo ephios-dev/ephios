@@ -41,7 +41,7 @@ class AbstractParticipant:
         """Return all participations for this participant"""
         raise NotImplementedError
 
-    @functools.lru_cache
+    @functools.lru_cache(maxsize=64)
     def collect_all_qualifications(self) -> set:
         return Qualification.collect_all_included_qualifications(self.qualifications)
 
