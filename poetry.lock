@@ -1098,7 +1098,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "sphinx"
-version = "4.4.0"
+version = "4.5.0"
 description = "Python documentation generator"
 category = "dev"
 optional = false
@@ -1392,7 +1392,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "993a214f333a9ab054ab6e4624dd184ea931828cc075e5acc841464e20f2a1b5"
+content-hash = "ed7eca2cbda1c2f2f5cd7fdb4c8e542d252c07774f28007dec4c94d57c280bfd"
 
 [metadata.files]
 alabaster = [
@@ -2140,8 +2140,8 @@ soupsieve = [
     {file = "soupsieve-2.3.1.tar.gz", hash = "sha256:b8d49b1cd4f037c7082a9683dfa1801aa2597fb11c3a1155b7a5b94829b4f1f9"},
 ]
 sphinx = [
-    {file = "Sphinx-4.4.0-py3-none-any.whl", hash = "sha256:5da895959511473857b6d0200f56865ed62c31e8f82dd338063b84ec022701fe"},
-    {file = "Sphinx-4.4.0.tar.gz", hash = "sha256:6caad9786055cb1fa22b4a365c1775816b876f91966481765d7d50e9f0dd35cc"},
+    {file = "Sphinx-4.5.0-py3-none-any.whl", hash = "sha256:ebf612653238bcc8f4359627a9b7ce44ede6fdd75d9d30f68255c7383d3a6226"},
+    {file = "Sphinx-4.5.0.tar.gz", hash = "sha256:7bf8ca9637a4ee15af412d1a1d9689fec70523a68ca9bb9127c2f3eeb344e2e6"},
 ]
 sphinx-github-changelog = [
     {file = "sphinx-github-changelog-1.2.0.tar.gz", hash = "sha256:1104d66fcb1849e46637e9b2e9385ed4323e3576b99f89890affbf569e16afde"},
