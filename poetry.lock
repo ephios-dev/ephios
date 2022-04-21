@@ -904,7 +904,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "pylint"
-version = "2.13.6"
+version = "2.13.7"
 description = "python code static checker"
 category = "dev"
 optional = false
@@ -1395,7 +1395,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "988605c488ab1da8a83a9c66aae4d46a1f52248aa8b47b20d62fc911baf6826e"
+content-hash = "2211d93e2261fef5a3c157efcd322444e36a63829c3f10d01ce05d1ba359629d"
 
 [metadata.files]
 alabaster = [
@@ -1979,8 +1979,8 @@ pygments = [
     {file = "Pygments-2.11.2.tar.gz", hash = "sha256:4e426f72023d88d03b2fa258de560726ce890ff3b630f88c21cbb8b2503b8c6a"},
 ]
 pylint = [
-    {file = "pylint-2.13.6-py3-none-any.whl", hash = "sha256:939e67253d1b8569a4c827d933debf603f999ba745775c66e36463922d4e320b"},
-    {file = "pylint-2.13.6.tar.gz", hash = "sha256:8b1265173abaf37c2e7a21989d05fd6b0f8032c6772f85abe3b0652903aac66c"},
+    {file = "pylint-2.13.7-py3-none-any.whl", hash = "sha256:13ddbbd8872c804574149e81197c28877eba75224ba6b76cd8652fc31df55c1c"},
+    {file = "pylint-2.13.7.tar.gz", hash = "sha256:911d3a97c808f7554643bcc5416028cfdc42eae34ed129b150741888c688d5d5"},
 ]
 pyparsing = [
     {file = "pyparsing-3.0.7-py3-none-any.whl", hash = "sha256:a6c06a88f252e6c322f65faf8f418b16213b51bdfaece0524c1c1bc30c63c484"},
