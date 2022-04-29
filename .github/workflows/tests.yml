@@ -18,6 +18,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: Gr1N/setup-poetry@v7
+      with:
+        poetry-preview: true
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
@@ -58,6 +60,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: Gr1N/setup-poetry@v7
+      with:
+        poetry-preview: true
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
