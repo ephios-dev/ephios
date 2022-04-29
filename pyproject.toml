@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ephios"
-version = "0.12.0-dev"
+version = "0.0.0" # automatically set by poetry-dynamic-versioning
 description = "ephios is a tool to manage shifts for medical services."
 authors = ["Julian Baumann <julian@ephios.de>", "Felix Rindt <felix@ephios.de>"]
 license = "MIT"
@@ -89,7 +89,7 @@ DJANGO_SETTINGS_MODULE = "tests.settings"
 addopts = "--fail-on-template-vars"
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.2.0b1", "poetry-dynamic-versioning-plugin"]
 build-backend = "poetry.masonry.api"
 
 
@@ -102,3 +102,9 @@ branch = true
 
 [tool.coverage.django_coverage_plugin]
 template_extensions = 'html, txt, tex, email'
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+bump = true
