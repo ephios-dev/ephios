@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django_filters",
     "guardian",
     "rest_framework",
+    'rest_framework.authtoken',
     "django_select2",
     "djangoformsetjs",
     "compressor",
@@ -304,4 +305,8 @@ def GET_SITE_URL():
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }
