@@ -12,10 +12,10 @@ repos:
           - --ignore-init-module-imports
           - --expand-star-imports
   - repo: https://github.com/PyCQA/isort
-    rev: 5.6.4
+    rev: 5.10.1
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 22.3.0
     hooks:
       - id: black
