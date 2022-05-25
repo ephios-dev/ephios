@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django_filters",
     "guardian",
+    "rest_framework",
     "django_select2",
     "djangoformsetjs",
     "compressor",
@@ -63,6 +65,7 @@ INSTALLED_APPS = [
 EPHIOS_CORE_MODULES = [
     "ephios.core",
     "ephios.extra",
+    "ephios.api",
 ]
 INSTALLED_APPS += EPHIOS_CORE_MODULES
 
@@ -296,3 +299,9 @@ def GET_SITE_URL():
     if site_url.endswith("/"):
         site_url = site_url[:-1]
     return site_url
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"],
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+}
