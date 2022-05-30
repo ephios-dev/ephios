@@ -2,11 +2,12 @@ import django_filters
 from django.db.models import Max, Min, Prefetch
 from rest_framework import filters, serializers, viewsets
 
-# Serializers define the API representation.
 from ephios.core.models import Event, EventType, Shift
 
 
 class SignupStatsSerializer(serializers.Serializer):
+    # Stats are read only, so we don't implement create and update:
+    # pylint: disable=abstract-method
     requested_count = serializers.IntegerField()
     confirmed_count = serializers.IntegerField()
     missing = serializers.IntegerField()
@@ -15,7 +16,7 @@ class SignupStatsSerializer(serializers.Serializer):
     max_count = serializers.IntegerField()
 
 
-class ShiftSerializer(serializers.HyperlinkedModelSerializer):
+class ShiftSerializer(serializers.ModelSerializer):
     signup_stats = SignupStatsSerializer(source="signup_method.get_signup_stats")
 
     class Meta:
@@ -57,18 +58,6 @@ class EventSerializer(serializers.ModelSerializer):
             "signup_stats",
             "shifts",
         ]
-
-
-# TODO create filter for start_time / end_time
-"""
-class EventTimeFilter(django_filters.FilterSet):
-    start = django_filters.IsoDateTimeFilter(field_name="start_time", lookup_expr='gte')
-    end = django_filters.IsoDateTimeFilter(field_name="end_time", lookup_expr='lte')
-
-    class Meta:
-        model = Event
-        fields = 'start_time', 'end_time',
-"""
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
