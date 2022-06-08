@@ -15,4 +15,5 @@ the corresponding section, feel free to contact us.
    user/index
    admin/index
    development/index
+   api/index
    changelog
