@@ -380,15 +380,15 @@ sqlparse = ">=0.2.0"
 
 [[package]]
 name = "django-dynamic-preferences"
-version = "1.12.0"
+version = "1.13.0"
 description = "Dynamic global and instance settings for your django project"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django = ">=1.11"
-persisting-theory = ">=0.2.1"
+django = ">=2.2"
+persisting-theory = "1.0"
 six = "*"
 
 [[package]]
@@ -797,7 +797,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [[package]]
 name = "persisting-theory"
-version = "0.2.1"
+version = "1.0"
 description = "Registries that can autodiscover values accross your project apps"
 category = "main"
 optional = false
@@ -1672,8 +1672,8 @@ django-debug-toolbar = [
     {file = "django_debug_toolbar-3.4.0-py3-none-any.whl", hash = "sha256:42c1c2e9dc05bb57b53d641e3a6d131fc031b92377b34ae32e604a1fe439bb83"},
 ]
 django-dynamic-preferences = [
-    {file = "django-dynamic-preferences-1.12.0.tar.gz", hash = "sha256:cd8987cf8e4dd36e019ad3e8a25c589bc4b410ca4a66cdfcbe5c25a517a7c0ad"},
-    {file = "django_dynamic_preferences-1.12.0-py2.py3-none-any.whl", hash = "sha256:06cc20998429e008fe0e9a06f50bedd09bf42eeb9afcbc9df440127ff524bc1b"},
+    {file = "django-dynamic-preferences-1.13.0.tar.gz", hash = "sha256:b7b13c913b5b6f6e05c880afeae1a91b147a5bc11fb95079151d9cc88b606a50"},
+    {file = "django_dynamic_preferences-1.13.0-py2.py3-none-any.whl", hash = "sha256:0f13d3c05df70366dcf7199fa285c36fdd11c88c99af750b270285ad149ec6d5"},
 ]
 django-environ = [
     {file = "django-environ-0.8.1.tar.gz", hash = "sha256:6f0bc902b43891656b20486938cba0861dc62892784a44919170719572a534cb"},
@@ -1905,7 +1905,8 @@ pathspec = [
     {file = "pathspec-0.9.0.tar.gz", hash = "sha256:e564499435a2673d586f6b2130bb5b95f04a3ba06f81b8f895b651a3c76aabb1"},
 ]
 persisting-theory = [
-    {file = "persisting-theory-0.2.1.tar.gz", hash = "sha256:00ff7dcc8f481ff75c770ca5797d968e8725b6df1f77fe0cf7d20fa1e5790c0a"},
+    {file = "persisting-theory-1.0.tar.gz", hash = "sha256:0f840fa22247bcaa514094da7f3b26c602359429ab12d2cd88be06b49a336290"},
+    {file = "persisting_theory-1.0-py3-none-any.whl", hash = "sha256:73fe3ba1ea7ab67632a1c292fc5c9fa6d3ebfd0e2ad74defa56e316abf3c8d21"},
 ]
 pillow = [
     {file = "Pillow-9.0.1-1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:a5d24e1d674dd9d72c66ad3ea9131322819ff86250b30dc5821cbafcfa0b96b4"},
