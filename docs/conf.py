@@ -71,4 +71,4 @@ django.setup()
 
 from django.core import management
 
-management.call_command("generateschema", ["--file", "ephios-open-api-schema.yml"])
+management.call_command("generateschema", ["--file", "api/ephios-open-api-schema.yml"])

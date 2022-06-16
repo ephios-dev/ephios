@@ -86,6 +86,3 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         .prefetch_related(Prefetch("shifts__participations"))
         .order_by("start_time")
     )
-
-    def get_queryset(self):
-        return self.queryset

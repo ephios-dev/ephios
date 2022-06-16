@@ -9,11 +9,11 @@ Base classes
    :members:
    :undoc-members:
    :private-members:
-.. autoclass:: ephios.core.notifications.types.AbstractNotificationHandler
+.. autoclass:: ephios.core.services.notifications.types.AbstractNotificationHandler
    :members:
    :undoc-members:
    :private-members:
-.. autoclass:: ephios.core.notifications.backends.AbstractNotificationBackend
+.. autoclass:: ephios.core.services.notifications.backends.AbstractNotificationBackend
    :members:
    :undoc-members:
    :private-members:
