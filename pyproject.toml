@@ -77,10 +77,10 @@ line_length = 100
 
 [tool.pylint.messages_control]
 # C0330 and C0301 are disabled for use of black
-disable = """C0330, C0301,
+disable = """C0301,
 duplicate-code, attribute-defined-outside-init, missing-module-docstring, missing-class-docstring,
 no-member, invalid-name, import-outside-toplevel, unused-argument, too-many-ancestors, missing-function-docstring,
-too-few-public-methods, no-self-use, too-many-arguments, cyclic-import, inconsistent-return-statements,
+too-few-public-methods, too-many-arguments, cyclic-import, inconsistent-return-statements,
 useless-object-inheritance, logging-fstring-interpolation
 """
 
