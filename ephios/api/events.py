@@ -1,6 +1,7 @@
 import django_filters
 from django.db.models import Max, Min, Prefetch
 from rest_framework import filters, serializers, viewsets
+from rest_framework_guardian import filters as guardian_filters
 
 from ephios.core.models import Event, EventType, Shift
 
@@ -71,6 +72,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         django_filters.rest_framework.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     queryset = (
