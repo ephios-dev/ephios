@@ -36,7 +36,7 @@ django-libsass = ">=0.8,<0.10"
 crispy-bootstrap5 = ">=0.4,<0.7"
 djangorestframework = "^3.12.4"
 django-coverage-plugin = "^2.0.1"
-django-filter = "^21.1"
+django-filter = ">=21.1,<23.0"
 djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 
