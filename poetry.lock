@@ -417,14 +417,14 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-filter"
-version = "21.1"
+version = "22.1"
 description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
-Django = ">=2.2"
+Django = ">=3.2"
 
 [[package]]
 name = "django-formset-js-improved"
@@ -1437,7 +1437,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a3e8f0570b6c499c1946f10cf2f35280204df315b6bc065e188b5cb3cbeb7ef6"
+content-hash = "2fdea054ac6fc421f34e280efa2f53c04aae96b293ecff4e7157e1eb4d330bd2"
 
 [metadata.files]
 alabaster = [
@@ -1716,8 +1716,8 @@ django-extensions = [
     {file = "django_extensions-3.1.5-py3-none-any.whl", hash = "sha256:9238b9e016bb0009d621e05cf56ea8ce5cce9b32e91ad2026996a7377ca28069"},
 ]
 django-filter = [
-    {file = "django-filter-21.1.tar.gz", hash = "sha256:632a251fa8f1aadb4b8cceff932bb52fe2f826dd7dfe7f3eac40e5c463d6836e"},
-    {file = "django_filter-21.1-py3-none-any.whl", hash = "sha256:f4a6737a30104c98d2e2a5fb93043f36dd7978e0c7ddc92f5998e85433ea5063"},
+    {file = "django-filter-22.1.tar.gz", hash = "sha256:ed473b76e84f7e83b2511bb2050c3efb36d135207d0128dfe3ae4b36e3594ba5"},
+    {file = "django_filter-22.1-py3-none-any.whl", hash = "sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb"},
 ]
 django-formset-js-improved = [
     {file = "django-formset-js-improved-0.5.0.2.tar.gz", hash = "sha256:251649ca389144728359b57d5845c601b3420fdafa2e4634668de614e14953ce"},
