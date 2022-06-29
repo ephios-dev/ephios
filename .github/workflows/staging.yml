@@ -44,12 +44,15 @@ jobs:
         run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
 
       - name: rsync wheel
-        run: |
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 10
+          max_attempts: 3
+          command: |
           echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > .staging-key
           chmod 0600 .staging-key
           rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel staghios@despina.uberspace.de:~
           rm .staging-key
-
 
       - name: Checkout ephios repo
         uses: actions/checkout@v2
