@@ -176,6 +176,7 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   width: 100% !important;
 }
 
+//Pending indicator
 .pending-indicator {
   position: absolute;
   top: 15px;
@@ -188,6 +189,12 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   background-image: linear-gradient($yellow-400, $yellow-500);
   background-clip: padding-box;
   border-radius: 50%;
+}
+
+// Indicate participations of minors with a warning right border, though explanation must be available
+.participation-card-minor {
+  border-right: 0.5rem solid $warning;
+  box-sizing: border-box;
 }
 
 // Event Calendar classes

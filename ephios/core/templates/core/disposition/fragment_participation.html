@@ -6,7 +6,7 @@
 
 {% block participation_body %}
     <div class="row align-items-start no-gutters mb-0">
-        <div class="col-sm pe-3 pt-2 pb-1">
+        <div class="col pe-3 pt-2 pb-1">
             <h6 class="d-inline">
                 {{ form.instance.participant.icon }}
                 {{ form.instance.participant }}
@@ -20,6 +20,10 @@
                               {% endblocktranslate %}"></span>
                 {% endif %}
             {% endwith %}
+
+            {% if form.instance.participant.is_minor %}
+                <span class="badge bg-warning">{% trans "Minor" %}</span>
+            {% endif %}
             {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
                 <span class="badge bg-secondary text-dark">{{ qualification }}</span>
             {% endfor %}
@@ -27,7 +31,7 @@
             {% block participation_detail %}
             {% endblock %}
         </div>
-        <div class="col-sm-auto d-flex justify-content-between align-items-center">
+        <div class="col-auto d-flex justify-content-between align-items-center">
             {% block participation_controls %}
             {% endblock %}
             <button class="btn" type="button" data-bs-toggle="collapse"
