@@ -23,16 +23,18 @@
         {% endif %}
     {% endif %}
     <div>
+        {% if participation.participant.is_minor %}
+            <span class="badge bg-warning">{% trans "Minor" %}</span>
+        {% endif %}
         {% for qualification in participation.participant.qualifications|get_relevant_qualifications %}
             <span class='badge bg-secondary text-dark'>{{ qualification }}</span>
-        {% empty %}
-            <em>{% translate "none" %}</em>
         {% endfor %}
     </div>
 </div>
 
 <a class="badge
 {% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-muted{% endif %}
+{% if participation.participant.is_minor %}participation-card-minor{% endif %}
 "
    tabindex="0"
    data-bs-toggle="popover"
