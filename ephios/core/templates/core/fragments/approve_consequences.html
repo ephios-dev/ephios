@@ -12,7 +12,7 @@
 
                     <li class="list-group-item">
                         <form action="{% url "core:consequence_edit" pk=c.id %}" method="POST"
-                              class="consequence-form d-inline-block">
+                              class="consequence-form d-inline-block pe-1">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success btn-sm btn-consequence"
                                     name="action" value="confirm"><i class="fas fa-check"></i>
