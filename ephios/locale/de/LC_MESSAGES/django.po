@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-06 12:36+0200\n"
+"POT-Creation-Date: 2022-07-06 12:48+0200\n"
 "PO-Revision-Date: 2022-05-30 12:38+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -1344,16 +1344,15 @@ msgid "Your upcoming events"
 msgstr "Anstehende Schichten"
 
 #: ephios/core/templates/core/home.html:64
-#, fuzzy
 #| msgid "None"
+msgctxt "empty list of upcoming shifts"
 msgid "None yet"
-msgstr "Nichts"
+msgstr "Noch keine"
 
 #: ephios/core/templates/core/home.html:65
-#, fuzzy
 #| msgid "events"
 msgid "View events"
-msgstr "Veranstaltungen"
+msgstr "Veranstaltungen ansehen"
 
 #: ephios/core/templates/core/home.html:77
 msgid "Events with requested participations"
