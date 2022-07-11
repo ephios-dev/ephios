@@ -1063,7 +1063,7 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"
 
 [[package]]
 name = "reportlab"
-version = "3.6.10"
+version = "3.6.11"
 description = "The Reportlab Toolkit"
 category = "main"
 optional = false
