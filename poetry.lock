@@ -1450,7 +1450,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "fb5f0b693f671b5d7f553e080d12f8668b3cddae69dc76435e293523221007aa"
+content-hash = "f4c163e51797fd76c7db029d228d709e2f0e4b0d93f09ad5eb8c70dda37825cd"
 
 [metadata.files]
 alabaster = [
