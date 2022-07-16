@@ -40,7 +40,8 @@ Receivers will receive a ``request`` keyword argument.
 administration_settings_section = PluginSignal()
 """
 This signal is sent out to get sections for administration settings. Receivers should return a list of dicts
-containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'. Only views that the current user is
+allowed to view should be returned.
 Receivers will receive a ``request`` keyword argument.
 """
 

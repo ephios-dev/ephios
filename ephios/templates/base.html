@@ -124,15 +124,10 @@
                                 {{ user.get_full_name }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
-                                {% if user.is_staff %}
-                                    <a class="dropdown-item"
-                                       href="{% url "core:settings_general" %}">{% trans "Administration" %}</a>
-                                    <div class="dropdown-divider"></div>
-                                {% endif %}
                                 <a class="dropdown-item"
                                    href="{% url "core:profile" %}">{% trans "Profile" %}</a>
                                 <a class="dropdown-item"
-                                   href="{% url "core:profile_notifications" %}">{% trans "Notifications" %}</a>
+                                   href="{% url "core:settings_notifications" %}">{% trans "Einstellungen" %}</a>
                                 <a class="dropdown-item"
                                    href="{% url "password_change" %}">{% trans "Change password" %}</a>
                                 <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>

@@ -17,7 +17,6 @@ from ephios.core.views.accounts import (
     UserProfileDeleteView,
     UserProfileDetailView,
     UserProfileListView,
-    UserProfileNotificationsView,
     UserProfilePasswordResetView,
     UserProfileUpdateView,
 )
@@ -45,7 +44,7 @@ from ephios.core.views.eventtype import (
 )
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
-from ephios.core.views.settings import GeneralSettingsView
+from ephios.core.views.settings import GeneralSettingsView, NotificationSettingsView
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
     ShiftCreateView,
@@ -150,7 +149,12 @@ urlpatterns = [
         RRuleOccurrenceView.as_view(),
         name="rrule_occurrences",
     ),
-    path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
+    path(
+        "settings/notifications/",
+        NotificationSettingsView.as_view(),
+        name="settings_notifications",
+    ),
+    path("settings/instance/", GeneralSettingsView.as_view(), name="settings_instance"),
     path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
         "settings/eventtypes/create/",
@@ -168,11 +172,6 @@ urlpatterns = [
         name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
-    path(
-        "profile/notifications/",
-        UserProfileNotificationsView.as_view(),
-        name="profile_notifications",
-    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),

@@ -19,10 +19,14 @@ def pages_footer_links(sender, request, **kwargs):
     dispatch_uid="ephios.plugins.pages.signals.pages_settings_section",
 )
 def pages_settings_section(sender, request, **kwargs):
-    return [
-        {
-            "label": _("Pages"),
-            "url": reverse("pages:settings_page_list"),
-            "active": request.resolver_match.url_name.startswith("settings_page"),
-        },
-    ]
+    return (
+        [
+            {
+                "label": _("Pages"),
+                "url": reverse("pages:settings_page_list"),
+                "active": request.resolver_match.url_name.startswith("settings_page"),
+            },
+        ]
+        if request.user.is_staff
+        else []
+    )
