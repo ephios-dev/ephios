@@ -44,7 +44,12 @@ from ephios.core.views.eventtype import (
 )
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
-from ephios.core.views.settings import GeneralSettingsView, NotificationSettingsView
+from ephios.core.views.settings import (
+    GeneralSettingsView,
+    NotificationSettingsView,
+    PasswordChangeDoneSettingsView,
+    PasswordChangeSettingsView,
+)
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
     ShiftCreateView,
@@ -153,6 +158,16 @@ urlpatterns = [
         "settings/notifications/",
         NotificationSettingsView.as_view(),
         name="settings_notifications",
+    ),
+    path(
+        "settings/password_change/done",
+        PasswordChangeDoneSettingsView.as_view(),
+        name="settings_password_change_done",
+    ),
+    path(
+        "settings/password_change/",
+        PasswordChangeSettingsView.as_view(),
+        name="settings_password_change",
     ),
     path("settings/instance/", GeneralSettingsView.as_view(), name="settings_instance"),
     path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),

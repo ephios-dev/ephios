@@ -1,8 +1,9 @@
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import FormView
 from dynamic_preferences.forms import global_preference_form_builder
@@ -71,3 +72,12 @@ class NotificationSettingsView(
     def form_valid(self, form):
         form.update_preferences()
         return super().form_valid(form)
+
+
+class PasswordChangeSettingsView(PasswordChangeView, SettingsViewMixin):
+    template_name = "core/settings/password_change_form.html"
+    success_url = reverse_lazy("core:settings_password_change_done")
+
+
+class PasswordChangeDoneSettingsView(PasswordChangeView, SettingsViewMixin):
+    template_name = "core/settings/password_change_done.html"

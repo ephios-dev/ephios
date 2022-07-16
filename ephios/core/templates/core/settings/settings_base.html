@@ -15,15 +15,17 @@
                     <li class="nav-item"><h5>{% translate "Personal" %}</h5></li>
                     <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_notifications" %}active{% endif %}"
                            href="{% url "core:settings_notifications" %}">{% translate "Notifications" %}</a></li>
-                    {% if settings_sections %}
-                        <li class="nav-item mt-2"><h5>{% translate "Management" %}</h5></li>
-                        {% for section in settings_sections %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if section.active %}active{% endif %}"
-                               href="{{ section.url }}">{{ section.label }}</a>
-                        </li>
-                        {% endfor %}
-                    {% endif %}
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_password_change" %}active{% endif %}"
+                           href="{% url "core:settings_password_change" %}">{% translate "Change password" %}</a></li>
+                {% if settings_sections %}
+                    <li class="nav-item mt-2"><h5>{% translate "Management" %}</h5></li>
+                    {% for section in settings_sections %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if section.active %}active{% endif %}"
+                           href="{{ section.url }}">{{ section.label }}</a>
+                    </li>
+                    {% endfor %}
+                {% endif %}
                 </ul>
         </div>
         <div class="flex-fill">
