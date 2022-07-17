@@ -13,7 +13,7 @@ from ephios.core.signals import management_settings_sections
 from ephios.extra.mixins import StaffRequiredMixin
 
 
-def get_available_administration_settings_sections(request):
+def get_available_management_settings_sections(request):
     sections = []
     if request.user.is_staff:
         sections.append(
@@ -38,7 +38,7 @@ def get_available_administration_settings_sections(request):
 
 class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
     def get_context_data(self, **kwargs):
-        kwargs["management_settings_sections"] = get_available_administration_settings_sections(
+        kwargs["management_settings_sections"] = get_available_management_settings_sections(
             self.request
         )
         return super().get_context_data(**kwargs)
