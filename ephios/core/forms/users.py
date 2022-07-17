@@ -52,6 +52,7 @@ MANAGEMENT_PERMISSIONS = [
     "core.add_qualification",
     "core.change_qualification",
     "core.delete_qualification",
+    "auth.publish_event_for_group",
     "modellogging.view_logentry",
 ]
 
@@ -118,7 +119,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         required=False,
     )
     is_management_group = PermissionField(
-        label=_("Can manage ephios"),
+        label=_("Can manage permissions and qualifications"),
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),

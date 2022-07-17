@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 15:50+0200\n"
+"POT-Creation-Date: 2022-07-17 23:34+0200\n"
 "PO-Revision-Date: 2022-05-30 12:38+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -111,7 +111,7 @@ msgstr ""
 msgid "Responsibles"
 msgstr "Verantwortliche"
 
-#: ephios/core/forms/events.py:161 ephios/core/forms/users.py:287
+#: ephios/core/forms/events.py:161 ephios/core/forms/users.py:288
 #: ephios/core/pdf.py:63 ephios/core/pdf.py:129
 #: ephios/core/templates/core/event_archive.html:19
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
@@ -171,7 +171,7 @@ msgstr "Nachricht an alle Teilnehmenden senden"
 msgid "Mail content"
 msgstr "Nachricht"
 
-#: ephios/core/forms/events.py:288 ephios/core/forms/users.py:300
+#: ephios/core/forms/events.py:288 ephios/core/forms/users.py:301
 msgid "Send"
 msgstr "Senden"
 
@@ -179,38 +179,38 @@ msgstr "Senden"
 msgid "You cannot send an empty mail."
 msgstr "Sie können keine leere Nachricht versenden."
 
-#: ephios/core/forms/users.py:66 ephios/core/forms/users.py:82
+#: ephios/core/forms/users.py:67 ephios/core/forms/users.py:83
 #: ephios/core/models/events.py:76
 msgid "Can view past events"
 msgstr "Darf vergangene Veranstaltungen sehen"
 
-#: ephios/core/forms/users.py:67 ephios/core/forms/users.py:86
+#: ephios/core/forms/users.py:68 ephios/core/forms/users.py:87
 msgid "Can add events"
 msgstr "Darf Veranstaltungen hinzufügen"
 
-#: ephios/core/forms/users.py:68 ephios/core/forms/users.py:108
+#: ephios/core/forms/users.py:69 ephios/core/forms/users.py:109
 msgid "Can edit users"
 msgstr "Kann Benutzer bearbeiten"
 
-#: ephios/core/forms/users.py:69 ephios/core/forms/users.py:121
+#: ephios/core/forms/users.py:70
 msgid "Can manage ephios"
 msgstr "Kann die ephios-Instanz verwalten"
 
-#: ephios/core/forms/users.py:71 ephios/core/forms/users.py:91
+#: ephios/core/forms/users.py:72 ephios/core/forms/users.py:92
 msgid "Can publish events for groups"
 msgstr "Darf Veranstaltungen sichtbar machen für"
 
-#: ephios/core/forms/users.py:74 ephios/core/forms/users.py:98
+#: ephios/core/forms/users.py:75 ephios/core/forms/users.py:99
 msgid "Can decide working hours for groups"
 msgstr "Kann Arbeitsstunden genehmigen für"
 
-#: ephios/core/forms/users.py:94
+#: ephios/core/forms/users.py:95
 msgid "Choose groups that this group can make events visible for."
 msgstr ""
 "Wählen Sie Gruppen, für die diese Gruppe Veranstaltungen sichtbar machen "
 "darf."
 
-#: ephios/core/forms/users.py:102
+#: ephios/core/forms/users.py:103
 msgid ""
 "Choose groups that the group you are currently editing can decide whether to "
 "grant working hours for."
@@ -218,7 +218,7 @@ msgstr ""
 "Wählen Sie Gruppen für die die gerade bearbeitete Gruppe über die "
 "Genehmigung von Arbeitsstunden entscheiden kann."
 
-#: ephios/core/forms/users.py:110
+#: ephios/core/forms/users.py:111
 msgid ""
 "If checked, users in this group can view, add, edit and delete users. They "
 "can also manage group memberships for their own groups."
@@ -227,7 +227,11 @@ msgstr ""
 "Benutzerprofile ansehen, bearbeiten und löschen. Außerdem können "
 "Gruppenmitgliedschaften für die eigenen Gruppen verwaltet werden."
 
-#: ephios/core/forms/users.py:123
+#: ephios/core/forms/users.py:122
+msgid "Can manage permissions and qualifications"
+msgstr "Kann Rechte und Qualifikationen verwalten"
+
+#: ephios/core/forms/users.py:124
 msgid ""
 "If checked, users in this group can manage users, groups, all group "
 "memberships, eventtypes and qualifications"
@@ -236,41 +240,41 @@ msgstr ""
 "Gruppen, Gruppenmitgliedschaften, Benutzer, Veranstaltungstypen und "
 "Qualifikationen bearbeiten und hinzufügen"
 
-#: ephios/core/forms/users.py:130 ephios/core/models/users.py:191
+#: ephios/core/forms/users.py:131 ephios/core/models/users.py:191
 #: ephios/core/templates/core/userprofile_list.html:8
 #: ephios/core/templates/core/userprofile_list.html:13
 #: ephios/templates/base.html:101
 msgid "Users"
 msgstr "Benutzer"
 
-#: ephios/core/forms/users.py:157
+#: ephios/core/forms/users.py:158
 #: ephios/core/templates/core/settings/settings_base.html:21
 msgid "Management"
 msgstr "Verwaltung"
 
-#: ephios/core/forms/users.py:162
+#: ephios/core/forms/users.py:163
 msgid "Planning"
 msgstr "Planung"
 
-#: ephios/core/forms/users.py:171
+#: ephios/core/forms/users.py:172
 #: ephios/core/templates/core/disposition/disposition.html:125
 #: ephios/core/templates/core/event_detail.html:28
 #: ephios/core/templates/core/event_form.html:58
 #: ephios/core/templates/core/eventtype_form.html:20
-#: ephios/core/templates/core/settings/general.html:9
-#: ephios/core/templates/core/settings/settings_notifications.html:13
+#: ephios/core/templates/core/settings/settings_instance.html:9
+#: ephios/core/templates/core/settings/settings_notifications.html:17
 #: ephios/core/templates/core/shift_form.html:48
 #: ephios/core/templates/core/userprofile_form.html:109
 #: ephios/plugins/qualification_management/forms.py:121
 msgid "Save"
 msgstr "Speichern"
 
-#: ephios/core/forms/users.py:202 ephios/core/templates/core/group_list.html:6
+#: ephios/core/forms/users.py:203 ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11 ephios/templates/base.html:107
 msgid "Groups"
 msgstr "Gruppen"
 
-#: ephios/core/forms/users.py:222
+#: ephios/core/forms/users.py:223
 #, python-brace-format
 msgid ""
 "The user is also member of <b>{groups}</b>, but you are not allowed to "
@@ -279,21 +283,21 @@ msgstr ""
 "Der Benutzer ist außerdem Mitglied von <b>{groups}</b>, aber Sie haben keine "
 "Berechtigung, um Gruppenmitgliedschaften für diese Gruppen zu verwalten."
 
-#: ephios/core/forms/users.py:240
+#: ephios/core/forms/users.py:241
 msgid "Inactive users cannot log in and do not get any notifications."
 msgstr ""
 "Inaktive Benutzer können sich nicht anmelden und bekommen keine "
 "Benachrichtigungen."
 
-#: ephios/core/forms/users.py:242
+#: ephios/core/forms/users.py:243
 msgid "Active user"
 msgstr "Aktiver Benutzer"
 
-#: ephios/core/forms/users.py:288
+#: ephios/core/forms/users.py:289
 msgid "Hours of work"
 msgstr "Arbeitsstunden"
 
-#: ephios/core/forms/users.py:289
+#: ephios/core/forms/users.py:290
 msgid "Occasion"
 msgstr "Anlass"
 
@@ -1375,14 +1379,6 @@ msgstr "Seite %(page)s von %(of)s (%(count)s Elemente)"
 msgid "%(count)s elements"
 msgstr "%(count)s Elemente"
 
-#: ephios/core/templates/core/settings/password_change_done.html:5
-msgid "Password changed successfully"
-msgstr "Passwort erfolgreich geändert"
-
-#: ephios/core/templates/core/settings/password_change_done.html:6
-msgid "Back to home page"
-msgstr "Zurück zur Startseite"
-
 #: ephios/core/templates/core/settings/password_change_form.html:6
 #: ephios/core/templates/core/settings/settings_base.html:19
 msgid "Change password"
@@ -1403,11 +1399,11 @@ msgid "Personal"
 msgstr "Persönlich"
 
 #: ephios/core/templates/core/settings/settings_base.html:17
-#: ephios/core/templates/core/settings/settings_notifications.html:7
+#: ephios/core/templates/core/settings/settings_notifications.html:11
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:9
+#: ephios/core/templates/core/settings/settings_notifications.html:13
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
@@ -1415,11 +1411,11 @@ msgstr ""
 "Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
 "möchten:"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:16
+#: ephios/core/templates/core/settings/settings_notifications.html:20
 msgid "Push notifications"
 msgstr "Push-Benachrichtigungen"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:18
+#: ephios/core/templates/core/settings/settings_notifications.html:22
 msgid ""
 "You can manage the occasions you want to receive push notificaions for "
 "above. You can manage if you want to receive push notifications on this "
@@ -1736,13 +1732,17 @@ msgstr "ephios-Instanz"
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/views/settings.py:47
+#: ephios/core/views/settings.py:49
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:64
+#: ephios/core/views/settings.py:66
 msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
+
+#: ephios/core/views/settings.py:82
+msgid "Password changed successfully."
+msgstr "Passwort erfolgreich geändert."
 
 #: ephios/core/views/shift.py:56
 msgid "You must enable plugins providing signup methods to continue."
@@ -2542,6 +2542,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Back to home page"
+#~ msgstr "Zurück zur Startseite"
 
 #~ msgid "General"
 #~ msgstr "Allgemein"
