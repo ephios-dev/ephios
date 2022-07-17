@@ -44,8 +44,8 @@ class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
         return super().get_context_data(**kwargs)
 
 
-class GeneralSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
-    template_name = "core/settings/general.html"
+class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
+    template_name = "core/settings/settings_instance.html"
     success_message = _("Settings saved successfully.")
 
     def get_form_class(self):

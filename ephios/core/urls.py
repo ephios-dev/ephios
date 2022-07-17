@@ -45,7 +45,7 @@ from ephios.core.views.eventtype import (
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import (
-    GeneralSettingsView,
+    InstanceSettingsView,
     NotificationSettingsView,
     PasswordChangeDoneSettingsView,
     PasswordChangeSettingsView,
@@ -169,7 +169,7 @@ urlpatterns = [
         PasswordChangeSettingsView.as_view(),
         name="settings_password_change",
     ),
-    path("settings/instance/", GeneralSettingsView.as_view(), name="settings_instance"),
+    path("settings/instance/", InstanceSettingsView.as_view(), name="settings_instance"),
     path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
         "settings/eventtypes/create/",
