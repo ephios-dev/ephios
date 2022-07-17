@@ -31,7 +31,7 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
-MANAGEMENT_PERMISSIONS = [
+CORE_MANAGEMENT_PERMISSIONS = [
     "auth.add_group",
     "auth.change_group",
     "auth.delete_group",
@@ -123,7 +123,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
-        permissions=MANAGEMENT_PERMISSIONS,
+        permissions=CORE_MANAGEMENT_PERMISSIONS,
         required=False,
     )
 
