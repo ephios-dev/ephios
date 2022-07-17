@@ -60,7 +60,7 @@ from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
-    path("", HomeView.as_view(), name="index"),
+    path("", HomeView.as_view(), name="home"),
     path("events/", current_event_list_view, name="event_list"),
     path(
         "events/<int:pk>/edit/",
