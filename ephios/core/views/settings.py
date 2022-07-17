@@ -76,10 +76,10 @@ class NotificationSettingsView(
         return super().form_valid(form)
 
 
-class PasswordChangeSettingsView(PasswordChangeView, SettingsViewMixin):
+class PasswordChangeSettingsView(SettingsViewMixin, PasswordChangeView):
     template_name = "core/settings/password_change_form.html"
     success_url = reverse_lazy("core:settings_password_change_done")
 
 
-class PasswordChangeDoneSettingsView(PasswordChangeView, SettingsViewMixin):
+class PasswordChangeDoneSettingsView(SettingsViewMixin, PasswordChangeView):
     template_name = "core/settings/password_change_done.html"
