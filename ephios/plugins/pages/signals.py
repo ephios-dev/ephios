@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import administration_settings_section, footer_link
+from ephios.core.signals import footer_link, management_settings_sections
 from ephios.plugins.pages.models import Page
 
 
@@ -15,7 +15,7 @@ def pages_footer_links(sender, request, **kwargs):
 
 
 @receiver(
-    administration_settings_section,
+    management_settings_sections,
     dispatch_uid="ephios.plugins.pages.signals.pages_settings_section",
 )
 def pages_settings_section(sender, request, **kwargs):

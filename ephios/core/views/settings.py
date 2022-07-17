@@ -9,7 +9,7 @@ from django.views.generic import FormView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.forms.users import UserNotificationPreferenceForm
-from ephios.core.signals import administration_settings_section
+from ephios.core.signals import management_settings_sections
 from ephios.extra.mixins import StaffRequiredMixin
 
 
@@ -31,14 +31,16 @@ def get_available_administration_settings_sections(request):
                 "active": request.resolver_match.url_name.startswith("settings_eventtype"),
             }
         )
-    for __, result in administration_settings_section.send(None, request=request):
+    for __, result in management_settings_sections.send(None, request=request):
         sections += result
     return sections
 
 
 class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
     def get_context_data(self, **kwargs):
-        kwargs["settings_sections"] = get_available_administration_settings_sections(self.request)
+        kwargs["management_settings_sections"] = get_available_administration_settings_sections(
+            self.request
+        )
         return super().get_context_data(**kwargs)
 
 

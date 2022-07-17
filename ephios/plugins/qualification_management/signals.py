@@ -2,11 +2,11 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import administration_settings_section
+from ephios.core.signals import management_settings_sections
 
 
 @receiver(
-    administration_settings_section,
+    management_settings_sections,
     dispatch_uid="ephios.plugins.qualification_management.signals.qualifications_settings_section",
 )
 def qualifications_settings_section(sender, request, **kwargs):
