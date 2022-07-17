@@ -17,7 +17,6 @@ from ephios.core.views.accounts import (
     UserProfileDeleteView,
     UserProfileDetailView,
     UserProfileListView,
-    UserProfileNotificationsView,
     UserProfilePasswordResetView,
     UserProfileUpdateView,
 )
@@ -45,7 +44,11 @@ from ephios.core.views.eventtype import (
 )
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
-from ephios.core.views.settings import GeneralSettingsView
+from ephios.core.views.settings import (
+    InstanceSettingsView,
+    NotificationSettingsView,
+    PasswordChangeSettingsView,
+)
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
     ShiftCreateView,
@@ -56,7 +59,7 @@ from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
-    path("", HomeView.as_view(), name="index"),
+    path("", HomeView.as_view(), name="home"),
     path("events/", current_event_list_view, name="event_list"),
     path(
         "events/<int:pk>/edit/",
@@ -150,7 +153,17 @@ urlpatterns = [
         RRuleOccurrenceView.as_view(),
         name="rrule_occurrences",
     ),
-    path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
+    path(
+        "settings/notifications/",
+        NotificationSettingsView.as_view(),
+        name="settings_notifications",
+    ),
+    path(
+        "settings/password_change/",
+        PasswordChangeSettingsView.as_view(),
+        name="settings_password_change",
+    ),
+    path("settings/instance/", InstanceSettingsView.as_view(), name="settings_instance"),
     path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
         "settings/eventtypes/create/",
@@ -168,11 +181,6 @@ urlpatterns = [
         name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
-    path(
-        "profile/notifications/",
-        UserProfileNotificationsView.as_view(),
-        name="profile_notifications",
-    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),

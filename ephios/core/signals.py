@@ -37,11 +37,11 @@ containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
 Receivers will receive a ``request`` keyword argument.
 """
 
-administration_settings_section = PluginSignal()
+management_settings_sections = PluginSignal()
 """
-This signal is sent out to get sections for administration settings. Receivers should return a list of dicts
-containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
-Receivers will receive a ``request`` keyword argument.
+This signal is sent out to get sections for management settings. Receivers should return a list of dicts
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'. Only views that the current user is
+allowed to view should be returned. Receivers will receive a ``request`` keyword argument.
 """
 
 participant_from_request = PluginSignal()

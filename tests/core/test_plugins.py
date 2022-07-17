@@ -29,15 +29,15 @@ def test_enabling_and_disabling(django_app, planner, page):
     # This tests expects pages to be enabled by default
     assert "ephios.plugins.pages" in original_plugins
 
-    response = django_app.get(reverse("core:index"), user=planner)
+    response = django_app.get(reverse("core:home"), user=planner)
     assert "Testimpressum" in response
 
     preferences["general__enabled_plugins"] = []
-    response = django_app.get(reverse("core:index"), user=planner)
+    response = django_app.get(reverse("core:home"), user=planner)
     assert "Testimpressum" not in response
 
     preferences["general__enabled_plugins"] = original_plugins
-    response = django_app.get(reverse("core:index"), user=planner)
+    response = django_app.get(reverse("core:home"), user=planner)
     assert "Testimpressum" in response
 
 
