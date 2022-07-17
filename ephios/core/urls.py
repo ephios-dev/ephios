@@ -47,7 +47,6 @@ from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import (
     InstanceSettingsView,
     NotificationSettingsView,
-    PasswordChangeDoneSettingsView,
     PasswordChangeSettingsView,
 )
 from ephios.core.views.shift import (
@@ -158,11 +157,6 @@ urlpatterns = [
         "settings/notifications/",
         NotificationSettingsView.as_view(),
         name="settings_notifications",
-    ),
-    path(
-        "settings/password_change/done/",
-        PasswordChangeDoneSettingsView.as_view(),
-        name="settings_password_change_done",
     ),
     path(
         "settings/password_change/",
