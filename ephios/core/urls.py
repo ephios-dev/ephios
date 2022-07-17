@@ -160,7 +160,7 @@ urlpatterns = [
         name="settings_notifications",
     ),
     path(
-        "settings/password_change/done",
+        "settings/password_change/done/",
         PasswordChangeDoneSettingsView.as_view(),
         name="settings_password_change_done",
     ),
