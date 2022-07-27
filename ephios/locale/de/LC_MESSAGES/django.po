@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: admin@ephios.de\n"
-"POT-Creation-Date: 2022-02-26 22:26+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-07-16 15:50+0200\n"
 "PO-Revision-Date: 2022-05-30 12:38+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
-"\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
+">\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -112,14 +112,14 @@ msgid "Responsibles"
 msgstr "Verantwortliche"
 
 #: ephios/core/forms/events.py:161 ephios/core/forms/users.py:287
-#: ephios/core/pdf.py:64 ephios/core/pdf.py:130
+#: ephios/core/pdf.py:63 ephios/core/pdf.py:129
 #: ephios/core/templates/core/event_archive.html:19
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/views/log.py:35
 msgid "Date"
 msgstr "Datum"
 
-#: ephios/core/forms/events.py:162 ephios/core/pdf.py:71 ephios/core/pdf.py:141
+#: ephios/core/forms/events.py:162 ephios/core/pdf.py:70 ephios/core/pdf.py:140
 #: ephios/core/templates/core/fragments/shift_box_small.html:18
 msgid "Meeting time"
 msgstr "Treffpunkt"
@@ -239,11 +239,12 @@ msgstr ""
 #: ephios/core/forms/users.py:130 ephios/core/models/users.py:191
 #: ephios/core/templates/core/userprofile_list.html:8
 #: ephios/core/templates/core/userprofile_list.html:13
-#: ephios/templates/base.html:101 htmlcov/d_22bf896e5e5f5300_base_html.html:160
+#: ephios/templates/base.html:101
 msgid "Users"
 msgstr "Benutzer"
 
 #: ephios/core/forms/users.py:157
+#: ephios/core/templates/core/settings/settings_base.html:21
 msgid "Management"
 msgstr "Verwaltung"
 
@@ -252,23 +253,20 @@ msgid "Planning"
 msgstr "Planung"
 
 #: ephios/core/forms/users.py:171
-#: ephios/core/templates/core/disposition/disposition.html:120
+#: ephios/core/templates/core/disposition/disposition.html:125
 #: ephios/core/templates/core/event_detail.html:28
 #: ephios/core/templates/core/event_form.html:58
 #: ephios/core/templates/core/eventtype_form.html:20
 #: ephios/core/templates/core/settings/general.html:9
+#: ephios/core/templates/core/settings/settings_notifications.html:13
 #: ephios/core/templates/core/shift_form.html:48
 #: ephios/core/templates/core/userprofile_form.html:109
-#: ephios/core/templates/core/userprofile_notifications.html:25
 #: ephios/plugins/qualification_management/forms.py:121
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:87
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:117
 msgid "Save"
 msgstr "Speichern"
 
 #: ephios/core/forms/users.py:202 ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11 ephios/templates/base.html:107
-#: htmlcov/d_22bf896e5e5f5300_base_html.html:166
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -529,22 +527,22 @@ msgstr "Anlass"
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
-#: ephios/core/pdf.py:62 ephios/core/pdf.py:129
+#: ephios/core/pdf.py:61 ephios/core/pdf.py:128
 #: ephios/core/templates/core/event_archive.html:18
 #: ephios/core/templates/core/mails/new_event.html:24
 #: ephios/core/templates/core/shift_form.html:73
 msgid "Location"
 msgstr "Ort"
 
-#: ephios/core/pdf.py:68
+#: ephios/core/pdf.py:67
 msgid "Time"
 msgstr "Zeit"
 
-#: ephios/core/pdf.py:77 ephios/core/pdf.py:131
+#: ephios/core/pdf.py:76 ephios/core/pdf.py:130
 msgid "Description"
 msgstr "Beschreibung"
 
-#: ephios/core/pdf.py:85 ephios/core/pdf.py:149
+#: ephios/core/pdf.py:84 ephios/core/pdf.py:148
 msgid "Participants"
 msgstr "Teilnehmende"
 
@@ -587,7 +585,7 @@ msgid "A new profile has been created"
 msgstr "Ein neues Benutzerprofil wurde erstellt"
 
 #: ephios/core/services/notifications/types.py:105
-#: ephios/core/templates/core/home.html:19
+#: ephios/core/templates/core/home.html:20
 msgid "Welcome to ephios!"
 msgstr "Willkommen bei ephios!"
 
@@ -794,7 +792,9 @@ msgstr "Ersatz für fehlende Anmeldeverfahren"
 #: ephios/core/signup/fallback.py:41
 msgid ""
 "This method is used when the original signup method is not installed anymore."
-msgstr "Dieses Anmeldeverfahren wird genutzt, wenn das eigentlich vorgesehene Verfahren nicht mehr installiert ist."
+msgstr ""
+"Dieses Anmeldeverfahren wird genutzt, wenn das eigentlich vorgesehene "
+"Verfahren nicht mehr installiert ist."
 
 #: ephios/core/signup/methods.py:58
 #, python-brace-format
@@ -921,23 +921,35 @@ msgid "Your username is your email address:"
 msgstr "Ihr Benutzername ist Ihre E-Mail-Adresse:"
 
 #: ephios/core/templates/core/disposition/disposition.html:8
-#: ephios/core/templates/core/home.html:64
+#: ephios/core/templates/core/home.html:107
 #: ephios/plugins/basesignup/templates/basesignup/fragment_participation_pills_shift_state.html:21
 #: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:37
-#: htmlcov/d_9392a18a22e43381_fragment_state_common_html.html:80
 msgid "Disposition"
 msgstr "Disposition"
 
-#: ephios/core/templates/core/disposition/disposition.html:39
+#: ephios/core/templates/core/disposition/disposition.html:42
 msgid "Add others"
 msgstr "Weitere hinzufügen"
+
+#: ephios/core/templates/core/disposition/disposition.html:124
+#: ephios/core/templates/core/event_form.html:61
+#: ephios/core/templates/core/eventtype_form.html:21
+#: ephios/core/templates/core/userprofile_form.html:111
+msgid "Cancel"
+msgstr "Abbrechen"
 
 #: ephios/core/templates/core/disposition/fragment_participation.html:18
 #, python-format
 msgid "%(participant)s already participates in %(conflicts)s at the same time."
 msgstr "%(participant)s nimmt zur selben Zeit bereits an %(conflicts)s teil."
 
-#: ephios/core/templates/core/disposition/fragment_participation.html:40
+#: ephios/core/templates/core/disposition/fragment_participation.html:25
+#: ephios/core/templates/core/userprofile_badges.html:4
+#: ephios/plugins/basesignup/templates/basesignup/participation_card_inline.html:27
+msgid "Minor"
+msgstr "Minderjährig"
+
+#: ephios/core/templates/core/disposition/fragment_participation.html:44
 #: ephios/core/templates/core/fragments/shift_box_big.html:114
 #: ephios/core/templates/core/fragments/shift_box_big.html:122
 msgid "Customize"
@@ -945,7 +957,7 @@ msgstr "Anpassen"
 
 #: ephios/core/templates/core/event_archive.html:6
 #: ephios/core/templates/core/event_archive.html:11
-#: ephios/templates/base.html:95 htmlcov/d_22bf896e5e5f5300_base_html.html:154
+#: ephios/templates/base.html:95
 msgid "Past events"
 msgstr "Vergangene Veranstaltungen"
 
@@ -976,8 +988,7 @@ msgid "Action"
 msgstr "Aktion"
 
 #: ephios/core/templates/core/event_archive.html:33
-#: ephios/core/templates/core/event_list.html:142
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:201
+#: ephios/core/templates/core/event_list.html:141
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -1003,7 +1014,6 @@ msgstr "Möchten Sie die folgenden Veranstaltungen wirklich löschen?"
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:20
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:26
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:85
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:116
 msgid "Back"
 msgstr "Zurück"
 
@@ -1028,17 +1038,13 @@ msgstr "Zurück"
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:59
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:36
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:72
-#: htmlcov/d_e22e12f9b57e6511_shift_box_big_html.html:93
 msgid "Delete"
 msgstr "Löschen"
 
 #: ephios/core/templates/core/event_calendar.html:6
 #: ephios/core/templates/core/event_calendar.html:11
-#: ephios/core/templates/core/event_list.html:9
-#: ephios/core/templates/core/event_list.html:14 ephios/templates/base.html:90
-#: htmlcov/d_22bf896e5e5f5300_base_html.html:149
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:68
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:73
+#: ephios/core/templates/core/event_list.html:8
+#: ephios/core/templates/core/event_list.html:13 ephios/templates/base.html:90
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -1053,7 +1059,6 @@ msgstr "Nächster Monat"
 #: ephios/core/templates/core/event_confirm_delete.html:6
 #: ephios/core/templates/core/event_confirm_delete.html:11
 #: ephios/core/templates/core/event_detail.html:62
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:121
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -1065,7 +1070,6 @@ msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 #: ephios/core/templates/core/event_copy.html:7
 #: ephios/core/templates/core/event_copy.html:28
 #: ephios/core/templates/core/event_detail.html:68
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:127
 msgid "Copy event"
 msgstr "Veranstaltung kopieren"
 
@@ -1079,7 +1083,6 @@ msgid "Preview"
 msgstr "Vorschau"
 
 #: ephios/core/templates/core/event_detail.html:27
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:86
 msgid ""
 "This event has not been saved! If you are done editing the event, you can "
 "save it."
@@ -1088,7 +1091,6 @@ msgstr ""
 "Bearbeiten der Veranstaltung fertig sind, können Sie sie speichern."
 
 #: ephios/core/templates/core/event_detail.html:34
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:93
 msgid "This event has not been saved! Please add a shift to save this event."
 msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
@@ -1097,110 +1099,83 @@ msgstr ""
 #: ephios/core/templates/core/event_detail.html:52
 #: ephios/core/templates/core/event_form.html:10
 #: ephios/core/templates/core/event_form.html:26
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:111
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:69
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:85
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
 #: ephios/core/templates/core/event_detail.html:57
 #: ephios/core/templates/core/shift_form.html:58
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:116
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
 #: ephios/core/templates/core/event_detail.html:73
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:132
 msgid "Download PDF"
 msgstr "PDF herunterladen"
 
 #: ephios/core/templates/core/event_detail.html:78
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:137
 msgid "Send notifications"
 msgstr "Benachrichtigungen senden"
 
 #: ephios/core/templates/core/event_detail.html:85
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:144
 msgid "View edit history"
 msgstr "Änderungsverlauf"
 
 #: ephios/core/templates/core/event_detail.html:111
-#: ephios/core/templates/core/event_list.html:136
+#: ephios/core/templates/core/event_list.html:135
 #: ephios/core/templates/core/mails/new_event.html:16
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:14
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:169
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:195
 msgid "to"
 msgstr "bis"
 
 #: ephios/core/templates/core/event_detail.html:136
-#: htmlcov/d_665b89aa18c0023b_event_detail_html.html:188
 msgid "No shifts"
 msgstr "Keine Schichten"
 
 #: ephios/core/templates/core/event_form.html:12
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:71
 msgid "Create new event"
 msgstr "Neue Veranstaltung anlegen"
 
 #: ephios/core/templates/core/event_form.html:19
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:78
 msgid "You have an unsaved event"
 msgstr "Sie haben eine nicht gespeicherte Veranstaltung"
 
 #: ephios/core/templates/core/event_form.html:20
-#: ephios/core/templates/core/home.html:36
-#: ephios/core/templates/core/home.html:60
+#: ephios/core/templates/core/home.html:58
+#: ephios/core/templates/core/home.html:103
 #: ephios/core/templates/core/mails/new_event.html:25
 #: ephios/core/templates/core/userprofile_list.html:47
 #: ephios/plugins/pages/templates/pages/page_list.html:21
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:79
 msgid "View"
 msgstr "Anzeigen"
 
 #: ephios/core/templates/core/event_form.html:28
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:87
 #, python-format
 msgid "Create new %(title)s"
 msgstr "%(title)s hinzufügen"
 
 #: ephios/core/templates/core/event_form.html:39
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:98
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: ephios/core/templates/core/event_form.html:61
-#: ephios/core/templates/core/eventtype_form.html:21
-#: ephios/core/templates/core/userprofile_form.html:111
-#: htmlcov/d_230313de61ae3b1a_crispy_py.html:78
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:120
-msgid "Cancel"
-msgstr "Abbrechen"
-
 #: ephios/core/templates/core/event_form.html:62
-#: htmlcov/d_665b89aa18c0023b_event_form_html.html:121
 msgid "Next"
 msgstr "Weiter"
 
-#: ephios/core/templates/core/event_list.html:35
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:94
+#: ephios/core/templates/core/event_list.html:34
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: ephios/core/templates/core/event_list.html:40
+#: ephios/core/templates/core/event_list.html:39
 #, python-format
 msgid ""
 "Add\n"
 "                                    %(title)s"
 msgstr "%(title)s hinzufügen"
 
-#: ephios/core/templates/core/event_list.html:48
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:107
+#: ephios/core/templates/core/event_list.html:47
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
-#: ephios/core/templates/core/event_list.html:154
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:213
+#: ephios/core/templates/core/event_list.html:153
 msgid "There are no events."
 msgstr "Es gibt momentan keine Veranstaltungen."
 
@@ -1231,7 +1206,6 @@ msgstr "Veranstaltungstyp hinzufügen"
 #: ephios/core/templates/core/userprofile_list.html:51
 #: ephios/plugins/pages/templates/pages/page_list.html:24
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:56
-#: htmlcov/d_e22e12f9b57e6511_shift_box_big_html.html:90
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1250,17 +1224,14 @@ msgid "originally"
 msgstr "ursprünglich"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:45
-#: htmlcov/d_e22e12f9b57e6511_shift_box_big_html.html:79
 msgid "Meetup"
 msgstr "Treffpunkt"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:97
-#: htmlcov/d_e22e12f9b57e6511_shift_box_big_html.html:114
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
 #: ephios/core/templates/core/fragments/shift_box_big.html:127
-#: htmlcov/d_e22e12f9b57e6511_shift_box_big_html.html:135
 msgid "Decline"
 msgstr "Absagen"
 
@@ -1325,25 +1296,33 @@ msgstr "Gruppe hinzufügen"
 msgid "Name"
 msgstr "Name"
 
-#: ephios/core/templates/core/home.html:10 ephios/templates/base.html:86
-#: htmlcov/d_22bf896e5e5f5300_base_html.html:145
+#: ephios/core/templates/core/home.html:11 ephios/templates/base.html:86
 msgid "Home"
 msgstr "Startseite"
 
-#: ephios/core/templates/core/home.html:26
+#: ephios/core/templates/core/home.html:32
 msgid "Your upcoming events"
 msgstr "Anstehende Schichten"
 
-#: ephios/core/templates/core/home.html:49
+#: ephios/core/templates/core/home.html:64
+msgctxt "empty list of upcoming shifts"
+msgid "None yet"
+msgstr "Noch keine"
+
+#: ephios/core/templates/core/home.html:65
+msgid "View events"
+msgstr "Veranstaltungen ansehen"
+
+#: ephios/core/templates/core/home.html:77
 msgid "Events with requested participations"
 msgstr "Veranstaltungen mit angefragten Teilnahmen"
 
-#: ephios/core/templates/core/home.html:82
+#: ephios/core/templates/core/home.html:125
 #: ephios/core/templates/core/logentry_list.html:16
 msgid "Edit history"
 msgstr "Änderungsverlauf"
 
-#: ephios/core/templates/core/home.html:85
+#: ephios/core/templates/core/home.html:128
 msgid "View everything"
 msgstr "Alles ansehen"
 
@@ -1396,11 +1375,59 @@ msgstr "Seite %(page)s von %(of)s (%(count)s Elemente)"
 msgid "%(count)s elements"
 msgstr "%(count)s Elemente"
 
+#: ephios/core/templates/core/settings/password_change_done.html:5
+msgid "Password changed successfully"
+msgstr "Passwort erfolgreich geändert"
+
+#: ephios/core/templates/core/settings/password_change_done.html:6
+msgid "Back to home page"
+msgstr "Zurück zur Startseite"
+
+#: ephios/core/templates/core/settings/password_change_form.html:6
+#: ephios/core/templates/core/settings/settings_base.html:19
+msgid "Change password"
+msgstr "Passwort ändern"
+
+#: ephios/core/templates/core/settings/password_change_form.html:10
+msgid "Submit"
+msgstr "Absenden"
+
 #: ephios/core/templates/core/settings/settings_base.html:5
 #: ephios/core/templates/core/settings/settings_base.html:10
-#: ephios/core/templates/core/userprofile_notifications.html:9
+#: ephios/templates/base.html:130
 msgid "Settings"
 msgstr "Einstellungen"
+
+#: ephios/core/templates/core/settings/settings_base.html:15
+msgid "Personal"
+msgstr "Persönlich"
+
+#: ephios/core/templates/core/settings/settings_base.html:17
+#: ephios/core/templates/core/settings/settings_notifications.html:7
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: ephios/core/templates/core/settings/settings_notifications.html:9
+msgid ""
+"You can configure whether you want to receive notifications for the "
+"following occasions:"
+msgstr ""
+"Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
+"möchten:"
+
+#: ephios/core/templates/core/settings/settings_notifications.html:16
+msgid "Push notifications"
+msgstr "Push-Benachrichtigungen"
+
+#: ephios/core/templates/core/settings/settings_notifications.html:18
+msgid ""
+"You can manage the occasions you want to receive push notificaions for "
+"above. You can manage if you want to receive push notifications on this "
+"device at all below."
+msgstr ""
+"Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
+"empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen empfangen "
+"können, steuern Sie über den Knopf unten."
 
 #: ephios/core/templates/core/shift_confirm_delete.html:6
 #: ephios/core/templates/core/shift_confirm_delete.html:11
@@ -1445,10 +1472,6 @@ msgstr "Sie erstellen gerade diese Schicht"
 #: ephios/core/templates/core/signup.html:7
 msgid "Signup"
 msgstr "Anmeldung"
-
-#: ephios/core/templates/core/userprofile_badges.html:4
-msgid "Minor"
-msgstr "Minderjährig"
 
 #: ephios/core/templates/core/userprofile_badges.html:7
 msgid "Inactive"
@@ -1499,7 +1522,7 @@ msgstr "Passwort zurücksetzen"
 
 #: ephios/core/templates/core/userprofile_detail.html:8
 #: ephios/core/templates/core/userprofile_detail.html:13
-#: ephios/templates/base.html:133 htmlcov/d_22bf896e5e5f5300_base_html.html:185
+#: ephios/templates/base.html:128
 msgid "Profile"
 msgstr "Benutzerprofil"
 
@@ -1531,7 +1554,7 @@ msgstr "Telefonnummer"
 
 #: ephios/core/templates/core/userprofile_detail.html:34
 #: ephios/core/templates/core/userprofile_form.html:34
-#: ephios/plugins/qualification_management/signals.py:15
+#: ephios/plugins/qualification_management/signals.py:16
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
@@ -1605,77 +1628,46 @@ msgstr "E-Mail-Adresse"
 msgid "Information"
 msgstr "Information"
 
-#: ephios/core/templates/core/userprofile_notifications.html:18
-#: ephios/templates/base.html:135 htmlcov/d_22bf896e5e5f5300_base_html.html:187
-msgid "Notifications"
-msgstr "Benachrichtigungen"
-
-#: ephios/core/templates/core/userprofile_notifications.html:21
-msgid ""
-"You can configure whether you want to receive notifications for the "
-"following occasions:"
-msgstr ""
-"Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
-"möchten:"
-
-#: ephios/core/templates/core/userprofile_notifications.html:28
-msgid "Push notifications"
-msgstr "Push-Benachrichtigungen"
-
-#: ephios/core/templates/core/userprofile_notifications.html:30
-msgid ""
-"You can manage the occasions you want to receive push notificaions for "
-"above. You can manage if you want to receive push notifications on this "
-"device at all below."
-msgstr ""
-"Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
-"empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen empfangen "
-"können, steuern Sie über den Knopf unten."
-
-#: ephios/core/views/accounts.py:94
+#: ephios/core/views/accounts.py:87
 #, python-brace-format
 msgid "User {name} ({email}) added successfully."
 msgstr "Benutzer {name} ({email}) erfolgreich hinzugefügt."
 
-#: ephios/core/views/accounts.py:141
+#: ephios/core/views/accounts.py:134
 #, python-brace-format
 msgid "User {name} ({user}) updated successfully."
 msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 
-#: ephios/core/views/accounts.py:164
+#: ephios/core/views/accounts.py:157
 #, python-brace-format
 msgid "The user {name} ({user}) was deleted."
 msgstr "Benutzer {name} ({user}) wurde gelöscht."
 
-#: ephios/core/views/accounts.py:191
+#: ephios/core/views/accounts.py:184
 #, python-brace-format
 msgid "The user's password has been reset. An email was sent to {email}."
 msgstr ""
 "Das Account-Passwort wurde zurückgesetzt. Eine Nachricht wurde an {email} "
 "geschickt."
 
-#: ephios/core/views/accounts.py:198
+#: ephios/core/views/accounts.py:191
 #, python-brace-format
 msgid "No valid email address ({email}). The password has not been reset."
 msgstr ""
 "Keine valide E-Mail-Adresse ({email}). Das Passwort wurde nicht "
 "zurückgesetzt."
 
-#: ephios/core/views/accounts.py:208
-msgid "Settings succesfully saved."
-msgstr "Einstellungen erfolgreich gespeichert."
-
-#: ephios/core/views/accounts.py:237
+#: ephios/core/views/accounts.py:215
 #, python-brace-format
 msgid "Group \"{group}\" created successfully."
 msgstr "Gruppe \"{group}\" erfolgreich erstellt."
 
-#: ephios/core/views/accounts.py:250
+#: ephios/core/views/accounts.py:228
 #, python-brace-format
 msgid "Group \"{group}\" updated successfully."
 msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 
-#: ephios/core/views/accounts.py:261
+#: ephios/core/views/accounts.py:239
 #, python-brace-format
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
@@ -1692,16 +1684,16 @@ msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: ephios/core/views/event.py:167 ephios/core/views/shift.py:90
+#: ephios/core/views/event.py:191 ephios/core/views/shift.py:90
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:265
+#: ephios/core/views/event.py:289
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:318
+#: ephios/core/views/event.py:342
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -1736,16 +1728,20 @@ msgstr "Handelnder Benutzer"
 msgid "Contents"
 msgstr "Inhalte"
 
-#: ephios/core/views/settings.py:16
-msgid "General"
-msgstr "Allgemein"
-
 #: ephios/core/views/settings.py:21
+msgid "ephios instance"
+msgstr "ephios-Instanz"
+
+#: ephios/core/views/settings.py:29
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/views/settings.py:39
+#: ephios/core/views/settings.py:47
 msgid "Settings saved successfully."
+msgstr "Einstellungen erfolgreich gespeichert."
+
+#: ephios/core/views/settings.py:64
+msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
 
 #: ephios/core/views/shift.py:56
@@ -2025,16 +2021,9 @@ msgstr "nicht zugeteilt"
 
 #: ephios/plugins/basesignup/templates/basesignup/fragment_participation_pills_shift_state.html:15
 #: ephios/plugins/basesignup/templates/basesignup/section_based/fragment_state.html:31
-#: htmlcov/d_9392a18a22e43381_fragment_state_common_html.html:74
 msgctxt "participation count"
 msgid "Total"
 msgstr "Gesamt"
-
-#: ephios/plugins/basesignup/templates/basesignup/participation_card_inline.html:29
-#: ephios/plugins/qualification_management/forms.py:60
-#: ephios/plugins/qualification_management/forms.py:61
-msgid "none"
-msgstr "keine"
 
 #: ephios/plugins/basesignup/templates/basesignup/section_based/configuration_form.html:13
 msgid "Sections"
@@ -2177,7 +2166,7 @@ msgstr ""
 "Dieses Plugin lässt Sie Seiten mit beliebigem Inhalt erstellen. Diese können "
 "in der Fußzeile verlinkt werden. Nützlich für ein Impressum."
 
-#: ephios/plugins/pages/signals.py:24
+#: ephios/plugins/pages/signals.py:25
 msgid "Pages"
 msgstr "Seiten"
 
@@ -2264,6 +2253,11 @@ msgid ""
 msgstr ""
 "Falls der Haken gesetzt ist beinhalten die übergeordneten Qualifikationen "
 "({superior}) die untergeordneten Qualifikationen ({inferior})."
+
+#: ephios/plugins/qualification_management/forms.py:60
+#: ephios/plugins/qualification_management/forms.py:61
+msgid "none"
+msgstr "keine"
 
 #: ephios/plugins/qualification_management/forms.py:68
 msgid ""
@@ -2406,7 +2400,7 @@ msgstr "kann nicht löschen, hat Qualifikationen"
 msgid "Add category"
 msgstr "Kategorie hinzufügen"
 
-#: ephios/plugins/qualification_management/views.py:45
+#: ephios/plugins/qualification_management/views.py:47
 msgid ""
 "There was an error fetching one of the qualification repos. Check the URLs, "
 "try again or contact support."
@@ -2414,20 +2408,20 @@ msgstr ""
 "Beim Holen der Qualifikations-Repositories trat ein Fehler auf. Prüfen Sie "
 "die URLs, versuchen Sie es erneut oder wenden Sie sich an den support."
 
-#: ephios/plugins/qualification_management/views.py:67
-#: ephios/plugins/qualification_management/views.py:76
+#: ephios/plugins/qualification_management/views.py:70
+#: ephios/plugins/qualification_management/views.py:80
 msgid "Qualification was saved."
 msgstr "Qualifikation wurde gespeichert."
 
-#: ephios/plugins/qualification_management/views.py:86
+#: ephios/plugins/qualification_management/views.py:91
 msgid "Qualification was deleted."
 msgstr "Qualifikation wurde gelöscht."
 
-#: ephios/plugins/qualification_management/views.py:103
+#: ephios/plugins/qualification_management/views.py:111
 msgid "Qualification categories saved."
 msgstr "Qualifikationskategorien wurden gespeichert."
 
-#: ephios/plugins/qualification_management/views.py:117
+#: ephios/plugins/qualification_management/views.py:126
 #, python-brace-format
 msgid "One user had '{qualification}' assigned."
 msgid_plural "{count} users had '{qualification}' assigned."
@@ -2462,22 +2456,11 @@ msgstr "Seite nicht gefunden"
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: ephios/templates/base.html:129 htmlcov/d_22bf896e5e5f5300_base_html.html:181
-msgid "Administration"
-msgstr "Administration"
-
-#: ephios/templates/base.html:137
-#: ephios/templates/registration/password_change_form.html:6
-#: ephios/templates/registration/password_change_form.html:10
-#: htmlcov/d_22bf896e5e5f5300_base_html.html:189
-msgid "Change password"
-msgstr "Passwort ändern"
-
-#: ephios/templates/base.html:138 htmlcov/d_22bf896e5e5f5300_base_html.html:190
+#: ephios/templates/base.html:131
 msgid "Logout"
 msgstr "Abmelden"
 
-#: ephios/templates/base.html:173
+#: ephios/templates/base.html:166
 #, python-format
 msgid ""
 "\n"
@@ -2523,19 +2506,6 @@ msgstr "Anmelden"
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: ephios/templates/registration/password_change_done.html:5
-#: ephios/templates/registration/password_change_done.html:9
-msgid "Password changed successfully"
-msgstr "Passwort erfolgreich geändert"
-
-#: ephios/templates/registration/password_change_done.html:10
-msgid "Back to home page"
-msgstr "Zurück zur Startseite"
-
-#: ephios/templates/registration/password_change_form.html:14
-msgid "Submit"
-msgstr "Absenden"
-
 #: ephios/templates/registration/password_reset_complete.html:5
 #: ephios/templates/registration/password_reset_complete.html:9
 msgid "Password set successfully"
@@ -2573,27 +2543,12 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#: htmlcov/d_22bf896e5e5f5300_base_html.html:225
-#, python-format
-msgid ""
-"</span>&nbsp;</span><span class=\"r\"></span></p>\n"
-"    <p class=\"run\"><span class=\"n\"><a id=\"t167\" href=\"#t167\">167</"
-"a></span><span class=\"t\"><span class=\"txt\">                        "
-"powered by %(brand)s</span>&nbsp;</span><span class=\"r\"></span></p>\n"
-"    <p class=\"run\"><span class=\"n\"><a id=\"t168\" href=\"#t168\">168</"
-"a></span><span class=\"t\"><span class=\"txt\">                    "
-msgstr ""
+#~ msgid "General"
+#~ msgstr "Allgemein"
 
-#: htmlcov/d_665b89aa18c0023b_event_list_html.html:99
-#, python-format
-msgid ""
-"Add</span>&nbsp;</span><span class=\"r\"></span></p>\n"
-"    <p class=\"run\"><span class=\"n\"><a id=\"t41\" href=\"#t41\">41</a></"
-"span><span class=\"t\"><span class=\"txt"
-"\">                                    %(title)s"
-msgstr ""
+#~ msgid "Administration"
+#~ msgstr "Administration"
 
-#, python-brace-format
 #~ msgid "'{choice}' is not a valid signup action."
 #~ msgstr "'{choice}' ist keinen gültige Anmeldeaktion."
 
@@ -2606,15 +2561,12 @@ msgstr ""
 #~ msgid "Can decline after confirmation"
 #~ msgstr "Kann nach Bestätigung absagen"
 
-#, python-brace-format
 #~ msgid "{min} to {max}"
 #~ msgstr "{min} bis {max}"
 
-#, python-brace-format
 #~ msgid "at least {min}"
 #~ msgstr "mindestens {min}"
 
-#, python-brace-format
 #~ msgid "at most {max}"
 #~ msgstr "höchstens {max}"
 
@@ -2648,11 +2600,9 @@ msgstr ""
 #~ msgid "missing"
 #~ msgstr "fehlen"
 
-#, python-brace-format
 #~ msgid "You are rejected from {shift}."
 #~ msgstr "Sie wurden für {shift} abgelehnt."
 
-#, python-brace-format
 #~ msgid "You are bindingly signed up for {shift}."
 #~ msgstr "Sie sind verbindlich für {shift} eingeteilt."
 
@@ -2712,7 +2662,6 @@ msgstr ""
 #~ msgid "You are not allowed to change group associations."
 #~ msgstr "Sie sind nicht berechtigt Gruppenmitgliedschaften zu bearbeiten."
 
-#, python-brace-format
 #~ msgid ""
 #~ "The participation of {participant} for {shift} was changed. The status is "
 #~ "now {status}"
@@ -2726,7 +2675,6 @@ msgstr ""
 #~ msgid "Advanced settings"
 #~ msgstr "Erweiterte Einstellungen"
 
-#, python-format
 #~ msgid "Add %(title)s"
 #~ msgstr "%(title)s hinzufügen"
 

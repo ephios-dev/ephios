@@ -85,6 +85,30 @@ class EventListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
+class EventCalendarView(LoginRequiredMixin, TemplateView):
+    template_name = "core/event_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        today = datetime.today()
+        year = int(self.request.GET.get("year", today.year))
+        month = int(self.request.GET.get("month", today.month))
+        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+        shifts = Shift.objects.filter(
+            event__in=events, start_time__month=month, start_time__year=year
+        )
+        calendar = ShiftCalendar(shifts)
+        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
+        nextyear, nextmonth = _nextmonth(year, month)
+        kwargs.setdefault(
+            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
+        )
+        prevyear, prevmonth = _prevmonth(year, month)
+        kwargs.setdefault(
+            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
+        )
+        return super().get_context_data(**kwargs)
+
+
 class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):
     model = Event
     permission_required = "core.view_event"
@@ -317,30 +341,6 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
-
-
-class EventCalendarView(TemplateView):
-    template_name = "core/event_calendar.html"
-
-    def get_context_data(self, **kwargs):
-        today = datetime.today()
-        year = int(self.request.GET.get("year", today.year))
-        month = int(self.request.GET.get("month", today.month))
-        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
-        shifts = Shift.objects.filter(
-            event__in=events, start_time__month=month, start_time__year=year
-        )
-        calendar = ShiftCalendar(shifts)
-        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
-        nextyear, nextmonth = _nextmonth(year, month)
-        kwargs.setdefault(
-            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
-        )
-        prevyear, prevmonth = _prevmonth(year, month)
-        kwargs.setdefault(
-            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
-        )
-        return super().get_context_data(**kwargs)
 
 
 class EventListTypeSettingView(RedirectView):

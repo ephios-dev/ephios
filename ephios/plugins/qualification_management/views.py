@@ -9,7 +9,7 @@ from django.views.generic import CreateView, FormView, ListView, UpdateView
 
 from ephios.core.models import Qualification, QualificationCategory
 from ephios.core.views.settings import SettingsViewMixin
-from ephios.extra.mixins import StaffRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.qualification_management.forms import (
     QualificationCategoryFormset,
     QualificationDeleteForm,
@@ -23,14 +23,16 @@ from ephios.plugins.qualification_management.serializers import QualificationFix
 # Templates in this plugin are under core/, because Qualification is a core model.
 
 
-class QualificationListView(StaffRequiredMixin, SettingsViewMixin, ListView):
+class QualificationListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
     model = Qualification
     ordering = ("category__title", "title")
+    permission_required = "core.view_qualification"
 
 
-class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
+class QualificationImportView(CustomPermissionRequiredMixin, SettingsViewMixin, FormView):
     template_name = "core/import.html"
     form_class = QualificationImportForm
+    permission_required = "core.add_qualification"
 
     def get_success_url(self):
         return reverse("qualification_management:settings_qualification_list")
@@ -53,9 +55,10 @@ class QualificationImportView(StaffRequiredMixin, SettingsViewMixin, FormView):
         return super().form_valid(form)
 
 
-class QualificationCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
+class QualificationCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, CreateView):
     model = Qualification
     form_class = QualificationForm
+    permission_required = "core.add_qualification"
 
     def get_form_kwargs(self):
         return {
@@ -68,28 +71,33 @@ class QualificationCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView)
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationUpdateView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+class QualificationUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
     model = Qualification
     form_class = QualificationForm
+    permission_required = "core.change_qualification"
 
     def get_success_url(self):
         messages.success(self.request, _("Qualification was saved."))
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationDeleteView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+class QualificationDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
     model = Qualification
     form_class = QualificationDeleteForm
     template_name_suffix = "_confirm_delete"
+    permission_required = "core.delete_qualification"
 
     def get_success_url(self):
         messages.info(self.request, _("Qualification was deleted."))
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationCategorySetUpdateView(StaffRequiredMixin, SettingsViewMixin, FormView):
+class QualificationCategorySetUpdateView(
+    CustomPermissionRequiredMixin, SettingsViewMixin, FormView
+):
     form_class = QualificationCategoryFormset
     template_name = "core/qualificationcategories_form.html"
+    permission_required = "core.change_qualification"
 
     def get_form_kwargs(self):
         return {"queryset": QualificationCategory.objects.all(), **super().get_form_kwargs()}
@@ -104,9 +112,10 @@ class QualificationCategorySetUpdateView(StaffRequiredMixin, SettingsViewMixin, 
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationReassignmentView(StaffRequiredMixin, SettingsViewMixin, FormView):
+class QualificationReassignmentView(CustomPermissionRequiredMixin, SettingsViewMixin, FormView):
     form_class = QualificationReassignmentForm
     template_name = "core/qualification_reassignment.html"
+    permission_required = "core.change_userprofile"
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -125,7 +134,9 @@ class QualificationReassignmentView(StaffRequiredMixin, SettingsViewMixin, FormV
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationExportFixtureView(StaffRequiredMixin, View):
+class QualificationExportFixtureView(CustomPermissionRequiredMixin, View):
+    permission_required = "core.view_qualification"
+
     def get(self, request, *args, **kwargs):
         qualifications = Qualification.objects.all()
         serializer = QualificationFixtureSerializer(qualifications, many=True)
