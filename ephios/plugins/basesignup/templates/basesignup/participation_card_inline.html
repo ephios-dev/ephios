@@ -1,0 +1,57 @@
+{% load guardian_tags %}
+{% load user_extras %}
+{% load i18n %}
+
+<div id="popover-title-{{ participation.id }}" class="d-none">
+    <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
+    {{ participation.participant }}
+</div>
+
+<div id="popover-content-{{ participation.id }}" class="d-none">
+    {% if participation.individual_start_time or participation.individual_end_time %}
+        <div class="mb-3">
+            <i class="fas fa-user-clock"></i>
+            <strong>{{ participation.get_time_display }}</strong>
+        </div>
+    {% endif %}
+    {% if participation.comment %}
+        {% if disposition_url or participation == own_participation %}
+            <div class="mb-3">
+                <i class="fas fa-comment"></i>
+                <span>{{ participation.comment }}</span>
+            </div>
+        {% endif %}
+    {% endif %}
+    <div>
+        {% if participation.participant.is_minor %}
+            <span class="badge bg-warning">{% trans "Minor" %}</span>
+        {% endif %}
+        {% for qualification in participation.participant.qualifications|get_relevant_qualifications %}
+            <span class='badge bg-secondary text-dark'>{{ qualification }}</span>
+        {% endfor %}
+    </div>
+</div>
+
+<a class="badge
+{% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-muted{% endif %}
+{% if participation.participant.is_minor %}participation-card-minor{% endif %}
+"
+   tabindex="0"
+   data-bs-toggle="popover"
+   data-bs-trigger="hover"
+   data-bs-placement="bottom"
+   data-html="true"
+   data-title-ref="#popover-title-{{ participation.id }}"
+   data-bs-content-ref="#popover-content-{{ participation.id }}"
+>
+    {% if participation.state == participation.States.CONFIRMED %}
+        {% if participation.has_customized_signup %}
+            <i class="fas fa-cog"></i>
+        {% else %}
+            <i class="fas fa-check"></i>
+        {% endif %}
+    {% else %}
+        <i class="far fa-clock"></i>
+    {% endif %}
+    {{ participation.participant }}
+</a>

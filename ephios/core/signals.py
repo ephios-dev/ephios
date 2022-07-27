@@ -16,6 +16,13 @@ This signal is sent out to get all known signup methods. Receivers should return
 subclasses of ``ephios.core.signup.methods.BaseSignupMethod``.
 """
 
+check_participant_signup = PluginSignal()
+"""
+This signal is sent out so receivers can prevent signup for a shift or provide feedback for dispatchers.
+Receivers will receive a ``participant`` and ``method`` keyword argument and
+should return an instance of the fitting! subclass of ``ephios.core.signup.methods.ParticipationError`` or None.
+"""
+
 footer_link = PluginSignal()
 """
 This signal is sent out to get links for that page footer. Receivers should return a dict of
@@ -23,11 +30,18 @@ with keys being the text and values being the url to link to.
 Receivers will receive a ``request`` keyword argument.
 """
 
-administration_settings_section = PluginSignal()
+nav_link = PluginSignal()
 """
-This signal is sent out to get sections for administration settings. Receivers should return a list of dicts
+This signal is sent out to get links for the main navbar. Receivers should return a list of dicts
 containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
 Receivers will receive a ``request`` keyword argument.
+"""
+
+management_settings_sections = PluginSignal()
+"""
+This signal is sent out to get sections for management settings. Receivers should return a list of dicts
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'. Only views that the current user is
+allowed to view should be returned. Receivers will receive a ``request`` keyword argument.
 """
 
 participant_from_request = PluginSignal()
@@ -42,7 +56,29 @@ event_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the event create and update views.
 You receive an `event` and `request` keyword arg you should use to create an instance of your form.
-Subclass `BaseEventPluginForm` to customize the rendering behavior.
+Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
+If all forms are valid, `save` will be called on your form.
+"""
+
+event_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display in the general section of the event
+detail view. Receivers will receive an `event` and `request` keyword arg to generate the information.
+Receivers should return html that is added below the event description.
+"""
+
+shift_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display in the shift box of the event
+detail view. Receivers will receive a `shift` and `request` keyword arg to generate the information.
+Receivers should return html that is added below the participations.
+"""
+
+shift_forms = PluginSignal()
+"""
+This signal is sent out to get a list of form instances to show on the shift create and update views.
+You receive a `shift` and `request` keyword arg you should use to create an instance of your form.
+Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
 
@@ -77,6 +113,19 @@ This signal is sent out to get a list of actions that a user can perform on a li
 Receivers should return a list of actions. Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
 Once the user wants to perform the action, a POST request will be issued to this URL. The ``bulk_action`` field
 will contain a list of event ids on which the action should be performed.
+"""
+
+register_event_action = PluginSignal()
+"""
+This signal is sent out to get a list of actions that a user can perform on a single event. The actions are
+displayed in the dropdown menu on the event detail view. Each action is represented by a dict with the keys
+``url``, ``label`` and ``icon``. The given url will be called with a ``pk`` parameter containing the id of the event.
+"""
+
+homepage_info = PluginSignal()
+"""
+This signal is sent out to get additional information to display on the homepage.
+Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
 """
 
 

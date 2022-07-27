@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import Event
-from ephios.core.signup import Qualification
+from ephios.core.models import Event, Qualification
+from ephios.core.models.users import ExpirationDateField
 from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
@@ -14,7 +14,7 @@ class EventAutoQualificationConfiguration(models.Model):
     qualification = models.ForeignKey(
         Qualification, on_delete=models.CASCADE, verbose_name=_("Qualification")
     )
-    expiration_date = models.DateField(verbose_name=_("Expiration date"), null=True, blank=True)
+    expiration_date = ExpirationDateField(verbose_name=_("Expiration date"), null=True, blank=True)
 
     class Modes(models.IntegerChoices):
         ANY_SHIFT = 1, _("any shift")

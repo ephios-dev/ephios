@@ -1,3 +1,4 @@
+import datetime
 import functools
 import secrets
 import uuid
@@ -26,7 +27,9 @@ from django.db.models.functions import TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
@@ -76,9 +79,15 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
+class VisibleUserProfileManager(BaseUserManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_visible=True)
+
+
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
     is_active = BooleanField(default=True, verbose_name=_("Active"))
+    is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
@@ -93,12 +102,15 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "date_of_birth",
     ]
 
-    objects = UserProfileManager()
+    objects = VisibleUserProfileManager()
+    all_objects = UserProfileManager()
 
     class Meta:
         verbose_name = _("user profile")
         verbose_name_plural = _("user profiles")
         db_table = "userprofile"
+        base_manager_name = "all_objects"
+        default_manager_name = "all_objects"
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -119,7 +131,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         return self.age < 18
 
     def as_participant(self):
-        from ephios.core.signup import LocalUserParticipant
+        from ephios.core.signup.participants import LocalUserParticipant
 
         return LocalUserParticipant(
             first_name=self.first_name,
@@ -133,45 +145,35 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     @property
     def qualifications(self):
         return Qualification.objects.filter(
-            pk__in=self.qualification_grants.filter(
-                Q(expires__gt=timezone.now()) | Q(expires__isnull=True)
-            ).values_list("qualification_id", flat=True)
+            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
         ).annotate(
             expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
         )
 
-    def get_shifts(self, with_participation_state_in):
-        from ephios.core.models import Shift
-
-        shift_ids = self.localparticipation_set.filter(
-            state__in=with_participation_state_in
-        ).values_list("shift", flat=True)
-        return Shift.objects.filter(pk__in=shift_ids).select_related("event")
-
     def get_workhour_items(self):
         from ephios.core.models import AbstractParticipation
 
-        participation = (
-            self.localparticipation_set.filter(state=AbstractParticipation.States.CONFIRMED)
+        participations = (
+            self.participations.filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
-                hours=ExpressionWrapper(
-                    (
-                        F("shift__end_time") - F("shift__start_time")
-                    )  # calculate length of shift in μs
-                    / 1000000  # convert microseconds to seconds
-                    / 3600,  # convert seconds to hours
-                    output_field=models.DecimalField(),
+                duration=ExpressionWrapper(
+                    (F("end_time") - F("start_time")),
+                    output_field=models.DurationField(),
                 ),
-                date=ExpressionWrapper(TruncDate(F("shift__start_time")), output_field=DateField()),
+                date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
             )
-            .values("hours", "date", "reason")
+            .values("duration", "date", "reason")
         )
-        workinghours = self.workinghours_set.all().values("hours", "date", "reason")
-        hour_sum = (participation.aggregate(Sum("hours"))["hours__sum"] or 0) + (
-            workinghours.aggregate(Sum("hours"))["hours__sum"] or 0
+        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
+            "duration", "date", "reason"
         )
-        return hour_sum, list(sorted(chain(participation, workinghours), key=lambda k: k["date"]))
+        hour_sum = (
+            participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
+        ) + datetime.timedelta(
+            hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
+        )
+        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
 
 
 register_model_for_logging(
@@ -180,7 +182,6 @@ register_model_for_logging(
         unlogged_fields={"id", "password", "calendar_token", "last_login"},
     ),
 )
-
 
 register_model_for_logging(
     Group,
@@ -193,9 +194,16 @@ register_model_for_logging(
 )
 
 
+class QualificationCategoryManager(models.Manager):
+    def get_by_natural_key(self, category_uuid, *args):
+        return self.get(uuid=category_uuid)
+
+
 class QualificationCategory(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+
+    objects = QualificationCategoryManager()
 
     class Meta:
         verbose_name = _("qualification track")
@@ -205,9 +213,17 @@ class QualificationCategory(Model):
     def __str__(self):
         return str(self.title)
 
+    def natural_key(self):
+        return (self.uuid, self.title)
+
+
+class QualificationManager(models.Manager):
+    def get_by_natural_key(self, qualification_uuid, *args):
+        return self.get(uuid=qualification_uuid)
+
 
 class Qualification(Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
     abbreviation = CharField(max_length=254)
     category = ForeignKey(
@@ -216,9 +232,12 @@ class Qualification(Model):
         related_name="qualifications",
         verbose_name=_("category"),
     )
-    included_qualifications = models.ManyToManyField(
+    includes = models.ManyToManyField(
         "self", related_name="included_by", symmetrical=False, blank=True
     )
+    is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
+
+    objects = QualificationManager()
 
     def __eq__(self, other):
         return self.uuid == other.uuid if other else False
@@ -234,6 +253,47 @@ class Qualification(Model):
     def __str__(self):
         return str(self.title)
 
+    def natural_key(self):
+        return (self.uuid, self.title)
+
+    natural_key.dependencies = ["core.QualificationCategory"]
+
+    @classmethod
+    def collect_all_included_qualifications(cls, given_qualifications) -> set:
+        """We collect using breadth first search with one query for every layer of inclusion."""
+        all_qualifications = set(given_qualifications)
+        current = set(given_qualifications)
+        while current:
+            new = (
+                Qualification.objects.filter(included_by__in=current)
+                .exclude(id__in=(q.id for q in all_qualifications))
+                .distinct()
+            )
+            all_qualifications |= set(new)
+            current = new
+        return all_qualifications
+
+
+class CustomQualificationGrantQuerySet(models.QuerySet):
+    # Available on both Manager and QuerySet.
+    def unexpired(self):
+        return self.exclude(expires__isnull=False, expires__lt=timezone.now())
+
+
+class ExpirationDateField(models.DateTimeField):
+    """
+    A model datetime field whose formfield is an EndOfDayDateTimeField
+    """
+
+    def formfield(self, **kwargs):
+        return super().formfield(
+            **{
+                "widget": CustomDateInput,
+                "form_class": EndOfDayDateTimeField,
+                **kwargs,
+            }
+        )
+
 
 class QualificationGrant(Model):
     qualification = ForeignKey(
@@ -248,7 +308,9 @@ class QualificationGrant(Model):
         on_delete=models.CASCADE,
         verbose_name=_("user profile"),
     )
-    expires = models.DateTimeField(_("expiration date"), blank=True, null=True)
+    expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
+
+    objects = CustomQualificationGrantQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"
@@ -315,7 +377,8 @@ class Consequence(Model):
                 self.handler.execute(self)
                 from ephios.core.services.notifications.types import ConsequenceApprovedNotification
 
-                ConsequenceApprovedNotification.send(self)
+                if user != self.user:
+                    ConsequenceApprovedNotification.send(self)
         except Exception as e:  # pylint: disable=broad-except
             self.state = self.States.FAILED
             add_log_recorder(
@@ -340,7 +403,8 @@ class Consequence(Model):
         self.save()
         from ephios.core.services.notifications.types import ConsequenceDeniedNotification
 
-        ConsequenceDeniedNotification.send(self)
+        if user != self.user:
+            ConsequenceDeniedNotification.send(self)
 
     def render(self):
         return self.handler.render(self)
@@ -385,6 +449,7 @@ class Notification(Model):
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @functools.cached_property
     def notification_type(self):
@@ -401,3 +466,6 @@ class Notification(Model):
 
     def as_html(self):
         return self.notification_type.as_html(self)
+
+    def get_url(self):
+        return self.notification_type.get_url(self)

@@ -1,4 +1,3 @@
-import functools
 import json
 from calendar import _nextmonth, _prevmonth
 from datetime import datetime, timedelta
@@ -40,7 +39,11 @@ from ephios.core.services.notifications.types import (
     NewEventNotification,
 )
 from ephios.core.signals import event_forms
-from ephios.extra.mixins import CanonicalSlugDetailMixin, CustomPermissionRequiredMixin
+from ephios.extra.mixins import (
+    CanonicalSlugDetailMixin,
+    CustomPermissionRequiredMixin,
+    PluginFormMixin,
+)
 from ephios.extra.permissions import get_groups_with_perms
 
 
@@ -82,39 +85,42 @@ class EventListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
+class EventCalendarView(LoginRequiredMixin, TemplateView):
+    template_name = "core/event_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        today = datetime.today()
+        year = int(self.request.GET.get("year", today.year))
+        month = int(self.request.GET.get("month", today.month))
+        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+        shifts = Shift.objects.filter(
+            event__in=events, start_time__month=month, start_time__year=year
+        )
+        calendar = ShiftCalendar(shifts)
+        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
+        nextyear, nextmonth = _nextmonth(year, month)
+        kwargs.setdefault(
+            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
+        )
+        prevyear, prevmonth = _prevmonth(year, month)
+        kwargs.setdefault(
+            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
+        )
+        return super().get_context_data(**kwargs)
+
+
 class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):
     model = Event
     permission_required = "core.view_event"
 
     def get_queryset(self):
+        base = Event.objects.all()
         if self.request.user.has_perm("core.add_event"):
-            return Event.all_objects.all()
-        return Event.objects.all()
+            base = Event.all_objects.all()
+        return base.prefetch_related("shifts", "shifts__participations")
 
 
-class EventEditMixin:
-    @functools.cached_property
-    def plugin_forms(self):
-        forms = []
-        for __, resp in event_forms.send(sender=None, event=self.object, request=self.request):
-            forms.extend(resp)
-        return forms
-
-    def get_context_data(self, **kwargs):
-        kwargs["plugin_forms"] = self.plugin_forms
-        return super().get_context_data(**kwargs)
-
-    def is_valid(self, form):
-        return form.is_valid() and all(plugin_form.is_valid() for plugin_form in self.plugin_forms)
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        for plugin_form in self.plugin_forms:
-            plugin_form.save()
-        return response
-
-
-class EventUpdateView(CustomPermissionRequiredMixin, EventEditMixin, UpdateView):
+class EventUpdateView(CustomPermissionRequiredMixin, PluginFormMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
     permission_required = "core.change_event"
@@ -131,8 +137,11 @@ class EventUpdateView(CustomPermissionRequiredMixin, EventEditMixin, UpdateView)
             return self.form_valid(form)
         return self.form_invalid(form)
 
+    def get_plugin_forms(self):
+        return event_forms.send(sender=None, event=self.object, request=self.request)
 
-class EventCreateView(CustomPermissionRequiredMixin, EventEditMixin, CreateView):
+
+class EventCreateView(CustomPermissionRequiredMixin, PluginFormMixin, CreateView):
     template_name = "core/event_form.html"
     permission_required = "core.add_event"
     accept_object_perms = False
@@ -164,6 +173,9 @@ class EventCreateView(CustomPermissionRequiredMixin, EventEditMixin, CreateView)
 
     def get_success_url(self):
         return reverse("core:event_createshift", kwargs={"pk": self.object.pk})
+
+    def get_plugin_forms(self):
+        return event_forms.send(sender=None, event=self.object, request=self.request)
 
 
 class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
@@ -229,7 +241,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         for date in occurrences:
             event = self.get_object()
             start_date = event.get_start_time().date()
-            shifts = event.shifts.all()
+            shifts = list(event.shifts.all())
             event.pk = None
             event.save()
             assign_perm(
@@ -312,6 +324,9 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
     template_name = "core/event_notification.html"
     form_class = EventNotificationForm
 
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "event": self.object}
+
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
@@ -326,30 +341,6 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
-
-
-class EventCalendarView(TemplateView):
-    template_name = "core/event_calendar.html"
-
-    def get_context_data(self, **kwargs):
-        today = datetime.today()
-        year = int(self.request.GET.get("year", today.year))
-        month = int(self.request.GET.get("month", today.month))
-        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
-        shifts = Shift.objects.filter(
-            event__in=events, start_time__month=month, start_time__year=year
-        )
-        calendar = ShiftCalendar(shifts)
-        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
-        nextyear, nextmonth = _nextmonth(year, month)
-        kwargs.setdefault(
-            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
-        )
-        prevyear, prevmonth = _prevmonth(year, month)
-        kwargs.setdefault(
-            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
-        )
-        return super().get_context_data(**kwargs)
 
 
 class EventListTypeSettingView(RedirectView):

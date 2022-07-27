@@ -1,0 +1,61 @@
+// ephios colors
+
+$brand-color: #FF033F;
+$brand-gray: #1c1c1c;
+
+$gray-100: #FCFDFD;
+//$gray-1: #F6F8F9;
+$gray-200: #F3F5F6;
+$gray-250: #EAECEE;
+//$gray-4: #DDE1E3;
+$gray-300: #CAD0D3;
+$gray-400: #B9C1C6;
+//$gray-7: #A0ABB1;
+$gray-500: #8F9CA3;
+$gray-550: #76858F;
+$gray-600: #606E76;
+$gray-700: #465258;
+$gray-800: #2B353B;
+//$gray-13: #232C32;
+$gray-900: #0C1012;
+
+$blue: #87CFF8;
+$red: $brand-color;
+$yellow: #DBB006;
+$green: #00C24A;
+
+$primary: #014065;
+
+$success: shade-color($green, 40%);
+$danger: shade-color($red, 40%);
+$secondary: $gray-300;
+$info: $blue;
+$warning:       $yellow;
+$light:         $gray-250;
+$dark:          $gray-900;
+
+$theme-colors: (
+        "primary": $primary,
+        "secondary": $secondary,
+        "success": $success,
+        "info": $info,
+        "warning": $warning,
+        "danger": $danger,
+        "light": $light,
+        "dark": $dark,
+        "brand": $brand-color,
+);
+
+// Looks
+//$link-decoration: none;
+$body-bg: $gray-200;
+$card-bg: $gray-100;
+$card-cap-bg: $gray-100;
+
+$text-muted: $gray-550;
+
+$enable-negative-margins: true;
+
+// Shadow (navbar)
+$box-shadow: 0 4px 4px rgba(#000, .10);
+

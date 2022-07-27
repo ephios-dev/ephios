@@ -3,16 +3,30 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.types import MultipleChoicePreference, StringPreference
+from dynamic_preferences.registries import (
+    PerInstancePreferenceRegistry,
+    global_preferences_registry,
+)
+from dynamic_preferences.types import (
+    ModelMultipleChoicePreference,
+    MultipleChoicePreference,
+    StringPreference,
+)
 from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
-from ephios.core import event_type_preference_registry, plugins
+from ephios.core import plugins
 from ephios.core.models import QualificationCategory, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
-from ephios.extra.preferences import CustomModelMultipleChoicePreference, JSONPreference
+from ephios.extra.preferences import JSONPreference
+
+
+class EventTypeRegistry(PerInstancePreferenceRegistry):
+    pass
+
+
+event_type_preference_registry = EventTypeRegistry()
 
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
@@ -29,7 +43,7 @@ class OrganizationName(StringPreference):
 
 
 @global_preferences_registry.register
-class RelevantQualificationCategories(CustomModelMultipleChoicePreference):
+class RelevantQualificationCategories(ModelMultipleChoicePreference):
     name = "relevant_qualification_categories"
     section = general_global_section
     model = QualificationCategory
@@ -43,8 +57,8 @@ class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
     default = [
-        ephios.plugins.basesignup.PluginApp.__module__,
-        ephios.plugins.pages.PluginApp.__module__,
+        ephios.plugins.basesignup.apps.PluginApp.__module__,
+        ephios.plugins.pages.apps.PluginApp.__module__,
     ]
     section = general_global_section
     required = False
@@ -54,6 +68,7 @@ class EnabledPlugins(MultipleChoicePreference):
         return [
             (plugin.module, mark_safe(f"<strong>{plugin.name}</strong>: {plugin.description}"))
             for plugin in plugins.get_all_plugins()
+            if getattr(plugin, "visible", True)
         ]
 
 
@@ -72,7 +87,7 @@ class NotificationPreference(JSONPreference):
 
 
 @event_type_preference_registry.register
-class VisibleForPreference(CustomModelMultipleChoicePreference):
+class VisibleForPreference(ModelMultipleChoicePreference):
     name = "visible_for"
     verbose_name = _("Events of this type should by default be visible for")
     model = Group
@@ -81,7 +96,7 @@ class VisibleForPreference(CustomModelMultipleChoicePreference):
 
 
 @event_type_preference_registry.register
-class ResponsibleUsersPreference(CustomModelMultipleChoicePreference):
+class ResponsibleUsersPreference(ModelMultipleChoicePreference):
     name = "responsible_users"
     verbose_name = _("Users that are responsible for this event type by default")
     model = UserProfile
@@ -90,7 +105,7 @@ class ResponsibleUsersPreference(CustomModelMultipleChoicePreference):
 
 
 @event_type_preference_registry.register
-class ResponsibleGroupsPreference(CustomModelMultipleChoicePreference):
+class ResponsibleGroupsPreference(ModelMultipleChoicePreference):
     name = "responsible_groups"
     verbose_name = _("Groups that are responsible for this event type by default")
     model = Group

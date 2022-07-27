@@ -9,7 +9,7 @@
 {% block content %}
     <div class="page-header mb-3">
         <h1>{% trans "Events" %}
-            <small class="float-right">
+            <small class="float-end">
                 <form method="post" action="{% url "core:event_list_type_setting" %}">
                     {% csrf_token %}
                     <div class="btn-group">
@@ -21,8 +21,8 @@
         </h1>
     </div>
     <div class="d-flex justify-content-between mb-2">
-        <a class="btn btn-outline-secondary" href="{{ previous_month_url }}">{% translate "Previous month" %}</a>
-        <a class="btn btn-outline-secondary" href="{{ next_month_url }}">{% translate "Next month" %}</a>
+        <a class="btn btn-secondary" href="{{ previous_month_url }}">{% translate "Previous month" %}</a>
+        <a class="btn btn-secondary" href="{{ next_month_url }}">{% translate "Next month" %}</a>
     </div>
     {{ calendar }}
 {% endblock %}

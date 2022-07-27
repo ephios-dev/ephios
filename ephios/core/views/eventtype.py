@@ -37,7 +37,7 @@ class EventTypeUpdateView(
         form = EventTypeForm(self.request.POST or None, instance=self.object)
         preference_form = self.get_preference_form()
 
-        if form.is_valid() and preference_form.is_valid():
+        if all([form.is_valid(), preference_form.is_valid()]):
             event_type = form.save()
             preference_form.update_preferences()
             messages.success(
@@ -74,9 +74,9 @@ class EventTypeCreateView(
     accept_object_perms = False
     template_name = "core/eventtype_form.html"
     model = EventType
-    fields = ["title", "can_grant_qualification"]
+    fields = ["title"]
     success_message = _(
-        "Eventtype succesfully created. More settings for this eventtype can be managed below. "
+        "Event type was created. More settings for this event type can be managed below."
     )
 
     def get_success_url(self):

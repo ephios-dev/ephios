@@ -25,16 +25,12 @@ if not os.path.exists(DATA_DIR):
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
-SITE_URL = env.str("SITE_URL")
-if SITE_URL.endswith("/"):
-    SITE_URL = SITE_URL[:-1]
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = "DENY"
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -50,7 +46,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "django_filters",
     "guardian",
+    "rest_framework",
+    "rest_framework.authtoken",
     "django_select2",
     "djangoformsetjs",
     "compressor",
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "statici18n",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "crispy_forms",
+    "crispy_bootstrap5",
     "webpush",
     "ephios.modellogging",
 ]
@@ -65,14 +66,16 @@ INSTALLED_APPS = [
 EPHIOS_CORE_MODULES = [
     "ephios.core",
     "ephios.extra",
+    "ephios.api",
 ]
 INSTALLED_APPS += EPHIOS_CORE_MODULES
 
 CORE_PLUGINS = [
-    "ephios.plugins.basesignup",
-    "ephios.plugins.pages",
-    "ephios.plugins.guests",
-    "ephios.plugins.eventautoqualification",
+    "ephios.plugins.basesignup.apps.PluginApp",
+    "ephios.plugins.pages.apps.PluginApp",
+    "ephios.plugins.qualification_management.apps.PluginApp",
+    "ephios.plugins.guests.apps.PluginApp",
+    "ephios.plugins.eventautoqualification.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
@@ -81,6 +84,8 @@ for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
 INSTALLED_APPS += PLUGINS
 
 INSTALLED_APPS += ["dynamic_preferences"]  # must come after our apps to collect preferences
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -111,6 +116,7 @@ TEMPLATES = [
                 "dynamic_preferences.processors.global_preferences",
                 "ephios.core.context.ephios_base_context",
             ],
+            "debug": DEBUG,
         },
     },
 ]
@@ -148,10 +154,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "guardian.backends.ObjectPermissionBackend",
-)
+]
 
 AUTH_USER_MODEL = "core.UserProfile"
 LOGIN_REDIRECT_URL = "/"
@@ -165,8 +171,6 @@ LANGUAGE_CODE = "de"
 TIME_ZONE = "Europe/Berlin"
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 
@@ -182,6 +186,8 @@ STATICFILES_FINDERS = (
     "compressor.finders.CompressorFinder",
 )
 COMPRESS_ENABLED = not DEBUG
+# https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
@@ -191,26 +197,43 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
-if not DEBUG:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": True,
-        "handlers": {
-            "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {"format": "%(levelname)s %(asctime)s %(name)s %(module)s %(message)s"},
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
         },
-        "loggers": {
-            "django": {
-                "handlers": ["mail_admins"],
-                "level": "ERROR",
-                "propagate": False,
-            },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
         },
-        "root": {
-            "handlers": ["mail_admins"],
+    },
+    "handlers": {
+        "mail_admins": {
             "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
         },
-    }
-
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["mail_admins", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["mail_admins", "console"],
+    },
+}
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
@@ -223,7 +246,7 @@ SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""
 
 # django-debug-toolbar
-if DEBUG:
+if DEBUG and env.bool("DEBUG_TOOLBAR", True):
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
@@ -238,7 +261,8 @@ CSP_STYLE_SRC = ("'self'",)
 CSP_INCLUDE_NONCE_IN = ["style-src"]
 
 # django-crispy-forms
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 # django.contrib.messages
@@ -269,3 +293,20 @@ if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
         "VAPID_PRIVATE_KEY": vp,
         "VAPID_ADMIN_EMAIL": ADMINS[0][1],
     }
+
+
+def GET_SITE_URL():
+    site_url = env.str("SITE_URL")
+    if site_url.endswith("/"):
+        site_url = site_url[:-1]
+    return site_url
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}

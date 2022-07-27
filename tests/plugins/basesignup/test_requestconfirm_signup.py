@@ -16,7 +16,7 @@ def test_request_confirm_signup_flow(django_app, volunteer, planner, event):
     )
 
     response = django_app.get(event.get_absolute_url(), user=volunteer)
-    assert "already requested" in response
+    assert "mannequin_requested" in response
 
     # confirm the participation as planner
     response = django_app.get(
@@ -54,7 +54,7 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
         reverse("core:shift_disposition", kwargs=dict(pk=shift.pk)),
         user=planner,
     ).forms["add-user-form"]
-    # can't user form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
+    # can't use form.submit as webtest doesn't recognise the user field (as that's outside of the <form> tags)
     response = django_app.post(
         form.action,
         user=planner,

@@ -4,18 +4,18 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 
-from ephios.core.forms.events import BaseEventPluginFormMixin
+from ephios.core.forms.events import BasePluginFormMixin
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.eventautoqualification.models import EventAutoQualificationConfiguration
 
 
-class EventAutoQualificationForm(BaseEventPluginFormMixin, forms.ModelForm):
+class EventAutoQualificationForm(BasePluginFormMixin, forms.ModelForm):
     class Meta:
         model = EventAutoQualificationConfiguration
         fields = ["qualification", "expiration_date", "mode", "extend_only", "needs_confirmation"]
         widgets = {
             "qualification": Select2Widget,
-            "expiration_date": CustomDateInput(format="%Y-%m-%d"),
+            "expiration_date": CustomDateInput,
         }
 
     def __init__(self, *args, event=None, edit_permission=False, **kwargs):

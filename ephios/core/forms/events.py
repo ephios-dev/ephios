@@ -2,9 +2,10 @@ import operator
 import re
 from datetime import date, datetime, timedelta
 
-import django.forms as forms
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -17,13 +18,19 @@ from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
 from recurrence.forms import RecurrenceField
 
-from ephios.core import event_type_preference_registry, signup
+from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
+from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
+from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
 from ephios.modellogging.log import add_log_recorder, update_log
-from ephios.modellogging.recorders import InstanceActionType, PermissionLogRecorder
+from ephios.modellogging.recorders import (
+    DerivedFieldsLogRecorder,
+    InstanceActionType,
+    PermissionLogRecorder,
+)
 
 
 class EventForm(forms.ModelForm):
@@ -151,7 +158,7 @@ class EventForm(forms.ModelForm):
 
 
 class ShiftForm(forms.ModelForm):
-    date = forms.DateField(widget=CustomDateInput(format="%Y-%m-%d"), label=_("Date"))
+    date = forms.DateField(widget=CustomDateInput, label=_("Date"))
     meeting_time = forms.TimeField(widget=CustomTimeInput, label=_("Meeting time"))
     start_time = forms.TimeField(widget=CustomTimeInput, label=_("Start time"))
     end_time = forms.TimeField(widget=CustomTimeInput, label=_("End time"))
@@ -164,12 +171,26 @@ class ShiftForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        signup_methods = list(signup.enabled_signup_methods())
+        signup_methods = list(enabled_signup_methods())
+
+        # make sure that if a shift uses a disabled but installed method, it is also available in the list
         if self.instance and (method_slug := self.instance.signup_method_slug):
             if method_slug not in map(operator.attrgetter("slug"), signup_methods):
-                signup_methods.append(self.instance.signup_method)
+                try:
+                    signup_methods.append(signup_method_from_slug(method_slug, self.instance))
+                except ValueError:  # not installed
+                    pass
+
         self.fields["signup_method_slug"].widget = forms.Select(
             choices=((method.slug, method.verbose_name) for method in signup_methods)
+        )
+        # this recorder may cause db queries, so it's added on Shift init, but here in the form
+        # pylint: disable=undefined-variable
+        add_log_recorder(
+            self.instance,
+            DerivedFieldsLogRecorder(
+                lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
+            ),
         )
 
     def clean(self):
@@ -193,7 +214,7 @@ class ShiftForm(forms.ModelForm):
 
 class EventDuplicationForm(forms.Form):
     start_date = forms.DateField(
-        widget=CustomDateInput(format="%Y-%m-%d"),
+        widget=CustomDateInput,
         initial=date.today(),
         help_text=_(
             "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."
@@ -206,7 +227,7 @@ class EventDuplicationForm(forms.Form):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ["title", "can_grant_qualification", "color"]
+        fields = ["title", "color"]
         widgets = {"color": ColorInput()}
 
     def clean_color(self):
@@ -220,7 +241,7 @@ class EventTypePreferenceForm(PreferenceForm):
     registry = event_type_preference_registry
 
 
-class BaseEventPluginFormMixin:
+class BasePluginFormMixin:
     @property
     def heading(self):
         raise NotImplementedError
@@ -231,11 +252,11 @@ class BaseEventPluginFormMixin:
         except AttributeError:
             self.helper = FormHelper(self)
             self.helper.form_tag = False
-        return render_to_string("core/fragments/event_plugin_form.html", context={"form": self})
+        return render_to_string("core/fragments/plugin_form.html", context={"form": self})
 
     def is_function_active(self):
         """
-        When building forms for additional features, return whether that feature is enabled for the forms event instance.
+        When building forms for additional features, return whether that feature is enabled for the form instance.
         With the default template, if this is True, the collapse is expanded on page load.
         """
         return False
@@ -257,17 +278,21 @@ class EventNotificationForm(forms.Form):
     mail_content = forms.CharField(required=False, widget=forms.Textarea, label=_("Mail content"))
 
     def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Field("action"),
-            Field("mail_content", wrapper_class="no-display"),
-            Submit("submit", _("Send")),
+            Field("mail_content"),
+            FormActions(
+                Submit("submit", _("Send"), css_class="float-end"),
+                AbortLink(href=self.event.get_absolute_url()),
+            ),
         )
 
     def clean(self):
         if (
-            self.cleaned_data["action"] == self.PARTICIPANTS
+            self.cleaned_data.get("action") == self.PARTICIPANTS
             and not self.cleaned_data["mail_content"]
         ):
             raise ValidationError(_("You cannot send an empty mail."))

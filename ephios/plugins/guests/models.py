@@ -7,9 +7,9 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation, Event
+from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
-from ephios.core.signup import AbstractParticipant, Qualification
+from ephios.core.signup.participants import AbstractParticipant
 from ephios.modellogging.log import register_model_for_logging
 
 
@@ -23,7 +23,7 @@ class EventGuestShare(models.Model):
 
     @property
     def url(self):
-        return settings.SITE_URL + reverse(
+        return settings.GET_SITE_URL() + reverse(
             "guests:register", kwargs=dict(public_signup_token=self.token, event_id=self.event.id)
         )
 
@@ -100,5 +100,5 @@ class GuestParticipant(AbstractParticipant):
     @property
     def icon(self):
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Guest")}"></span>'
+            f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{_("Guest")}"></span>'
         )

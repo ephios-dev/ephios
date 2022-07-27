@@ -39,7 +39,11 @@ def get_enabled_plugins():
     Return a subset of all plugin meta classes - those that are enabled
     """
     enabled_plugins = global_preferences_registry.manager().get("general__enabled_plugins")
-    yield from (plugin for plugin in get_all_plugins() if plugin.module in enabled_plugins)
+    yield from (
+        plugin
+        for plugin in get_all_plugins()
+        if plugin.module in enabled_plugins or not getattr(plugin, "visible", True)
+    )
 
 
 @functools.lru_cache()

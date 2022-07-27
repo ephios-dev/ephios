@@ -1,27 +1,27 @@
 import uuid
+from collections import Counter
 from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
 
 from django import forms
-from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
 from django.template.loader import get_template
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import FormView
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup import (
-    AbstractParticipant,
-    BaseDispositionParticipationForm,
+from ephios.core.signup.disposition import BaseDispositionParticipationForm
+from ephios.core.signup.methods import (
+    BaseSignupForm,
     BaseSignupMethod,
     BaseSignupView,
-    ParticipationError,
+    ParticipantUnfitError,
 )
+from ephios.core.signup.participants import AbstractParticipant
+
+NO_SECTION_UUID = "other"
 
 
 def sections_participant_qualifies_for(sections, participant: AbstractParticipant):
@@ -34,7 +34,7 @@ def sections_participant_qualifies_for(sections, participant: AbstractParticipan
 
 
 class SectionBasedDispositionParticipationForm(BaseDispositionParticipationForm):
-    disposition_participation_template = "basesignup/section_based/fragment_participant.html"
+    disposition_participation_template = "basesignup/section_based/fragment_participation.html"
 
     section = forms.ChoiceField(
         label=_("Section"),
@@ -116,12 +116,25 @@ SectionsFormset = forms.formset_factory(
 )
 
 
-class SectionBasedConfigurationForm(forms.Form):
+class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
+    choose_preferred_section = forms.BooleanField(
+        label=_("Participants must provide a preferred section"),
+        help_text=_("This only makes sense if you configure multiple sections."),
+        widget=forms.CheckboxInput,
+        required=False,
+        initial=False,
+    )
+    sections = forms.Field(
+        label=_("Structure"),
+        widget=forms.HiddenInput,
+        required=False,
+    )
+
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
         self.sections_formset = SectionsFormset(
             data=data,
-            initial=self.initial.get("sections", list()),
+            initial=self.initial.get("sections", []),
             prefix="sections",
         )
 
@@ -131,26 +144,53 @@ class SectionBasedConfigurationForm(forms.Form):
 
         sections = [
             {
-                key: form.cleaned_data[key]
+                key: cleaned_data[key]
                 for key in ("title", "qualifications", "min_count", "max_count", "uuid")
             }
-            for form in self.sections_formset
-            if not form.cleaned_data.get("DELETE")
+            for cleaned_data in self.sections_formset.cleaned_data
+            if cleaned_data and not cleaned_data.get("DELETE")
         ]
         return sections
 
+    @staticmethod
+    def format_sections(value):
+        return ", ".join(section["title"] for section in value)
 
-class SectionSignupForm(forms.Form):
-    section = forms.ChoiceField(
+
+class SectionSignupForm(BaseSignupForm):
+    preferred_section_uuid = forms.ChoiceField(
         label=_("Preferred Section"),
         widget=forms.RadioSelect,
         required=False,
-        # choices are set as (uuid, title) of section
+        # choices are later set as (uuid, title) of section
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["preferred_section_uuid"].initial = self.instance.data.get(
+            "preferred_section_uuid"
+        )
+        self.fields["preferred_section_uuid"].required = (
+            self.data.get("signup_choice") == "sign_up"
+            and self.method.configuration.choose_preferred_section
+        )
+        self.fields["preferred_section_uuid"].choices = [
+            (section["uuid"], section["title"])
+            for section in self.sections_participant_qualifies_for
+        ]
+        unqualified = [
+            section
+            for section in self.method.configuration.sections
+            if section not in self.sections_participant_qualifies_for
+        ]
+        if unqualified:
+            self.fields["preferred_section_uuid"].help_text = _(
+                "You don't qualify for {qualifications}."
+            ).format(qualifications=", ".join(str(section["title"]) for section in unqualified))
 
-class SectionBasedSignupView(FormView, BaseSignupView):
-    template_name = "basesignup/section_based/signup.html"
+    def save(self, commit=True):
+        self.instance.data["preferred_section_uuid"] = self.cleaned_data["preferred_section_uuid"]
+        return super().save(commit)
 
     @cached_property
     def sections_participant_qualifies_for(self):
@@ -158,41 +198,9 @@ class SectionBasedSignupView(FormView, BaseSignupView):
             self.method.configuration.sections, self.participant
         )
 
-    def get_form(self, form_class=None):
-        form = SectionSignupForm(self.request.POST)
-        form.fields["section"].choices = [
-            (section["uuid"], section["title"])
-            for section in self.sections_participant_qualifies_for
-        ]
-        return form
 
-    def get_context_data(self, **kwargs):
-        kwargs.setdefault("shift", self.shift)
-        kwargs.setdefault(
-            "unqualified_sections",
-            [
-                section["title"]
-                for section in self.method.configuration.sections
-                if section not in self.sections_participant_qualifies_for
-            ],
-        )
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        return super().signup_pressed(preferred_section_uuid=form.cleaned_data.get("section"))
-
-    def signup_pressed(self, **kwargs):
-        if not self.method.configuration.choose_preferred_section:
-            # do straight signup if choosing is not enabled
-            return super().signup_pressed(**kwargs)
-
-        if not self.method.can_sign_up(self.participant):
-            # redirect a misled request
-            messages.warning(self.request, _("You can not sign up for this shift."))
-            return redirect(self.participant.reverse_event_detail(self.shift.event))
-
-        # all good, redirect to the form
-        return redirect(self.participant.reverse_signup_action(self.shift))
+class SectionBasedSignupView(BaseSignupView):
+    form_class = SectionSignupForm
 
 
 class SectionBasedSignupMethod(BaseSignupMethod):
@@ -205,49 +213,76 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     registration_button_text = _("Request")
     signup_success_message = _("You have successfully requested a participation for {shift}.")
     signup_error_message = _("Requesting a participation failed: {error}")
-
-    configuration_form_class = SectionBasedConfigurationForm
     signup_view_class = SectionBasedSignupView
-
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
-    def get_configuration_fields(self):
-        return {
-            **super().get_configuration_fields(),
-            "choose_preferred_section": {
-                "formfield": forms.BooleanField(
-                    label=_("Ask participants for a preferred section"),
-                    help_text=_("This only makes sense if you configure multiple sections."),
-                    widget=forms.CheckboxInput,
-                    required=False,
-                ),
-                "default": False,
-            },
-            "sections": {
-                "formfield": forms.Field(
-                    label=_("Structure"),
-                    widget=forms.HiddenInput,
-                    required=False,
-                ),
-                "default": [],
-            },
-        }
+    configuration_form_class = SectionBasedConfigurationForm
+    shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
-    def get_participant_count_bounds(self):
-        return (
-            sum(section.get("min_count") or 0 for section in self.configuration.sections),
-            sum(
-                section.get("max_count") or section.get("min_count")
-                for section in self.configuration.sections
+    def _get_signup_stats_per_section(self, participations=None):
+        from ephios.core.signup.methods import SignupStats
+
+        if participations is None:
+            participations = list(self.shift.participations.all())
+        confirmed_counter = Counter()
+        requested_counter = Counter()
+        for p in participations:
+            if p.state == AbstractParticipation.States.CONFIRMED:
+                c = confirmed_counter
+            elif p.state == AbstractParticipation.States.REQUESTED:
+                c = requested_counter
+            else:
+                continue
+            section_uuid = p.data.get("dispatched_section_uuid")
+            if not section_uuid or section_uuid not in (
+                section["uuid"] for section in self.configuration.sections
+            ):
+                section_uuid = NO_SECTION_UUID
+            c[section_uuid] += 1
+
+        d = {}
+        for section in self.configuration.sections:
+            section_uuid = section["uuid"]
+            min_count = section.get("min_count")
+            max_count = section.get("max_count")
+            d[section_uuid] = SignupStats(
+                requested_count=requested_counter[section_uuid],
+                confirmed_count=confirmed_counter[section_uuid],
+                missing=(max(min_count - confirmed_counter[section_uuid], 0) if min_count else 0),
+                free=(max(max_count - confirmed_counter[section_uuid], 0) if max_count else None),
+                min_count=min_count,
+                max_count=max_count,
             )
-            if all(section.get("max_count") for section in self.configuration.sections)
-            else None,
+
+        # Participations not assigned to a section are extra, so max and free are explicitly zero.
+        # We do not offset missing places in other sections, as qualifications etc. might not match.
+        # Disposition will always be required to resolve unassigned participations.
+        d[NO_SECTION_UUID] = SignupStats(
+            requested_count=requested_counter[NO_SECTION_UUID],
+            confirmed_count=confirmed_counter[NO_SECTION_UUID],
+            missing=0,
+            free=0,
+            min_count=None,
+            max_count=0,
         )
+
+        return d
+
+    def get_signup_stats(self):
+        from ephios.core.signup.methods import SignupStats
+
+        participations = list(self.shift.participations.all())
+
+        signup_stats = SignupStats.ZERO
+        for stats in self._get_signup_stats_per_section(participations).values():
+            signup_stats += stats
+
+        return signup_stats
 
     @staticmethod
     def check_qualification(method, participant):
         if not sections_participant_qualifies_for(method.configuration.sections, participant):
-            return ParticipationError(_("You are not qualified."))
+            return ParticipantUnfitError(_("You are not qualified."))
 
     @property
     def _signup_checkers(self):
@@ -255,21 +290,59 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
     # pylint: disable=arguments-differ
     def _configure_participation(
-        self, participation: AbstractParticipation, preferred_section_uuid=None, **kwargs
+        self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
-        participation.data["preferred_section_uuid"] = preferred_section_uuid
-        if preferred_section_uuid:
-            # reset dispatch decision, as that would have overwritten the preferred choice
-            participation.data["dispatched_section_uuid"] = None
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
 
     def render_configuration_form(self, *args, form=None, **kwargs):
+        """We overwrite the template to render the formset."""
         form = form or self.get_configuration_form(*args, **kwargs)
         template = get_template("basesignup/section_based/configuration_form.html").render(
             {"form": form}
         )
         return template
+
+    def get_shift_state_context_data(self, request, **kwargs):
+        context_data = super().get_shift_state_context_data(request)
+        participations = context_data["participations"]
+        section_stats = self._get_signup_stats_per_section(participations)
+        sections = {
+            section["uuid"]: {
+                "title": section["title"],
+                "placeholder": section.get("min_count") or 0,
+                "qualifications_label": ", ".join(
+                    q.abbreviation
+                    for q in Qualification.objects.filter(id__in=section["qualifications"])
+                ),
+                "participations": [],
+                "stats": section_stats[section["uuid"]],
+            }
+            for section in self.configuration.sections
+        }
+
+        unsorted_participations = []
+        for participation in participations:
+            dispatched_uuid = participation.data.get(
+                "dispatched_section_uuid"
+            ) or participation.data.get("preferred_section_uuid")
+            if dispatched_uuid not in sections:
+                unsorted_participations.append(participation)
+            else:
+                sections[dispatched_uuid]["participations"].append(participation)
+                sections[dispatched_uuid]["placeholder"] -= 1
+
+        for section in sections.values():
+            section["placeholder"] = list(range(max(0, section["placeholder"])))
+        if unsorted_participations:
+            sections[NO_SECTION_UUID] = {
+                "title": _("unassigned"),
+                "participations": unsorted_participations,
+                "placeholder": [],
+            }
+
+        context_data["sections"] = sections
+        return context_data
 
     def _get_sections_with_users(self):
         relevant_qualification_categories = global_preferences_registry.manager()[
@@ -309,25 +382,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         # add sections without participants
         sections_with_users += [(section, None) for section in section_by_uuid.values()]
         return sections_with_users
-
-    def render_shift_state(self, request):
-        return get_template("basesignup/section_based/fragment_state.html").render(
-            {
-                "shift": self.shift,
-                "requested_participations": (
-                    self.shift.participations.filter(state=AbstractParticipation.States.REQUESTED)
-                ),
-                "sections_with_users": self._get_sections_with_users(),
-                "disposition_url": (
-                    reverse(
-                        "core:shift_disposition",
-                        kwargs=dict(pk=self.shift.pk),
-                    )
-                    if request.user.has_perm("core.change_event", obj=self.shift.event)
-                    else None
-                ),
-            }
-        )
 
     def get_participation_display(self):
         confirmed_sections_with_users = self._get_sections_with_users()

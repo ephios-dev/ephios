@@ -1,10 +1,11 @@
+import logging
 import uuid
 from argparse import Namespace
 from datetime import date, datetime
 
 import pytest
-import pytz
 from django.contrib.auth.models import Group
+from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
@@ -23,6 +24,13 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
+
+
+@pytest.fixture(autouse=True)
+def check_log_for_exceptions(caplog):
+    caplog.set_level(logging.ERROR)
+    yield
+    assert caplog.get_records("call") == []
 
 
 @pytest.fixture
@@ -44,7 +52,7 @@ def enable_plugins():
 
 @pytest.fixture
 def tz():
-    return pytz.timezone("Europe/Berlin")
+    return get_default_timezone()
 
 
 @pytest.fixture
@@ -94,7 +102,14 @@ def volunteer():
 
 
 @pytest.fixture
-def qualified_volunteer(volunteer, qualifications, tz):
+def qualified_volunteer(qualifications, tz):
+    volunteer = UserProfile.objects.create(
+        first_name="Marianne",
+        last_name="Medizinfrau",
+        email="marianne@localhost",
+        date_of_birth=date(1985, 1, 1),
+        password="dummy",
+    )
     QualificationGrant.objects.create(
         user=volunteer,
         qualification=qualifications.nfs,
@@ -120,11 +135,11 @@ def responsible_user():
 
 @pytest.fixture
 def service_event_type():
-    return EventType.objects.create(title="Service", can_grant_qualification=False)
+    return EventType.objects.create(title="Service")
 
 
 @pytest.fixture
-def groups(superuser, manager, planner, volunteer):
+def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers = Group.objects.create(name="Managers")
     planners = Group.objects.create(name="Planners")
     volunteers = Group.objects.create(name="Volunteers")
@@ -132,7 +147,7 @@ def groups(superuser, manager, planner, volunteer):
     managers.user_set.add(superuser)
     managers.user_set.add(manager)
     planners.user_set.add(superuser, planner)
-    volunteers.user_set.add(superuser, planner, volunteer)
+    volunteers.user_set.add(superuser, planner, volunteer, qualified_volunteer)
 
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
@@ -173,9 +188,9 @@ def event(groups, service_event_type, planner, tz):
         event=event,
         meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
         start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
+        end_time=datetime(2099, 6, 30, 20, 30).astimezone(tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration={},
+        signup_configuration=dict(user_can_decline_confirmed=True),
     )
     return event
 
@@ -204,7 +219,7 @@ def conflicting_event(event, service_event_type, volunteer, groups):
     )
 
     LocalParticipation.objects.create(
-        shift=event.shifts.first(),
+        shift=conflicting_event.shifts.first(),
         user=volunteer,
         state=AbstractParticipation.States.CONFIRMED,
     )
@@ -274,15 +289,13 @@ def multi_shift_event(groups, service_event_type, planner, tz):
 @pytest.fixture
 def qualifications():
     """
-    Subset of the qualifications of the setupdata fixture, returned as a namespace.
+    Some medical qualifications, returned as a namespace.
     """
-
+    q = Namespace()
     medical_category = QualificationCategory.objects.create(
         title="Medical",
         uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
     )
-
-    q = Namespace()
 
     q.rs = Qualification.objects.create(
         category=medical_category,
@@ -290,15 +303,13 @@ def qualifications():
         abbreviation="RS",
         uuid=uuid.UUID("0b41fac6-ca9e-4b8a-82c5-849412187351"),
     )
-
     q.nfs = Qualification.objects.create(
         category=medical_category,
         title="Notfallsanitäter",
         abbreviation="NFS",
         uuid=uuid.UUID("d114125b-7cf4-49e2-8908-f93e2f95dfb8"),
     )
-    q.nfs.included_qualifications.add(q.rs)
-
+    q.nfs.includes.add(q.rs)
     q.na = Qualification.objects.create(
         category=medical_category,
         title="Notarzt",
@@ -310,55 +321,49 @@ def qualifications():
         title="License",
         uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
     )
-
     q.b = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse B",
         abbreviation="Fe B",
         uuid=uuid.UUID("0715b687-877a-4fed-bde0-5ea06b1043fc"),
     )
-
     q.be = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse BE",
         abbreviation="Fe BE",
         uuid=uuid.UUID("31529f69-09d7-44cc-84f6-19fbfd949faa"),
     )
-    q.be.included_qualifications.add(q.b)
-
+    q.be.includes.add(q.b)
     q.c1 = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1",
         abbreviation="Fe C1",
         uuid=uuid.UUID("c9898e6c-4ecf-4781-9c0a-884861e36a81"),
     )
-    q.c1.included_qualifications.add(q.b)
-
+    q.c1.includes.add(q.b)
     q.c = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C",
         abbreviation="Fe C",
         uuid=uuid.UUID("2d2fc932-5206-4c2c-bb63-0bc579acea6f"),
     )
-    q.c.included_qualifications.add(q.c1)
-
+    q.c.includes.add(q.c1)
     q.c1e = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse C1E",
         abbreviation="Fe C1E",
         uuid=uuid.UUID("f5e3be89-59de-4b13-a92f-5949009f62d8"),
     )
-    q.c1e.included_qualifications.add(q.c1)
-    q.c1e.included_qualifications.add(q.be)
-
+    q.c1e.includes.add(q.c1)
+    q.c1e.includes.add(q.be)
     q.ce = Qualification.objects.create(
         category=driverslicense_category,
         title="Fahrerlaubnis Klasse CE",
         abbreviation="Fe CE",
         uuid=uuid.UUID("736ca05a-7ff9-423a-9fa4-8b4641fde29c"),
     )
-    q.ce.included_qualifications.add(q.c)
-    q.ce.included_qualifications.add(q.c1e)
+    q.ce.includes.add(q.c)
+    q.ce.includes.add(q.c1e)
 
     return q
 

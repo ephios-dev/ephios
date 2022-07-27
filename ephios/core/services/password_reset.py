@@ -14,7 +14,7 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
         if user is not None:
             text_content = _(
                 "Your password for {site} has been changed. If you didn't request this change, contact an administrator immediately."
-            ).format(site=settings.SITE_URL)
+            ).format(site=settings.GET_SITE_URL())
             html_content = render_to_string("email_base.html", {"message_text": text_content})
             message = EmailMultiAlternatives(
                 to=[user.email],

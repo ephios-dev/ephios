@@ -15,7 +15,6 @@ def manifest(request):
         "start_url": "/",
         "display": "standalone",
         "scope": "/",
-        "orientation": "any",
         "background_color": "#fff",
         "theme_color": "#000",
         "status_bar": "default",

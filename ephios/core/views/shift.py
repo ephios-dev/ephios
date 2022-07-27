@@ -9,13 +9,14 @@ from django.views import View
 from django.views.generic import DeleteView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
-from ephios.core import signup
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
-from ephios.extra.mixins import CustomPermissionRequiredMixin
+from ephios.core.signals import shift_forms
+from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
+from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
-class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
+class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateView):
     permission_required = "core.change_event"
     template_name = "core/shift_form.html"
 
@@ -35,14 +36,21 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
         kwargs.setdefault("configuration_form", "")
         return super().get_context_data(**kwargs)
 
+    def get_plugin_forms(self):
+        return shift_forms.send(
+            sender=None, shift=getattr(self, "object", None), request=self.request
+        )
+
     def post(self, *args, **kwargs):
         form = self.get_shift_form()
-        try:
-            from ephios.core.signup import signup_method_from_slug
+        self.object = form.instance
 
-            signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
-        except KeyError as e:
-            if not list(signup.enabled_signup_methods()):
+        try:
+            signup_method = signup_method_from_slug(
+                self.request.POST["signup_method_slug"], event=self.event
+            )
+        except KeyError:
+            if not list(enabled_signup_methods()):
                 form.add_error(
                     "signup_method_slug",
                     _("You must enable plugins providing signup methods to continue."),
@@ -56,7 +64,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             raise ValidationError(e) from e
         else:
             configuration_form = signup_method.get_configuration_form(self.request.POST)
-            if not all((form.is_valid(), configuration_form.is_valid())):
+            if not all((self.is_valid(form), configuration_form.is_valid())):
                 return self.render_to_response(
                     self.get_context_data(
                         form=form,
@@ -70,6 +78,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             shift.event = self.event
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
+            self.save_plugin_forms()
             if "addAnother" in self.request.POST:
                 return redirect(
                     reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})
@@ -85,15 +94,19 @@ class ShiftCreateView(CustomPermissionRequiredMixin, TemplateView):
             return redirect(self.event.get_absolute_url())
 
 
-class ShiftConfigurationFormView(View):
-    def get(self, request, *args, **kwargs):
-        from ephios.core.signup import signup_method_from_slug
+class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
+    queryset = Event.all_objects
+    permission_required = "core.change_event"
+    pk_url_kwarg = "event_id"
 
-        signup_method = signup_method_from_slug(self.kwargs.get("slug"))
+    def get(self, request, *args, **kwargs):
+        signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
         return HttpResponse(signup_method.render_configuration_form())
 
 
-class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class ShiftUpdateView(
+    CustomPermissionRequiredMixin, PluginFormMixin, SingleObjectMixin, TemplateView
+):
     model = Shift
     template_name = "core/shift_form.html"
     permission_required = "core.change_event"
@@ -123,20 +136,25 @@ class ShiftUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Template
         kwargs.setdefault("configuration_form", self.get_configuration_form())
         return super().get_context_data(**kwargs)
 
+    def get_plugin_forms(self):
+        return shift_forms.send(sender=None, shift=self.object, request=self.request)
+
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-        try:
-            from ephios.core.signup import signup_method_from_slug
 
-            signup_method = signup_method_from_slug(self.request.POST["signup_method_slug"])
+        try:
+            signup_method = signup_method_from_slug(
+                self.request.POST["signup_method_slug"], shift=self.object
+            )
             configuration_form = signup_method.get_configuration_form(self.request.POST)
         except ValueError as e:
             raise ValidationError(e) from e
-        if form.is_valid() and configuration_form.is_valid():
+        if all([self.is_valid(form), configuration_form.is_valid()]):
             shift = form.save(commit=False)
             shift.signup_configuration = configuration_form.cleaned_data
             shift.save()
+            self.save_plugin_forms()
             if "addAnother" in self.request.POST:
                 return redirect(reverse("core:event_createshift", kwargs={"pk": shift.event.pk}))
             messages.success(
@@ -159,11 +177,11 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         if self.object.event.shifts.count() == 1:
             messages.error(self.request, _("You cannot delete the last shift!"))
             return redirect(self.object.event.get_absolute_url())
-        return super().delete(request, *args, **kwargs)
+        return super().form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, _("The shift has been deleted."))

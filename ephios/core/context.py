@@ -1,14 +1,16 @@
-import importlib
+try:
+    import importlib_metadata  # importlib is broken on python3.8, using backport
+except ImportError:
+    import importlib.metadata as importlib_metadata
 
 from django.conf import settings
-from django.templatetags.static import static
 from django.utils.translation import get_language
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signals import footer_link
+from ephios.core.signals import footer_link, nav_link
 
 # suggested in https://github.com/python-poetry/poetry/issues/273
-EPHIOS_VERSION = "v" + importlib.metadata.version("ephios")
+EPHIOS_VERSION = "v" + importlib_metadata.version("ephios")
 
 
 def ephios_base_context(request):
@@ -17,15 +19,16 @@ def ephios_base_context(request):
         for label, url in result.items():
             footer[label] = url
 
-    datatables_translation_url = None
-    if get_language() == "de-de":
-        datatables_translation_url = static("datatables/german.json")
+    nav = []
+    for _, result in nav_link.send(None, request=request):
+        nav += result
 
     return {
         "ParticipationStates": AbstractParticipation.States,
+        "nav": nav,
         "footer": footer,
-        "datatables_translation_url": datatables_translation_url,
+        "LANGUAGE_CODE": get_language(),
         "ephios_version": EPHIOS_VERSION,
-        "SITE_URL": settings.SITE_URL,
+        "SITE_URL": settings.GET_SITE_URL(),
         "PWA_APP_ICONS": settings.PWA_APP_ICONS,
     }

@@ -1,0 +1,221 @@
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.container-main {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-flow: column;
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  height: 60px;
+  margin-top: 2rem;
+}
+
+.btn-disabled {
+  pointer-events: none;
+}
+
+.btn-consequence {
+  width: 31px;
+}
+
+.twoColumns {
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+}
+
+.break-word {
+  word-break: break-word;
+}
+
+.consequence-list {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.event-list-status-icon {
+  min-width: 28px;
+}
+
+.tooltip-inner {
+  text-align: left;
+}
+
+.unloading {
+  transition: filter 0.5s;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+#unloading-spinner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -38vh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+}
+
+
+/* mannequins */
+
+.mannequin {
+  border-radius: $card-border-radius;
+  border: $card-border-width solid;
+  display: inline;
+  aspect-ratio: 1;
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+}
+
+.mannequin-neutral {
+  background: $gray-200;
+  border-color: $gray-500;
+}
+
+.mannequin-confirmed {
+  background: #e0ffec;
+  border-color: #006627;
+}
+
+.mannequin-requested {
+  background: #fef6cd;
+  border-color: #aa8409;
+}
+
+.mannequin-denied {
+  background: #232c32;
+  border-color: #0000;
+}
+
+/* Make the event list item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
+@media (min-width: 992px) {
+  .event-list-item-link {
+    pointer-events: none;
+  }
+
+  .event-list-item-button {
+    pointer-events: auto;
+  }
+}
+
+.event-list-item-link {
+  text-decoration: none;
+}
+
+/* event list layout */
+
+.event-list-item-link {
+  .grid-wrapper {
+    display: grid;
+    grid-column-gap: 0.5rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "title batch"
+      "title signup"
+      "time signup";
+  }
+
+  .grid-title {
+    grid-area: title;
+  }
+
+  .grid-time {
+    grid-area: time;
+  }
+
+  .grid-batch {
+    grid-area: batch;
+    justify-self: end;
+  }
+
+  .grid-signup {
+    grid-area: signup;
+    justify-self: end;
+    align-self: end;
+  }
+
+  .grid-action {
+    grid-area: action;
+  }
+
+
+  @media (min-width: 992px) {
+    .grid-wrapper {
+      grid-template-columns: 6fr auto 8rem 6rem auto;
+      grid-template-rows: auto;
+      grid-template-areas:
+        "title batch time signup action"
+    }
+    .grid-signup {
+      justify-self: center;
+    }
+  }
+}
+
+/*
+When select2s are hidden on page load, they tend to have the wrong size.
+This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220#issuecomment-705855505
+*/
+.select2 {
+  width: 100% !important;
+}
+
+//Pending indicator
+.pending-indicator {
+  position: absolute;
+  top: 15px;
+  left: -5px;
+  z-index: 2;
+  display: block;
+  width: 10px;
+  height: 10px;
+  color: #ffffff;
+  background-image: linear-gradient($yellow-400, $yellow-500);
+  background-clip: padding-box;
+  border-radius: 50%;
+}
+
+// Indicate participations of minors with a warning right border, though explanation must be available
+.participation-card-minor {
+  border-right: 0.5rem solid $warning;
+  box-sizing: border-box;
+}
+
+// Event Calendar classes
+.table-fixed {
+  table-layout: fixed;
+}
+
+.calendar-row-height {
+  height: 100px;
+}
+
+.calendar-today {
+  background-color: #cbcbcb;
+}
+
+// disable link badges underlining
+a.badge {
+  text-decoration: none;
+}
+
+// show form feedback
+.invalid-feedback {
+  display: block;
+}

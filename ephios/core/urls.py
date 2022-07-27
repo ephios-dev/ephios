@@ -2,7 +2,11 @@ from django.urls import path
 
 from ephios.core import pdf
 from ephios.core.ical import user_event_feed_view
-from ephios.core.signup.disposition import AddUserView, DispositionView
+from ephios.core.signup.disposition import (
+    AddPlaceholderParticipantView,
+    AddUserView,
+    DispositionView,
+)
 from ephios.core.views.accounts import (
     GroupCreateView,
     GroupDeleteView,
@@ -11,8 +15,8 @@ from ephios.core.views.accounts import (
     ProfileView,
     UserProfileCreateView,
     UserProfileDeleteView,
+    UserProfileDetailView,
     UserProfileListView,
-    UserProfileNotificationsView,
     UserProfilePasswordResetView,
     UserProfileUpdateView,
 )
@@ -40,7 +44,11 @@ from ephios.core.views.eventtype import (
 )
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
-from ephios.core.views.settings import GeneralSettingsView
+from ephios.core.views.settings import (
+    InstanceSettingsView,
+    NotificationSettingsView,
+    PasswordChangeSettingsView,
+)
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
     ShiftCreateView,
@@ -51,7 +59,7 @@ from ephios.core.views.signup import LocalUserShiftActionView
 
 app_name = "core"
 urlpatterns = [
-    path("", HomeView.as_view(), name="index"),
+    path("", HomeView.as_view(), name="home"),
     path("events/", current_event_list_view, name="event_list"),
     path(
         "events/<int:pk>/edit/",
@@ -85,7 +93,7 @@ urlpatterns = [
     ),
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
     path(
-        "events/<int:pk>/copy",
+        "events/<int:pk>/copy/",
         EventCopyView.as_view(),
         name="event_copy",
     ),
@@ -105,7 +113,7 @@ urlpatterns = [
         name="event_bulk_delete",
     ),
     path(
-        "shifts/<int:pk>/signup-action/",
+        "shifts/<int:pk>/signup/",
         LocalUserShiftActionView.as_view(),
         name="signup_action",
     ),
@@ -120,7 +128,7 @@ urlpatterns = [
         name="shift_delete",
     ),
     path(
-        "signup_methods/<slug:slug>/configuration_form/",
+        "signup_method_configuration_form/<int:event_id>/<slug:slug>/",
         ShiftConfigurationFormView.as_view(),
         name="signupmethod_configurationform",
     ),
@@ -134,13 +142,28 @@ urlpatterns = [
         AddUserView.as_view(),
         name="shift_disposition_add_user",
     ),
+    path(
+        "shifts/<int:pk>/disposition/add-placeholder/",
+        AddPlaceholderParticipantView.as_view(),
+        name="shift_disposition_add_placeholder",
+    ),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
     path(
-        "extra/rruleoccurrence",
+        "extra/rruleoccurrence/",
         RRuleOccurrenceView.as_view(),
         name="rrule_occurrences",
     ),
-    path("settings/general/", GeneralSettingsView.as_view(), name="settings_general"),
+    path(
+        "settings/notifications/",
+        NotificationSettingsView.as_view(),
+        name="settings_notifications",
+    ),
+    path(
+        "settings/password_change/",
+        PasswordChangeSettingsView.as_view(),
+        name="settings_password_change",
+    ),
+    path("settings/instance/", InstanceSettingsView.as_view(), name="settings_instance"),
     path("settings/eventtypes/", EventTypeListView.as_view(), name="settings_eventtype_list"),
     path(
         "settings/eventtypes/create/",
@@ -158,32 +181,27 @@ urlpatterns = [
         name="settings_eventtype_delete",
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
-    path(
-        "profile/notifications",
-        UserProfileNotificationsView.as_view(),
-        name="profile_notifications",
-    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
-    path("groups/<int:pk>/edit", GroupUpdateView.as_view(), name="group_edit"),
-    path("groups/<int:pk>/delete", GroupDeleteView.as_view(), name="group_delete"),
-    path("groups/create", GroupCreateView.as_view(), name="group_add"),
+    path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
+    path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),
+    path("groups/create/", GroupCreateView.as_view(), name="group_add"),
     path(
         "users/",
         UserProfileListView.as_view(),
         name="userprofile_list",
     ),
     path(
-        "users/<int:pk>/edit",
+        "users/<int:pk>/edit/",
         UserProfileUpdateView.as_view(),
         name="userprofile_edit",
     ),
     path(
-        "users/<int:pk>/delete",
+        "users/<int:pk>/delete/",
         UserProfileDeleteView.as_view(),
         name="userprofile_delete",
     ),
     path(
-        "users/<int:pk>/password_reset",
+        "users/<int:pk>/password_reset/",
         UserProfilePasswordResetView.as_view(),
         name="userprofile_password_reset",
     ),
@@ -193,12 +211,17 @@ urlpatterns = [
         name="userprofile_create",
     ),
     path(
-        "consequences/<int:pk>/edit",
+        "users/<int:pk>/",
+        UserProfileDetailView.as_view(),
+        name="userprofile_detail",
+    ),
+    path(
+        "consequences/<int:pk>/edit/",
         ConsequenceUpdateView.as_view(),
         name="consequence_edit",
     ),
     path(
-        "profile/requestworkinghour",
+        "profile/requestworkinghour/",
         WorkingHourRequestView.as_view(),
         name="request_workinghour",
     ),
@@ -207,7 +230,7 @@ urlpatterns = [
     path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
     path(
-        "events/list_type_setting",
+        "events/list_type_setting/",
         EventListTypeSettingView.as_view(),
         name="event_list_type_setting",
     ),

@@ -26,7 +26,7 @@ class RedirectAuthenticatedUserMixin:
         return super().dispatch(request, *args, **kwargs)
 
     def get_authenticated_url(self):
-        return reverse("core:index")
+        return reverse("core:home")
 
 
 class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
@@ -36,7 +36,7 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
         fields=["email", "first_name", "last_name", "date_of_birth", "phone", "qualifications"],
         widgets={
             "qualifications": Select2MultipleWidget,
-            "date_of_birth": CustomDateInput(format="%Y-%m-%d"),
+            "date_of_birth": CustomDateInput,
         },
     )
 

@@ -13,18 +13,18 @@ def get_groups_with_perms(obj, only_with_perms_in):
 
     if group_model.objects.is_generic():
         group_filters = {
-            "%s__content_type" % group_rel_name: ctype,
-            "%s__object_pk" % group_rel_name: obj.pk,
+            f"{group_rel_name}__content_type": ctype,
+            f"{group_rel_name}__object_pk": obj.pk,
         }
     else:
-        group_filters = {"%s__content_object" % group_rel_name: obj}
+        group_filters = {f"{group_rel_name}__content_object": obj}
 
     permission_ids = Permission.objects.filter(
         content_type=ctype, codename__in=only_with_perms_in
     ).values_list("id", flat=True)
     group_filters.update(
         {
-            "%s__permission_id__in" % group_rel_name: permission_ids,
+            f"{group_rel_name}__permission_id__in": permission_ids,
         }
     )
     return Group.objects.filter(**group_filters).distinct()
@@ -70,8 +70,8 @@ class PermissionFormMixin:
 
     def save(self, commit=True):
         target = super().save(commit)
-        to_remove = list()
-        to_assign = list()
+        to_remove = []
+        to_assign = []
         for key, field in self.fields.items():
             if isinstance(field, PermissionField):
                 if self.cleaned_data[key]:

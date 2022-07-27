@@ -32,9 +32,7 @@ class LogFilterForm(forms.Form):
         required=False,
         label=_("Acting User"),
     )
-    date = forms.DateField(
-        widget=CustomDateInput(format="%Y-%m-%d"), required=False, label=_("Date")
-    )
+    date = forms.DateField(widget=CustomDateInput, required=False, label=_("Date"))
     search = forms.CharField(
         required=False,
         label=_("Contents"),
