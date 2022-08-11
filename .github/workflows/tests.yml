@@ -48,7 +48,7 @@ jobs:
           - database: mysql
             database_url: "mysql://root:root@127.0.0.1:3306/ephios"
           - database: postgres
-            database_url: "psql://user:pass@127.0.0.1:5432/ephios"
+            database_url: "psql://pytest:pass@127.0.0.1:5432"
 
     steps:
     - uses: actions/checkout@v3
@@ -71,13 +71,11 @@ jobs:
         poetry run python manage.py collectstatic
         poetry run python manage.py compilejsi18n
 
-    - name: Setup postgres
-      uses: harmon758/postgresql-action@v1
-      with:
-        postgresql version: '13'  # See https://hub.docker.com/_/postgres for available versions
-        postgresql db: ephios
-        postgresql user: user
-        postgresql password: pass
+    - name: Setup postgres # postgres 14 on ubuntu 22.04
+      run: |
+        sudo systemctl start postgresql.service
+        pg_isready
+        sudo -u postgres psql --command="CREATE USER pytest WITH CREATEDB PASSWORD 'pass'"
       if: matrix.database == 'postgres'
 
     - name: Setup mysql
