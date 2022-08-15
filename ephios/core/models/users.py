@@ -225,7 +225,7 @@ class QualificationManager(models.Manager):
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
-    abbreviation = CharField(max_length=254)
+    abbreviation = CharField(max_length=254, verbose_name=_("Abbreviation"))
     category = ForeignKey(
         QualificationCategory,
         on_delete=models.CASCADE,
@@ -233,7 +233,12 @@ class Qualification(Model):
         verbose_name=_("category"),
     )
     includes = models.ManyToManyField(
-        "self", related_name="included_by", symmetrical=False, blank=True
+        "self",
+        related_name="included_by",
+        verbose_name=_("Included"),
+        help_text=_("other qualifications that this qualification includes"),
+        symmetrical=False,
+        blank=True,
     )
     is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
