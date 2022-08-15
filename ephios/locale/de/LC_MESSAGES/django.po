@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 15:50+0200\n"
+"POT-Creation-Date: 2022-08-15 16:40+0200\n"
 "PO-Revision-Date: 2022-05-30 12:38+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -257,8 +257,8 @@ msgstr "Planung"
 #: ephios/core/templates/core/event_detail.html:28
 #: ephios/core/templates/core/event_form.html:58
 #: ephios/core/templates/core/eventtype_form.html:20
-#: ephios/core/templates/core/settings/general.html:9
-#: ephios/core/templates/core/settings/settings_notifications.html:13
+#: ephios/core/templates/core/settings/settings_instance.html:9
+#: ephios/core/templates/core/settings/settings_notifications.html:17
 #: ephios/core/templates/core/shift_form.html:48
 #: ephios/core/templates/core/userprofile_form.html:109
 #: ephios/plugins/qualification_management/forms.py:121
@@ -447,7 +447,7 @@ msgstr "Telefonnummer"
 msgid "calendar token"
 msgstr "Kalender-Token"
 
-#: ephios/core/models/users.py:109 ephios/core/models/users.py:309
+#: ephios/core/models/users.py:109 ephios/core/models/users.py:314
 msgid "user profile"
 msgstr "Benutzerprofil"
 
@@ -463,67 +463,83 @@ msgstr "Qualifikationskategorie"
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
+#: ephios/core/models/users.py:228
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
+msgid "Abbreviation"
+msgstr "Abkürzung"
+
 #: ephios/core/models/users.py:233
 msgid "category"
 msgstr "Kategorie"
 
 #: ephios/core/models/users.py:238
+#| msgid "Includes"
+msgid "Included"
+msgstr "Enthaltene"
+
+#: ephios/core/models/users.py:239
+#| msgid "There is {count} user with this qualification."
+#| msgid_plural "There are {count} users with this qualification."
+msgid "other qualifications that this qualification includes"
+msgstr "andere Qualifikationen, die in dieser enthalten sind"
+
+#: ephios/core/models/users.py:243
 msgid "imported"
 msgstr "importiert"
 
-#: ephios/core/models/users.py:249 ephios/core/models/users.py:302
+#: ephios/core/models/users.py:254 ephios/core/models/users.py:307
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: ephios/core/models/users.py:250
+#: ephios/core/models/users.py:255
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: ephios/core/models/users.py:311
+#: ephios/core/models/users.py:316
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
-#: ephios/core/models/users.py:321
+#: ephios/core/models/users.py:326
 msgid "Qualification grant"
 msgstr "Qualifikationserteilung"
 
-#: ephios/core/models/users.py:337 ephios/core/models/users.py:445
+#: ephios/core/models/users.py:342 ephios/core/models/users.py:450
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
-#: ephios/core/models/users.py:343
+#: ephios/core/models/users.py:348
 msgid "needs confirmation"
 msgstr "benötigt Bestätigung"
 
-#: ephios/core/models/users.py:344
+#: ephios/core/models/users.py:349
 msgid "executed"
 msgstr "ausgeführt"
 
-#: ephios/core/models/users.py:345
+#: ephios/core/models/users.py:350
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: ephios/core/models/users.py:346
+#: ephios/core/models/users.py:351
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:352
+#: ephios/core/models/users.py:357
 msgid "State"
 msgstr "Status"
 
-#: ephios/core/models/users.py:357
+#: ephios/core/models/users.py:362
 msgid "Consequence"
 msgstr "Konsequenz"
 
-#: ephios/core/models/users.py:373
+#: ephios/core/models/users.py:378
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: ephios/core/models/users.py:387
+#: ephios/core/models/users.py:392
 msgid "Reason"
 msgstr "Anlass"
 
-#: ephios/core/models/users.py:401
+#: ephios/core/models/users.py:406
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
@@ -777,11 +793,11 @@ msgstr ""
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: ephios/core/signup/disposition.py:117
+#: ephios/core/signup/disposition.py:118
 msgid "search"
 msgstr "suchen"
 
-#: ephios/core/signup/disposition.py:141
+#: ephios/core/signup/disposition.py:142
 msgid "This signup method does not support disposition."
 msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 
@@ -1375,14 +1391,6 @@ msgstr "Seite %(page)s von %(of)s (%(count)s Elemente)"
 msgid "%(count)s elements"
 msgstr "%(count)s Elemente"
 
-#: ephios/core/templates/core/settings/password_change_done.html:5
-msgid "Password changed successfully"
-msgstr "Passwort erfolgreich geändert"
-
-#: ephios/core/templates/core/settings/password_change_done.html:6
-msgid "Back to home page"
-msgstr "Zurück zur Startseite"
-
 #: ephios/core/templates/core/settings/password_change_form.html:6
 #: ephios/core/templates/core/settings/settings_base.html:19
 msgid "Change password"
@@ -1403,11 +1411,11 @@ msgid "Personal"
 msgstr "Persönlich"
 
 #: ephios/core/templates/core/settings/settings_base.html:17
-#: ephios/core/templates/core/settings/settings_notifications.html:7
+#: ephios/core/templates/core/settings/settings_notifications.html:11
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:9
+#: ephios/core/templates/core/settings/settings_notifications.html:13
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
@@ -1415,11 +1423,11 @@ msgstr ""
 "Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
 "möchten:"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:16
+#: ephios/core/templates/core/settings/settings_notifications.html:20
 msgid "Push notifications"
 msgstr "Push-Benachrichtigungen"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:18
+#: ephios/core/templates/core/settings/settings_notifications.html:22
 msgid ""
 "You can manage the occasions you want to receive push notificaions for "
 "above. You can manage if you want to receive push notifications on this "
@@ -1736,13 +1744,18 @@ msgstr "ephios-Instanz"
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/views/settings.py:47
+#: ephios/core/views/settings.py:49
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:64
+#: ephios/core/views/settings.py:66
 msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
+
+#: ephios/core/views/settings.py:82
+#| msgid "Password changed successfully"
+msgid "Password changed successfully."
+msgstr "Passwort erfolgreich geändert."
 
 #: ephios/core/views/shift.py:56
 msgid "You must enable plugins providing signup methods to continue."
@@ -2323,8 +2336,8 @@ msgstr "Qualifikation löschen"
 #, python-format
 msgid ""
 "\n"
-"            Are you sure you want to delete the qualification \"%(title)s"
-"\"?\n"
+"            Are you sure you want to delete the qualification "
+"\"%(title)s\"?\n"
 "        "
 msgstr ""
 "\n"
@@ -2371,10 +2384,6 @@ msgstr "Qualifikationen neu zuweisen"
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:23
 msgid "All qualifications"
 msgstr "Alle Qualifikationen"
-
-#: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
-msgid "Abbreviation"
-msgstr "Abkürzung"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:30
 msgid "Category"
@@ -2542,6 +2551,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Back to home page"
+#~ msgstr "Zurück zur Startseite"
 
 #~ msgid "General"
 #~ msgstr "Allgemein"
