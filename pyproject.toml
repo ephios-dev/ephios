@@ -46,7 +46,7 @@ pgsql = ["psycopg2"]
 mysql = ["mysqlclient"]
 redis = ["django-redis"]
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^22.6"
 pre-commit = "^2.20.0"
 django-debug-toolbar = "^3.6"
