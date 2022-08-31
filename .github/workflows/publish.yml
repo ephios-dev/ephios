@@ -12,4 +12,3 @@ jobs:
       uses: JRubics/poetry-publish@v1.10
       with:
         pypi_token: ${{ secrets.PYPI_TOKEN }}
-        allow_poetry_pre_release: "yes"
