@@ -14,8 +14,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-        <h1>{{ shift }}</h1>
+    <div class="page-header text-break pb-3">
+        <h1>{{ shift.event }}</h1>
+        <h3 class="subtitle text-muted">
+            {{ shift.get_datetime_display }}
+        </h3>
     </div>
 
     <form method="post" class="d-none" id="add-user-form"
@@ -117,7 +120,10 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
+        <div class="form-group">
+            <a role="button" class="btn btn-secondary" href="{{ shift.event.get_absolute_url }}">{% trans "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
+        </div>
     </form>
 
 

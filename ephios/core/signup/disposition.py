@@ -91,6 +91,7 @@ def get_disposition_formset(form):
         formset=DispositionBaseModelFormset,
         form=form,
         extra=0,
+        edit_only=True,
         can_order=False,
         can_delete=True,
     )

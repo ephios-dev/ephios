@@ -2,7 +2,7 @@ from django.apps import AppConfig
 from dynamic_preferences.registries import preference_models
 
 
-class UserManagementConfig(AppConfig):
+class CoreAppConfig(AppConfig):
     name = "ephios.core"
 
     def ready(self):

@@ -4,7 +4,6 @@
 {% load i18n %}
 {% load event_extras %}
 {% load utils %}
-visible
 {% block title %}
     {% translate "Events" %}
 {% endblock %}
@@ -100,11 +99,11 @@ visible
                                href="{{ event.get_absolute_url }}">
                                 <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                                     <div class="grid-title">
-                                        <h5 class="mb-0">
+                                        <h5 class="mb-0 text-break">
                                             {{ event.title }}
 
                                         </h5>
-                                        <span class="w-100 text-muted">
+                                        <span class="w-100 text-muted text-break">
                                             {{ event.location }}
                                         </span>
                                     </div>

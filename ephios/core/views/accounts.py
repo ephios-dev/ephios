@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -11,7 +10,6 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    FormView,
     ListView,
     TemplateView,
     UpdateView,
@@ -19,12 +17,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.forms.users import (
-    GroupForm,
-    QualificationGrantFormset,
-    UserNotificationPreferenceForm,
-    UserProfileForm,
-)
+from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
@@ -201,21 +194,6 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
                 )
             return redirect(reverse("core:userprofile_list"))
         return self.render_to_response({"userprofile": self.object})
-
-
-class UserProfileNotificationsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
-    template_name = "core/userprofile_notifications.html"
-    success_message = _("Settings succesfully saved.")
-
-    def get_form(self, form_class=None):
-        return UserNotificationPreferenceForm(self.request.POST or None, user=self.request.user)
-
-    def get_success_url(self):
-        return reverse("core:profile_notifications")
-
-    def form_valid(self, form):
-        form.update_preferences()
-        return super().form_valid(form)
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

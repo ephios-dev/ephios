@@ -83,7 +83,7 @@
                     <ul class="navbar-nav me-auto">
                         {% with url_name=request.resolver_match.url_name %}
                             <li class="nav-item {% if url_name == "index" %}active{% endif %}">
-                                <a class="nav-link" href="{% url "core:index" %}">{% trans "Home" %}</a>
+                                <a class="nav-link" href="{% url "core:home" %}">{% trans "Home" %}</a>
                             </li>
                             <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
                                 <a class="nav-link"
@@ -124,17 +124,10 @@
                                 {{ user.get_full_name }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
-                                {% if user.is_staff %}
-                                    <a class="dropdown-item"
-                                       href="{% url "core:settings_general" %}">{% trans "Administration" %}</a>
-                                    <div class="dropdown-divider"></div>
-                                {% endif %}
                                 <a class="dropdown-item"
                                    href="{% url "core:profile" %}">{% trans "Profile" %}</a>
                                 <a class="dropdown-item"
-                                   href="{% url "core:profile_notifications" %}">{% trans "Notifications" %}</a>
-                                <a class="dropdown-item"
-                                   href="{% url "password_change" %}">{% trans "Change password" %}</a>
+                                   href="{% url "core:settings_notifications" %}">{% trans "Settings" %}</a>
                                 <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
                             </div>
                         </li>

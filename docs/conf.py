@@ -35,6 +35,7 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
     "sphinx_github_changelog",
+    "sphinxcontrib.openapi",
 ]
 gettext_compact = "docs"
 
@@ -67,3 +68,7 @@ environ.Env.read_env(env_file=str(Path(__file__).parent.parent.absolute() / ".en
 import django
 
 django.setup()
+
+from django.core import management
+
+management.call_command("generateschema", ["--file", "api/ephios-open-api-schema.yml"])

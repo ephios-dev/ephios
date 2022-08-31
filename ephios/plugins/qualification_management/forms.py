@@ -169,7 +169,7 @@ class BaseQualificationCategoryFormset(forms.BaseModelFormSet):
             form.fields[DELETION_FIELD_NAME] = forms.BooleanField(
                 label=_("Delete"),
                 required=False,
-                disabled=category.qualifications.exists(),
+                disabled=category.pk and category.qualifications.exists(),
             )
 
 

@@ -27,6 +27,12 @@ class AbstractParticipant:
         today, born = today or date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
+    @property
+    def is_minor(self):
+        if age := self.get_age():
+            return age < 18
+        return False
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 

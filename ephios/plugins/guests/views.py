@@ -26,7 +26,7 @@ class RedirectAuthenticatedUserMixin:
         return super().dispatch(request, *args, **kwargs)
 
     def get_authenticated_url(self):
-        return reverse("core:index")
+        return reverse("core:home")
 
 
 class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
