@@ -13,7 +13,7 @@ function handleGroupForm(ev) {
         slidingOptions.duration = 0
     }
 
-    if (planningGroupCheckbox.is(":checked")) {
+    if (planningGroupCheckbox.is(":checked") && !$("#id_is_management_group").is(":checked")) {
         $(".publish-select").slideDown(slidingOptions);
     } else {
         $(".publish-select").slideUp(slidingOptions);
