@@ -392,15 +392,15 @@ sqlparse = ">=0.2.0"
 
 [[package]]
 name = "django-dynamic-preferences"
-version = "1.13.0"
+version = "1.14.0"
 description = "Dynamic global and instance settings for your django project"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django = ">=2.2"
-persisting-theory = "1.0"
+django = ">=3.2"
+persisting_theory = "1.0"
 six = "*"
 
 [[package]]
@@ -1759,8 +1759,7 @@ django-debug-toolbar = [
     {file = "django_debug_toolbar-3.6.0-py3-none-any.whl", hash = "sha256:fe7fe3f21865218827e2162ecc06eba386dfe8cffe4f3501c49bb4359e06a0e6"},
 ]
 django-dynamic-preferences = [
-    {file = "django-dynamic-preferences-1.13.0.tar.gz", hash = "sha256:b7b13c913b5b6f6e05c880afeae1a91b147a5bc11fb95079151d9cc88b606a50"},
-    {file = "django_dynamic_preferences-1.13.0-py2.py3-none-any.whl", hash = "sha256:0f13d3c05df70366dcf7199fa285c36fdd11c88c99af750b270285ad149ec6d5"},
+    {file = "django-dynamic-preferences-1.14.0.tar.gz", hash = "sha256:c00abcb8d524067390a66518cfcd32683b87ad3cc620d5913649fc7707b80833"},
 ]
 django-environ = [
     {file = "django-environ-0.9.0.tar.gz", hash = "sha256:bff5381533056328c9ac02f71790bd5bf1cea81b1beeb648f28b81c9e83e0a21"},
