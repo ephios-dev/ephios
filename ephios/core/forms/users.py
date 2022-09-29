@@ -31,7 +31,7 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
-MANAGEMENT_PERMISSIONS = [
+CORE_MANAGEMENT_PERMISSIONS = [
     "auth.add_group",
     "auth.change_group",
     "auth.delete_group",
@@ -52,6 +52,7 @@ MANAGEMENT_PERMISSIONS = [
     "core.add_qualification",
     "core.change_qualification",
     "core.delete_qualification",
+    "auth.publish_event_for_group",
     "modellogging.view_logentry",
 ]
 
@@ -118,11 +119,11 @@ class GroupForm(PermissionFormMixin, ModelForm):
         required=False,
     )
     is_management_group = PermissionField(
-        label=_("Can manage ephios"),
+        label=_("Can manage permissions and qualifications"),
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
-        permissions=MANAGEMENT_PERMISSIONS,
+        permissions=CORE_MANAGEMENT_PERMISSIONS,
         required=False,
     )
 

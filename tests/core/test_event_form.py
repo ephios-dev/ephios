@@ -1,7 +1,8 @@
 from datetime import date, time
 
+from django.contrib.auth.models import Group
 from django.urls import reverse
-from guardian.shortcuts import get_users_with_perms
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.extra.permissions import get_groups_with_perms
@@ -83,3 +84,20 @@ def test_participating_users_can_see_otherwise_invisible_event(
 
     # check that we can get (200 OK) the event details as a participant
     assert django_app.get(event.get_absolute_url(), user=volunteer)
+
+
+def test_management_group_can_make_event_visible_for_all_groups(
+    django_app, service_event_type, manager, groups
+):
+    event_form = django_app.get(
+        reverse("core:event_create", kwargs=dict(type=service_event_type.pk)),
+        user=manager,
+    ).form
+    num_groups = Group.objects.count()
+    assert (
+        get_objects_for_user(
+            manager, "publish_event_for_group", klass=Group, accept_global_perms=False
+        ).count()
+        < num_groups
+    )
+    assert num_groups == len(event_form["visible_for"].options)

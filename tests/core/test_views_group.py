@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from guardian.shortcuts import get_group_perms, get_objects_for_group
+from guardian.shortcuts import get_group_perms
 
 
 class TestGroupView:
@@ -103,24 +103,6 @@ class TestGroupView:
         assert "publish_event_for_group" not in get_group_perms(
             group, Group.objects.get(name="Volunteers")
         )
-
-    def test_publish_for_groups_gets_saved_for_non_planner_groups(
-        self, django_app, groups, manager
-    ):
-        managers, planners, volunteers = groups
-        form = django_app.get(
-            reverse("core:group_edit", kwargs={"pk": managers.id}), user=manager
-        ).form
-        form["users"].force_value([manager.id])
-        form["is_planning_group"] = False
-        form["is_management_group"] = True
-        form["is_hr_group"] = False
-        form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-        form.submit().follow()
-        managers.refresh_from_db()
-        assert set(get_objects_for_group(managers, ["publish_event_for_group"], klass=Group)) == {
-            volunteers
-        }
 
     def test_group_delete(self, django_app, groups, manager):
         group = Group(name="Testgroup")
