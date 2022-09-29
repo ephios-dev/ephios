@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-17 23:34+0200\n"
+"POT-Creation-Date: 2022-08-15 16:40+0200\n"
 "PO-Revision-Date: 2022-05-30 12:38+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -451,7 +451,7 @@ msgstr "Telefonnummer"
 msgid "calendar token"
 msgstr "Kalender-Token"
 
-#: ephios/core/models/users.py:109 ephios/core/models/users.py:309
+#: ephios/core/models/users.py:109 ephios/core/models/users.py:314
 msgid "user profile"
 msgstr "Benutzerprofil"
 
@@ -467,67 +467,83 @@ msgstr "Qualifikationskategorie"
 msgid "qualification tracks"
 msgstr "Qualifikationskategorien"
 
+#: ephios/core/models/users.py:228
+#: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
+msgid "Abbreviation"
+msgstr "Abkürzung"
+
 #: ephios/core/models/users.py:233
 msgid "category"
 msgstr "Kategorie"
 
 #: ephios/core/models/users.py:238
+#| msgid "Includes"
+msgid "Included"
+msgstr "Enthaltene"
+
+#: ephios/core/models/users.py:239
+#| msgid "There is {count} user with this qualification."
+#| msgid_plural "There are {count} users with this qualification."
+msgid "other qualifications that this qualification includes"
+msgstr "andere Qualifikationen, die in dieser enthalten sind"
+
+#: ephios/core/models/users.py:243
 msgid "imported"
 msgstr "importiert"
 
-#: ephios/core/models/users.py:249 ephios/core/models/users.py:302
+#: ephios/core/models/users.py:254 ephios/core/models/users.py:307
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: ephios/core/models/users.py:250
+#: ephios/core/models/users.py:255
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: ephios/core/models/users.py:311
+#: ephios/core/models/users.py:316
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
-#: ephios/core/models/users.py:321
+#: ephios/core/models/users.py:326
 msgid "Qualification grant"
 msgstr "Qualifikationserteilung"
 
-#: ephios/core/models/users.py:337 ephios/core/models/users.py:445
+#: ephios/core/models/users.py:342 ephios/core/models/users.py:450
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
-#: ephios/core/models/users.py:343
+#: ephios/core/models/users.py:348
 msgid "needs confirmation"
 msgstr "benötigt Bestätigung"
 
-#: ephios/core/models/users.py:344
+#: ephios/core/models/users.py:349
 msgid "executed"
 msgstr "ausgeführt"
 
-#: ephios/core/models/users.py:345
+#: ephios/core/models/users.py:350
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: ephios/core/models/users.py:346
+#: ephios/core/models/users.py:351
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:352
+#: ephios/core/models/users.py:357
 msgid "State"
 msgstr "Status"
 
-#: ephios/core/models/users.py:357
+#: ephios/core/models/users.py:362
 msgid "Consequence"
 msgstr "Konsequenz"
 
-#: ephios/core/models/users.py:373
+#: ephios/core/models/users.py:378
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: ephios/core/models/users.py:387
+#: ephios/core/models/users.py:392
 msgid "Reason"
 msgstr "Anlass"
 
-#: ephios/core/models/users.py:401
+#: ephios/core/models/users.py:406
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
@@ -781,11 +797,11 @@ msgstr ""
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: ephios/core/signup/disposition.py:117
+#: ephios/core/signup/disposition.py:118
 msgid "search"
 msgstr "suchen"
 
-#: ephios/core/signup/disposition.py:141
+#: ephios/core/signup/disposition.py:142
 msgid "This signup method does not support disposition."
 msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 
@@ -2323,8 +2339,8 @@ msgstr "Qualifikation löschen"
 #, python-format
 msgid ""
 "\n"
-"            Are you sure you want to delete the qualification \"%(title)s"
-"\"?\n"
+"            Are you sure you want to delete the qualification "
+"\"%(title)s\"?\n"
 "        "
 msgstr ""
 "\n"
@@ -2371,10 +2387,6 @@ msgstr "Qualifikationen neu zuweisen"
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:23
 msgid "All qualifications"
 msgstr "Alle Qualifikationen"
-
-#: ephios/plugins/qualification_management/templates/core/qualification_list.html:29
-msgid "Abbreviation"
-msgstr "Abkürzung"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:30
 msgid "Category"

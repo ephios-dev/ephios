@@ -11,7 +11,7 @@ documentation = "https://docs.ephios.de/en/stable/"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Django = ">=4.0,<4.1"
+Django = "^4.1"
 django-environ = "^0.9.0"
 django-guardian = "^2.4.0"
 django-ical = "^1.8.3"
@@ -26,8 +26,8 @@ Markdown = "^3.3.7"
 psycopg2 = {version = "^2.9.3", optional = true}
 mysqlclient = {version = "^2.1.1", optional = true}
 django-redis = {version = "^5.2.0", optional = true}
-django-compressor = "^4.0"
-django-statici18n = "^2.2.0"
+django-compressor = "^4.1"
+django-statici18n = "^2.3.0"
 django-dynamic-preferences = "^1.13.0"
 django-crispy-forms = "^1.14.0"
 django-webpush = "^0.3.4"
@@ -47,19 +47,19 @@ mysql = ["mysqlclient"]
 redis = ["django-redis"]
 
 [tool.poetry.dev-dependencies]
-black = "^22.6"
+black = "^22.8"
 pre-commit = "^2.20.0"
-django-debug-toolbar = "^3.5"
+django-debug-toolbar = "^3.6"
 pytest-django = "^4.5.2"
 django-webtest = "^1.9.9"
-django-extensions = "^3.2.0"
+django-extensions = "^3.2.1"
 coverage = "^6.4"
 coveralls = "^3.3.1"
 django-coverage-plugin = "^2.0.1"
 isort = "^5.10.1"
-pylint = "^2.14.4"
-autoflake = "^1.4"
-Sphinx = "^5.0.2"
+pylint = "^2.15.3"
+autoflake = "^1.6"
+Sphinx = "^5.1.1"
 sphinx-rtd-theme = "^1.0.0"
 sphinx-intl = "^2.0.1"
 sphinx-github-changelog = "^1.2.0"
