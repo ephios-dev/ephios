@@ -93,8 +93,8 @@ DJANGO_SETTINGS_MODULE = "tests.settings"
 addopts = "--fail-on-template-vars"
 
 [build-system]
-requires = ["poetry>=1.2.0", "poetry-dynamic-versioning"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 
 [tool.coverage.run]
