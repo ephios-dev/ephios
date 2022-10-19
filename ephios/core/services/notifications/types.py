@@ -466,6 +466,21 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                     ),
                 )
             )
+        for responsible in get_users_with_perms(
+            event, with_superusers=False, only_with_perms_in=["change_event"]
+        ):
+            notifications.append(
+                Notification(
+                    slug=cls.slug,
+                    user=responsible,
+                    data=dict(
+                        email=responsible.email,
+                        event_id=event.id,
+                        content=content,
+                        event_title=event.title,
+                    ),
+                )
+            )
         Notification.objects.bulk_create(notifications)
 
     @classmethod

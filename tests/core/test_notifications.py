@@ -76,8 +76,7 @@ class TestNotifications:
         ParticipationConfirmedNotification.send(participation)
         ParticipationRejectedNotification.send(participation)
         ResponsibleParticipationRequestedNotification(participation).send()
-        CustomEventParticipantNotification.send(event, "hi")
-        assert Notification.objects.count() == 3 + len(
+        assert Notification.objects.count() == 2 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
         call_command("send_notifications")
@@ -155,3 +154,16 @@ class TestNotifications:
         assert Notification.objects.count() == 2
         call_command("send_notifications")
         assert Notification.objects.count() == 0
+
+    def test_responsibles_receive_custom_notification(
+        self, django_app, qualified_volunteer, planner, event
+    ):
+        self._enable_all_notifications(qualified_volunteer)
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=qualified_volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        CustomEventParticipantNotification.send(event, "test notification")
+        assert planner.has_perm("change_event", event)
+        assert Notification.objects.get(user=planner)

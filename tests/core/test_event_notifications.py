@@ -45,7 +45,9 @@ class TestEventNotifications:
         form["mail_content"] = "hey there"
         response = form.submit()
         assert response.status_code == 302
-        assert Notification.objects.count() == 1
+        assert Notification.objects.count() == 1 + len(
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
+        )
 
     def test_mail_participants_content_required(
         self, django_app, event, volunteer, planner, groups
