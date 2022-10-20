@@ -440,7 +440,7 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-formset-js-improved"
-version = "0.5.0.2"
+version = "0.5.0.3"
 description = "Extend Django formsets with JavaScript"
 category = "main"
 optional = false
@@ -1774,7 +1774,8 @@ django-filter = [
     {file = "django_filter-22.1-py3-none-any.whl", hash = "sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb"},
 ]
 django-formset-js-improved = [
-    {file = "django-formset-js-improved-0.5.0.2.tar.gz", hash = "sha256:251649ca389144728359b57d5845c601b3420fdafa2e4634668de614e14953ce"},
+    {file = "django-formset-js-improved-0.5.0.3.tar.gz", hash = "sha256:6c5a0ffec4fc25ad5f502b914fa6414fb0e43ec5f116a88a2da0090a72f32a4c"},
+    {file = "django_formset_js_improved-0.5.0.3-py3-none-any.whl", hash = "sha256:99ff030c427fe412a8a54c6fadc3809f3d65683470b67f68d1d421ce7a09bb94"},
 ]
 django-guardian = [
     {file = "django-guardian-2.4.0.tar.gz", hash = "sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0"},
