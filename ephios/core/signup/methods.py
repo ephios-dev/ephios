@@ -134,11 +134,12 @@ class BaseParticipationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        start = cleaned_data["individual_start_time"] or self.shift.start_time
-        end = cleaned_data["individual_end_time"] or self.shift.end_time
-        if end < start:
-            self.add_error("individual_end_time", _("End time must not be before start time."))
-        return cleaned_data
+        if not self.errors:
+            start = cleaned_data["individual_start_time"] or self.shift.start_time
+            end = cleaned_data["individual_end_time"] or self.shift.end_time
+            if end < start:
+                self.add_error("individual_end_time", _("End time must not be before start time."))
+            return cleaned_data
 
     class Meta:
         model = AbstractParticipation
