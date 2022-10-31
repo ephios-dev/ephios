@@ -7,10 +7,9 @@ class PluginApp(PluginConfig):
     name = "ephios.plugins.simpleresource"
 
     class EphiosPluginMeta:
-        name = _("Simple Resource Managemennt Plugin")
+        name = _("Simple Resource Management Plugin")
         author = "Ephios Team"
         description = _("This plugins provides a simple resource management system.")
 
     def ready(self):
-        # from . import signals  # pylint: disable=unused-import
-        pass
+        from . import signals  # pylint: disable=unused-import

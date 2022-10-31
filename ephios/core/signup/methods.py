@@ -726,6 +726,9 @@ class BaseSignupMethod:
                 if request.user.has_perm("core.change_event", obj=self.shift.event)
                 else None
             )
+        from ephios.plugins.simpleresource.models import Resource
+
+        kwargs["resources"] = [r.as_resource() for r in Resource.objects.all()]
         return kwargs
 
     def get_participation_display(self):

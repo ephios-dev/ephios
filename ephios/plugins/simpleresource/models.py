@@ -1,5 +1,7 @@
 from django.db import models
 
+from ephios.core.signup import resources
+
 
 class ResourceCategory(models.Model):
     name = models.CharField(max_length=50)
@@ -15,3 +17,6 @@ class Resource(models.Model):
 
     def __str__(self):
         return self.title
+
+    def as_resource(self):
+        return resources.Resource(id=self.id, title=self.title)
