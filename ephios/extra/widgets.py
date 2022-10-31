@@ -1,4 +1,4 @@
-from django.forms import DateInput, MultiWidget, SplitDateTimeWidget, TimeInput
+from django.forms import DateInput, MultiWidget, TimeInput
 from django.forms.utils import to_current_timezone
 from django.forms.widgets import Input
 
@@ -13,10 +13,6 @@ class CustomDateInput(DateInput):
 
 class CustomTimeInput(TimeInput):
     template_name = "extra/widgets/custom_time_input.html"
-
-
-class CustomSplitDateTimeInput(SplitDateTimeWidget):
-    pass
 
 
 class CustomSplitDateTimeWidget(MultiWidget):
