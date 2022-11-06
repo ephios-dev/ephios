@@ -434,8 +434,8 @@ register_model_for_logging(
 
 class WorkingHours(Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    hours = models.DecimalField(decimal_places=2, max_digits=7)
-    reason = models.CharField(max_length=1024, default="")
+    hours = models.DecimalField(decimal_places=2, max_digits=7, verbose_name=_("Hours of work"))
+    reason = models.CharField(max_length=1024, default="", verbose_name=_("Occasion"))
     date = models.DateField()
 
     class Meta:

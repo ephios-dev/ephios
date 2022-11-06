@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load utils %}
+{% load user_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Working hours" %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {% trans "Working hours" %}
+    </h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="card-title">{% translate "Working hours" %}</h5>
+                {% if can_grant %}
+                    <a class="btn btn-outline-primary btn-sm"
+                       href="{% url "core:workinghour_add" userprofile.pk %}">{% translate "Add working hours" %}</a>
+                {% elif own_profile %}
+                    <a class="btn btn-outline-primary btn-sm"
+                       href="{% url "core:workinghour_request" %}">{% translate "Request working hours" %}</a>
+                {% endif %}
+            </div>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% with userprofile|workhour_items as workhour_items %}
+                {% for item in workhour_items.1 %}
+                    <li class="list-group-item flex-column">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <span class="me-1">{{ item.date|date:"SHORT_DATE_FORMAT" }}</span>
+                            <span class="flex-grow-1 me-2 break-word">{{ item.reason }}</span>
+                            <span class="text-nowrap">{{ item.duration|timedelta_in_hours }} {% translate "hours" %}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                <li class="list-group-item flex-column">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <b>{% translate "Total" %}</b>
+                        <span>{{ workhour_items.0|timedelta_in_hours }} {% translate "hours" %}</span>
+                    </div>
+                </li>
+            {% endwith %}
+        </ul>
+    </div>
+{% endblock %}
+
