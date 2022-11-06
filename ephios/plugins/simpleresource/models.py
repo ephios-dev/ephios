@@ -1,6 +1,6 @@
 from django.db import models
 
-from ephios.core.signup import resources
+from ephios.core.models import Shift
 
 
 class ResourceCategory(models.Model):
@@ -18,5 +18,10 @@ class Resource(models.Model):
     def __str__(self):
         return self.title
 
-    def as_resource(self):
-        return resources.Resource(id=self.id, title=self.title)
+
+class ResourceAllocation(models.Model):
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
+    resources = models.ManyToManyField(Resource)
+
+    def __str__(self):
+        return f"Resource allocation for {self.shift}"
