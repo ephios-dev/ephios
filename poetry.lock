@@ -537,11 +537,11 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "django-select2"
-version = "7.11.1"
-description = "Select2 option fields for Django"
+version = "8.0.0"
+description = "This is a Django_ integration of Select2_."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 
 [package.dependencies]
 django = ">=3.2"
@@ -1473,7 +1473,7 @@ redis = ["django-redis"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "8115e3c58eae1f737fd32b1ce9ff1ba207512f1db47fd83da3717434566bac99"
+content-hash = "198c28e30418463662491f9119feededd84fc434cdd337f6f2014431dae03898"
 
 [metadata.files]
 alabaster = [
@@ -1806,8 +1806,8 @@ django-redis = [
     {file = "django_redis-5.2.0-py3-none-any.whl", hash = "sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026"},
 ]
 django-select2 = [
-    {file = "django-select2-7.11.1.tar.gz", hash = "sha256:6c56749ca5dd11be9a78a0861086973170c605ace27126c109f3d722cea3c32e"},
-    {file = "django_select2-7.11.1-py2.py3-none-any.whl", hash = "sha256:e558f79fd932fc9013a9dca5e680412403ad8b8a9b5b09754e97c8ce1849c4e1"},
+    {file = "django-select2-8.0.0.tar.gz", hash = "sha256:0145c9cb34a8c0813f68d7165ed6b034ac03fbdbf145aea203d15ae1653cf7d9"},
+    {file = "django_select2-8.0.0-py3-none-any.whl", hash = "sha256:38e2c91c99f0da07bb43addfa1ac3a2cd6a209154a93edbf4564b9203fa32a4d"},
 ]
 django-statici18n = [
     {file = "django-statici18n-2.3.1.tar.gz", hash = "sha256:00079579035d5b45320830191e2c047f8643b7906307eff9833f0fa95068a603"},
@@ -2081,6 +2081,8 @@ pre-commit = [
 psycopg2 = [
     {file = "psycopg2-2.9.5-cp310-cp310-win32.whl", hash = "sha256:d3ef67e630b0de0779c42912fe2cbae3805ebaba30cda27fea2a3de650a9414f"},
     {file = "psycopg2-2.9.5-cp310-cp310-win_amd64.whl", hash = "sha256:4cb9936316d88bfab614666eb9e32995e794ed0f8f6b3b718666c22819c1d7ee"},
+    {file = "psycopg2-2.9.5-cp311-cp311-win32.whl", hash = "sha256:093e3894d2d3c592ab0945d9eba9d139c139664dcf83a1c440b8a7aa9bb21955"},
+    {file = "psycopg2-2.9.5-cp311-cp311-win_amd64.whl", hash = "sha256:920bf418000dd17669d2904472efeab2b20546efd0548139618f8fa305d1d7ad"},
     {file = "psycopg2-2.9.5-cp36-cp36m-win32.whl", hash = "sha256:b9ac1b0d8ecc49e05e4e182694f418d27f3aedcfca854ebd6c05bb1cffa10d6d"},
     {file = "psycopg2-2.9.5-cp36-cp36m-win_amd64.whl", hash = "sha256:fc04dd5189b90d825509caa510f20d1d504761e78b8dfb95a0ede180f71d50e5"},
     {file = "psycopg2-2.9.5-cp37-cp37m-win32.whl", hash = "sha256:922cc5f0b98a5f2b1ff481f5551b95cd04580fd6f0c72d9b22e6c0145a4840e0"},
