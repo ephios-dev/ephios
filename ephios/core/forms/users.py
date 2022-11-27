@@ -299,7 +299,7 @@ class WorkingHourRequestForm(ModelForm):
             Field("hours"),
             Field("reason"),
             FormActions(
-                Submit("submit", _("Send"), css_class="float-end"),
+                Submit("submit", _("Save"), css_class="float-end"),
             ),
         )
 

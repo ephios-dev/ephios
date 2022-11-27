@@ -4,7 +4,11 @@
 
 {% block title %}
     {% if form.can_grant %}
-        {% translate "Add working hours for" %} {{ form.user }}
+        {% if form.instance %}
+            {% translate "Edit working hours of" %} {{ form.user }}
+        {% else %}
+            {% translate "Add working hours for" %} {{ form.user }}
+        {% endif %}
     {% else %}
         {% translate "Request working hours" %}
     {% endif %}
@@ -13,7 +17,11 @@
 {% block content %}
     <h1 class="page-header">
         {% if form.can_grant %}
-            {% translate "Add working hours for" %} {{ form.user }}
+            {% if form.instance %}
+                {% translate "Edit working hours of" %} {{ form.user }}
+            {% else %}
+                {% translate "Add working hours for" %} {{ form.user }}
+            {% endif %}
         {% else %}
             {% translate "Request working hours" %}
         {% endif %}

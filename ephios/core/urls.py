@@ -60,8 +60,10 @@ from ephios.core.views.workinghour import (
     OwnWorkingHourView,
     UserProfileWorkingHourView,
     WorkingHourCreateView,
+    WorkingHourDeleteView,
     WorkingHourOverview,
     WorkingHourRequestView,
+    WorkingHourUpdateView,
 )
 
 app_name = "core"
@@ -239,13 +241,17 @@ urlpatterns = [
         name="workinghour_request",
     ),
     path("workinghours/", WorkingHourOverview.as_view(), name="workinghour_list"),
+    path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghour_edit"),
     path(
-        "workinghours/<int:pk>/",
+        "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghour_delete"
+    ),
+    path(
+        "workinghours/user/<int:pk>/",
         UserProfileWorkingHourView.as_view(),
         name="workinghour_detail",
     ),
     path(
-        "workinghours/<int:pk>/add/",
+        "workinghours/user/<int:pk>/add/",
         WorkingHourCreateView.as_view(),
         name="workinghour_add",
     ),

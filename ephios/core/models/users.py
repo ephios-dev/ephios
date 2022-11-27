@@ -22,6 +22,7 @@ from django.db.models import (
     Model,
     Q,
     Sum,
+    Value,
 )
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -162,12 +163,14 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 ),
                 date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
+                type=Value("event"),
+                origin_id=F("shift__event__pk"),
             )
-            .values("duration", "date", "reason")
+            .values("duration", "date", "reason", "type", "origin_id")
         )
-        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
-            "duration", "date", "reason"
-        )
+        workinghours = self.workinghours_set.annotate(
+            duration=F("hours"), type=Value("request"), origin_id=F("pk")
+        ).values("duration", "date", "reason", "type", "origin_id")
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
         ) + datetime.timedelta(
@@ -440,6 +443,9 @@ class WorkingHours(Model):
 
     class Meta:
         db_table = "workinghours"
+
+    def __str__(self):
+        return f"{self.hours} hours for {self.user} because of {self.reason} on {self.date}"
 
 
 class Notification(Model):

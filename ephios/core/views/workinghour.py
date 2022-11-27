@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import DetailView, FormView, TemplateView
+from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
 
 from ephios.core.forms.users import WorkingHourRequestForm
-from ephios.core.models import UserProfile
+from ephios.core.models import UserProfile, WorkingHours
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -50,7 +51,7 @@ class UserProfileWorkingHourView(CustomPermissionRequiredMixin, DetailView):
 
 class WorkingHourRequestView(LoginRequiredMixin, FormView):
     form_class = WorkingHourRequestForm
-    template_name = "core/workinghour_form.html"
+    template_name = "core/workinghours_form.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -79,3 +80,28 @@ class WorkingHourCreateView(CustomPermissionRequiredMixin, WorkingHourRequestVie
         workinghour.save()
         messages.success(self.request, _("Working hours have been added."))
         return redirect(reverse("core:workinghour_list"))
+
+
+class WorkingHourUpdateView(CustomPermissionRequiredMixin, UpdateView):
+    permission_required = "core.grant_working_hours"
+    model = WorkingHours
+    form_class = WorkingHourRequestForm
+
+    def get_success_url(self):
+        return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        kwargs["request"] = self.request
+        kwargs["can_grant"] = True
+        return kwargs
+
+
+class WorkingHourDeleteView(CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView):
+    permission_required = "core.grant_working_hours"
+    model = WorkingHours
+    success_message = _("Working hours have been deleted.")
+
+    def get_success_url(self):
+        return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})

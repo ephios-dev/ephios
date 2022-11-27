@@ -31,7 +31,7 @@
                     <li class="list-group-item flex-column">
                         <div class="d-flex w-100 justify-content-between align-items-start">
                             <span class="me-1">{{ item.date|date:"SHORT_DATE_FORMAT" }}</span>
-                            <span class="flex-grow-1 me-2 break-word">{{ item.reason }}</span>
+                            <span class="flex-grow-1 me-2 break-word">{{ item.reason }} {{ item|workinghour_origin_link }}</span>
                             <span class="text-nowrap">{{ item.duration|timedelta_in_hours }} {% translate "hours" %}</span>
                         </div>
                     </li>
