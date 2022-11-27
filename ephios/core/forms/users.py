@@ -300,9 +300,6 @@ class WorkingHourRequestForm(ModelForm):
             Field("reason"),
             FormActions(
                 Submit("submit", _("Send"), css_class="float-end"),
-                AbortLink(href=reverse("core:workinghour_detail", args=[self.user.pk]))
-                if self.can_grant
-                else AbortLink(href=reverse("core:workinghour_own")),
             ),
         )
 
