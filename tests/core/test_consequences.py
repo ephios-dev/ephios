@@ -74,8 +74,8 @@ class TestQualificationConsequence:
 
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
-        form = django_app.get(reverse("core:request_workinghour"), user=volunteer).form
-        form["when"] = datetime.datetime.now().date()
+        form = django_app.get(reverse("core:workinghour_request"), user=volunteer).form
+        form["date"] = datetime.datetime.now().date()
         form["hours"] = 42
         form["reason"] = "testing"
         form.submit()

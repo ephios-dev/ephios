@@ -5,12 +5,12 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Working hours" %}
+    {% trans "Working hours of" %} {{ userprofile }}
 {% endblock %}
 
 {% block content %}
     <h1 class="page-header">
-        {% trans "Working hours" %}
+        {% trans "Working hours of" %} {{ userprofile }}
     </h1>
     <div class="card">
         <div class="card-body">
