@@ -1,14 +1,27 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
+from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.forms.users import WorkingHourRequestForm
 from ephios.core.models import UserProfile, WorkingHours
 from ephios.extra.mixins import CustomPermissionRequiredMixin
+
+
+class WorkingHourPermissionMixin:
+    def setup(self, request, *args, **kwargs):
+        result = super().setup(request, *args, **kwargs)
+        self.target_user = UserProfile.objects.get(pk=self.kwargs["pk"])
+        grant_ids = get_objects_for_user(
+            self.request.user, "decide_workinghours_for_group", klass=Group
+        ).values_list("id", flat=True)
+        self.can_grant = self.target_user.groups.filter(id__in=grant_ids).exists()
+        return result
 
 
 class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
@@ -35,17 +48,22 @@ class OwnWorkingHourView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         kwargs["own_profile"] = True
-        kwargs["can_grant"] = self.request.user.has_perm("core.grant_working_hours")
+        grant_ids = get_objects_for_user(
+            self.request.user, "decide_workinghours_for_group", klass=Group
+        ).values_list("id", flat=True)
+        kwargs["can_grant"] = self.request.user.groups.filter(id__in=grant_ids).exists()
         return super().get_context_data(**kwargs)
 
 
-class UserProfileWorkingHourView(CustomPermissionRequiredMixin, DetailView):
+class UserProfileWorkingHourView(
+    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, DetailView
+):
     model = UserProfile
     permission_required = "core.view_userprofile"
     template_name = "core/userprofile_workinghours.html"
 
     def get_context_data(self, **kwargs):
-        kwargs["can_grant"] = self.request.user.has_perm("core.grant_working_hours")
+        kwargs["can_grant"] = self.can_grant
         return super().get_context_data(**kwargs)
 
 
@@ -65,8 +83,11 @@ class WorkingHourRequestView(LoginRequiredMixin, FormView):
         return redirect(reverse("core:workinghour_own"))
 
 
-class WorkingHourCreateView(CustomPermissionRequiredMixin, WorkingHourRequestView):
-    permission_required = "core.grant_working_hours"
+class WorkingHourCreateView(
+    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, WorkingHourRequestView
+):
+    def has_permission(self):
+        return self.can_grant
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -82,10 +103,12 @@ class WorkingHourCreateView(CustomPermissionRequiredMixin, WorkingHourRequestVie
         return redirect(reverse("core:workinghour_list"))
 
 
-class WorkingHourUpdateView(CustomPermissionRequiredMixin, UpdateView):
-    permission_required = "core.grant_working_hours"
+class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequiredMixin, UpdateView):
     model = WorkingHours
     form_class = WorkingHourRequestForm
+
+    def has_permission(self):
+        return self.can_grant
 
     def get_success_url(self):
         return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})
@@ -98,10 +121,15 @@ class WorkingHourUpdateView(CustomPermissionRequiredMixin, UpdateView):
         return kwargs
 
 
-class WorkingHourDeleteView(CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView):
-    permission_required = "core.grant_working_hours"
+class WorkingHourDeleteView(
+    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView
+):
+    permission_required = "core.decide_workinghours_for_group"
     model = WorkingHours
     success_message = _("Working hours have been deleted.")
+
+    def has_permission(self):
+        return self.can_grant
 
     def get_success_url(self):
         return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})

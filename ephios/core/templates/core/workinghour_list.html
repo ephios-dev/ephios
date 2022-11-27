@@ -32,7 +32,7 @@
                                href="{% url "core:workinghour_detail" userprofile.pk %}"><span
                                     class="fa fa-eye"></span> <span
                                     class="d-none d-md-inline">{% trans "View" %}</span></a>
-                        {% if perms.core.grant_working_hours %}
+                        {% if request.user|can_grant_workinghours_for:userprofile %}
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                                href="{% url "core:workinghour_add" userprofile.pk %}"><span
                                     class="fa fa-plus"></span> <span

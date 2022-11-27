@@ -1,4 +1,5 @@
 from django import template
+from django.contrib.auth.models import Group
 from django.db.models import Count, Q
 from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
@@ -74,3 +75,11 @@ def shifts_needing_disposition(user):
         )
         .filter(request_count__gt=0)
     )
+
+
+@register.filter(name="can_grant_workinghours_for")
+def can_grant_workinghours_for(user, target_user):
+    grant_ids = get_objects_for_user(
+        user, "decide_workinghours_for_group", klass=Group
+    ).values_list("id", flat=True)
+    return target_user.groups.filter(id__in=grant_ids).exists()
