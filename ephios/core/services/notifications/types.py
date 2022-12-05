@@ -340,7 +340,7 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
         )
         if participation.shift.signup_method.uses_requested_state:
             return _(
-                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}"
+                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
             ).format(
                 shift=participation.shift,
                 participant=participation.participant,

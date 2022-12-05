@@ -702,10 +702,10 @@ msgstr "Eine Teilnahme für ihre Veranstaltung wurde angefragt"
 #, python-brace-format
 msgid ""
 "{participant} has requested a participation for {shift}. You can decide "
-"about it at {disposition_url}"
+"about it at {disposition_url}."
 msgstr ""
 "{participant} hat eine Teilnahme an {shift} angefragt. Sie können unter "
-"{disposition_url} über die Teilnahme entscheiden"
+"{disposition_url} über die Teilnahme entscheiden."
 
 #: ephios/core/services/notifications/types.py:349
 #, python-brace-format
