@@ -338,7 +338,10 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        if participation.shift.signup_method.uses_requested_state:
+        if (
+            participation.shift.signup_method.uses_requested_state
+            and participation.state != AbstractParticipation.States.CONFIRMED
+        ):
             return _(
                 "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
             ).format(
