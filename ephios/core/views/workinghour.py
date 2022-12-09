@@ -1,7 +1,12 @@
+import datetime
+from collections import Counter
+from itertools import chain
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import DurationField, ExpressionWrapper, F, Sum
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -9,7 +14,7 @@ from django.views.generic import DeleteView, DetailView, FormView, TemplateView,
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.forms.users import WorkingHourRequestForm
-from ephios.core.models import UserProfile, WorkingHours
+from ephios.core.models import LocalParticipation, UserProfile, WorkingHours
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -29,14 +34,59 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     permission_required = "core.view_userprofile"
 
     def get_context_data(self, **kwargs):
-        kwargs["userprofiles"] = sorted(
-            [
-                (userprofile, userprofile.get_workhour_items())
-                for userprofile in UserProfile.objects.all()
-            ],
-            key=lambda x: x[1][0],
-            reverse=True,
+        today = datetime.datetime.today()
+        year = int(self.request.GET.get("year", today.year))
+        # users = UserProfile.objects.annotate(
+        #     hour_sum=Sum(ExpressionWrapper(
+        #             (F("participations__shift__start_time") - F("participations__shift__end_time")),
+        #             output_field=DurationField(),
+        #         ), filter=Q(participations__state=LocalParticipation.States.CONFIRMED, participations__shift__start_time__year=year)
+        # ))
+        # participations = LocalParticipation.objects.filter(
+        #     state=LocalParticipation.States.CONFIRMED,
+        # ).annotate(duration=ExpressionWrapper(
+        #             (F("end_time") - F("start_time")),
+        #             output_field=DurationField(),
+        #         ),).values("user").annotate(hour_sum=Sum("duration")).values_list("user", "hour_sum")
+        participations = (
+            LocalParticipation.objects.filter(
+                state=LocalParticipation.States.CONFIRMED,
+                start_time__year=year,
+                finished=True,
+            )
+            .annotate(
+                duration=ExpressionWrapper(
+                    (F("end_time") - F("start_time")),
+                    output_field=DurationField(),
+                ),
+            )
+            .annotate(hour_sum=Sum("duration"))
+            .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
         )
+        workinghours = (
+            WorkingHours.objects.filter(date__year=year)
+            .annotate(hour_sum=Sum("hours"))
+            .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
+        )
+        result = {}
+        c = Counter()
+        for user_pk, first_name, last_name, hours in chain(participations, workinghours):
+            current_sum = (
+                hours.total_seconds() / (60 * 60)
+                if isinstance(hours, datetime.timedelta)
+                else float(hours)
+            )
+            c[user_pk] += current_sum
+            result[user_pk] = {
+                "pk": user_pk,
+                "first_name": first_name,
+                "last_name": last_name,
+                "hours": c[user_pk],
+            }
+        kwargs["users"] = sorted(result.values(), key=lambda x: x["hours"], reverse=True)
+        kwargs["year"] = year
+        kwargs["next_year"] = year + 1 if year < today.year else None
+        kwargs["previous_year"] = year - 1
         return super().get_context_data(**kwargs)
 
 
