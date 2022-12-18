@@ -155,7 +155,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         from ephios.core.models import AbstractParticipation
 
         participations = (
-            self.participations.filter(state=AbstractParticipation.States.CONFIRMED)
+            self.participations.filter(state=AbstractParticipation.States.CONFIRMED, finished=True)
             .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),

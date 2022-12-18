@@ -10,8 +10,18 @@
 
 {% block content %}
     <h1 class="page-header">
-        {% trans "Working hours" %}
+        {% trans "Working hours" %} {% trans "in" %} {{ year }}
     </h1>
+    <div class="d-flex justify-content-between">
+        <div>
+            <a class="btn btn-secondary" href="{% url "core:workinghour_list" %}?year={{ previous_year }}"><i class="fa fa-arrow-left"></i> {{ previous_year }}</a>
+        </div>
+        {% if next_year %}
+        <div>
+            <a class="btn btn-secondary" href="{% url "core:workinghour_list" %}?year={{ next_year }}">{{ next_year }} <i class="fa fa-arrow-right"></i></a>
+        </div>
+        {% endif %}
+    </div>
     <table id="userprofile_table" class="table table-striped display">
             <thead>
             <tr>

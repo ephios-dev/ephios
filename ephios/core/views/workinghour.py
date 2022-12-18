@@ -21,12 +21,15 @@ from ephios.extra.mixins import CustomPermissionRequiredMixin
 class WorkingHourPermissionMixin:
     def setup(self, request, *args, **kwargs):
         result = super().setup(request, *args, **kwargs)
-        self.target_user = UserProfile.objects.get(pk=self.kwargs["pk"])
+        self.target_user = self._get_target_user(request, *args, **kwargs)
         grant_ids = get_objects_for_user(
             self.request.user, "decide_workinghours_for_group", klass=Group
         ).values_list("id", flat=True)
         self.can_grant = self.target_user.groups.filter(id__in=grant_ids).exists()
         return result
+
+    def _get_target_user(self, request, *args, **kwargs):
+        return kwargs.get("target_user", UserProfile.objects.get(pk=self.kwargs["pk"]))
 
 
 class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
@@ -152,6 +155,9 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
     model = WorkingHours
     form_class = WorkingHourRequestForm
 
+    def _get_target_user(self, request, *args, **kwargs):
+        return WorkingHours.objects.get(pk=self.kwargs["pk"]).user
+
     def has_permission(self):
         return self.can_grant
 
@@ -160,7 +166,7 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
+        kwargs["user"] = self.target_user
         kwargs["request"] = self.request
         kwargs["can_grant"] = True
         return kwargs
@@ -172,6 +178,9 @@ class WorkingHourDeleteView(
     permission_required = "core.decide_workinghours_for_group"
     model = WorkingHours
     success_message = _("Working hours have been deleted.")
+
+    def _get_target_user(self, request, *args, **kwargs):
+        return WorkingHours.objects.get(pk=self.kwargs["pk"]).user
 
     def has_permission(self):
         return self.can_grant

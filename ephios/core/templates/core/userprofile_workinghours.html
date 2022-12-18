@@ -12,38 +12,49 @@
     <h1 class="page-header">
         {% trans "Working hours of" %} {{ userprofile }}
     </h1>
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="card-title">{% translate "Working hours" %}</h5>
-                {% if can_grant %}
-                    <a class="btn btn-outline-primary btn-sm"
+    {% if can_grant %}
+                    <a class="btn btn-primary"
                        href="{% url "core:workinghour_add" userprofile.pk %}">{% translate "Add working hours" %}</a>
                 {% elif own_profile %}
-                    <a class="btn btn-outline-primary btn-sm"
+                    <a class="btn btn-primary"
                        href="{% url "core:workinghour_request" %}">{% translate "Request working hours" %}</a>
                 {% endif %}
-            </div>
-        </div>
-        <ul class="list-group list-group-flush">
-            {% with userprofile|workhour_items as workhour_items %}
+    <table id="workinghours_table" class="table table-striped display">
+            <thead>
+            <tr>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Reason" %}</th>
+                <th class="d-none d-lg-table-cell">{% trans "Hours" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% with userprofile|workhour_items as workhour_items %}
                 {% for item in workhour_items.1 %}
-                    <li class="list-group-item flex-column">
-                        <div class="d-flex w-100 justify-content-between align-items-start">
-                            <span class="me-1">{{ item.date|date:"SHORT_DATE_FORMAT" }}</span>
-                            <span class="flex-grow-1 me-2 break-word">{{ item.reason }} {% if can_grant %}{{ item|workinghour_origin_link }}{% endif %}</span>
-                            <span class="text-nowrap">{{ item.duration|timedelta_in_hours }} {% translate "hours" %}</span>
-                        </div>
-                    </li>
+                    <tr>
+                        <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
+                        <td class="break-word">{{ item.reason }}</td>
+                        <td class="text-nowrap">{{ item.duration|timedelta_in_hours }} {% translate "hours" %}</td>
+                        <td>
+                            {% if can_grant %}
+                                {% if item.type == "event" %}
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% trans "View event" %}</span></a>
+                                {% else %}
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghour_edit" item.origin_id %}"><span class="fa fa-edit"></span> <span class="d-none d-md-inline">{% trans "Edit" %}</span></a>
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghour_delete" item.origin_id %}"><span class="fa fa-trash"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% endfor %}
-                <li class="list-group-item flex-column">
-                    <div class="d-flex w-100 justify-content-between align-items-center">
-                        <b>{% translate "Total" %}</b>
-                        <span>{{ workhour_items.0|timedelta_in_hours }} {% translate "hours" %}</span>
-                    </div>
-                </li>
+                <tr>
+                    <td><b>{% translate "Total" %}</b></td>
+                    <td></td>
+                    <td>{{ workhour_items.0|timedelta_in_hours }} {% translate "hours" %}</td>
+                    <td></td>
+                </tr>
             {% endwith %}
-        </ul>
-    </div>
+            </tbody>
+    </table>
 {% endblock %}
 
