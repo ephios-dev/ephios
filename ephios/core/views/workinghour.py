@@ -36,18 +36,6 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         today = datetime.datetime.today()
         year = int(self.request.GET.get("year", today.year))
-        # users = UserProfile.objects.annotate(
-        #     hour_sum=Sum(ExpressionWrapper(
-        #             (F("participations__shift__start_time") - F("participations__shift__end_time")),
-        #             output_field=DurationField(),
-        #         ), filter=Q(participations__state=LocalParticipation.States.CONFIRMED, participations__shift__start_time__year=year)
-        # ))
-        # participations = LocalParticipation.objects.filter(
-        #     state=LocalParticipation.States.CONFIRMED,
-        # ).annotate(duration=ExpressionWrapper(
-        #             (F("end_time") - F("start_time")),
-        #             output_field=DurationField(),
-        #         ),).values("user").annotate(hour_sum=Sum("duration")).values_list("user", "hour_sum")
         participations = (
             LocalParticipation.objects.filter(
                 state=LocalParticipation.States.CONFIRMED,
@@ -87,6 +75,13 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
         kwargs["year"] = year
         kwargs["next_year"] = year + 1 if year < today.year else None
         kwargs["previous_year"] = year - 1
+        kwargs["can_grant_for"] = set(
+            get_objects_for_user(self.request.user, "decide_workinghours_for_group", klass=Group)
+        )
+        kwargs["groups_by_user"] = {
+            profile.pk: set(profile.groups.all())
+            for profile in UserProfile.objects.all().prefetch_related("groups")
+        }
         return super().get_context_data(**kwargs)
 
 

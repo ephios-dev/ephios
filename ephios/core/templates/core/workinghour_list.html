@@ -32,12 +32,14 @@
                            href="{% url "core:workinghour_detail" user.pk %}"><span
                                 class="fa fa-eye"></span> <span
                                 class="d-none d-md-inline">{% trans "View" %}</span></a>
-                        {% if request.user|can_grant_workinghours_for:user.pk %}
-                            <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                               href="{% url "core:workinghour_add" user.pk %}"><span
-                                    class="fa fa-plus"></span> <span
-                                    class="d-none d-md-inline">{% trans "Add" %}</span></a>
-                        {% endif %}
+                        {% with groups_by_user|get:user.pk as user_groups %}
+                            {% if can_grant_for|allows_grant_for:user_groups %}
+                                <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                                   href="{% url "core:workinghour_add" user.pk %}"><span
+                                        class="fa fa-plus"></span> <span
+                                        class="d-none d-md-inline">{% trans "Add" %}</span></a>
+                            {% endif %}
+                        {% endwith %}
                     </td>
                 <td></td>
                 </tr>

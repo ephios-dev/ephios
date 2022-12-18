@@ -1,12 +1,11 @@
 from django import template
-from django.contrib.auth.models import Group
 from django.db.models import Count, Q
 from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
-from ephios.core.models import AbstractParticipation, Shift, UserProfile
+from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup.methods import get_conflicting_participations
 
 register = template.Library()
@@ -77,9 +76,6 @@ def shifts_needing_disposition(user):
     )
 
 
-@register.filter(name="can_grant_workinghours_for")
-def can_grant_workinghours_for(user, target_user_pk):
-    grant_ids = get_objects_for_user(
-        user, "decide_workinghours_for_group", klass=Group
-    ).values_list("id", flat=True)
-    return UserProfile.objects.get(pk=target_user_pk).groups.filter(id__in=grant_ids).exists()
+@register.filter(name="allows_grant_for")
+def allows_grant_for(grant_group_ids, user_group_ids):
+    return bool(grant_group_ids & user_group_ids)
