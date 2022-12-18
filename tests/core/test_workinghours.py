@@ -21,7 +21,10 @@ class TestWorkingHours:
         from ephios.core.models import AbstractParticipation, LocalParticipation
 
         LocalParticipation.objects.create(
-            user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+            user=volunteer,
+            shift=event.shifts.first(),
+            state=AbstractParticipation.States.CONFIRMED,
+            finished=True,
         )
         hour_sum, workinghour_list = volunteer.get_workhour_items()
         assert hour_sum == datetime.timedelta(hours=12.5)
