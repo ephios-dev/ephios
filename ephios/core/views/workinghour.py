@@ -1,7 +1,10 @@
 import datetime
 from collections import Counter
+from datetime import date
 from itertools import chain
+from typing import Optional
 
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
@@ -16,6 +19,7 @@ from guardian.shortcuts import get_objects_for_user
 from ephios.core.forms.users import WorkingHourRequestForm
 from ephios.core.models import LocalParticipation, UserProfile, WorkingHours
 from ephios.extra.mixins import CustomPermissionRequiredMixin
+from ephios.extra.widgets import CustomDateInput
 
 
 class WorkingHourPermissionMixin:
@@ -32,18 +36,21 @@ class WorkingHourPermissionMixin:
         return kwargs.get("target_user", UserProfile.objects.get(pk=self.kwargs["pk"]))
 
 
+class DateFilterForm(forms.Form):
+    start = forms.DateField(required=False, label=_("From"), widget=CustomDateInput)
+    end = forms.DateField(required=False, label=_("To"), widget=CustomDateInput)
+
+
 class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     template_name = "core/workinghour_list.html"
     permission_required = "core.view_userprofile"
 
-    def get_context_data(self, **kwargs):
-        today = datetime.datetime.today()
-        year = int(self.request.GET.get("year", today.year))
+    def _get_working_hours_stats(self, start: Optional[date], end: Optional[date]):
         participations = (
             LocalParticipation.objects.filter(
                 state=LocalParticipation.States.CONFIRMED,
-                start_time__year=year,
-                finished=True,
+                start_time__date__gte=start,
+                end_time__date__lte=end,
             )
             .annotate(
                 duration=ExpressionWrapper(
@@ -55,7 +62,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
             .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
         )
         workinghours = (
-            WorkingHours.objects.filter(date__year=year)
+            WorkingHours.objects.filter(date__gte=start, date__lte=end)
             .annotate(hour_sum=Sum("hours"))
             .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
         )
@@ -74,10 +81,24 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
                 "last_name": last_name,
                 "hours": c[user_pk],
             }
-        kwargs["users"] = sorted(result.values(), key=lambda x: x["hours"], reverse=True)
-        kwargs["year"] = year
-        kwargs["next_year"] = year + 1 if year < today.year else None
-        kwargs["previous_year"] = year - 1
+        return sorted(result.values(), key=lambda x: x["hours"], reverse=True)
+
+    def get_context_data(self, **kwargs):
+        filter_form = DateFilterForm(
+            self.request.GET
+            or {
+                # intitial data for initial page laod
+                # (does not use `initial` cause that only works with unbound forms)
+                "start": date.today().replace(month=1, day=1),
+                "end": date.today().replace(month=12, day=31),
+            }
+        )
+        filter_form.is_valid()
+        kwargs["filter_form"] = filter_form
+        kwargs["users"] = self._get_working_hours_stats(
+            start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
+            end=filter_form.cleaned_data.get("end") or date.max,
+        )
         kwargs["can_grant_for"] = set(
             get_objects_for_user(self.request.user, "decide_workinghours_for_group", klass=Group)
         )

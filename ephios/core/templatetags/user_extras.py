@@ -76,6 +76,6 @@ def shifts_needing_disposition(user):
     )
 
 
-@register.filter(name="allows_grant_for")
-def allows_grant_for(grant_group_ids, user_group_ids):
-    return bool(grant_group_ids & user_group_ids)
+@register.filter(name="intersects")
+def intersects(a, b):
+    return bool(set(a) & set(b))
