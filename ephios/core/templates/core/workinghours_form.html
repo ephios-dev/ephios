@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+    {% if form.can_grant %}
+        {% if form.instance.pk %}
+            {% translate "Edit working hours of" %} {{ form.user }}
+        {% else %}
+            {% translate "Add working hours for" %} {{ form.user }}
+        {% endif %}
+    {% else %}
+        {% translate "Request working hours" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {% if form.can_grant %}
+            {% if form.instance.pk %}
+                {% translate "Edit working hours of" %} {{ form.user }}
+            {% else %}
+                {% translate "Add working hours for" %} {{ form.user }}
+            {% endif %}
+        {% else %}
+            {% translate "Request working hours" %}
+        {% endif %}
+    </h1>
+    {% crispy form %}
+{% endblock %}

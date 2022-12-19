@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.forms.users import UserNotificationPreferenceForm
@@ -57,6 +57,22 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsView
 
     def get_success_url(self):
         return reverse("core:settings_instance")
+
+
+class PersonalDataSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateView):
+    template_name = "core/settings/settings_personal_data.html"
+
+    def get_context_data(self, **kwargs):
+        kwargs["userprofile"] = self.request.user
+        return super().get_context_data(**kwargs)
+
+
+class CalendarSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateView):
+    template_name = "core/settings/settings_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        kwargs["userprofile"] = self.request.user
+        return super().get_context_data(**kwargs)
 
 
 class NotificationSettingsView(

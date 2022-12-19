@@ -1,19 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    TemplateView,
-    UpdateView,
-)
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
 
@@ -24,19 +16,6 @@ from ephios.core.services.notifications.types import (
     ProfileUpdateNotification,
 )
 from ephios.extra.mixins import CustomPermissionRequiredMixin
-
-
-class ProfileView(LoginRequiredMixin, DetailView):
-    def get_object(self, queryset=None):
-        return self.request.user
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(own_profile=True, **kwargs)
-
-
-class UserProfileDetailView(CustomPermissionRequiredMixin, DetailView):
-    model = UserProfile
-    permission_required = "core.view_userprofile"
 
 
 class UserProfileListView(CustomPermissionRequiredMixin, ListView):

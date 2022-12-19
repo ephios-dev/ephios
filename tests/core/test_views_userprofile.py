@@ -3,7 +3,6 @@ from collections import OrderedDict
 from datetime import date, datetime
 
 import pytest
-from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
@@ -13,16 +12,12 @@ from ephios.core.services.notifications.types import NewProfileNotification
 
 
 class TestUserProfileView:
-    def test_no_permission_required(self, django_app, volunteer):
-        response = django_app.get(reverse("core:profile"), user=volunteer)
-        assert response.status_code == 200
-
     def test_correct_user_data_displayed(
         self, django_app, superuser, manager, planner, volunteer, responsible_user
     ):
         users = [superuser, manager, planner, volunteer, responsible_user]
         for user in users:
-            response = django_app.get(reverse("core:profile"), user=user)
+            response = django_app.get(reverse("core:settings_personal_data"), user=user)
             assert response.html.find("dd", text=user.first_name)
             assert response.html.find("dd", text=user.last_name)
             assert response.html.find("dd", text=user.email)
@@ -31,15 +26,8 @@ class TestUserProfileView:
             )
             assert response.html.find("dd", text=user.phone)
 
-    def test_view_other_profile(self, django_app, superuser, volunteer, workinghours):
-        response = django_app.get(
-            reverse("core:userprofile_detail", kwargs={"pk": volunteer.id}), user=superuser
-        )
-        assert response.html.find("dd", text=volunteer.email)
-        assert response.html.find("span", text=floatformat(volunteer.get_workhour_items()[0]))
-
     def test_correct_qualifications(self, django_app, qualified_volunteer):
-        response = django_app.get(reverse("core:profile"), user=qualified_volunteer)
+        response = django_app.get(reverse("core:settings_personal_data"), user=qualified_volunteer)
         for q in qualified_volunteer.qualifications:
             assert q.expires is None or response.html.findAll("li", text=re.compile(f"{q.title}"))
 

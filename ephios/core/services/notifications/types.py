@@ -84,7 +84,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_url(cls, notification):
-        return urljoin(settings.GET_SITE_URL(), reverse("core:profile"))
+        return urljoin(settings.GET_SITE_URL(), reverse("core:settings_personal_data"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
