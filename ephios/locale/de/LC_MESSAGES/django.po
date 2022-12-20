@@ -1004,6 +1004,7 @@ msgstr "bis"
 #: ephios/core/templates/core/workinghours_list.html:33
 #: ephios/plugins/pages/templates/pages/page_list.html:11
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:32
+#: ephios/core/templates/core/workinghour_list.html:31
 msgid "Action"
 msgstr "Aktion"
 
@@ -1167,6 +1168,7 @@ msgstr "Sie haben eine nicht gespeicherte Veranstaltung"
 #: ephios/core/templates/core/mails/new_event.html:25
 #: ephios/core/templates/core/workinghours_list.html:46
 #: ephios/plugins/pages/templates/pages/page_list.html:21
+#: ephios/core/templates/core/workinghour_list.html:44
 msgid "View"
 msgstr "Anzeigen"
 
@@ -1472,12 +1474,14 @@ msgstr ""
 #: ephios/core/templates/core/settings/settings_personal_data.html:8
 #: ephios/core/templates/core/userprofile_list.html:24
 #: ephios/core/templates/core/workinghours_list.html:31
+#: ephios/core/templates/core/workinghour_list.html:29
 msgid "First name"
 msgstr "Vorname"
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:10
 #: ephios/core/templates/core/userprofile_list.html:23
 #: ephios/core/templates/core/workinghours_list.html:30
+#: ephios/core/templates/core/workinghour_list.html:28
 msgid "Last name"
 msgstr "Nachname"
 
@@ -1684,10 +1688,14 @@ msgstr "Arbeitsstunden hinzufügen für"
 #: ephios/core/templates/core/workinghours_list.html:14
 #: ephios/core/templates/core/workinghours_list.html:32
 #: ephios/templates/base.html:101 ephios/templates/base.html:132
+#: ephios/core/templates/core/workinghour_list.html:8
+#: ephios/core/templates/core/workinghour_list.html:13
+#: ephios/core/templates/core/workinghour_list.html:30
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
 #: ephios/core/templates/core/workinghours_list.html:52
+#: ephios/core/templates/core/workinghour_list.html:50
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -1838,15 +1846,15 @@ msgstr "Von"
 msgid "To"
 msgstr "Bis"
 
-#: ephios/core/views/workinghour.py:151
+#: ephios/core/views/workinghour.py:151 ephios/core/views/workinghour.py:130
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: ephios/core/views/workinghour.py:171
+#: ephios/core/views/workinghour.py:171 ephios/core/views/workinghour.py:150
 msgid "Working hours have been added."
 msgstr "Arbeitsstunden wurden hinzugefügt."
 
-#: ephios/core/views/workinghour.py:201
+#: ephios/core/views/workinghour.py:201 ephios/core/views/workinghour.py:180
 msgid "Working hours have been deleted."
 msgstr "Arbeitsstunden wurden gelöscht."
 
@@ -2626,8 +2634,19 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#~ msgid "in"
-#~ msgstr "in"
+#: ephios/core/templates/core/workinghour_list.html:13
+msgid "in"
+msgstr "in"
+
+#: ephios/core/templates/core/workinghours_confirm_delete.html:6
+#: ephios/core/templates/core/workinghours_confirm_delete.html:11
+msgid "Delete working hour"
+msgstr "Arbeitsstunden löschen"
+
+#: ephios/core/templates/core/workinghours_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the working hour \"%(workinghours)s\"?"
+msgstr "Möchten Sie die Arbeitsstunden \"%(workinghours)s\" wirklich löschen?"
 
 #~ msgid "Profile"
 #~ msgstr "Benutzerprofil"
