@@ -1692,10 +1692,8 @@ msgid "Add"
 msgstr "Hinzufügen"
 
 #: ephios/core/templates/core/workinghours_list.html:60
-#, fuzzy
-#| msgid "Log entries"
 msgid "No entries"
-msgstr "Änderungseinträge"
+msgstr "Keine Einträge"
 
 #: ephios/core/views/accounts.py:66
 #, python-brace-format
