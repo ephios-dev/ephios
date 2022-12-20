@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-10-07 20:08+0200\n"
 "PO-Revision-Date: 2023-11-08 16:07+0000\n"
-"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -2152,8 +2152,8 @@ msgstr "Passwort zurücksetzen"
 msgid ""
 "Are you sure that you want to send a password reset email to \"%(name)s\"?"
 msgstr ""
-"Sind Sie sicher, dass Sie eine E-Mail zum Zurücksetzen des Passworts an "
-"\"%(name)s\" senden möchten?"
+"Sind Sie sicher, dass Sie eine E-Mail zum Zurücksetzen des Passworts an \""
+"%(name)s\" senden möchten?"
 
 #: ephios/core/templates/core/userprofile_confirm_password_reset.html:20
 #: ephios/core/templates/core/userprofile_form.html:109
@@ -2581,8 +2581,7 @@ msgstr "an andere Schicht gekoppelt"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:23
 msgid "This method mirrors signup from another shift."
-msgstr ""
-"Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
+msgstr "Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:32
 msgid "shift to mirror participation from"
