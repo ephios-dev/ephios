@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-19 00:29+0100\n"
-"PO-Revision-Date: 2022-05-30 12:38+0000\n"
+"POT-Creation-Date: 2022-12-20 17:36+0100\n"
+"PO-Revision-Date: 2022-12-20 13:36+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Weblate 4.15.1-dev\n"
 
 #: ephios/core/consequences.py:35
 #, python-brace-format
@@ -1001,7 +1001,7 @@ msgstr "bis"
 #: ephios/core/templates/core/group_list.html:21
 #: ephios/core/templates/core/userprofile_list.html:30
 #: ephios/core/templates/core/userprofile_workinghours.html:28
-#: ephios/core/templates/core/workinghour_list.html:31
+#: ephios/core/templates/core/workinghours_list.html:33
 #: ephios/plugins/pages/templates/pages/page_list.html:11
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:32
 msgid "Action"
@@ -1165,7 +1165,7 @@ msgstr "Sie haben eine nicht gespeicherte Veranstaltung"
 #: ephios/core/templates/core/home.html:58
 #: ephios/core/templates/core/home.html:103
 #: ephios/core/templates/core/mails/new_event.html:25
-#: ephios/core/templates/core/workinghour_list.html:44
+#: ephios/core/templates/core/workinghours_list.html:46
 #: ephios/plugins/pages/templates/pages/page_list.html:21
 msgid "View"
 msgstr "Anzeigen"
@@ -1359,6 +1359,7 @@ msgid "Concerns"
 msgstr "betrifft"
 
 #: ephios/core/templates/core/logentry_list.html:56
+#: ephios/core/templates/core/workinghours_list.html:24
 msgid "Filter"
 msgstr "Filter"
 
@@ -1420,10 +1421,8 @@ msgstr "Persönlich"
 
 #: ephios/core/templates/core/settings/settings_base.html:17
 #: ephios/core/templates/core/settings/settings_personal_data.html:6
-#, fuzzy
-#| msgid "Personal"
 msgid "Personal data"
-msgstr "Persönlich"
+msgstr "Persönliche Daten"
 
 #: ephios/core/templates/core/settings/settings_base.html:19
 #: ephios/core/templates/core/settings/settings_notifications.html:11
@@ -1432,8 +1431,6 @@ msgstr "Benachrichtigungen"
 
 #: ephios/core/templates/core/settings/settings_base.html:21
 #: ephios/core/templates/core/settings/settings_calendar.html:7
-#, fuzzy
-#| msgid "Calendar feed"
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -1474,13 +1471,13 @@ msgstr ""
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:8
 #: ephios/core/templates/core/userprofile_list.html:24
-#: ephios/core/templates/core/workinghour_list.html:29
+#: ephios/core/templates/core/workinghours_list.html:31
 msgid "First name"
 msgstr "Vorname"
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:10
 #: ephios/core/templates/core/userprofile_list.html:23
-#: ephios/core/templates/core/workinghour_list.html:28
+#: ephios/core/templates/core/workinghours_list.html:30
 msgid "Last name"
 msgstr "Nachname"
 
@@ -1628,23 +1625,17 @@ msgid "Information"
 msgstr "Information"
 
 #: ephios/core/templates/core/userprofile_list.html:47
-#, fuzzy
-#| msgid "Working hours"
 msgid "View working hours"
-msgstr "Arbeitsstunden"
+msgstr "Arbeitsstunden anzeigen"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:8
 #: ephios/core/templates/core/userprofile_workinghours.html:13
-#, fuzzy
-#| msgid "Working hours"
 msgid "Working hours of"
-msgstr "Arbeitsstunden"
+msgstr "Arbeitsstunden für"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:17
-#, fuzzy
-#| msgid "Working hours"
 msgid "Add working hours"
-msgstr "Arbeitsstunden"
+msgstr "Arbeitsstunden hinzufügen"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:20
 #: ephios/core/templates/core/workinghours_form.html:13
@@ -1653,8 +1644,6 @@ msgid "Request working hours"
 msgstr "Arbeitsstunden anfragen"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:27
-#, fuzzy
-#| msgid "hours"
 msgid "Hours"
 msgstr "Stunden"
 
@@ -1664,56 +1653,47 @@ msgid "hours"
 msgstr "Stunden"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:41
-#, fuzzy
-#| msgid "View events"
 msgid "View event"
-msgstr "Veranstaltungen ansehen"
+msgstr "Veranstaltung anzeigen"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:51
 msgid "Total"
 msgstr "Summe"
 
-#: ephios/core/templates/core/workinghour_list.html:8
-#: ephios/core/templates/core/workinghour_list.html:13
-#: ephios/core/templates/core/workinghour_list.html:30
+#: ephios/core/templates/core/workinghours_confirm_delete.html:6
+#: ephios/core/templates/core/workinghours_confirm_delete.html:11
+msgid "Delete working hours"
+msgstr "Arbeitsstunden löschen"
+
+#: ephios/core/templates/core/workinghours_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the working hours \"%(workinghours)s\"?"
+msgstr "Möchten Sie die Arbeitsstunden \"%(workinghours)s\" wirklich löschen?"
+
+#: ephios/core/templates/core/workinghours_form.html:8
+#: ephios/core/templates/core/workinghours_form.html:21
+msgid "Edit working hours of"
+msgstr "Arbeitsstunden bearbeiten für"
+
+#: ephios/core/templates/core/workinghours_form.html:10
+#: ephios/core/templates/core/workinghours_form.html:23
+msgid "Add working hours for"
+msgstr "Arbeitsstunden hinzufügen für"
+
+#: ephios/core/templates/core/workinghours_list.html:9
+#: ephios/core/templates/core/workinghours_list.html:14
+#: ephios/core/templates/core/workinghours_list.html:32
 #: ephios/templates/base.html:101 ephios/templates/base.html:132
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
-#: ephios/core/templates/core/workinghour_list.html:13
-msgid "in"
-msgstr ""
-
-#: ephios/core/templates/core/workinghour_list.html:50
+#: ephios/core/templates/core/workinghours_list.html:52
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
-#: ephios/core/templates/core/workinghours_confirm_delete.html:6
-#: ephios/core/templates/core/workinghours_confirm_delete.html:11
-#, fuzzy
-#| msgid "Request working hours"
-msgid "Delete working hour"
-msgstr "Arbeitsstunden anfragen"
-
-#: ephios/core/templates/core/workinghours_confirm_delete.html:15
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete the group \"%(group)s\"?"
-msgid "Are you sure you want to delete the working hour \"%(workinghours)s\"?"
-msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
-
-#: ephios/core/templates/core/workinghours_form.html:8
-#: ephios/core/templates/core/workinghours_form.html:21
-#, fuzzy
-#| msgid "Request working hours"
-msgid "Edit working hours of"
-msgstr "Arbeitsstunden anfragen"
-
-#: ephios/core/templates/core/workinghours_form.html:10
-#: ephios/core/templates/core/workinghours_form.html:23
-#, fuzzy
-#| msgid "Can decide working hours for groups"
-msgid "Add working hours for"
-msgstr "Kann Arbeitsstunden genehmigen für"
+#: ephios/core/templates/core/workinghours_list.html:60
+msgid "No entries"
+msgstr "Keine Einträge"
 
 #: ephios/core/views/accounts.py:66
 #, python-brace-format
@@ -1850,21 +1830,25 @@ msgstr "Sie können die letzte Schicht nicht löschen!"
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
-#: ephios/core/views/workinghour.py:130
+#: ephios/core/views/workinghour.py:40
+msgid "From"
+msgstr "Von"
+
+#: ephios/core/views/workinghour.py:41
+msgid "To"
+msgstr "Bis"
+
+#: ephios/core/views/workinghour.py:151
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: ephios/core/views/workinghour.py:150
-#, fuzzy
-#| msgid "Working hours"
+#: ephios/core/views/workinghour.py:171
 msgid "Working hours have been added."
-msgstr "Arbeitsstunden"
+msgstr "Arbeitsstunden wurden hinzugefügt."
 
-#: ephios/core/views/workinghour.py:180
-#, fuzzy
-#| msgid "You have been rejected."
+#: ephios/core/views/workinghour.py:201
 msgid "Working hours have been deleted."
-msgstr "Ihre Teilnahme wurde abgelehnt."
+msgstr "Arbeitsstunden wurden gelöscht."
 
 #: ephios/extra/bootstrap.py:13
 msgid "close"
@@ -2641,6 +2625,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "in"
+#~ msgstr "in"
 
 #~ msgid "Profile"
 #~ msgstr "Benutzerprofil"

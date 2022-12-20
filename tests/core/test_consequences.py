@@ -74,7 +74,7 @@ class TestQualificationConsequence:
 
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
-        form = django_app.get(reverse("core:workinghour_request"), user=volunteer).form
+        form = django_app.get(reverse("core:workinghours_request"), user=volunteer).form
         form["date"] = datetime.datetime.now().date()
         form["hours"] = 42
         form["reason"] = "testing"
@@ -86,7 +86,7 @@ class TestWorkingHourConsequence:
             data__reason="testing",
         )
 
-    def test_render_workinghour_consequence(self, workinghours_consequence):
+    def test_render_workinghours_consequence(self, workinghours_consequence):
         assert workinghours_consequence.render()
 
     def test_confirm_workinghours(self, volunteer, superuser, workinghours_consequence):

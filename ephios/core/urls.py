@@ -234,25 +234,25 @@ urlpatterns = [
         EventListTypeSettingView.as_view(),
         name="event_list_type_setting",
     ),
-    path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghour_own"),
+    path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
         "workinghours/own/request/",
         WorkingHourRequestView.as_view(),
-        name="workinghour_request",
+        name="workinghours_request",
     ),
-    path("workinghours/", WorkingHourOverview.as_view(), name="workinghour_list"),
-    path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghour_edit"),
+    path("workinghours/", WorkingHourOverview.as_view(), name="workinghours_list"),
+    path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghours_edit"),
     path(
-        "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghour_delete"
+        "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghours_delete"
     ),
     path(
         "workinghours/user/<int:pk>/",
         UserProfileWorkingHourView.as_view(),
-        name="workinghour_detail",
+        name="workinghours_detail",
     ),
     path(
         "workinghours/user/<int:pk>/add/",
         WorkingHourCreateView.as_view(),
-        name="workinghour_add",
+        name="workinghours_add",
     ),
 ]
