@@ -11,7 +11,6 @@ class ResourceCategory(models.Model):
 
 
 class Resource(models.Model):
-    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     category = models.ForeignKey(ResourceCategory, on_delete=models.CASCADE)
 

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Resource categories" %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% translate "Resource categories" %}</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{% translate "Name" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in resourcecategory_list %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>
+                        <a href="">{% translate "Edit" %}</a>
+                        <a href="">{% translate "Delete" %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
