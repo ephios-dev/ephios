@@ -42,7 +42,7 @@ class DateFilterForm(forms.Form):
 
 
 class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
-    template_name = "core/workinghour_list.html"
+    template_name = "core/workinghours_list.html"
     permission_required = "core.view_userprofile"
 
     def _get_working_hours_stats(self, start: Optional[date], end: Optional[date]):
@@ -149,7 +149,7 @@ class WorkingHourRequestView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         form.create_consequence()
         messages.success(self.request, _("Your request has been submitted."))
-        return redirect(reverse("core:workinghour_own"))
+        return redirect(reverse("core:workinghours_own"))
 
 
 class WorkingHourCreateView(
@@ -169,7 +169,7 @@ class WorkingHourCreateView(
         workinghour.user = form.user
         workinghour.save()
         messages.success(self.request, _("Working hours have been added."))
-        return redirect(reverse("core:workinghour_list"))
+        return redirect(reverse("core:workinghours_list"))
 
 
 class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequiredMixin, UpdateView):
@@ -183,7 +183,7 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
         return self.can_grant
 
     def get_success_url(self):
-        return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})
+        return reverse("core:workinghours_detail", kwargs={"pk": self.object.user.pk})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -207,4 +207,4 @@ class WorkingHourDeleteView(
         return self.can_grant
 
     def get_success_url(self):
-        return reverse("core:workinghour_detail", kwargs={"pk": self.object.user.pk})
+        return reverse("core:workinghours_detail", kwargs={"pk": self.object.user.pk})

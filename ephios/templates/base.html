@@ -98,7 +98,7 @@
                             {% if perms.core.view_userprofile %}
                                 <li class="nav-item {% if url_name == "workinghours_list" %}active{% endif %}">
                                     <a class="nav-link"
-                                       href="{% url "core:workinghour_list" %}">{% trans "Working hours" %}</a>
+                                       href="{% url "core:workinghours_list" %}">{% trans "Working hours" %}</a>
                                 </li>
                                 <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
                                     <a class="nav-link"
@@ -129,7 +129,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
                                 <a class="dropdown-item"
-                                   href="{% url "core:workinghour_own" %}">{% trans "Working hours" %}</a>
+                                   href="{% url "core:workinghours_own" %}">{% trans "Working hours" %}</a>
                                 <a class="dropdown-item"
                                    href="{% url "core:settings_personal_data" %}">{% trans "Settings" %}</a>
                                 <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
