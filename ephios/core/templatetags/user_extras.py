@@ -74,3 +74,8 @@ def shifts_needing_disposition(user):
         )
         .filter(request_count__gt=0)
     )
+
+
+@register.filter(name="intersects")
+def intersects(a, b):
+    return bool(set(a) & set(b))

@@ -147,7 +147,7 @@ def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers.user_set.add(superuser)
     managers.user_set.add(manager)
     planners.user_set.add(superuser, planner)
-    volunteers.user_set.add(superuser, planner, volunteer, qualified_volunteer)
+    volunteers.user_set.add(planner, volunteer, qualified_volunteer)
 
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
@@ -387,11 +387,12 @@ def workinghours_consequence(volunteer):
 
 @pytest.fixture
 def workinghours(volunteer):
+    today = datetime.today()
     return [
         WorkingHours.objects.create(
-            user=volunteer, hours=21, reason="Lager aufräumen", date=date(2020, 1, 1)
+            user=volunteer, hours=21, reason="Lager aufräumen", date=date(today.year - 1, 1, 1)
         ),
         WorkingHours.objects.create(
-            user=volunteer, hours=21, reason="RTW checken", date=date(2021, 1, 1)
+            user=volunteer, hours=21, reason="RTW checken", date=date(today.year, 1, 1)
         ),
     ]
