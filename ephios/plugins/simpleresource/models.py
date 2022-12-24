@@ -20,7 +20,7 @@ class Resource(models.Model):
 
 class ResourceAllocation(models.Model):
     shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
-    resources = models.ManyToManyField(Resource)
+    resources = models.ManyToManyField(Resource, blank=True)
 
     def __str__(self):
         return f"Resource allocation for {self.shift}"

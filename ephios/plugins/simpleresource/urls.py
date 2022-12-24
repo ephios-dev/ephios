@@ -1,12 +1,32 @@
 from django.urls import path
 
-from ephios.plugins.simpleresource.views import ResourceCategoryListView
+from ephios.plugins.simpleresource.views import (
+    ResourceCreateView,
+    ResourceDeleteView,
+    ResourceListView,
+    ResourceUpdateView,
+)
 
 app_name = "simpleresource"
 urlpatterns = [
     path(
-        "resource_management/categories/",
-        ResourceCategoryListView.as_view(),
-        name="resourcecategory_list",
+        "resources/",
+        ResourceListView.as_view(),
+        name="resource_list",
+    ),
+    path(
+        "resources/add/",
+        ResourceCreateView.as_view(),
+        name="resource_add",
+    ),
+    path(
+        "resources/<int:pk>/edit/",
+        ResourceUpdateView.as_view(),
+        name="resource_edit",
+    ),
+    path(
+        "resources/<int:pk>/delete/",
+        ResourceDeleteView.as_view(),
+        name="resource_delete",
     ),
 ]
