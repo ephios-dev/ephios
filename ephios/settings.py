@@ -79,7 +79,7 @@ CORE_PLUGINS = [
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
-    PLUGINS.append(ep.module)
+    PLUGINS.append(ep.value)
 
 INSTALLED_APPS += PLUGINS
 
