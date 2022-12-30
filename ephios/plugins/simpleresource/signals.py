@@ -1,7 +1,6 @@
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _
 
 from ephios.core.signals import nav_link, shift_forms, shift_info
 from ephios.plugins.simpleresource.forms import ResourceAllocationForm
@@ -13,23 +12,26 @@ def display_shift_resources(shift, request, **kwargs):
     try:
         allocation = ResourceAllocation.objects.get(shift=shift)
         if allocation.resources.exists():
-            html = f"<span>{_('Allocated resources:')} "
-            html += ", ".join(allocation.resources.values_list("title", flat=True))
-            html += "</span>"
-            return mark_safe(html)
+            return render_to_string(
+                "simpleresource/resource_allocations.html", {"allocation": allocation}, request
+            )
     except ResourceAllocation.DoesNotExist:
         pass
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.simpleresource.signals.nav_link")
 def add_nav_link(sender, request, **kwargs):
-    return [
-        {
-            "label": "Resources",
-            "url": reverse_lazy("simpleresource:resource_list"),
-            "active": request.resolver_match.url_name.startswith("simpleresource"),
-        }
-    ]
+    return (
+        [
+            {
+                "label": "Resources",
+                "url": reverse_lazy("simpleresource:resource_list"),
+                "active": request.resolver_match.url_name.startswith("simpleresource"),
+            }
+        ]
+        if request.user.has_perm("simpleresource.add_resource")
+        else []
+    )
 
 
 @receiver(shift_forms, dispatch_uid="ephios.plugins.simpleresource.signals.shift_forms")

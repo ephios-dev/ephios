@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-20 17:36+0100\n"
+"POT-Creation-Date: 2022-12-30 21:44+0100\n"
 "PO-Revision-Date: 2022-12-20 13:36+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -266,6 +266,7 @@ msgstr "Planung"
 #: ephios/core/templates/core/shift_form.html:48
 #: ephios/core/templates/core/userprofile_form.html:109
 #: ephios/plugins/qualification_management/forms.py:121
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:80
 msgid "Save"
 msgstr "Speichern"
 
@@ -988,6 +989,7 @@ msgstr "Typ"
 #: ephios/plugins/basesignup/signup/section_based.py:99
 #: ephios/plugins/pages/templates/pages/page_list.html:10
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:28
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:19
 msgid "Title"
 msgstr "Titel"
 
@@ -1004,6 +1006,7 @@ msgstr "bis"
 #: ephios/core/templates/core/workinghours_list.html:33
 #: ephios/plugins/pages/templates/pages/page_list.html:11
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:32
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:21
 msgid "Action"
 msgstr "Aktion"
 
@@ -1035,6 +1038,8 @@ msgstr "Möchten Sie die folgenden Veranstaltungen wirklich löschen?"
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:20
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:26
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:85
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:16
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:79
 msgid "Back"
 msgstr "Zurück"
 
@@ -1061,6 +1066,11 @@ msgstr "Zurück"
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:59
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:36
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:72
+#: ephios/plugins/simpleresource/forms.py:37
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:17
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:33
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:33
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:66
 msgid "Delete"
 msgstr "Löschen"
 
@@ -1230,6 +1240,7 @@ msgstr "Veranstaltungstyp hinzufügen"
 #: ephios/core/templates/core/userprofile_workinghours.html:43
 #: ephios/plugins/pages/templates/pages/page_list.html:24
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:56
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:31
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1644,6 +1655,7 @@ msgid "Request working hours"
 msgstr "Arbeitsstunden anfragen"
 
 #: ephios/core/templates/core/userprofile_workinghours.html:27
+#: ephios/core/templates/core/workinghours_list.html:32
 msgid "Hours"
 msgstr "Stunden"
 
@@ -1682,7 +1694,6 @@ msgstr "Arbeitsstunden hinzufügen für"
 
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/core/templates/core/workinghours_list.html:32
 #: ephios/templates/base.html:101 ephios/templates/base.html:132
 msgid "Working hours"
 msgstr "Arbeitsstunden"
@@ -1691,7 +1702,7 @@ msgstr "Arbeitsstunden"
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: ephios/core/templates/core/workinghours_list.html:60
+#: ephios/core/templates/core/workinghours_list.html:59
 msgid "No entries"
 msgstr "Keine Einträge"
 
@@ -2460,6 +2471,7 @@ msgid "All qualifications"
 msgstr "Alle Qualifikationen"
 
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:30
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:20
 msgid "Category"
 msgstr "Kategorie"
 
@@ -2480,6 +2492,7 @@ msgid "cannot delete, has qualifications"
 msgstr "kann nicht löschen, hat Qualifikationen"
 
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:52
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:49
 msgid "Add category"
 msgstr "Kategorie hinzufügen"
 
@@ -2510,6 +2523,82 @@ msgid "One user had '{qualification}' assigned."
 msgid_plural "{count} users had '{qualification}' assigned."
 msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
 msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
+
+#: ephios/plugins/simpleresource/apps.py:10
+msgid "Simple Resource Management Plugin"
+msgstr ""
+
+#: ephios/plugins/simpleresource/apps.py:12
+msgid "This plugins provides a simple resource management system."
+msgstr ""
+
+#: ephios/plugins/simpleresource/forms.py:24
+#, fuzzy
+#| msgid "Required Qualification"
+msgid "Resource allocation"
+msgstr "Erforderliche Qualifikation"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:6
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:11
+#, fuzzy
+#| msgid "Delete group"
+msgid "Delete resource"
+msgstr "Gruppe löschen"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:15
+#, fuzzy, python-format
+#| msgid "Are you sure you want to delete the group \"%(group)s\"?"
+msgid "Are you sure you want to delete the resource %(resource)s?"
+msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:7
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:16
+#, fuzzy
+#| msgid "Edit group"
+msgid "Edit resource"
+msgstr "Gruppe bearbeiten"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:9
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:18
+#, fuzzy
+#| msgid "Create new group"
+msgid "Create new resource"
+msgstr "Neue Gruppe erstellen"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:5
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:9
+msgid "Resources"
+msgstr ""
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:12
+#, fuzzy
+#| msgid "Add group"
+msgid "Add resource"
+msgstr "Gruppe hinzufügen"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:14
+#, fuzzy
+#| msgid "Manage categories"
+msgid "Edit categories"
+msgstr "Kategorien bearbeiten"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:9
+#, fuzzy
+#| msgid "Edit qualification categories"
+msgid "Edit resource categories"
+msgstr "Qualifikationskategorien bearbeiten"
+
+#: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:36
+#, fuzzy
+#| msgid "cannot delete, has qualifications"
+msgid "cannot delete, has resources"
+msgstr "kann nicht löschen, hat Qualifikationen"
+
+#: ephios/plugins/simpleresource/views.py:46
+#, fuzzy
+#| msgid "Group \"{group}\" updated successfully."
+msgid "Resource categories updated successfully."
+msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
@@ -2664,9 +2753,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "at most {max}"
 #~ msgstr "höchstens {max}"
-
-#~ msgid "Required Qualification"
-#~ msgstr "Erforderliche Qualifikation"
 
 #~ msgid "You can not sign up for this shift."
 #~ msgstr "Sie können sich für diese Schicht nicht anmelden."
