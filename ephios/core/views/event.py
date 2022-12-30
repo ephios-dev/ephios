@@ -2,11 +2,11 @@ import json
 from calendar import _nextmonth, _prevmonth
 from datetime import datetime, timedelta
 
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import BooleanField, Case, Max, Min, Prefetch, When
-from django.forms import DateField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -22,7 +22,6 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
-    RedirectView,
     TemplateView,
     UpdateView,
 )
@@ -51,6 +50,31 @@ def current_event_list_view(request):
     if request.session.get("event_list_view_type", "list") == "calendar":
         return EventCalendarView.as_view()(request)
     return EventListView.as_view()(request)
+
+
+class EventFilterForm(forms.Form):
+    date = forms.DateField(label=_("Date"))
+    date_mode = forms.ChoiceField(
+        label=_("Date mode"),
+        choices=[
+            ("before", _("before")),
+            ("after", _("after")),
+        ],
+        initial="after",
+    )
+    event_type = forms.ModelMultipleChoiceField(
+        queryset=EventType.objects.all(),
+        label=EventType._meta.verbose_name,
+    )
+    participation_states = forms.ChoiceField(
+        label=_("Participation"),
+        choices=[  # events only have aggregated participation state, so we pick some useful ones
+            ("all", _("all")),
+            ("none", _("no response")),
+            ("confirmed", _("confirmed")),
+            ("requested-confirmed", _("requested or confirmed")),
+        ],
+    )
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -232,10 +256,10 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     def form_valid(self, form):
         occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=730),  # allow dates up to two years in the future
+            datetime.now() + timedelta(days=7305),  # allow dates up to twenty years in the future
             inc=True,
             dtstart=datetime.combine(
-                DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
+                forms.DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
             ),
         )
         for date in occurrences:
@@ -301,10 +325,11 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
                     recurrence.between(
                         datetime.now() - timedelta(days=1),
                         datetime.now()
-                        + timedelta(days=730),  # allow dates up to two years in the future
+                        + timedelta(days=7305),  # allow dates up to twenty years in the future
                         inc=True,
                         dtstart=datetime.combine(
-                            DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
+                            forms.DateField().to_python(self.request.POST["dtstart"]),
+                            datetime.min.time(),
                         ),
                     ),
                     default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT"),
@@ -341,12 +366,3 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
-
-
-class EventListTypeSettingView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse("core:event_list")
-
-    def post(self, request, *args, **kwargs):
-        request.session["event_list_view_type"] = request.POST.get("event_list_view_type")
-        return self.get(request, *args, **kwargs)

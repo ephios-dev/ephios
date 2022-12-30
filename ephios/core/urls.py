@@ -27,7 +27,6 @@ from ephios.core.views.event import (
     EventCreateView,
     EventDeleteView,
     EventDetailView,
-    EventListTypeSettingView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
@@ -229,11 +228,6 @@ urlpatterns = [
     path("manifest.json", manifest, name="pwa_manifest"),
     path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
-    path(
-        "events/list_type_setting/",
-        EventListTypeSettingView.as_view(),
-        name="event_list_type_setting",
-    ),
     path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
         "workinghours/own/request/",

@@ -10,19 +10,24 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>{% translate "Events" %}
-            <small class="float-end">
-                <form method="post" action="{% url "core:event_list_type_setting" %}">
-                    {% csrf_token %}
+        <form method="GET">
+            <h1>{% translate "Events" %}
+                <small class="float-end">
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-secondary"><span class="fa fa-list"></span></button>
                         <button type="submit" class="btn btn-sm btn-outline-secondary" name="event_list_view_type"
                                 value="calendar"><span class="fa fa-calendar"></span></button>
                     </div>
-                </form>
-            </small>
-        </h1>
+                </small>
+            </h1>
+
+            <div id="filter-form">
+
+            </div>
+
+        </form>
     </div>
+
     <form id="bulk_action_form" method="post">
         {% csrf_token %}
         {% if perms.core.add_event %}
@@ -72,8 +77,8 @@
                                         {% if counter %}
                                      data-bs-toggle="tooltip" data-bs-placement="bottom"
                                      data-bs-html="true"
-                                     title="{% for state in counter %}<div>
-                                         {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                     title="{% for state in counter %}
+                                     <div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                         {% endif %}
                                 >
                                     {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
