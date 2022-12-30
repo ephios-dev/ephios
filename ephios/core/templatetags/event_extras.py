@@ -165,7 +165,7 @@ def event_plugin_content(event, request):
 @register.simple_tag(name="shift_plugin_content")
 def shift_plugin_content(shift, request):
     results = shift_info.send(None, shift=shift, request=request)
-    return [mark_safe(result[1]) for result in results if result[1] is not None]
+    return [result[1] for result in results if result[1] is not None]
 
 
 @register.simple_tag(name="homepage_plugin_content")

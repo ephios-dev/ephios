@@ -7,9 +7,11 @@
 
 {% block content %}
     <h1>{% translate "Resources" %}</h1>
-    {% if perms.simpleresource.add_qualification %}
+    {% if perms.simpleresource.add_resource %}
         <a class="btn btn-primary text-nowrap" href="{% url "simpleresource:resource_add" %}"><span
                                 class="fa fa-plus"></span> <span>{% trans "Add resource" %}</span></a>
+        <a class="btn btn-secondary text-nowrap" href="{% url "simpleresource:resource_categories" %}"><span
+                                class="fa fa-edit"></span> <span>{% trans "Edit categories" %}</span></a>
     {% endif %}
     <table class="table table-striped">
         <thead>

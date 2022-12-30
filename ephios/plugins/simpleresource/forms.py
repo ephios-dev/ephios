@@ -1,9 +1,10 @@
-from django.forms import ModelForm
+from django.forms import BaseModelFormSet, BooleanField, ModelForm, modelformset_factory
+from django.forms.formsets import DELETION_FIELD_NAME
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin
-from ephios.plugins.simpleresource.models import ResourceAllocation
+from ephios.plugins.simpleresource.models import ResourceAllocation, ResourceCategory
 
 
 class ResourceAllocationForm(BasePluginFormMixin, ModelForm):
@@ -24,3 +25,25 @@ class ResourceAllocationForm(BasePluginFormMixin, ModelForm):
 
     def is_function_active(self):
         return bool(self.instance.resources.exists())
+
+
+class BaseResourceCategoryFormset(BaseModelFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        initial_form_count = self.initial_form_count()
+        if self.can_delete and (self.can_delete_extra or index < initial_form_count):
+            category: ResourceCategory = form.instance
+            form.fields[DELETION_FIELD_NAME] = BooleanField(
+                label=_("Delete"),
+                required=False,
+                disabled=category.pk and category.resource_set.exists(),
+            )
+
+
+ResourceCategoryFormset = modelformset_factory(
+    ResourceCategory,
+    formset=BaseResourceCategoryFormset,
+    can_delete=True,
+    extra=0,
+    fields=["name"],
+)

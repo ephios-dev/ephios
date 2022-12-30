@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from ephios.core.signals import nav_link, shift_forms, shift_info
@@ -15,7 +16,7 @@ def display_shift_resources(shift, request, **kwargs):
             html = f"<span>{_('Allocated resources:')} "
             html += ", ".join(allocation.resources.values_list("title", flat=True))
             html += "</span>"
-            return html
+            return mark_safe(html)
     except ResourceAllocation.DoesNotExist:
         pass
 
