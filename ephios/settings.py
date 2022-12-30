@@ -78,7 +78,7 @@ CORE_PLUGINS = [
     "ephios.plugins.eventautoqualification.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
-for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
+for ep in importlib_metadata.entry_points(group="ephios.plugins"):
     PLUGINS.append(ep.value)
 
 INSTALLED_APPS += PLUGINS
