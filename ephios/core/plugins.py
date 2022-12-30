@@ -9,7 +9,7 @@ from dynamic_preferences.signals import preference_updated
 
 logger = logging.getLogger(__name__)
 
-# The plugin mechanics are heavily inspired by pretix (licenced under Apache 2.0) - Check it out!
+# The plugin mechanics are heavily inspired by pretix (then licenced under Apache 2.0) - Check it out!
 
 logger.info("Installed plugins: %s", ", ".join(settings.PLUGINS))
 
