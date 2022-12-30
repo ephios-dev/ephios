@@ -29,7 +29,7 @@
         <tr>
             <th>{% translate "Last name" %}</th>
             <th>{% translate "First name" %}</th>
-            <th class="d-none d-lg-table-cell">{% translate "Working hours" %}</th>
+            <th>{% translate "Hours" %}</th>
             <th>{% translate "Action" %}</th>
         </tr>
         </thead>
@@ -38,7 +38,7 @@
             <tr>
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.first_name }}</td>
-                <td class="d-none d-lg-table-cell">{{ user.hours|floatformat:2 }}</td>
+                <td>{{ user.hours|floatformat:2 }}</td>
                 <td class="d-flex">
                     <a class="btn btn-secondary btn-sm text-nowrap"
                        href="{% url "core:workinghours_detail" user.pk %}"><span
@@ -53,7 +53,6 @@
                         {% endif %}
                     {% endwith %}
                 </td>
-                <td></td>
             </tr>
         {% empty %}
             <tr>
