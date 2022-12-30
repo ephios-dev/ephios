@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2022-12-30 21:44+0100\n"
-"PO-Revision-Date: 2022-12-20 13:36+0000\n"
+"PO-Revision-Date: 2022-12-30 22:56+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2526,79 +2526,60 @@ msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/plugins/simpleresource/apps.py:10
 msgid "Simple Resource Management Plugin"
-msgstr ""
+msgstr "Plugin für grundlegende Ressourcenverwaltung"
 
 #: ephios/plugins/simpleresource/apps.py:12
 msgid "This plugins provides a simple resource management system."
-msgstr ""
+msgstr "Dieses Plugin bietet ein einfaches Ressourcenverwaltungssystem."
 
 #: ephios/plugins/simpleresource/forms.py:24
-#, fuzzy
-#| msgid "Required Qualification"
 msgid "Resource allocation"
-msgstr "Erforderliche Qualifikation"
+msgstr "Ressourcenzuweisung"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:6
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:11
-#, fuzzy
-#| msgid "Delete group"
 msgid "Delete resource"
-msgstr "Gruppe löschen"
+msgstr "Ressource löschen"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:15
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete the group \"%(group)s\"?"
+#, python-format
 msgid "Are you sure you want to delete the resource %(resource)s?"
-msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
+msgstr "Möchten Sie die Ressource %(resource)s wirklich löschen?"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:7
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:16
-#, fuzzy
-#| msgid "Edit group"
 msgid "Edit resource"
-msgstr "Gruppe bearbeiten"
+msgstr "Ressource bearbeiten"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:9
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_form.html:18
-#, fuzzy
-#| msgid "Create new group"
 msgid "Create new resource"
-msgstr "Neue Gruppe erstellen"
+msgstr "Ressource hinzufügen"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:5
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:9
 msgid "Resources"
-msgstr ""
+msgstr "Ressourcen"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:12
-#, fuzzy
-#| msgid "Add group"
 msgid "Add resource"
-msgstr "Gruppe hinzufügen"
+msgstr "Ressource hinzufügen"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:14
-#, fuzzy
-#| msgid "Manage categories"
 msgid "Edit categories"
 msgstr "Kategorien bearbeiten"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:9
-#, fuzzy
-#| msgid "Edit qualification categories"
 msgid "Edit resource categories"
-msgstr "Qualifikationskategorien bearbeiten"
+msgstr "Ressourcenkategorien bearbeiten"
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:36
-#, fuzzy
-#| msgid "cannot delete, has qualifications"
 msgid "cannot delete, has resources"
-msgstr "kann nicht löschen, hat Qualifikationen"
+msgstr "kann nicht löschen, hat Ressourcen"
 
 #: ephios/plugins/simpleresource/views.py:46
-#, fuzzy
-#| msgid "Group \"{group}\" updated successfully."
 msgid "Resource categories updated successfully."
-msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
+msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
