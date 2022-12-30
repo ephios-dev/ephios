@@ -35,7 +35,7 @@
                         <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
                         <td class="break-word">{{ item.reason }}</td>
                         <td class="text-nowrap">{{ item.duration|timedelta_in_hours }} <span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
-                        <td class="d-flex">
+                        <td class="whitespace-nowrap">
                             {% if can_grant %}
                                 {% if item.type == "event" %}
                                     <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% trans "View event" %}</span></a>
