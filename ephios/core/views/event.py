@@ -1,17 +1,18 @@
 import json
 from calendar import _nextmonth, _prevmonth
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import BooleanField, Case, Max, Min, Prefetch, When
+from django.db.models import BooleanField, Case, Max, Min, Prefetch, Q, QuerySet, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
 from django.utils.translation import gettext as _
@@ -44,30 +45,37 @@ from ephios.extra.mixins import (
     PluginFormMixin,
 )
 from ephios.extra.permissions import get_groups_with_perms
-
-
-def current_event_list_view(request):
-    if request.session.get("event_list_view_type", "list") == "calendar":
-        return EventCalendarView.as_view()(request)
-    return EventListView.as_view()(request)
+from ephios.extra.widgets import CustomDateInput
 
 
 class EventFilterForm(forms.Form):
-    date = forms.DateField(label=_("Date"))
-    date_mode = forms.ChoiceField(
-        label=_("Date mode"),
-        choices=[
-            ("before", _("before")),
-            ("after", _("after")),
-        ],
-        initial="after",
+    query = forms.CharField(
+        label=_("Search for…"),
+        widget=forms.TextInput(attrs={"placeholder": _("Search for…"), "autofocus": "autofocus"}),
+        required=False,
     )
-    event_type = forms.ModelMultipleChoiceField(
+    event_types = forms.ModelMultipleChoiceField(
         queryset=EventType.objects.all(),
         label=EventType._meta.verbose_name,
+        required=False,
+    )
+    date_mode = forms.ChoiceField(
+        label=_("Date mode"),
+        required=False,
+        choices=[
+            ("until", _("until")),
+            ("from", _("from")),
+        ],
+        initial="from",
+    )
+    date = forms.DateField(
+        label=_("Date"),
+        required=False,
+        widget=CustomDateInput,
     )
     participation_states = forms.ChoiceField(
         label=_("Participation"),
+        required=False,
         choices=[  # events only have aggregated participation state, so we pick some useful ones
             ("all", _("all")),
             ("none", _("no response")),
@@ -76,12 +84,65 @@ class EventFilterForm(forms.Form):
         ],
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["date"].initial = timezone.now().date()
+
+    def clean_date(self):
+        if not self.cleaned_data["date"]:
+            return timezone.now().date()
+        return self.cleaned_data["date"]
+
+    def filter_events(self, qs: QuerySet[Event]):
+        data = self.cleaned_data
+
+        date = self.cleaned_data["date"]
+        if self.cleaned_data.get("date_mode", "from") == "from":
+            qs = qs.filter(end_time__gte=datetime.combine(date, time.min))
+            qs.order_by("start_time", "end_time")
+        else:  # until
+            qs = qs.filter(start_time__lte=datetime.combine(date, time.max))
+            qs.order_by("-start_time", "-end_time")  # TODO doesn't seem to work?!
+
+        if event_types := self.cleaned_data.get("event_types"):
+            qs = qs.filter(type__in=event_types)
+
+        if query := self.cleaned_data.get("query"):
+            qs.filter(
+                Q(title__icontains=query)
+                | Q(location__icontains=query)
+                | Q(description__icontains=query)
+            )
+
+        # TODO participation state filter
+        return qs
+
+    def filter_shifts(self, qs: QuerySet[Shift]):
+        data = self.cleaned_data
+        # TODO do filtering
+        return qs
+
+    def get_calendar_month(self):
+        "Return, even if the form is invalid, a tuple of year, month for the calendar to show"
+        if self.is_valid() and (date := self.cleaned_data.get("date")):
+            return date.year, date.month
+        now = timezone.now()
+        return now.year, now.month
+
 
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
+    @property
+    def template_name(self):
+        mode = self.request.session.get("event_list_view_mode", "list")
+        # don't want to put the mode in the filename as the value in the session might be invalid
+        if mode == "calendar":
+            return "core/event_calendar.html"
+        return "core/event_list.html"
+
     def get_queryset(self):
-        return (
+        qs = (
             get_objects_for_user(self.request.user, "core.view_event")
             .annotate(
                 start_time=Min("shifts__start_time"),
@@ -97,40 +158,52 @@ class EventListView(LoginRequiredMixin, ListView):
                     output_field=BooleanField(),
                 )
             )
-            .filter(end_time__gte=timezone.now())
             .select_related("type")
             .prefetch_related("shifts")
             .prefetch_related(Prefetch("shifts__participations"))
-            .order_by("start_time")
         )
+        if self.filter_form.is_valid():
+            qs = self.filter_form.filter_events(qs)
+        else:
+            # saveguard for not loading too many events
+            qs = qs.filter(end_time__gte=timezone.now()).order_by("start_time")
+        return qs
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        kwargs.setdefault("eventtypes", EventType.objects.all())
-        return super().get_context_data(**kwargs)
-
-
-class EventCalendarView(LoginRequiredMixin, TemplateView):
-    template_name = "core/event_calendar.html"
+    @cached_property
+    def filter_form(self):
+        return EventFilterForm(data=self.request.GET or None)
 
     def get_context_data(self, **kwargs):
-        today = datetime.today()
-        year = int(self.request.GET.get("year", today.year))
-        month = int(self.request.GET.get("month", today.month))
-        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+        ctx = super().get_context_data(**kwargs)
+        ctx["eventtypes"] = EventType.objects.all()
+        ctx["filter_form"] = self.filter_form
+
+        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar"}:
+            self.request.session["event_list_view_mode"] = new_mode
+        mode = self.request.session.get("event_list_view_mode", "list")
+        ctx["mode"] = mode
+
+        if mode == "calendar":
+            ctx.update(self._get_calendar_context())
+        return ctx
+
+    def _get_calendar_context(self):
         shifts = Shift.objects.filter(
-            event__in=events, start_time__month=month, start_time__year=year
+            event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
         )
+        year, month = self.filter_form.get_calendar_month()
+        shifts = shifts.filter(start_time__year=year, start_time__month=month)
+        if self.filter_form.is_valid():
+            shifts = self.filter_form.filter_shifts(shifts)
         calendar = ShiftCalendar(shifts)
-        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
-        nextyear, nextmonth = _nextmonth(year, month)
-        kwargs.setdefault(
-            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
-        )
+
         prevyear, prevmonth = _prevmonth(year, month)
-        kwargs.setdefault(
-            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
-        )
-        return super().get_context_data(**kwargs)
+        nextyear, nextmonth = _nextmonth(year, month)
+        return {
+            "calendar": mark_safe(calendar.formatmonth(year, month)),
+            "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
+            "next_month_first": datetime.min.replace(year=nextyear, month=nextmonth),
+        }
 
 
 class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):

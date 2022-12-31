@@ -27,11 +27,11 @@ from ephios.core.views.event import (
     EventCreateView,
     EventDeleteView,
     EventDetailView,
+    EventListView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
-    current_event_list_view,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -68,7 +68,7 @@ from ephios.core.views.workinghour import (
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("events/", current_event_list_view, name="event_list"),
+    path("events/", EventListView.as_view(), name="event_list"),
     path(
         "events/<int:pk>/edit/",
         EventUpdateView.as_view(),
