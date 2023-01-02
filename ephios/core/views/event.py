@@ -58,10 +58,12 @@ class EventFilterForm(forms.Form):
         queryset=EventType.objects.all(),
         label=EventType._meta.verbose_name,
         required=False,
-        # widget=forms.CheckboxSelectMultiple,
+        widget=forms.SelectMultiple(
+            attrs={"class": "flex-grow-1 h-0"}
+        ),  # can't set it using cripsy tag
     )
     direction = forms.ChoiceField(
-        label=_("Date mode"),
+        label=_("Date"),
         required=False,
         choices=[
             ("until", _("until")),

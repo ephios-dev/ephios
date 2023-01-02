@@ -35,22 +35,24 @@
             </h1>
 
             <div id="filter-form" class="row collapse {% if filter_form.is_valid %}show{% endif %}">
-                {# TODO: calendar controls - replace date widget with next/prev month buttons #}
-
                 <div class="col-6 col-md-4 col-lg-3">
                     {% crispy_field filter_form.state wrapper_class="div" %}
                     {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
                 </div>
+                {% crispy_field filter_form.types wrapper_class="col-6 col-md-4 col-lg-3 d-flex flex-column" show_labels=True %}
                 <div class="col-6 col-md-4 col-lg-3">
-                    {% crispy_field filter_form.direction show_labels=True %}
-                    {% crispy_field filter_form.date show_labels=False %}
+                    {% if mode != "calendar" %}
+                        {% crispy_field filter_form.direction show_labels=True %}
+                        {% crispy_field filter_form.date show_labels=False %}
+                    {% else %}
+                        {# TODO: calendar controls - replace date widget with next/prev month buttons #}
+                    {% endif %}
                 </div>
-                {% crispy_field filter_form.types wrapper_class="col-6 col-md-4 col-lg-3" show_labels=False %}
-                <div class="mb-3 gap-1 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column ">
+                <div class="mb-3 gap-3 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column justify-content-end justify-content-md-start justify-content-lg-end">
                     <button type="submit" class="btn btn-primary">
-                        <span class="fa fa-funnel"></span> {% translate "Apply Filter" %}
+                        <span class="fa fa-funnel"></span> {% translate "Apply" %}
                     </button>
-                    <a class="btn btn-secondary" href="?">{% translate "Close Filter" %}</a>
+                    <a class="btn btn-secondary" href="?">{% translate "Reset" %}</a>
                 </div>
             </div>
 
@@ -110,6 +112,8 @@
                                          data-bs-html="true"
                                          title="{% for state in counter %}
                                      <div>
+
+
 
 
 
