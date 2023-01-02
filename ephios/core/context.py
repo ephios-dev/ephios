@@ -20,7 +20,7 @@ def ephios_base_context(request):
             footer[label] = url
 
     nav = []
-    for _, result in nav_link.send(None, request=request):
+    for _, result in nav_link.send_robust(None, request=request):
         nav += result
 
     return {

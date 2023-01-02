@@ -26,7 +26,8 @@ def add_nav_link(sender, request, **kwargs):
             {
                 "label": "Resources",
                 "url": reverse_lazy("simpleresource:resource_list"),
-                "active": request.resolver_match.url_name.startswith("simpleresource"),
+                "active": request.resolver_match
+                and request.resolver_match.app_name == "simpleresource",
             }
         ]
         if request.user.has_perm("simpleresource.add_resource")
