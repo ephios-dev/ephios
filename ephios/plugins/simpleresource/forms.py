@@ -56,5 +56,5 @@ ResourceCategoryFormset = modelformset_factory(
     formset=BaseResourceCategoryFormset,
     can_delete=True,
     extra=0,
-    fields=["name"],
+    fields=["name", "icon"],
 )

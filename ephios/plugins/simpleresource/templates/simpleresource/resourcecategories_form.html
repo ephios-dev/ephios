@@ -27,8 +27,11 @@
                             <div class="list-group-item" data-formset-form>
                                 {{ category_form.id }}
                                 <div class="row align-items-center">
-                                    <div class="col-lg-10">
+                                    <div class="col-lg-6">
                                         {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                    </div>
+                                    <div class="col-lg-4">
+                                        {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
                                     </div>
                                     <div class="col-lg-2">
                                         {% if not category_form.fields.DELETE.disabled %}
@@ -61,8 +64,11 @@
                         <div class="list-group-item" data-formset-form>
                             {{ category_form.id }}
                             <div class="row align-items-center">
-                                <div class="col-lg-10">
+                                <div class="col-lg-6">
                                     {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                </div>
+                                <div class="col-lg-4">
+                                    {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
                                 </div>
                                 <div class="col-lg-1">
                                     <button class="btn btn-link" type="button"
