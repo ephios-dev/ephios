@@ -6,7 +6,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import BooleanField, Case, Max, Min, Prefetch, Q, QuerySet, When
+from django.db.models import BooleanField, Case, Count, Max, Min, Prefetch, Q, QuerySet, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -32,7 +32,7 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.calendar import ShiftCalendar
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
-from ephios.core.models import Event, EventType, Shift
+from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
@@ -54,12 +54,12 @@ class EventFilterForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": _("Search for…"), "autofocus": "autofocus"}),
         required=False,
     )
-    event_types = forms.ModelMultipleChoiceField(
+    types = forms.ModelMultipleChoiceField(
         queryset=EventType.objects.all(),
         label=EventType._meta.verbose_name,
         required=False,
     )
-    date_mode = forms.ChoiceField(
+    direction = forms.ChoiceField(
         label=_("Date mode"),
         required=False,
         choices=[
@@ -73,18 +73,20 @@ class EventFilterForm(forms.Form):
         required=False,
         widget=CustomDateInput,
     )
-    participation_states = forms.ChoiceField(
-        label=_("Participation"),
+    state = forms.ChoiceField(
+        label=_("State"),
         required=False,
         choices=[  # events only have aggregated participation state, so we pick some useful ones
-            ("all", _("all")),
-            ("none", _("no response")),
+            (None, _("all")),
+            ("no-response", _("no response")),
             ("confirmed", _("confirmed")),
             ("requested-confirmed", _("requested or confirmed")),
+            ("pending", _("disposition to do")),
         ],
     )
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = timezone.now().date()
 
@@ -94,27 +96,64 @@ class EventFilterForm(forms.Form):
         return self.cleaned_data["date"]
 
     def filter_events(self, qs: QuerySet[Event]):
-        data = self.cleaned_data
+        fdata = self.cleaned_data
 
-        date = self.cleaned_data["date"]
-        if self.cleaned_data.get("date_mode", "from") == "from":
+        date = fdata["date"]
+        if fdata.get("direction", "from") == "from":
             qs = qs.filter(end_time__gte=datetime.combine(date, time.min))
             qs.order_by("start_time", "end_time")
         else:  # until
             qs = qs.filter(start_time__lte=datetime.combine(date, time.max))
             qs.order_by("-start_time", "-end_time")  # TODO doesn't seem to work?!
 
-        if event_types := self.cleaned_data.get("event_types"):
+        if event_types := fdata.get("types"):
             qs = qs.filter(type__in=event_types)
 
-        if query := self.cleaned_data.get("query"):
-            qs.filter(
+        if query := fdata.get("query"):
+            qs = qs.filter(
                 Q(title__icontains=query)
                 | Q(location__icontains=query)
                 | Q(description__icontains=query)
             )
 
-        # TODO participation state filter
+        if state_filter := fdata.get("state"):
+            qs = self._annotate_participation_states(qs)
+            qs = {
+                "confirmed": qs.filter(
+                    **{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0}
+                ),
+                "requested-confirmed": qs.filter(
+                    Q(**{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0})
+                    | Q(**{f"state_{AbstractParticipation.States.REQUESTED}_count__gt": 0})
+                ),
+                "no-response": qs.filter(
+                    **{f"state_{state}_count": 0 for state in AbstractParticipation.States}
+                ),
+                "pending": qs.filter(pending_disposition_count__gt=0),
+            }.get(state_filter, qs)
+
+        return qs
+
+    def _annotate_participation_states(self, qs):
+        qs = qs.annotate(
+            pending_disposition_count=Count(
+                "shifts__participations",
+                filter=Q(
+                    shifts__participations__state=AbstractParticipation.States.REQUESTED,
+                    can_change=True,
+                ),
+            ),
+            **{
+                f"state_{state}_count": Count(
+                    "shifts__participations",
+                    filter=Q(
+                        shifts__participations__localparticipation__user=self.request.user,
+                        shifts__participations__state=state,
+                    ),
+                )
+                for state in AbstractParticipation.States
+            },
+        )
         return qs
 
     def filter_shifts(self, qs: QuerySet[Shift]):
@@ -171,7 +210,7 @@ class EventListView(LoginRequiredMixin, ListView):
 
     @cached_property
     def filter_form(self):
-        return EventFilterForm(data=self.request.GET or None)
+        return EventFilterForm(data=self.request.GET or None, request=self.request)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
