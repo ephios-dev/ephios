@@ -4,8 +4,8 @@ from ephios.core.models import Shift
 
 
 class ResourceCategory(models.Model):
-    name = models.CharField(max_length=50)
-    icon = models.CharField(max_length=50, default="box")
+    name = models.CharField(max_length=50, help_text=" ")
+    icon = models.CharField(max_length=50, default="box", help_text="FontAwesome icon name")
 
     def __str__(self):
         # pylint: disable=invalid-str-returned
