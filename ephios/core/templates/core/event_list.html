@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load crispy_forms_filters %}
 {% load cache %}
 {% load static %}
@@ -29,9 +30,24 @@
                 </small>
             </h1>
 
-            <div id="filter-form">
+            <div id="filter-form" class="row">
                 {# TODO: calendar controls - replace date widget with next/prev month buttons #}
-                {{ filter_form|crispy }}
+
+                <div class="col-6 col-md-4 col-lg-3">
+                    {% crispy_field filter_form.state wrapper_class="div" %}
+                    {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    {% crispy_field filter_form.direction show_labels=True %}
+                    {% crispy_field filter_form.date show_labels=False %}
+                </div>
+                {% crispy_field filter_form.types wrapper_class="col-6 col-md-4 col-lg-3" show_labels=False %}
+                <div class="mb-3 gap-1 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column">
+                    <a class="btn btn-secondary" href="?">{% translate "Clear" %}</a>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="fa fa-funnel"></span> {% translate "Filter" %}
+                    </button>
+                </div>
             </div>
 
         </form>
@@ -44,7 +60,7 @@
             {% if perms.core.add_event %}
                 <div id="event-controls" class="d-flex flex-wrap pb-3">
                     <div class="dropdown m-1 ms-0">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="eventCreateButton"
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="eventCreateButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="fa fa-plus"></span>
                             {% translate "Add event" %}
@@ -58,7 +74,7 @@
                         </div>
                     </div>
                     <div class="bulk-actions">
-                        <button class="btn btn-secondary m-1 ms-0" type="submit" name="delete"
+                        <button class="btn btn-secondary btn-sm m-1 ms-0" type="submit" name="delete"
                                 formaction="{% url "core:event_bulk_delete" %}"><span
                                 class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                         {% event_bulk_actions %}
@@ -90,6 +106,20 @@
                                          data-bs-html="true"
                                          title="{% for state in counter %}
                                      <div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                              {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                             {% endif %}
                                     >
