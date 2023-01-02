@@ -339,7 +339,7 @@ class PermissionLogRecorder(BaseLogRecorder):
             data["removed_groups"] = self.old_groups - self.new_groups
         else:
             data["users"] = self.new_users
-            data["groups"] = self.old_groups
+            data["groups"] = self.new_groups
 
         return data
 
