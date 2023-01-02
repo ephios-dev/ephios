@@ -16,8 +16,19 @@ class ResourceAllocationForm(BasePluginFormMixin, ModelForm):
         }
 
     def __init__(self, *args, shift, **kwargs):
-        kwargs.setdefault("instance", ResourceAllocation.objects.get_or_create(shift=shift)[0])
+        self.shift = shift
+        try:
+            kwargs.setdefault("instance", ResourceAllocation.objects.get(shift=shift))
+        except ResourceAllocation.DoesNotExist:
+            pass
         super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        if self.cleaned_data.get("resources"):
+            self.instance.shift = self.shift
+            super().save(commit)
+        elif self.instance.pk:
+            self.instance.delete()
 
     @property
     def heading(self):
