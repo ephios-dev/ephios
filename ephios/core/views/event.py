@@ -175,14 +175,6 @@ class EventFilterForm(forms.Form):
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
 
-    @property
-    def template_name(self):
-        mode = self.request.session.get("event_list_view_mode", "list")
-        # don't want to put the mode in the filename as the value in the session might be invalid
-        if mode == "calendar":
-            return "core/event_calendar.html"
-        return "core/event_list.html"
-
     def get_queryset(self):
         qs = (
             get_objects_for_user(self.request.user, "core.view_event")
