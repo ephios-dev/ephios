@@ -13,6 +13,7 @@
 {% block content %}
     <div class="page-header">
         <form method="GET">
+            <button type="submit" class="d-none">{# default submit button for hitting ENTER in an input #}</button>
             <h1>{% translate "Events" %}
                 <small class="float-end">
                     <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
@@ -34,20 +35,26 @@
                 </small>
             </h1>
 
-            <div id="filter-form" class="row collapse {% if filter_form.is_valid %}show{% endif %}">
+            <div id="filter-form"
+                 class="row collapse {% if filter_form.is_valid and not request.GET.hide_filter %}show{% endif %}">
                 <div class="col-6 col-md-4 col-lg-3">
                     {% crispy_field filter_form.state wrapper_class="div" %}
                     {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
                 </div>
                 {% crispy_field filter_form.types wrapper_class="col-6 col-md-4 col-lg-3 d-flex flex-column" show_labels=True %}
-                <div class="col-6 col-md-4 col-lg-3">
-                    {% if mode != "calendar" %}
+                {% if mode != "calendar" %}
+                    <div class="col-6 col-md-4 col-lg-3">
                         {% crispy_field filter_form.direction show_labels=True %}
                         {% crispy_field filter_form.date show_labels=False %}
-                    {% else %}
-                        {# TODO: calendar controls - replace date widget with next/prev month buttons #}
-                    {% endif %}
-                </div>
+                    </div>
+                {% else %}
+                    <div class="col-6 col-md-4 col-lg-3 d-flex flex-column justify-content-end">
+                        <div class="d-none">
+                            <input name="direction" value="from"/>
+                        </div>
+                        {% crispy_field filter_form.date show_labels=True wrapper_class="order-2" %}
+                    </div>
+                {% endif %}
                 <div class="mb-3 gap-3 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column justify-content-end justify-content-md-start justify-content-lg-end">
                     <button type="submit" class="btn btn-primary">
                         <span class="fa fa-funnel"></span> {% translate "Apply" %}
@@ -56,11 +63,28 @@
                 </div>
             </div>
 
+            {% if mode == "calendar" %}
+                <div class="d-flex justify-content-between order-1 gap-3 mb-3">
+                    <button class="btn btn-secondary"
+                            type="submit"
+                            name="date"
+                            value="{{ prev_month_first|date:"Y-m-d" }}"
+                    ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</button>
+                    <button class="btn btn-secondary"
+                            type="submit"
+                            name="date"
+                            value="{{ next_month_first|date:"Y-m-d" }}"
+                    >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            {% endif %}
+
         </form>
     </div>
 
-    {% block event_list_body %}
-        {# this block is overwritten by the calendar template #}
+    {% if mode == "calendar" %}
+        {{ calendar }}
+    {% else %}
         <form id="bulk_action_form" method="post">
             {% csrf_token %}
             {% if perms.core.add_event %}
@@ -110,31 +134,7 @@
                                             {% if counter %}
                                          data-bs-toggle="tooltip" data-bs-placement="bottom"
                                          data-bs-html="true"
-                                         title="{% for state in counter %}
-                                     <div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
-                                            {% endif %}
-                                    >
+                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -215,5 +215,5 @@
                 </div>
             {% endif %}
         </form>
-    {% endblock %}
+    {% endif %}
 {% endblock %}
