@@ -15,6 +15,10 @@
         <form method="GET">
             <h1>{% translate "Events" %}
                 <small class="float-end">
+                    <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filter-form" aria-expanded="false" aria-controls="filter-form">
+                        {% translate "Filter" %}
+                    </button>
                     <div class="btn-group">
                         <button type="submit"
                                 class="btn btn-sm {% if mode == "list" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
@@ -30,7 +34,7 @@
                 </small>
             </h1>
 
-            <div id="filter-form" class="row">
+            <div id="filter-form" class="row collapse {% if filter_form.is_valid %}show{% endif %}">
                 {# TODO: calendar controls - replace date widget with next/prev month buttons #}
 
                 <div class="col-6 col-md-4 col-lg-3">
@@ -42,11 +46,11 @@
                     {% crispy_field filter_form.date show_labels=False %}
                 </div>
                 {% crispy_field filter_form.types wrapper_class="col-6 col-md-4 col-lg-3" show_labels=False %}
-                <div class="mb-3 gap-1 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column">
-                    <a class="btn btn-secondary" href="?">{% translate "Clear" %}</a>
+                <div class="mb-3 gap-1 col-6 col-md-12 col-lg-3 d-flex flex-column flex-md-row flex-lg-column ">
                     <button type="submit" class="btn btn-primary">
-                        <span class="fa fa-funnel"></span> {% translate "Filter" %}
+                        <span class="fa fa-funnel"></span> {% translate "Apply Filter" %}
                     </button>
+                    <a class="btn btn-secondary" href="?">{% translate "Close Filter" %}</a>
                 </div>
             </div>
 
@@ -106,6 +110,10 @@
                                          data-bs-html="true"
                                          title="{% for state in counter %}
                                      <div>
+
+
+
+
 
 
 
