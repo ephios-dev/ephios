@@ -9,6 +9,7 @@ from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
+from ephios.core import plugins
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
 from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
 from ephios.core.models import (
@@ -47,7 +48,9 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture(autouse=True)
 def enable_plugins():
     preferences = global_preferences_registry.manager()
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.pages"]
+    preferences["general__enabled_plugins"] = [
+        plugin.module for plugin in plugins.get_all_plugins()
+    ]
 
 
 @pytest.fixture
