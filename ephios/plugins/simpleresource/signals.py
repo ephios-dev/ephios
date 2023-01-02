@@ -1,6 +1,7 @@
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signals import nav_link, shift_forms, shift_info
 from ephios.plugins.simpleresource.forms import ResourceAllocationForm
@@ -24,7 +25,7 @@ def add_nav_link(sender, request, **kwargs):
     return (
         [
             {
-                "label": "Resources",
+                "label": _("Resources"),
                 "url": reverse_lazy("simpleresource:resource_list"),
                 "active": request.resolver_match
                 and request.resolver_match.app_name == "simpleresource",
