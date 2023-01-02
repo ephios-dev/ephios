@@ -51,6 +51,7 @@ def enable_plugins():
     preferences["general__enabled_plugins"] = [
         plugin.module for plugin in plugins.get_all_plugins()
     ]
+    plugins.is_receiver_path_enabled.cache_clear()
 
 
 @pytest.fixture
