@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load param_replace %}
 {% load ephios_crispy %}
 {% load crispy_forms_filters %}
 {% load cache %}
@@ -59,23 +60,25 @@
                     <button type="submit" class="btn btn-primary">
                         <span class="fa fa-funnel"></span> {% translate "Apply" %}
                     </button>
-                    <a class="btn btn-secondary" href="?">{% translate "Reset" %}</a>
+                    {# preserve date on reset in calendar mode #}
+                    <a class="btn btn-secondary" href="?{% if mode == "calendar" %}date={{ request.GET.date }}&hide_filter=1{% endif %}">{% translate "Reset" %}</a>
                 </div>
             </div>
 
             {% if mode == "calendar" %}
                 <div class="d-flex justify-content-between order-1 gap-3 mb-3">
-                    <button class="btn btn-secondary"
-                            type="submit"
-                            name="date"
-                            value="{{ prev_month_first|date:"Y-m-d" }}"
-                    ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</button>
-                    <button class="btn btn-secondary"
-                            type="submit"
-                            name="date"
-                            value="{{ next_month_first|date:"Y-m-d" }}"
-                    >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i>
-                    </button>
+                    {% if not request.GET.direction %}
+                        {# hide the filter if the filter was not submitted but the form is considered valid because we changed dates #}
+                        {% setvar "1" as hide_filter %}
+                    {% else %}
+                        {% setvar "" as hide_filter %}
+                    {% endif %}
+                    <a class="btn btn-secondary"
+                       href="?{% param_replace date=prev_month_first|date:"Y-m-d" hide_filter=hide_filter %}"
+                    ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
+                    <a class="btn btn-secondary"
+                       href="?{% param_replace date=next_month_first|date:"Y-m-d" hide_filter=hide_filter %}"
+                    >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
                 </div>
             {% endif %}
 
