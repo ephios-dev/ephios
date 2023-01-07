@@ -22,7 +22,6 @@ from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
     EventActivateView,
-    EventArchiveView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
@@ -109,11 +108,6 @@ urlpatterns = [
         "events/create/<int:type>/",
         EventCreateView.as_view(),
         name="event_create",
-    ),
-    path(
-        "events/past/",
-        EventArchiveView.as_view(),
-        name="event_list_past",
     ),
     path(
         "events/delete/",

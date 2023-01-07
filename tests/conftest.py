@@ -156,7 +156,6 @@ def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
-    assign_perm("core.view_past_event", planners)
     for perm in CORE_MANAGEMENT_PERMISSIONS:
         assign_perm(perm, managers)
     assign_perm("decide_workinghours_for_group", managers, volunteers)

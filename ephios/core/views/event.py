@@ -388,24 +388,6 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("core:event_list")
 
 
-class EventArchiveView(CustomPermissionRequiredMixin, ListView):
-    permission_required = "core.view_past_event"
-    model = Event
-    template_name = "core/event_archive.html"
-
-    def get_queryset(self):
-        return (
-            get_objects_for_user(self.request.user, "core.view_event")
-            .annotate(
-                start_time=Min("shifts__start_time"),
-                end_time=Max("shifts__end_time"),
-            )
-            .filter(end_time__lt=timezone.now())
-            .select_related("type")
-            .order_by("-start_time")
-        )
-
-
 class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = "core.add_event"
     model = Event
