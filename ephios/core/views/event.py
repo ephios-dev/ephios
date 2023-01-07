@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDict
 from django.utils.formats import date_format
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
@@ -90,6 +91,12 @@ class EventFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
+        if (old_data := kwargs.get("data")) is not None:
+            kwargs["data"] = MultiValueDict(
+                old_data,
+            )
+            kwargs["data"]["date"] = old_data.get("date") or timezone.now().date()
+            kwargs["data"]["direction"] = old_data.get("direction") or "from"
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = timezone.now().date()
 
@@ -97,6 +104,11 @@ class EventFilterForm(forms.Form):
         if not self.cleaned_data["date"]:
             return timezone.now().date()
         return self.cleaned_data["date"]
+
+    def clean_direction(self):
+        if not self.cleaned_data["direction"]:
+            return "from"
+        return self.cleaned_data["direction"]
 
     def filter_events(self, qs: QuerySet[Event]):
         fdata = self.cleaned_data
@@ -120,7 +132,7 @@ class EventFilterForm(forms.Form):
             )
 
         if state_filter := fdata.get("state"):
-            qs = self._annotate_participation_states(qs)
+            qs = self._annotate_event_participation_states(qs)
             qs = {
                 "confirmed": qs.filter(
                     **{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0}
@@ -137,7 +149,42 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def _annotate_participation_states(self, qs):
+    def filter_shifts(self, qs: QuerySet[Shift]):
+        fdata = self.cleaned_data
+        if event_types := fdata.get("types"):
+            qs = qs.filter(event__type__in=event_types)
+
+        if query := fdata.get("query"):
+            qs = qs.filter(
+                Q(event__title__icontains=query)
+                | Q(event__location__icontains=query)
+                | Q(event__description__icontains=query)
+            )
+
+        if state_filter := fdata.get("state"):
+            qs = {
+                "confirmed": qs.filter(
+                    participations__localparticipation__user=self.request.user,
+                    participations__state=AbstractParticipation.States.CONFIRMED,
+                ).distinct(),
+                "requested-confirmed": qs.filter(
+                    participations__localparticipation__user=self.request.user,
+                    participations__state__in=[
+                        AbstractParticipation.States.CONFIRMED,
+                        AbstractParticipation.States.REQUESTED,
+                    ],
+                ).distinct(),
+                "no-response": qs.exclude(
+                    participations__localparticipation__user=self.request.user,
+                ).distinct(),
+                "pending": qs.filter(
+                    can_change=True, participations__state=AbstractParticipation.States.REQUESTED
+                ).distinct(),
+            }.get(state_filter, qs)
+
+        return qs
+
+    def _annotate_event_participation_states(self, qs):
         qs = qs.annotate(
             pending_disposition_count=Count(
                 "shifts__participations",
@@ -157,11 +204,6 @@ class EventFilterForm(forms.Form):
                 for state in AbstractParticipation.States
             },
         )
-        return qs
-
-    def filter_shifts(self, qs: QuerySet[Shift]):
-        data = self.cleaned_data
-        # TODO do filtering
         return qs
 
     def get_calendar_month(self):
@@ -222,8 +264,22 @@ class EventListView(LoginRequiredMixin, ListView):
         return ctx
 
     def _get_calendar_context(self):
-        shifts = Shift.objects.filter(
-            event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
+        shifts = (
+            Shift.objects.filter(
+                event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
+            )
+            .annotate(
+                can_change=Case(
+                    When(
+                        event_id__in=get_objects_for_user(self.request.user, ["core.change_event"]),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=BooleanField(),
+                )
+            )
+            .select_related("event", "event__type")
+            .prefetch_related("participations")
         )
         year, month = self.filter_form.get_calendar_month()
         shifts = shifts.filter(start_time__year=year, start_time__month=month)
