@@ -19,11 +19,16 @@ def setvar(value=None):
 
 @register.simple_tag(takes_context=True)
 def param_replace(context, **kwargs):
+    """
+    Replace parameters in the GET query and urlencode them back.
+    Usage in <a> tag:
+    href="?{% param_replace overwrite_key=1 delete_this_key=None %}"
+    """
     params = context["request"].GET.copy()
     for key, value in kwargs.items():
-        if not value and key in params:
+        if value is None and key in params:
             del params[key]
-        else:
+        elif value is not None:
             params[key] = str(value)
     return params.urlencode(safe="[]")
 

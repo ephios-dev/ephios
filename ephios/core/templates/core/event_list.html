@@ -18,7 +18,7 @@
                 {# but the form is considered valid because e.g. we changed dates #}
                 {% setvar "1" as no_filter_data %}
             {% else %}
-                {% setvar "" as no_filter_data %}
+                {% setvar None as no_filter_data %}
             {% endif %}
             <button type="submit" class="d-none">{# default submit button for hitting ENTER in an input #}</button>
             <h1>{% translate "Events" %}
@@ -28,16 +28,14 @@
                         {% translate "Filter" %}
                     </button>
                     <div class="btn-group">
-                        <a type="submit"
-                           class="btn btn-sm {% if mode == "list" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                        <a class="btn btn-sm {% if mode == "list" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
                                 {% if no_filter_data %}
                            href="?{% param_replace mode="list" hide_filter="1" date="" %}"
                                 {% else %}
-                           href="?{% param_replace mode="list" hide_filter="" %}"
+                           href="?{% param_replace mode="list" hide_filter=None %}"
                                 {% endif %}
                         ><span class="fa fa-list"></span></a>
-                        <a type="submit"
-                           class="btn btn-sm {% if mode == "calendar" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                        <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
                            href="?{% param_replace mode="calendar" hide_filter=no_filter_data %}"
                         ><i class="fa fa-calendar"></i></a>
                     </div>
