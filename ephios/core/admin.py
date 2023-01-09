@@ -11,10 +11,12 @@ from ephios.core.models import (
     QualificationCategory,
     QualificationGrant,
     Shift,
+    UserProfile,
     WorkingHours,
 )
 from ephios.core.models.events import PlaceholderParticipation
 
+admin.site.register(UserProfile)
 admin.site.register(Qualification)
 admin.site.register(QualificationGrant)
 admin.site.register(QualificationCategory)

@@ -63,7 +63,9 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         except ValueError as e:
             raise ValidationError(e) from e
         else:
-            configuration_form = signup_method.get_configuration_form(self.request.POST)
+            configuration_form = signup_method.get_configuration_form(
+                self.request.POST, event=self.event
+            )
             if not all((self.is_valid(form), configuration_form.is_valid())):
                 return self.render_to_response(
                     self.get_context_data(
@@ -147,7 +149,9 @@ class ShiftUpdateView(
             signup_method = signup_method_from_slug(
                 self.request.POST["signup_method_slug"], shift=self.object
             )
-            configuration_form = signup_method.get_configuration_form(self.request.POST)
+            configuration_form = signup_method.get_configuration_form(
+                self.request.POST, event=self.object.event
+            )
         except ValueError as e:
             raise ValidationError(e) from e
         if all([self.is_valid(form), configuration_form.is_valid()]):

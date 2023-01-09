@@ -379,6 +379,17 @@ def check_participant_age(method, participant):
         )
 
 
+def check_general_required_qualifications(method, participant):
+    if not participant.has_qualifications(
+        method.shift.event.type.preferences["general_required_qualifications"]
+    ):
+        return ParticipantUnfitError(
+            _("You lack qualifications for the eventtype {eventtype}.").format(
+                eventtype=method.shift.event.type
+            )
+        )
+
+
 def check_participant_signup_signal(method, participant):
     errors = []
     for _, result in check_participant_signup.send(None, method=method, participant=participant):
@@ -458,6 +469,10 @@ class BaseSignupMethodConfigurationForm(forms.Form):
         initial=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event", None)
+        super().__init__(*args, **kwargs)
+
 
 class BaseSignupMethod:
     # pylint: disable=too-many-public-methods
@@ -527,6 +542,7 @@ class BaseSignupMethod:
             check_inside_signup_timeframe,
             check_conflicting_participations,
             check_participant_age,
+            check_general_required_qualifications,
             check_participant_signup_signal,
         ]
 
@@ -748,7 +764,7 @@ class BaseSignupMethod:
         return form
 
     def render_configuration_form(self, *args, form=None, **kwargs):
-        form = form or self.get_configuration_form(*args, **kwargs)
+        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
         template = Template(
             template_string="{% load crispy_forms_filters %}{{ form|crispy }}"
         ).render(Context({"form": form}))

@@ -16,7 +16,7 @@ from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
 from ephios.core import plugins
-from ephios.core.models import QualificationCategory, UserProfile
+from ephios.core.models import Qualification, QualificationCategory, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.extra.preferences import JSONPreference
@@ -110,4 +110,16 @@ class ResponsibleGroupsPreference(ModelMultipleChoicePreference):
     verbose_name = _("Groups that are responsible for this event type by default")
     model = Group
     default = Group.objects.none()
+    field_kwargs = {"widget": Select2MultipleWidget}
+
+
+@event_type_preference_registry.register
+class GeneralRequiredQualificationPreference(ModelMultipleChoicePreference):
+    name = "general_required_qualifications"
+    verbose_name = _("General required qualifications for this event type")
+    help_text = _(
+        "These qualifications are required for all events of this event type. Users without these qualification will not be able to sign up, so make sure to use this field appropriately."
+    )
+    model = Qualification
+    default = Qualification.objects.none()
     field_kwargs = {"widget": Select2MultipleWidget}
