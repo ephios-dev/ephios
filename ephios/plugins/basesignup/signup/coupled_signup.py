@@ -21,7 +21,7 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
 
     @property
     def configuration_form_class(self):
-        class ConfigurationForm(super().configuration_form_class):
+        class ConfigurationForm(forms.Form):
             leader_shift_id = forms.ModelChoiceField(
                 label=_("shift to mirror participation from"),
                 required=True,

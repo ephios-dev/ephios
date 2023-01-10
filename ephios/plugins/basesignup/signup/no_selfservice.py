@@ -6,22 +6,20 @@ from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
 
 
+class NoSelfserviceConfigurationForm(forms.Form):
+    no_selfservice_explanation = forms.CharField(
+        label=_("Explanation"),
+        required=False,
+        initial="",
+    )
+
+
 class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = "no_selfservice"
     verbose_name = _("No Signup (only disposition)")
     description = _("""This method allows no signup by users.""")
     uses_requested_state = False
-
-    @property
-    def configuration_form_class(self):
-        class ConfigurationForm(super().configuration_form_class):
-            no_selfservice_explanation = forms.CharField(
-                label=_("Explanation"),
-                required=False,
-                initial="",
-            )
-
-        return ConfigurationForm
+    configuration_form_class = NoSelfserviceConfigurationForm
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
