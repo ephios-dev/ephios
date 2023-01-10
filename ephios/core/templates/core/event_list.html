@@ -12,30 +12,32 @@
 
 {% block content %}
     <div class="page-header">
-            <h1>{% translate "Events" %}
-                <small class="float-end">
-                    <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#filter-form" aria-expanded="false" aria-controls="filter-form">
-                        {% translate "Filter" %}
-                    </button>
-                    <div class="btn-group">
-                        <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
+        <h1>{% translate "Events" %}
+            <small class="float-end">
+                <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="filter-collapse">
+                    {% translate "Filter" %}
+                </button>
+                <div class="btn-group">
+                    <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                             {% if filter_form.was_submitted %}
-                           href="?{% param_replace mode="list" %}"
+                       href="?{% param_replace mode="list" %}"
                             {% else %}
-                            {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                           href="?{% param_replace mode="list" date=None %}"
+                                {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
+                       href="?{% param_replace mode="list" date=None %}"
                             {% endif %}
-                        ><span class="fa fa-list"></span></a>
-                        <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                           href="?{% param_replace mode="calendar" %}"
-                        ><i class="fa fa-calendar"></i></a>
-                    </div>
-                </small>
-            </h1>
-            <form method="GET" id="filter-form"
-                    {# show the filter if data has been submitted and it's not forced to hide, or if it has errors #}
-                  class="row collapse {% if filter_form.was_submitted and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
+                    ><span class="fa fa-list"></span></a>
+                    <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
+                       href="?{% param_replace mode="calendar" %}"
+                    ><i class="fa fa-calendar"></i></a>
+                </div>
+            </small>
+        </h1>
+        <div class="clearfix">{# clear the float-end above #}</div>
+        <form method="GET" id="filter-form">
+            {# show the filter if data has been submitted and it's not forced to hide, or if it has errors #}
+            <div id="filter-collapse"
+                 class="row collapse {% if filter_form.was_submitted and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
                 <div class="col-6 col-md-4 col-lg-3">
                     {% crispy_field filter_form.state wrapper_class="div" %}
                     {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
@@ -62,20 +64,18 @@
                     <a class="btn btn-secondary"
                        href="?{% if mode == "calendar" %}date={{ request.GET|get:"date"|default:"" }}{% endif %}">{% translate "Reset" %}</a>
                 </div>
-            <form/>
-
-            {% if mode == "calendar" %}
-                <div class="d-flex justify-content-between order-1 gap-3 mb-3">
-                    <a class="btn btn-secondary"
-                       href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
-                    ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
-                    <a class="btn btn-secondary"
-                       href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
-                    >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
-                </div>
-            {% endif %}
-
+            </div>
         </form>
+        {% if mode == "calendar" %}
+            <div class="d-flex justify-content-between order-1 gap-3 mb-3">
+                <a class="btn btn-secondary"
+                   href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
+                ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
+                <a class="btn btn-secondary"
+                   href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
+                >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
+            </div>
+        {% endif %}
     </div>
 
     {% if mode == "calendar" %}
