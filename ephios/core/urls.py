@@ -22,17 +22,15 @@ from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
     EventActivateView,
-    EventArchiveView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
     EventDetailView,
-    EventListTypeSettingView,
+    EventListView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
-    current_event_list_view,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -69,7 +67,7 @@ from ephios.core.views.workinghour import (
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("events/", current_event_list_view, name="event_list"),
+    path("events/", EventListView.as_view(), name="event_list"),
     path(
         "events/<int:pk>/edit/",
         EventUpdateView.as_view(),
@@ -110,11 +108,6 @@ urlpatterns = [
         "events/create/<int:type>/",
         EventCreateView.as_view(),
         name="event_create",
-    ),
-    path(
-        "events/past/",
-        EventArchiveView.as_view(),
-        name="event_list_past",
     ),
     path(
         "events/delete/",
@@ -229,11 +222,6 @@ urlpatterns = [
     path("manifest.json", manifest, name="pwa_manifest"),
     path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
-    path(
-        "events/list_type_setting/",
-        EventListTypeSettingView.as_view(),
-        name="event_list_type_setting",
-    ),
     path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
         "workinghours/own/request/",

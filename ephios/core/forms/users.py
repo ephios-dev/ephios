@@ -61,7 +61,6 @@ def get_group_permission_log_fields(group):
     perms = set(group.permissions.values_list("codename", flat=True))
 
     return {
-        _("Can view past events"): "view_past_event" in perms,
         _("Can add events"): "add_event" in perms,
         _("Can edit users"): "change_userprofile" in perms,
         _("Can manage ephios"): "change_group" in perms,
@@ -76,10 +75,6 @@ def get_group_permission_log_fields(group):
 
 
 class GroupForm(PermissionFormMixin, ModelForm):
-    can_view_past_event = PermissionField(
-        label=_("Can view past events"), permissions=["core.view_past_event"], required=False
-    )
-
     is_planning_group = PermissionField(
         label=_("Can add events"),
         permissions=["core.add_event", "core.delete_event"],
@@ -150,7 +145,6 @@ class GroupForm(PermissionFormMixin, ModelForm):
         self.helper.layout = Layout(
             Field("name"),
             Field("users"),
-            Field("can_view_past_event"),
             Fieldset(
                 _("Management"),
                 Field("is_hr_group", title="This permission is included with the management role."),

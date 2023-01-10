@@ -33,7 +33,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert list(group.user_set.all()) == [manager]
-        assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert not group.permissions.filter(
             codename__in=[
@@ -58,7 +57,6 @@ class TestGroupView:
         group_name = "Testgroup"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = True
         form["is_planning_group"] = True
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         form["is_hr_group"] = True
@@ -67,7 +65,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert set(group.user_set.all()) == {manager}
-        assert group.permissions.filter(codename="view_past_event").exists()
         assert group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" in get_group_perms(
             group, Group.objects.get(name="Volunteers")
@@ -89,7 +86,6 @@ class TestGroupView:
         group_name = "New name"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = False
         form["is_planning_group"] = False
         form["is_management_group"] = False
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
@@ -98,7 +94,6 @@ class TestGroupView:
         group.refresh_from_db()
         assert group.name == group_name
         assert set(group.user_set.all()) == {manager}
-        assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" not in get_group_perms(
             group, Group.objects.get(name="Volunteers")

@@ -73,7 +73,7 @@ class Event(Model):
     class Meta:
         verbose_name = _("event")
         verbose_name_plural = _("events")
-        permissions = [("view_past_event", _("Can view past events"))]
+        permissions = []
         db_table = "event"
         base_manager_name = "all_objects"
         default_manager_name = "objects"

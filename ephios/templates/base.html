@@ -89,12 +89,6 @@
                                 <a class="nav-link"
                                    href="{% url "core:event_list" %}">{% trans "Events" %}</a>
                             </li>
-                            {% if perms.core.view_past_event %}
-                                <li class="nav-item {% if url_name == "event_list_past" %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{% url "core:event_list_past" %}">{% trans "Past events" %}</a>
-                                </li>
-                            {% endif %}
                             {% if perms.core.view_userprofile %}
                                 <li class="nav-item {% if url_name == "workinghours_list" %}active{% endif %}">
                                     <a class="nav-link"

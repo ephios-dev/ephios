@@ -39,7 +39,6 @@ def create_objects():
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
-    assign_perm("core.view_past_event", planners)
     assign_perm("core.view_userprofile", managers)
     assign_perm("core.add_userprofile", managers)
     assign_perm("core.change_userprofile", managers)

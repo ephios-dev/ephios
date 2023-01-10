@@ -62,17 +62,6 @@ def participation_mannequin_style(participation):
     return "neutral"
 
 
-@register.simple_tag
-def setvar(value=None):
-    """
-    as an alternative to using with blocks and template, use
-    `{% setvar value|filter:param as var %}` to save a value to a variable in a template.
-    The builtin `firstof` doesn't work, because it converts values to strings.
-    From here: https://pythoncircle.com/post/701/how-to-set-a-variable-in-django-template/
-    """
-    return value
-
-
 @register.filter(name="can_sign_up")
 @catch_signup_method_fails(default=False)
 def can_sign_up(request, shift):

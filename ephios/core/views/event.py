@@ -1,17 +1,19 @@
 import json
 from calendar import _nextmonth, _prevmonth
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import BooleanField, Case, Max, Min, Prefetch, When
-from django.forms import DateField
+from django.db.models import BooleanField, Case, Count, Max, Min, Prefetch, Q, QuerySet, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDict
 from django.utils.formats import date_format
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
 from django.utils.translation import gettext as _
@@ -22,7 +24,6 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
-    RedirectView,
     TemplateView,
     UpdateView,
 )
@@ -32,7 +33,7 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.calendar import ShiftCalendar
 from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
-from ephios.core.models import Event, EventType, Shift
+from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
     EventReminderNotification,
@@ -45,19 +46,189 @@ from ephios.extra.mixins import (
     PluginFormMixin,
 )
 from ephios.extra.permissions import get_groups_with_perms
+from ephios.extra.widgets import CustomDateInput
 
 
-def current_event_list_view(request):
-    if request.session.get("event_list_view_type", "list") == "calendar":
-        return EventCalendarView.as_view()(request)
-    return EventListView.as_view()(request)
+class EventFilterForm(forms.Form):
+    query = forms.CharField(
+        label=_("Search for…"),
+        widget=forms.TextInput(attrs={"placeholder": _("Search for…"), "autofocus": "autofocus"}),
+        required=False,
+    )
+    types = forms.ModelMultipleChoiceField(
+        queryset=EventType.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={"class": "flex-grow-1 h-0"}
+        ),  # can't set it using cripsy tag
+    )
+    direction = forms.ChoiceField(
+        label=_("Date"),
+        required=False,
+        choices=[
+            ("until", _("until")),
+            ("from", _("from")),
+        ],
+        initial="from",
+    )
+    date = forms.DateField(
+        label=_("Date"),
+        required=False,
+        widget=CustomDateInput,
+    )
+    state = forms.ChoiceField(
+        label=_("State"),
+        required=False,
+        choices=[  # events only have aggregated participation state, so we pick some useful ones
+            (None, _("all")),
+            ("no-response", _("no response")),
+            ("confirmed", _("confirmed")),
+            ("requested-confirmed", _("requested or confirmed")),
+            ("pending", _("disposition to do")),
+        ],
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+
+        # as a heuristic, save this to determine if the filter form was submitted through html
+        self.was_submitted = False
+
+        if (old_data := kwargs.get("data")) is not None:
+            self.was_submitted = "direction" in old_data
+
+            kwargs["data"] = MultiValueDict(
+                old_data,
+            )
+            kwargs["data"]["date"] = old_data.get("date") or timezone.now().date()
+            kwargs["data"]["direction"] = old_data.get("direction") or "from"
+        super().__init__(*args, **kwargs)
+        self.fields["date"].initial = timezone.now().date()
+
+    def clean_date(self):
+        if not self.cleaned_data["date"]:
+            return timezone.now().date()
+        return self.cleaned_data["date"]
+
+    def clean_direction(self):
+        if not self.cleaned_data["direction"]:
+            return "from"
+        return self.cleaned_data["direction"]
+
+    def filter_events(self, qs: QuerySet[Event]):
+        fdata = self.cleaned_data
+
+        date = fdata["date"]
+        if fdata.get("direction", "from") == "from":
+            qs = qs.filter(end_time__gte=datetime.combine(date, time.min))
+            qs = qs.order_by("start_time", "end_time")
+        else:  # until
+            qs = qs.filter(start_time__lte=datetime.combine(date, time.max))
+            qs = qs.order_by("-start_time", "-end_time")
+
+        if event_types := fdata.get("types"):
+            qs = qs.filter(type__in=event_types)
+
+        if query := fdata.get("query"):
+            qs = qs.filter(
+                Q(title__icontains=query)
+                | Q(location__icontains=query)
+                | Q(description__icontains=query)
+            )
+
+        if state_filter := fdata.get("state"):
+            qs = self._annotate_event_participation_states(qs)
+            qs = {
+                "confirmed": qs.filter(
+                    **{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0}
+                ),
+                "requested-confirmed": qs.filter(
+                    Q(**{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0})
+                    | Q(**{f"state_{AbstractParticipation.States.REQUESTED}_count__gt": 0})
+                ),
+                "no-response": qs.filter(
+                    **{f"state_{state}_count": 0 for state in AbstractParticipation.States}
+                ),
+                "pending": qs.filter(pending_disposition_count__gt=0),
+            }.get(state_filter, qs)
+
+        return qs
+
+    def filter_shifts(self, qs: QuerySet[Shift]):
+        """
+        filter a shift queryset. Can't filter based on associated events, because we need
+        more fine-grained filtering for participation states.
+        """
+        fdata = self.cleaned_data
+        if event_types := fdata.get("types"):
+            qs = qs.filter(event__type__in=event_types)
+
+        if query := fdata.get("query"):
+            qs = qs.filter(
+                Q(event__title__icontains=query)
+                | Q(event__location__icontains=query)
+                | Q(event__description__icontains=query)
+            )
+
+        if state_filter := fdata.get("state"):
+            qs = {
+                "confirmed": qs.filter(
+                    participations__localparticipation__user=self.request.user,
+                    participations__state=AbstractParticipation.States.CONFIRMED,
+                ).distinct(),
+                "requested-confirmed": qs.filter(
+                    participations__localparticipation__user=self.request.user,
+                    participations__state__in=[
+                        AbstractParticipation.States.CONFIRMED,
+                        AbstractParticipation.States.REQUESTED,
+                    ],
+                ).distinct(),
+                "no-response": qs.exclude(
+                    participations__localparticipation__user=self.request.user,
+                ).distinct(),
+                "pending": qs.filter(
+                    can_change=True, participations__state=AbstractParticipation.States.REQUESTED
+                ).distinct(),
+            }.get(state_filter, qs)
+
+        return qs
+
+    def _annotate_event_participation_states(self, qs):
+        qs = qs.annotate(
+            pending_disposition_count=Count(
+                "shifts__participations",
+                filter=Q(
+                    shifts__participations__state=AbstractParticipation.States.REQUESTED,
+                    can_change=True,
+                ),
+            ),
+            **{
+                f"state_{state}_count": Count(
+                    "shifts__participations",
+                    filter=Q(
+                        shifts__participations__localparticipation__user=self.request.user,
+                        shifts__participations__state=state,
+                    ),
+                )
+                for state in AbstractParticipation.States
+            },
+        )
+        return qs
+
+    def get_calendar_month(self):
+        "Return, even if the form is invalid, a tuple of year, month for the calendar to show"
+        if self.is_valid() and (date := self.cleaned_data.get("date")):
+            return date.year, date.month
+        now = timezone.now()
+        return now.year, now.month
 
 
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
+    paginate_by = 100
 
     def get_queryset(self):
-        return (
+        qs = (
             get_objects_for_user(self.request.user, "core.view_event")
             .annotate(
                 start_time=Min("shifts__start_time"),
@@ -73,40 +244,66 @@ class EventListView(LoginRequiredMixin, ListView):
                     output_field=BooleanField(),
                 )
             )
-            .filter(end_time__gte=timezone.now())
             .select_related("type")
             .prefetch_related("shifts")
             .prefetch_related(Prefetch("shifts__participations"))
-            .order_by("start_time")
         )
+        if self.filter_form.is_valid():
+            qs = self.filter_form.filter_events(qs)
+        else:
+            # saveguard for not loading too many events
+            qs = qs.filter(end_time__gte=timezone.now()).order_by("start_time", "end_time")
+        return qs
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        kwargs.setdefault("eventtypes", EventType.objects.all())
-        return super().get_context_data(**kwargs)
-
-
-class EventCalendarView(LoginRequiredMixin, TemplateView):
-    template_name = "core/event_calendar.html"
+    @cached_property
+    def filter_form(self):
+        return EventFilterForm(data=self.request.GET or None, request=self.request)
 
     def get_context_data(self, **kwargs):
-        today = datetime.today()
-        year = int(self.request.GET.get("year", today.year))
-        month = int(self.request.GET.get("month", today.month))
-        events = get_objects_for_user(self.request.user, "core.view_event", klass=Event)
-        shifts = Shift.objects.filter(
-            event__in=events, start_time__month=month, start_time__year=year
+        ctx = super().get_context_data(**kwargs)
+        ctx["eventtypes"] = EventType.objects.all()
+        ctx["filter_form"] = self.filter_form
+
+        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar"}:
+            self.request.session["event_list_view_mode"] = new_mode
+        mode = self.request.session.get("event_list_view_mode", "list")
+        ctx["mode"] = mode
+
+        if mode == "calendar":
+            ctx.update(self._get_calendar_context())
+        return ctx
+
+    def _get_calendar_context(self):
+        shifts = (
+            Shift.objects.filter(
+                event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
+            )
+            .annotate(
+                can_change=Case(
+                    When(
+                        event_id__in=get_objects_for_user(self.request.user, ["core.change_event"]),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=BooleanField(),
+                )
+            )
+            .select_related("event", "event__type")
+            .prefetch_related("participations")
         )
+        year, month = self.filter_form.get_calendar_month()
+        shifts = shifts.filter(start_time__year=year, start_time__month=month)
+        if self.filter_form.is_valid():
+            shifts = self.filter_form.filter_shifts(shifts)
         calendar = ShiftCalendar(shifts)
-        kwargs.setdefault("calendar", mark_safe(calendar.formatmonth(year, month)))
-        nextyear, nextmonth = _nextmonth(year, month)
-        kwargs.setdefault(
-            "next_month_url", f"{reverse('core:event_list')}?year={nextyear}&month={nextmonth}"
-        )
+
         prevyear, prevmonth = _prevmonth(year, month)
-        kwargs.setdefault(
-            "previous_month_url", f"{reverse('core:event_list')}?year={prevyear}&month={prevmonth}"
-        )
-        return super().get_context_data(**kwargs)
+        nextyear, nextmonth = _nextmonth(year, month)
+        return {
+            "calendar": mark_safe(calendar.formatmonth(year, month)),
+            "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
+            "next_month_first": datetime.min.replace(year=nextyear, month=nextmonth),
+        }
 
 
 class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, DetailView):
@@ -201,24 +398,6 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("core:event_list")
 
 
-class EventArchiveView(CustomPermissionRequiredMixin, ListView):
-    permission_required = "core.view_past_event"
-    model = Event
-    template_name = "core/event_archive.html"
-
-    def get_queryset(self):
-        return (
-            get_objects_for_user(self.request.user, "core.view_event")
-            .annotate(
-                start_time=Min("shifts__start_time"),
-                end_time=Max("shifts__end_time"),
-            )
-            .filter(end_time__lt=timezone.now())
-            .select_related("type")
-            .order_by("-start_time")
-        )
-
-
 class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = "core.add_event"
     model = Event
@@ -232,10 +411,10 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     def form_valid(self, form):
         occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=730),  # allow dates up to two years in the future
+            datetime.now() + timedelta(days=7305),  # allow dates up to twenty years in the future
             inc=True,
             dtstart=datetime.combine(
-                DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
+                forms.DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
             ),
         )
         for date in occurrences:
@@ -301,10 +480,11 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
                     recurrence.between(
                         datetime.now() - timedelta(days=1),
                         datetime.now()
-                        + timedelta(days=730),  # allow dates up to two years in the future
+                        + timedelta(days=7305),  # allow dates up to twenty years in the future
                         inc=True,
                         dtstart=datetime.combine(
-                            DateField().to_python(self.request.POST["dtstart"]), datetime.min.time()
+                            forms.DateField().to_python(self.request.POST["dtstart"]),
+                            datetime.min.time(),
                         ),
                     ),
                     default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT"),
@@ -341,12 +521,3 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
-
-
-class EventListTypeSettingView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse("core:event_list")
-
-    def post(self, request, *args, **kwargs):
-        request.session["event_list_view_type"] = request.POST.get("event_list_view_type")
-        return self.get(request, *args, **kwargs)

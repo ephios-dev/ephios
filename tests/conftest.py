@@ -143,6 +143,11 @@ def service_event_type():
 
 
 @pytest.fixture
+def training_event_type():
+    return EventType.objects.create(title="Training")
+
+
+@pytest.fixture
 def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers = Group.objects.create(name="Managers")
     planners = Group.objects.create(name="Planners")
@@ -156,7 +161,6 @@ def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
-    assign_perm("core.view_past_event", planners)
     for perm in CORE_MANAGEMENT_PERMISSIONS:
         assign_perm(perm, managers)
     assign_perm("decide_workinghours_for_group", managers, volunteers)
@@ -200,13 +204,13 @@ def event(groups, service_event_type, planner, tz):
 
 
 @pytest.fixture
-def conflicting_event(event, service_event_type, volunteer, groups):
+def conflicting_event(event, training_event_type, volunteer, groups):
     managers, planners, volunteers = groups
     conflicting_event = Event.objects.create(
         title="Conflicting event",
         description="clashes",
         location="Berlin",
-        type=service_event_type,
+        type=training_event_type,
         active=True,
     )
 
