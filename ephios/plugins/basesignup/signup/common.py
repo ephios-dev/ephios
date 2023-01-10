@@ -1,6 +1,8 @@
 import typing
 
 from django import forms
+from django.contrib import messages
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -8,6 +10,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.methods import (
     BaseSignupMethod,
+    BaseSignupView,
     ParticipantUnfitError,
     SignupDisallowedError,
 )
@@ -156,3 +159,11 @@ class QualificationMinMaxBaseSignupMethod(
                 rendered_count - len(participation_info)
             )
         return participation_info
+
+
+class NoSignupSignupView(BaseSignupView):
+    def get(self, request, *args, **kwargs):
+        messages.error(self.request, _("This action is not allowed."))
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
+
+    post = get

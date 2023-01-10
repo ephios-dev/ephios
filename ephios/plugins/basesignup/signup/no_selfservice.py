@@ -3,7 +3,10 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
-from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
+from ephios.plugins.basesignup.signup.common import (
+    NoSignupSignupView,
+    RenderParticipationPillsShiftStateMixin,
+)
 
 
 class NoSelfserviceConfigurationForm(forms.Form):
@@ -20,6 +23,7 @@ class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSig
     description = _("""This method allows no signup by users.""")
     uses_requested_state = False
     configuration_form_class = NoSelfserviceConfigurationForm
+    signup_view_class = NoSignupSignupView
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs

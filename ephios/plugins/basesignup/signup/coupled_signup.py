@@ -10,7 +10,10 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod, SignupStats
-from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
+from ephios.plugins.basesignup.signup.common import (
+    NoSignupSignupView,
+    RenderParticipationPillsShiftStateMixin,
+)
 
 
 class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
@@ -18,6 +21,7 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
     verbose_name = _("coupled to another shift")
     description = _("""This method mirrors signup from another shift.""")
     uses_requested_state = True
+    signup_view_class = NoSignupSignupView
 
     @property
     def configuration_form_class(self):
