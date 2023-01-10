@@ -57,7 +57,6 @@ class EventFilterForm(forms.Form):
     )
     types = forms.ModelMultipleChoiceField(
         queryset=EventType.objects.all(),
-        label=EventType._meta.verbose_name,
         required=False,
         widget=forms.SelectMultiple(
             attrs={"class": "flex-grow-1 h-0"}

@@ -12,8 +12,6 @@
 
 {% block content %}
     <div class="page-header">
-        <form method="GET">
-            <button type="submit" class="d-none">{# default submit button for hitting ENTER in an input #}</button>
             <h1>{% translate "Events" %}
                 <small class="float-end">
                     <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
@@ -35,10 +33,9 @@
                     </div>
                 </small>
             </h1>
-
-            <div id="filter-form"
+            <form method="GET" id="filter-form"
                     {# show the filter if data has been submitted and it's not forced to hide, or if it has errors #}
-                 class="row collapse {% if filter_form.was_submitted and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
+                  class="row collapse {% if filter_form.was_submitted and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
                 <div class="col-6 col-md-4 col-lg-3">
                     {% crispy_field filter_form.state wrapper_class="div" %}
                     {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
@@ -63,9 +60,9 @@
                     </button>
                     {# preserve date on reset in calendar mode #}
                     <a class="btn btn-secondary"
-                       href="?{% if mode == "calendar" %}date={{ request.GET.date }}{% endif %}">{% translate "Reset" %}</a>
+                       href="?{% if mode == "calendar" %}date={{ request.GET|get:"date"|default:"" }}{% endif %}">{% translate "Reset" %}</a>
                 </div>
-            </div>
+            <form/>
 
             {% if mode == "calendar" %}
                 <div class="d-flex justify-content-between order-1 gap-3 mb-3">
