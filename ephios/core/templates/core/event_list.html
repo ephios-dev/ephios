@@ -208,39 +208,7 @@
                         {% endwith %}
                     {% endfor %}
                 </div>
-
-                <nav aria-label="event list page">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link"
-                                   href="?{% param_replace page=page_obj.previous_page_number %}">«</a>
-                            </li>
-                        {% endif %}
-                        <li class="page-item">
-                            <span class="page-link disabled">
-                                {% if paginator.num_pages == 1 %}
-                                    {% blocktranslate count total=paginator.count context "Pagination" trimmed %}
-                                        {{ total }} entry
-                                        {% plural %}
-                                        {{ total }} entries
-                                    {% endblocktranslate %}
-
-                                {% else %}
-                                    {% blocktranslate with number=page_obj.number num_pages=paginator.num_pages total=paginator.count context "Pagination" trimmed %}
-                                        Page {{ number }} of {{ num_pages }} ({{ total }} entries)
-                                    {% endblocktranslate %}
-                                {% endif %}
-                            </span>
-                        </li>
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link"
-                                   href="?{% param_replace page=page_obj.next_page_number %}">»</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                {% include 'core/pagination.html' %}
             {% else %}
                 <div class="mb-3">
                     <h5 class="mt-5 text-center">
