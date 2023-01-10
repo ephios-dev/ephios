@@ -19,7 +19,7 @@
                         {% translate "Filter" %}
                     </button>
                     <div class="btn-group">
-                        <a class="btn btn-sm {% if mode == "list" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                        <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                             {% if filter_form.was_submitted %}
                            href="?{% param_replace mode="list" %}"
                             {% else %}
@@ -27,7 +27,7 @@
                            href="?{% param_replace mode="list" date=None %}"
                             {% endif %}
                         ><span class="fa fa-list"></span></a>
-                        <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                        <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                            href="?{% param_replace mode="calendar" %}"
                         ><i class="fa fa-calendar"></i></a>
                     </div>
@@ -130,9 +130,7 @@
                                             {% if counter %}
                                          data-bs-toggle="tooltip" data-bs-placement="bottom"
                                          data-bs-html="true"
-                                         title="{% for state in counter %}<div>
-
-                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
+                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
