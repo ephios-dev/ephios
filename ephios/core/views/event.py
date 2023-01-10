@@ -91,7 +91,13 @@ class EventFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
+
+        # as a heuristic, save this to determine if the filter form was submitted through html
+        self.was_submitted = False
+
         if (old_data := kwargs.get("data")) is not None:
+            self.was_submitted = "direction" in old_data
+
             kwargs["data"] = MultiValueDict(
                 old_data,
             )
@@ -150,6 +156,10 @@ class EventFilterForm(forms.Form):
         return qs
 
     def filter_shifts(self, qs: QuerySet[Shift]):
+        """
+        filter a shift queryset. Can't filter based on associated events, because we need
+        more fine-grained filtering for participation states.
+        """
         fdata = self.cleaned_data
         if event_types := fdata.get("types"):
             qs = qs.filter(event__type__in=event_types)
@@ -216,6 +226,7 @@ class EventFilterForm(forms.Form):
 
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
+    paginate_by = 100
 
     def get_queryset(self):
         qs = (

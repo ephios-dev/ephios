@@ -13,13 +13,6 @@
 {% block content %}
     <div class="page-header">
         <form method="GET">
-            {% if not request.GET.direction %}
-                {# use this var to hide the filter if the filter was not submitted #}
-                {# but the form is considered valid because e.g. we changed dates #}
-                {% setvar "1" as no_filter_data %}
-            {% else %}
-                {% setvar None as no_filter_data %}
-            {% endif %}
             <button type="submit" class="d-none">{# default submit button for hitting ENTER in an input #}</button>
             <h1>{% translate "Events" %}
                 <small class="float-end">
@@ -29,21 +22,23 @@
                     </button>
                     <div class="btn-group">
                         <a class="btn btn-sm {% if mode == "list" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
-                                {% if no_filter_data %}
-                           href="?{% param_replace mode="list" hide_filter="1" date="" %}"
-                                {% else %}
-                           href="?{% param_replace mode="list" hide_filter=None %}"
-                                {% endif %}
+                            {% if filter_form.was_submitted %}
+                           href="?{% param_replace mode="list" %}"
+                            {% else %}
+                            {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
+                           href="?{% param_replace mode="list" date=None %}"
+                            {% endif %}
                         ><span class="fa fa-list"></span></a>
                         <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
-                           href="?{% param_replace mode="calendar" hide_filter=no_filter_data %}"
+                           href="?{% param_replace mode="calendar" %}"
                         ><i class="fa fa-calendar"></i></a>
                     </div>
                 </small>
             </h1>
 
             <div id="filter-form"
-                 class="row collapse {% if filter_form.is_valid and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
+                    {# show the filter if data has been submitted and it's not forced to hide, or if it has errors #}
+                 class="row collapse {% if filter_form.was_submitted and not request.GET.hide_filter or filter_form.errors %}show{% endif %}">
                 <div class="col-6 col-md-4 col-lg-3">
                     {% crispy_field filter_form.state wrapper_class="div" %}
                     {% crispy_field filter_form.query wrapper_class="div" show_labels=False %}
@@ -68,17 +63,17 @@
                     </button>
                     {# preserve date on reset in calendar mode #}
                     <a class="btn btn-secondary"
-                       href="?{% if mode == "calendar" %}date={{ request.GET.date }}&hide_filter=1{% endif %}">{% translate "Reset" %}</a>
+                       href="?{% if mode == "calendar" %}date={{ request.GET.date }}{% endif %}">{% translate "Reset" %}</a>
                 </div>
             </div>
 
             {% if mode == "calendar" %}
                 <div class="d-flex justify-content-between order-1 gap-3 mb-3">
                     <a class="btn btn-secondary"
-                       href="?{% param_replace date=prev_month_first|date:"Y-m-d" hide_filter=no_filter_data %}"
+                       href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
                     ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
                     <a class="btn btn-secondary"
-                       href="?{% param_replace date=next_month_first|date:"Y-m-d" hide_filter=no_filter_data %}"
+                       href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
                     >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
                 </div>
             {% endif %}
@@ -138,7 +133,9 @@
                                             {% if counter %}
                                          data-bs-toggle="tooltip" data-bs-placement="bottom"
                                          data-bs-html="true"
-                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
+                                         title="{% for state in counter %}<div>
+
+                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -211,6 +208,39 @@
                         {% endwith %}
                     {% endfor %}
                 </div>
+
+                <nav aria-label="event list page">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?{% param_replace page=page_obj.previous_page_number %}">«</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <span class="page-link disabled">
+                                {% if paginator.num_pages == 1 %}
+                                    {% blocktranslate count total=paginator.count context "Pagination" trimmed %}
+                                        {{ total }} entry
+                                        {% plural %}
+                                        {{ total }} entries
+                                    {% endblocktranslate %}
+
+                                {% else %}
+                                    {% blocktranslate with number=page_obj.number num_pages=paginator.num_pages total=paginator.count context "Pagination" trimmed %}
+                                        Page {{ number }} of {{ num_pages }} ({{ total }} entries)
+                                    {% endblocktranslate %}
+                                {% endif %}
+                            </span>
+                        </li>
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?{% param_replace page=page_obj.next_page_number %}">»</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
             {% else %}
                 <div class="mb-3">
                     <h5 class="mt-5 text-center">
