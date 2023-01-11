@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation, EventType, LocalParticipation, UserProfile
+from ephios.core.models import AbstractParticipation, EventType, UserProfile
 from ephios.core.signals import (
     event_info,
     homepage_info,
@@ -101,18 +101,17 @@ def confirmed_participations(user: UserProfile):
     )
 
 
-@register.filter(name="event_signup_state_counts")
-def event_signup_state_counts(event, user):
+@register.filter(name="event_list_signup_state_counts")
+def event_list_signup_state_counts(event):
     """
-    Return a counter counting states for a users participations for shifts of an event.
-    Uses None as key for no participation info.
+    Using the annotations on the event queryset in the event list view,
+    return a counter counting states for a users participations for shifts of an event.
     """
+    # the counter is nice because we can loop over it in the template and only get non-zero count states
     counter = collections.Counter()
-    for shift in event.shifts.all():
-        for participation in shift.participations.all():
-            if isinstance(participation, LocalParticipation) and participation.user_id == user.id:
-                counter[participation.state] += 1
-                break
+    for state in AbstractParticipation.States:
+        if count := getattr(event, f"state_{state}_count", 0):
+            counter[state] = count
     return counter
 
 

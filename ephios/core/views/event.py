@@ -139,7 +139,6 @@ class EventFilterForm(forms.Form):
             )
 
         if state_filter := fdata.get("state"):
-            qs = self._annotate_event_participation_states(qs)
             qs = {
                 "confirmed": qs.filter(
                     **{f"state_{AbstractParticipation.States.CONFIRMED}_count__gt": 0}
@@ -195,28 +194,6 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def _annotate_event_participation_states(self, qs):
-        qs = qs.annotate(
-            pending_disposition_count=Count(
-                "shifts__participations",
-                filter=Q(
-                    shifts__participations__state=AbstractParticipation.States.REQUESTED,
-                    can_change=True,
-                ),
-            ),
-            **{
-                f"state_{state}_count": Count(
-                    "shifts__participations",
-                    filter=Q(
-                        shifts__participations__localparticipation__user=self.request.user,
-                        shifts__participations__state=state,
-                    ),
-                )
-                for state in AbstractParticipation.States
-            },
-        )
-        return qs
-
     def get_calendar_month(self):
         "Return, even if the form is invalid, a tuple of year, month for the calendar to show"
         if self.is_valid() and (date := self.cleaned_data.get("date")):
@@ -245,6 +222,25 @@ class EventListView(LoginRequiredMixin, ListView):
                     default=False,
                     output_field=BooleanField(),
                 )
+            )
+            .annotate(
+                pending_disposition_count=Count(
+                    "shifts__participations",
+                    filter=Q(
+                        shifts__participations__state=AbstractParticipation.States.REQUESTED,
+                        can_change=True,
+                    ),
+                ),
+                **{
+                    f"state_{state}_count": Count(
+                        "shifts__participations",
+                        filter=Q(
+                            shifts__participations__localparticipation__user=self.request.user,
+                            shifts__participations__state=state,
+                        ),
+                    )
+                    for state in AbstractParticipation.States
+                },
             )
             .select_related("type")
             .prefetch_related("shifts")
