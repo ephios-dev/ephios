@@ -107,16 +107,6 @@ class EventFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = timezone.now().date()
 
-    def clean_date(self):
-        if not self.cleaned_data["date"]:
-            return timezone.now().date()
-        return self.cleaned_data["date"]
-
-    def clean_direction(self):
-        if not self.cleaned_data["direction"]:
-            return "from"
-        return self.cleaned_data["direction"]
-
     def filter_events(self, qs: QuerySet[Event]):
         fdata = self.cleaned_data
 
