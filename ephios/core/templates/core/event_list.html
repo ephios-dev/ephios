@@ -124,14 +124,14 @@
                         </div>
                     {% endif %}
                     {% for event in event_list %}
-                        {% with counter=event|event_signup_state_counts:request.user stats=event.get_signup_stats %}
+                        {% with counter=event|event_list_signup_state_counts stats=event.get_signup_stats %}
                             <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
                                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                            {% if counter %}
-                                         data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                         data-bs-html="true"
-                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"{% endif %}>
+                                        {% if counter %}
+                                         data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                        {% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -169,7 +169,7 @@
                                         <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                             <div class="position-relative">
                                                 <span class="fas fa-users"></span>
-                                                {% if event.can_change and stats.requested_count > 0 %}
+                                                {% if event.pending_disposition_count %}
                                                     <span class="pending-indicator"></span>
                                                 {% endif %}
                                                 {{ stats.confirmed_count }}
