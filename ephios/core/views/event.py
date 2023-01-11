@@ -17,6 +17,7 @@ from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext_lazy
 from django.views import View
 from django.views.generic import (
     CreateView,
@@ -56,6 +57,7 @@ class EventFilterForm(forms.Form):
         required=False,
     )
     types = forms.ModelMultipleChoiceField(
+        label=_("event type"),
         queryset=EventType.objects.all(),
         required=False,
         widget=forms.SelectMultiple(
@@ -66,8 +68,8 @@ class EventFilterForm(forms.Form):
         label=_("Date"),
         required=False,
         choices=[
-            ("until", _("until")),
-            ("from", _("from")),
+            ("until", pgettext_lazy("event date filter", "until")),
+            ("from", pgettext_lazy("event date filter", "from")),
         ],
         initial="from",
     )
