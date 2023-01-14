@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-01-14 13:49+0100\n"
-"PO-Revision-Date: 2023-01-13 17:01+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2023-01-14 13:03+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -77,7 +77,7 @@ msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
 #: ephios/core/dynamic_preferences_registry.py:119
 msgid "General required qualifications for this event type"
-msgstr ""
+msgstr "Allgemein erforderliche Qualifikationen für diesen Veranstaltungstyp"
 
 #: ephios/core/dynamic_preferences_registry.py:121
 msgid ""
@@ -85,6 +85,9 @@ msgid ""
 "without these qualification will not be able to sign up, so make sure to use "
 "this field appropriately."
 msgstr ""
+"Diese Qualifikationen sind für alle Veranstaltungen dieses Typs "
+"erforderlich. Nutzer ohne diese Qualifikationen können sich nicht anmelden. "
+"Nutzen Sie dieses Feld mit Bedacht."
 
 #: ephios/core/forms/events.py:39 ephios/core/forms/events.py:111
 msgid "Visible for"
@@ -887,14 +890,13 @@ msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
 #: ephios/core/signup/methods.py:388
-#, fuzzy, python-brace-format
-#| msgid "{user} acquires '{qualification}' after participating in {event}."
+#, python-brace-format
 msgid ""
 "You lack the necessary qualification to participate in {eventtype} type "
 "events."
 msgstr ""
-"{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
-"{event}."
+"Ihnen fehlen die nötigen Qualifikationen um an Veranstaltungen des Typs "
+"{eventtype} teilzunehmen."
 
 #: ephios/core/signup/methods.py:454
 msgid "Minimum age"
@@ -1997,10 +1999,8 @@ msgid "Maximum number of participants"
 msgstr "Maximale Anzahl von Teilnehmenden"
 
 #: ephios/plugins/basesignup/signup/common.py:88
-#, fuzzy
-#| msgid "You have successfully requested a participation for {shift}."
 msgid "You don't have all required qualifications for this shift."
-msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
+msgstr "Sie haben nicht alle erforderlichen Qualifikationen für diese Schicht."
 
 #: ephios/plugins/basesignup/signup/common.py:95
 #: ephios/plugins/basesignup/signup/section_based.py:101
@@ -2013,6 +2013,8 @@ msgid ""
 "Participants also need to have the qualifications <b>{qualifications}</b> to "
 "participate in {eventtype}"
 msgstr ""
+"Teilnehmende benötigen außerdem die Qualifikationen <b>{qualifications}</b> "
+"um an Veranstaltungen des Typs {eventtype} teilzunehmen"
 
 #: ephios/plugins/basesignup/signup/coupled_signup.py:21
 msgid "coupled to another shift"
