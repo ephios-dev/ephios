@@ -24,6 +24,7 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
+from ephios.core.dynamic_preferences_registry import GeneralRequiredQualificationPreference
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
@@ -381,12 +382,12 @@ def check_participant_age(method, participant):
 
 def check_general_required_qualifications(method, participant):
     if not participant.has_qualifications(
-        method.shift.event.type.preferences["general_required_qualifications"]
+        method.shift.event.type.preferences[GeneralRequiredQualificationPreference.name]
     ):
         return ParticipantUnfitError(
-            _("You lack qualifications for the eventtype {eventtype}.").format(
-                eventtype=method.shift.event.type
-            )
+            _(
+                "You lack the necessary qualification to participate in {eventtype} type events."
+            ).format(eventtype=method.shift.event.type)
         )
 
 
@@ -470,7 +471,7 @@ class BaseSignupMethodConfigurationForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop("event", None)
+        self.event = kwargs.pop("event")
         super().__init__(*args, **kwargs)
 
 
