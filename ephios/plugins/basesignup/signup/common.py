@@ -84,7 +84,9 @@ class QualificationsRequiredSignupMixin(_Base):
     @staticmethod
     def check_qualification(method, participant):
         if not participant.has_qualifications(method.configuration.required_qualifications):
-            return ParticipantUnfitError(_("You are not qualified."))
+            return ParticipantUnfitError(
+                _("You don't have all required qualifications for this shift.")
+            )
 
     @property
     def configuration_form_class(self):
@@ -95,6 +97,18 @@ class QualificationsRequiredSignupMixin(_Base):
                 widget=Select2MultipleWidget,
                 required=False,
                 initial=[],
+                help_text=_(
+                    "Participants also need to have the qualifications <b>{qualifications}</b> to participate in {eventtype}"
+                ).format(
+                    qualifications=",".join(
+                        self.event.type.preferences.get("general_required_qualifications")
+                        .all()
+                        .values_list("title", flat=True)
+                    ),
+                    eventtype=self.event.type,
+                )
+                if self.event.type.preferences.get("general_required_qualifications").exists()
+                else None,
             )
 
             @staticmethod

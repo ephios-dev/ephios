@@ -5,6 +5,7 @@ from datetime import date, datetime
 
 import pytest
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
@@ -32,6 +33,14 @@ def check_log_for_exceptions(caplog):
     caplog.set_level(logging.ERROR)
     yield
     assert caplog.get_records("call") == []
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    # The cache is not cleared after a test, but we need it to be for test isolation
+    # because e.g. dynamic preferences uses the cache
+    yield
+    cache.clear()
 
 
 @pytest.fixture

@@ -6,12 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: admin@ephios.de\n"
-"POT-Creation-Date: 2023-01-11 14:03+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-14 13:49+0100\n"
 "PO-Revision-Date: 2023-01-13 17:01+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
-"\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
+">\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -75,6 +75,17 @@ msgstr "Benutzer die standardmäßig für diesen Eventtyp verantwortlich sind"
 msgid "Groups that are responsible for this event type by default"
 msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
+#: ephios/core/dynamic_preferences_registry.py:119
+msgid "General required qualifications for this event type"
+msgstr ""
+
+#: ephios/core/dynamic_preferences_registry.py:121
+msgid ""
+"These qualifications are required for all events of this event type. Users "
+"without these qualification will not be able to sign up, so make sure to use "
+"this field appropriately."
+msgstr ""
+
 #: ephios/core/forms/events.py:39 ephios/core/forms/events.py:111
 msgid "Visible for"
 msgstr "Sichtbar für"
@@ -114,7 +125,7 @@ msgstr "Verantwortliche"
 #: ephios/core/forms/events.py:161 ephios/core/pdf.py:63 ephios/core/pdf.py:129
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/templates/core/userprofile_workinghours.html:25
-#: ephios/core/views/event.py:67 ephios/core/views/event.py:76
+#: ephios/core/views/event.py:68 ephios/core/views/event.py:77
 #: ephios/core/views/log.py:35
 msgid "Date"
 msgstr "Datum"
@@ -299,6 +310,7 @@ msgid "color"
 msgstr "Farbe"
 
 #: ephios/core/models/events.py:51 ephios/core/models/events.py:67
+#: ephios/core/views/event.py:60
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
@@ -330,7 +342,7 @@ msgstr "Veranstaltungen"
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:187 ephios/core/views/event.py:86
+#: ephios/core/models/events.py:187 ephios/core/views/event.py:87
 msgid "confirmed"
 msgstr "bestätigt"
 
@@ -512,7 +524,7 @@ msgstr "fehlgeschlagen"
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:360 ephios/core/views/event.py:81
+#: ephios/core/models/users.py:360 ephios/core/views/event.py:82
 msgid "State"
 msgstr "Status"
 
@@ -809,110 +821,121 @@ msgstr ""
 "Dieses Anmeldeverfahren wird genutzt, wenn das eigentlich vorgesehene "
 "Verfahren nicht mehr installiert ist."
 
-#: ephios/core/signup/methods.py:58
+#: ephios/core/signup/methods.py:59
 #, python-brace-format
 msgid "Signup Method '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: ephios/core/signup/methods.py:117
+#: ephios/core/signup/methods.py:118
 msgid "Individual start time"
 msgstr "Individueller Beginn"
 
-#: ephios/core/signup/methods.py:120
+#: ephios/core/signup/methods.py:121
 msgid "Individual end time"
 msgstr "Individuelles Ende"
 
-#: ephios/core/signup/methods.py:141
+#: ephios/core/signup/methods.py:142
 msgid "End time must not be before start time."
 msgstr "Ende darf nicht vor dem Beginn sein."
 
-#: ephios/core/signup/methods.py:167
+#: ephios/core/signup/methods.py:168
 #, python-brace-format
 msgid "{label} was changed from {initial} to {current}."
 msgstr "{label} wurde von {initial} zu {current} geändert."
 
-#: ephios/core/signup/methods.py:249 ephios/core/signup/methods.py:434
+#: ephios/core/signup/methods.py:250 ephios/core/signup/methods.py:446
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
 msgstr "Sie sind zu dieser Zeit bereits eingeteilt für {shifts}."
 
-#: ephios/core/signup/methods.py:296
+#: ephios/core/signup/methods.py:297
+#: ephios/plugins/basesignup/signup/common.py:180
 msgid "This action is not allowed."
 msgstr "Diese Aktion ist nicht erlaubt."
 
-#: ephios/core/signup/methods.py:298
+#: ephios/core/signup/methods.py:299
 msgid "Form submission is missing the mode of signup."
 msgstr "Formulardaten enthalten nicht den Anmeldemodus."
 
-#: ephios/core/signup/methods.py:305
+#: ephios/core/signup/methods.py:306
 msgid "Your participation was saved."
 msgstr "Ihre Teilnahme wurde gespeichert."
 
-#: ephios/core/signup/methods.py:340
+#: ephios/core/signup/methods.py:341
 msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
-#: ephios/core/signup/methods.py:347 ephios/core/signup/methods.py:359
+#: ephios/core/signup/methods.py:348 ephios/core/signup/methods.py:360
 msgid "You have been rejected."
 msgstr "Ihre Teilnahme wurde abgelehnt."
 
-#: ephios/core/signup/methods.py:357
+#: ephios/core/signup/methods.py:358
 msgid "You cannot decline by yourself."
 msgstr "Sie können sich nicht selbstständig abmelden."
 
-#: ephios/core/signup/methods.py:361
+#: ephios/core/signup/methods.py:362
 msgid "You have already declined participating."
 msgstr "Sie haben bereits abgesagt."
 
-#: ephios/core/signup/methods.py:369
+#: ephios/core/signup/methods.py:370
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: ephios/core/signup/methods.py:378
+#: ephios/core/signup/methods.py:379
 #, python-brace-format
 msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
-#: ephios/core/signup/methods.py:442
+#: ephios/core/signup/methods.py:388
+#, fuzzy, python-brace-format
+#| msgid "{user} acquires '{qualification}' after participating in {event}."
+msgid ""
+"You lack the necessary qualification to participate in {eventtype} type "
+"events."
+msgstr ""
+"{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
+"{event}."
+
+#: ephios/core/signup/methods.py:454
 msgid "Minimum age"
 msgstr "Mindestalter"
 
-#: ephios/core/signup/methods.py:448
+#: ephios/core/signup/methods.py:460
 msgid "Signup until"
 msgstr "Anmelden bis"
 
-#: ephios/core/signup/methods.py:451
+#: ephios/core/signup/methods.py:463
 msgid "Confirmed users can decline by themselves"
 msgstr "Bestätigte Nutzer können selbstständig absagen"
 
-#: ephios/core/signup/methods.py:453
+#: ephios/core/signup/methods.py:465
 msgid "only if the signup timeframe has not ended"
 msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 
-#: ephios/core/signup/methods.py:456
+#: ephios/core/signup/methods.py:468
 msgid "Users can provide individual start and end times"
 msgstr "Teilnehmende können individuelle Start- und Endzeiten angeben"
 
-#: ephios/core/signup/methods.py:496
+#: ephios/core/signup/methods.py:512
 msgid "Sign up"
 msgstr "Anmelden"
 
-#: ephios/core/signup/methods.py:497
+#: ephios/core/signup/methods.py:513
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: ephios/core/signup/methods.py:498
+#: ephios/core/signup/methods.py:514
 #, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
-#: ephios/core/signup/methods.py:499
+#: ephios/core/signup/methods.py:515
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: ephios/core/signup/methods.py:500
+#: ephios/core/signup/methods.py:516
 #, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
@@ -1168,7 +1191,6 @@ msgid "Show"
 msgstr "Anzeigen"
 
 #: ephios/core/templates/core/event_list.html:211
-#| msgid "Confirm results"
 msgid "No results."
 msgstr "Keine Ergebnisse."
 
@@ -1384,7 +1406,6 @@ msgstr "Seite %(page)s von %(of)s (%(count)s Elemente)"
 
 #: ephios/core/templates/core/pagination.html:38
 #, python-format
-#| msgid "%(count)s elements"
 msgid "%(count)s element"
 msgid_plural "%(count)s elements"
 msgstr[0] "%(count)s Element"
@@ -1745,46 +1766,42 @@ msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 msgid "Search for…"
 msgstr "Suche nach…"
 
-#: ephios/core/views/event.py:70
-#| msgid "until"
+#: ephios/core/views/event.py:71
 msgctxt "event date filter"
 msgid "until"
 msgstr "bis zum"
 
-#: ephios/core/views/event.py:71
+#: ephios/core/views/event.py:72
 msgctxt "event date filter"
 msgid "from"
 msgstr "ab dem"
 
-#: ephios/core/views/event.py:84
+#: ephios/core/views/event.py:85
 msgid "all"
 msgstr "alle"
 
-#: ephios/core/views/event.py:85
-#| msgid "Responsibles"
+#: ephios/core/views/event.py:86
 msgid "no response"
 msgstr "ohne Rückmeldung"
 
-#: ephios/core/views/event.py:87
-#| msgid "Request and confirm"
+#: ephios/core/views/event.py:88
 msgid "requested or confirmed"
 msgstr "angefragt oder bestätigt"
 
-#: ephios/core/views/event.py:88
-#| msgid "Disposition"
+#: ephios/core/views/event.py:89
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: ephios/core/views/event.py:389 ephios/core/views/shift.py:90
+#: ephios/core/views/event.py:376 ephios/core/views/shift.py:92
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:469
+#: ephios/core/views/event.py:456
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:523
+#: ephios/core/views/event.py:510
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -1845,16 +1862,16 @@ msgstr ""
 "Um fortzufahren, müssen Sie Plugins aktivieren, die Anmeldeverfahren "
 "bereitstellen."
 
-#: ephios/core/views/shift.py:161
+#: ephios/core/views/shift.py:165
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: ephios/core/views/shift.py:182
+#: ephios/core/views/shift.py:186
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: ephios/core/views/shift.py:187
+#: ephios/core/views/shift.py:191
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
@@ -1967,42 +1984,50 @@ msgstr "Grundlegende Anmeldeverfahren"
 msgid "This plugins adds basic signup methods."
 msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
-#: ephios/plugins/basesignup/signup/common.py:37
+#: ephios/plugins/basesignup/signup/common.py:40
 msgid "The maximum number of participants is reached."
 msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
-#: ephios/plugins/basesignup/signup/common.py:49
+#: ephios/plugins/basesignup/signup/common.py:52
 msgid "Minimum number of participants"
 msgstr "Minimale Anzahl von Teilnehmenden"
 
-#: ephios/plugins/basesignup/signup/common.py:52
+#: ephios/plugins/basesignup/signup/common.py:55
 msgid "Maximum number of participants"
 msgstr "Maximale Anzahl von Teilnehmenden"
 
-#: ephios/plugins/basesignup/signup/common.py:84
-#: ephios/plugins/basesignup/signup/section_based.py:285
-msgid "You are not qualified."
-msgstr "Sie sind nicht qualifiziert."
+#: ephios/plugins/basesignup/signup/common.py:88
+#, fuzzy
+#| msgid "You have successfully requested a participation for {shift}."
+msgid "You don't have all required qualifications for this shift."
+msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
 
-#: ephios/plugins/basesignup/signup/common.py:90
+#: ephios/plugins/basesignup/signup/common.py:95
 #: ephios/plugins/basesignup/signup/section_based.py:101
 msgid "Required Qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:18
+#: ephios/plugins/basesignup/signup/common.py:101
+#, python-brace-format
+msgid ""
+"Participants also need to have the qualifications <b>{qualifications}</b> to "
+"participate in {eventtype}"
+msgstr ""
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:21
 msgid "coupled to another shift"
 msgstr "an andere Schicht gekoppelt"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:19
+#: ephios/plugins/basesignup/signup/coupled_signup.py:22
 msgid "This method mirrors signup from another shift."
 msgstr ""
 "Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:26
+#: ephios/plugins/basesignup/signup/coupled_signup.py:30
 msgid "shift to mirror participation from"
 msgstr "Teilnahmen werden gespiegelt von"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:58
+#: ephios/plugins/basesignup/signup/coupled_signup.py:62
 msgid "Participation is coupled to {}."
 msgstr "Teilnahme ist gekoppelt an {}."
 
@@ -2021,19 +2046,19 @@ msgctxt "signup button text"
 msgid "Participate"
 msgstr "Teilnehmen"
 
-#: ephios/plugins/basesignup/signup/no_selfservice.py:11
-msgid "No Signup (only disposition)"
-msgstr "Keine Anmeldung (nur Disposition)"
-
-#: ephios/plugins/basesignup/signup/no_selfservice.py:12
-msgid "This method allows no signup by users."
-msgstr "Dieses Anmeldeverfahren erlaubt keine Anmeldung durch Benutzer."
-
-#: ephios/plugins/basesignup/signup/no_selfservice.py:19
+#: ephios/plugins/basesignup/signup/no_selfservice.py:14
 msgid "Explanation"
 msgstr "Begründung"
 
-#: ephios/plugins/basesignup/signup/no_selfservice.py:35
+#: ephios/plugins/basesignup/signup/no_selfservice.py:22
+msgid "No Signup (only disposition)"
+msgstr "Keine Anmeldung (nur Disposition)"
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:23
+msgid "This method allows no signup by users."
+msgstr "Dieses Anmeldeverfahren erlaubt keine Anmeldung durch Benutzer."
+
+#: ephios/plugins/basesignup/signup/no_selfservice.py:37
 msgid "Signup for this shift is disabled."
 msgstr "Die Anmeldung für diese Schicht ist deaktiviert."
 
@@ -2129,6 +2154,10 @@ msgstr ""
 "Teilnehmenden auswählen können.\n"
 "Abschnitte können Qualifikationen fordern, die die Teilnehmenden aufweisen "
 "müssen."
+
+#: ephios/plugins/basesignup/signup/section_based.py:285
+msgid "You are not qualified."
+msgstr "Sie sind nicht qualifiziert."
 
 #: ephios/plugins/basesignup/signup/section_based.py:339
 msgid "unassigned"
@@ -2438,8 +2467,8 @@ msgstr "Qualifikation löschen"
 #, python-format
 msgid ""
 "\n"
-"            Are you sure you want to delete the qualification "
-"\"%(title)s\"?\n"
+"            Are you sure you want to delete the qualification \"%(title)s"
+"\"?\n"
 "        "
 msgstr ""
 "\n"
@@ -2717,7 +2746,7 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
-#, fuzzy, python-format
+#, fuzzy
 #~| msgid ""
 #~| "Add\n"
 #~| "                                    %(title)s"
