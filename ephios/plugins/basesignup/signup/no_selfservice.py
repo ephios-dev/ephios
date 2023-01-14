@@ -16,6 +16,10 @@ class NoSelfserviceConfigurationForm(forms.Form):
         initial="",
     )
 
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event")
+        super().__init__(*args, **kwargs)
+
 
 class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = "no_selfservice"

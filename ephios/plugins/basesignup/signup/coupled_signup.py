@@ -35,6 +35,10 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
                 ),
             )
 
+            def __init__(self, *args, **kwargs):
+                self.event = kwargs.pop("event")
+                super().__init__(*args, **kwargs)
+
             @staticmethod
             def format_leader_shift_id(value):
                 return str(Shift.objects.get(id=value) if isinstance(value, int) else value)
