@@ -282,9 +282,6 @@ PWA_APP_ICONS = [
     {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
 ]
 
-# django-dynamic-preferences
-DYNAMIC_PREFERENCES = {}  # use defaults
-
 # django-webpush
 if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
     vp = Vapid().from_file(vapid_private_key_path)
