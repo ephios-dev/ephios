@@ -5,12 +5,13 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from ephios.core.views.settings import SettingsViewMixin
-from ephios.extra.mixins import StaffRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.pages.models import Page
 
 
-class PageListView(StaffRequiredMixin, SettingsViewMixin, ListView):
+class PageListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
     model = Page
+    permission_required = "pages.add_page"
 
 
 class PageView(DetailView):
@@ -26,8 +27,9 @@ class PageView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class PageCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
+class PageCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, CreateView):
     model = Page
+    permission_required = "pages.add_page"
     fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
@@ -35,8 +37,9 @@ class PageCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
         return reverse("pages:settings_page_list")
 
 
-class PageUpdateView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+class PageUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
     model = Page
+    permission_required = "pages.change_page"
     fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
@@ -44,8 +47,9 @@ class PageUpdateView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
         return reverse("pages:settings_page_list")
 
 
-class PageDeleteView(StaffRequiredMixin, SettingsViewMixin, DeleteView):
+class PageDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, DeleteView):
     model = Page
+    permission_required = "pages.delete_page"
 
     def get_success_url(self):
         messages.info(self.request, _("Page deleted successfully."))

@@ -128,6 +128,13 @@ This signal is sent out to get additional information to display on the homepage
 Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
 """
 
+register_group_permission_fields = PluginSignal()
+"""
+This signal is sent out to get a list of permission fields that should be displayed on the group form.
+Receivers should return a list of tuples of the form ``(field_name, field)``. field must be an instance of
+``ephios.extra.permissions.PermissionField``.
+"""
+
 
 @receiver(
     register_consequence_handlers,
