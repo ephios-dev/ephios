@@ -2,7 +2,12 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import footer_link, management_settings_sections
+from ephios.core.signals import (
+    footer_link,
+    management_settings_sections,
+    register_group_permission_fields,
+)
+from ephios.extra.permissions import PermissionField
 from ephios.plugins.pages.models import Page
 
 
@@ -27,6 +32,27 @@ def pages_settings_section(sender, request, **kwargs):
                 "active": request.resolver_match.url_name.startswith("settings_page"),
             },
         ]
-        if request.user.is_staff
+        if request.user.has_perm("pages.add_page")
         else []
     )
+
+
+@receiver(
+    register_group_permission_fields,
+    dispatch_uid="ephios.plugins.pages.signals.group_permission_fields",
+)
+def pages_group_permission_fields(sender, **kwargs):
+    return [
+        (
+            "manage_pages",
+            PermissionField(
+                label=_("Manage pages"),
+                help_text=_("Allows to create, edit and delete pages."),
+                permissions=[
+                    "pages.add_page",
+                    "pages.change_page",
+                    "pages.delete_page",
+                ],
+            ),
+        )
+    ]

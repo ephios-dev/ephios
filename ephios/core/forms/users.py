@@ -21,6 +21,7 @@ from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile, WorkingHours
 from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import enabled_notification_types
+from ephios.core.signals import register_group_permission_fields
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
@@ -140,6 +141,11 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 **kwargs.get("initial", {}),
             }
             self.permission_target = group
+        extra_fields = [
+            item for _, result in register_group_permission_fields.send(None) for item in result
+        ]
+        for field_name, field in extra_fields:
+            self.base_fields[field_name] = field
         super().__init__(**kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -158,6 +164,10 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 ),
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
+            ),
+            Fieldset(
+                _("Other"),
+                *(Field(entry[0]) for entry in extra_fields),
             ),
             FormActions(
                 Submit("submit", _("Save"), css_class="float-end"),
