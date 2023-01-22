@@ -176,7 +176,9 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         ) + datetime.timedelta(
             hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
         )
-        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
+        return hour_sum, list(
+            sorted(chain(participations, workinghours), key=lambda k: k["date"], reverse=True)
+        )
 
 
 register_model_for_logging(
