@@ -30,6 +30,12 @@
             </thead>
             <tbody>
                 {% with userprofile|workhour_items as workhour_items %}
+                <tr>
+                    <td><b>{% translate "Total" %}</b></td>
+                    <td></td>
+                    <td>{{ workhour_items.0|timedelta_in_hours }}<span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
+                    <td></td>
+                </tr>
                 {% for item in workhour_items.1 %}
                     <tr>
                         <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
@@ -47,12 +53,6 @@
                         </td>
                     </tr>
                 {% endfor %}
-                <tr>
-                    <td><b>{% translate "Total" %}</b></td>
-                    <td></td>
-                    <td>{{ workhour_items.0|timedelta_in_hours }}<span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
-                    <td></td>
-                </tr>
             {% endwith %}
             </tbody>
     </table>
