@@ -58,7 +58,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "description", "location"]
+        fields = ["title", "type", "description", "location"]
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
@@ -94,6 +94,8 @@ class EventForm(forms.ModelForm):
 
         super().__init__(**kwargs)
 
+        if event is None:
+            self.fields.pop("type")
         self.fields["visible_for"].queryset = can_publish_for_groups
         self.fields["visible_for"].disabled = not can_publish_for_groups
         if self.locked_visible_for_groups:
@@ -105,7 +107,8 @@ class EventForm(forms.ModelForm):
             ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
 
     def save(self, commit=True):
-        self.instance.type = self.eventtype
+        if not self.instance.pk:
+            self.instance.type = self.eventtype
         event: Event = super().save(commit=commit)
 
         add_log_recorder(event, PermissionLogRecorder("view_event", _("Visible for")))
