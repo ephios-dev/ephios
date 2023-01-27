@@ -28,6 +28,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     shift_form["end_time"] = time(16, 0)
     event = shift_form.submit().follow().context["event"]
     assert event.title == "Seeed Concert"
+    assert event.type == service_event_type
     assert set(get_groups_with_perms(event, only_with_perms_in=["view_event"])) == {
         volunteers,
         planners,
@@ -121,3 +122,15 @@ def test_unsaved_event_warning(django_app, planner, groups, service_event_type):
     response = response.click("View")
     assert "This event has not been saved"
     assert not response.context["event"].active
+
+
+def test_change_event_type(django_app, planner, event, service_event_type, training_event_type):
+    assert event.type == service_event_type
+    event_form = django_app.get(
+        reverse("core:event_edit", kwargs=dict(pk=event.pk)),
+        user=planner,
+    ).form
+    event_form["type"] = training_event_type.pk
+    event_form.submit()
+    event.refresh_from_db()
+    assert event.type == training_event_type

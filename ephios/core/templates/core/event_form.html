@@ -31,6 +31,9 @@
     <form method="post" class="form">
         {% csrf_token %}
         {{ form.title|as_crispy_field }}
+        {% if form.type %}
+            {{ form.type|as_crispy_field }}
+        {% endif %}
         {{ form.description|as_crispy_field }}
         {{ form.location|as_crispy_field }}
 
