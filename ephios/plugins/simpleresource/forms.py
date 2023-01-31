@@ -21,8 +21,8 @@ class ResourceAllocationForm(BasePluginFormMixin, ModelForm):
         self.helper = FormHelper()
         self.helper.include_media = False
         try:
-            kwargs.setdefault("instance", ResourceAllocation.objects.get(shift=shift))
-        except ResourceAllocation.DoesNotExist:
+            kwargs.setdefault("instance", ResourceAllocation.objects.get(shift_id=shift.id))
+        except (AttributeError, ResourceAllocation.DoesNotExist):
             pass
         super().__init__(*args, **kwargs)
 

@@ -23,9 +23,9 @@ class EventAutoQualificationForm(BasePluginFormMixin, forms.ModelForm):
         self.event = event
         try:
             kwargs.setdefault(
-                "instance", EventAutoQualificationConfiguration.objects.get(event=self.event)
+                "instance", EventAutoQualificationConfiguration.objects.get(event_id=self.event.id)
             )
-        except EventAutoQualificationConfiguration.DoesNotExist:
+        except (AttributeError, EventAutoQualificationConfiguration.DoesNotExist):
             pass
 
         super().__init__(*args, **kwargs)
