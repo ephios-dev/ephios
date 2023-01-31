@@ -126,10 +126,10 @@ def qualified_volunteer(qualifications, tz):
     QualificationGrant.objects.create(
         user=volunteer,
         qualification=qualifications.nfs,
-        expires=datetime(2064, 4, 1).astimezone(tz),
+        expires=datetime(2064, 4, 1, tzinfo=tz),
     )
     QualificationGrant.objects.create(
-        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1).astimezone(tz)
+        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1, tzinfo=tz)
     )
     QualificationGrant.objects.create(user=volunteer, qualification=qualifications.b, expires=None)
     return volunteer
