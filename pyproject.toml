@@ -91,6 +91,12 @@ max-line-length = "100"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
 addopts = "--fail-on-template-vars"
+filterwarnings = [
+    # displaying naive datetime warnings as errors
+    # as seen in https://docs.djangoproject.com/en/4.1/topics/i18n/timezones/#code
+    # and https://docs.pytest.org/en/stable/how-to/capture-warnings.html#controlling-warnings
+    'error:DateTimeField .* received a naive datetime',
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]

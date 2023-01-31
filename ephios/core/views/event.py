@@ -112,10 +112,10 @@ class EventFilterForm(forms.Form):
 
         date = fdata["date"]
         if fdata.get("direction", "from") == "from":
-            qs = qs.filter(end_time__gte=datetime.combine(date, time.min))
+            qs = qs.filter(end_time__gte=make_aware(datetime.combine(date, time.min)))
             qs = qs.order_by("start_time", "end_time")
         else:  # until
-            qs = qs.filter(start_time__lte=datetime.combine(date, time.max))
+            qs = qs.filter(start_time__lte=make_aware(datetime.combine(date, time.max)))
             qs = qs.order_by("-start_time", "-end_time")
 
         if event_types := fdata.get("types"):
