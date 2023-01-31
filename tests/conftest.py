@@ -203,9 +203,9 @@ def event(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 30).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 6, 30, 20, 30, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration=dict(user_can_decline_confirmed=True),
     )
@@ -260,9 +260,9 @@ def event_to_next_day(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 18, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 19, 0).astimezone(tz),
-        end_time=datetime(2099, 7, 1, 6, 0).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 18, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 19, 0, tzinfo=tz),
+        end_time=datetime(2099, 7, 1, 6, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
@@ -285,18 +285,18 @@ def multi_shift_event(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 6, 30, 20, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 7, 1, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 7, 1, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 7, 1, 20, 0).astimezone(tz),
+        meeting_time=datetime(2099, 7, 1, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 7, 1, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 7, 1, 20, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
@@ -391,7 +391,7 @@ def qualifications_consequence(volunteer, qualifications, event, tz):
         user=volunteer,
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
-        expires=datetime(2065, 4, 1).astimezone(tz),
+        expires=datetime(2065, 4, 1, tzinfo=tz),
     )
 
 
