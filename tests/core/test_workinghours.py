@@ -11,14 +11,14 @@ class TestWorkingHours:
     def test_own_workinghours_without_hours(self, django_app, volunteer):
         response = django_app.get(reverse("core:workinghours_own"), user=volunteer)
         assert response.status_code == 200
-        assert response.html.find(text=f"{floatformat(0, arg=2)}")
+        assert response.html.find(string=f"{floatformat(0, arg=2)}")
 
     def test_own_workinghours(self, django_app, volunteer, workinghours):
         response = django_app.get(reverse("core:workinghours_own"), user=volunteer)
-        assert response.html.find(text=workinghours[0].reason)
-        assert response.html.find(text=workinghours[1].reason)
+        assert response.html.find(string=workinghours[0].reason)
+        assert response.html.find(string=workinghours[1].reason)
         total_hours = workinghours[0].hours + workinghours[1].hours
-        assert response.html.find(text=f"{floatformat(total_hours, arg=2)}")
+        assert response.html.find(string=f"{floatformat(total_hours, arg=2)}")
 
     def test_workinghours_rounding(self, django_app, volunteer, event):
         from ephios.core.models import AbstractParticipation, LocalParticipation
@@ -34,8 +34,8 @@ class TestWorkingHours:
 
     def test_workinghours_overview(self, django_app, superuser, volunteer, workinghours):
         response = django_app.get(reverse("core:workinghours_list"), user=superuser)
-        assert response.html.find(text=floatformat(workinghours[1].hours, arg=2))
-        assert not response.html.find(text=superuser.last_name)
+        assert response.html.find(string=floatformat(workinghours[1].hours, arg=2))
+        assert not response.html.find(string=superuser.last_name)
 
     def test_grant_permission(
         self, django_app, manager, superuser, groups, workinghours, volunteer
@@ -45,9 +45,9 @@ class TestWorkingHours:
         )
         response = django_app.get(reverse("core:workinghours_list"), user=volunteer, status=403)
         response = django_app.get(reverse("core:workinghours_list"), user=manager)
-        assert len(response.html.find_all("span", text=re.compile("^Add$"))) == 1
+        assert len(response.html.find_all("span", string=re.compile("^Add$"))) == 1
         response = django_app.get(reverse("core:workinghours_list"), user=superuser)
-        assert len(response.html.find_all("span", text=re.compile("^Add$"))) == 2
+        assert len(response.html.find_all("span", string=re.compile("^Add$"))) == 2
 
     def test_workinghours_delete(self, django_app, superuser, volunteer, workinghours, groups):
         response = django_app.get(
