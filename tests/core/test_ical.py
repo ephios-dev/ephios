@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from django.urls import reverse
-from django.utils.datetime_safe import strftime
 
 from ephios.core.models import AbstractParticipation
 
@@ -30,4 +29,4 @@ def test_user_event_feed(django_app, qualified_volunteer, event):
         )
     )
     assert response and event.title in response
-    assert strftime(individual_start_time, "%M") in response
+    assert individual_start_time.strftime("%M") in response
