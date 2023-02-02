@@ -178,10 +178,10 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         return self
 
     def change_statements(self):
-        yield dict(label=self.label, value=self.new_value, old_value=self.old_value)
+        yield {"label": self.label, "value": self.new_value, "old_value": self.old_value}
 
     def value_statements(self):
-        yield dict(label=self.label, value=self.new_value)
+        yield {"label": self.label, "value": self.new_value}
 
 
 class M2MLogRecorder(BaseLogRecorder):
@@ -253,11 +253,11 @@ class M2MLogRecorder(BaseLogRecorder):
     def change_statements(self):
         for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
             if objects := getattr(self, attr):
-                yield dict(label=self.label, verb=verb, objects=objects)
+                yield {"label": self.label, "verb": verb, "objects": objects}
 
     def value_statements(self):
         if self.current:
-            yield dict(label=self.label, objects=self.current)
+            yield {"label": self.label, "objects": self.current}
 
 
 @receiver(m2m_changed)
@@ -359,11 +359,11 @@ class PermissionLogRecorder(BaseLogRecorder):
     def change_statements(self):
         for attr, verb in [("added", _("added")), ("removed", _("removed"))]:
             if objects := getattr(self, attr):
-                yield dict(label=self.label, verb=verb, objects=objects)
+                yield {"label": self.label, "verb": verb, "objects": objects}
 
     def value_statements(self):
         if hasattr(self, "current"):
-            yield dict(label=self.label, objects=self.current)
+            yield {"label": self.label, "objects": self.current}
 
 
 class DerivedFieldsLogRecorder(BaseLogRecorder):
@@ -391,14 +391,14 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
         return f"derived-{id(self.derive)}"
 
     def serialize(self, action_type: InstanceActionType):
-        return dict(
-            changes={
+        return {
+            "changes": {
                 str(key): [old_value, new_value]
                 for key in set(itertools.chain(self.old_dict.keys(), self.new_dict.keys()))
                 if (old_value := self.old_dict.get(key)) != (new_value := self.new_dict.get(key))
                 or action_type != InstanceActionType.CHANGE
             }
-        )
+        }
 
     @classmethod
     def deserialize(cls, data, model, action_type: InstanceActionType):
@@ -419,11 +419,11 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
 
     def change_statements(self):
         for label, (old_value, new_value) in self.changes.items():
-            yield dict(label=label, value=new_value, old_value=old_value)
+            yield {"label": label, "value": new_value, "old_value": old_value}
 
     def value_statements(self):
         for label, (__, new_value) in self.changes.items():
-            yield dict(label=label, value=new_value)
+            yield {"label": label, "value": new_value}
 
 
 class FixedMessageLogRecorder(BaseLogRecorder):
@@ -451,11 +451,11 @@ class FixedMessageLogRecorder(BaseLogRecorder):
 
     def change_statements(self):
         if self.show_change_statement:
-            yield dict(label=self.label, value=self.message)
+            yield {"label": self.label, "value": self.message}
 
     def value_statements(self):
         if self.show_value_statement:
-            yield dict(label=self.label, value=self.message)
+            yield {"label": self.label, "value": self.message}
 
 
 register_log_recorders = Signal()

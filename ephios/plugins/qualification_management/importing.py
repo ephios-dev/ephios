@@ -173,9 +173,7 @@ class QualificationChangeManager:
             if str(category.uuid) in uuids_of_used_categories:
                 QualificationCategory.objects.get_or_create(
                     uuid=category.uuid,
-                    defaults=dict(
-                        title=category.title,
-                    ),
+                    defaults={"title": category.title},
                 )
 
     def _delete_unneeded_qualification_categories(self):

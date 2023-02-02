@@ -95,7 +95,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         return Consequence.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(hours=hours, date=when, reason=reason),
+            data={"hours": hours, "date": when, "reason": reason},
         )
 
     @classmethod
@@ -142,19 +142,17 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         return Consequence.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(
-                qualification_id=qualification.id,
-                event_id=None if shift is None else shift.event_id,
-                expires=expires,
-            ),
+            data={
+                "qualification_id": qualification.id,
+                "event_id": None if shift is None else shift.event_id,
+                "expires": expires,
+            },
         )
 
     @classmethod
     def execute(cls, consequence):
         qg, created = QualificationGrant.objects.get_or_create(
-            defaults=dict(
-                expires=consequence.data["expires"],
-            ),
+            defaults={"expires": consequence.data["expires"]},
             user=consequence.user,
             qualification_id=consequence.data["qualification_id"],
         )

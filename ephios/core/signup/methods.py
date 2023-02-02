@@ -724,7 +724,7 @@ class BaseSignupMethod:
                 return get_template(self.shift_state_template_name).template.render(context)
         except Exception as e:  # pylint: disable=broad-except
             logger.exception(f"Shift #{self.shift.pk} state render failed")
-            with context.update(dict(exception_message=getattr(e, "message", None))):
+            with context.update({"exception_message": getattr(e, "message", None)}):
                 return get_template("core/fragments/signup_method_missing.html").template.render(
                     context
                 )
@@ -742,7 +742,7 @@ class BaseSignupMethod:
         ).order_by("-state")
         if self.disposition_participation_form_class is not None:
             kwargs["disposition_url"] = (
-                reverse("core:shift_disposition", kwargs=dict(pk=self.shift.pk))
+                reverse("core:shift_disposition", kwargs={"pk": self.shift.pk})
                 if request.user.has_perm("core.change_event", obj=self.shift.event)
                 else None
             )

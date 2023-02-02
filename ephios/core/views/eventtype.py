@@ -80,4 +80,4 @@ class EventTypeCreateView(
     )
 
     def get_success_url(self):
-        return reverse("core:settings_eventtype_edit", kwargs=dict(pk=self.object.pk))
+        return reverse("core:settings_eventtype_edit", kwargs={"pk": self.object.pk})
