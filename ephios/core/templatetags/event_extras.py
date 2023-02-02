@@ -3,7 +3,6 @@ import operator
 from functools import reduce
 
 from django import template
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -165,10 +164,10 @@ def homepage_plugin_content(request):
 @register.simple_tag(name="event_plugin_actions")
 def event_plugin_actions(event):
     html = ""
-    for _, actions in register_event_action.send(None):
+    for _, actions in register_event_action.send(None, event=event):
         html += "".join(
             [
-                f"<li><a class='dropdown-item' href='{reverse(action['url'], kwargs={'pk': event.id})}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
+                f"<li><a class='dropdown-item' href='{action['url']}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
                 for action in actions
             ]
         )
