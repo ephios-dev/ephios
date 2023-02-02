@@ -101,7 +101,9 @@ def prevent_getting_participant_from_request_user(request):
 
     class ProtectedUser(SimpleLazyObject):
         def as_participant(self):
-            raise Exception("Access of request.user.as_participant in SignupViews is not allowed.")
+            raise AttributeError(
+                "Access of request.user.as_participant in SignupViews is not allowed."
+            )
 
     request.user = ProtectedUser(lambda: original_user)
 
