@@ -237,7 +237,7 @@ class QualificationReassignmentForm(forms.Form):
             _, created = QualificationGrant.objects.get_or_create(
                 user=user,
                 qualification=self.cleaned_data["new_qualification"],
-                defaults=dict(expires=self.cleaned_data["expires"]),
+                defaults={"expires": self.cleaned_data["expires"]},
             )
             created_count += int(created)
         return created_count, len(users)

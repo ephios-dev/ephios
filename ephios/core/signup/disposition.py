@@ -44,7 +44,7 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
 
     class Meta(BaseParticipationForm.Meta):
         fields = ["state", "individual_start_time", "individual_end_time", "comment"]
-        widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
+        widgets = {"state": forms.HiddenInput(attrs={"class": "state-input"})}
 
 
 class DispositionBaseModelFormset(forms.BaseModelFormSet):

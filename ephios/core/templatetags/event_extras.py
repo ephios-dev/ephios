@@ -168,7 +168,7 @@ def event_plugin_actions(event):
     for _, actions in register_event_action.send(None):
         html += "".join(
             [
-                f"<li><a class='dropdown-item' href='{reverse(action['url'], kwargs=dict(pk=event.id))}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
+                f"<li><a class='dropdown-item' href='{reverse(action['url'], kwargs={'pk': event.id})}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
                 for action in actions
             ]
         )
