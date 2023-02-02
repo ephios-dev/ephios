@@ -9,9 +9,9 @@ from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, UserProfile
 from ephios.core.signals import (
+    event_action,
     event_info,
     homepage_info,
-    register_event_action,
     register_event_bulk_action,
     shift_info,
 )
@@ -162,9 +162,11 @@ def homepage_plugin_content(request):
 
 
 @register.simple_tag(name="event_plugin_actions")
-def event_plugin_actions(event):
+def event_plugin_actions(event_detail_view):
     html = ""
-    for _, actions in register_event_action.send(None, event=event):
+    for _, actions in event_action.send(
+        None, event=event_detail_view.object, request=event_detail_view.request
+    ):
         html += "".join(
             [
                 f"<li><a class='dropdown-item' href='{action['url']}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"

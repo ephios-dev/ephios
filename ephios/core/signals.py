@@ -115,11 +115,11 @@ Once the user wants to perform the action, a POST request will be issued to this
 will contain a list of event ids on which the action should be performed.
 """
 
-register_event_action = PluginSignal()
+event_action = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a single event. The actions are
 displayed in the dropdown menu on the event detail view.
-Receivers receive a ``event`` keyword argument.
+Receivers receive a ``event`` and ``request`` keyword argument.
 Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
 """
 
