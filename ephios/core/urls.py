@@ -22,6 +22,7 @@ from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
     EventActivateView,
+    EventCancellationView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
@@ -99,6 +100,7 @@ urlpatterns = [
         name="event_notifications",
     ),
     path("events/<int:pk>/pdf/", pdf.EventDetailPDFView.as_view(), name="event_detail_pdf"),
+    path("events/<int:pk>/cancel/", EventCancellationView.as_view(), name="event_cancel"),
     path(
         "events/<int:pk>/copy/",
         EventCopyView.as_view(),

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Cancel event" %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">{% blocktranslate %}Cancel event "{{ event }}"{% endblocktranslate %}</h1>
+    {% crispy form %}
+{% endblock %}

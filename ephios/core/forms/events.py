@@ -300,3 +300,26 @@ class EventNotificationForm(forms.Form):
         ):
             raise ValidationError(_("You cannot send an empty mail."))
         return super().clean()
+
+
+class EventCancellationForm(forms.Form):
+    explanation = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+        label=_("Explanation"),
+        help_text=_(
+            "All participants will be notified about the cancellation and this message will be included."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event")
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field("explanation"),
+            FormActions(
+                Submit("submit", _("Cancel event"), css_class="float-end"),
+                AbortLink(href=self.event.get_absolute_url()),
+            ),
+        )

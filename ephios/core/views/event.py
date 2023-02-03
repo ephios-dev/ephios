@@ -33,10 +33,16 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from recurrence.forms import RecurrenceField
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
+from ephios.core.forms.events import (
+    EventCancellationForm,
+    EventDuplicationForm,
+    EventForm,
+    EventNotificationForm,
+)
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
+    EventCancellationNotification,
     EventReminderNotification,
     NewEventNotification,
 )
@@ -509,3 +515,26 @@ class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, Fo
             CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
         messages.success(self.request, _("Notifications sent succesfully."))
         return redirect(self.object.get_absolute_url())
+
+
+class EventCancellationView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    model = Event
+    permission_required = "core.change_event"
+    template_name = "core/event_cancellation.html"
+    form_class = EventCancellationForm
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "event": self.object}
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def form_valid(self, form):
+        EventCancellationNotification.send(self.object, form.cleaned_data["explanation"])
+        event_title = self.object.title
+        self.object.delete()
+        messages.info(
+            self.request, _("Event {title} has been cancelled.").format(title=event_title)
+        )
+        return redirect(reverse("core:event_list"))
