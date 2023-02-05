@@ -1,0 +1,13 @@
+<div class="text-center">
+    <span {% if today %}class="badge bg-primary rounded-circle fs-6"{% endif %}>{{ day }}</span>
+</div>
+<div>
+    {% for shift in shifts %}
+        <a href="{{ shift.event.get_absolute_url }}" class="text-decoration-none" title="{{ shift.event.type }}: {{ shift.event.title }}">
+            <div class="w-100 d-inline-block text-truncate">
+                <span class="eventtype-indicator eventtype-{{ shift.event.type.pk }}-color"></span>
+                <small>{{ shift.start_time|time }}</small> {{ shift.event.title }}
+            </div>
+        </a>
+    {% endfor %}
+</div>

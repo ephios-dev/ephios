@@ -193,10 +193,6 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   height: 100px;
 }
 
-.calendar-today {
-  background-color: #cbcbcb;
-}
-
 // disable link badges underlining
 a.badge {
   text-decoration: none;
@@ -209,4 +205,13 @@ a.badge {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+//calendar eventtype indicator
+.eventtype-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-clip: padding-box;
+  border-radius: 50%;
 }

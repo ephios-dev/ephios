@@ -44,7 +44,7 @@
                                             {{ participation.shift.event.title }}
                                         </span>
                                     <span class="col-auto col-lg-2">
-                                            <span class="badge badge-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
+                                            <span class="badge eventtype-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
                                         </span>
                                     <span class="col-lg-4">
                                               {{ participation.start_time|date:"D" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}, {{ participation.get_time_display }}

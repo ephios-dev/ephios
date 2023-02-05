@@ -11,6 +11,12 @@
 {% endblock %}
 
 {% block content %}
+    <style nonce="{{ request.csp_nonce }}">
+                    {% cache 900 "eventtype_colors" %}
+                        {% eventtype_colors %}
+                    {% endcache %}
+                </style>
+
     <div class="page-header">
         <h1>{% translate "Events" %}
             <small class="float-end">
@@ -110,11 +116,6 @@
             {% endif %}
 
             {% if event_list %}
-                <style nonce="{{ request.csp_nonce }}">
-                    {% cache 900 "eventtype_colors" %}
-                        {% eventtype_colors %}
-                    {% endcache %}
-                </style>
                 <div class="list-group mb-3">
                     {% if perms.core.add_event %}
                         <div class="list-group-item px-0">
@@ -164,7 +165,7 @@
                                         </span>
                                         </div>
                                         <div class="grid-batch"><span
-                                                class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span>
+                                                class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                                         </div>
                                         <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                             <div class="position-relative">
