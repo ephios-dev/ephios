@@ -207,11 +207,28 @@ a.badge {
   white-space: nowrap;
 }
 
-//calendar eventtype indicator
-.eventtype-indicator {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background-clip: padding-box;
-  border-radius: 50%;
+.calendar-shift {
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap
+}
+
+@media (min-width: 992px) {
+  //calendar eventtype indicator
+  .eventtype-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-clip: padding-box;
+    border-radius: 50%;
+  }
+
+  .calendar-shift {
+    background-color: $gray-200 !important;
+    color: $gray-900 !important;
+  }
+
+  .calendar-truncate {
+    text-overflow: ellipsis;
+  }
 }

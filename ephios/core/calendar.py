@@ -41,4 +41,4 @@ class ShiftCalendar(HTMLCalendar):
         return self.day_cell("noday", "&nbsp;")
 
     def day_cell(self, cssclass, body):
-        return f'<td class="calendar-row-height p-1 {cssclass}">{body}</td>'
+        return f'<td class="calendar-row-height p-0 pe-1 p-lg-1 {cssclass}">{body}</td>'
