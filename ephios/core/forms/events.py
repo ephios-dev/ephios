@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
@@ -171,6 +172,13 @@ class ShiftForm(forms.ModelForm):
     class Meta:
         model = Shift
         fields = ["meeting_time", "start_time", "end_time", "signup_method_slug"]
+        help_texts = {
+            "signup_method_slug": mark_safe(
+                _(
+                    "Signup method for this shift. Explanations for the signup methods can be found in the <a href='{url}'>documentation</a>."
+                ).format(url="https://docs.ephios.de/de/stable/user/planner/signup_methods.html")
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
