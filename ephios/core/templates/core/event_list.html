@@ -11,6 +11,12 @@
 {% endblock %}
 
 {% block content %}
+    <style nonce="{{ request.csp_nonce }}">
+                    {% cache 900 "eventtype_colors" %}
+                        {% eventtype_colors %}
+                    {% endcache %}
+                </style>
+
     <div class="page-header">
         <h1>{% translate "Events" %}
             <small class="float-end">
@@ -67,11 +73,28 @@
             </div>
         </form>
         {% if mode == "calendar" %}
-            <div class="d-flex justify-content-between order-1 gap-3 mb-3">
+            <div class="d-flex order-1 gap-3 mb-3">
                 <a class="btn btn-secondary"
                    href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
                 ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
-                <a class="btn btn-secondary"
+                {% if perms.core.add_event %}
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle d-none d-md-inline-block" type="button" id="eventCreateButton"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-plus"></span>
+                            {% translate "Add event" %}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
+                            {% for eventtype in eventtypes %}
+                                <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
+                                    {% blocktranslate with title=eventtype.title trimmed %}
+                                        Add {{ title }}
+                                    {% endblocktranslate %}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                <a class="btn btn-secondary ms-auto"
                    href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
                 >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
             </div>
@@ -110,11 +133,6 @@
             {% endif %}
 
             {% if event_list %}
-                <style nonce="{{ request.csp_nonce }}">
-                    {% cache 900 "eventtype_colors" %}
-                        {% eventtype_colors %}
-                    {% endcache %}
-                </style>
                 <div class="list-group mb-3">
                     {% if perms.core.add_event %}
                         <div class="list-group-item px-0">
@@ -164,7 +182,7 @@
                                         </span>
                                         </div>
                                         <div class="grid-batch"><span
-                                                class="badge badge-{{ event.type.pk }}-color">{{ event.type }}</span>
+                                                class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                                         </div>
                                         <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                             <div class="position-relative">
