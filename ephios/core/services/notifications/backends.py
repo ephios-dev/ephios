@@ -1,4 +1,5 @@
 import logging
+import smtplib
 import traceback
 
 from django.conf import settings
@@ -36,10 +37,13 @@ def send_all_notifications():
                         raise e
                     notification.failed = True
                     notification.save()
-                    mail_admins(
-                        "Notification sending failed",
-                        f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
-                    )
+                    try:
+                        mail_admins(
+                            "Notification sending failed",
+                            f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
+                        )
+                    except smtplib.SMTPConnectError:
+                        pass  # if the mail backend threw this, mail admin will probably throw this as well
                     logger.warning(
                         f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
                     )
