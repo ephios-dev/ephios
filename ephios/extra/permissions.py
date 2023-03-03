@@ -39,7 +39,7 @@ class PermissionField(BooleanField):
 
     def __init__(self, *args, **kwargs):
         self.permission_set = kwargs.pop("permissions")
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, required=kwargs.pop("required", False), **kwargs)
 
     def set_initial_value(self, user_or_group):
         self.target = user_or_group

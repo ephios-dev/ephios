@@ -3,7 +3,6 @@ from collections import OrderedDict
 from datetime import date, datetime
 
 import pytest
-from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
@@ -13,35 +12,24 @@ from ephios.core.services.notifications.types import NewProfileNotification
 
 
 class TestUserProfileView:
-    def test_no_permission_required(self, django_app, volunteer):
-        response = django_app.get(reverse("core:profile"), user=volunteer)
-        assert response.status_code == 200
-
     def test_correct_user_data_displayed(
         self, django_app, superuser, manager, planner, volunteer, responsible_user
     ):
         users = [superuser, manager, planner, volunteer, responsible_user]
         for user in users:
-            response = django_app.get(reverse("core:profile"), user=user)
-            assert response.html.find("dd", text=user.first_name)
-            assert response.html.find("dd", text=user.last_name)
-            assert response.html.find("dd", text=user.email)
+            response = django_app.get(reverse("core:settings_personal_data"), user=user)
+            assert response.html.find("dd", string=user.first_name)
+            assert response.html.find("dd", string=user.last_name)
+            assert response.html.find("dd", string=user.email)
             assert response.html.find(
-                "dd", text=date_format(user.date_of_birth, format="DATE_FORMAT")
+                "dd", string=date_format(user.date_of_birth, format="DATE_FORMAT")
             )
-            assert response.html.find("dd", text=user.phone)
-
-    def test_view_other_profile(self, django_app, superuser, volunteer, workinghours):
-        response = django_app.get(
-            reverse("core:userprofile_detail", kwargs={"pk": volunteer.id}), user=superuser
-        )
-        assert response.html.find("dd", text=volunteer.email)
-        assert response.html.find("span", text=floatformat(volunteer.get_workhour_items()[0]))
+            assert response.html.find("dd", string=user.phone)
 
     def test_correct_qualifications(self, django_app, qualified_volunteer):
-        response = django_app.get(reverse("core:profile"), user=qualified_volunteer)
+        response = django_app.get(reverse("core:settings_personal_data"), user=qualified_volunteer)
         for q in qualified_volunteer.qualifications:
-            assert q.expires is None or response.html.findAll("li", text=re.compile(f"{q.title}"))
+            assert q.expires is None or response.html.findAll("li", string=re.compile(f"{q.title}"))
 
     def test_userprofile_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_list"), user=volunteer, status=403)
@@ -50,7 +38,9 @@ class TestUserProfileView:
     def test_userprofile_list(self, django_app, superuser):
         response = django_app.get(reverse("core:userprofile_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(text=UserProfile.objects.all().values_list("email", flat=True))
+        assert response.html.findAll(
+            string=UserProfile.objects.all().values_list("email", flat=True)
+        )
         edit_links = [
             reverse("core:userprofile_edit", kwargs={"pk": userprofile_id})
             for userprofile_id in UserProfile.objects.all().values_list("id", flat=True)

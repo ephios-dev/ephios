@@ -73,7 +73,7 @@ class Event(Model):
     class Meta:
         verbose_name = _("event")
         verbose_name_plural = _("events")
-        permissions = [("view_past_event", _("Can view past events"))]
+        permissions = []
         db_table = "event"
         base_manager_name = "all_objects"
         default_manager_name = "objects"
@@ -128,7 +128,9 @@ class Event(Model):
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
+        return reverse(
+            "core:event_detail", kwargs={"pk": self.id, "slug": self.get_canonical_slug()}
+        )
 
     def activate(self):
         if not self.active:

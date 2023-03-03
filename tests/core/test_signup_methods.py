@@ -5,8 +5,18 @@ import pytest
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
-from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
-from ephios.core.signup.methods import SignupStats, get_conflicting_participations
+from ephios.core.models import (
+    AbstractParticipation,
+    LocalParticipation,
+    Qualification,
+    QualificationGrant,
+    Shift,
+)
+from ephios.core.signup.methods import (
+    ParticipationError,
+    SignupStats,
+    get_conflicting_participations,
+)
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 
@@ -165,3 +175,14 @@ def test_event_detail_renders_with_missing_signup_method(django_app, event, volu
         event.get_absolute_url(),
         user=volunteer,
     )
+
+
+def test_general_required_qualifications(django_app, event, volunteer, qualifications):
+    event.type.preferences["general_required_qualifications"] = Qualification.objects.filter(
+        pk=qualifications.b.pk
+    )
+    with pytest.raises(ParticipationError):
+        event.shifts.first().signup_method.perform_signup(volunteer.as_participant())
+    QualificationGrant.objects.create(qualification=qualifications.b, user=volunteer)
+    volunteer.refresh_from_db()
+    event.shifts.first().signup_method.perform_signup(volunteer.as_participant())

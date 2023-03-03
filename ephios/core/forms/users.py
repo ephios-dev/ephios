@@ -5,10 +5,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.forms import (
-    CharField,
     CheckboxSelectMultiple,
-    DateField,
-    DecimalField,
     Form,
     ModelForm,
     ModelMultipleChoiceField,
@@ -21,9 +18,10 @@ from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.core.consequences import WorkingHoursConsequenceHandler
-from ephios.core.models import QualificationGrant, UserProfile
+from ephios.core.models import QualificationGrant, UserProfile, WorkingHours
 from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import enabled_notification_types
+from ephios.core.signals import register_group_permission_fields
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import PermissionField, PermissionFormMixin
@@ -31,7 +29,7 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
-MANAGEMENT_PERMISSIONS = [
+CORE_MANAGEMENT_PERMISSIONS = [
     "auth.add_group",
     "auth.change_group",
     "auth.delete_group",
@@ -52,6 +50,7 @@ MANAGEMENT_PERMISSIONS = [
     "core.add_qualification",
     "core.change_qualification",
     "core.delete_qualification",
+    "auth.publish_event_for_group",
     "modellogging.view_logentry",
 ]
 
@@ -63,7 +62,6 @@ def get_group_permission_log_fields(group):
     perms = set(group.permissions.values_list("codename", flat=True))
 
     return {
-        _("Can view past events"): "view_past_event" in perms,
         _("Can add events"): "add_event" in perms,
         _("Can edit users"): "change_userprofile" in perms,
         _("Can manage ephios"): "change_group" in perms,
@@ -78,10 +76,6 @@ def get_group_permission_log_fields(group):
 
 
 class GroupForm(PermissionFormMixin, ModelForm):
-    can_view_past_event = PermissionField(
-        label=_("Can view past events"), permissions=["core.view_past_event"], required=False
-    )
-
     is_planning_group = PermissionField(
         label=_("Can add events"),
         permissions=["core.add_event", "core.delete_event"],
@@ -118,11 +112,11 @@ class GroupForm(PermissionFormMixin, ModelForm):
         required=False,
     )
     is_management_group = PermissionField(
-        label=_("Can manage ephios"),
+        label=_("Can manage permissions and qualifications"),
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
-        permissions=MANAGEMENT_PERMISSIONS,
+        permissions=CORE_MANAGEMENT_PERMISSIONS,
         required=False,
     )
 
@@ -147,12 +141,16 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 **kwargs.get("initial", {}),
             }
             self.permission_target = group
+        extra_fields = [
+            item for _, result in register_group_permission_fields.send(None) for item in result
+        ]
+        for field_name, field in extra_fields:
+            self.base_fields[field_name] = field
         super().__init__(**kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("name"),
             Field("users"),
-            Field("can_view_past_event"),
             Fieldset(
                 _("Management"),
                 Field("is_hr_group", title="This permission is included with the management role."),
@@ -166,6 +164,10 @@ class GroupForm(PermissionFormMixin, ModelForm):
                 ),
                 Field("publish_event_for_group", wrapper_class="publish-select"),
                 "decide_workinghours_for_group",
+            ),
+            Fieldset(
+                _("Other"),
+                *(Field(entry[0]) for entry in extra_fields),
             ),
             FormActions(
                 Submit("submit", _("Save"), css_class="float-end"),
@@ -283,29 +285,32 @@ class QualificationGrantFormsetHelper(FormHelper):
         self.field_class = "col-md-8"
 
 
-class WorkingHourRequestForm(Form):
-    when = DateField(widget=CustomDateInput, label=_("Date"))
-    hours = DecimalField(label=_("Hours of work"), min_value=0.5)
-    reason = CharField(label=_("Occasion"))
+class WorkingHourRequestForm(ModelForm):
+    date = forms.DateField(widget=CustomDateInput)
+
+    class Meta:
+        model = WorkingHours
+        fields = ["date", "hours", "reason"]
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
+        self.can_grant = kwargs.pop("can_grant", False)
+        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
-            Field("when"),
+            Field("date"),
             Field("hours"),
             Field("reason"),
             FormActions(
-                Submit("submit", _("Send"), css_class="float-end"),
-                AbortLink(href=reverse("core:profile")),
+                Submit("submit", _("Save"), css_class="float-end"),
             ),
         )
 
     def create_consequence(self):
         WorkingHoursConsequenceHandler.create(
-            user=self.request.user,
-            when=self.cleaned_data["when"],
+            user=self.user,
+            when=self.cleaned_data["date"],
             hours=float(self.cleaned_data["hours"]),
             reason=self.cleaned_data["reason"],
         )

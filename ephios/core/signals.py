@@ -55,7 +55,7 @@ Receivers will receive a ``request`` keyword argument.
 event_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the event create and update views.
-You receive an `event` and `request` keyword arg you should use to create an instance of your form.
+You receive an `Optional[event]` and `request` keyword arg you should use to create an instance of your form.
 Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
 """
@@ -115,17 +115,25 @@ Once the user wants to perform the action, a POST request will be issued to this
 will contain a list of event ids on which the action should be performed.
 """
 
-register_event_action = PluginSignal()
+event_action = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a single event. The actions are
-displayed in the dropdown menu on the event detail view. Each action is represented by a dict with the keys
-``url``, ``label`` and ``icon``. The given url will be called with a ``pk`` parameter containing the id of the event.
+displayed in the dropdown menu on the event detail view.
+Receivers receive a ``event`` and ``request`` keyword argument.
+Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
 """
 
 homepage_info = PluginSignal()
 """
 This signal is sent out to get additional information to display on the homepage.
 Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
+"""
+
+register_group_permission_fields = PluginSignal()
+"""
+This signal is sent out to get a list of permission fields that should be displayed on the group form.
+Receivers should return a list of tuples of the form ``(field_name, field)``. field must be an instance of
+``ephios.extra.permissions.PermissionField``.
 """
 
 

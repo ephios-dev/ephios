@@ -76,10 +76,11 @@ CORE_PLUGINS = [
     "ephios.plugins.qualification_management.apps.PluginApp",
     "ephios.plugins.guests.apps.PluginApp",
     "ephios.plugins.eventautoqualification.apps.PluginApp",
+    "ephios.plugins.simpleresource.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
-for ep in importlib_metadata.entry_points().get("ephios.plugins", []):
-    PLUGINS.append(ep.module)
+for ep in importlib_metadata.entry_points(group="ephios.plugins"):
+    PLUGINS.append(ep.value)
 
 INSTALLED_APPS += PLUGINS
 
@@ -305,6 +306,8 @@ def GET_SITE_URL():
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 100,
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",

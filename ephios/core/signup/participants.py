@@ -82,7 +82,7 @@ class LocalUserParticipant(AbstractParticipant):
         return LocalParticipation.objects.filter(user=self.user)
 
     def reverse_signup_action(self, shift):
-        return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
+        return reverse("core:signup_action", kwargs={"pk": shift.pk})
 
     def reverse_event_detail(self, event):
         return event.get_absolute_url()

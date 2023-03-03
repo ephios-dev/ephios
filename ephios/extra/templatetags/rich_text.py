@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-ALLOWED_TAGS = [
+ALLOWED_TAGS = {
     "a",
     "abbr",
     "acronym",
@@ -36,8 +36,7 @@ ALLOWED_TAGS = [
     "thead",
     "tr",
     "ul",
-]
-
+}
 
 ALLOWED_ATTRIBUTES = {
     "a": ["href", "title", "class"],
@@ -50,17 +49,12 @@ ALLOWED_ATTRIBUTES = {
     "span": ["class", "title"],
 }
 
-ALLOWED_PROTOCOLS = ["http", "https", "mailto", "tel"]
+ALLOWED_PROTOCOLS = {"http", "https", "mailto", "tel"}
 
 
 def markdown_compile(source, excluded_tags=""):
     extensions = ["markdown.extensions.sane_lists", "markdown.extensions.nl2br"]
-    tags = ALLOWED_TAGS.copy()
-    for tag in excluded_tags.split(","):
-        try:
-            tags.remove(tag)
-        except ValueError:
-            pass
+    tags = ALLOWED_TAGS - set(excluded_tags.split(","))
     return bleach.clean(
         markdown.markdown(source, extensions=extensions),
         tags=tags,

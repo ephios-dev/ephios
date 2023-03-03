@@ -3,16 +3,15 @@ import operator
 from functools import reduce
 
 from django import template
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation, EventType, LocalParticipation, UserProfile
+from ephios.core.models import AbstractParticipation, EventType, UserProfile
 from ephios.core.signals import (
+    event_action,
     event_info,
     homepage_info,
-    register_event_action,
     register_event_bulk_action,
     shift_info,
 )
@@ -62,17 +61,6 @@ def participation_mannequin_style(participation):
     return "neutral"
 
 
-@register.simple_tag
-def setvar(value=None):
-    """
-    as an alternative to using with blocks and template, use
-    `{% setvar value|filter:param as var %}` to save a value to a variable in a template.
-    The builtin `firstof` doesn't work, because it converts values to strings.
-    From here: https://pythoncircle.com/post/701/how-to-set-a-variable-in-django-template/
-    """
-    return value
-
-
 @register.filter(name="can_sign_up")
 @catch_signup_method_fails(default=False)
 def can_sign_up(request, shift):
@@ -112,18 +100,17 @@ def confirmed_participations(user: UserProfile):
     )
 
 
-@register.filter(name="event_signup_state_counts")
-def event_signup_state_counts(event, user):
+@register.filter(name="event_list_signup_state_counts")
+def event_list_signup_state_counts(event):
     """
-    Return a counter counting states for a users participations for shifts of an event.
-    Uses None as key for no participation info.
+    Using the annotations on the event queryset in the event list view,
+    return a counter counting states for a users participations for shifts of an event.
     """
+    # the counter is nice because we can loop over it in the template and only get non-zero count states
     counter = collections.Counter()
-    for shift in event.shifts.all():
-        for participation in shift.participations.all():
-            if isinstance(participation, LocalParticipation) and participation.user_id == user.id:
-                counter[participation.state] += 1
-                break
+    for state in AbstractParticipation.States:
+        if count := getattr(event, f"state_{state}_count", 0):
+            counter[state] = count
     return counter
 
 
@@ -165,7 +152,7 @@ def event_plugin_content(event, request):
 @register.simple_tag(name="shift_plugin_content")
 def shift_plugin_content(shift, request):
     results = shift_info.send(None, shift=shift, request=request)
-    return list(map(lambda item: mark_safe(item[1]), results))
+    return [result[1] for result in results if result[1] is not None]
 
 
 @register.simple_tag(name="homepage_plugin_content")
@@ -175,12 +162,14 @@ def homepage_plugin_content(request):
 
 
 @register.simple_tag(name="event_plugin_actions")
-def event_plugin_actions(event):
+def event_plugin_actions(event_detail_view):
     html = ""
-    for _, actions in register_event_action.send(None):
+    for _, actions in event_action.send(
+        None, event=event_detail_view.object, request=event_detail_view.request
+    ):
         html += "".join(
             [
-                f"<li><a class='dropdown-item' href='{reverse(action['url'], kwargs=dict(pk=event.id))}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
+                f"<li><a class='dropdown-item' href='{action['url']}'><span class='fas {action['icon']}'></span> {action['label']}</a></li>"
                 for action in actions
             ]
         )

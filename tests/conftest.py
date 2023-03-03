@@ -5,12 +5,14 @@ from datetime import date, datetime
 
 import pytest
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
+from ephios.core import plugins
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
-from ephios.core.forms.users import MANAGEMENT_PERMISSIONS
+from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
 from ephios.core.models import (
     AbstractParticipation,
     Event,
@@ -33,6 +35,14 @@ def check_log_for_exceptions(caplog):
     assert caplog.get_records("call") == []
 
 
+@pytest.fixture(autouse=True)
+def clear_cache():
+    # The cache is not cleared after a test, but we need it to be for test isolation
+    # because e.g. dynamic preferences uses the cache
+    yield
+    cache.clear()
+
+
 @pytest.fixture
 def csrf_exempt_django_app(django_app_factory):
     return django_app_factory(csrf_checks=False)
@@ -47,7 +57,10 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture(autouse=True)
 def enable_plugins():
     preferences = global_preferences_registry.manager()
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.pages"]
+    preferences["general__enabled_plugins"] = [
+        plugin.module for plugin in plugins.get_all_plugins()
+    ]
+    plugins.is_receiver_path_enabled.cache_clear()
 
 
 @pytest.fixture
@@ -113,10 +126,10 @@ def qualified_volunteer(qualifications, tz):
     QualificationGrant.objects.create(
         user=volunteer,
         qualification=qualifications.nfs,
-        expires=datetime(2064, 4, 1).astimezone(tz),
+        expires=datetime(2064, 4, 1, tzinfo=tz),
     )
     QualificationGrant.objects.create(
-        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1).astimezone(tz)
+        user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1, tzinfo=tz)
     )
     QualificationGrant.objects.create(user=volunteer, qualification=qualifications.b, expires=None)
     return volunteer
@@ -139,6 +152,11 @@ def service_event_type():
 
 
 @pytest.fixture
+def training_event_type():
+    return EventType.objects.create(title="Training")
+
+
+@pytest.fixture
 def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers = Group.objects.create(name="Managers")
     planners = Group.objects.create(name="Planners")
@@ -147,13 +165,12 @@ def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     managers.user_set.add(superuser)
     managers.user_set.add(manager)
     planners.user_set.add(superuser, planner)
-    volunteers.user_set.add(superuser, planner, volunteer, qualified_volunteer)
+    volunteers.user_set.add(planner, volunteer, qualified_volunteer)
 
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
-    assign_perm("core.view_past_event", planners)
-    for perm in MANAGEMENT_PERMISSIONS:
+    for perm in CORE_MANAGEMENT_PERMISSIONS:
         assign_perm(perm, managers)
     assign_perm("decide_workinghours_for_group", managers, volunteers)
     return managers, planners, volunteers
@@ -186,9 +203,9 @@ def event(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 30).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 6, 30, 20, 30, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration=dict(user_can_decline_confirmed=True),
     )
@@ -196,13 +213,13 @@ def event(groups, service_event_type, planner, tz):
 
 
 @pytest.fixture
-def conflicting_event(event, service_event_type, volunteer, groups):
+def conflicting_event(event, training_event_type, volunteer, groups):
     managers, planners, volunteers = groups
     conflicting_event = Event.objects.create(
         title="Conflicting event",
         description="clashes",
         location="Berlin",
-        type=service_event_type,
+        type=training_event_type,
         active=True,
     )
 
@@ -243,9 +260,9 @@ def event_to_next_day(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 18, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 19, 0).astimezone(tz),
-        end_time=datetime(2099, 7, 1, 6, 0).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 18, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 19, 0, tzinfo=tz),
+        end_time=datetime(2099, 7, 1, 6, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
@@ -268,18 +285,18 @@ def multi_shift_event(groups, service_event_type, planner, tz):
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 6, 30, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 6, 30, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 6, 30, 20, 0).astimezone(tz),
+        meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 6, 30, 20, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
 
     Shift.objects.create(
         event=event,
-        meeting_time=datetime(2099, 7, 1, 7, 0).astimezone(tz),
-        start_time=datetime(2099, 7, 1, 8, 0).astimezone(tz),
-        end_time=datetime(2099, 7, 1, 20, 0).astimezone(tz),
+        meeting_time=datetime(2099, 7, 1, 7, 0, tzinfo=tz),
+        start_time=datetime(2099, 7, 1, 8, 0, tzinfo=tz),
+        end_time=datetime(2099, 7, 1, 20, 0, tzinfo=tz),
         signup_method_slug=RequestConfirmSignupMethod.slug,
         signup_configuration={},
     )
@@ -374,7 +391,7 @@ def qualifications_consequence(volunteer, qualifications, event, tz):
         user=volunteer,
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
-        expires=datetime(2065, 4, 1).astimezone(tz),
+        expires=datetime(2065, 4, 1, tzinfo=tz),
     )
 
 
@@ -387,11 +404,12 @@ def workinghours_consequence(volunteer):
 
 @pytest.fixture
 def workinghours(volunteer):
+    today = datetime.today()
     return [
         WorkingHours.objects.create(
-            user=volunteer, hours=21, reason="Lager aufräumen", date=date(2020, 1, 1)
+            user=volunteer, hours=21, reason="Lager aufräumen", date=date(today.year - 1, 1, 1)
         ),
         WorkingHours.objects.create(
-            user=volunteer, hours=21, reason="RTW checken", date=date(2021, 1, 1)
+            user=volunteer, hours=21, reason="RTW checken", date=date(today.year, 1, 1)
         ),
     ]

@@ -18,9 +18,9 @@ class EventAllowGuestsForm(BasePluginFormMixin, forms.Form):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         try:
-            self.instance = EventGuestShare.objects.get(event=self.event)
+            self.instance = EventGuestShare.objects.get(event_id=self.event.id)
             self.fields["link"].initial = self.instance.url
-        except EventGuestShare.DoesNotExist:
+        except (AttributeError, EventGuestShare.DoesNotExist):
             self.instance = EventGuestShare(event=self.event)
             del self.fields["link"]
             del self.fields["new_link"]

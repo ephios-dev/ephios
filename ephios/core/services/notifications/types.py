@@ -84,7 +84,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_url(cls, notification):
-        return urljoin(settings.GET_SITE_URL(), reverse("core:profile"))
+        return urljoin(settings.GET_SITE_URL(), reverse("core:settings_personal_data"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
@@ -133,7 +133,7 @@ class NewEventNotification(AbstractNotificationHandler):
         notifications = []
         for user in get_users_with_perms(event, only_with_perms_in=["view_event"]):
             notifications.append(
-                Notification(slug=cls.slug, user=user, data=dict(event_id=event.id, **kwargs))
+                Notification(slug=cls.slug, user=user, data={"event_id": event.id, **kwargs})
             )
         Notification.objects.bulk_create(notifications)
 
@@ -188,7 +188,7 @@ class ParticipationMixin:
         Notification.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(participation_id=participation.id, email=participation.participant.email),
+            data={"participation_id": participation.id, "email": participation.participant.email},
         )
 
 
@@ -253,11 +253,11 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
         Notification.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(
-                participation_id=participation.id,
-                email=participation.participant.email,
-                claims=claims,
-            ),
+            data={
+                "participation_id": participation.id,
+                "email": participation.participant.email,
+                "claims": claims,
+            },
         )
 
     @classmethod
@@ -297,7 +297,7 @@ class ResponsibleMixin:
     def get_data(self, **kwargs):
         kwargs["disposition_url"] = urljoin(
             settings.GET_SITE_URL(),
-            reverse("core:shift_disposition", kwargs=dict(pk=self.participation.shift.pk)),
+            reverse("core:shift_disposition", kwargs={"pk": self.participation.shift.pk}),
         )
         kwargs["participation_id"] = self.participation.id
         return kwargs
@@ -338,9 +338,12 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        if participation.shift.signup_method.uses_requested_state:
+        if (
+            participation.shift.signup_method.uses_requested_state
+            and participation.state != AbstractParticipation.States.CONFIRMED
+        ):
             return _(
-                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}"
+                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
             ).format(
                 shift=participation.shift,
                 participant=participation.participant,
@@ -414,7 +417,7 @@ class EventReminderNotification(AbstractNotificationHandler):
         notifications = []
         for user in users_not_participating:
             notifications.append(
-                Notification(slug=cls.slug, user=user, data=dict(event_id=event.id))
+                Notification(slug=cls.slug, user=user, data={"event_id": event.id})
             )
         Notification.objects.bulk_create(notifications)
 
@@ -458,12 +461,27 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                 Notification(
                     slug=cls.slug,
                     user=user,
-                    data=dict(
-                        email=participant.email,
-                        event_id=event.id,
-                        content=content,
-                        event_title=event.title,
-                    ),
+                    data={
+                        "email": participant.email,
+                        "event_id": event.id,
+                        "content": content,
+                        "event_title": event.title,
+                    },
+                )
+            )
+        for responsible in get_users_with_perms(
+            event, with_superusers=False, only_with_perms_in=["change_event"]
+        ):
+            notifications.append(
+                Notification(
+                    slug=cls.slug,
+                    user=responsible,
+                    data={
+                        "email": responsible.email,
+                        "event_id": event.id,
+                        "content": content,
+                        "event_title": event.title,
+                    },
                 )
             )
         Notification.objects.bulk_create(notifications)
@@ -486,7 +504,7 @@ class ConsequenceApprovedNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, consequence: Consequence):
         Notification.objects.create(
-            slug=cls.slug, user=consequence.user, data=dict(consequence_id=consequence.id)
+            slug=cls.slug, user=consequence.user, data={"consequence_id": consequence.id}
         )
 
     @classmethod
@@ -506,7 +524,7 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, consequence: Consequence):
         Notification.objects.create(
-            slug=cls.slug, user=consequence.user, data=dict(consequence_id=consequence.id)
+            slug=cls.slug, user=consequence.user, data={"consequence_id": consequence.id}
         )
 
     @classmethod

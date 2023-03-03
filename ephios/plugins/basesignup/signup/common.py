@@ -1,6 +1,8 @@
 import typing
 
 from django import forms
+from django.contrib import messages
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -8,6 +10,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.methods import (
     BaseSignupMethod,
+    BaseSignupView,
     ParticipantUnfitError,
     SignupDisallowedError,
 )
@@ -81,7 +84,9 @@ class QualificationsRequiredSignupMixin(_Base):
     @staticmethod
     def check_qualification(method, participant):
         if not participant.has_qualifications(method.configuration.required_qualifications):
-            return ParticipantUnfitError(_("You are not qualified."))
+            return ParticipantUnfitError(
+                _("You don't have all required qualifications for this shift.")
+            )
 
     @property
     def configuration_form_class(self):
@@ -92,6 +97,18 @@ class QualificationsRequiredSignupMixin(_Base):
                 widget=Select2MultipleWidget,
                 required=False,
                 initial=[],
+                help_text=_(
+                    "Participants also need to have the qualifications <b>{qualifications}</b> to participate in {eventtype}"
+                ).format(
+                    qualifications=",".join(
+                        self.event.type.preferences.get("general_required_qualifications")
+                        .all()
+                        .values_list("title", flat=True)
+                    ),
+                    eventtype=self.event.type,
+                )
+                if self.event.type.preferences.get("general_required_qualifications").exists()
+                else None,
             )
 
             @staticmethod
@@ -156,3 +173,11 @@ class QualificationMinMaxBaseSignupMethod(
                 rendered_count - len(participation_info)
             )
         return participation_info
+
+
+class NoSignupSignupView(BaseSignupView):
+    def get(self, request, *args, **kwargs):
+        messages.error(self.request, _("This action is not allowed."))
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
+
+    post = get

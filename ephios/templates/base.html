@@ -78,62 +78,63 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                {% if user.is_authenticated %}
-                    <ul class="navbar-nav me-auto">
-                        {% with url_name=request.resolver_match.url_name %}
-                            <li class="nav-item {% if url_name == "index" %}active{% endif %}">
-                                <a class="nav-link" href="{% url "core:home" %}">{% trans "Home" %}</a>
+            {# empty/replace the nav bar block for use in e.g. error page templates #}
+            {% block main_nav %}
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    {% if user.is_authenticated %}
+                        <ul class="navbar-nav me-auto">
+                            {% with url_name=request.resolver_match.url_name %}
+                                <li class="nav-item {% if url_name == "index" %}active{% endif %}">
+                                    <a class="nav-link" href="{% url "core:home" %}">{% trans "Home" %}</a>
+                                </li>
+                                <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
+                                    <a class="nav-link"
+                                       href="{% url "core:event_list" %}">{% trans "Events" %}</a>
+                                </li>
+                                {% if perms.core.view_userprofile %}
+                                    <li class="nav-item {% if url_name == "workinghours_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "core:workinghours_list" %}">{% trans "Working hours" %}</a>
+                                    </li>
+                                    <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "core:userprofile_list" %}">{% trans "Users" %}</a>
+                                    </li>
+                                {% endif %}
+                                {% if perms.auth.view_group %}
+                                    <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{% url "core:group_list" %}">{% trans "Groups" %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for item in nav %}
+                                    <li class="nav-item {% if item.active %}active{% endif %}">
+                                        <a class="nav-link"
+                                           href="{{ item.url }}">{{ item.label }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% endwith %}
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ user.get_full_name }}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
+                                    <a class="dropdown-item"
+                                       href="{% url "core:workinghours_own" %}">{% trans "Working hours" %}</a>
+                                    <a class="dropdown-item"
+                                       href="{% url "core:settings_personal_data" %}">{% trans "Settings" %}</a>
+                                    <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
+                                </div>
                             </li>
-                            <li class="nav-item {% if url_name == "event_list" %}active{% endif %}">
-                                <a class="nav-link"
-                                   href="{% url "core:event_list" %}">{% trans "Events" %}</a>
-                            </li>
-                            {% if perms.core.view_past_event %}
-                                <li class="nav-item {% if url_name == "event_list_past" %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{% url "core:event_list_past" %}">{% trans "Past events" %}</a>
-                                </li>
-                            {% endif %}
-                            {% if perms.core.view_userprofile %}
-                                <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{% url "core:userprofile_list" %}">{% trans "Users" %}</a>
-                                </li>
-                            {% endif %}
-                            {% if perms.auth.view_group %}
-                                <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{% url "core:group_list" %}">{% trans "Groups" %}
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% for item in nav %}
-                                <li class="nav-item {% if item.active %}active{% endif %}">
-                                    <a class="nav-link"
-                                       href="{{ item.url }}">{{ item.label }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        {% endwith %}
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ user.get_full_name }}
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
-                                <a class="dropdown-item"
-                                   href="{% url "core:profile" %}">{% trans "Profile" %}</a>
-                                <a class="dropdown-item"
-                                   href="{% url "core:settings_notifications" %}">{% trans "Settings" %}</a>
-                                <a class="dropdown-item" href="{% url "logout" %}">{% trans "Logout" %}</a>
-                            </div>
-                        </li>
-                    </ul>
-                {% endif %}
-            </div>
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endblock %}
         </div>
     </nav>
     <div id="unloading-spinner" class="d-none">

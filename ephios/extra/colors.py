@@ -27,4 +27,6 @@ def get_eventtype_color_style(eventtype: EventType):
         )
     )
     text_color = get_text_color_for_background(luminance)
-    return f".badge-{eventtype.pk}-color{{background-color:{eventtype.color};color:{text_color}}}"
+    return (
+        f".eventtype-{eventtype.pk}-color{{background-color:{eventtype.color};color:{text_color}}}"
+    )

@@ -140,4 +140,4 @@ class QualificationExportFixtureView(CustomPermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         qualifications = Qualification.objects.all()
         serializer = QualificationFixtureSerializer(qualifications, many=True)
-        return JsonResponse(serializer.data, safe=False, json_dumps_params=dict(ensure_ascii=False))
+        return JsonResponse(serializer.data, safe=False, json_dumps_params={"ensure_ascii": False})

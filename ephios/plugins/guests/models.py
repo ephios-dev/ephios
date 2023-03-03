@@ -24,7 +24,7 @@ class EventGuestShare(models.Model):
     @property
     def url(self):
         return settings.GET_SITE_URL() + reverse(
-            "guests:register", kwargs=dict(public_signup_token=self.token, event_id=self.event.id)
+            "guests:register", kwargs={"public_signup_token": self.token, "event_id": self.event.id}
         )
 
 
@@ -89,12 +89,12 @@ class GuestParticipant(AbstractParticipant):
     def reverse_signup_action(self, shift):
         return reverse(
             "guests:signup_action",
-            kwargs=dict(pk=shift.pk, guest_access_token=self.guest_user.access_token),
+            kwargs={"pk": shift.pk, "guest_access_token": self.guest_user.access_token},
         )
 
     def reverse_event_detail(self, event):
         return reverse(
-            "guests:event_detail", kwargs=dict(guest_access_token=self.guest_user.access_token)
+            "guests:event_detail", kwargs={"guest_access_token": self.guest_user.access_token}
         )
 
     @property

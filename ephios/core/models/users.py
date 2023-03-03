@@ -22,6 +22,7 @@ from django.db.models import (
     Model,
     Q,
     Sum,
+    Value,
 )
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -154,7 +155,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         from ephios.core.models import AbstractParticipation
 
         participations = (
-            self.participations.filter(state=AbstractParticipation.States.CONFIRMED)
+            self.participations.filter(state=AbstractParticipation.States.CONFIRMED, finished=True)
             .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),
@@ -162,18 +163,22 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 ),
                 date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
+                type=Value("event"),
+                origin_id=F("shift__event__pk"),
             )
-            .values("duration", "date", "reason")
+            .values("duration", "date", "reason", "type", "origin_id")
         )
-        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
-            "duration", "date", "reason"
-        )
+        workinghours = self.workinghours_set.annotate(
+            duration=F("hours"), type=Value("request"), origin_id=F("pk")
+        ).values("duration", "date", "reason", "type", "origin_id")
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
         ) + datetime.timedelta(
             hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
         )
-        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
+        return hour_sum, list(
+            sorted(chain(participations, workinghours), key=lambda k: k["date"], reverse=True)
+        )
 
 
 register_model_for_logging(
@@ -434,12 +439,15 @@ register_model_for_logging(
 
 class WorkingHours(Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    hours = models.DecimalField(decimal_places=2, max_digits=7)
-    reason = models.CharField(max_length=1024, default="")
+    hours = models.DecimalField(decimal_places=2, max_digits=7, verbose_name=_("Hours of work"))
+    reason = models.CharField(max_length=1024, default="", verbose_name=_("Occasion"))
     date = models.DateField()
 
     class Meta:
         db_table = "workinghours"
+
+    def __str__(self):
+        return f"{self.hours} hours for {self.user} because of {self.reason} on {self.date}"
 
 
 class Notification(Model):

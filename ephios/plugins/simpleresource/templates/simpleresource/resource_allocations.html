@@ -1,0 +1,5 @@
+<div id="resource-allocation-shift-{{ allocation.shift.id }}">
+    {% for resource in allocation.resources.all %}
+        <span class="badge bg-light text-dark"><i class="fas fa-{{ resource.category.icon }}"></i> {{ resource.title }}</span>
+    {% endfor %}
+</div>

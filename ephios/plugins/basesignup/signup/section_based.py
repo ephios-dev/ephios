@@ -297,7 +297,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
     def render_configuration_form(self, *args, form=None, **kwargs):
         """We overwrite the template to render the formset."""
-        form = form or self.get_configuration_form(*args, **kwargs)
+        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
         template = get_template("basesignup/section_based/configuration_form.html").render(
             {"form": form}
         )

@@ -12,29 +12,25 @@ from ephios.core.views.accounts import (
     GroupDeleteView,
     GroupListView,
     GroupUpdateView,
-    ProfileView,
     UserProfileCreateView,
     UserProfileDeleteView,
-    UserProfileDetailView,
     UserProfileListView,
     UserProfilePasswordResetView,
     UserProfileUpdateView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
-from ephios.core.views.consequences import ConsequenceUpdateView, WorkingHourRequestView
+from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
     EventActivateView,
-    EventArchiveView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
     EventDetailView,
-    EventListTypeSettingView,
+    EventListView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
     RRuleOccurrenceView,
-    current_event_list_view,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -45,9 +41,11 @@ from ephios.core.views.eventtype import (
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import manifest, offline, serviceworker
 from ephios.core.views.settings import (
+    CalendarSettingsView,
     InstanceSettingsView,
     NotificationSettingsView,
     PasswordChangeSettingsView,
+    PersonalDataSettingsView,
 )
 from ephios.core.views.shift import (
     ShiftConfigurationFormView,
@@ -56,11 +54,20 @@ from ephios.core.views.shift import (
     ShiftUpdateView,
 )
 from ephios.core.views.signup import LocalUserShiftActionView
+from ephios.core.views.workinghour import (
+    OwnWorkingHourView,
+    UserProfileWorkingHourView,
+    WorkingHourCreateView,
+    WorkingHourDeleteView,
+    WorkingHourOverview,
+    WorkingHourRequestView,
+    WorkingHourUpdateView,
+)
 
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("events/", current_event_list_view, name="event_list"),
+    path("events/", EventListView.as_view(), name="event_list"),
     path(
         "events/<int:pk>/edit/",
         EventUpdateView.as_view(),
@@ -101,11 +108,6 @@ urlpatterns = [
         "events/create/<int:type>/",
         EventCreateView.as_view(),
         name="event_create",
-    ),
-    path(
-        "events/past/",
-        EventArchiveView.as_view(),
-        name="event_list_past",
     ),
     path(
         "events/delete/",
@@ -153,6 +155,8 @@ urlpatterns = [
         RRuleOccurrenceView.as_view(),
         name="rrule_occurrences",
     ),
+    path("settings/data/", PersonalDataSettingsView.as_view(), name="settings_personal_data"),
+    path("settings/calendar/", CalendarSettingsView.as_view(), name="settings_calendar"),
     path(
         "settings/notifications/",
         NotificationSettingsView.as_view(),
@@ -180,7 +184,6 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
-    path("profile/", ProfileView.as_view(), name="profile"),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),
@@ -211,27 +214,33 @@ urlpatterns = [
         name="userprofile_create",
     ),
     path(
-        "users/<int:pk>/",
-        UserProfileDetailView.as_view(),
-        name="userprofile_detail",
-    ),
-    path(
         "consequences/<int:pk>/edit/",
         ConsequenceUpdateView.as_view(),
         name="consequence_edit",
-    ),
-    path(
-        "profile/requestworkinghour/",
-        WorkingHourRequestView.as_view(),
-        name="request_workinghour",
     ),
     path("log/", LogView.as_view(), name="log"),
     path("manifest.json", manifest, name="pwa_manifest"),
     path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
     path("offline/", offline, name="pwa_offline"),
+    path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
-        "events/list_type_setting/",
-        EventListTypeSettingView.as_view(),
-        name="event_list_type_setting",
+        "workinghours/own/request/",
+        WorkingHourRequestView.as_view(),
+        name="workinghours_request",
+    ),
+    path("workinghours/", WorkingHourOverview.as_view(), name="workinghours_list"),
+    path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghours_edit"),
+    path(
+        "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghours_delete"
+    ),
+    path(
+        "workinghours/user/<int:pk>/",
+        UserProfileWorkingHourView.as_view(),
+        name="workinghours_detail",
+    ),
+    path(
+        "workinghours/user/<int:pk>/add/",
+        WorkingHourCreateView.as_view(),
+        name="workinghours_add",
     ),
 ]

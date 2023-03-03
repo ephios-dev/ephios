@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from guardian.shortcuts import get_group_perms, get_objects_for_group
+from guardian.shortcuts import get_group_perms
 
 
 class TestGroupView:
@@ -12,7 +12,7 @@ class TestGroupView:
     def test_group_list(self, django_app, superuser, groups):
         response = django_app.get(reverse("core:group_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(text=Group.objects.all().values_list("name", flat=True))
+        assert response.html.findAll(string=Group.objects.all().values_list("name", flat=True))
         edit_links = [
             reverse("core:group_edit", kwargs={"pk": group_id})
             for group_id in Group.objects.all().values_list("id", flat=True)
@@ -33,7 +33,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert list(group.user_set.all()) == [manager]
-        assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert not group.permissions.filter(
             codename__in=[
@@ -58,7 +57,6 @@ class TestGroupView:
         group_name = "Testgroup"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = True
         form["is_planning_group"] = True
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         form["is_hr_group"] = True
@@ -67,7 +65,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert set(group.user_set.all()) == {manager}
-        assert group.permissions.filter(codename="view_past_event").exists()
         assert group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" in get_group_perms(
             group, Group.objects.get(name="Volunteers")
@@ -89,7 +86,6 @@ class TestGroupView:
         group_name = "New name"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = False
         form["is_planning_group"] = False
         form["is_management_group"] = False
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
@@ -98,29 +94,10 @@ class TestGroupView:
         group.refresh_from_db()
         assert group.name == group_name
         assert set(group.user_set.all()) == {manager}
-        assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" not in get_group_perms(
             group, Group.objects.get(name="Volunteers")
         )
-
-    def test_publish_for_groups_gets_saved_for_non_planner_groups(
-        self, django_app, groups, manager
-    ):
-        managers, planners, volunteers = groups
-        form = django_app.get(
-            reverse("core:group_edit", kwargs={"pk": managers.id}), user=manager
-        ).form
-        form["users"].force_value([manager.id])
-        form["is_planning_group"] = False
-        form["is_management_group"] = True
-        form["is_hr_group"] = False
-        form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-        form.submit().follow()
-        managers.refresh_from_db()
-        assert set(get_objects_for_group(managers, ["publish_event_for_group"], klass=Group)) == {
-            volunteers
-        }
 
     def test_group_delete(self, django_app, groups, manager):
         group = Group(name="Testgroup")
