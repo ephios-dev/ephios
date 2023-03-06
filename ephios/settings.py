@@ -316,7 +316,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "api.AccessToken"
 OAUTH2_PROVIDER = {
-    "SCOPES": {"read": "Read scope", "write": "Write scope", "me": "Access to the own user profile"}
+    "SCOPES": {
+        "read": "Read scope",
+        "write": "Write scope",
+        "me": "Access to the own user profile",
+    },
 }
-ACCESS_TOKEN_MODEL = "ephios.api.models.AccessToken"
