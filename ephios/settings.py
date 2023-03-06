@@ -316,7 +316,13 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Like UserProfile, these models are implemented using djangos private swappable API
+# due to how swappable works, we need to list every model for it to work, even if we are not swapping all
 OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "api.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "oauth2_provider.IDToken"
+OAUTH2_PROVIDER_GRANT_MODEL = "oauth2_provider.Grant"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "oauth2_provider.RefreshToken"
 OAUTH2_PROVIDER = {
     "SCOPES": {
         "read": "Read scope",
