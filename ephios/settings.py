@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django_filters",
     "guardian",
+    "oauth2_provider",
     "rest_framework",
     "rest_framework.authtoken",
     "django_select2",
@@ -311,5 +312,11 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
 }
+
+OAUTH2_PROVIDER = {
+    "SCOPES": {"read": "Read scope", "write": "Write scope", "me": "Access to the own user profile"}
+}
+ACCESS_TOKEN_MODEL = "ephios.api.models.AccessToken"

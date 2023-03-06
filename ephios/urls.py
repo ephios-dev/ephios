@@ -27,6 +27,7 @@ urlpatterns = [
     path("webpush/", include("webpush.urls")),
     path("", include("ephios.core.urls")),
     path("api/", include("ephios.api.urls")),
+    path("oauth/", include("oauth2_provider.urls", namespace="oauth2_provider")),
     path("jsi18n.js", JavaScriptCatalog.as_view(packages=["recurrence"]), name="jsi18n"),
 ]
 
