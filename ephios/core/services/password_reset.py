@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 class CustomMinimumLengthValidator(MinimumLengthValidator):
     def password_changed(self, password, user):
         if user is not None:
+            # revoke API tokens
+            for token in user.oauth2_provider_accesstoken.all():
+                token.revoke()
+
+            # send notification to user
             text_content = _(
                 "Your password for {site} has been changed. If you didn't request this change, contact an administrator immediately."
             ).format(site=settings.GET_SITE_URL())
