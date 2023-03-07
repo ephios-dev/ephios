@@ -8,7 +8,6 @@ from django.views import View
 from django.views.generic import CreateView, FormView, ListView, UpdateView
 
 from ephios.core.models import Qualification, QualificationCategory
-from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.qualification_management.forms import (
     QualificationCategoryFormset,
@@ -23,13 +22,13 @@ from ephios.plugins.qualification_management.serializers import QualificationFix
 # Templates in this plugin are under core/, because Qualification is a core model.
 
 
-class QualificationListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
+class QualificationListView(CustomPermissionRequiredMixin, ListView):
     model = Qualification
     ordering = ("category__title", "title")
     permission_required = "core.view_qualification"
 
 
-class QualificationImportView(CustomPermissionRequiredMixin, SettingsViewMixin, FormView):
+class QualificationImportView(CustomPermissionRequiredMixin, FormView):
     template_name = "core/import.html"
     form_class = QualificationImportForm
     permission_required = "core.add_qualification"
@@ -55,7 +54,7 @@ class QualificationImportView(CustomPermissionRequiredMixin, SettingsViewMixin, 
         return super().form_valid(form)
 
 
-class QualificationCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, CreateView):
+class QualificationCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Qualification
     form_class = QualificationForm
     permission_required = "core.add_qualification"
@@ -71,7 +70,7 @@ class QualificationCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, 
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
+class QualificationUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Qualification
     form_class = QualificationForm
     permission_required = "core.change_qualification"
@@ -81,7 +80,7 @@ class QualificationUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, 
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
+class QualificationDeleteView(CustomPermissionRequiredMixin, UpdateView):
     model = Qualification
     form_class = QualificationDeleteForm
     template_name_suffix = "_confirm_delete"
@@ -92,9 +91,7 @@ class QualificationDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, 
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationCategorySetUpdateView(
-    CustomPermissionRequiredMixin, SettingsViewMixin, FormView
-):
+class QualificationCategorySetUpdateView(CustomPermissionRequiredMixin, FormView):
     form_class = QualificationCategoryFormset
     template_name = "core/qualificationcategories_form.html"
     permission_required = "core.change_qualification"
@@ -112,7 +109,7 @@ class QualificationCategorySetUpdateView(
         return reverse("qualification_management:settings_qualification_list")
 
 
-class QualificationReassignmentView(CustomPermissionRequiredMixin, SettingsViewMixin, FormView):
+class QualificationReassignmentView(CustomPermissionRequiredMixin, FormView):
     form_class = QualificationReassignmentForm
     template_name = "core/qualification_reassignment.html"
     permission_required = "core.change_userprofile"
