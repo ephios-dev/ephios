@@ -332,4 +332,5 @@ OAUTH2_PROVIDER = {
         "CONFIDENTIAL_READ": "Read confidential data like participations and user data",
         "CONFIDENTIAL_WRITE": "Write confidential data like participations and user data",
     },
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
 }
