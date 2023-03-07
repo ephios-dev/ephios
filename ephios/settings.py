@@ -325,8 +325,11 @@ OAUTH2_PROVIDER_GRANT_MODEL = "oauth2_provider.Grant"
 OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "oauth2_provider.RefreshToken"
 OAUTH2_PROVIDER = {
     "SCOPES": {
-        "read": "Read scope",
-        "write": "Write scope",
-        "me": "Access to the own user profile",
+        "PUBLIC_READ": "Read public data like events and shifts",
+        "PUBLIC_WRITE": "Write public data like events and shifts",
+        "ME_READ": "Read own user profile and personal data",
+        "ME_WRITE": "Write own user profile and personal data",
+        "CONFIDENTIAL_READ": "Read confidential data like participations and user data",
+        "CONFIDENTIAL_WRITE": "Write confidential data like participations and user data",
     },
 }
