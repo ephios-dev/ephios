@@ -13,7 +13,7 @@
                     {% endif %}
                 {% endfor %}
 
-                <p>{% trans "Application requires the following permissions" %}</p>
+                <p>{% trans "The application requires the following permissions:" %}</p>
                 <ul>
                     {% for scope in scopes_descriptions %}
                         <li>{{ scope }}</li>
@@ -25,8 +25,8 @@
 
                 <div class="control-group">
                     <div class="controls">
-                        <input type="submit" class="btn btn-large btn-secondary" value="Cancel"/>
-                        <input type="submit" class="btn btn-large btn-primary" name="allow" value="Authorize"/>
+                        <input type="submit" class="btn btn-large btn-secondary" value="{% translate "Cancel" %}"/>
+                        <input type="submit" class="btn btn-large btn-primary" name="allow" value="{% translate "Authorize" %}"/>
                     </div>
                 </div>
             </form>
