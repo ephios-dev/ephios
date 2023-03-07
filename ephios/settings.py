@@ -69,7 +69,7 @@ EPHIOS_CORE_MODULES = [
     "ephios.extra",
     "ephios.api",
 ]
-INSTALLED_APPS += EPHIOS_CORE_MODULES
+INSTALLED_APPS = EPHIOS_CORE_MODULES + INSTALLED_APPS
 
 CORE_PLUGINS = [
     "ephios.plugins.basesignup.apps.PluginApp",
