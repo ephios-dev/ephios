@@ -13,7 +13,7 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
     def password_changed(self, password, user):
         if user is not None:
             # revoke API tokens
-            for token in user.oauth2_provider_accesstoken.all():
+            for token in user.api_accesstoken.all():
                 token.revoke()
 
             # send notification to user
