@@ -21,6 +21,13 @@ def get_available_management_settings_sections(request):
                 "active": request.resolver_match.url_name == "settings_instance",
             }
         )
+        sections.append(
+            {
+                "label": _("OAuth2 applications"),
+                "url": reverse("oauth2_provider:list"),
+                "active": request.resolver_match.url_name == "list",
+            }
+        )
     if request.user.has_perm("core.view_eventtype"):
         sections.append(
             {
