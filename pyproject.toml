@@ -47,7 +47,7 @@ mysql = ["mysqlclient"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.8"
+black = ">=22.8,<24.0"
 pre-commit = ">=2.20,<4.0"
 django-debug-toolbar = "^3.6"
 pytest-django = "^4.5.2"
