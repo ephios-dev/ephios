@@ -4,6 +4,7 @@ import secrets
 import uuid
 from datetime import date
 from itertools import chain
+from typing import Optional
 
 import guardian.mixins
 from django.contrib.auth import get_user_model
@@ -92,7 +93,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
-    date_of_birth = DateField(_("date of birth"))
+    date_of_birth = DateField(_("date of birth"), null=True, blank=False)
     phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
 
@@ -123,13 +124,15 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         return self.first_name
 
     @property
-    def age(self):
+    def age(self) -> Optional[int]:
+        if self.date_of_birth is None:
+            return None
         today, born = date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     @property
     def is_minor(self):
-        return self.age < 18
+        return self.date_of_birth is not None and self.age < 18
 
     def as_participant(self):
         from ephios.core.signup.participants import LocalUserParticipant
