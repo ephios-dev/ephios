@@ -315,7 +315,8 @@ REST_FRAMEWORK = {
 }
 
 # Like UserProfile, these models are implemented using djangos private swappable API
-# due to how swappable works, we need to list every model for it to work, even if we are not swapping all
+# due to a shaky implementation in django-oauth-toolkit, we need to customize all models,
+# although we only want to customize the AccessToken model
 OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "api.AccessToken"
 OAUTH2_PROVIDER_APPLICATION_MODEL = "api.Application"
 OAUTH2_PROVIDER_ID_TOKEN_MODEL = "api.IDToken"
