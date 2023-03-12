@@ -5,4 +5,4 @@ class ApiAppConfig(AppConfig):
     name = "ephios.api"
 
     def ready(self):
-        pass
+        from . import signals  # pylint: disable=unused-import
