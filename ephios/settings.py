@@ -68,6 +68,8 @@ EPHIOS_CORE_MODULES = [
     "ephios.extra",
     "ephios.api",
 ]
+# we need to import our own modules before everything else to allow template
+# customizing for django-oauth-toolkit
 INSTALLED_APPS = EPHIOS_CORE_MODULES + INSTALLED_APPS
 
 CORE_PLUGINS = [
