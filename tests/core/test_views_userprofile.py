@@ -92,7 +92,7 @@ class TestUserProfileView:
         assert userprofile.first_name == "testfirst"
         assert userprofile.last_name == "testlast"
         assert userprofile.date_of_birth == date(1999, 1, 1)
-        assert userprofile.phone == ""
+        assert not userprofile.phone
         assert userprofile.is_active
         assert set(userprofile.groups.all()) == {volunteers}
         assert set(userprofile.qualifications) == {qualifications.rs, qualifications.na}
