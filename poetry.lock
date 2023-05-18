@@ -977,15 +977,14 @@ django-appconf = ">=1.0"
 
 [[package]]
 name = "django-webpush"
-version = "0.3.4"
+version = "0.3.5"
 description = "A simple Django package to integrate Web Push Notification in your Application"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-webpush-0.3.4.tar.gz", hash = "sha256:28cbe7da20f1df5b61d859f61e2d11d4076de1c367aa048d654894fb8f324065"},
-    {file = "django_webpush-0.3.4-py2.py3-none-any.whl", hash = "sha256:a123102dede1a959f667e075ed746ac5b7d4a8622320162eba41a507a835e1e4"},
-    {file = "django_webpush-0.3.4-py3-none-any.whl", hash = "sha256:a2613784e822e2dde27086fb20b6d1a2b76e4d5dc8271607aecd45c98a3b7954"},
+    {file = "django-webpush-0.3.5.tar.gz", hash = "sha256:e3c9bd3ed996bec90aac07996659fbcb912dd70bb90c582595dacf235e7cc780"},
+    {file = "django_webpush-0.3.5-py2.py3-none-any.whl", hash = "sha256:87b08702f560fdd1a23a539c77a8f0b0de37b9746a57ad9ca3cb32c97ccdd9a3"},
 ]
 
 [package.dependencies]
