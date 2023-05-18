@@ -69,7 +69,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ["title", "description", "location"]
     ordering_fields = ["start_time", "end_time", "title"]
     ordering = ("start_time", "end_time")
-    permission_classes = [DjangoObjectPermissions, TokenHasScope]
+    permission_classes = (DjangoObjectPermissions | TokenHasScope,)
     required_scopes = ["PUBLIC_READ"]
 
     filter_backends = [
