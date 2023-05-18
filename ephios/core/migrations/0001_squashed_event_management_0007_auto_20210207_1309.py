@@ -8,7 +8,6 @@ import ephios.extra.json
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("event_management", "0001_squashed_0009_auto_20200921_2155"),
         ("event_management", "0002_auto_20200927_2157"),
