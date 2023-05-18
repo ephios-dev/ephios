@@ -8,7 +8,6 @@ import ephios.extra.json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0005_remove_event_mail_updates"),
     ]

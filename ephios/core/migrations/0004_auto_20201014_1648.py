@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0003_userprofile_calendar_token_squashed_0008_auto_20200925_1640"),
     ]

@@ -6,7 +6,6 @@ import ephios.core.models.users
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("eventautoqualification", "0003_alter_eventautoqualificationconfiguration_id"),
     ]
