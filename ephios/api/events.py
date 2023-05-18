@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Max, Min, Prefetch
-from oauth2_provider.contrib.rest_framework import TokenHasScope
+from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import filters, serializers, viewsets
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
@@ -69,7 +69,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ["title", "description", "location"]
     ordering_fields = ["start_time", "end_time", "title"]
     ordering = ("start_time", "end_time")
-    permission_classes = (DjangoObjectPermissions | TokenHasScope,)
+    permission_classes = [DjangoObjectPermissions, IsAuthenticatedOrTokenHasScope]
     required_scopes = ["PUBLIC_READ"]
 
     filter_backends = [
