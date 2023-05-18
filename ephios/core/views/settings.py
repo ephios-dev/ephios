@@ -1,5 +1,3 @@
-import typing
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -23,6 +21,14 @@ def get_available_management_settings_sections(request):
                 "active": request.resolver_match.url_name == "settings_instance",
             }
         )
+        sections.append(
+            {
+                "label": _("OAuth2 applications"),
+                "url": reverse("oauth2_provider:list"),
+                "active": request.resolver_match.namespace == "oauth2_provider"
+                and request.resolver_match.url_name == "list",
+            }
+        )
     if request.user.has_perm("core.view_eventtype"):
         sections.append(
             {
@@ -36,15 +42,7 @@ def get_available_management_settings_sections(request):
     return sections
 
 
-class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
-    def get_context_data(self, **kwargs):
-        kwargs["management_settings_sections"] = get_available_management_settings_sections(
-            self.request
-        )
-        return super().get_context_data(**kwargs)
-
-
-class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
+class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/settings/settings_instance.html"
     success_message = _("Settings saved successfully.")
 
@@ -59,7 +57,7 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsView
         return reverse("core:settings_instance")
 
 
-class PersonalDataSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateView):
+class PersonalDataSettingsView(LoginRequiredMixin, TemplateView):
     template_name = "core/settings/settings_personal_data.html"
 
     def get_context_data(self, **kwargs):
@@ -67,7 +65,7 @@ class PersonalDataSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateVi
         return super().get_context_data(**kwargs)
 
 
-class CalendarSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateView):
+class CalendarSettingsView(LoginRequiredMixin, TemplateView):
     template_name = "core/settings/settings_calendar.html"
 
     def get_context_data(self, **kwargs):
@@ -75,9 +73,7 @@ class CalendarSettingsView(LoginRequiredMixin, SettingsViewMixin, TemplateView):
         return super().get_context_data(**kwargs)
 
 
-class NotificationSettingsView(
-    LoginRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView
-):
+class NotificationSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/settings/settings_notifications.html"
     success_message = _("Settings succesfully saved.")
 
@@ -92,7 +88,7 @@ class NotificationSettingsView(
         return super().form_valid(form)
 
 
-class PasswordChangeSettingsView(SuccessMessageMixin, SettingsViewMixin, PasswordChangeView):
+class PasswordChangeSettingsView(SuccessMessageMixin, PasswordChangeView):
     template_name = "core/settings/password_change_form.html"
     success_url = reverse_lazy("core:home")
     success_message = _("Password changed successfully.")
