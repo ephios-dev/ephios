@@ -764,18 +764,19 @@ sqlparse = ">=0.2"
 
 [[package]]
 name = "django-dynamic-preferences"
-version = "1.14.0"
+version = "1.15.0"
 description = "Dynamic global and instance settings for your django project"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-dynamic-preferences-1.14.0.tar.gz", hash = "sha256:c00abcb8d524067390a66518cfcd32683b87ad3cc620d5913649fc7707b80833"},
+    {file = "django-dynamic-preferences-1.15.0.tar.gz", hash = "sha256:8ec6e3a1156346fd6c21fb9b12739910cff1c7582d61f2c10b8d3f2fd4b5b067"},
+    {file = "django_dynamic_preferences-1.15.0-py2.py3-none-any.whl", hash = "sha256:a37529ceefe2430a34e9906e1843102fb569c8086c6fe99a14f795f578c96d8c"},
 ]
 
 [package.dependencies]
 django = ">=3.2"
-persisting_theory = "1.0"
+persisting-theory = "1.0"
 six = "*"
 
 [[package]]
