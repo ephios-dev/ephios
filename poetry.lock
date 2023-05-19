@@ -812,14 +812,14 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-filter"
-version = "22.1"
+version = "23.2"
 description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-filter-22.1.tar.gz", hash = "sha256:ed473b76e84f7e83b2511bb2050c3efb36d135207d0128dfe3ae4b36e3594ba5"},
-    {file = "django_filter-22.1-py3-none-any.whl", hash = "sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb"},
+    {file = "django-filter-23.2.tar.gz", hash = "sha256:2fe15f78108475eda525692813205fa6f9e8c1caf1ae65daa5862d403c6dbf00"},
+    {file = "django_filter-23.2-py3-none-any.whl", hash = "sha256:d12d8e0fc6d3eb26641e553e5d53b191eb8cec611427d4bdce0becb1f7c172b5"},
 ]
 
 [package.dependencies]
@@ -2604,4 +2604,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "1076ce7ecaef9d6469d9a690645df42d31d90f131e56305d3bfa0198880dace6"
+content-hash = "d8ccb8a4cbca756f23239c86fe4fa74845930c8d4e7d8c305ba1e89c184a1b88"
