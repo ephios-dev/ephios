@@ -858,18 +858,18 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-ical"
-version = "1.8.3"
+version = "1.9.1"
 description = "iCal feeds for Django based on Django's syndication feed framework."
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-ical-1.8.3.tar.gz", hash = "sha256:0d5595c5bc954e401b59b27a9a86962557f0d3b965e9f5860244cd6bc450e8ab"},
-    {file = "django_ical-1.8.3-py3-none-any.whl", hash = "sha256:d3f97d163c03ea795e0722d5031e7f3806037ac913c814b0cfee54464f06978e"},
+    {file = "django-ical-1.9.1.tar.gz", hash = "sha256:6b94d5c3cf2112ae4c6e42fe6391e5c083b9079c0e570797ed49d3471b5a4ec2"},
+    {file = "django_ical-1.9.1-py3-none-any.whl", hash = "sha256:b24ea828db1979529b1b719730fd049841f1f7a06f6a09e97df2425ec2b1e8bd"},
 ]
 
 [package.dependencies]
-django = ">=2.2"
+django = ">=3.2"
 django-recurrence = ">=1.11.1"
 icalendar = ">=4.0.3"
 
