@@ -85,6 +85,13 @@ class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
         return super().get_queryset().filter(is_visible=True)
 
+    # mozilla-django-oidc looks here for a method to create users
+    def create_user(self, username, email):
+        user = self.model(email=email)
+        user.set_unusable_password()
+        user.save()
+        return user
+
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)

@@ -41,6 +41,7 @@ uritemplate = "^4.1.1"
 django-recurrence = "^1.11.1"
 redis = {version = "^4.3.4", optional = true}
 django-oauth-toolkit = "^2.2.0"
+mozilla-django-oidc = "^3.0.0"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
