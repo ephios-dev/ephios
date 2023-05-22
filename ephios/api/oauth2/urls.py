@@ -2,6 +2,7 @@ from django.urls import re_path
 from oauth2_provider import views
 from oauth2_provider.urls import base_urlpatterns
 
+from ephios.api.oauth2.views import AllUserApplicationList
 from ephios.extra.permissions import staff_required
 
 app_name = "oauth2_provider"
@@ -9,7 +10,7 @@ app_name = "oauth2_provider"
 
 management_urlpatterns = [
     # Application management views
-    re_path(r"^applications/$", staff_required(views.ApplicationList.as_view()), name="list"),
+    re_path(r"^applications/$", staff_required(AllUserApplicationList.as_view()), name="list"),
     re_path(
         r"^applications/register/$",
         staff_required(views.ApplicationRegistration.as_view()),

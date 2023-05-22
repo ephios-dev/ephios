@@ -3,18 +3,41 @@
 {% load i18n %}
 {% block settings_content %}
     <div class="block-center">
-        <h3 class="block-center-heading">{% trans "Your applications" %}</h3>
+        <h3 class="block-center-heading">{% trans "OAuth2 applications" %}</h3>
+        <a class="btn btn-primary" href="{% url "oauth2_provider:register" %}">{% trans "New Application" %}</a>
         {% if applications %}
-            <ul>
+            <table id="userprofile_table" class="table table-striped display">
+                <thead>
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "User" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "Action" %}</th>
+                </tr>
+                </thead>
+                <tbody>
                 {% for application in applications %}
-                    <li><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></li>
+                    <tr>
+                        <td>{{ application.name }}</td>
+                        <td>
+                            {{ application.user }}
+                        </td>
+                        <td>{{ application.created }}</td>
+                        <td class="d-flex">
+                            <a class="btn btn-secondary"
+                               href="{{ application.get_absolute_url }}">{% trans "View" %}</a>
+                            <a class="btn btn-secondary ms-1"
+                               href="{% url "oauth2_provider:update" application.id %}">{% trans "Edit" %}</a>
+                            <a class="btn btn-secondary ms-1"
+                               href="{% url "oauth2_provider:delete" application.id %}">{% trans "Delete" %}</a>
+
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ul>
-
-            <a class="btn btn-success" href="{% url "oauth2_provider:register" %}">{% trans "New Application" %}</a>
+                </tbody>
+            </table>
         {% else %}
-
-            <p>{% trans "No applications defined" %}. <a href="{% url 'oauth2_provider:register' %}">{% trans "Click here" %}</a> {% trans "if you want to register a new one" %}</p>
+            <p>{% trans "No applications defined" %}.</p>
         {% endif %}
     </div>
 {% endblock %}

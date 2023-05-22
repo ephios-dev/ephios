@@ -3,21 +3,55 @@
 {% load i18n %}
 {% block settings_content %}
     <div class="block-center">
-    <h1>{% trans "Tokens" %}</h1>
-        <ul>
+        <h1>{% translate "Your API Tokens" %}</h1>
+        <p>
+            {% blocktranslate trimmed %}
+                API Tokens let other applications authenticate at ephios.
+                They might be created manually or when logging in at a third party sites.
+                If you are unsure about the origins of a token or the security of the third party application
+                please revoke the token.
+            {% endblocktranslate %}
+        </p>
         {% for authorized_token in authorized_tokens %}
-            <li>
-                {{ authorized_token.application }}
-                (<a href="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}">{% trans "revoke" %}</a>)
-            </li>
-            <ul>
-            {% for scope_name, scope_description in authorized_token.scopes.items %}
-                <li>{{ scope_name }}: {{ scope_description }}</li>
-            {% endfor %}
-            </ul>
+            <div class="card w-100 mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ authorized_token.name }}
+                    </h5>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <p>
+                                {% blocktranslate trimmed with created=authorized_token.created %}
+                                    This token was created on {{ created }}.
+                                {% endblocktranslate %}
+                                {% if authorized_token.is_expired %}
+                                    <br/>
+                                    {% blocktranslate trimmed with expires=authorized_token.expires %}
+                                        It expired on {{ expires }}.
+                                    {% endblocktranslate %}
+                                {% elif authorized_token.expires %}
+                                    <br/>
+                                    {% blocktranslate trimmed with expired=authorized_token.expires %}
+                                        It will expire on {{ expires }}.
+                                    {% endblocktranslate %}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h6>{% translate "Scope" %}</h6>
+                            <ul>
+                                {% for scope_name, scope_description in authorized_token.scopes.items %}
+                                    <li>{{ scope_name }}: {{ scope_description }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <a href="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}"
+                       class="btn btn-secondary">{% translate "Revoke" %}</a>
+                </div>
+            </div>
         {% empty %}
-            <li>{% trans "There are no authorized tokens yet." %}</li>
+            <p>{% trans "There are no authorized tokens yet." %}</p>
         {% endfor %}
-        </ul>
     </div>
 {% endblock %}
