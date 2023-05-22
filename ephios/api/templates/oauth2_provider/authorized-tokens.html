@@ -12,6 +12,9 @@
                 please revoke the token.
             {% endblocktranslate %}
         </p>
+
+        <a href="#" class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+
         {% for authorized_token in authorized_tokens %}
             <div class="card w-100 mb-3">
                 <div class="card-body">
@@ -34,6 +37,11 @@
                                     {% blocktranslate trimmed with expired=authorized_token.expires %}
                                         It will expire on {{ expires }}.
                                     {% endblocktranslate %}
+                                {% endif %}
+                                {% if not authorized_token.application %}
+                                    <p>
+                                        <strong>{{ authorized_token.description }}</strong>
+                                    </p>
                                 {% endif %}
                             </p>
                         </div>

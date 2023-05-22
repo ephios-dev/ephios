@@ -1,3 +1,4 @@
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from oauth2_provider.models import (
     AbstractAccessToken,
@@ -22,6 +23,12 @@ class Application(AbstractApplication):
 class AccessToken(AbstractAccessToken):
     class Meta(AbstractAccessToken.Meta):
         swappable = "OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL"
+
+    description = models.TextField(
+        verbose_name=_("Description"),
+        blank=True,
+        help_text=_("describes manually created tokens"),
+    )
 
     @property
     def name(self):
