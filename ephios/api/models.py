@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from oauth2_provider.models import (
     AbstractAccessToken,
@@ -27,8 +28,18 @@ class AccessToken(AbstractAccessToken):
     description = models.TextField(
         verbose_name=_("Description"),
         blank=True,
-        help_text=_("describes manually created tokens"),
+        help_text=_("Describes where and for what this token is used"),
     )
+
+    # make expires nullable for non-expiring user tokens
+    expires = models.DateTimeField(
+        null=True,
+    )
+
+    def is_expired(self):
+        if not self.expires:
+            return False  # never expires
+        return timezone.now() >= self.expires
 
     @property
     def name(self):
@@ -38,6 +49,10 @@ class AccessToken(AbstractAccessToken):
 
     def __str__(self):
         return self.name
+
+    def revoke(self):  # todo actually use this in the view, currently a plain delete view
+        self.expires = timezone.now()
+        self.save(update_fields=["expires"])
 
 
 class RefreshToken(AbstractRefreshToken):

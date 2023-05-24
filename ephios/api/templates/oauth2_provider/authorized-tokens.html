@@ -13,7 +13,7 @@
             {% endblocktranslate %}
         </p>
 
-        <a href="#" class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+        <a href="{% url "api:settings-authorized-token-create" %}" class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
 
         {% for authorized_token in authorized_tokens %}
             <div class="card w-100 mb-3">
@@ -34,13 +34,13 @@
                                     {% endblocktranslate %}
                                 {% elif authorized_token.expires %}
                                     <br/>
-                                    {% blocktranslate trimmed with expired=authorized_token.expires %}
+                                    {% blocktranslate trimmed with expires=authorized_token.expires %}
                                         It will expire on {{ expires }}.
                                     {% endblocktranslate %}
                                 {% endif %}
                                 {% if not authorized_token.application %}
-                                    <p>
-                                        <strong>{{ authorized_token.description }}</strong>
+                                    <p> {# TODO use preformatting #}
+                                        {{ authorized_token.description }}
                                     </p>
                                 {% endif %}
                             </p>

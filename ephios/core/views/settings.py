@@ -26,7 +26,7 @@ def get_available_management_settings_sections(request):
                 "label": _("App integrations"),
                 "url": reverse("oauth2_provider:list"),
                 "active": request.resolver_match.namespace == "oauth2_provider"
-                and request.resolver_match.url_name == "list",
+                and "authorized-token" not in request.resolver_match.url_name,
             }
         )
     if request.user.has_perm("core.view_eventtype"):
