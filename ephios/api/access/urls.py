@@ -2,7 +2,7 @@ from django.urls import re_path
 from oauth2_provider import views
 from oauth2_provider.urls import base_urlpatterns
 
-from ephios.api.oauth2.views import AllUserApplicationList
+from ephios.api.access.views import AllUserApplicationList
 from ephios.extra.permissions import staff_required
 
 app_name = "oauth2_provider"

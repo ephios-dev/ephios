@@ -4,7 +4,6 @@
 {% block settings_content %}
     <div class="block-center">
         <h3 class="block-center-heading">{{ application.name }}</h3>
-
         <div class="mb-3">
             <label for="client_id" class="form-label">{% trans "Client id" %}</label>
             <input id="client_id" class="form-control" type="text" value="{{ application.client_id }}"
@@ -14,12 +13,6 @@
             <label for="client_secret" class="form-label">{% trans "Client secret" %}</label>
             <input id="client_secret" class="form-control" type="text" value="{{ application.client_secret }}"
                    readonly>
-        </div>
-
-        <div class="mb-3">
-            <label for="redirect_uris" class="form-label">{% trans "Redirect URIs" %}</label>
-            <textarea id="redirect_uris" class="form-control" type="text"
-                      readonly>{{ application.redirect_uris }}</textarea>
         </div>
         <div class="mb-3">
             <label for="client_type" class="form-label">{% trans "Client type" %}</label>
@@ -33,8 +26,13 @@
                    readonly>
         </div>
         <div class="mb-3">
+            <label for="redirect_uris" class="form-label">{% trans "Redirect URIs" %}</label>
+            <textarea id="redirect_uris" class="form-control" type="text"
+                      readonly>{{ application.redirect_uris }}</textarea>
+        </div>
+        <div class="mb-3">
             <label for="created" class="form-label">{% trans "Created" %}</label>
-            <input id="creatd" class="form-control" type="text"
+            <input id="created" class="form-control" type="text"
                    value="{{ application.created }}"
                    readonly>
         </div>
