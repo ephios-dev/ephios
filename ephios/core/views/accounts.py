@@ -171,8 +171,7 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
                         email=self.object.email
                     ),
                 )
-            return redirect(reverse("core:userprofile_list"))
-        return self.render_to_response({"userprofile": self.object})
+        return redirect(reverse("core:userprofile_list"))
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):

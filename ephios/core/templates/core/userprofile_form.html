@@ -100,8 +100,7 @@
                         <h4 class="card-title">{% translate "Password" %}</h4>
                         <a class="btn btn-secondary text-nowrap mt-1"
                            href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-                            {% trans "Reset password" %}</a>
-
+                            {% trans "Send password reset email" %}</a>
                     </div>
                 </div>
             {% endif %}
