@@ -2,17 +2,17 @@ import copy
 import os
 from email.utils import getaddresses
 
+import environ
+from cryptography.hazmat.primitives import serialization
+from django.contrib.messages import constants
 from django.utils.translation import gettext_lazy
+from py_vapid import Vapid, b64urlencode
 
 try:
     import importlib_metadata  # importlib is broken on python3.8, using backport
 except ImportError:
     import importlib.metadata as importlib_metadata
 
-import environ
-from cryptography.hazmat.primitives import serialization
-from django.contrib.messages import constants
-from py_vapid import Vapid, b64urlencode
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
