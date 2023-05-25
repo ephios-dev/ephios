@@ -1,4 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
+{% load rich_text %}
 
 {% load i18n %}
 {% block settings_content %}
@@ -13,14 +14,26 @@
             {% endblocktranslate %}
         </p>
 
-        <a href="{% url "api:settings-authorized-token-create" %}" class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+        <a href="{% url "api:settings-authorized-token-create" %}"
+           class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+
+        {% if not request.GET.show_expired %}
+            <a href="?show_expired=1" class="btn btn-secondary ms-1 mb-3">{% translate "Show expired" %}</a>
+        {% endif %}
 
         {% for authorized_token in authorized_tokens %}
             <div class="card w-100 mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        {{ authorized_token.name }}
-                    </h5>
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <h5 class="card-title">
+                            {{ authorized_token.name }}
+                        </h5>
+                        {% if authorized_token.is_expired %}
+                            <span class="badge bg-warning text-white">{% translate "Expired" %}</span>
+                        {% endif %}
+                    </div>
+
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <p>
@@ -38,12 +51,10 @@
                                         It will expire on {{ expires }}.
                                     {% endblocktranslate %}
                                 {% endif %}
-                                {% if not authorized_token.application %}
-                                    <p> {# TODO use preformatting #}
-                                        {{ authorized_token.description }}
-                                    </p>
-                                {% endif %}
                             </p>
+                            {% if not authorized_token.application %}
+                                {{ authorized_token.description|rich_text }}
+                            {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
                             <h6>{% translate "Scope" %}</h6>
@@ -55,13 +66,20 @@
                         </div>
                     </div>
                     {% if not authorized_token.is_expired %}
-                        <a href="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}"
-                           class="btn btn-secondary">{% translate "Revoke" %}</a>
+                        <form method="POST" action="{% url "oauth2_provider:authorized-token-revoke" %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="pk" value="{{ authorized_token.id }}">
+                            <button type="submit" class="btn btn-secondary">{% translate "Revoke" %}</button>
+                        </form>
                     {% endif %}
                 </div>
             </div>
         {% empty %}
-            <p>{% trans "There are no authorized tokens yet." %}</p>
+            {% if request.GET.show_expired %}
+                <p>{% translate "There are no tokens." %}</p>
+            {% else %}
+                <p>{% translate "There are no active tokens." %}</p>
+            {% endif %}
         {% endfor %}
     </div>
 {% endblock %}

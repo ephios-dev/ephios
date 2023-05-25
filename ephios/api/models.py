@@ -28,7 +28,6 @@ class AccessToken(AbstractAccessToken):
     description = models.TextField(
         verbose_name=_("Description"),
         blank=True,
-        help_text=_("Describes where and for what this token is used"),
     )
 
     # make expires nullable for non-expiring user tokens

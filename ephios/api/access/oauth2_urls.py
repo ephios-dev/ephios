@@ -2,7 +2,11 @@ from django.urls import re_path
 from oauth2_provider import views
 from oauth2_provider.urls import base_urlpatterns
 
-from ephios.api.access.views import AllUserApplicationList
+from ephios.api.access.views import (
+    AccessTokenRevokeView,
+    AccessTokensListView,
+    AllUserApplicationList,
+)
 from ephios.extra.permissions import staff_required
 
 app_name = "oauth2_provider"
@@ -34,13 +38,13 @@ management_urlpatterns = [
     # Token management views
     re_path(
         r"^authorized_tokens/$",
-        views.AuthorizedTokensListView.as_view(),
+        AccessTokensListView.as_view(),
         name="authorized-token-list",
     ),
     re_path(
-        r"^authorized_tokens/(?P<pk>[\w-]+)/delete/$",
-        views.AuthorizedTokenDeleteView.as_view(),
-        name="authorized-token-delete",
+        r"^authorized_tokens/revoke/$",
+        AccessTokenRevokeView.as_view(),
+        name="authorized-token-revoke",
     ),
 ]
 

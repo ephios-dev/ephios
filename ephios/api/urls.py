@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
 
-from ephios.api.access.views import AccessTokenCreateView
+from ephios.api.access.views import AccessTokenCreateView, AccessTokenRevealView
 from ephios.api.views.events import EventViewSet
 
 router = routers.DefaultRouter()
@@ -20,5 +20,10 @@ urlpatterns = [
         "settings/api/token/create/",
         AccessTokenCreateView.as_view(),
         name="settings-authorized-token-create",
+    ),
+    path(
+        "settings/api/token/reveal/<int:pk>/",
+        AccessTokenRevealView.as_view(),
+        name="settings-authorized-token-reveal",
     ),
 ]

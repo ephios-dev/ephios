@@ -2,6 +2,8 @@ import copy
 import os
 from email.utils import getaddresses
 
+from django.utils.translation import gettext_lazy
+
 try:
     import importlib_metadata  # importlib is broken on python3.8, using backport
 except ImportError:
@@ -326,12 +328,16 @@ OAUTH2_PROVIDER_GRANT_MODEL = "api.Grant"
 OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "api.RefreshToken"
 OAUTH2_PROVIDER = {
     "SCOPES": {
-        "PUBLIC_READ": "Read public data like events and shifts",
-        "PUBLIC_WRITE": "Write public data like events and shifts",
-        "ME_READ": "Read own user profile and personal data",
-        "ME_WRITE": "Write own user profile and personal data",
-        "CONFIDENTIAL_READ": "Read confidential data like participations and user data",
-        "CONFIDENTIAL_WRITE": "Write confidential data like participations and user data",
+        "PUBLIC_READ": gettext_lazy("Read public data like events and shifts"),
+        "PUBLIC_WRITE": gettext_lazy("Write public data like events and shifts"),
+        "ME_READ": gettext_lazy("Read own user profile and personal data"),
+        "ME_WRITE": gettext_lazy("Write own user profile and personal data"),
+        "CONFIDENTIAL_READ": gettext_lazy(
+            "Read confidential data like participations and user data"
+        ),
+        "CONFIDENTIAL_WRITE": gettext_lazy(
+            "Write confidential data like participations and user data"
+        ),
     },
     "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
 }
