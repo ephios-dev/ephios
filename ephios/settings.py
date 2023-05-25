@@ -328,15 +328,15 @@ OAUTH2_PROVIDER_GRANT_MODEL = "api.Grant"
 OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "api.RefreshToken"
 OAUTH2_PROVIDER = {
     "SCOPES": {
-        "PUBLIC_READ": gettext_lazy("Read public data like events and shifts"),
-        "PUBLIC_WRITE": gettext_lazy("Write public data like events and shifts"),
-        "ME_READ": gettext_lazy("Read own user profile and personal data"),
-        "ME_WRITE": gettext_lazy("Write own user profile and personal data"),
+        "PUBLIC_READ": gettext_lazy("Read public data like available events and shifts"),
+        "PUBLIC_WRITE": gettext_lazy("Write public data like available events and shifts"),
+        "ME_READ": gettext_lazy("Read own personal data and participations"),
+        "ME_WRITE": gettext_lazy("Write own personal data and participations"),
         "CONFIDENTIAL_READ": gettext_lazy(
-            "Read confidential data like participations and user data"
+            "Read confidential data like all users profile and participations"
         ),
         "CONFIDENTIAL_WRITE": gettext_lazy(
-            "Write confidential data like participations and user data"
+            "Write confidential data like all users profile and participations"
         ),
     },
     "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
