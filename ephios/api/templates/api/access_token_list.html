@@ -1,0 +1,98 @@
+{% extends "core/settings/settings_base.html" %}
+{% load rich_text %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h1>{% translate "Your API Tokens" %}</h1>
+        <p>
+            {% blocktranslate trimmed %}
+                API Tokens let other applications authenticate at ephios.
+                They might be created manually or when logging in at a third party sites.
+                If you are unsure about the origins of a token or the security of the third party application
+                please revoke the token.
+            {% endblocktranslate %}
+        </p>
+
+        <a href="{% url "api:settings-access-token-create" %}"
+           class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+
+        {% if not request.GET.show_inactive %}
+            <a href="?show_inactive=1" class="btn btn-secondary ms-1 mb-3">{% translate "Show inactive" %}</a>
+        {% endif %}
+
+        {% for authorized_token in authorized_tokens %}
+            <div class="card w-100 mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">
+                                    {{ authorized_token }}
+                                </h5>
+                                {% if authorized_token.revoked %}
+                                    <span class="badge bg-danger text-white">{% translate "Revoked" %}</span>
+                                {% elif authorized_token.is_expired %}
+                                    <span class="badge bg-warning text-white">{% translate "Expired" %}</span>
+                                {% elif authorized_token.is_valid %}
+                                    <form method="POST" action="{% url "api:settings-access-token-revoke" %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="pk" value="{{ authorized_token.id }}">
+                                        <button type="submit"
+                                                class="btn btn-outline-danger">{% translate "Revoke" %}</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+
+                            {% if authorized_token.application %}
+                                <p>
+                                    {% blocktranslate trimmed with app_name=authorized_token.application.name %}
+                                        created by <em>{{ app_name }}</em>
+                                    {% endblocktranslate %}
+                                </p>
+                            {% else %}
+                                {{ authorized_token.description|rich_text }}
+                            {% endif %}
+                            <p class="text-muted">
+
+                                {% blocktranslate trimmed with created=authorized_token.created %}
+                                    created on {{ created }}
+                                {% endblocktranslate %}
+                                {% if authorized_token.revoked %}
+                                    <br/>
+                                    {% blocktranslate trimmed with revoked=authorized_token.revoked %}
+                                        revoked on {{ revoked }}
+                                    {% endblocktranslate %}
+                                {% elif authorized_token.is_expired %}
+                                    <br/>
+                                    {% blocktranslate trimmed with expires=authorized_token.expires %}
+                                        expired on {{ expires }}
+                                    {% endblocktranslate %}
+                                {% elif authorized_token.expires %}
+                                    <br/>
+                                    {% blocktranslate trimmed with expires=authorized_token.expires %}
+                                        expires on {{ expires }}
+                                    {% endblocktranslate %}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h6>{% translate "Scope" %}</h6>
+                            <ul>
+                                {% for scope_name, scope_description in authorized_token.scopes.items %}
+                                    <li><code>{{ scope_name }}</code>: {{ scope_description }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            {% if request.GET.show_inactive %}
+                <p>{% translate "There are no tokens." %}</p>
+            {% else %}
+                <p>{% translate "There are no active tokens." %}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

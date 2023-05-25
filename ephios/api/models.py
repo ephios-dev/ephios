@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from oauth2_provider.models import (
@@ -20,6 +21,9 @@ class Application(AbstractApplication):
     def natural_key(self):
         return (self.client_id,)
 
+    def get_absolute_url(self):
+        return reverse("api:settings-oauth-app-detail", args=[str(self.id)])
+
 
 class AccessToken(AbstractAccessToken):
     class Meta(AbstractAccessToken.Meta):
@@ -29,6 +33,8 @@ class AccessToken(AbstractAccessToken):
         verbose_name=_("Description"),
         blank=True,
     )
+
+    revoked = models.DateTimeField(null=True)
 
     # make expires nullable for non-expiring user tokens
     expires = models.DateTimeField(
@@ -40,14 +46,14 @@ class AccessToken(AbstractAccessToken):
             return False  # never expires
         return timezone.now() >= self.expires
 
-    @property
-    def name(self):
-        if self.application and self.application.name:
-            return f"{self.application.name} #{self.id}"
-        return _("User-Token") + f" #{self.id}"
+    def is_valid(self, scopes=None):
+        # expand super to include revoked check
+        return self.revoked is None and super().is_valid(scopes)
 
     def __str__(self):
-        return self.name
+        if self.application:
+            return _("Access Token") + f" #{self.id}"
+        return _("User Token") + f" #{self.id}"
 
     def revoke_related(self):
         """
@@ -61,9 +67,9 @@ class AccessToken(AbstractAccessToken):
             self.revoke()
 
     def revoke(self):
-        if not self.is_expired():
-            self.expires = timezone.now()
-            self.save(update_fields=["expires"])
+        if self.revoked is None:
+            self.revoked = timezone.now()
+            self.save(update_fields=["revoked"])
 
 
 class RefreshToken(AbstractRefreshToken):

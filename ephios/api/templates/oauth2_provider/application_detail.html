@@ -49,9 +49,9 @@
                    readonly>
         </div>
         <div class="btn-toolbar">
-            <a class="btn btn-secondary me-1" href="{% url "oauth2_provider:list" %}">{% trans "Back" %}</a>
-            <a class="btn btn-primary me-1" href="{% url "oauth2_provider:update" application.id %}">{% trans "Edit" %}</a>
-            <a class="btn btn-danger me-1" href="{% url "oauth2_provider:delete" application.id %}">{% trans "Delete" %}</a>
+            <a class="btn btn-secondary me-1" href="{% url "api:settings-oauth-app-list" %}">{% trans "Back" %}</a>
+            <a class="btn btn-primary me-1" href="{% url "api:settings-oauth-app-update" application.id %}">{% trans "Edit" %}</a>
+            <a class="btn btn-danger me-1" href="{% url "api:settings-oauth-app-delete" application.id %}">{% trans "Delete" %}</a>
         </div>
     </div>
 {% endblock %}

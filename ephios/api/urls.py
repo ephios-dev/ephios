@@ -1,9 +1,17 @@
 from django.urls import include, path
+from oauth2_provider import views
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
 
-from ephios.api.access.views import AccessTokenCreateView, AccessTokenRevealView
+from ephios.api.access.views import (
+    AccessTokenCreateView,
+    AccessTokenRevealView,
+    AccessTokenRevokeView,
+    AccessTokensListView,
+    AllUserApplicationList,
+)
 from ephios.api.views.events import EventViewSet
+from ephios.extra.permissions import staff_required
 
 router = routers.DefaultRouter()
 router.register(r"events", EventViewSet)
@@ -17,13 +25,57 @@ urlpatterns = [
         name="openapi-schema",
     ),
     path(
-        "settings/api/token/create/",
-        AccessTokenCreateView.as_view(),
-        name="settings-authorized-token-create",
-    ),
-    path(
-        "settings/api/token/reveal/<int:pk>/",
-        AccessTokenRevealView.as_view(),
-        name="settings-authorized-token-reveal",
+        "settings/",
+        include(
+            [
+                # Token management views
+                path(
+                    "token/",
+                    AccessTokensListView.as_view(),
+                    name="settings-access-token-list",
+                ),
+                path(
+                    "token/create/",
+                    AccessTokenCreateView.as_view(),
+                    name="settings-access-token-create",
+                ),
+                path(
+                    "token/reveal/<int:pk>/",
+                    AccessTokenRevealView.as_view(),
+                    name="settings-access-token-reveal",
+                ),
+                path(
+                    "token/revoke/",
+                    AccessTokenRevokeView.as_view(),
+                    name="settings-access-token-revoke",
+                ),
+                # Application management views
+                path(
+                    "applications/",
+                    staff_required(AllUserApplicationList.as_view()),
+                    name="settings-oauth-app-list",
+                ),
+                path(
+                    "applications/register/",
+                    staff_required(views.ApplicationRegistration.as_view()),
+                    name="settings-oauth-app-register",
+                ),
+                path(
+                    "applications/<int:pk>/",
+                    staff_required(views.ApplicationDetail.as_view()),
+                    name="settings-oauth-app-detail",
+                ),
+                path(
+                    "applications/<int:pk>/delete/",
+                    staff_required(views.ApplicationDelete.as_view()),
+                    name="settings-oauth-app-delete",
+                ),
+                path(
+                    "applications/<int:pk>/update/",
+                    staff_required(views.ApplicationUpdate.as_view()),
+                    name="settings-oauth-app-update",
+                ),
+            ]
+        ),
     ),
 ]

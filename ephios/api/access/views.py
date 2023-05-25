@@ -25,11 +25,16 @@ class AllUserApplicationList(StaffRequiredMixin, outh2_views.ApplicationList):
 
 
 class AccessTokensListView(outh2_views.AuthorizedTokensListView):
+    template_name = "api/access_token_list.html"
+
     def get_queryset(self):
         qs = super().get_queryset().select_related("application").filter(user=self.request.user)
-        if not self.request.GET.get("show_expired"):
-            qs = qs.filter(Q(expires__gt=timezone.now()) | Q(expires__isnull=True))
-        return qs.order_by("-expires", "-created")
+        if not self.request.GET.get("show_inactive"):
+            qs = qs.filter(
+                Q(expires__gt=timezone.now()) | Q(expires__isnull=True),
+                revoked__isnull=True,
+            )
+        return qs.order_by("-created")
 
 
 class TokenScopesChoiceField(forms.MultipleChoiceField):
@@ -86,7 +91,7 @@ class AccessTokenCreateView(LoginRequiredMixin, CreateView):
         token.user = self.request.user
         token.token = generate_key()
         token.save()
-        return redirect("api:settings-authorized-token-reveal", pk=token.pk)
+        return redirect("api:settings-access-token-reveal", pk=token.pk)
 
 
 class AccessTokenRevealView(LoginRequiredMixin, TemplateView):
@@ -99,7 +104,7 @@ class AccessTokenRevealView(LoginRequiredMixin, TemplateView):
             raise PermissionDenied
         if token.created < timezone.now() - timezone.timedelta(seconds=30):
             messages.error(request, _("Token is too old to be revealed."))
-            return redirect("oauth2_provider:authorized-token-list")
+            return redirect("api:settings-access-token-list")
         context = self.get_context_data(token=token, **kwargs)
         return self.render_to_response(context)
 
@@ -109,4 +114,4 @@ class AccessTokenRevokeView(LoginRequiredMixin, View):
         # user can only revoke own tokens
         get_object_or_404(AccessToken, pk=request.POST["pk"], user=request.user).revoke_related()
         messages.success(request, _("Token was revoked."))
-        return redirect("oauth2_provider:authorized-token-list")
+        return redirect("api:settings-access-token-list")

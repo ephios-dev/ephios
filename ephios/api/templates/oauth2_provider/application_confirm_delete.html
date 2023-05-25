@@ -8,13 +8,13 @@
                 Are you sure to delete the application {{ app_name }}?
             {% endblocktranslate %}
         </h3>
-        <form method="post" action="{% url 'oauth2_provider:delete' application.pk %}">
+        <form method="post" action="{% url 'api:settings-oauth-app-delete' application.pk %}">
             {% csrf_token %}
 
             <div class="control-group">
                 <div class="controls">
                     <a class="btn btn-secondary btn-large"
-                       href="{% url "oauth2_provider:list" %}">{% trans "Cancel" %}</a>
+                       href="{% url "api:settings-oauth-app-list" %}">{% trans "Cancel" %}</a>
                     <input type="submit" class="btn btn-large btn-danger" name="allow" value="{% trans 'Delete' %}"/>
                 </div>
             </div>

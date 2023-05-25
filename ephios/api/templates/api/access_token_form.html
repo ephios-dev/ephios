@@ -15,6 +15,6 @@
         {{ form|crispy }}
         <button class="btn btn-primary float-end" type="submit">{% translate "Save" %}</button>
         <a role="button" class="btn btn-secondary mt-1"
-           href="{% url 'oauth2_provider:authorized-token-list' %}">{% translate "Cancel" %}</a>
+           href="{% url 'api:settings-access-token-list' %}">{% translate "Cancel" %}</a>
     </form>
 {% endblock %}
