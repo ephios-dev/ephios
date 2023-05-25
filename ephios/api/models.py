@@ -49,9 +49,21 @@ class AccessToken(AbstractAccessToken):
     def __str__(self):
         return self.name
 
-    def revoke(self):  # todo actually use this in the view, currently a plain delete view
-        self.expires = timezone.now()
-        self.save(update_fields=["expires"])
+    def revoke_related(self):
+        """
+        Revoke this token and other types of related OAuth2 tokens.
+        """
+        try:
+            # aquired from OAuth2 refresh token, so revoke that one (which will revoke this access token as well)
+            self.refresh_token.revoke()
+        except RefreshToken.DoesNotExist:
+            # manually created token (?), so revoke it directly
+            self.revoke()
+
+    def revoke(self):
+        if not self.is_expired():
+            self.expires = timezone.now()
+            self.save(update_fields=["expires"])
 
 
 class RefreshToken(AbstractRefreshToken):

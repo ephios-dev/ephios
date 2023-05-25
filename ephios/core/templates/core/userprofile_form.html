@@ -98,9 +98,19 @@
                 <div class="card mb-2">
                     <div class="card-body">
                         <h4 class="card-title">{% translate "Password" %}</h4>
+                        <p>
+                            {% blocktranslate trimmed %}
+                                If the user forgot their password, you can send them a password reset email.
+                                If there are doubts about the secrecy of the password, you should revoke it as well.
+                            {% endblocktranslate %}
+                        </p>
                         <a class="btn btn-secondary text-nowrap mt-1"
                            href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-                            {% trans "Send password reset email" %}</a>
+                            {% translate "Send password reset email" %}</a>
+                                                <a class="btn btn-secondary text-nowrap ms-1 mt-1"
+                           href="{% url "core:userprofile_password_token_revoke" userprofile.pk %}">
+                            {% translate "Revoke password and API Tokens" %}</a>
+
                     </div>
                 </div>
             {% endif %}

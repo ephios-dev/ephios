@@ -107,6 +107,6 @@ class AccessTokenRevealView(LoginRequiredMixin, TemplateView):
 class AccessTokenRevokeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         # user can only revoke own tokens
-        get_object_or_404(AccessToken, pk=request.POST["pk"], user=request.user).revoke()
+        get_object_or_404(AccessToken, pk=request.POST["pk"], user=request.user).revoke_related()
         messages.success(request, _("Token was revoked."))
         return redirect("oauth2_provider:authorized-token-list")
