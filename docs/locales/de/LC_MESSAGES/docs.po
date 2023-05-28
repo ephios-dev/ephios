@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ephios \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-27 01:17+0100\n"
+"POT-Creation-Date: 2023-02-06 01:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: ../../admin/index.rst:2
 msgid "Administration documentation"
@@ -23,6 +23,68 @@ msgstr ""
 
 #: ../../admin/index.rst:4
 msgid "This section shows how to install ephios."
+msgstr ""
+
+#: ../../api/index.rst:2
+msgid "API documentation"
+msgstr ""
+
+#: ../../api/index.rst:4
+msgid "ephios provides a REST-API built with Django-Rest-Framework."
+msgstr ""
+
+#: ../../api/index.rst:7
+msgid "Auth"
+msgstr ""
+
+#: ../../api/index.rst:9
+msgid ""
+"Currently only session based authentication is available. Permissions are"
+" checked just like in the web interface."
+msgstr ""
+
+#: ../../api/index.rst:13
+msgid "Endpoints"
+msgstr ""
+
+#: ../../<openapi>
+msgid "Query Parameters"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "Number of results to return per page."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "The initial index from which to return the results."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "type"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A search term."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "Which field to use when ordering the results."
+msgstr ""
+
+#: ../../<openapi>
+msgid "Status Codes"
+msgstr ""
+
+#: ../../<openapi>
+msgid "Parameters"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A unique integer value identifying this Veranstaltung."
+msgstr ""
+
+#: ../../changelog.rst:2
+msgid "Changelog"
 msgstr ""
 
 #: ../../development/contributing.rst:2
@@ -96,7 +158,7 @@ msgid ""
 msgstr ""
 
 #: ../../development/contributing.rst:27
-msgid "Load data for testing with ``python manage.py setupdata debug``"
+msgid "Load data for testing with ``python manage.py devdata``"
 msgstr ""
 
 #: ../../development/contributing.rst:28
@@ -170,7 +232,34 @@ msgstr ""
 msgid ""
 "Configure the given participation object for signup according to the "
 "method's configuration. You need at least to set the participations "
-"state. `kwargs` may contain further instructions from e.g. a form."
+"state, as that is not done with the participation form. `kwargs` contains"
+" the signup form's cleaned_data."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod._decline_checkers:1 of
+msgid ""
+"Return a list of methods that check if the participant can decline the "
+"shift."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod._signup_checkers:1 of
+msgid ""
+"Return a list of methods that check if the participant can sign up for "
+"the shift."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.can_customize_signup:1 of
+msgid ""
+"Return whether the participant gets shown the option to customize their "
+"participation."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.can_decline:1 of
+msgid "Return whether the participant is allowed to decline."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.can_sign_up:1 of
+msgid "Return whether the participant is allowed to perform signup."
 msgstr ""
 
 #: ephios.core.signup.methods.BaseSignupMethod.disposition_participation_form_class:1
@@ -180,6 +269,12 @@ msgid ""
 "you don't want to support the default disposition."
 msgstr ""
 
+#: ephios.core.signup.methods.BaseSignupMethod.get_decline_errors:1 of
+msgid ""
+"Return a list of ParticipationErrors that describe reasons for not being "
+"able to decline."
+msgstr ""
+
 #: ephios.core.signup.methods.BaseSignupMethod.get_participant_count_bounds:1
 #: of
 msgid ""
@@ -187,6 +282,13 @@ msgid ""
 "shift. Use None for any value if it is not specifiable. The default "
 "implementation returns None, None to signify both values are not "
 "specified."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.get_participant_errors:1 of
+msgid ""
+"Return errors for whether the participant fulfills the requirements set "
+"by the signup methods for participation. This runs a subset of the check "
+"for `get_signup_errors`."
 msgstr ""
 
 #: ephios.core.signup.methods.BaseSignupMethod.get_participation_display:1 of
@@ -199,14 +301,31 @@ msgid ""
 "[\"participant2_name\", \"participant2_qualification\"]]"
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.get_signup_info:1 of
+#: ephios.core.signup.methods.BaseSignupMethod.get_shift_state_context_data:1
+#: of
 msgid ""
-"Return key/value pairs about the configuration to show in the shift info "
-"box."
+"Additionally to the context of the event detail view, provide context for"
+" rendering `shift_state_template_name`."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.get_signup_errors:1 of
+msgid ""
+"Return a list of ParticipationErrors that describe reasons for not being "
+"able to sign up."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.get_signup_info:1 of
+msgid "Return key/value pairs about the configuration to show in exports etc."
 msgstr ""
 
 #: ephios.core.signup.methods.BaseSignupMethod.get_signup_stats:1 of
 msgid "Return an instance of SignupStats for the shift."
+msgstr ""
+
+#: ephios.core.signup.methods.BaseSignupMethod.has_customized_signup:1 of
+msgid ""
+"Return whether the participation was customized in a way specific to this"
+" signup method."
 msgstr ""
 
 #: ephios.core.signup.methods.BaseSignupMethod.perform_decline:1 of
@@ -220,13 +339,17 @@ msgstr ""
 msgid ""
 "Creates and/or configures a participation object for a given participant "
 "and sends out notifications. Passes the participation and kwargs to "
-"configure_participation to do configuration specific to the signup method"
+"configure_participation to do configuration specific to the signup "
+"method."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.render_shift_state:1 of
+#: ephios.core.signup.methods.BaseSignupMethod.render:1 of
+#, python-format
 msgid ""
-"Render html that will be shown in the shift info box. Use it to inform "
-"about the current state of the shift and participations."
+"Render the state/participations of the shift. Match the signature of "
+"template.render for use with the include template tag: {% include "
+"shift.signup_method %} By default, this loads `shift_state_template_name`"
+" and renders it using context from `get_shift_state_context_data`."
 msgstr ""
 
 #: ephios.core.consequences.BaseConsequenceHandler.execute:1 of
@@ -323,21 +446,40 @@ msgstr ""
 msgid "Available signals"
 msgstr ""
 
-#: ../../docstring ephios.core.signals.administration_settings_section:1 of
+#: ../../docstring ephios.core.signals.check_participant_signup:1 of
 msgid ""
-"This signal is sent out to get sections for administration settings. "
-"Receivers should return a list of dicts containing key-value-pairs for "
-"'label', 'url' and a boolean flag 'active'. Receivers will receive a "
-"``request`` keyword argument."
+"This signal is sent out so receivers can prevent signup for a shift or "
+"provide feedback for dispatchers. Receivers will receive a "
+"``participant`` and ``method`` keyword argument and should return an "
+"instance of the fitting! subclass of "
+"``ephios.core.signup.methods.ParticipationError`` or None."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.event_action:1 of
+msgid ""
+"This signal is sent out to get a list of actions that a user can perform "
+"on a single event. The actions are displayed in the dropdown menu on the "
+"event detail view. Receivers receive a ``event`` and ``request`` keyword "
+"argument. Each action is represented by a dict with the keys ``url``, "
+"``label`` and ``icon``."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.event_forms:1 of
 msgid ""
 "This signal is sent out to get a list of form instances to show on the "
-"event create and update views. You receive an `event` and `request` "
-"keyword arg you should use to create an instance of your form. Subclass "
-"`BaseEventPluginForm` to customize the rendering behavior. If all forms "
-"are valid, `save` will be called on your form."
+"event create and update views. You receive an `Optional[event]` and "
+"`request` keyword arg you should use to create an instance of your form. "
+"Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to "
+"customize the rendering behavior. If all forms are valid, `save` will be "
+"called on your form."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.event_info:1 of
+msgid ""
+"This signal is sent out to get additional information to display in the "
+"general section of the event detail view. Receivers will receive an "
+"`event` and `request` keyword arg to generate the information. Receivers "
+"should return html that is added below the event description."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.footer_link:1 of
@@ -345,6 +487,30 @@ msgid ""
 "This signal is sent out to get links for that page footer. Receivers "
 "should return a dict of with keys being the text and values being the url"
 " to link to. Receivers will receive a ``request`` keyword argument."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.homepage_info:1 of
+msgid ""
+"This signal is sent out to get additional information to display on the "
+"homepage. Receivers receive a ``request`` keyword argument. Receivers "
+"should return html that will be rendered inside a card."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.management_settings_sections:1 of
+msgid ""
+"This signal is sent out to get sections for management settings. "
+"Receivers should return a list of dicts containing key-value-pairs for "
+"'label', 'url' and a boolean flag 'active'. Only views that the current "
+"user is allowed to view should be returned. Receivers will receive a "
+"``request`` keyword argument."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.nav_link:1 of
+msgid ""
+"This signal is sent out to get links for the main navbar. Receivers "
+"should return a list of dicts containing key-value-pairs for 'label', "
+"'url' and a boolean flag 'active'. Receivers will receive a ``request`` "
+"keyword argument."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.participant_from_request:1 of
@@ -386,6 +552,14 @@ msgid ""
 "event ids on which the action should be performed."
 msgstr ""
 
+#: ../../docstring ephios.core.signals.register_group_permission_fields:1 of
+msgid ""
+"This signal is sent out to get a list of permission fields that should be"
+" displayed on the group form. Receivers should return a list of tuples of"
+" the form ``(field_name, field)``. field must be an instance of "
+"``ephios.extra.permissions.PermissionField``."
+msgstr ""
+
 #: ../../docstring ephios.core.signals.register_notification_backends:1 of
 msgid ""
 "This signal is sent out to get all backends that can handle sending out "
@@ -408,6 +582,24 @@ msgid ""
 "``ephios.core.signup.methods.BaseSignupMethod``."
 msgstr ""
 
+#: ../../docstring ephios.core.signals.shift_forms:1 of
+msgid ""
+"This signal is sent out to get a list of form instances to show on the "
+"shift create and update views. You receive a `shift` and `request` "
+"keyword arg you should use to create an instance of your form. Subclass "
+":py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the"
+" rendering behavior. If all forms are valid, `save` will be called on "
+"your form."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.shift_info:1 of
+msgid ""
+"This signal is sent out to get additional information to display in the "
+"shift box of the event detail view. Receivers will receive a `shift` and "
+"`request` keyword arg to generate the information. Receivers should "
+"return html that is added below the participations."
+msgstr ""
+
 #: ../../index.rst:7
 msgid "Welcome to ephios's documentation!"
 msgstr ""
@@ -428,4 +620,244 @@ msgid ""
 "This section shows how to use ephios. This includes functionality for "
 "volunteers as well as for planners."
 msgstr ""
+
+#: ../../user/planner/index.rst:2
+msgid "User guide for planners"
+msgstr ""
+
+#: ../../user/planner/index.rst:4
+msgid ""
+"This section of the documentation is intended for users that manage an "
+"ephios instance in any kind, like creating new events or managing other "
+"users."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:2
+msgid "Signup methods"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:4
+msgid ""
+"To cover different use cases, ephios offers different signup methods. In "
+"the following, the provided logon procedures are explained, but "
+"additional signup methods can also be integrated as a plugin."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:6
+msgid ""
+"When creating a shift, a signup method has to be selected. This controls "
+"how users can sign up for the shift and what happens after signing up."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:9
+msgid "Availabe signup methods"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:11
+msgid "Instant confirmation"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:13
+msgid ""
+"Shifts with this signup methods offer the user a button with the "
+"inscription \"Participate\". Any user who signs up is immediately "
+"confirmed and listed as a participant in the shift."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:15
+msgid ""
+"The shift settings can specify conditions that a user must meet in order "
+"to participate. These include a minimum age and a registration deadline. "
+"In addition, a minimum and a maximum number of participants can be "
+"specified. If the maximum number of participants is reached, no further "
+"users can register. Furthermore, required qualifications can be "
+"specified. Users must have all the specified qualifications to be able to"
+" participate."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:17
+msgid ""
+"In addition, it can be set whether users who have already been confirmed "
+"can cancel on their own and whether individually deviating start and end "
+"times can be specified when registering."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:20
+msgid "Request and confirm"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:22
+msgid ""
+"Shifts with this registration procedure offer the user a button labeled "
+"\"Requests\". Any user requesting to attend will have their request "
+"listed in the disposition. The persons responsible for the event will "
+"receive notification of the request. In the disposition they can then "
+"confirm or reject the participation."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:24
+msgid ""
+"The same settings can be made for this signup method as for \"Instant "
+"confirmation.\""
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:27
+msgid "Section based signup"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:29
+msgid ""
+"This signup method works in the same way as \"Request and confirm\". In "
+"addition, several sections can be defined in the shift settings. For each"
+" section, a minimum and maximum number of participants can be specified. "
+"Also per section the required qualifications can be specified. Users must"
+" have all of the specified qualifications to participate in that section."
+" Sections with mixed qualifications (e.g., RTW with 1x RS, 1x NFS) must "
+"either be mapped as multiple sections or use a different signup method."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:31
+msgid ""
+"Users can specify a preferred section when requesting participation. It "
+"can be set in the shift settings that this specification is mandatory. "
+"The preferred section is visible in the disposition."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:34
+msgid "No registration (disposition only)"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:36
+msgid ""
+"The ability to sign up for this shift is disabled for all users, "
+"optionally a reason can be specified. Users can be added via the "
+"disposition. This registration procedure can be used e.g. for training "
+"courses, where the responsible persons send individual helpers and a "
+"self-registration is not intended."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:39
+msgid "Linked to other shift"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:41
+msgid ""
+"With this registration method, it is not possible for volunteers to "
+"register; instead, the participants are mirrored by another shift. The "
+"shift to be mirrored is selected in the settings. This registration "
+"procedure can be used, for example, for courses lasting several days, "
+"where registration is controlled via the first shift and the participants"
+" are automatically registered for all other days/shifts."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:44
+msgid "Disposition"
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:46
+msgid ""
+"On the detail page of an event, the disposition can be reached for each "
+"shift via the button \"Disposition\". There, all participations for the "
+"shift are displayed in the corresponding states."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:48
+msgid ""
+"Requested: The user has requested participation for this shift. The "
+"relevant qualifications of the user and additional information such as "
+"the preferred section are also displayed. If there is an exclamation mark"
+" on the cogwheel, a deviating participation time or comment was entered "
+"during registration. These can be viewed by clicking on the cogwheel."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:49
+msgid ""
+"Rejected by responsible person: the participation was rejected by a "
+"responsible person via the disposition."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:50
+msgid "Declined by participant: the helping person has declined for this shift."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:51
+msgid ""
+"Confirmed: participation was confirmed by a responsible person. Here (if "
+"needed) further details like the assigned section can be entered. The "
+"participant can be assigned for a different time via the cogwheel."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:52
+msgid ""
+"Add more: Using the search field, participation can be created for "
+"additional users who have not previously signed up for this shift. If no "
+"user is found for the entered name, ephios offers the possibility to "
+"create a placeholder with this name. This can be used, for example, if "
+"external helpers without an account are to be assigned."
+msgstr ""
+
+#: ../../user/planner/signup_methods.rst:54
+msgid ""
+"The state of a participation can be changed by moving the entry into the "
+"desired field. For example, a requested participation can be confirmed by"
+" moving it to the \"Confirmed\" field. The changes must then be confirmed"
+" with \"Save\"."
+msgstr ""
+
+#~ msgid "Load data for testing with ``python manage.py setupdata debug``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Configure the given participation object "
+#~ "for signup according to the method's "
+#~ "configuration. You need at least to "
+#~ "set the participations state. `kwargs` "
+#~ "may contain further instructions from "
+#~ "e.g. a form."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Return key/value pairs about the "
+#~ "configuration to show in the shift "
+#~ "info box."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Creates and/or configures a participation "
+#~ "object for a given participant and "
+#~ "sends out notifications. Passes the "
+#~ "participation and kwargs to "
+#~ "configure_participation to do configuration "
+#~ "specific to the signup method"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Render html that will be shown in"
+#~ " the shift info box. Use it to"
+#~ " inform about the current state of"
+#~ " the shift and participations."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This signal is sent out to get "
+#~ "sections for administration settings. "
+#~ "Receivers should return a list of "
+#~ "dicts containing key-value-pairs for "
+#~ "'label', 'url' and a boolean flag "
+#~ "'active'. Receivers will receive a "
+#~ "``request`` keyword argument."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This signal is sent out to get "
+#~ "a list of form instances to show"
+#~ " on the event create and update "
+#~ "views. You receive an `event` and "
+#~ "`request` keyword arg you should use "
+#~ "to create an instance of your "
+#~ "form. Subclass `BaseEventPluginForm` to "
+#~ "customize the rendering behavior. If all"
+#~ " forms are valid, `save` will be "
+#~ "called on your form."
+#~ msgstr ""
 
