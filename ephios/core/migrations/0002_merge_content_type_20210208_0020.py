@@ -13,7 +13,6 @@ def migrate_content_type(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0001_squashed_event_management_0007_auto_20210207_1309"),
     ]

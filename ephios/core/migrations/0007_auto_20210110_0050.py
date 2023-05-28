@@ -8,7 +8,6 @@ import ephios.extra.json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0006_auto_20210109_2230"),
     ]

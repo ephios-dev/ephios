@@ -17,7 +17,7 @@ django-guardian = "^2.4.0"
 django-ical = "^1.8.3"
 django-polymorphic = "^3.1.0"
 django-select2 = ">=8.0,<9.0"
-reportlab = "^3.6.11"
+reportlab = ">=3.6.11,<5.0.0"
 django-formset-js-improved = "^0.5.0"
 django-csp = "^3.7"
 bleach = ">=6.0.0,<7.0.0"
@@ -35,11 +35,13 @@ django-libsass = "^0.9"
 crispy-bootstrap5 = ">=0.6,<0.8"
 djangorestframework = "^3.13.1"
 django-coverage-plugin = "^2.0.3"
-django-filter = "^22.1"
+django-filter = ">=22.1,<24.0"
 djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 django-recurrence = "^1.11.1"
 redis = {version = "^4.3.4", optional = true}
+django-oauth-toolkit = "^2.2.0"
+mozilla-django-oidc = "^3.0.0"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
@@ -47,9 +49,9 @@ mysql = ["mysqlclient"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.8"
+black = ">=22.8,<24.0"
 pre-commit = ">=2.20,<4.0"
-django-debug-toolbar = "^3.6"
+django-debug-toolbar = ">=3.6,<5.0"
 pytest-django = "^4.5.2"
 django-webtest = "^1.9.9"
 django-extensions = "^3.2.1"

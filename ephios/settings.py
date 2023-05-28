@@ -49,8 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django_filters",
     "guardian",
+    "oauth2_provider",
     "rest_framework",
-    "rest_framework.authtoken",
     "django_select2",
     "djangoformsetjs",
     "compressor",
@@ -68,7 +68,9 @@ EPHIOS_CORE_MODULES = [
     "ephios.extra",
     "ephios.api",
 ]
-INSTALLED_APPS += EPHIOS_CORE_MODULES
+# we need to import our own modules before everything else to allow template
+# customizing for django-oauth-toolkit
+INSTALLED_APPS = EPHIOS_CORE_MODULES + INSTALLED_APPS
 
 CORE_PLUGINS = [
     "ephios.plugins.basesignup.apps.PluginApp",
@@ -309,7 +311,38 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
 }
+
+# Like UserProfile, these models are implemented using djangos private swappable API
+# due to a shaky implementation in django-oauth-toolkit, we need to customize all models,
+# although we only want to customize the AccessToken model
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "api.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "api.Application"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "api.IDToken"
+OAUTH2_PROVIDER_GRANT_MODEL = "api.Grant"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "api.RefreshToken"
+OAUTH2_PROVIDER = {
+    "SCOPES": {
+        "PUBLIC_READ": "Read public data like events and shifts",
+        "PUBLIC_WRITE": "Write public data like events and shifts",
+        "ME_READ": "Read own user profile and personal data",
+        "ME_WRITE": "Write own user profile and personal data",
+        "CONFIDENTIAL_READ": "Read confidential data like participations and user data",
+        "CONFIDENTIAL_WRITE": "Write confidential data like participations and user data",
+    },
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
+}
+
+if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
+    INSTALLED_APPS.append("mozilla_django_oidc")
+    AUTHENTICATION_BACKENDS.append("mozilla_django_oidc.auth.OIDCAuthenticationBackend")
+    OIDC_RP_CLIENT_ID = env.str("OIDC_RP_CLIENT_ID")
+    OIDC_RP_CLIENT_SECRET = env.str("OIDC_RP_CLIENT_SECRET")
+    OIDC_RP_SIGN_ALGO = env.str("OIDC_RP_SIGN_ALGO")
+    OIDC_OP_AUTHORIZATION_ENDPOINT = env.str("OIDC_OP_AUTHORIZATION_ENDPOINT")
+    OIDC_OP_TOKEN_ENDPOINT = env.str("OIDC_OP_TOKEN_ENDPOINT")
+    OIDC_OP_USER_ENDPOINT = env.str("OIDC_OP_USER_ENDPOINT")
+    OIDC_OP_JWKS_ENDPOINT = env.str("OIDC_OP_JWKS_ENDPOINT")
