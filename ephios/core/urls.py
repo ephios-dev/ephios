@@ -16,6 +16,7 @@ from ephios.core.views.accounts import (
     UserProfileDeleteView,
     UserProfileListView,
     UserProfilePasswordResetView,
+    UserProfilePasswordTokenRevokationView,
     UserProfileUpdateView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
@@ -207,6 +208,11 @@ urlpatterns = [
         "users/<int:pk>/password_reset/",
         UserProfilePasswordResetView.as_view(),
         name="userprofile_password_reset",
+    ),
+    path(
+        "users/<int:pk>/password_revoke/",
+        UserProfilePasswordTokenRevokationView.as_view(),
+        name="userprofile_password_token_revoke",
     ),
     path(
         "users/create/",

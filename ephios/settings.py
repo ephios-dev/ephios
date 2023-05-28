@@ -1,16 +1,19 @@
 import copy
 import os
+from datetime import timedelta
 from email.utils import getaddresses
+
+import environ
+from cryptography.hazmat.primitives import serialization
+from django.contrib.messages import constants
+from django.utils.translation import gettext_lazy
+from py_vapid import Vapid, b64urlencode
 
 try:
     import importlib_metadata  # importlib is broken on python3.8, using backport
 except ImportError:
     import importlib.metadata as importlib_metadata
 
-import environ
-from cryptography.hazmat.primitives import serialization
-from django.contrib.messages import constants
-from py_vapid import Vapid, b64urlencode
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -312,7 +315,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+        "ephios.api.access.auth.CustomOAuth2Authentication",
     ],
 }
 
@@ -326,14 +329,18 @@ OAUTH2_PROVIDER_GRANT_MODEL = "api.Grant"
 OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "api.RefreshToken"
 OAUTH2_PROVIDER = {
     "SCOPES": {
-        "PUBLIC_READ": "Read public data like events and shifts",
-        "PUBLIC_WRITE": "Write public data like events and shifts",
-        "ME_READ": "Read own user profile and personal data",
-        "ME_WRITE": "Write own user profile and personal data",
-        "CONFIDENTIAL_READ": "Read confidential data like participations and user data",
-        "CONFIDENTIAL_WRITE": "Write confidential data like participations and user data",
+        "PUBLIC_READ": gettext_lazy("Read public data like available events and shifts"),
+        "PUBLIC_WRITE": gettext_lazy("Write public data like available events and shifts"),
+        "ME_READ": gettext_lazy("Read own personal data and participations"),
+        "ME_WRITE": gettext_lazy("Write own personal data and participations"),
+        "CONFIDENTIAL_READ": gettext_lazy(
+            "Read confidential data like all users profile and participations"
+        ),
+        "CONFIDENTIAL_WRITE": gettext_lazy(
+            "Write confidential data like all users profile and participations"
+        ),
     },
-    "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
+    "REFRESH_TOKEN_EXPIRE_SECONDS": timedelta(days=90),
 }
 
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):

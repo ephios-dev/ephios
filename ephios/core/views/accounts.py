@@ -9,6 +9,7 @@ from django.views.generic import CreateView, DeleteView, ListView, TemplateView,
 from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.api.access.auth import revoke_all_access_tokens
 from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.services.notifications.types import (
@@ -171,8 +172,27 @@ class UserProfilePasswordResetView(CustomPermissionRequiredMixin, SingleObjectMi
                         email=self.object.email
                     ),
                 )
-            return redirect(reverse("core:userprofile_list"))
-        return self.render_to_response({"userprofile": self.object})
+        return redirect(reverse("core:userprofile_list"))
+
+
+class UserProfilePasswordTokenRevokationView(
+    CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView
+):
+    model = UserProfile
+    permission_required = "core.change_userprofile"
+    template_name = "core/userprofile_confirm_password_token_revokation.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object: UserProfile = self.get_object()
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("confirm"):
+            self.object.set_unusable_password()
+            self.object.save()
+            revoke_all_access_tokens(self.object)
+            messages.info(request, _("The user's password and API tokens have been revoked."))
+        return redirect(reverse("core:userprofile_list"))
 
 
 class GroupListView(CustomPermissionRequiredMixin, ListView):
