@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-29 00:36+0200\n"
 "PO-Revision-Date: 2023-05-28 23:11+0000\n"
-"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/"
 "documentation/de/>\n"
 "Language: de\n"
@@ -62,13 +62,14 @@ msgstr ""
 
 #: ../../admin/additional_features/oidc.rst:12
 msgid "https://your-ephios-instance.com/oidc/callback/"
-msgstr ""
+msgstr "https://your-ephios-instance.com/oidc/callback/"
 
 #: ../../admin/additional_features/oidc.rst:15
 msgid ""
 "You will also need to know the following information about your OIDC "
 "provider:"
 msgstr ""
+"Sie müssen außerdem die folgenden Informationen zu Ihrem OIDC-Provider haben:"
 
 #: ../../admin/additional_features/oidc.rst:18
 msgid "Value"
@@ -405,7 +406,7 @@ msgstr ""
 
 #: ../../changelog.rst:2
 msgid "Changelog"
-msgstr ""
+msgstr "Changelog"
 
 #: ../../development/contributing.rst:2
 msgid "Contributing"
@@ -922,7 +923,7 @@ msgstr ""
 
 #: ../../index.rst:7
 msgid "Welcome to ephios's documentation!"
-msgstr ""
+msgstr "Willkommen bei der ephios-Dokumentation!"
 
 #: ../../index.rst:9
 msgid ""
@@ -930,6 +931,9 @@ msgid ""
 "can't find what you're looking for in the corresponding section, feel "
 "free to contact us."
 msgstr ""
+"Diese Dokumentation erklärt wie man ephios benutzt, installiert und "
+"erweitert. Wenn Sie eine Information nicht finden können Sie uns gerne "
+"kontaktieren."
 
 #: ../../user/events/index.rst:2
 msgid "Managing events"
@@ -1223,59 +1227,65 @@ msgstr ""
 
 #: ../../user/integrations/index.rst:2
 msgid "Notifications and integrations"
-msgstr ""
+msgstr "Benachrichtigungen und Integrationen"
 
 #: ../../user/integrations/index.rst:4
 msgid ""
 "This section of the documentation explains how to manage notifications "
 "and integrations like the calendar export."
 msgstr ""
+"Dieser Abschnitt der Dokumentation erklärt das Verwalten von "
+"Benachrichtigungen und Integrationen wie den Kalender-Export."
 
 #: ../../user/integrations/notifications.rst:2
 msgid "Notifications"
-msgstr ""
+msgstr "Benachrichtigungen"
 
 #: ../../user/qualifications/assignment.rst:2
 msgid "Assigning qualifications"
-msgstr ""
+msgstr "Qualifikationen zuweisen"
 
 #: ../../user/qualifications/graph.rst:2
 msgid "The qualification tree"
-msgstr ""
+msgstr "Der Qualifikationsbaum"
 
 #: ../../user/qualifications/import.rst:2
 msgid "Importing qualifications"
-msgstr ""
+msgstr "Qualifikationen importieren"
 
 #: ../../user/qualifications/index.rst:2
 msgid "Managing qualifications"
-msgstr ""
+msgstr "Qualifikationen verwalten"
 
 #: ../../user/qualifications/index.rst:4
 msgid ""
 "This section of the documentation explains how the qualification system "
 "in ephios works."
 msgstr ""
+"Dieser Abschnitt erklärt, wie das Qualifikationssystem in ephios "
+"funktioniert."
 
 #: ../../user/users/creating_users.rst:2
 msgid "Creating and changing users"
-msgstr ""
+msgstr "Nutzer erstellen und bearbeiten"
 
 #: ../../user/users/index.rst:2
 msgid "Managing groups and users"
-msgstr ""
+msgstr "Gruppen und Nutzer verwalten"
 
 #: ../../user/users/index.rst:4
 msgid "This section of the documentation explains how to manage groups and users."
 msgstr ""
+"Dieser Abschnitt der Dokumentation erklärt, wie Gruppen und Nutzer verwaltet "
+"werden."
 
 #: ../../user/users/permissions.rst:2
 msgid "Introduction to the permission model"
-msgstr ""
+msgstr "Einführung in das Berechtigungsmodell"
 
 #: ../../user/users/workinghours.rst:2
 msgid "Managing working hours"
-msgstr ""
+msgstr "Arbeitsstunden verwalten"
 
 #~ msgid "Load data for testing with ``python manage.py setupdata debug``"
 #~ msgstr ""
