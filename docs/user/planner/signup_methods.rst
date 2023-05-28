@@ -43,7 +43,7 @@ With this registration method, it is not possible for volunteers to register; in
 Disposition
 ^^^^^^^^^^^
 
-On the detail page of an event, the disposition can be reached for each shift via the button "Disposition". There, all participations for the shift are displayed in the corresponding states.
+On the detail page of an event, responsibles of the event can reach the disposition for each shift via the button "Disposition". There, all participations for the shift are displayed in the corresponding states.
 
 - Requested: The user has requested participation for this shift. The relevant qualifications of the user and additional information such as the preferred section are also displayed. If there is an exclamation mark on the cogwheel, a deviating participation time or comment was entered during registration. These can be viewed by clicking on the cogwheel.
 - Rejected by responsible person: the participation was rejected by a responsible person via the disposition.
