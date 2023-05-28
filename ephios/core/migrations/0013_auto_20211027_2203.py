@@ -7,7 +7,6 @@ import ephios.core.models.users
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0012_rename_included_qualifications_qualification_includes"),
     ]

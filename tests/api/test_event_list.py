@@ -3,7 +3,7 @@ from guardian.shortcuts import remove_perm
 
 
 def test_api_event_list_rejects_anonymous_get(django_app, event):
-    response = django_app.get(reverse("api:event-list"), status=401)
+    response = django_app.get(reverse("api:event-list"), status=403)
     assert event.title not in response
     assert "Authentication credentials were not provided." in response
 

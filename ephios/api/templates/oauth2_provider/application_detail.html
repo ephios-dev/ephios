@@ -1,0 +1,57 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h3 class="block-center-heading">{{ application.name }}</h3>
+        <div class="mb-3">
+            <label for="client_id" class="form-label">{% trans "Client id" %}</label>
+            <input id="client_id" class="form-control" type="text" value="{{ application.client_id }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="client_secret" class="form-label">{% trans "Client secret" %}</label>
+            <input id="client_secret" class="form-control" type="text" value="{{ application.client_secret }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="client_type" class="form-label">{% trans "Client type" %}</label>
+            <input id="client_type" class="form-control" type="text" value="{{ application.client_type }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="authorization_grant_type" class="form-label">{% trans "Authorization Grant Type" %}</label>
+            <input id="authorization_grant_type" class="form-control" type="text"
+                   value="{{ application.authorization_grant_type }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="redirect_uris" class="form-label">{% trans "Redirect URIs" %}</label>
+            <textarea id="redirect_uris" class="form-control" type="text"
+                      readonly>{{ application.redirect_uris }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="created" class="form-label">{% trans "Created" %}</label>
+            <input id="created" class="form-control" type="text"
+                   value="{{ application.created }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="updated" class="form-label">{% trans "Updated" %}</label>
+            <input id="updated" class="form-control" type="text"
+                   value="{{ application.updated }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="user" class="form-label">{% trans "User" %}</label>
+            <input id="user" class="form-control" type="text"
+                   value="{{ application.user }}"
+                   readonly>
+        </div>
+        <div class="btn-toolbar">
+            <a class="btn btn-secondary me-1" href="{% url "oauth2_provider:list" %}">{% trans "Back" %}</a>
+            <a class="btn btn-primary me-1" href="{% url "oauth2_provider:update" application.id %}">{% trans "Edit" %}</a>
+            <a class="btn btn-danger me-1" href="{% url "oauth2_provider:delete" application.id %}">{% trans "Delete" %}</a>
+        </div>
+    </div>
+{% endblock %}

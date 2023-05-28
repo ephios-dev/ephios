@@ -9,13 +9,10 @@ from dynamic_preferences.forms import preference_form_builder
 
 from ephios.core.forms.events import EventTypeForm, EventTypePreferenceForm
 from ephios.core.models import EventType
-from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
-class EventTypeUpdateView(
-    CustomPermissionRequiredMixin, SettingsViewMixin, TemplateView, SingleObjectMixin
-):
+class EventTypeUpdateView(CustomPermissionRequiredMixin, TemplateView, SingleObjectMixin):
     template_name = "core/eventtype_form.html"
     permission_required = "core.change_eventtype"
     model = EventType
@@ -50,13 +47,13 @@ class EventTypeUpdateView(
         )
 
 
-class EventTypeListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
+class EventTypeListView(CustomPermissionRequiredMixin, ListView):
     permission_required = "core.view_eventtype"
     accept_object_perms = False
     model = EventType
 
 
-class EventTypeDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, DeleteView):
+class EventTypeDeleteView(CustomPermissionRequiredMixin, DeleteView):
     permission_required = "core.delete_eventtype"
     model = EventType
 
@@ -67,9 +64,7 @@ class EventTypeDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, Dele
         return reverse("core:settings_eventtype_list")
 
 
-class EventTypeCreateView(
-    CustomPermissionRequiredMixin, SettingsViewMixin, SuccessMessageMixin, CreateView
-):
+class EventTypeCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
     permission_required = "core.add_eventtype"
     accept_object_perms = False
     template_name = "core/eventtype_form.html"

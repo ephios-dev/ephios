@@ -4,12 +4,11 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from ephios.core.views.settings import SettingsViewMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.pages.models import Page
 
 
-class PageListView(CustomPermissionRequiredMixin, SettingsViewMixin, ListView):
+class PageListView(CustomPermissionRequiredMixin, ListView):
     model = Page
     permission_required = "pages.add_page"
 
@@ -27,7 +26,7 @@ class PageView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class PageCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, CreateView):
+class PageCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Page
     permission_required = "pages.add_page"
     fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
@@ -37,7 +36,7 @@ class PageCreateView(CustomPermissionRequiredMixin, SettingsViewMixin, CreateVie
         return reverse("pages:settings_page_list")
 
 
-class PageUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateView):
+class PageUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Page
     permission_required = "pages.change_page"
     fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
@@ -47,7 +46,7 @@ class PageUpdateView(CustomPermissionRequiredMixin, SettingsViewMixin, UpdateVie
         return reverse("pages:settings_page_list")
 
 
-class PageDeleteView(CustomPermissionRequiredMixin, SettingsViewMixin, DeleteView):
+class PageDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = Page
     permission_required = "pages.delete_page"
 

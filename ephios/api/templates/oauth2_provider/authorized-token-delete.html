@@ -1,0 +1,13 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load i18n %}
+{% block settings_content %}
+    <form action="" method="post">{% csrf_token %}
+        <h1>{% blocktranslate trimmed with token_name=object.name %}
+            Delete {{ token_name }}
+            {% endblocktranslate %}
+        </h1>
+        <p>{% trans "Are you sure you want to delete this token?" %}</p>
+        <input class="btn btn-danger" type="submit" value="{% trans 'Delete' %}" />
+    </form>
+{% endblock %}
