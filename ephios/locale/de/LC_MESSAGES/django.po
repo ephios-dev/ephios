@@ -6,34 +6,34 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-05-29 00:38+0200\n"
-"PO-Revision-Date: 2023-01-14 13:03+0000\n"
+"PO-Revision-Date: 2023-05-28 23:16+0000\n"
 "Last-Translator: Felix Rindt <felix@rindt.me>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.1-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: ephios/api/access/views.py:65
 msgid "What is this token for?"
-msgstr ""
+msgstr "Wofür ist dieses Token?"
 
 #: ephios/api/access/views.py:74
 msgid "For security reasons, only select the scopes that are actually needed."
-msgstr ""
+msgstr "Aus Sicherheitsgründen nur den benötigten Geltungsbereich auswählen."
 
 #: ephios/api/access/views.py:113
 msgid "Token is too old to be revealed."
-msgstr ""
+msgstr "Token ist zu alt, um angezeigt werden zu können."
 
 #: ephios/api/access/views.py:123
 msgid "Token was revoked."
-msgstr ""
+msgstr "Token wurde entfernt."
 
 #: ephios/api/models.py:33 ephios/core/pdf.py:76 ephios/core/pdf.py:130
 msgid "Description"
@@ -41,21 +41,19 @@ msgstr "Beschreibung"
 
 #: ephios/api/models.py:56
 msgid "Access Token"
-msgstr ""
+msgstr "Zugriffstoken"
 
 #: ephios/api/models.py:57
-#, fuzzy
-#| msgid "Personal"
 msgid "Personal Token"
-msgstr "Persönlich"
+msgstr "Persönliches Zugriffstoken"
 
 #: ephios/api/templates/api/access_token_form.html:8
 msgid "Edit API Token"
-msgstr ""
+msgstr "API Token bearbeiten"
 
 #: ephios/api/templates/api/access_token_form.html:10
 msgid "Add API Token"
-msgstr ""
+msgstr "API Token hinzufügen"
 
 #: ephios/api/templates/api/access_token_form.html:16
 #: ephios/api/templates/oauth2_provider/application_form.html:27
@@ -85,10 +83,8 @@ msgstr "Abbrechen"
 
 #: ephios/api/templates/api/access_token_list.html:7
 #: ephios/core/templates/core/settings/settings_base.html:26
-#, fuzzy
-#| msgid "Information"
 msgid "Integrations"
-msgstr "Information"
+msgstr "Integrationen"
 
 #: ephios/api/templates/api/access_token_list.html:9
 msgid ""
@@ -97,86 +93,78 @@ msgid ""
 "other applications. If you are unsure about the origins of a token or the "
 "security of the third party application please revoke access."
 msgstr ""
+"Andere Anwendungen können sich mit ephios verbinden, in dem sie Sie nach dem "
+"Zugriff zu Ihren Daten fragen. Sie können außerdem persönliche Zugriffstoken "
+"erstellen, um mit anderen Anwendungen auf ephios zuzugreifen. Wenn Sie sich "
+"unsicher über die Vertraulichkeit der Token oder einer "
+"Drittanbieteranwendung sind, sollten sie den Zugriff widerrufen."
 
 #: ephios/api/templates/api/access_token_list.html:17
-#, fuzzy
-#| msgid "current qualifications"
 msgid "Third party applications"
-msgstr "momentane Qualifikationen"
+msgstr "Drittanbieteranwendungen"
 
 #: ephios/api/templates/api/access_token_list.html:31
 #: ephios/api/templates/api/access_token_list.html:99
 msgid "Scope"
-msgstr ""
+msgstr "Geltungsbereich"
 
 #: ephios/api/templates/api/access_token_list.html:40
 #: ephios/api/templates/api/access_token_list.html:108
 msgid "Revoked"
-msgstr ""
+msgstr "Widerrufen"
 
 #: ephios/api/templates/api/access_token_list.html:46
 #: ephios/api/templates/api/access_token_list.html:116
 msgid "Revoke"
-msgstr ""
+msgstr "Widerrufen"
 
 #: ephios/api/templates/api/access_token_list.html:54
-#, fuzzy
-#| msgid "Your participation has been confirmed"
 msgid "No applications have been authorized."
-msgstr "Ihre Teilnahme wurde bestätigt"
+msgstr "Es wurden keine Anwendungen autorisiert."
 
 #: ephios/api/templates/api/access_token_list.html:59
-#, fuzzy
-#| msgid "Personal data"
 msgid "Personal API tokens"
-msgstr "Persönliche Daten"
+msgstr "Persönliche Zugriffstoken"
 
 #: ephios/api/templates/api/access_token_list.html:63
-#, fuzzy
-#| msgid "Create new event"
 msgid "Create new API token"
-msgstr "Neue Veranstaltung anlegen"
+msgstr "Neues API-Token anlegen"
 
 #: ephios/api/templates/api/access_token_list.html:77
-#, fuzzy, python-format
-#| msgid "Create new %(title)s"
+#, python-format
 msgid "created on %(created)s"
-msgstr "%(title)s hinzufügen"
+msgstr "am %(created)s hinzugefügt"
 
 #: ephios/api/templates/api/access_token_list.html:82
 #, python-format
 msgid "revoked on %(revoked)s"
-msgstr ""
+msgstr "am %(revoked)s widerrufen"
 
 #: ephios/api/templates/api/access_token_list.html:86
 #, python-format
 msgid "expired on %(expires)s"
-msgstr ""
+msgstr "am %(expires)s abgelaufen"
 
 #: ephios/api/templates/api/access_token_list.html:90
 #, python-format
 msgid "expires on %(expires)s"
-msgstr ""
+msgstr "läuft am %(expires)s ab"
 
 #: ephios/api/templates/api/access_token_list.html:94
 msgid "does not expire"
-msgstr ""
+msgstr "läuft nicht ab"
 
 #: ephios/api/templates/api/access_token_list.html:110
-#, fuzzy
-#| msgid "expires"
 msgid "Expired"
-msgstr "Ablaufdatum"
+msgstr "Abgelaufen"
 
 #: ephios/api/templates/api/access_token_list.html:124
-#, fuzzy
-#| msgid "There are no events."
 msgid "There are no tokens."
-msgstr "Es gibt momentan keine Veranstaltungen."
+msgstr "Es gibt keine Token."
 
 #: ephios/api/templates/api/access_token_reveal.html:9
 msgid "API Token"
-msgstr ""
+msgstr "API-Token"
 
 #: ephios/api/templates/api/access_token_reveal.html:13
 msgid ""
@@ -186,6 +174,10 @@ msgid ""
 "            again.\n"
 "        "
 msgstr ""
+"\n"
+"            Das API-Token wurde erstellt. Bitte speichern Sie es an einem "
+"sicheren Ort. Sie können es sich später nicht erneut ansehen.\n"
+"        "
 
 #: ephios/api/templates/api/access_token_reveal.html:26
 #: ephios/api/templates/oauth2_provider/application_detail.html:15
@@ -197,19 +189,16 @@ msgstr "Kopieren"
 
 #: ephios/api/templates/api/access_token_reveal.html:31
 msgid "Done"
-msgstr ""
+msgstr "Fertig"
 
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:8
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete the group \"%(group)s\"?"
+#, python-format
 msgid "Are you sure to delete the application %(app_name)s?"
-msgstr "Möchten Sie die Gruppe \"%(group)s\" wirklich löschen?"
+msgstr "Möchten Sie die Anwendung %(app_name)s wirklich löschen?"
 
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:12
-#, fuzzy
-#| msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
 msgid "Are you sure to delete the application?"
-msgstr "Möchten Sie die Schicht \"%(shift)s\" wirklich löschen?"
+msgstr "Möchten Sie die Anwendung wirklich löschen?"
 
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:24
 #: ephios/api/templates/oauth2_provider/application_detail.html:68
@@ -247,39 +236,35 @@ msgstr "Löschen"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:9
 msgid "Client id"
-msgstr ""
+msgstr "Client-ID"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:20
 msgid "Client secret"
-msgstr ""
+msgstr "Client-Secret"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:30
-#, fuzzy
-#| msgid "event type"
 msgid "Client type"
-msgstr "Veranstaltungstyp"
+msgstr "Client-Typ"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:35
 msgid "Authorization Grant Type"
-msgstr ""
+msgstr "Authorization-Grant-Type"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:41
 msgid "Redirect URIs"
-msgstr ""
+msgstr "Weiterleitungs-URIs"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:46
 #: ephios/api/templates/oauth2_provider/application_list.html:22
 msgid "Created"
-msgstr ""
+msgstr "Erstellt am"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:52
 msgid "Updated"
-msgstr ""
+msgstr "Geändert am"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:58
 #: ephios/api/templates/oauth2_provider/application_list.html:21
-#, fuzzy
-#| msgid "Users"
 msgid "User"
 msgstr "Benutzer"
 
@@ -321,17 +306,13 @@ msgid "Edit"
 msgstr "Bearbeiten"
 
 #: ephios/api/templates/oauth2_provider/application_form.html:11
-#, fuzzy
-#| msgid "Edit qualification"
 msgid "Edit application"
-msgstr "Qualifikation bearbeiten"
+msgstr "Anwendung bearbeiten"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:6
 #: ephios/core/views/settings.py:26
-#, fuzzy
-#| msgid "Administration"
 msgid "App integrations"
-msgstr "Administration"
+msgstr "App-Integrationen"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:8
 msgid ""
