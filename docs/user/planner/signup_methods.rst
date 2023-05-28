@@ -38,7 +38,7 @@ The ability to sign up for this shift is disabled for all users, optionally a re
 Linked to other shift
 ^^^^^^^^^^^^^^^^^^^^^
 
-With this registration method, it is not possible for volunteers to register; instead, the participants are mirrored by another shift. The shift to be mirrored is selected in the settings. This registration procedure can be used, for example, for courses lasting several days, where registration is controlled via the first shift and the participants are automatically registered for all other days/shifts.
+With this registration method, it is not possible for volunteers to register; instead, the participants are mirrored from another shift. The shift to mirror is selected in the settings. This registration procedure can be used, for example, for courses lasting several days, where registration is controlled via the first shift and the participants are automatically registered for all other days/shifts.
 
 Disposition
 ^^^^^^^^^^^
