@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -32,14 +31,20 @@ class ApplicationDelete(oauth2_views.ApplicationDelete):
 class AccessTokensListView(oauth2_views.AuthorizedTokensListView):
     template_name = "api/access_token_list.html"
 
+    context_object_name = "personal_access_tokens"
+
     def get_queryset(self):
-        qs = super().get_queryset().select_related("application").filter(user=self.request.user)
-        if not self.request.GET.get("show_inactive"):
-            qs = qs.filter(
-                Q(expires__gt=timezone.now()) | Q(expires__isnull=True),
-                revoked__isnull=True,
-            )
+        # personal API tokens
+        qs = super().get_queryset().filter(user=self.request.user, application__id=None)
         return qs.order_by("-created")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["oauth_access_tokens"] = AccessToken.objects.filter(
+            user=self.request.user,
+            application_id__isnull=False,
+        )
+        return context
 
 
 class TokenScopesChoiceField(forms.MultipleChoiceField):
@@ -47,7 +52,9 @@ class TokenScopesChoiceField(forms.MultipleChoiceField):
         scopes_list = super().clean(value)
         return " ".join(scopes_list)
 
-    def to_python(self, value):  # TODO is this correct?
+    def to_python(self, value):
+        # this should be the corresponding method to clean,
+        # but it is not called/tested
         if isinstance(value, str):
             return value.split(" ")
         return value
@@ -55,9 +62,7 @@ class TokenScopesChoiceField(forms.MultipleChoiceField):
 
 class AccessTokenForm(forms.ModelForm):
     description = forms.CharField(
-        widget=forms.Textarea(
-            attrs={"placeholder": _("Describe where and for what this token is used"), "rows": 1}
-        ),
+        widget=forms.TextInput(attrs={"placeholder": _("What is this token for?")}),
         required=True,
     )
     scope = TokenScopesChoiceField(

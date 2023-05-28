@@ -29,14 +29,15 @@ class AccessToken(AbstractAccessToken):
     class Meta(AbstractAccessToken.Meta):
         swappable = "OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL"
 
-    description = models.TextField(
+    description = models.CharField(
         verbose_name=_("Description"),
         blank=True,
+        max_length=1000,
     )
 
-    revoked = models.DateTimeField(null=True)
+    revoked = models.BooleanField(null=True)
 
-    # make expires nullable for non-expiring user tokens
+    # make expires nullable for non-expiring personal API token
     expires = models.DateTimeField(
         null=True,
     )
@@ -48,12 +49,12 @@ class AccessToken(AbstractAccessToken):
 
     def is_valid(self, scopes=None):
         # expand super to include revoked check
-        return self.revoked is None and super().is_valid(scopes)
+        return not self.revoked and super().is_valid(scopes)
 
     def __str__(self):
         if self.application:
             return _("Access Token") + f" #{self.id}"
-        return _("User Token") + f" #{self.id}"
+        return _("Personal Token") + f" #{self.id}"
 
     def revoke_related(self):
         """
@@ -67,9 +68,12 @@ class AccessToken(AbstractAccessToken):
             self.revoke()
 
     def revoke(self):
-        if self.revoked is None:
-            self.revoked = timezone.now()
-            self.save(update_fields=["revoked"])
+        if self.expires is not None:
+            self.expires = min(self.expires, timezone.now())
+        else:
+            self.expires = timezone.now()
+        self.revoked = True
+        self.save()
 
 
 class RefreshToken(AbstractRefreshToken):

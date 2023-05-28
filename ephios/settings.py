@@ -1,5 +1,6 @@
 import copy
 import os
+from datetime import timedelta
 from email.utils import getaddresses
 
 import environ
@@ -339,7 +340,7 @@ OAUTH2_PROVIDER = {
             "Write confidential data like all users profile and participations"
         ),
     },
-    "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 31 * 3,  # 3 months
+    "REFRESH_TOKEN_EXPIRE_SECONDS": timedelta(days=90),
 }
 
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):

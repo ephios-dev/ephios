@@ -22,8 +22,8 @@ webpages (javascript/AJAX).
 Token based authentication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-API tokens can be acquired from the user settings page and used in custom
-applications or scripts to access the API.
+Personal API tokens can be acquired from the user settings page and used in
+custom applications or scripts to access the API.
 When creating a token you should provide a helpful description as well as set
 a fitting expiration date.
 
@@ -46,6 +46,10 @@ In your requests to the API the token must be presented in the
 Authorization header like this:
 
 ``Authorization: Bearer <access token>``
+
+For example, a curl request to the events endpoint would look like this:
+
+``curl -X GET https://your-instance.ephios.de/api/events/ -H 'Authorization: Bearer gvRYPujOFh6iiLbT5Dw'``
 
 Permissions are checked based on the tokens scope and the permissions of the
 user that created the token. For example, if a token with the scope
