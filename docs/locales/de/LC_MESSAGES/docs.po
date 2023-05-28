@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ephios\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-29 00:36+0200\n"
-"PO-Revision-Date: 2023-05-28 22:59+0000\n"
+"PO-Revision-Date: 2023-05-28 23:11+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/"
 "documentation/de/>\n"
@@ -948,13 +948,16 @@ msgstr ""
 
 #: ../../user/events/signup_methods.rst:2
 msgid "Signup methods"
-msgstr ""
+msgstr "Anmeldeverfahren"
 
 #: ../../user/events/signup_methods.rst:4
 msgid ""
 "When creating a shift, a signup method has to be selected. This controls "
 "how users can sign up for the shift and what happens after signing up."
 msgstr ""
+"Beim Anlegen einer Schicht muss jeweils ein Anmeldeverfahren ausgewählt "
+"werden. Dieses steuert, wie sich Benutzer für die Schicht anmelden können "
+"und was nach der Anmeldung geschieht."
 
 #: ../../user/events/signup_methods.rst:6
 msgid ""
@@ -962,14 +965,18 @@ msgid ""
 "the following, the provided signup methods are explained, but additional "
 "signup methods can also be integrated as a plugin."
 msgstr ""
+"Um verschiedene Anwendungsfälle abzudecken, bietet ephios verschiedene "
+"Anmeldeverfahren an. Nachfolgend sind die mitgelieferten Anmeldeverfahren "
+"erläutert, es können jedoch auch zusätzliche Anmeldeverfahren als Plugin "
+"integriert werden."
 
 #: ../../user/events/signup_methods.rst:9
 msgid "Availabe signup methods"
-msgstr ""
+msgstr "Verfügbare Anmeldeverfahren"
 
 #: ../../user/events/signup_methods.rst:11
 msgid "Instant confirmation"
-msgstr ""
+msgstr "Direkte Bestätigung"
 
 #: ../../user/events/signup_methods.rst:13
 msgid ""
@@ -977,6 +984,9 @@ msgid ""
 "inscription \"Participate\". Any user who signs up is immediately "
 "confirmed and listed as a participant in the shift."
 msgstr ""
+"Schichten mit diesem Anmeldeverfahren bieten dem Nutzer einen Button mit der "
+"Aufschrift \"Teilnehmen\" an. Jeder Benutzer, der sich anmeldet, wird "
+"unmittelbar bestätigt und als Teilnehmer der Veranstaltung geführt."
 
 #: ../../user/events/signup_methods.rst:15
 msgid ""
@@ -988,6 +998,14 @@ msgid ""
 "specified. Users must have all the specified qualifications to be able to"
 " participate."
 msgstr ""
+"In den Einstellungen der Schicht können Bedingungen angegeben werden, die "
+"ein Benutzer erfüllen muss, um teilnehmen zu können. Dazu gehört ein "
+"Mindestalter und eine Anmeldefrist (Datum). Außerdem kann eine minimale und "
+"eine maximale Anzahl von Teilnehmenden angegeben werden. Ist die maximale "
+"Anzahl von Teilnehmenden erreicht, können sich keine weiteren Benutzer "
+"anmelden. Weiterhin können erforderliche Qualifikationen angegeben werden. "
+"Benutzer müssen dabei alle genannten Qualifikationen aufweisen, um "
+"teilnehmen zu können."
 
 #: ../../user/events/signup_methods.rst:17
 msgid ""
@@ -995,10 +1013,13 @@ msgid ""
 "can cancel on their own and whether individually deviating start and end "
 "times can be specified when registering."
 msgstr ""
+"Außerdem kann eingestellt werden, ob Nutzer, die bereits bestätigt sind, "
+"selbstständig wieder absagen können und ob individuell abweichende Start- "
+"und Endzeiten bei der Anmeldung angegeben werden dürfen."
 
 #: ../../user/events/signup_methods.rst:20
 msgid "Request and confirm"
-msgstr ""
+msgstr "Anfragen und bestätigen"
 
 #: ../../user/events/signup_methods.rst:22
 msgid ""
@@ -1008,16 +1029,23 @@ msgid ""
 "notification of the request. In the disposition they can then confirm or "
 "reject the participation."
 msgstr ""
+"Schichten mit diesem Anmeldeverfahren bieten dem Nutzer einen Button mit der "
+"Aufschrift \"Anfragen\" an. Jeder Benutzer, der eine Teilnahme anfragt, wird "
+"mit seiner Anfrage in der Disposition gelistet. Die für die Veranstaltung "
+"verantwortlichen Personen erhalten eine Benachrichtigung über die Anfrage. "
+"In der Disposition können diese die Teilnahme dann bestätigen oder ablehnen."
 
 #: ../../user/events/signup_methods.rst:24
 msgid ""
 "The same settings can be made for this signup method as for \"Instant "
 "confirmation\"."
 msgstr ""
+"Es können für dieses Anmeldeverfahren die selben Einstellungen vorgenommen "
+"werden wie bei \"Direkte Bestätigung\"."
 
 #: ../../user/events/signup_methods.rst:27
 msgid "Section based signup"
-msgstr ""
+msgstr "Bewerbung auf Abschnitte"
 
 #: ../../user/events/signup_methods.rst:29
 msgid ""
@@ -1029,6 +1057,16 @@ msgid ""
 " Sections with mixed qualifications (e.g., RTW with 1x RS, 1x NFS) must "
 "either be mapped as multiple sections or use a different signup method."
 msgstr ""
+"Dieses Anmeldeverfahren funktioniert grundlegend genau wie \"Anfragen und "
+"Bestätigen\". Zusätzlich können in den Einstellungen der Schicht mehrere "
+"Abschnitte (z.B. \"UHS\", \"Fußstreife\") definiert werden. Für jeden "
+"Abschnitt kann eine Mindest- und Höchstanzahl an Teilnehmenden angegeben "
+"werden. Ebenfalls pro Abschnitt können die erforderlichen Qualifikationen "
+"angegeben werden. Benutzer müssen alle genannten Qualifikationen aufweisen, "
+"um an diesem Abschnitt teilnehmen zu können. Abschnitte mit gemischten "
+"Qualifikationen (z.B. RTW mit 1x RS, 1x NFS) müssen entweder als mehrere "
+"Abschnitte abgebildet oder mit einem anderen Anmeldeverfahren durchgeführt "
+"werden."
 
 #: ../../user/events/signup_methods.rst:31
 msgid ""
@@ -1036,10 +1074,14 @@ msgid ""
 "can be set in the shift settings that this specification is mandatory. "
 "The preferred section is visible in the disposition."
 msgstr ""
+"Benutzer können beim Anfragen der Teilnahme einen bevorzugten Abschnitt "
+"angeben. In den Einstellungen der Schicht kann eingestellt werden, dass "
+"diese Angabe verpflichtend ist. Der bevorzugte Abschnitt ist in der "
+"Disposition ersichtlich."
 
 #: ../../user/events/signup_methods.rst:34
 msgid "No registration (disposition only)"
-msgstr ""
+msgstr "Keine Anmeldung (nur Disposition)"
 
 #: ../../user/events/signup_methods.rst:36
 msgid ""
@@ -1049,10 +1091,15 @@ msgid ""
 "where the responsible persons send individual helpers and a self-"
 "registration is not intended."
 msgstr ""
+"Die Möglichkeit zur Anmeldung an dieser Schicht ist für alle Nutzer "
+"deaktiviert, optional kann ein Grund hierfür angegeben werden. Nutzer können "
+"über die Disposition hinzugefügt werden. Dieses Anmeldeverfahren kann bspw. "
+"für Lehrgänge verwendet werden, bei dem die Verantwortlichen einzelne "
+"Helfende entsenden und eine Selbstanmeldung nicht vorgesehen ist."
 
 #: ../../user/events/signup_methods.rst:39
 msgid "Linked to other shift"
-msgstr ""
+msgstr "an andere Schicht gekoppelt"
 
 #: ../../user/events/signup_methods.rst:41
 msgid ""
@@ -1063,10 +1110,17 @@ msgid ""
 "is controlled via the first shift and the participants are automatically "
 "registered for all other days/shifts."
 msgstr ""
+"Bei diesem Anmeldeverfahren ist eine Anmeldung für Helfende nicht möglich, "
+"stattdessen werden die Teilnahmen von einer anderen Schicht gespiegelt. Die "
+"Schicht, von der gespiegelt werden soll, wird in den Einstellungen "
+"ausgewählt. Dieses Anmeldeverfahren kann bspw. für mehrtägige Lehrgänge "
+"verwendet werden, bei denen die Anmeldung über die erste Schicht geregelt "
+"wird und die Teilnehmenden automatisch für alle weiteren Tage/Schichten "
+"angemeldet werden sollen."
 
 #: ../../user/events/signup_methods.rst:44
 msgid "Disposition"
-msgstr ""
+msgstr "Disposition"
 
 #: ../../user/events/signup_methods.rst:46
 msgid ""
@@ -1074,6 +1128,9 @@ msgid ""
 "disposition for each shift via the button \"Disposition\". There, all "
 "participations for the shift are displayed in the corresponding states."
 msgstr ""
+"Auf der Detailseite eines Events kann für jede Schicht über den Button "
+"\"Disposition\" die Disposition erreicht werden. Dort werden alle Teilnahmen "
+"für die Schicht in den zugehörigen Zuständen angezeigt."
 
 #: ../../user/events/signup_methods.rst:48
 msgid ""
@@ -1083,16 +1140,26 @@ msgid ""
 " on the cogwheel, a deviating participation time or comment was entered "
 "during registration. These can be viewed by clicking on the cogwheel."
 msgstr ""
+"Angefragt: Der Nutzer hat eine Teilnahme für diese Schicht angefragt. Es "
+"werden zusätzlich die relevanten Qualifikationen des Nutzers und "
+"Zusatzinformationen wie der bevorzugte Abschnitt angezeigt. Befindet sich am "
+"Zahnrad ein Ausrufezeichen, wurde bei der Anmeldung eine abweichende "
+"Teilnahmezeit oder ein Kommentar angegeben. Diese können über einen Klick "
+"auf das Zahnrad eingesehen werden."
 
 #: ../../user/events/signup_methods.rst:49
 msgid ""
 "Rejected by responsible person: the participation was rejected by a "
 "responsible person via the disposition."
 msgstr ""
+"Abgesagt durch verantwortliche Person: die Teilnahme wurde von einer "
+"verantwortlichen Person über die Disposition abgelehnt."
 
 #: ../../user/events/signup_methods.rst:50
 msgid "Declined by participant: the helping person has declined for this shift."
 msgstr ""
+"Abgesagt durch helfende Person: die helfende Person hat selbstständig für "
+"diese Schicht abgesagt."
 
 #: ../../user/events/signup_methods.rst:51
 msgid ""
@@ -1100,6 +1167,10 @@ msgid ""
 "needed) further details like the assigned section can be entered. The "
 "participant can be assigned for a different time via the cogwheel."
 msgstr ""
+"Bestätigt: die Teilnahme wurde durch eine verantwortliche Person bestätigt. "
+"Hier können (sofern benötigt) weitere Angaben wie der zugeteilte Abschnitt "
+"gemacht werden. Über das Zahnrad kann der Teilnehmer für eine abweichende "
+"Zeit eingeteilt werden."
 
 #: ../../user/events/signup_methods.rst:52
 msgid ""
@@ -1109,6 +1180,12 @@ msgid ""
 "create a placeholder with this name. This can be used, for example, if "
 "external helpers without an account are to be assigned."
 msgstr ""
+"Weitere hinzufügen: Über das Suchfeld kann eine Teilnahme für weitere "
+"Benutzer angelegt werden, die für diese Schicht bisher keine Anmeldung in "
+"ephios getätigt haben. Wird für den eingegebenen Namen kein Benutzer "
+"gefunden, bietet ephios die Möglichkeit, einen Platzhalter mit diesem Namen "
+"anzulegen. Dieser kann beispielsweise genutzt werden, wenn externe Helfende "
+"ohne Account eingeteilt werden sollen."
 
 #: ../../user/events/signup_methods.rst:54
 msgid ""
@@ -1117,10 +1194,14 @@ msgid ""
 " moving it to the \"Confirmed\" field. The changes must then be confirmed"
 " with \"Save\"."
 msgstr ""
+"Der Zustand einer Teilnahme kann durch das Verschieben des Eintrags in das "
+"gewünschte Feld geändert werden. Beispielsweise kann eine angefragte "
+"Teilnahme bestätigt werden, indem sie in das Feld \"Bestätigt\" verschoben "
+"wird. Die Änderungen müssen anschließend mit \"Speichern\" bestätigt werden."
 
 #: ../../user/events/types.rst:2
 msgid "Event types"
-msgstr ""
+msgstr "Veranstaltungstypen"
 
 #: ../../user/events/visibility.rst:2
 msgid "Event visibility"
