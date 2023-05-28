@@ -54,4 +54,4 @@ On the detail page of an event, responsibles of the event can reach the disposit
 The state of a participation can be changed by moving the entry into the desired field. For example, a requested participation can be confirmed by moving it to the "Confirmed" field. The changes must then be confirmed with "Save".
 
 .. toctree::
-    :maxdepth: 0
+    :maxdepth: 2
