@@ -1,5 +1,5 @@
 from django.urls import include, path
-from oauth2_provider import views
+from oauth2_provider import views as oauth2_views
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
 
@@ -9,6 +9,7 @@ from ephios.api.access.views import (
     AccessTokenRevokeView,
     AccessTokensListView,
     AllUserApplicationList,
+    ApplicationDelete,
 )
 from ephios.api.views.events import EventViewSet
 from ephios.extra.permissions import staff_required
@@ -57,22 +58,22 @@ urlpatterns = [
                 ),
                 path(
                     "applications/register/",
-                    staff_required(views.ApplicationRegistration.as_view()),
+                    staff_required(oauth2_views.ApplicationRegistration.as_view()),
                     name="settings-oauth-app-register",
                 ),
                 path(
                     "applications/<int:pk>/",
-                    staff_required(views.ApplicationDetail.as_view()),
+                    staff_required(oauth2_views.ApplicationDetail.as_view()),
                     name="settings-oauth-app-detail",
                 ),
                 path(
                     "applications/<int:pk>/delete/",
-                    staff_required(views.ApplicationDelete.as_view()),
+                    staff_required(ApplicationDelete.as_view()),
                     name="settings-oauth-app-delete",
                 ),
                 path(
                     "applications/<int:pk>/update/",
-                    staff_required(views.ApplicationUpdate.as_view()),
+                    staff_required(oauth2_views.ApplicationUpdate.as_view()),
                     name="settings-oauth-app-update",
                 ),
             ]

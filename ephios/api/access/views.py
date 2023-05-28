@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
@@ -10,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, TemplateView
 from guardian.mixins import LoginRequiredMixin
-from oauth2_provider import views as outh2_views
+from oauth2_provider import views as oauth2_views
 from oauth2_provider.models import get_application_model
 from oauth2_provider.scopes import get_scopes_backend
 
@@ -19,12 +20,16 @@ from ephios.extra.mixins import StaffRequiredMixin
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 
-class AllUserApplicationList(StaffRequiredMixin, outh2_views.ApplicationList):
+class AllUserApplicationList(StaffRequiredMixin, oauth2_views.ApplicationList):
     def get_queryset(self):
         return get_application_model().objects.all()
 
 
-class AccessTokensListView(outh2_views.AuthorizedTokensListView):
+class ApplicationDelete(oauth2_views.ApplicationDelete):
+    success_url = reverse_lazy("api:settings-oauth-app-list")
+
+
+class AccessTokensListView(oauth2_views.AuthorizedTokensListView):
     template_name = "api/access_token_list.html"
 
     def get_queryset(self):
@@ -81,9 +86,6 @@ class AccessTokenCreateView(LoginRequiredMixin, CreateView):
     model = AccessToken
     form_class = AccessTokenForm
     template_name = "api/access_token_form.html"
-    success_message = _(
-        "Event type was created. More settings for this event type can be managed below."
-    )
 
     def form_valid(self, form):
         """If the form is valid, save the associated model."""
