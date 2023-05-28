@@ -22,7 +22,7 @@ from pathlib import Path
 import environ
 
 project = "ephios"
-copyright = "2021, ephios-dev"
+copyright = "2023, ephios-dev"
 author = "ephios-dev"
 
 
