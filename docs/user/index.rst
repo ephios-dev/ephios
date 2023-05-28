@@ -6,4 +6,4 @@ This section shows how to use ephios. This includes functionality for volunteers
 .. toctree::
     :maxdepth: 2
 
-    planner/index
+    events/index

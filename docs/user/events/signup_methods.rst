@@ -1,9 +1,9 @@
 Signup methods
 ==============
 
-To cover different use cases, ephios offers different signup methods. In the following, the provided logon procedures are explained, but additional signup methods can also be integrated as a plugin.
+When creating a shift, a signup method has to be selected. This controls how users can sign up for the shift and what happens after signing up.
 
-When creating a shift, a signup method has to be selected. This controls how users can sign up for the shift and what happens after signing up. 
+To cover different use cases, ephios offers different signup methods. In the following, the provided signup methods are explained, but additional signup methods can also be integrated as a plugin.
 
 Availabe signup methods
 -----------------------
@@ -19,7 +19,7 @@ In addition, it can be set whether users who have already been confirmed can can
 Request and confirm
 ^^^^^^^^^^^^^^^^^^^
 
-Shifts with this registration procedure offer the user a button labeled "Request". Any user requesting to attend will have their request listed in the disposition. The persons responsible for the event will receive notification of the request. In the disposition they can then confirm or reject the participation. 
+Shifts with this signup method offer the user a button labeled "Request". Any user requesting to attend will have their request listed in the disposition. The persons responsible for the event will receive notification of the request. In the disposition they can then confirm or reject the participation.
 
 The same settings can be made for this signup method as for "Instant confirmation".
 
@@ -33,12 +33,12 @@ Users can specify a preferred section when requesting participation. It can be s
 No registration (disposition only)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ability to sign up for this shift is disabled for all users, optionally a reason can be specified. Users can be added via the disposition. This registration procedure can be used e.g. for training courses, where the responsible persons send individual helpers and a self-registration is not intended.
+The ability to sign up for this shift is disabled for all users, optionally a reason can be specified. Users can be added via the disposition. This signup method can be used e.g. for training courses, where the responsible persons send individual helpers and a self-registration is not intended.
 
 Linked to other shift
 ^^^^^^^^^^^^^^^^^^^^^
 
-With this registration method, it is not possible for volunteers to register; instead, the participants are mirrored from another shift. The shift to mirror is selected in the settings. This registration procedure can be used, for example, for courses lasting several days, where registration is controlled via the first shift and the participants are automatically registered for all other days/shifts.
+With this signup method, it is not possible for volunteers to register; instead, the participants are mirrored from another shift. The shift to mirror is selected in the settings. This registration procedure can be used, for example, for courses lasting several days, where registration is controlled via the first shift and the participants are automatically registered for all other days/shifts.
 
 Disposition
 ^^^^^^^^^^^
