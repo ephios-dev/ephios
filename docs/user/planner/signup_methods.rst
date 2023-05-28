@@ -21,7 +21,7 @@ Request and confirm
 
 Shifts with this registration procedure offer the user a button labeled "Request". Any user requesting to attend will have their request listed in the disposition. The persons responsible for the event will receive notification of the request. In the disposition they can then confirm or reject the participation. 
 
-The same settings can be made for this signup method as for "Instant confirmation."
+The same settings can be made for this signup method as for "Instant confirmation".
 
 Section based signup
 ^^^^^^^^^^^^^^^^^^^^
