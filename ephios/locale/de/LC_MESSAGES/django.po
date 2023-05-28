@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-05-29 00:38+0200\n"
 "PO-Revision-Date: 2023-05-28 23:16+0000\n"
-"Last-Translator: Felix Rindt <felix@rindt.me>\n"
+"Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -321,18 +321,19 @@ msgid ""
 "integrate with ephios include the plugin system and the API. More detailed "
 "information can be found in the documentation."
 msgstr ""
+"Auf dieser Seite können Sie andere Anwendungen und Programme so "
+"konfigurieren, dass sie mit ephios als Authentifizierungsanbieter unter "
+"Verwendung des OAuth2-Standards arbeiten. Weitere Möglichkeiten zur "
+"Integration mit ephios sind das Plugin-System und die API. Ausführlichere "
+"Informationen finden Sie in der Dokumentation."
 
 #: ephios/api/templates/oauth2_provider/application_list.html:14
-#, fuzzy
-#| msgid "qualifications"
 msgid "OAuth2 applications"
-msgstr "Qualifikationen"
+msgstr "OAuth2-Anwendungen"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:15
-#, fuzzy
-#| msgid "New qualification"
 msgid "New Application"
-msgstr "Zielqualifikation"
+msgstr "Neue Anwendung"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:20
 #: ephios/core/templates/core/group_list.html:20
@@ -363,25 +364,21 @@ msgid "View"
 msgstr "Anzeigen"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:58
-#, fuzzy
-#| msgid "Qualification was deleted."
 msgid "No applications defined"
-msgstr "Qualifikation wurde gelöscht."
+msgstr "Keine Anwendungen vorhanden."
 
 #: ephios/api/templates/oauth2_provider/application_registration_form.html:5
-#, fuzzy
-#| msgid "Create new qualification"
 msgid "Register a new application"
-msgstr "Qualifikation hinzufügen"
+msgstr "Neue Anwendung registrieren"
 
 #: ephios/api/templates/oauth2_provider/authorize.html:7
 #: ephios/api/templates/oauth2_provider/authorize.html:30
 msgid "Authorize"
-msgstr ""
+msgstr "Autorisieren"
 
 #: ephios/api/templates/oauth2_provider/authorize.html:17
 msgid "The application requires the following permissions:"
-msgstr ""
+msgstr "Die Anwendung fordert die folgenden Berechtigungen an:"
 
 #: ephios/core/consequences.py:35
 #, python-brace-format
@@ -518,6 +515,8 @@ msgid ""
 "Signup method for this shift. Explanations for the signup methods can be "
 "found in the <a href='{url}'>documentation</a>."
 msgstr ""
+"Anmeldeverfahren für diese Schicht. Erläuterungen hierzu gibt es in der <a "
+"href='{url}'>Dokumentation</a>."
 
 #: ephios/core/forms/events.py:222
 msgid "Meeting time must not be after start time!"
@@ -638,7 +637,7 @@ msgstr "Planung"
 
 #: ephios/core/forms/users.py:169
 msgid "Other"
-msgstr ""
+msgstr "Sonstige"
 
 #: ephios/core/forms/users.py:204 ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11 ephios/templates/base.html:107
@@ -1854,31 +1853,23 @@ msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
 #: ephios/core/templates/core/userprofile_confirm_password_reset.html:12
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "        Are you sure that you want to reset the password of the user "
-#| "\"%(name)s\"?\n"
-#| "    "
+#, python-format
 msgid ""
 "Are you sure that you want to send a password reset email to \"%(name)s\"?"
 msgstr ""
-"\n"
-"        Möchten Sie das Passwort von %(name)s wirklich zurücksetzen?\n"
-"    "
+"Sind Sie sicher, dass Sie eine E-Mail zum Zurücksetzen des Passworts an \""
+"%(name)s\" senden möchten?"
 
 #: ephios/core/templates/core/userprofile_confirm_password_reset.html:20
 #: ephios/core/templates/core/userprofile_form.html:109
-#, fuzzy
-#| msgid "Password reset successfully"
 msgid "Send password reset email"
-msgstr "Passwort erfolgreich zurückgesetzt"
+msgstr "Mail zum Zurücksetzen des Passworts senden"
 
 #: ephios/core/templates/core/userprofile_confirm_password_token_revokation.html:5
 #: ephios/core/templates/core/userprofile_confirm_password_token_revokation.html:10
 #: ephios/core/templates/core/userprofile_confirm_password_token_revokation.html:22
 msgid "Revoke password and API tokens"
-msgstr ""
+msgstr "Passwort und Zugriffstoken widerrufen"
 
 #: ephios/core/templates/core/userprofile_confirm_password_token_revokation.html:12
 #, python-format
@@ -1887,6 +1878,10 @@ msgid ""
 "They won't be able to log in until they reset their password. This will also "
 "revoke all the users API tokens."
 msgstr ""
+"Sind Sie sicher, dass Sie das Passwort des Benutzers \"%(name)s\" widerrufen "
+"wollen? Eine erneute Anmeldung ist dann erst nach dem Zurücksetzen des "
+"Pasworts möglich. Dadurch werden auch alle Zugriffstoken des Benutzers "
+"widerrufen."
 
 #: ephios/core/templates/core/userprofile_form.html:12
 #: ephios/core/templates/core/userprofile_form.html:21
@@ -1912,10 +1907,13 @@ msgid ""
 "If there are doubts about the secrecy of the password, you should revoke it "
 "as well."
 msgstr ""
+"Wenn der Nutzer sein Passwort vergessen hat, können Sie ihm eine E-Mail zum "
+"Zurücksetzen des Passworts schicken. Wenn Zweifel an der Vertraulichkeit des "
+"Passworts besteht, sollten Sie es ebenfalls widerrufen."
 
 #: ephios/core/templates/core/userprofile_form.html:112
 msgid "Revoke password and API Tokens"
-msgstr ""
+msgstr "Passwort und Zugriffstoken widerrufen"
 
 #: ephios/core/templates/core/userprofile_list.html:17
 msgid "Add user"
@@ -2031,7 +2029,7 @@ msgstr ""
 
 #: ephios/core/views/accounts.py:194
 msgid "The user's password and API tokens have been revoked."
-msgstr ""
+msgstr "Das Passwort und die Zugrifftoken des Benutzers wurden widerrufen."
 
 #: ephios/core/views/accounts.py:214
 #, python-brace-format
@@ -2609,14 +2607,12 @@ msgid "Pages"
 msgstr "Seiten"
 
 #: ephios/plugins/pages/signals.py:49
-#, fuzzy
-#| msgid "Manage categories"
 msgid "Manage pages"
-msgstr "Kategorien bearbeiten"
+msgstr "Seiten verwalten"
 
 #: ephios/plugins/pages/signals.py:50
 msgid "Allows to create, edit and delete pages."
-msgstr ""
+msgstr "Darf Seiten erstellen, bearbeiten und löschen."
 
 #: ephios/plugins/pages/templates/pages/page_confirm_delete.html:6
 #: ephios/plugins/pages/templates/pages/page_confirm_delete.html:11
@@ -2937,31 +2933,28 @@ msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
 #: ephios/settings.py:332
 msgid "Read public data like available events and shifts"
-msgstr ""
+msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
 #: ephios/settings.py:333
 msgid "Write public data like available events and shifts"
-msgstr ""
+msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
 #: ephios/settings.py:334
-#, fuzzy
-#| msgid "Send a message to all participants"
 msgid "Read own personal data and participations"
-msgstr "Nachricht an alle Teilnehmenden senden"
+msgstr "Eigene Daten und Teilnahmen lesen"
 
 #: ephios/settings.py:335
-#, fuzzy
-#| msgid "Send reminder to everyone that is not participating"
 msgid "Write own personal data and participations"
-msgstr "Alle nicht teilnehmenden Benutzer an die Veranstaltung erinnern"
+msgstr "Eigene Daten und Teilnahmen schreiben"
 
 #: ephios/settings.py:337
 msgid "Read confidential data like all users profile and participations"
-msgstr ""
+msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
 #: ephios/settings.py:340
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
+"Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
 
 #: ephios/templates/400.html:5 ephios/templates/400.html:9
 msgid "Bad request"
