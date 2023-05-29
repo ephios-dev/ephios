@@ -373,7 +373,7 @@ def check_inside_signup_timeframe(method, participant):
 
 
 def check_participant_age(method, participant):
-    minimum_age = method.configuration.minimum_age
+    minimum_age = getattr(method.configuration, "minimum_age", None)
     day = method.shift.start_time.date()
     age = participant.get_age(day)
     if minimum_age is not None and age is not None and age < minimum_age:
