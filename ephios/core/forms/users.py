@@ -293,7 +293,6 @@ class WorkingHourRequestForm(ModelForm):
         fields = ["date", "hours", "reason"]
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
         self.can_grant = kwargs.pop("can_grant", False)
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
