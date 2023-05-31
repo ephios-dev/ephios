@@ -54,10 +54,16 @@ $(document).ready(function () {
     if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
         $(window).on('beforeunload', function () {
             $('.blur-on-unload').addClass("unloading");
-            $('#unloading-spinner').removeClass("d-none")
+            $('#unloading-spinner').removeClass("d-none");
         });
     }
+    // when hitting "back" button in browser, the page is not reloaded so we need to remove the blur manually
+    window.addEventListener('pageshow', function (event) {
+        $('.blur-on-unload').removeClass("unloading");
+        $('#unloading-spinner').addClass("d-none");
+    });
 })
+
 
 // Initialize the service worker
 if ('serviceWorker' in navigator) {
