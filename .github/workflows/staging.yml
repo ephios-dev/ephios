@@ -23,7 +23,9 @@ jobs:
       - name: Install poetry-dynamic-versioning
         run: poetry self add "poetry-dynamic-versioning[plugin]"
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry run pip install -U pip
+          poetry install
       - name: build
         run: poetry build
       - uses: actions/upload-artifact@v3
