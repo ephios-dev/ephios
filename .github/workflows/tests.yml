@@ -21,7 +21,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
     - name: Install dependencies
-      run: poetry install
+      run: |
+        poetry run pip install -U pip
+        poetry install
     - name: check format with black
       run: |
         poetry run black --version
@@ -61,6 +63,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install gettext
+        poetry run pip install -U pip
         poetry install --all-extras
         poetry run pip install git+https://github.com/ephios-dev/ephios-testplugin
     - name: Prepare files for test run
