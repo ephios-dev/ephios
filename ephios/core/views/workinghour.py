@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import DurationField, ExpressionWrapper, F, Sum
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
@@ -25,15 +25,17 @@ from ephios.extra.widgets import CustomDateInput
 class WorkingHourPermissionMixin:
     def setup(self, request, *args, **kwargs):
         result = super().setup(request, *args, **kwargs)
-        self.target_user = self._get_target_user(request, *args, **kwargs)
-        grant_ids = get_objects_for_user(
+        can_grant_for_group_ids = get_objects_for_user(
             self.request.user, "decide_workinghours_for_group", klass=Group
         ).values_list("id", flat=True)
-        self.can_grant = self.target_user.groups.filter(id__in=grant_ids).exists()
+        self.can_grant = (
+            self._get_target_user().groups.filter(id__in=can_grant_for_group_ids).exists()
+        )
         return result
 
-    def _get_target_user(self, request, *args, **kwargs):
-        return kwargs.get("target_user", UserProfile.objects.get(pk=self.kwargs["pk"]))
+    def _get_target_user(self):
+        """Return the working hour user"""
+        return get_object_or_404(UserProfile, pk=self.kwargs["pk"])
 
 
 class DateFilterForm(forms.Form):
@@ -143,7 +145,6 @@ class WorkingHourRequestView(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
-        kwargs["request"] = self.request
         return kwargs
 
     def form_valid(self, form):
@@ -161,7 +162,7 @@ class WorkingHourCreateView(
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["can_grant"] = True
-        kwargs["user"] = UserProfile.objects.get(pk=self.kwargs["pk"])
+        kwargs["user"] = self._get_target_user()
         return kwargs
 
     def form_valid(self, form):
@@ -176,9 +177,6 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
     model = WorkingHours
     form_class = WorkingHourRequestForm
 
-    def _get_target_user(self, request, *args, **kwargs):
-        return WorkingHours.objects.get(pk=self.kwargs["pk"]).user
-
     def has_permission(self):
         return self.can_grant
 
@@ -187,10 +185,12 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.target_user
-        kwargs["request"] = self.request
+        kwargs["user"] = self.object.user
         kwargs["can_grant"] = True
         return kwargs
+
+    def _get_target_user(self):
+        return get_object_or_404(WorkingHours, pk=self.kwargs["pk"]).user
 
 
 class WorkingHourDeleteView(
@@ -200,8 +200,8 @@ class WorkingHourDeleteView(
     model = WorkingHours
     success_message = _("Working hours have been deleted.")
 
-    def _get_target_user(self, request, *args, **kwargs):
-        return WorkingHours.objects.get(pk=self.kwargs["pk"]).user
+    def _get_target_user(self):
+        return get_object_or_404(WorkingHours, pk=self.kwargs["pk"]).user
 
     def has_permission(self):
         return self.can_grant
