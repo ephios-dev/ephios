@@ -3,10 +3,12 @@ from urllib.parse import urljoin
 from django.conf import settings
 from oauth2_provider.contrib.rest_framework import TokenHasScope
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
 
 from ephios.api.views.events import EventSerializer
 from ephios.core.models import Event
+from ephios.plugins.federation.models import FederatedGuest
 
 
 class SharedEventSerializer(EventSerializer):
@@ -35,5 +37,8 @@ class SharedEventListView(ListAPIView):
     required_scopes = ["PUBLIC_READ"]
 
     def get_queryset(self):
-        guest = self.request.auth.federatedguest_set.get()
+        try:
+            guest = self.request.auth.federatedguest_set.get()
+        except FederatedGuest.DoesNotExist:
+            raise PermissionDenied
         return Event.objects.filter(federatedeventshare__shared_with=guest)
