@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Shared events" %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% translate "Shared events" %}</h1>
+    {% for event in events %}
+        <p><a href="{{ event.signup_url }}">{{ event.title }}</a></p><br />
+    {% endfor %}
+{% endblock %}

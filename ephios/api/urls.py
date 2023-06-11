@@ -13,6 +13,7 @@ from ephios.api.access.views import (
     ApplicationDelete,
 )
 from ephios.api.views.events import EventViewSet
+from ephios.api.views.users import UserProfileMeView
 from ephios.extra.permissions import staff_required
 
 router = routers.DefaultRouter()
@@ -20,6 +21,7 @@ router.register(r"events", EventViewSet)
 
 app_name = "api"
 urlpatterns = [
+    path("users/me/", UserProfileMeView.as_view(), name="user-profile-me"),
     path(
         "settings/",
         include(
