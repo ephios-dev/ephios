@@ -36,7 +36,9 @@ class SharedEventSerializer(EventSerializer):
         ]
 
     def get_signup_url(self, obj):
-        return urljoin(settings.GET_SITE_URL(), obj.get_absolute_url())
+        return urljoin(
+            settings.GET_SITE_URL(), reverse("federation:event_detail", kwargs={"pk": obj.pk})
+        )
 
 
 class SharedEventListView(ListAPIView):
