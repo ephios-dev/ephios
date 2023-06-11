@@ -124,6 +124,7 @@ class FederationOAuthView(View):
                 code_verifier=request.session["code_verifier"],
             )
             request.session["access_token"] = token["access_token"]
+            request.session.set_expiry(token["expires_in"])
             user_data = requests.get(
                 urljoin(guest.url, "api/users/me/"),
                 headers={"Authorization": f"Bearer {token['access_token']}"},
@@ -149,19 +150,6 @@ class CheckFederatedAccessTokenMixin:
     def dispatch(self, request, *args, **kwargs):
         if "access_token" not in request.session.keys():
             return FederationOAuthView.as_view()(request, *args, **kwargs)
-        else:
-            try:
-                guest = FederatedGuest.objects.get(pk=request.session["guest"])
-                test_query = requests.get(
-                    urljoin(guest.url, "api/users/me/"),
-                    headers={"Authorization": f"Bearer {request.session['access_token']}"},
-                )
-                test_query.raise_for_status()
-            except HTTPError:
-                request.session.pop("access_token")
-                return FederationOAuthView.as_view()(request)
-            except FederatedGuest.DoesNotExist:
-                raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, object):
