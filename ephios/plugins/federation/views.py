@@ -16,7 +16,12 @@ from rest_framework.generics import ListAPIView
 
 from ephios.api.views.events import EventSerializer
 from ephios.core.models import Event
-from ephios.plugins.federation.models import FederatedGuest, FederatedHost, FederatedUser
+from ephios.plugins.federation.models import (
+    FederatedEventShare,
+    FederatedGuest,
+    FederatedHost,
+    FederatedUser,
+)
 
 
 class SharedEventSerializer(EventSerializer):
@@ -124,11 +129,36 @@ class FederationOAuthView(View):
             return redirect("federation:event_detail", kwargs={"pk": 1})
 
 
-class FederatedEventDetailView(DetailView):
+class CheckFederatedAccessTokenMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if "access_token" not in request.session.keys():
+            return FederationOAuthView.as_view()(request)
+        else:
+            try:
+                guest = FederatedGuest.objects.get(pk=request.session["guest"])
+                test_query = requests.get(
+                    urljoin(guest.url, "api/users/me/"),
+                    headers={"Authorization": f"Bearer {request.session['access_token']}"},
+                )
+                test_query.raise_for_status()
+            except HTTPError:
+                request.session.pop("access_token")
+                return FederationOAuthView.as_view()(request)
+            except FederatedGuest.DoesNotExist:
+                raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
     model = Event
 
-    def get(self, request, *args, **kwargs):
-        if "access_token" not in self.request.session.keys():
-            return FederationOAuthView.as_view()(self.request)
-        else:
-            return super().get(request, *args, **kwargs)
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        try:
+            FederatedEventShare.objects.get(
+                event=obj,
+                shared_with__in=[FederatedGuest.objects.get(pk=self.request.session["guest"])],
+            )
+        except FederatedEventShare.DoesNotExist:
+            raise PermissionDenied
+        return obj
