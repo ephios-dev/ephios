@@ -1,6 +1,8 @@
 import dataclasses
 
 from django.db import models
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.api.models import AccessToken, Application
@@ -74,10 +76,16 @@ class FederatedParticipant(AbstractParticipant):
         return FederatedParticipation.objects.filter(federated_user=self.federated_user)
 
     def reverse_signup_action(self, shift):
-        pass
+        return reverse("federation:shift_signup", kwargs=dict(pk=shift.pk))
 
     def reverse_event_detail(self, event):
-        pass
+        return reverse("federation:event_detail", kwargs=dict(pk=event.pk))
+
+    @property
+    def icon(self):
+        return mark_safe(
+            f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{_("Federated user")}"></span>'
+        )
 
 
 class FederatedParticipation(AbstractParticipation):

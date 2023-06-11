@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView, TemplateView
+from guardian.mixins import LoginRequiredMixin
 from oauth2_provider.contrib.rest_framework import TokenHasScope
 from oauthlib.oauth2 import WebApplicationClient
 from requests import HTTPError, JSONDecodeError
@@ -16,6 +17,7 @@ from rest_framework.generics import ListAPIView
 
 from ephios.api.views.events import EventSerializer
 from ephios.core.models import Event
+from ephios.core.views.signup import BaseShiftActionView
 from ephios.plugins.federation.models import (
     FederatedEventShare,
     FederatedGuest,
@@ -59,7 +61,7 @@ class SharedEventListView(ListAPIView):
         return Event.objects.filter(federatedeventshare__shared_with=guest)
 
 
-class IncomingSharedEventListView(TemplateView):
+class IncomingSharedEventListView(LoginRequiredMixin, TemplateView):
     template_name = "federation/incoming_shared_events.html"
 
     def get_context_data(self, **kwargs):
@@ -82,23 +84,33 @@ class IncomingSharedEventListView(TemplateView):
 class FederationOAuthView(View):
     def get(self, request, *args, **kwargs):
         if "code" not in request.GET.keys():
-            guest = FederatedGuest.objects.first()
-            oauth_client = WebApplicationClient(client_id=guest.client_id)
-            oauth = OAuth2Session(
-                client=oauth_client,
-                redirect_uri=urljoin(settings.GET_SITE_URL(), "api/federation/oauth-callback/"),
-                scope=["ME_READ"],
-            )
-            verifier = oauth_client.create_code_verifier(64)
-            request.session["code_verifier"] = verifier
-            request.session["guest"] = guest.pk
-            challenge = oauth_client.create_code_challenge(verifier, "S256")
-            authorization_url, state = oauth.authorization_url(
-                urljoin(guest.url, "api/oauth/authorize/"),
-                code_challenge=challenge,
-                code_challenge_method="S256",
-            )
-            return redirect(authorization_url)
+            try:
+                guest = (
+                    FederatedGuest.objects.get(pk=request.session["guest"])
+                    if "guest" in request.session.keys()
+                    else FederatedGuest.objects.get(url=request.GET["referrer"])
+                )
+                oauth_client = WebApplicationClient(client_id=guest.client_id)
+                oauth = OAuth2Session(
+                    client=oauth_client,
+                    redirect_uri=urljoin(
+                        settings.GET_SITE_URL(), f"api/federation/oauth-callback/"
+                    ),
+                    scope=["ME_READ"],
+                )
+                verifier = oauth_client.create_code_verifier(64)
+                request.session["code_verifier"] = verifier
+                request.session["event"] = self.kwargs["pk"]
+                request.session["guest"] = guest.pk
+                challenge = oauth_client.create_code_challenge(verifier, "S256")
+                authorization_url, state = oauth.authorization_url(
+                    urljoin(guest.url, "api/oauth/authorize/"),
+                    code_challenge=challenge,
+                    code_challenge_method="S256",
+                )
+                return redirect(authorization_url)
+            except (KeyError, FederatedGuest.DoesNotExist):
+                raise PermissionDenied
         else:
             guest = get_object_or_404(FederatedGuest, pk=request.session["guest"])
             oauth_client = WebApplicationClient(
@@ -117,22 +129,26 @@ class FederationOAuthView(View):
                 headers={"Authorization": f"Bearer {token['access_token']}"},
             )
             try:
-                FederatedUser.objects.get(federated_instance=guest, email=user_data.json()["email"])
+                user = FederatedUser.objects.get(
+                    federated_instance=guest, email=user_data.json()["email"]
+                )
             except FederatedUser.DoesNotExist:
-                FederatedUser.objects.create(
+                user = FederatedUser.objects.create(
                     federated_instance=guest,
                     email=user_data.json()["email"],
                     first_name=user_data.json()["first_name"],
                     last_name=user_data.json()["last_name"],
                     date_of_birth=user_data.json()["date_of_birth"],
                 )
-            return redirect("federation:event_detail", kwargs={"pk": 1})
+            request.session["federated_user"] = user.pk
+            requested_event = self.request.session.pop("event")
+            return redirect("federation:event_detail", pk=requested_event)
 
 
 class CheckFederatedAccessTokenMixin:
     def dispatch(self, request, *args, **kwargs):
         if "access_token" not in request.session.keys():
-            return FederationOAuthView.as_view()(request)
+            return FederationOAuthView.as_view()(request, *args, **kwargs)
         else:
             try:
                 guest = FederatedGuest.objects.get(pk=request.session["guest"])
@@ -148,17 +164,34 @@ class CheckFederatedAccessTokenMixin:
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, object):
+        context = super().get_context_data()
+        context["guest_url"] = FederatedGuest.objects.get(pk=self.request.session["guest"]).url
+        return context
+
 
 class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
     model = Event
+    template_name = "federation/event_detail.html"
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         try:
+            guest = self.request.session["guest"]
             FederatedEventShare.objects.get(
                 event=obj,
-                shared_with__in=[FederatedGuest.objects.get(pk=self.request.session["guest"])],
+                shared_with__in=[FederatedGuest.objects.get(pk=guest)],
             )
-        except FederatedEventShare.DoesNotExist:
+        except (KeyError, FederatedEventShare.DoesNotExist):
             raise PermissionDenied
         return obj
+
+
+class FederatedUserShiftActionView(BaseShiftActionView):
+    def get_participant(self):
+        try:
+            return FederatedUser.objects.get(
+                pk=self.request.session["federated_user"]
+            ).as_participant()
+        except FederatedUser.DoesNotExist as e:
+            raise PermissionDenied from e

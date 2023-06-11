@@ -1,0 +1,9 @@
+{% extends "core/event_detail.html" %}
+{% load i18n %}
+
+{% block messages %}
+    <div class="alert alert-info" role="alert">
+        {% translate "You are currently viewing an event at another ephios instance." %}
+        <a href="{{ guest_url }}">{% translate "Back to your ephios instance" %}</a>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.urls import path
 
 from ephios.plugins.federation.views import (
     FederatedEventDetailView,
+    FederatedUserShiftActionView,
     FederationOAuthView,
     IncomingSharedEventListView,
     SharedEventListView,
@@ -15,6 +16,11 @@ urlpatterns = [
         name="incoming_shared_event_list_view",
     ),
     path("events/shared/<int:pk>/", FederatedEventDetailView.as_view(), name="event_detail"),
+    path(
+        "shifts/shared/<int:pk>/signup/",
+        FederatedUserShiftActionView.as_view(),
+        name="shift_signup",
+    ),
     path(
         "api/federation/events/",
         SharedEventListView.as_view(),

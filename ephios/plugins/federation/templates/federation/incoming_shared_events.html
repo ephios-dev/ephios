@@ -8,6 +8,6 @@
 {% block content %}
     <h1>{% translate "Shared events" %}</h1>
     {% for event in events %}
-        <p><a href="{{ event.signup_url }}">{{ event.title }}</a></p><br />
+        <p><a href="{{ event.signup_url }}?referrer={{ SITE_URL }}">{{ event.title }}</a></p><br />
     {% endfor %}
 {% endblock %}
