@@ -147,7 +147,13 @@ class FederationOAuthView(View):
                             Qualification.objects.get(uuid=qualification["uuid"])
                         )
                     except Qualification.DoesNotExist:
-                        continue
+                        for included_qualification in qualification["includes"]:
+                            try:
+                                user.qualifications.add(
+                                    Qualification.objects.get(uuid=included_qualification["uuid"])
+                                )
+                            except Qualification.DoesNotExist:
+                                continue
             request.session["federated_user"] = user.pk
             requested_event = self.request.session.pop("event")
             return redirect("federation:event_detail", pk=requested_event)
