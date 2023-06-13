@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urljoin
 
 import requests
@@ -74,9 +75,16 @@ class IncomingSharedEventListView(LoginRequiredMixin, TemplateView):
                     headers={"Authorization": f"Bearer {host.access_token}"},
                 )
                 r.raise_for_status()
-                events += r.json()["results"]
+                results = r.json()["results"]
+                for event in results:
+                    event["type"] = event["type"]["title"]
+                    event["start_time"] = datetime.fromisoformat(event["start_time"])
+                    event["end_time"] = datetime.fromisoformat(event["end_time"])
+                    event["host"] = host.name
+                events += results
             except (HTTPError, JSONDecodeError):
                 continue
+        events.sort(key=lambda e: e["start_time"])
         context["events"] = events
         return context
 
