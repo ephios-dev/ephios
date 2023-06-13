@@ -16,7 +16,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
 
 from ephios.api.views.events import EventSerializer
-from ephios.core.models import Event
+from ephios.core.models import Event, Qualification
 from ephios.core.views.signup import BaseShiftActionView
 from ephios.plugins.federation.models import (
     FederatedEventShare,
@@ -141,6 +141,13 @@ class FederationOAuthView(View):
                     last_name=user_data.json()["last_name"],
                     date_of_birth=user_data.json()["date_of_birth"],
                 )
+                for qualification in user_data.json()["qualifications"]:
+                    try:
+                        user.qualifications.add(
+                            Qualification.objects.get(uuid=qualification["uuid"])
+                        )
+                    except Qualification.DoesNotExist:
+                        continue
             request.session["federated_user"] = user.pk
             requested_event = self.request.session.pop("event")
             return redirect("federation:event_detail", pk=requested_event)
