@@ -1,3 +1,7 @@
+import base64
+import binascii
+import json
+import secrets
 from datetime import datetime
 from urllib.parse import urljoin
 
@@ -14,8 +18,9 @@ from requests import HTTPError, JSONDecodeError
 from requests_oauthlib import OAuth2Session
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 
+from ephios.api.models import AccessToken
 from ephios.api.views.events import EventSerializer
 from ephios.core.models import Event, Qualification
 from ephios.core.views.signup import BaseShiftActionView
@@ -24,6 +29,7 @@ from ephios.plugins.federation.models import (
     FederatedGuest,
     FederatedHost,
     FederatedUser,
+    InviteCode,
 )
 
 
@@ -47,6 +53,32 @@ class SharedEventSerializer(EventSerializer):
         return urljoin(
             settings.GET_SITE_URL(), reverse("federation:event_detail", kwargs={"pk": obj.pk})
         )
+
+
+class FederatedGuestCreateSerializer(serializers.ModelSerializer):
+    code = serializers.CharField(write_only=True)
+    access_token = serializers.SlugRelatedField(slug_field="token", read_only=True)
+
+    class Meta:
+        model = FederatedGuest
+        fields = ["id", "name", "url", "client_id", "client_secret", "code", "access_token"]
+
+    def validate_code(self, value):
+        try:
+            data = json.loads(base64.b64decode(value.encode("ascii")).decode("ascii"))
+            return InviteCode.objects.get(code=data["code"], url=data["url"])
+        except (binascii.Error, JSONDecodeError, KeyError, InviteCode.DoesNotExist) as exc:
+            raise serializers.ValidationError("Invite code is not valid") from exc
+
+    def create(self, validated_data):
+        code = validated_data.pop("code")
+        validated_data["access_token"] = AccessToken.objects.create(
+            token=secrets.token_hex(),
+            description=f"Access token for federated guest {validated_data['name']}",
+        )
+        obj = super().create(validated_data)
+        code.delete()
+        return obj
 
 
 class SharedEventListView(ListAPIView):
@@ -207,3 +239,8 @@ class FederatedUserShiftActionView(BaseShiftActionView):
             ).as_participant()
         except FederatedUser.DoesNotExist as e:
             raise PermissionDenied from e
+
+
+class RedeemFederationInviteCodeView(CreateAPIView):
+    serializer_class = FederatedGuestCreateSerializer
+    queryset = FederatedGuest.objects.all()

@@ -5,6 +5,7 @@ from ephios.plugins.federation.views import (
     FederatedUserShiftActionView,
     FederationOAuthView,
     IncomingSharedEventListView,
+    RedeemFederationInviteCodeView,
     SharedEventListView,
 )
 
@@ -30,5 +31,8 @@ urlpatterns = [
         "api/federation/oauth-callback/",
         FederationOAuthView.as_view(),
         name="federation_oauth_callback",
+    ),
+    path(
+        "api/federation/setup/", RedeemFederationInviteCodeView.as_view(), name="reedem_invite_code"
     ),
 ]

@@ -1,4 +1,7 @@
+import base64
 import dataclasses
+import json
+from secrets import token_hex
 
 from django.db import models
 from django.urls import reverse
@@ -32,12 +35,17 @@ class FederatedHost(models.Model):
 
 
 class InviteCode(models.Model):
-    code = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, default=token_hex)
     url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Federation invite code for {self.url}"
+
+    def get_share_string(self):
+        return base64.b64encode(
+            json.dumps({"url": self.url, "code": self.code}).encode("ascii")
+        ).decode("ascii")
 
 
 class FederatedEventShare(models.Model):
