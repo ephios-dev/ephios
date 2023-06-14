@@ -76,10 +76,10 @@ class FederatedParticipant(AbstractParticipant):
         return FederatedParticipation.objects.filter(federated_user=self.federated_user)
 
     def reverse_signup_action(self, shift):
-        return reverse("federation:shift_signup", kwargs=dict(pk=shift.pk))
+        return reverse("federation:shift_signup", kwargs={"pk": shift.pk})
 
     def reverse_event_detail(self, event):
-        return reverse("federation:event_detail", kwargs=dict(pk=event.pk))
+        return reverse("federation:event_detail", kwargs={"pk": event.pk})
 
     @property
     def icon(self):
