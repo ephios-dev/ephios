@@ -53,7 +53,7 @@ class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
         return _("Federation")
 
     def is_function_active(self):
-        return self.instance.shared_with.exists()
+        return self.instance.pk and self.instance.shared_with.exists()
 
 
 class InviteCodeForm(forms.ModelForm):
