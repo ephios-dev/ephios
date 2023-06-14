@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
-from requests import HTTPError
+from requests import HTTPError, ReadTimeout
 
 from ephios.api.models import Application
 from ephios.core.forms.events import BasePluginFormMixin
@@ -30,7 +30,7 @@ class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault("prefix", "guests")
+        kwargs.setdefault("prefix", "federation")
         self.event = kwargs.pop("event")
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
@@ -38,7 +38,9 @@ class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
             self.instance = FederatedEventShare.objects.get(event_id=self.event.id)
         except (AttributeError, FederatedEventShare.DoesNotExist):
             self.instance = FederatedEventShare(event=self.event)
-        self.fields["shared_with"].initial = self.instance.shared_with.all()
+        self.fields["shared_with"].initial = (
+            self.instance.shared_with.all() if self.instance.pk else []
+        )
 
     def save(self):
         self.instance.shared_with.set(self.cleaned_data["shared_with"])
@@ -94,5 +96,5 @@ class RedeemInviteCodeForm(forms.Form):
                 access_token=response_data["access_token"],
                 oauth_application=oauth_application,
             )
-        except (binascii.Error, JSONDecodeError, KeyError, HTTPError) as exc:
+        except (binascii.Error, JSONDecodeError, KeyError, HTTPError, ReadTimeout) as exc:
             raise ValidationError(_("Invalid code")) from exc
