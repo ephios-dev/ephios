@@ -17,6 +17,9 @@ class FederatedGuest(models.Model):
     client_id = models.CharField(max_length=255)
     client_secret = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class FederatedHost(models.Model):
     name = models.CharField(max_length=255)
@@ -24,16 +27,25 @@ class FederatedHost(models.Model):
     access_token = models.CharField(max_length=255)
     oauth_application = models.ForeignKey(Application, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 class InviteCode(models.Model):
     code = models.CharField(max_length=255)
     url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Federation invite code for {self.url}"
+
 
 class FederatedEventShare(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     shared_with = models.ManyToManyField(FederatedGuest)
+
+    def __str__(self):
+        return f"Federated event share for {self.event}"
 
 
 class FederatedUser(models.Model):
@@ -45,6 +57,9 @@ class FederatedUser(models.Model):
     qualifications = models.ManyToManyField(Qualification)
     federated_instance = models.ForeignKey(FederatedGuest, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Federated user {self.first_name} {self.last_name}"
 
     def as_participant(self) -> "FederatedParticipant":
         return FederatedParticipant(
@@ -92,6 +107,9 @@ class FederatedParticipation(AbstractParticipation):
     federated_user = models.ForeignKey(
         FederatedUser, on_delete=models.CASCADE, verbose_name=_("federated participant")
     )
+
+    def __str__(self):
+        return f"Federated participation for {self.federated_user} in {self.shift}"
 
     @property
     def participant(self) -> "AbstractParticipant":

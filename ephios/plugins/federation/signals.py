@@ -2,7 +2,8 @@ from django.dispatch import receiver
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.signals import nav_link, participant_from_request
+from ephios.core.signals import event_forms, nav_link, participant_from_request
+from ephios.plugins.federation.forms import EventAllowFederationForm
 from ephios.plugins.federation.models import FederatedUser
 
 
@@ -27,3 +28,11 @@ def federated_participant_from_request(sender, request, **kwargs):
             return FederatedUser.objects.get(pk=request.session["federated_user"]).as_participant()
         except FederatedUser.DoesNotExist:
             pass
+
+
+@receiver(
+    event_forms,
+    dispatch_uid="ephios.plugins.federation.signals.federation_event_forms",
+)
+def guests_event_forms(sender, event, request, **kwargs):
+    return [EventAllowFederationForm(request.POST or None, event=event, request=request)]
