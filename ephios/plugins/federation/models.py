@@ -22,7 +22,7 @@ class FederatedGuest(models.Model):
     client_secret = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class FederatedHost(models.Model):
@@ -32,7 +32,7 @@ class FederatedHost(models.Model):
     oauth_application = models.ForeignKey(Application, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class InviteCode(models.Model):

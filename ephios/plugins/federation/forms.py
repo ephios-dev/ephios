@@ -43,7 +43,10 @@ class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
         )
 
     def save(self):
-        self.instance.shared_with.set(self.cleaned_data["shared_with"])
+        if self.cleaned_data["shared_with"] and not self.instance.pk:
+            self.instance.save()
+        if self.instance.pk:
+            self.instance.shared_with.set(self.cleaned_data["shared_with"])
 
     @property
     def heading(self):
@@ -85,6 +88,7 @@ class RedeemInviteCodeForm(forms.Form):
                     "client_secret": oauth_application.client_secret,
                     "code": data["code"],
                 },
+                timeout=10,
             )
             response.raise_for_status()
             response_data = response.json()

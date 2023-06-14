@@ -33,10 +33,10 @@ class FederatedGuestCreateSerializer(serializers.ModelSerializer):
     def get_host_name(self, obj):
         return global_preferences_registry.manager()["general__organization_name"]
 
-    def validate(self, data):
+    def validate(self, attrs):
         try:
-            data["code"] = InviteCode.objects.get(code=data["code"], url=data["url"])
-            return data
+            attrs["code"] = InviteCode.objects.get(code=attrs["code"], url=attrs["url"])
+            return attrs
         except InviteCode.DoesNotExist as exc:
             raise serializers.ValidationError("Invite code is not valid") from exc
 
