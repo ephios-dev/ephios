@@ -3,6 +3,7 @@ import dataclasses
 import json
 from secrets import token_hex
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -44,7 +45,9 @@ class InviteCode(models.Model):
 
     def get_share_string(self):
         return base64.b64encode(
-            json.dumps({"url": self.url, "code": self.code}).encode("ascii")
+            json.dumps(
+                {"guest_url": self.url, "code": self.code, "host_url": settings.GET_SITE_URL()}
+            ).encode("ascii")
         ).decode("ascii")
 
 

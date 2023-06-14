@@ -1,29 +1,23 @@
-import base64
-import binascii
-import json
-import secrets
 from datetime import datetime
 from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, FormView, TemplateView
 from guardian.mixins import LoginRequiredMixin
-from oauth2_provider.contrib.rest_framework import TokenHasScope
 from oauthlib.oauth2 import WebApplicationClient
-from requests import HTTPError, JSONDecodeError
+from requests import HTTPError, JSONDecodeError, ReadTimeout
 from requests_oauthlib import OAuth2Session
-from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView
 
-from ephios.api.models import AccessToken
-from ephios.api.views.events import EventSerializer
 from ephios.core.models import Event, Qualification
 from ephios.core.views.signup import BaseShiftActionView
+from ephios.plugins.federation.forms import InviteCodeForm, RedeemInviteCodeForm
 from ephios.plugins.federation.models import (
     FederatedEventShare,
     FederatedGuest,
@@ -31,67 +25,6 @@ from ephios.plugins.federation.models import (
     FederatedUser,
     InviteCode,
 )
-
-
-class SharedEventSerializer(EventSerializer):
-    signup_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Event
-        fields = [
-            "id",
-            "title",
-            "description",
-            "location",
-            "type",
-            "start_time",
-            "end_time",
-            "signup_url",
-        ]
-
-    def get_signup_url(self, obj):
-        return urljoin(
-            settings.GET_SITE_URL(), reverse("federation:event_detail", kwargs={"pk": obj.pk})
-        )
-
-
-class FederatedGuestCreateSerializer(serializers.ModelSerializer):
-    code = serializers.CharField(write_only=True)
-    access_token = serializers.SlugRelatedField(slug_field="token", read_only=True)
-
-    class Meta:
-        model = FederatedGuest
-        fields = ["id", "name", "url", "client_id", "client_secret", "code", "access_token"]
-
-    def validate_code(self, value):
-        try:
-            data = json.loads(base64.b64decode(value.encode("ascii")).decode("ascii"))
-            return InviteCode.objects.get(code=data["code"], url=data["url"])
-        except (binascii.Error, JSONDecodeError, KeyError, InviteCode.DoesNotExist) as exc:
-            raise serializers.ValidationError("Invite code is not valid") from exc
-
-    def create(self, validated_data):
-        code = validated_data.pop("code")
-        validated_data["access_token"] = AccessToken.objects.create(
-            token=secrets.token_hex(),
-            description=f"Access token for federated guest {validated_data['name']}",
-        )
-        obj = super().create(validated_data)
-        code.delete()
-        return obj
-
-
-class SharedEventListView(ListAPIView):
-    serializer_class = SharedEventSerializer
-    permission_classes = [TokenHasScope]
-    required_scopes = ["PUBLIC_READ"]
-
-    def get_queryset(self):
-        try:
-            guest = self.request.auth.federatedguest_set.get()
-        except FederatedGuest.DoesNotExist as exc:
-            raise PermissionDenied from exc
-        return Event.objects.filter(federatedeventshare__shared_with=guest)
 
 
 class IncomingSharedEventListView(LoginRequiredMixin, TemplateView):
@@ -115,7 +48,7 @@ class IncomingSharedEventListView(LoginRequiredMixin, TemplateView):
                     event["end_time"] = datetime.fromisoformat(event["end_time"])
                     event["host"] = host.name
                 events += results
-            except (HTTPError, JSONDecodeError):
+            except (HTTPError, JSONDecodeError, ReadTimeout):
                 continue
         events.sort(key=lambda e: e["start_time"])
         context["events"] = events
@@ -208,7 +141,7 @@ class CheckFederatedAccessTokenMixin:
             return FederationOAuthView.as_view()(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, obj):
+    def get_context_data(self, object):
         context = super().get_context_data()
         context["guest_url"] = FederatedGuest.objects.get(pk=self.request.session["guest"]).url
         return context
@@ -241,6 +174,30 @@ class FederatedUserShiftActionView(BaseShiftActionView):
             raise PermissionDenied from e
 
 
-class RedeemFederationInviteCodeView(CreateAPIView):
-    serializer_class = FederatedGuestCreateSerializer
-    queryset = FederatedGuest.objects.all()
+class FederationSettingsView(TemplateView):
+    template_name = "federation/federation_settings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["guests"] = FederatedGuest.objects.all()
+        context["hosts"] = FederatedHost.objects.all()
+        context["invites"] = InviteCode.objects.all()
+        return context
+
+
+class CreateInviteCodeView(SuccessMessageMixin, CreateView):
+    model = InviteCode
+    form_class = InviteCodeForm
+    success_url = reverse_lazy("federation:settings")
+
+    def get_success_message(self, cleaned_data):
+        return f"Invite code for {cleaned_data['url']} created."
+
+
+class RedeemInviteCodeView(FormView):
+    form_class = RedeemInviteCodeForm
+    template_name = "federation/redeem_invite_code.html"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Incoming share setup was successful.")
+        return redirect(reverse("federation:settings"))

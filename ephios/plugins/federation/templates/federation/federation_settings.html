@@ -1,0 +1,74 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+
+{% block settings_content %}
+    <h3>Outgoing shares</h3>
+    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Add outgoing share</a>
+    <table class="table table-striped display mt-2">
+        <thead>
+        <tr>
+            <th>{% translate "Name" %}</th>
+            <th>{% translate "URL" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for guest in guests %}
+            <tr>
+                <td>{{ guest.name }}</td>
+                <td>{{ guest.url }}</td>
+                <td>
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if invites %}
+        <h4>{% translate "Pending invites" %}</h4>
+        <table class="table table-striped display mt-2">
+        <thead>
+        <tr>
+            <th>{% translate "URL" %}</th>
+            <th>{% translate "Invite code" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for invite in invites %}
+            <tr>
+                <td>{{ invite.url }}</td>
+                <td>{{ invite.get_share_string }}</td>
+                <td>
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <h3>Incoming shares</h3>
+    <a class="btn btn-primary" role="button" href="{% url "federation:frontend_redeem_invite_code" %}">Add incoming share</a>
+    <table class="table table-striped display mt-2">
+        <thead>
+        <tr>
+            <th>{% translate "Name" %}</th>
+            <th>{% translate "URL" %}</th>
+            <th>{% translate "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for host in hosts %}
+            <tr>
+                <td>{{ host.name }}</td>
+                <td>{{ host.url }}</td>
+                <td>
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
