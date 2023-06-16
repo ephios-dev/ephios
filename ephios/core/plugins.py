@@ -11,8 +11,6 @@ logger = logging.getLogger(__name__)
 
 # The plugin mechanics are heavily inspired by pretix (then licenced under Apache 2.0) - Check it out!
 
-logger.info("Installed plugins: %s", ", ".join(settings.PLUGINS))
-
 
 def get_all_plugins():
     """

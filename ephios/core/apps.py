@@ -1,5 +1,10 @@
+import logging
+
 from django.apps import AppConfig
+from django.conf import settings
 from dynamic_preferences.registries import preference_models
+
+logger = logging.getLogger(__name__)
 
 
 class CoreAppConfig(AppConfig):
@@ -12,3 +17,5 @@ class CoreAppConfig(AppConfig):
 
         EventTypePreference = self.get_model("EventTypePreference")
         preference_models.register(EventTypePreference, event_type_preference_registry)
+
+        logger.info("Installed plugins: %s", ", ".join(settings.PLUGINS))

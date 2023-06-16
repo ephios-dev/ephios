@@ -247,6 +247,7 @@ LOGGING = {
     },
     "root": {
         "handlers": ["mail_admins", "console"],
+        "level": "INFO",
     },
 }
 
