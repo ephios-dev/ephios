@@ -5,9 +5,9 @@ from ephios.plugins.federation.views import api, frontend
 app_name = "federation"
 urlpatterns = [
     path(
-        "events/shared/",
-        frontend.IncomingSharedEventListView.as_view(),
-        name="incoming_shared_event_list_view",
+        "events/external/",
+        frontend.ExternalEventListView.as_view(),
+        name="external_event_list_view",
     ),
     path(
         "events/shared/<int:pk>/", frontend.FederatedEventDetailView.as_view(), name="event_detail"
@@ -31,16 +31,16 @@ urlpatterns = [
     path(
         "api/federation/events/",
         api.SharedEventListView.as_view(),
-        name="outgoing_shared_event_list_view",
+        name="shared_event_list_view",
     ),
     path(
         "api/federation/oauth-callback/",
-        frontend.FederationOAuthView.as_view(),
-        name="federation_oauth_callback",
+        api.FederationOAuthView.as_view(),
+        name="oauth_callback",
     ),
     path(
         "api/federation/setup/",
-        api.RedeemFederationInviteCodeView.as_view(),
+        api.RedeemInviteCodeView.as_view(),
         name="redeem_invite_code",
     ),
 ]

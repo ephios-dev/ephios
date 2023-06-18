@@ -2,8 +2,8 @@
 {% load i18n %}
 
 {% block settings_content %}
-    <h3>Outgoing shares</h3>
-    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Add outgoing share</a>
+    <h3>{% translate "ephios instances that you share events with" %}</h3>
+    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Share events with someone else</a>
     <table class="table table-striped display mt-2">
         <thead>
         <tr>
@@ -49,8 +49,8 @@
     </table>
     {% endif %}
 
-    <h3>Incoming shares</h3>
-    <a class="btn btn-primary" role="button" href="{% url "federation:frontend_redeem_invite_code" %}">Add incoming share</a>
+    <h3>{% translate "ephios instances that share events with you" %}</h3>
+    <a class="btn btn-secondary" role="button" href="{% url "federation:frontend_redeem_invite_code" %}">{% translate "Enter invite code" %}</a>
     <table class="table table-striped display mt-2">
         <thead>
         <tr>

@@ -8,9 +8,9 @@ import requests
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.forms import CheckboxSelectMultiple
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 from requests import HTTPError, ReadTimeout
 
@@ -26,7 +26,7 @@ from ephios.plugins.federation.models import (
 
 class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
     shared_with = forms.ModelMultipleChoiceField(
-        queryset=FederatedGuest.objects.all(), required=False, widget=Select2MultipleWidget
+        queryset=FederatedGuest.objects.all(), required=False, widget=CheckboxSelectMultiple
     )
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
 
     @property
     def heading(self):
-        return _("Federation")
+        return _("Share event with other ephios instances")
 
     def is_function_active(self):
         return self.instance.pk and self.instance.shared_with.exists()

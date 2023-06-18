@@ -17,7 +17,7 @@ def add_nav_link(sender, request, **kwargs):
     return [
         {
             "label": _("External events"),
-            "url": reverse_lazy("federation:incoming_shared_event_list_view"),
+            "url": reverse_lazy("federation:external_event_list_view"),
             "active": request.resolver_match and request.resolver_match.app_name == "federation",
         }
     ]
