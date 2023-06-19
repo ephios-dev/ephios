@@ -33,6 +33,13 @@
                         <td>{{ application.created }}</td>
                         <td class="d-flex">
                             <div>
+                                {% if application.federatedhost_set.exists %}
+                                <a class="btn btn-secondary"
+                                   href="{% url "federation:settings" %}">
+                                    <span class="fa fa-cog"></span>
+                                    <span class="d-none d-lg-inline">{% translate "Manage federation" %}</span>
+                                </a>
+                                {% else %}
                                 <a class="btn btn-secondary"
                                    href="{{ application.get_absolute_url }}">
                                     <span class="fa fa-eye"></span>
@@ -48,6 +55,7 @@
                                     <span class="fa fa-trash-alt"></span>
                                     <span class="d-none d-lg-inline">{% trans "Delete" %}</span>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

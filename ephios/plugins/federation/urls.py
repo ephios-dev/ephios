@@ -24,9 +24,19 @@ urlpatterns = [
         name="frontend_redeem_invite_code",
     ),
     path(
+        "settings/federation/hosts/<int:pk>/delete/",
+        frontend.FederatedHostDeleteView.as_view(),
+        name="delete_host",
+    ),
+    path(
         "settings/federation/guests/add/",
         frontend.CreateInviteCodeView.as_view(),
         name="create_invite_code",
+    ),
+    path(
+        "settings/federation/guests/<int:pk>/delete/",
+        frontend.FederatedGuestDeleteView.as_view(),
+        name="delete_guest",
     ),
     path(
         "api/federation/events/",

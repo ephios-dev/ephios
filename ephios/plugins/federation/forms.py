@@ -75,9 +75,7 @@ class RedeemInviteCodeForm(forms.Form):
             oauth_application = Application(
                 client_type=Application.CLIENT_CONFIDENTIAL,
                 authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
-                redirect_uris=urljoin(
-                    data["host_url"], reverse("federation:federation_oauth_callback")
-                ),
+                redirect_uris=urljoin(data["host_url"], reverse("federation:oauth_callback")),
             )
             response = requests.post(
                 urljoin(data["host_url"], reverse("federation:redeem_invite_code")),

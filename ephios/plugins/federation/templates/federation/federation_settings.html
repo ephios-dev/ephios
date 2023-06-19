@@ -3,7 +3,7 @@
 
 {% block settings_content %}
     <h3>{% translate "ephios instances that you share events with" %}</h3>
-    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Share events with someone else</a>
+    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Share events with another instance</a>
     <table class="table table-striped display mt-2">
         <thead>
         <tr>
@@ -17,9 +17,7 @@
             <tr>
                 <td>{{ guest.name }}</td>
                 <td>{{ guest.url }}</td>
-                <td>
-
-                </td>
+                <td><a class="btn btn-secondary" href="{% url "federation:delete_guest" guest.pk %}">{% translate "Stop sharing" %}</a></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -64,9 +62,7 @@
             <tr>
                 <td>{{ host.name }}</td>
                 <td>{{ host.url }}</td>
-                <td>
-
-                </td>
+                <td><a class="btn btn-secondary" href="{% url "federation:delete_host" host.pk %}">{% translate "Stop receiving" %}</a></td>
             </tr>
         {% endfor %}
         </tbody>

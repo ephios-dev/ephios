@@ -53,7 +53,7 @@ def federation_settings_section(sender, request, **kwargs):
             {
                 "label": _("Federation"),
                 "url": reverse("federation:settings"),
-                "active": request.resolver_match.url_name.startswith("federaion"),
+                "active": request.resolver_match.app_name == "federation",
             },
         ]
         if request.user.is_staff

@@ -25,6 +25,9 @@
                                 {{ token.application.name }}
                             </h5>
                             <p class="text-body-secondary">
+                                {% if token.application.federatedhost_set.exists %}
+                                    {% translate "ephios instance" %}
+                                {% endif %}
                             </p>
                         </div>
                         <div class="col-12 col-lg">

@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, FormView, TemplateView
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, TemplateView
 from guardian.mixins import LoginRequiredMixin
 from requests import HTTPError, JSONDecodeError, ReadTimeout
 from rest_framework.exceptions import PermissionDenied
@@ -118,3 +119,27 @@ class RedeemInviteCodeView(FormView):
     def form_valid(self, form):
         messages.success(self.request, "Incoming share setup was successful.")
         return redirect(reverse("federation:settings"))
+
+
+class FederatedGuestDeleteView(SuccessMessageMixin, DeleteView):
+    model = FederatedGuest
+    success_url = reverse_lazy("federation:settings")
+    success_message = _("You are no longer sharing events with this instance.")
+
+    def form_valid(self, form):
+        access_token = self.object.access_token
+        response = super().form_valid(form)
+        access_token.delete()
+        return response
+
+
+class FederatedHostDeleteView(SuccessMessageMixin, DeleteView):
+    model = FederatedHost
+    success_url = reverse_lazy("federation:settings")
+    success_message = _("You are no longer receiving events from this instance.")
+
+    def form_valid(self, form):
+        oauth_app = self.object.oauth_application
+        response = super().form_valid(form)
+        oauth_app.delete()
+        return response

@@ -1,0 +1,16 @@
+{% extends "core/settings/settings_base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block settings_content %}
+    <h3>{% translate "Stop sharing events" %}</h3>
+
+    <form method="post">{% csrf_token %}
+        <p>{% blocktranslate trimmed with name=federatedguest.name %}
+            Are you sure you want to remove the connection to "{{ name }}" and stop sharing all events with them? This will also delete all participations that originated from there.
+        {% endblocktranslate %}</p>
+        {{ form|crispy }}
+        <a role="button" class="btn btn-secondary" href="{% url "federation:settings" %}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Stop sharing" %}</button>
+    </form>
+{% endblock %}

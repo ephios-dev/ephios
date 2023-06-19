@@ -10,6 +10,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.permissions import AllowAny
 
 from ephios.core.models import Event, Qualification
 from ephios.plugins.federation.models import FederatedGuest, FederatedUser
@@ -23,7 +24,7 @@ class RedeemInviteCodeView(CreateAPIView):
     serializer_class = FederatedGuestCreateSerializer
     queryset = FederatedGuest.objects.all()
     authentication_classes = []
-    permission_classes = []
+    permission_classes = [AllowAny]
 
 
 class SharedEventListView(ListAPIView):
