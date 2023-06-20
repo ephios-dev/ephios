@@ -63,7 +63,7 @@ def test_manager_can_revoke_password_and_user_token(django_app, user_token, grou
     assert not AccessToken.objects.get().is_valid()
 
 
-def test_inactive_accounts_tokens_dont_work(django_app, user_token):
+def test_inactive_accounts_tokens_dont_work(django_app, user_token: AccessToken):
     user_token.user.is_active = False
     user_token.user.save()
     django_app.get(
