@@ -1,3 +1,4 @@
+import contextlib
 import itertools
 import threading
 from typing import Dict
@@ -15,6 +16,8 @@ from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, Mo
 
 
 class BaseLogConfig:
+    log_entry_context_manager = contextlib.nullcontext
+
     def initial_log_recorders(self, instance):
         """
         Initial log recorders are always added after model __init__.
@@ -129,6 +132,7 @@ def update_log(instance, action_type: InstanceActionType):
     if not log_data:
         return
 
+    config = LOGGED_MODELS[type(instance)]
     if logentry:
         logentry.data.update(log_data)
     else:
@@ -140,7 +144,6 @@ def update_log(instance, action_type: InstanceActionType):
         except AttributeError:
             user = None
             request_id = None
-        config = LOGGED_MODELS[type(instance)]
         attach_to_model, attached_to_object_id = config.object_to_attach_logentries_to(instance)
         attached_to_object_type = ContentType.objects.get_for_model(attach_to_model)
         logentry = LogEntry(
@@ -152,7 +155,9 @@ def update_log(instance, action_type: InstanceActionType):
             action_type=action_type,
             data=log_data,
         )
-    logentry.save()
+
+    with config.log_entry_context_manager():
+        logentry.save()
     instance._current_logentry = logentry
 
 
