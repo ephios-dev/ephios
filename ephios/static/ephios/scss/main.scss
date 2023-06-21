@@ -4,8 +4,17 @@
 // 2. Include any default variable overrides here
 @import "ephios_bootstrap_variables";
 
-// 3. Include bootstrap
+// bootstrap variables come next
 @import "../../bootstrap/scss/variables";
+@import "../../bootstrap/scss/variables-dark";
+
+
+// Sass map overrides here
+// https://getbootstrap.com/docs/5.3/migration/#new-_mapsscss
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+
+// 3. Include bootstrap
+@import "../../bootstrap/scss/maps";
 @import "../../bootstrap/scss/mixins";
 @import "../../bootstrap/scss/utilities";
 
@@ -40,6 +49,7 @@
 @import "../../bootstrap/scss/carousel";
 @import "../../bootstrap/scss/spinners";
 @import "../../bootstrap/scss/offcanvas";
+@import "../../bootstrap/scss/placeholders";
 
 // Helpers and utilities
 @import "../../bootstrap/scss/helpers";
