@@ -89,7 +89,7 @@
                                             {{ shift.event.title }}
                                         </span>
                                         <span class="col-auto col-lg-2">
-                                            <span class="badge badge-{{ shift.event.type.pk }}-color">{{ shift.event.type }}</span>
+                                            <span class="badge eventtype-{{ shift.event.type.pk }}-color">{{ shift.event.type }}</span>
                                         </span>
                                         <span class="col-lg-4">
                                               {{ shift.start_time|date:"D" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}, {{ shift.get_time_display }}
