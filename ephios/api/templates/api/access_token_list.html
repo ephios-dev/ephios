@@ -24,7 +24,7 @@
                             <h5 class="card-title">
                                 {{ token.application.name }}
                             </h5>
-                            <p class="text-muted">
+                            <p class="text-body-secondary">
                             </p>
                         </div>
                         <div class="col-12 col-lg">
@@ -73,7 +73,7 @@
                         <h5 class="card-title">
                             {{ token.description|rich_text }}
                         </h5>
-                        <p class="text-muted">
+                        <p class="text-body-secondary">
                             {% blocktranslate trimmed with created=token.created %}
                                 created on {{ created }}
                             {% endblocktranslate %}

@@ -11,7 +11,7 @@
     <div class="page-header">
         <h1>{{ event }}</h1>
         {% if event.shifts.exists %}
-            <h4 class="text-muted">{{ event.get_start_time }} {% trans "to" %} {{ event.get_end_time }}</h4>
+            <h4 class="text-body-secondary">{{ event.get_start_time }} {% trans "to" %} {{ event.get_end_time }}</h4>
         {% endif %}
         <h2>{% trans "Register as guest" %}</h2>
     </div>

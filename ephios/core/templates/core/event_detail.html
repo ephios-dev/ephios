@@ -91,15 +91,15 @@
                 {% endif %}
                 {{ event.title }}
             </h1>
-            <h5 class="card-subtitle mb-2 text-muted fw-bolder lh-base">
+            <h5 class="card-subtitle mb-2 text-body-secondary fw-bolder lh-base">
                 <span class="me-1 badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
-                <span class="text-muted me-1 d-inline-block">
+                <span class="text-body-secondary me-1 d-inline-block">
                     <i class="fas fa-map-marker-alt"></i>
                                 {{ event.location }}
                 </span>
                 {% with start_time=event.get_start_time end_time=event.get_end_time %}
                     {% if start_time %}
-                        <span class="text-muted d-inline-block">
+                        <span class="text-body-secondary d-inline-block">
                             <i class="far fa-calendar"></i>
                             {{ start_time|date:"D" }},
                             {% if not event.is_multi_day %}
@@ -115,7 +115,7 @@
                     {% endif %}
                 {% endwith %}
             </h5>
-            <div class="card-text text-muted">
+            <div class="card-text text-body-secondary">
                 {{ event.description|rich_text:"h1,h2" }}
             </div>
             <div class="event-plugin-content">

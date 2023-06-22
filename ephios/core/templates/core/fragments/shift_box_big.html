@@ -40,7 +40,7 @@
                         {{ shift.end_time|time }}
                     {% endif %}
                     </span>
-                <small class="fw-bold text-muted d-inline-block">
+                <small class="fw-bold text-body-secondary d-inline-block">
                     <span class="d-inline-block">
                         {{ shift.meeting_time|time }} {% translate "Meetup" %}
                     </span>
@@ -99,7 +99,7 @@
                             </span>
                         </div>
                     {% elif not can_sign_up or not can_decline %}
-                        <div class="text-muted mb-1">
+                        <div class="text-body-secondary mb-1">
                             {% for error in request|signup_errors:shift %}
                                 <span>{{ error.message }}</span>
                             {% endfor %}

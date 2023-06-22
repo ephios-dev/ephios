@@ -161,7 +161,7 @@
                                         {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
                                             <span class="text-danger fa fa-user-minus ps-2"></span>
                                         {% else %}
-                                            <span class="text-muted far fa-user ps-2"></span>
+                                            <span class="text-body-secondary far fa-user ps-2"></span>
                                         {% endif %}
                                     </div>
                                     {% if perms.core.add_event %}
@@ -177,9 +177,8 @@
                                         <div class="grid-title">
                                             <h5 class="mb-0 text-break">
                                                 {{ event.title }}
-
                                             </h5>
-                                            <span class="w-100 text-muted text-break">
+                                            <span class="w-100 text-body-secondary text-break">
                                             {{ event.location }}
                                         </span>
                                         </div>
