@@ -61,7 +61,7 @@
                     </li>
                 {% empty %}
                     <li class="list-group-item d-flex flex-column align-items-center justify-content-center">
-                        <span class="pb-1 text-muted">{% translate "None yet" context "empty list of upcoming shifts" %}</span>
+                        <span class="pb-1 text-body-secondary">{% translate "None yet" context "empty list of upcoming shifts" %}</span>
                         <a class="btn btn-sm btn-primary" href="{% url "core:event_list" %}">{% translate "View events" %}</a>
                     </li>
 

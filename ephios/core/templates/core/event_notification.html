@@ -14,7 +14,7 @@
 {% block content %}
     <div class="page-header">
         <h1>{% translate "Event notifications" %}</h1>
-        <h4 class="text-muted">{{ event.title }} ({{ event.get_start_time }} - {{ event.get_end_time }})</h4>
+        <h4 class="text-body-secondary">{{ event.title }} ({{ event.get_start_time }} - {{ event.get_end_time }})</h4>
     </div>
     {% crispy form %}
 {% endblock %}
