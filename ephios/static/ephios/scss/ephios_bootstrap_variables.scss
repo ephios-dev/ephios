@@ -35,22 +35,19 @@ $light:         $gray-250;
 $dark:          $gray-900;
 
 $custom-theme-colors: (
-    "primary": $primary,
-    "secondary": $secondary,
-    "success": $success,
-    "info": $info,
-    "warning": $warning,
-    "danger": $danger,
-    "light": $light,
-    "dark": $dark,
     "brand": $brand-color,
 );
 
 // Looks
 //$link-decoration: none;
+
+// TOOD this needs to be adapted for dark-theme
 $body-bg: $gray-200;
+$input-bg: $gray-100;
+$dropdown-bg: $gray-100;
 $card-bg: $gray-100;
 $card-cap-bg: $gray-100;
+$list-group-bg: $gray-100;
 
 $text-muted: $gray-550;
 
