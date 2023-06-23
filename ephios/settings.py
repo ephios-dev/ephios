@@ -2,6 +2,7 @@ import copy
 import os
 from datetime import timedelta
 from email.utils import getaddresses
+from pathlib import Path
 
 import environ
 from cryptography.hazmat.primitives import serialization
@@ -14,12 +15,14 @@ try:
 except ImportError:
     import importlib.metadata as importlib_metadata
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
-environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
+# read env file from ENV_PATH or fall back to a .env file in the project root
+env_path = env.str("ENV_PATH", default=os.path.join(BASE_DIR, ".env"))
+print(f"Loading ephios environment from {Path(env_path).absolute()}")
+environ.Env.read_env(env_file=env_path)
 
 DATA_DIR = env.str("DATA_DIR", default=os.path.join(BASE_DIR, "data"))
 if not os.path.exists(DATA_DIR):
