@@ -1,4 +1,3 @@
-import contextlib
 import itertools
 import threading
 from typing import Dict
@@ -16,8 +15,6 @@ from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, Mo
 
 
 class BaseLogConfig:
-    log_entry_context_manager = contextlib.nullcontext
-
     def initial_log_recorders(self, instance):
         """
         Initial log recorders are always added after model __init__.
@@ -44,6 +41,13 @@ class BaseLogConfig:
         which can break bulk loading in some cases, so we don't do that.
         """
         return type(instance), instance.pk
+
+    def save_logentry(self, logentry: LogEntry):
+        """
+        Save the logentry. Overwrite this method to process the logentry
+        bevore saving.
+        """
+        logentry.save()
 
 
 class ModelFieldsLogConfig(BaseLogConfig):
@@ -156,8 +160,7 @@ def update_log(instance, action_type: InstanceActionType):
             data=log_data,
         )
 
-    with config.log_entry_context_manager():
-        logentry.save()
+    config.save_logentry(logentry)
     instance._current_logentry = logentry
 
 
