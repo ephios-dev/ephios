@@ -295,13 +295,9 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
 
-    def render_configuration_form(self, *args, form=None, **kwargs):
+    def get_configuration_form_template(self):
         """We overwrite the template to render the formset."""
-        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        template = get_template("basesignup/section_based/configuration_form.html").render(
-            {"form": form}
-        )
-        return template
+        return get_template("basesignup/section_based/configuration_form.html")
 
     def get_shift_state_context_data(self, request, **kwargs):
         context_data = super().get_shift_state_context_data(request)

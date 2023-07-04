@@ -768,10 +768,11 @@ class BaseSignupMethod:
 
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        template = Template(
-            template_string="{% load crispy_forms_filters %}{{ form|crispy }}"
-        ).render(Context({"form": form}))
+        template = self.get_configuration_form_template().render(Context({"form": form}))
         return template
+
+    def get_configuration_form_template(self) -> Template:
+        return Template(template_string="{% load crispy_forms_filters %}{{ form|crispy }}")
 
 
 @dataclasses.dataclass(frozen=True)
