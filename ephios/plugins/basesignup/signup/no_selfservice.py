@@ -10,6 +10,7 @@ from ephios.plugins.basesignup.signup.common import (
 
 
 class NoSelfserviceConfigurationForm(forms.Form):
+    template_name = "core/signup_configuration_form.html"
     no_selfservice_explanation = forms.CharField(
         label=_("Explanation"),
         required=False,

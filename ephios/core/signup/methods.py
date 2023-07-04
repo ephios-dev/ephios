@@ -14,7 +14,6 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.template import Context, Template
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -452,6 +451,7 @@ def check_conflicting_participations(method, participant):
 
 
 class BaseSignupMethodConfigurationForm(forms.Form):
+    template_name = "core/signup_configuration_form.html"
     minimum_age = forms.IntegerField(
         required=False, min_value=1, max_value=999, initial=None, label=_("Minimum age")
     )
@@ -763,15 +763,10 @@ class BaseSignupMethod:
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
+        if self.event is not None:
+            kwargs.setdefault("event", self.event)
         form = self.configuration_form_class(*args, **kwargs)
         return form
-
-    def render_configuration_form(self, *args, form=None, **kwargs):
-        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        template = Template(
-            template_string="{% load crispy_forms_filters %}{{ form|crispy }}"
-        ).render(Context({"form": form}))
-        return template
 
 
 @dataclasses.dataclass(frozen=True)

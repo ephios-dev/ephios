@@ -6,7 +6,6 @@ from operator import itemgetter
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -117,6 +116,8 @@ SectionsFormset = forms.formset_factory(
 
 
 class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
+    template_name = "basesignup/section_based/configuration_form.html"
+
     choose_preferred_section = forms.BooleanField(
         label=_("Participants must provide a preferred section"),
         help_text=_("This only makes sense if you configure multiple sections."),
@@ -294,14 +295,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     ) -> AbstractParticipation:
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
-
-    def render_configuration_form(self, *args, form=None, **kwargs):
-        """We overwrite the template to render the formset."""
-        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        template = get_template("basesignup/section_based/configuration_form.html").render(
-            {"form": form}
-        )
-        return template
 
     def get_shift_state_context_data(self, request, **kwargs):
         context_data = super().get_shift_state_context_data(request)
