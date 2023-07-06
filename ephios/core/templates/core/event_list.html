@@ -12,7 +12,7 @@
 
 {% block content %}
     <style nonce="{{ request.csp_nonce }}">
-        {% cache 900 "eventtype_colors_css" %}
+        {% cache 900 eventtype_colors_css %}
             {% eventtype_colors %}
         {% endcache %}
     </style>
