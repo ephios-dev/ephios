@@ -249,8 +249,8 @@ class EventTypeForm(forms.ModelForm):
         return self.cleaned_data["color"]
 
     def save(self, commit=True):
-        super().save(commit=commit)
         cache.delete("eventtype_colors_css")
+        return super().save(commit=commit)
 
 
 class EventTypePreferenceForm(PreferenceForm):
