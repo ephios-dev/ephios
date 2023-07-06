@@ -8,6 +8,7 @@ from crispy_forms.layout import Field, Layout, Submit
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -246,6 +247,10 @@ class EventTypeForm(forms.ModelForm):
         if not regex.match(self.cleaned_data["color"]):
             raise ValidationError(_("You need to enter a valid color"))
         return self.cleaned_data["color"]
+
+    def save(self, commit=True):
+        super().save(commit=commit)
+        cache.delete("eventtype_colors_css")
 
 
 class EventTypePreferenceForm(PreferenceForm):

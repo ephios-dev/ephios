@@ -12,10 +12,10 @@
 
 {% block content %}
     <style nonce="{{ request.csp_nonce }}">
-                    {% cache 900 "eventtype_colors" %}
-                        {% eventtype_colors %}
-                    {% endcache %}
-                </style>
+        {% cache 900 "eventtype_colors_css" %}
+            {% eventtype_colors %}
+        {% endcache %}
+    </style>
 
     <div class="page-header">
         <h1>{% translate "Events" %}
@@ -79,7 +79,8 @@
                 ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
                 {% if perms.core.add_event %}
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle d-none d-md-inline-block" type="button" id="eventCreateButton"
+                        <button class="btn btn-primary dropdown-toggle d-none d-md-inline-block" type="button"
+                                id="eventCreateButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="fa fa-plus"></span>
                             {% translate "Add event" %}
@@ -146,10 +147,11 @@
                             <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
                                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                        {% if counter %}
+                                            {% if counter %}
                                          data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                         title="{% for state in counter %}<div>{% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
-                                        {% endif %}>
+                                         title="{% for state in counter %}<div>
+                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                            {% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
