@@ -29,7 +29,7 @@ django-compressor = "^4.3"
 django-statici18n = "^2.3.0"
 django-dynamic-preferences = "^1.13.0"
 django-crispy-forms = "^2.0"
-django-webpush = "^0.3.4"
+django-webpush = "^0.3.5"
 importlib-metadata = { version = ">=5.2.0", python = "<3.9" }
 django-libsass = "^0.9"
 crispy-bootstrap5 = "^0.7"
@@ -40,7 +40,7 @@ djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 django-recurrence = "^1.11.1"
 redis = {version = "^4.3.4", optional = true}
-django-oauth-toolkit = "^2.2.0"
+django-oauth-toolkit = "^2.3.0"
 mozilla-django-oidc = "^3.0.0"
 
 [tool.poetry.extras]
