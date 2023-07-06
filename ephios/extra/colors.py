@@ -1,6 +1,9 @@
 # inspired by https://jfelix.info/blog/how-to-make-a-text-color-fit-any-background-color
 from math import sqrt
 
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
+
 from ephios.core.models import EventType
 
 
@@ -30,3 +33,8 @@ def get_eventtype_color_style(eventtype: EventType):
     return (
         f".eventtype-{eventtype.pk}-color{{background-color:{eventtype.color};color:{text_color}}}"
     )
+
+
+def clear_eventtype_color_css_fragment_cache():
+    key = make_template_fragment_key("eventtype_colors_css", vary_on=None)
+    cache.delete(key)

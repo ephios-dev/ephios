@@ -8,7 +8,6 @@ from crispy_forms.layout import Field, Layout, Submit
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -24,6 +23,7 @@ from ephios.core.dynamic_preferences_registry import event_type_preference_regis
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
 from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
+from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
@@ -249,7 +249,7 @@ class EventTypeForm(forms.ModelForm):
         return self.cleaned_data["color"]
 
     def save(self, commit=True):
-        cache.delete("eventtype_colors_css")
+        clear_eventtype_color_css_fragment_cache()
         return super().save(commit=commit)
 
 
