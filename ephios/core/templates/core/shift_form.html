@@ -24,15 +24,16 @@
             <form method="post" class="form">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <hr class="border border-secondary border-dark opacity-75">
                 <div id="configuration_form">
                     {{ configuration_form }}
                 </div>
+                <hr class="border border-secondary border-dark opacity-75">
                 <div class="plugin-forms">
                     {% for plugin_form in plugin_forms %}
                         {{ plugin_form.render }}
                     {% endfor %}
                 </div>
-
                 <div class="form-group">
                     {% if object or event.active %}
                         <a role="button" class="btn btn-secondary"
@@ -65,8 +66,12 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         {{ event.title }}
-                        <small class="float-end"><a href="{% url "core:event_edit" event.pk %}"><span
-                                class="fas fa-edit"></span> {% trans "Edit" %}</a></small>
+                        <small class="float-end">
+                            <a href="{% url "core:event_edit" event.pk %}">
+                                <span class="fas fa-edit"></span>
+                                {% trans "Edit" %}
+                            </a>
+                        </small>
                     </h5>
                     <p class="card-text">
                         {% trans "Event type" %}: {{ event.type }}<br>
@@ -82,11 +87,18 @@
                     <div class="card-body">
                         <h5 class="card-subtitle mb-2 text-muted">{% trans "Shift" %}</h5>
                         <p class="card-text">{% trans "You are currently adding this shift" %}</p>
+                    </div>
                 </div>
             {% endif %}
         </div>
     </div>
-    <script type="application/json" id="configuration_form_url">{"url": "{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}"}</script>
+    <script type="application/json" id="configuration_form_url">
+        {% if object %}
+            {"url":"{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}?shift_id={{ object.id }}"}
+        {% else %}
+            {"url":"{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}"}
+        {% endif %}
+    </script>
 {% endblock %}
 
 {% block javascript %}

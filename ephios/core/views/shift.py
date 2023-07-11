@@ -100,7 +100,13 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
     pk_url_kwarg = "event_id"
 
     def get(self, request, *args, **kwargs):
-        signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
+        try:
+            shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
+        except Shift.DoesNotExist:
+            shift = None
+        signup_method = signup_method_from_slug(
+            self.kwargs.get("slug"), event=self.get_object(), shift=shift
+        )
         return HttpResponse(signup_method.get_configuration_form().render())
 
 
