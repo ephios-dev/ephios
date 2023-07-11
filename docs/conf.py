@@ -36,6 +36,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx_github_changelog",
     "sphinxcontrib.openapi",
+    "notfound.extension",
 ]
 gettext_compact = "docs"
 

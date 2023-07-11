@@ -1,2 +1,3 @@
 sphinx-github-changelog
 sphinxcontrib-openapi
+sphinx-notfound-page
