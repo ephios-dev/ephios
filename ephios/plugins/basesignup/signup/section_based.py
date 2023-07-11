@@ -6,7 +6,6 @@ from operator import itemgetter
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
@@ -217,6 +216,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
     configuration_form_class = SectionBasedConfigurationForm
+    configuration_form_template_name = "basesignup/section_based/configuration_form.html"
     shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
     def _get_signup_stats_per_section(self, participations=None):
@@ -294,10 +294,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     ) -> AbstractParticipation:
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
-
-    def get_configuration_form_template(self):
-        """We overwrite the template to render the formset."""
-        return get_template("basesignup/section_based/configuration_form.html")
 
     def get_shift_state_context_data(self, request, **kwargs):
         context_data = super().get_shift_state_context_data(request)

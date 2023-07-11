@@ -14,7 +14,6 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.template import Context, Template
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -499,6 +498,7 @@ class BaseSignupMethod:
         return BaseDispositionParticipationForm
 
     configuration_form_class = BaseSignupMethodConfigurationForm
+    configuration_form_template_name = "core/signup_configuration_form.html"
 
     @property
     def signup_view_class(self):
@@ -768,11 +768,7 @@ class BaseSignupMethod:
 
     def render_configuration_form(self, *args, form=None, **kwargs):
         form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        template = self.get_configuration_form_template().render(Context({"form": form}))
-        return template
-
-    def get_configuration_form_template(self) -> Template:
-        return Template(template_string="{% load crispy_forms_filters %}{{ form|crispy }}")
+        return get_template(self.configuration_form_template_name).render({"form": form})
 
 
 @dataclasses.dataclass(frozen=True)
