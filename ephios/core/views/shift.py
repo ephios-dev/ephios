@@ -70,9 +70,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
                 return self.render_to_response(
                     self.get_context_data(
                         form=form,
-                        configuration_form=signup_method.render_configuration_form(
-                            form=configuration_form
-                        ),
+                        configuration_form=configuration_form,
                     )
                 )
 
@@ -103,7 +101,7 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
 
     def get(self, request, *args, **kwargs):
         signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
-        return HttpResponse(signup_method.render_configuration_form())
+        return HttpResponse(signup_method.get_configuration_form().render())
 
 
 class ShiftUpdateView(
@@ -129,7 +127,7 @@ class ShiftUpdateView(
         )
 
     def get_configuration_form(self):
-        return self.object.signup_method.render_configuration_form(data=self.request.POST or None)
+        return self.object.signup_method.get_configuration_form(data=self.request.POST or None)
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
@@ -168,7 +166,7 @@ class ShiftUpdateView(
         return self.render_to_response(
             self.get_context_data(
                 form=form,
-                configuration_form=signup_method.render_configuration_form(form=configuration_form),
+                configuration_form=configuration_form,
             )
         )
 

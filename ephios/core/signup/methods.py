@@ -451,6 +451,7 @@ def check_conflicting_participations(method, participant):
 
 
 class BaseSignupMethodConfigurationForm(forms.Form):
+    template_name = "core/signup_configuration_form.html"
     minimum_age = forms.IntegerField(
         required=False, min_value=1, max_value=999, initial=None, label=_("Minimum age")
     )
@@ -498,7 +499,6 @@ class BaseSignupMethod:
         return BaseDispositionParticipationForm
 
     configuration_form_class = BaseSignupMethodConfigurationForm
-    configuration_form_template_name = "core/signup_configuration_form.html"
 
     @property
     def signup_view_class(self):
@@ -763,12 +763,10 @@ class BaseSignupMethod:
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
+        if self.event is not None:
+            kwargs.setdefault("event", self.event)
         form = self.configuration_form_class(*args, **kwargs)
         return form
-
-    def render_configuration_form(self, *args, form=None, **kwargs):
-        form = form or self.get_configuration_form(*args, event=self.event, **kwargs)
-        return get_template(self.configuration_form_template_name).render({"form": form})
 
 
 @dataclasses.dataclass(frozen=True)

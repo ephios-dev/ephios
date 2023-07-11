@@ -116,6 +116,8 @@ SectionsFormset = forms.formset_factory(
 
 
 class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
+    template_name = "basesignup/section_based/configuration_form.html"
+
     choose_preferred_section = forms.BooleanField(
         label=_("Participants must provide a preferred section"),
         help_text=_("This only makes sense if you configure multiple sections."),
@@ -216,7 +218,6 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
 
     configuration_form_class = SectionBasedConfigurationForm
-    configuration_form_template_name = "basesignup/section_based/configuration_form.html"
     shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
     def _get_signup_stats_per_section(self, participations=None):
