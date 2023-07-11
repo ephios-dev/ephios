@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
@@ -177,7 +178,12 @@ class ShiftForm(forms.ModelForm):
             "signup_method_slug": mark_safe(
                 _(
                     "Signup method for this shift. Explanations for the signup methods can be found in the <a href='{url}'>documentation</a>."
-                ).format(url="https://docs.ephios.de/de/stable/user/planner/signup_methods.html")
+                ).format(
+                    url=pgettext(
+                        "localized docs link",
+                        "https://docs.ephios.de/en/stable/user/events/signup_methods.html#availabe-signup-methods",
+                    )
+                )
             )
         }
 
