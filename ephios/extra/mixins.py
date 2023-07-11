@@ -1,8 +1,11 @@
 import functools
+from typing import Collection
 
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import resolve
+
+from ephios.core.forms.events import BasePluginFormMixin
 
 
 class CustomPermissionRequiredMixin(PermissionRequiredMixin):
@@ -147,5 +150,5 @@ class PluginFormMixin:
         for plugin_form in self.plugin_forms:
             plugin_form.save()
 
-    def get_plugin_forms(self):
+    def get_plugin_forms(self) -> Collection[BasePluginFormMixin]:
         raise NotImplementedError

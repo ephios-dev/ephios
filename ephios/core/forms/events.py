@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
@@ -264,17 +263,11 @@ class EventTypePreferenceForm(PreferenceForm):
 
 
 class BasePluginFormMixin:
+    template_name = "core/fragments/plugin_form.html"
+
     @property
     def heading(self):
         raise NotImplementedError
-
-    def render(self):
-        try:
-            self.helper.form_tag = False
-        except AttributeError:
-            self.helper = FormHelper(self)
-            self.helper.form_tag = False
-        return render_to_string("core/fragments/plugin_form.html", context={"form": self})
 
     def is_function_active(self):
         """
