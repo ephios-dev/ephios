@@ -66,7 +66,7 @@ def test_resource_allocation_edit(django_app, superuser, groups, event, resource
     form = django_app.get(
         reverse("core:shift_edit", kwargs={"pk": event.shifts.first().pk}), user=superuser
     ).form
-    form["resources"].select_multiple([resources[0].pk])
+    form["simple_resource-resources"].select_multiple([resources[0].pk])
     form.submit()
     assert ResourceAllocation.objects.get(shift=event.shifts.first()).resources.count() == 1
     assert (

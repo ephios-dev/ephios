@@ -1,4 +1,3 @@
-from crispy_forms.helper import FormHelper
 from django.forms import BaseModelFormSet, BooleanField, ModelForm, modelformset_factory
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.utils.translation import gettext as _
@@ -17,9 +16,8 @@ class ResourceAllocationForm(BasePluginFormMixin, ModelForm):
         }
 
     def __init__(self, *args, shift, **kwargs):
+        kwargs.setdefault("prefix", "simple_resource")
         self.shift = shift
-        self.helper = FormHelper()
-        self.helper.include_media = False
         try:
             kwargs.setdefault("instance", ResourceAllocation.objects.get(shift_id=shift.id))
         except (AttributeError, ResourceAllocation.DoesNotExist):
