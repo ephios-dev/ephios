@@ -34,7 +34,7 @@
                     <h4 class="card-title">{% translate "Qualifications" %}</h4>
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for form in qualification_formset %}
-                            <div class="list-group-item" data-formset-form>
+                            <li class="list-group-item" data-formset-form>
                                 {{ form.id }}
                                 <div class="row align-items-center">
                                     <div class="col-md-5">
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
-                            </div>
+                            </li>
                         {% endfor %}
                     </ul>
 
@@ -73,7 +73,7 @@
 
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
-                    <div class="list-group-item" data-formset-form>
+                    <li class="list-group-item" data-formset-form>
                         <div class="row align-items-center">
                             <div class="col-md-5">
                                 {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
@@ -90,7 +90,7 @@
                             </div>
                         </div>
                         <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
-                    </div>
+                    </li>
                 {% endescapescript %}
             </script>
 

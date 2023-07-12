@@ -24,7 +24,7 @@
                 <div class="card-body pt-2">
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for category_form in form %}
-                            <div class="list-group-item" data-formset-form>
+                            <li class="list-group-item" data-formset-form>
                                 {{ category_form.id }}
                                 <div class="row align-items-start">
                                     <div class="col-lg-6 pt-3">
@@ -48,7 +48,7 @@
                                 <div class="d-none">
                                     {{ category_form.DELETE }}
                                 </div>
-                            </div>
+                            </li>
                         {% endfor %}
                     </ul>
 
@@ -61,7 +61,7 @@
             {% with category_form=form.empty_form %}
                 <script type="form-template" data-formset-empty-form>
                     {% escapescript %}
-                        <div class="list-group-item" data-formset-form>
+                        <li class="list-group-item" data-formset-form>
                             {{ category_form.id }}
                             <div class="row align-items-start">
                                 <div class="col-lg-6 pt-3">
@@ -79,7 +79,7 @@
                             <div class="d-none">
                                 {{ category_form.DELETE }}
                             </div>
-                        </div>
+                        </li>
                     {% endescapescript %}
                 </script>
             {% endwith %}
