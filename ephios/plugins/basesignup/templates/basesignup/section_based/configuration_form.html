@@ -14,7 +14,7 @@
             {{ form.sections_formset|formset_errors }}
             <ul class="list-group list-group-flush" data-formset-body>
                 {% for section_form in form.sections_formset %}
-                    <div class="list-group-item" data-formset-form>
+                    <li class="list-group-item" data-formset-form>
                         <div class="row align-items-center">
                             <div class="col-md-3">
                                 {{ section_form.title|as_crispy_field }}
@@ -38,7 +38,7 @@
                             {{ section_form.DELETE }}
                             {{ section_form.uuid }}
                         </div>
-                    </div>
+                    </li>
                 {% endfor %}
             </ul>
 
@@ -50,7 +50,7 @@
 
     <script type="form-template" data-formset-empty-form>
         {% escapescript %}
-            <div class="list-group-item" data-formset-form>
+            <li class="list-group-item" data-formset-form>
                 <div class="row align-items-center">
                     <div class="col-md-3">
                         {{ form.sections_formset.empty_form.title|as_crispy_field }}
@@ -74,7 +74,7 @@
                     {{ form.sections_formset.empty_form.DELETE }}
                     {{ form.sections_formset.empty_form.uuid }}
                 </div>
-            </div>
+            </li>
         {% endescapescript %}
     </script>
 </div>

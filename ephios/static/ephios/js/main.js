@@ -23,7 +23,10 @@ function handleForms(elem) {
     elem.find("[data-formset]").formset({
         animateForms: true,
         reorderMode: 'dom',
-    }).on("formAdded", "div", function (event) {
+    }).on("prepareNewFormFragment", "[data-formset-form]", function (event) {
+        // Handle any forms that were added to the template with this custom event and
+        // not 'formAdded' as that would be called after animation leading to
+        // the slideDown animation not using the correct height
         handleForms($(event.target));
     });
 }
