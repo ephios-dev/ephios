@@ -49,3 +49,16 @@ how this works. In short it executes the following steps before every commit:
 If you want to do that manually, run ``pre-commit run --all-files``.
 Next to that, we also run ``pylint ephios`` to check for semantic issues in the code.
 
+Translations
+------------
+
+We are using djangos translation system for translations in python, html and javascript.
+After adding new strings to translate, run this to generate
+the `locale/**/.po` files for translation:
+
+.. code-block:: bash
+
+   python manage.py makemessages --all -d django
+   python manage.py makemessages --all -d djangojs --ignore data --ignore docs
+
+We tend to edit our .po files using weblate, but a local editor like poedit works as well.
