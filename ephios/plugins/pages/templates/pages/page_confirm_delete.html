@@ -12,7 +12,7 @@
     </div>
 
     <form method="post">{% csrf_token %}
-        <p>{% blocktranslate with title=page.title %}
+        <p>{% blocktranslate trimmed with title=page.title %}
             Are you sure you want to delete the page "{{ title }}"?
         {% endblocktranslate %}</p>
         <a role="button" class="btn btn-secondary" href="{% url "pages:settings_page_list" %}">{% translate "Back" %}</a>

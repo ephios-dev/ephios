@@ -13,7 +13,7 @@
     </div>
 
     <form method="post">{% csrf_token %}
-        <p>{% blocktranslate with title=qualification.title %}
+        <p>{% blocktranslate trimmed with title=qualification.title %}
             Are you sure you want to delete the qualification "{{ title }}"?
         {% endblocktranslate %}</p>
         {{ form|crispy }}

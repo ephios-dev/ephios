@@ -88,7 +88,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
                             {% for eventtype in eventtypes %}
                                 <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
-                                    {% blocktranslate with title=eventtype.title trimmed %}
+                                    {% blocktranslate trimmed with title=eventtype.title %}
                                         Add {{ title }}
                                     {% endblocktranslate %}</a>
                             {% endfor %}
@@ -118,7 +118,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
                             {% for eventtype in eventtypes %}
                                 <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
-                                    {% blocktranslate with title=eventtype.title trimmed %}
+                                    {% blocktranslate trimmed with title=eventtype.title %}
                                         Add {{ title }}
                                     {% endblocktranslate %}</a>
                             {% endfor %}
