@@ -3,15 +3,15 @@
 {% load i18n %}
 
 {% if log.action_type == "change" %}
-    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+    {% blocktranslate trimmed with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
         {{ class }} {{ maybe_object }} was changed.
     {% endblocktranslate %}
 {% elif log.action_type == "create" %}
-    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+    {% blocktranslate trimmed with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
         {{ class }} {{ maybe_object }} was created.
     {% endblocktranslate %}
 {% elif log.action_type == "delete" %}
-    {% blocktranslate with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
+    {% blocktranslate trimmed with class=log.content_object_classname maybe_object=log.content_object_or_str|linkify_absolute_url|default_if_none:"" %}
         {{ class }} {{ maybe_object }} was deleted.
     {% endblocktranslate %}
 {% endif %}
