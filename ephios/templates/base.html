@@ -50,13 +50,12 @@
         {% block css %}{% endblock %}
     {% endcompress %}
 
-    {# as of 2021-06-14, the statici18n tag misbehaves with compression when 500 errors occur #}
-    <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
     {% compress js %}
         <script type="text/javascript" src="{% static "jquery/js/jquery-3.7.0.min.js" %}"></script>
         <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
         <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
         <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
+        <script type="text/javascript" src="{% statici18n LANGUAGE_CODE %}"></script>
         <script type="text/javascript" src="{% static "select2/js/i18n/"|add:LANGUAGE_CODE|add:".js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/formset/formset.js" %}"></script>
         <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
