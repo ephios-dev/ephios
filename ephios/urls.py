@@ -16,7 +16,6 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from django.views.i18n import JavaScriptCatalog
 
 from ephios.core.plugins import get_all_plugins
 
@@ -28,7 +27,6 @@ urlpatterns = [
     path("", include("ephios.core.urls")),
     path("api/oauth/", include("ephios.api.access.oauth2_urls", namespace="oauth2_provider")),
     path("api/", include("ephios.api.urls")),
-    path("jsi18n.js", JavaScriptCatalog.as_view(packages=["recurrence"]), name="jsi18n"),
 ]
 
 # Insert plugin url configs. We can't easily restrict to enabled plugins, as patterns are collected on startup.
