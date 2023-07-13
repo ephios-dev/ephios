@@ -114,6 +114,9 @@ class PlaceholderParticipant(AbstractParticipant):
 
     @property
     def icon(self):
+        title = _(
+            "Placeholder"
+        )  # not getting marked for translation when inside f-string for some reason
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Placeholder")}"></span>'
+            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{title}"></span>'
         )
