@@ -221,8 +221,8 @@ class QualificationCategory(Model):
     objects = QualificationCategoryManager()
 
     class Meta:
-        verbose_name = _("qualification track")
-        verbose_name_plural = _("qualification tracks")
+        verbose_name = _("qualification category")
+        verbose_name_plural = _("qualification categories")
         db_table = "qualificationcategory"
 
     def __str__(self):
@@ -339,6 +339,7 @@ class QualificationGrant(Model):
         unique_together = [["qualification", "user"]]  # issue #218
         db_table = "qualificationgrant"
         verbose_name = _("Qualification grant")
+        verbose_name_plural = _("Qualification grants")
 
 
 register_model_for_logging(
@@ -375,6 +376,7 @@ class Consequence(Model):
     class Meta:
         db_table = "consequence"
         verbose_name = _("Consequence")
+        verbose_name_plural = _("Consequences")
 
     @property
     def handler(self):
@@ -448,13 +450,15 @@ register_model_for_logging(
 
 
 class WorkingHours(Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("User"))
     hours = models.DecimalField(decimal_places=2, max_digits=7, verbose_name=_("Hours of work"))
     reason = models.CharField(max_length=1024, default="", verbose_name=_("Occasion"))
-    date = models.DateField()
+    date = models.DateField(verbose_name=_("Date"))
 
     class Meta:
         db_table = "workinghours"
+        verbose_name = _("Working hours")
+        verbose_name_plural = _("Working hours")
 
     def __str__(self):
         return f"{self.hours} hours for {self.user} because of {self.reason} on {self.date}"
@@ -468,7 +472,7 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    failed = models.BooleanField(default=False)
+    failed = models.BooleanField(default=False, verbose_name=_("failed"))
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )

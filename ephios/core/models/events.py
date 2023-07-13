@@ -353,6 +353,8 @@ class LocalParticipation(AbstractParticipation):
 
     class Meta:
         db_table = "localparticipation"
+        verbose_name = _("participation")
+        verbose_name_plural = _("participations")
 
 
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
@@ -377,6 +379,10 @@ class PlaceholderParticipation(AbstractParticipation):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} @ {self.shift}"
+
+    class Meta:
+        verbose_name = _("placeholder participation")
+        verbose_name_plural = _("placeholder participations")
 
 
 register_model_for_logging(PlaceholderParticipation, PARTICIPATION_LOG_CONFIG)
