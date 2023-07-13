@@ -55,6 +55,8 @@ class GuestUser(models.Model):
     class Meta:
         # there might be two people using the same email *sigh*
         unique_together = [["event", "email", "first_name", "last_name"]]
+        verbose_name = _("guest user")
+        verbose_name_plural = _("guest users")
 
 
 class GuestParticipation(AbstractParticipation):
@@ -65,6 +67,13 @@ class GuestParticipation(AbstractParticipation):
     @property
     def participant(self) -> AbstractParticipant:
         return self.guest_user.as_participant()
+
+    def __str__(self):
+        return f"{self.guest_user.first_name} {self.guest_user.last_name} @ {self.shift}"
+
+    class Meta:
+        verbose_name = _("guest participation")
+        verbose_name_plural = _("guest participations")
 
 
 register_model_for_logging(GuestParticipation, PARTICIPATION_LOG_CONFIG)

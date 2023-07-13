@@ -12,6 +12,10 @@ class ResourceCategory(models.Model):
         # pylint: disable=invalid-str-returned
         return self.name
 
+    class Meta:
+        verbose_name = _("Resource category")
+        verbose_name_plural = _("Resource categories")
+
 
 class Resource(models.Model):
     title = models.CharField(max_length=100, verbose_name=_("Title"))
@@ -23,6 +27,10 @@ class Resource(models.Model):
         # pylint: disable=invalid-str-returned
         return self.title
 
+    class Meta:
+        verbose_name = _("Resource")
+        verbose_name_plural = _("Resources")
+
 
 class ResourceAllocation(models.Model):
     shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
@@ -30,3 +38,7 @@ class ResourceAllocation(models.Model):
 
     def __str__(self):
         return f"Resource allocation for {self.shift}"
+
+    class Meta:
+        verbose_name = _("Resource allocation")
+        verbose_name_plural = _("Resource allocations")
