@@ -9,9 +9,11 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const staticCacheName = "django-pwa-v" + new Date().getTime();
-const filesToCache = [
+const staticCacheName = "ephios-pwa-v" + new Date().getTime();
+const staticFilesToCacheOnInstall = [
     '/offline/',
+    '/events/',
+    '/',
     "/manifest.json",
     "/static/ephios/img/ephios-192x.png",
     "/static/ephios/img/ephios-512x.png",
@@ -22,13 +24,19 @@ const filesToCache = [
 
 // Cache on install
 self.addEventListener("install", event => {
-    this.skipWaiting();
     event.waitUntil(
-        caches.open(staticCacheName)
-            .then(cache => {
-                return cache.addAll(filesToCache);
-            })
-    )
+        fetch("/api/events/").then(response => {
+            return response.json();
+        }).then(json_response => {
+            caches.open(staticCacheName).then(cache => {
+                let eventDetailUrlsToCache = []
+                if(json_response.results) {
+                    eventDetailUrlsToCache = json_response.results.map(event => event.frontend_url);
+                }
+                return cache.addAll(staticFilesToCacheOnInstall.concat(eventDetailUrlsToCache));
+            });
+        })
+    );
 });
 
 // Clear cache on activate
@@ -37,7 +45,7 @@ self.addEventListener('activate', event => {
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames
-                    .filter(cacheName => (cacheName.startsWith("django-pwa-")))
+                    .filter(cacheName => (cacheName.startsWith("ephios-pwa-")))
                     .filter(cacheName => (cacheName !== staticCacheName))
                     .map(cacheName => caches.delete(cacheName))
             );
@@ -45,15 +53,51 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Serve from Cache
 self.addEventListener("fetch", event => {
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-            .catch(() => {
-                return caches.match('/offline/');
-            })
+        caches.open(staticCacheName).then(function (cache) {
+            const isStatic = new URL(event.request.url).pathname.startsWith("/static/");
+            if (isStatic) {
+                // Return static files from the cache by default,
+                // falling back to network and caching it then.
+                return cache.match(event.request).then(function (response) {
+                    return response || fetch(event.request).then(function (response) {
+                        cache.put(event.request, response.clone());
+                        return response;
+                    });
+                });
+            } else {
+                // Serve dynamic content from network, falling back to cache when offline.
+                // Cache network responses for the offline case.
+                return fetch(event.request).then(function (response) {
+                    if (event.request.method === "GET") {
+                        // This will inadvertedly cache pages with messages in them
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                }).catch(() => {
+                    return cache.match(event.request).then(function (response) {
+                        if (response) {
+                            return response.body.getReader().read().then((result) => {
+                                let body = new TextDecoder().decode(result.value);
+                                // this is somewhat hacky, but it works to communicate to the frontend that we are offline
+                                body = body.replace("data-pwa-network=\"online\"", "data-pwa-network=\"offline\"");
+                                return new Response(
+                                    new TextEncoder().encode(body),
+                                    {
+                                        headers: response.headers,
+                                        status: response.status,
+                                        statusText: response.statusText
+                                    }
+                                );
+                            });
+                        }
+                        return cache.match('/offline/');
+                    });
+                });
+            }
+        })
     )
-});
+    ;
+})
+;

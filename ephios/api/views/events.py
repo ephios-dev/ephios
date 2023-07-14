@@ -47,6 +47,7 @@ class EventSerializer(serializers.ModelSerializer):
     end_time = serializers.DateTimeField(source="get_end_time")
     signup_stats = SignupStatsSerializer(source="get_signup_stats")
     shifts = ShiftSerializer(many=True)
+    frontend_url = serializers.URLField(source="get_absolute_url")
 
     class Meta:
         model = Event
@@ -56,6 +57,7 @@ class EventSerializer(serializers.ModelSerializer):
             "description",
             "location",
             "type",
+            "frontend_url",
             "start_time",
             "end_time",
             "signup_stats",

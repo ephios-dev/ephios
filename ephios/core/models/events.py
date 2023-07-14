@@ -286,7 +286,9 @@ class Shift(DatetimeDisplayMixin, Model):
         try:
             return signup_method_from_slug(self.signup_method_slug, self, event=event)
         except ValueError:
-            logger.warning(f"signup method {self.signup_method_slug} was not found")
+            logger.warning(
+                f"signup method {self.signup_method_slug} on shift #{self.pk} was not found"
+            )
             from ephios.core.signup.fallback import FallbackSignupMethod
 
             return FallbackSignupMethod(self, event=event)
