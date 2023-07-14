@@ -1,7 +1,6 @@
 const staticCacheName = "ephios-pwa-v" + new Date().getTime();
 const staticFilesToCacheOnInstall = [
     '/offline/',
-    "/manifest.json",
     "/static/ephios/img/ephios-192x.png",
     "/static/ephios/img/ephios-512x.png",
     "/static/ephios/img/ephios-1024x.png",
@@ -69,7 +68,7 @@ self.addEventListener("fetch", event => {
                                 );
                             });
                         }
-                        return cache.match('/offline/');
+                        return cache.match('/offline/', {ignoreVary: true });
                     });
                 });
             }
