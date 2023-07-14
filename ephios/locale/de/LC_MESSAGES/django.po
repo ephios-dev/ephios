@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-13 21:27+0200\n"
-"PO-Revision-Date: 2023-07-13 21:28+0200\n"
+"POT-Creation-Date: 2023-07-14 14:55+0200\n"
+"PO-Revision-Date: 2023-07-14 14:57+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -63,7 +63,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/event_form.html:61
 #: ephios/core/templates/core/eventtype_form.html:20
 #: ephios/core/templates/core/settings/settings_instance.html:9
-#: ephios/core/templates/core/settings/settings_notifications.html:17
+#: ephios/core/templates/core/settings/settings_notifications.html:30
 #: ephios/core/templates/core/shift_form.html:49
 #: ephios/core/templates/core/userprofile_form.html:118
 #: ephios/plugins/qualification_management/forms.py:121
@@ -1760,27 +1760,27 @@ msgstr ""
 "Kalender sehen. Um dies zu aktivieren, müssen Sie die Adresse des folgenden "
 "Links kopieren und den Kalender mit dieser URL abonnieren."
 
-#: ephios/core/templates/core/settings/settings_notifications.html:13
+#: ephios/core/templates/core/settings/settings_notifications.html:14
+msgid "Activate push notifications on each device you want to receive them."
+msgstr ""
+"Aktiveren Sie Push-Benachrichtigungen auf jedem Gerät, auf dem Sie diese "
+"empfangen wollen."
+
+#: ephios/core/templates/core/settings/settings_notifications.html:20
+msgid "Subscribe to Push Messaging"
+msgstr "Push-Benachrichtigungen abonnieren"
+
+#: ephios/core/templates/core/settings/settings_notifications.html:24
+msgid "Notification occasions"
+msgstr "Benachrichtigungsanlässe"
+
+#: ephios/core/templates/core/settings/settings_notifications.html:26
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
 msgstr ""
 "Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
 "möchten:"
-
-#: ephios/core/templates/core/settings/settings_notifications.html:20
-msgid "Push notifications"
-msgstr "Push-Benachrichtigungen"
-
-#: ephios/core/templates/core/settings/settings_notifications.html:22
-msgid ""
-"You can manage the occasions you want to receive push notificaions for "
-"above. You can manage if you want to receive push notifications on this "
-"device at all below."
-msgstr ""
-"Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
-"empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen empfangen "
-"können, steuern Sie über den Knopf unten."
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:8
 #: ephios/core/templates/core/userprofile_list.html:24
@@ -3106,6 +3106,23 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#, fuzzy
+#~| msgid "Notifications"
+#~ msgid "Notification types"
+#~ msgstr "Benachrichtigungen"
+
+#~ msgid "Push notifications"
+#~ msgstr "Push-Benachrichtigungen"
+
+#~ msgid ""
+#~ "You can manage the occasions you want to receive push notificaions for "
+#~ "above. You can manage if you want to receive push notifications on this "
+#~ "device at all below."
+#~ msgstr ""
+#~ "Oberhalb können Sie einstellen, für welche Anlässe Sie Benachrichtigungen "
+#~ "empfangen möchten. Ob Sie auf diesem Gerät Push-Benachrichtigungen "
+#~ "empfangen können, steuern Sie über den Knopf unten."
 
 #~ msgid "qualification track"
 #~ msgstr "Qualifikationskategorie"
