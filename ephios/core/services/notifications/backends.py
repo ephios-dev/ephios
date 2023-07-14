@@ -112,6 +112,7 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
         payload = {
             "head": str(notification.subject),
             "body": notification.as_plaintext(),
+            "icon": "/static/ephios/img/ephios-symbol-red.svg",
         }
         if url := notification.get_url():
             payload["url"] = url

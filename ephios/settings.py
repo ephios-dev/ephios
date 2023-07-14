@@ -285,9 +285,30 @@ MESSAGE_TAGS = {
 
 # PWA
 PWA_APP_ICONS = [
-    {"src": "/static/ephios/img/ephios-192x.png", "sizes": "192x192", "purpose": "any maskable"},
-    {"src": "/static/ephios/img/ephios-512x.png", "sizes": "512x512", "purpose": "any maskable"},
-    {"src": "/static/ephios/img/ephios-1024x.png", "sizes": "1024x1024", "purpose": "any maskable"},
+    {
+        "src": "/static/ephios/img/ephios-192x.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable",
+    },
+    {
+        "src": "/static/ephios/img/ephios-512x.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable",
+    },
+    {
+        "src": "/static/ephios/img/ephios-1024x.png",
+        "sizes": "1024x1024",
+        "type": "image/png",
+        "purpose": "maskable",
+    },
+    {
+        "src": "/static/ephios/img/ephios-symbol-red.svg",
+        "sizes": "any",
+        "type": "image/svg+xml",
+        "purpose": "any",
+    },
 ]
 
 # django-webpush

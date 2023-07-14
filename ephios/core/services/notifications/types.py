@@ -42,7 +42,7 @@ class AbstractNotificationHandler:
         return NotImplementedError
 
     @property
-    def description(self):
+    def title(self):
         return NotImplementedError
 
     @classmethod

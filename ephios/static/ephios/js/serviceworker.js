@@ -12,6 +12,7 @@
 const staticCacheName = "django-pwa-v" + new Date().getTime();
 const filesToCache = [
     '/offline/',
+    "/manifest.json",
     "/static/ephios/img/ephios-192x.png",
     "/static/ephios/img/ephios-512x.png",
     "/static/ephios/img/ephios-1024x.png",
