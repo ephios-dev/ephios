@@ -69,7 +69,6 @@ $(document).ready(function () {
         $('#unloading-spinner').addClass("d-none");
     });
 
-    // if loaded offline, show a warning instead of maybe cached messages
     if ($("body").data("pwa-network") === "offline") {
         // disable all forms and post buttons
         $("form").find("input, [type='submit'], select, textarea").prop("disabled", true);

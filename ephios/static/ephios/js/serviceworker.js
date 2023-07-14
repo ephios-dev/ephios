@@ -25,16 +25,8 @@ const staticFilesToCacheOnInstall = [
 // Cache on install
 self.addEventListener("install", event => {
     event.waitUntil(
-        fetch("/api/events/").then(response => {
-            return response.json();
-        }).then(json_response => {
-            caches.open(staticCacheName).then(cache => {
-                let eventDetailUrlsToCache = []
-                if(json_response.results) {
-                    eventDetailUrlsToCache = json_response.results.map(event => event.frontend_url);
-                }
-                return cache.addAll(staticFilesToCacheOnInstall.concat(eventDetailUrlsToCache));
-            });
+        caches.open(staticCacheName).then(cache => {
+            return cache.addAll(staticFilesToCacheOnInstall);
         })
     );
 });
