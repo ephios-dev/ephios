@@ -194,7 +194,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
-COMPRESS_ENABLED = not DEBUG or True
+COMPRESS_ENABLED = not DEBUG  # or True
 CSRF_TRUSTED_ORIGINS = ["https://local.rindt.me"]
 # https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)

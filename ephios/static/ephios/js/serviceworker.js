@@ -12,8 +12,6 @@
 const staticCacheName = "ephios-pwa-v" + new Date().getTime();
 const staticFilesToCacheOnInstall = [
     '/offline/',
-    '/events/',
-    '/',
     "/manifest.json",
     "/static/ephios/img/ephios-192x.png",
     "/static/ephios/img/ephios-512x.png",
@@ -62,8 +60,8 @@ self.addEventListener("fetch", event => {
                 // Serve dynamic content from network, falling back to cache when offline.
                 // Cache network responses for the offline case.
                 return fetch(event.request).then(function (response) {
-                    if (event.request.method === "GET") {
-                        // This will inadvertedly cache pages with messages in them
+                    if (event.request.method === "GET" && response.status === 200) {
+                        // This will inadvertently cache pages with messages in them
                         cache.put(event.request, response.clone());
                     }
                     return response;
@@ -89,7 +87,5 @@ self.addEventListener("fetch", event => {
                 });
             }
         })
-    )
-    ;
-})
-;
+    );
+});
