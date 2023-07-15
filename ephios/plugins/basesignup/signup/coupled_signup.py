@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod, SignupStats
@@ -42,7 +43,10 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
 
             @staticmethod
             def format_leader_shift_id(value):
-                return str(Shift.objects.get(id=value) if isinstance(value, int) else value)
+                try:
+                    return str(Shift.objects.get(id=value) if isinstance(value, int) else value)
+                except Shift.DoesNotExist:
+                    return pgettext("coupled signup leader shift", "missing")
 
         return ConfigurationForm
 
