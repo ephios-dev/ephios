@@ -31,55 +31,63 @@ self.addEventListener('activate', event => {
     );
 });
 
-function markResponseAsOffline(response) {
-    return response.body.getReader().read().then((result) => {
-        let body = new TextDecoder().decode(result.value);
-        // this is somewhat hacky, but it works to communicate to the frontend that we are offline
-        body = body.replace("data-pwa-network=\"online\"", "data-pwa-network=\"offline\"");
-        return new Response(
-            new TextEncoder().encode(body),
-            {
-                headers: response.headers,
-                status: response.status,
-                statusText: response.statusText
-            }
-        );
-    });
+async function markResponseAsOffline(response) {
+    let content = await response.body.getReader().read().then(r => r.value);
+    let body = new TextDecoder().decode(content);
+    // this is somewhat hacky, but it works to communicate to the frontend that we are offline
+    body = body.replace("data-pwa-network=\"online\"", "data-pwa-network=\"offline\"");
+    return new Response(
+        new TextEncoder().encode(body),
+        {
+            headers: response.headers,
+            status: response.status,
+            statusText: response.statusText
+        }
+    );
+}
+
+async function cacheThenNetwork(event) {
+    // Return static files from the cache by default,
+    // falling back to network and caching it then.
+    let cache_response = await caches.match(event.request);
+    if (cache_response) {
+        return cache_response;
+    }
+    let response = await fetch(event.request);
+    let cache = await caches.open(staticCacheName);
+    await cache.put(event.request, response.clone());
+    return response;
+}
+
+async function networkThenCacheOrOffline(event) {
+    // Serve dynamic content from network, falling back to cache when offline.
+    // Cache network responses for the offline case.
+    try {
+        let response = await fetch(event.request);
+        if(!response.ok ) {
+            // fetch() on firefox does not throw an error when offline, but returns an Exception object
+            throw new Error("Response is not ok");
+        }
+        if (event.request.method === "GET" && response.status === 200) {
+            // This will inadvertently cache pages with messages in them
+            let cache = await caches.open(staticCacheName);
+            await cache.put(event.request, response.clone());
+        }
+        return response;
+    } catch (err) {
+        let response = await caches.match(event.request)
+        if (response) {
+            return await markResponseAsOffline(response);
+        }
+        return caches.match('/offline/', {ignoreVary: true});
+    }
 }
 
 self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.open(staticCacheName).then(function (cache) {
-            const isStatic = new URL(event.request.url).pathname.startsWith("/static/");
-            if (isStatic) {
-                // Return static files from the cache by default,
-                // falling back to network and caching it then.
-                return cache.match(event.request).then(function (response) {
-                    return response || fetch(event.request).then(function (response) {
-                        cache.put(event.request, response.clone());
-                        return response;
-                    });
-                });
-            } else {
-                // Serve dynamic content from network, falling back to cache when offline.
-                // Cache network responses for the offline case.
-                return fetch(event.request)
-                    .then(function (response) {
-                        if (event.request.method === "GET" && response.status === 200) {
-                            // This will inadvertently cache pages with messages in them
-                            cache.put(event.request, response.clone());
-                        }
-                        return response;
-                    })
-                    .catch(() => {
-                        return cache.match(event.request).then(function (response) {
-                            if (response) {
-                                return markResponseAsOffline(response);
-                            }
-                            return cache.match('/offline/', {ignoreVary: true});
-                        });
-                    });
-            }
-        })
-    );
+    const isStatic = new URL(event.request.url).pathname.startsWith("/static/");
+    if (isStatic) {
+        event.respondWith(cacheThenNetwork(event));
+    } else {
+        event.respondWith(networkThenCacheOrOffline(event));
+    }
 });
