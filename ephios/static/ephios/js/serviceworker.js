@@ -1,4 +1,4 @@
-const staticCacheName = "ephios-pwa-v" + new Date().getTime();
+const staticCacheName = "ephios-pwa-v1";
 const staticFilesToCacheOnInstall = [
     '/offline/',
     "/static/ephios/img/ephios-192x.png",
@@ -11,7 +11,9 @@ const staticFilesToCacheOnInstall = [
 self.addEventListener("install", event => {
     event.waitUntil(
         caches.open(staticCacheName).then(cache => {
-            return cache.addAll(staticFilesToCacheOnInstall);
+            return cache.addAll(staticFilesToCacheOnInstall).then(() => {
+                this.skipWaiting();
+            });
         })
     );
 });
@@ -29,6 +31,22 @@ self.addEventListener('activate', event => {
     );
 });
 
+function markResponseAsOffline(response) {
+    return response.body.getReader().read().then((result) => {
+        let body = new TextDecoder().decode(result.value);
+        // this is somewhat hacky, but it works to communicate to the frontend that we are offline
+        body = body.replace("data-pwa-network=\"online\"", "data-pwa-network=\"offline\"");
+        return new Response(
+            new TextEncoder().encode(body),
+            {
+                headers: response.headers,
+                status: response.status,
+                statusText: response.statusText
+            }
+        );
+    });
+}
+
 self.addEventListener("fetch", event => {
     event.respondWith(
         caches.open(staticCacheName).then(function (cache) {
@@ -45,32 +63,22 @@ self.addEventListener("fetch", event => {
             } else {
                 // Serve dynamic content from network, falling back to cache when offline.
                 // Cache network responses for the offline case.
-                return fetch(event.request).then(function (response) {
-                    if (event.request.method === "GET" && response.status === 200) {
-                        // This will inadvertently cache pages with messages in them
-                        cache.put(event.request, response.clone());
-                    }
-                    return response;
-                }).catch(() => {
-                    return cache.match(event.request).then(function (response) {
-                        if (response) {
-                            return response.body.getReader().read().then((result) => {
-                                let body = new TextDecoder().decode(result.value);
-                                // this is somewhat hacky, but it works to communicate to the frontend that we are offline
-                                body = body.replace("data-pwa-network=\"online\"", "data-pwa-network=\"offline\"");
-                                return new Response(
-                                    new TextEncoder().encode(body),
-                                    {
-                                        headers: response.headers,
-                                        status: response.status,
-                                        statusText: response.statusText
-                                    }
-                                );
-                            });
+                return fetch(event.request)
+                    .then(function (response) {
+                        if (event.request.method === "GET" && response.status === 200) {
+                            // This will inadvertently cache pages with messages in them
+                            cache.put(event.request, response.clone());
                         }
-                        return cache.match('/offline/', {ignoreVary: true });
+                        return response;
+                    })
+                    .catch(() => {
+                        return cache.match(event.request).then(function (response) {
+                            if (response) {
+                                return markResponseAsOffline(response);
+                            }
+                            return cache.match('/offline/', {ignoreVary: true});
+                        });
                     });
-                });
             }
         })
     );
