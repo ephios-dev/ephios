@@ -71,7 +71,7 @@ async function cacheThenNetwork(event) {
         return cache_response;
     }
     return fetchAndCacheOrCatch(event, async (err) => {
-        return caches.match('{{ offline_url }}', {ignoreVary: true});
+        throw err; // already checked the cache, so we can only fail
     })
 }
 
