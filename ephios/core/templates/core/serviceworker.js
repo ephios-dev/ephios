@@ -23,7 +23,9 @@ self.addEventListener('activate', event => {
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames
-                    .filter(cacheName => (cacheName.startsWith("ephios-pwa-")))
+                    .filter(cacheName => (
+                        cacheName.startsWith("ephios-pwa-") || cacheName.startsWith("django-pwa-") // old cache names
+                    ))
                     .filter(cacheName => (cacheName !== CACHE_NAME))
                     .map(cacheName => caches.delete(cacheName))
             );
