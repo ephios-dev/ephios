@@ -2,18 +2,17 @@ const CACHE_NAME = "{{ cache_name }}";
 
 const filesToCacheOnInstall = [
     '{{ offline_url }}',
-    "/static/ephios/img/ephios-192x.png",
-    "/static/ephios/img/ephios-512x.png",
-    "/static/ephios/img/ephios-1024x.png",
-    "/static/ephios/img/ephios-symbol-red.svg",
-    "/static/ephios/img/ephios-text-black.png",
+    // We would also need to cache the css for the offline page,
+    // but its name is not known due to django-compressors
+    // dynamic file names, though the files will be cached on
+    // subsequent visits to pages that use the same css.
 ];
 
 self.addEventListener("install", event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll(filesToCacheOnInstall).then(() => {
-                this.skipWaiting();
+                return this.skipWaiting();
             });
         })
     );
@@ -47,26 +46,12 @@ async function markResponseAsOffline(response) {
     );
 }
 
-async function cacheThenNetwork(event) {
-    // Return static files from the cache by default,
-    // falling back to network and caching it then.
-    let cache_response = await caches.match(event.request);
-    if (cache_response) {
-        return cache_response;
-    }
-    let response = await fetch(event.request);
-    let cache = await caches.open(CACHE_NAME);
-    await cache.put(event.request, response.clone());
-    return response;
-}
-
-async function networkThenCacheOrOffline(event) {
-    // Serve dynamic content from network, falling back to cache when offline.
-    // Cache network responses for the offline case.
+async function fetchAndCacheOrCatch(event, catchCallback) {
     try {
         let response = await fetch(event.request);
-        if(!response.ok ) {
-            // fetch() on firefox does not throw an error when offline, but returns an Exception object
+        if (response.ok === undefined) {
+            // fetch() on firefox does not throw an error when offline,
+            // but returns an Exception object without ok property
             throw new Error("Response is not ok");
         }
         if (event.request.method === "GET" && response.ok) {
@@ -76,12 +61,32 @@ async function networkThenCacheOrOffline(event) {
         }
         return response;
     } catch (err) {
+        return catchCallback(err);
+    }
+}
+
+async function cacheThenNetwork(event) {
+    let cache_response = await caches.match(event.request);
+    if (cache_response) {
+        return cache_response;
+    }
+    return fetchAndCacheOrCatch(event, async (err) => {
+        return caches.match('{{ offline_url }}', {ignoreVary: true});
+    })
+}
+
+async function networkThenCacheOrOffline(event) {
+    return fetchAndCacheOrCatch(event, async (err) => {
         let response = await caches.match(event.request)
         if (response) {
-            return await markResponseAsOffline(response);
+            if (event.request.mode === "navigate"){
+                // mark the response document as offline, so the frontend can display a message
+                response = await markResponseAsOffline(response);
+            }
+            return response;
         }
         return caches.match('{{ offline_url }}', {ignoreVary: true});
-    }
+    })
 }
 
 self.addEventListener("fetch", event => {
