@@ -78,8 +78,8 @@ $(document).ready(function () {
         time = new Date(time).toLocaleString(document.querySelector("html").getAttribute('lang'));
         message(
             "warning",
-            gettext("You are currently offline and seeing the page as it was on {time}.").replace("{time}", time),
-            0
+            gettext("You are currently offline and seeing the content as it was on {time}.").replace("{time}", time)
+            + " (" + gettext("experimental") + ")", 0
         );
     }
 

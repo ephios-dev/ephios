@@ -1,6 +1,7 @@
-const staticCacheName = "ephios-pwa-v1";
-const staticFilesToCacheOnInstall = [
-    '/offline/',
+const CACHE_NAME = "{{ cache_name }}";
+
+const filesToCacheOnInstall = [
+    '{{ offline_url }}',
     "/static/ephios/img/ephios-192x.png",
     "/static/ephios/img/ephios-512x.png",
     "/static/ephios/img/ephios-1024x.png",
@@ -10,8 +11,8 @@ const staticFilesToCacheOnInstall = [
 
 self.addEventListener("install", event => {
     event.waitUntil(
-        caches.open(staticCacheName).then(cache => {
-            return cache.addAll(staticFilesToCacheOnInstall).then(() => {
+        caches.open(CACHE_NAME).then(cache => {
+            return cache.addAll(filesToCacheOnInstall).then(() => {
                 this.skipWaiting();
             });
         })
@@ -24,7 +25,7 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames
                     .filter(cacheName => (cacheName.startsWith("ephios-pwa-")))
-                    .filter(cacheName => (cacheName !== staticCacheName))
+                    .filter(cacheName => (cacheName !== CACHE_NAME))
                     .map(cacheName => caches.delete(cacheName))
             );
         })
@@ -54,7 +55,7 @@ async function cacheThenNetwork(event) {
         return cache_response;
     }
     let response = await fetch(event.request);
-    let cache = await caches.open(staticCacheName);
+    let cache = await caches.open(CACHE_NAME);
     await cache.put(event.request, response.clone());
     return response;
 }
@@ -68,9 +69,9 @@ async function networkThenCacheOrOffline(event) {
             // fetch() on firefox does not throw an error when offline, but returns an Exception object
             throw new Error("Response is not ok");
         }
-        if (event.request.method === "GET" && response.status === 200) {
+        if (event.request.method === "GET" && response.ok) {
             // This will inadvertently cache pages with messages in them
-            let cache = await caches.open(staticCacheName);
+            let cache = await caches.open(CACHE_NAME);
             await cache.put(event.request, response.clone());
         }
         return response;
@@ -79,7 +80,7 @@ async function networkThenCacheOrOffline(event) {
         if (response) {
             return await markResponseAsOffline(response);
         }
-        return caches.match('/offline/', {ignoreVary: true});
+        return caches.match('{{ offline_url }}', {ignoreVary: true});
     }
 }
 

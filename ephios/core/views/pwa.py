@@ -1,8 +1,5 @@
-import functools
-
 from django.conf import settings
-from django.contrib.staticfiles import finders
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
@@ -42,18 +39,15 @@ class PWAManifestView(View):
         return response
 
 
-@functools.lru_cache
-def serviceworker_js():
-    with open(finders.find("ephios/js/serviceworker.js"), "rb") as sw_js:
-        return sw_js.read()
+class ServiceWorkerView(TemplateView):
+    template_name = "core/serviceworker.js"
+    content_type = "application/javascript"
 
-
-class ServiceWorkerView(View):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(
-            serviceworker_js(),
-            content_type="application/javascript",
-        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["offline_url"] = reverse("core:pwa_offline")
+        context["cache_name"] = f"ephios-pwa-{settings.EPHIOS_VERSION}"
+        return context
 
 
 class OfflineView(TemplateView):
