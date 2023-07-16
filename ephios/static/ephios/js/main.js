@@ -83,7 +83,7 @@ $(document).ready(function () {
         );
     }
 
-    // In itialize the service worker
+    // Initialize the service worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/serviceworker.js', {
             scope: '/'
