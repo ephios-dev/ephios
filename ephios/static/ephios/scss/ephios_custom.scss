@@ -1,7 +1,7 @@
 header {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 500;  // somewhere between the normal widgets and popups (defined by bootstrap)
 }
 
 .container-main {
@@ -168,7 +168,6 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
   position: absolute;
   top: 15px;
   left: -5px;
-  z-index: 2;
   display: block;
   width: 10px;
   height: 10px;

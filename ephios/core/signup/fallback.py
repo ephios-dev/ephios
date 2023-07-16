@@ -27,11 +27,8 @@ def catch_signup_method_fails(default=None):
 
 
 def get_signup_method_failed_error_list():
-    return [
-        ImproperlyConfiguredError(
-            mark_safe(f'<span class="text-danger">{_("Signup configuration is invalid!")}</span>')
-        )
-    ]
+    message = _("Signup configuration is invalid!")
+    return [ImproperlyConfiguredError(mark_safe(f'<span class="text-danger">{message}</span>'))]
 
 
 class FallbackSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):

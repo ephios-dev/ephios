@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-14 14:55+0200\n"
-"PO-Revision-Date: 2023-07-14 14:57+0200\n"
+"POT-Creation-Date: 2023-07-16 20:59+0200\n"
+"PO-Revision-Date: 2023-07-16 21:00+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -283,6 +283,7 @@ msgstr "Benutzer"
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:85
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:16
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:89
+#: ephios/templates/offline.html:13
 msgid "Back"
 msgstr "Zurück"
 
@@ -775,28 +776,28 @@ msgstr "Anmeldeverfahren"
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:323
+#: ephios/core/models/events.py:325
 #: ephios/core/templates/core/fragments/shift_box_small.html:21
 msgid "Signup method"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:335
+#: ephios/core/models/events.py:337
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:356
+#: ephios/core/models/events.py:358
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:357
+#: ephios/core/models/events.py:359
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:384
+#: ephios/core/models/events.py:386
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:385
+#: ephios/core/models/events.py:387
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1206,11 +1207,15 @@ msgstr "suchen"
 msgid "This signup method does not support disposition."
 msgstr "Dieses Anmeldeverfahren unterstützt keine Einteilung."
 
-#: ephios/core/signup/fallback.py:39
+#: ephios/core/signup/fallback.py:30
+msgid "Signup configuration is invalid!"
+msgstr "Anmeldeeinstellungen sind fehlerhaft!"
+
+#: ephios/core/signup/fallback.py:36
 msgid "Fallback for missing signup methods"
 msgstr "Ersatz für fehlende Anmeldeverfahren"
 
-#: ephios/core/signup/fallback.py:41
+#: ephios/core/signup/fallback.py:38
 msgid ""
 "This method is used when the original signup method is not installed anymore."
 msgstr ""
@@ -1483,7 +1488,8 @@ msgid "Next"
 msgstr "Weiter"
 
 #: ephios/core/templates/core/event_list.html:10
-#: ephios/core/templates/core/event_list.html:21 ephios/templates/base.html:92
+#: ephios/core/templates/core/event_list.html:21 ephios/core/views/pwa.py:30
+#: ephios/templates/base.html:92
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -2156,6 +2162,10 @@ msgstr "Handelnder Benutzer"
 msgid "Contents"
 msgstr "Inhalte"
 
+#: ephios/core/views/pwa.py:31
+msgid "Show the event list"
+msgstr "Zeig die Veranstaltungsliste"
+
 #: ephios/core/views/settings.py:19
 msgid "ephios instance"
 msgstr "ephios-Instanz"
@@ -2316,20 +2326,25 @@ msgstr ""
 "Teilnehmende benötigen außerdem die Qualifikationen <b>{qualifications}</b> "
 "um an Veranstaltungen des Typs {eventtype} teilzunehmen"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:21
+#: ephios/plugins/basesignup/signup/coupled_signup.py:22
 msgid "coupled to another shift"
 msgstr "an andere Schicht gekoppelt"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:22
+#: ephios/plugins/basesignup/signup/coupled_signup.py:23
 msgid "This method mirrors signup from another shift."
 msgstr ""
 "Dieses Anmeldeverfahren spiegelt die Anmeldungen einer anderen Schicht."
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:31
+#: ephios/plugins/basesignup/signup/coupled_signup.py:32
 msgid "shift to mirror participation from"
 msgstr "Teilnahmen werden gespiegelt von"
 
-#: ephios/plugins/basesignup/signup/coupled_signup.py:67
+#: ephios/plugins/basesignup/signup/coupled_signup.py:49
+msgctxt "coupled signup leader shift"
+msgid "missing"
+msgstr "fehlt"
+
+#: ephios/plugins/basesignup/signup/coupled_signup.py:71
 msgid "Participation is coupled to {}."
 msgstr "Teilnahme ist gekoppelt an {}."
 
@@ -2973,27 +2988,27 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:335
+#: ephios/settings.py:357
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:336
+#: ephios/settings.py:358
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:337
+#: ephios/settings.py:359
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:338
+#: ephios/settings.py:360
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:340
+#: ephios/settings.py:362
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:343
+#: ephios/settings.py:365
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -3035,14 +3050,14 @@ msgstr "Abmelden"
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
 
-#: ephios/templates/offline.html:9
+#: ephios/templates/offline.html:10
 msgid "No connection"
 msgstr "Keine Verbindung"
 
-#: ephios/templates/offline.html:10
+#: ephios/templates/offline.html:11
 msgid ""
-"You are currently offline. Please check your internet connection and try "
-"again."
+"This page is not available offline. Please check your internet connection "
+"and try again."
 msgstr ""
 "Sie sind offline. Prüfen Sie Ihre Internetverbindung und versuchen Sie es "
 "erneut."
@@ -3237,9 +3252,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "Radio"
 #~ msgstr "Funk"
-
-#~ msgid "missing"
-#~ msgstr "fehlen"
 
 #~ msgid "You are rejected from {shift}."
 #~ msgstr "Sie wurden für {shift} abgelehnt."

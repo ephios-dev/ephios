@@ -29,6 +29,9 @@ function handleForms(elem) {
         // the slideDown animation not using the correct height
         handleForms($(event.target));
     });
+    elem.find(".action-navigate-back").click(function () {
+        window.history.back();
+    });
 }
 
 $(document).ready(function () {
@@ -65,19 +68,33 @@ $(document).ready(function () {
         $('.blur-on-unload').removeClass("unloading");
         $('#unloading-spinner').addClass("d-none");
     });
+
+    if ($("body").data("pwa-network") === "offline") {
+        // disable all forms and post buttons
+        $("form").find("input, [type='submit'], select, textarea").prop("disabled", true);
+        // display a warning that the page is outdated
+        $("#messages").empty();
+        let time = document.querySelector("meta[name='created']").getAttribute('content');
+        time = new Date(time).toLocaleString(document.querySelector("html").getAttribute('lang'));
+        message(
+            "warning",
+            gettext("You are currently offline and seeing the content as it was on {time}.").replace("{time}", time)
+            + " (" + gettext("experimental") + ")", 0
+        );
+    }
+
+    // Initialize the service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/serviceworker.js', {
+            scope: '/'
+        }).then(function (registration) {
+            console.log('django-pwa: ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            console.log('django-pwa: ServiceWorker registration failed: ', err);
+        });
+    }
+
 })
-
-
-// Initialize the service worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/serviceworker.js', {
-        scope: '/'
-    }).then(function (registration) {
-        console.log('django-pwa: ServiceWorker registration successful with scope: ', registration.scope);
-    }, function (err) {
-        console.log('django-pwa: ServiceWorker registration failed: ', err);
-    });
-}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -96,10 +113,8 @@ function getCookie(name) {
 }
 
 function message(cls, message, timeout) {
-    html = '<div class="alert alert-' + cls + ' alert-dismissible fade show" role="alert">' + message + `
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+    html = '<div class="alert alert-' + cls + ' alert-dismissible show" role="alert">' + message + `
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>`;
     $("#messages").append(html);
 }
