@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-14 14:31+0200\n"
-"PO-Revision-Date: 2023-07-14 14:43+0200\n"
+"POT-Creation-Date: 2023-07-16 20:58+0200\n"
+"PO-Revision-Date: 2023-07-16 20:58+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -27,6 +27,14 @@ msgstr "Derzeit ausgewählte Termine"
 msgid "No dates selected"
 msgstr "Keine Termine ausgewählt"
 
+#: ephios/js/main.js:81
+msgid "You are currently offline and seeing the content as it was on {time}."
+msgstr "Sie sind offline und sehen die Inhalte, wie sie am {time} waren."
+
+#: ephios/js/main.js:82
+msgid "experimental"
+msgstr "experimentell"
+
 #: plugins/basesignup/js/disposition.js:13
 msgid "Create \"{userName}\" as placeholder"
 msgstr "\"{userName}\" als Platzhalter anlegen"
@@ -38,8 +46,7 @@ msgstr "Serviceworker werden von Ihrem Browser nicht unterstützt."
 #: webpush/webpush.js:40
 msgid "Showing notifications are not supported in your browser."
 msgstr ""
-"Das Anzeigen von Benachrichtigungen wird von Ihrem Browser nicht "
-"unterstützt."
+"Das Anzeigen von Benachrichtigungen wird von Ihrem Browser nicht unterstützt."
 
 #: webpush/webpush.js:49 webpush/webpush.js:173
 msgid "Subscribe to Push Messaging"
