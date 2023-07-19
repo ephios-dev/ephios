@@ -8,6 +8,17 @@ def test_api_event_list_rejects_anonymous_get(django_app, event):
     assert "Authentication credentials were not provided." in response
 
 
+def test_browseable_api_renders(django_app, event, planner):
+    response = django_app.get(
+        reverse("api:event-list"),
+        user=planner,
+        status=200,
+        headers={"Accept": "text/html"},
+    )
+    # logged in user only shown in browseable api
+    assert str(planner) in response.text
+
+
 def test_api_event_list_view_permission_checks(django_app, event, planner, groups, volunteer):
     django_app.get(
         reverse("api:event-detail", kwargs=dict(pk=event.pk)), user=volunteer, status=200
