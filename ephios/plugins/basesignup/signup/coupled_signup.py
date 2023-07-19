@@ -71,11 +71,8 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
                 _("Participation is coupled to {}.").format(method.leader_shift)
             )
         # This is red as it requires responsibles to update the shift configuration.
-        return ActionDisallowedError(
-            mark_safe(
-                f'<span class="text-danger">{_("Participation is coupled to another shift, but the leading shift is missing.")}</span>'
-            )
-        )
+        text = _("Participation is coupled to another shift, but the leading shift is missing.")
+        return ActionDisallowedError(mark_safe(f'<span class="text-danger">{text}</span>'))
 
     @property
     def _signup_checkers(self):
