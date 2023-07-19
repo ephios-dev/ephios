@@ -62,10 +62,12 @@ class TokenScopesChoiceField(forms.MultipleChoiceField):
 
 class AccessTokenForm(forms.ModelForm):
     description = forms.CharField(
+        label=_("Description"),
         widget=forms.TextInput(attrs={"placeholder": _("What is this token for?")}),
         required=True,
     )
     scope = TokenScopesChoiceField(
+        label=_("Scope"),
         choices=[
             (scope, mark_safe(f"<code>{scope}</code>: {description}"))
             for scope, description in get_scopes_backend().get_all_scopes().items()
@@ -74,6 +76,7 @@ class AccessTokenForm(forms.ModelForm):
         help_text=_("For security reasons, only select the scopes that are actually needed."),
     )
     expires = forms.SplitDateTimeField(
+        label=_("expiration date"),
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
