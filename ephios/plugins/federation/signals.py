@@ -7,6 +7,7 @@ from ephios.core.signals import (
     management_settings_sections,
     nav_link,
     participant_from_request,
+    periodic_signal,
 )
 from ephios.plugins.federation.forms import EventAllowFederationForm
 from ephios.plugins.federation.models import FederatedUser
@@ -59,3 +60,12 @@ def federation_settings_section(sender, request, **kwargs):
         if request.user.is_staff
         else []
     )
+
+
+@receiver(periodic_signal, dispatch_uid="ephios.plugins.federation.signals.periodic_signal")
+def delete_expired_invites(sender, **kwargs):
+    from ephios.plugins.federation.models import InviteCode
+
+    for invite in InviteCode.objects.all():
+        if invite.is_expired:
+            invite.delete()
