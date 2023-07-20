@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, TemplateView
@@ -14,6 +14,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ephios.core.models import Event
 from ephios.core.views.signup import BaseShiftActionView
+from ephios.extra.mixins import StaffRequiredMixin
 from ephios.plugins.federation.forms import InviteCodeForm, RedeemInviteCodeForm
 from ephios.plugins.federation.models import (
     FederatedEventShare,
@@ -103,21 +104,44 @@ class FederationSettingsView(TemplateView):
         return context
 
 
-class CreateInviteCodeView(SuccessMessageMixin, CreateView):
+class CreateInviteCodeView(CreateView):
     model = InviteCode
     form_class = InviteCodeForm
     success_url = reverse_lazy("federation:settings")
 
-    def get_success_message(self, cleaned_data):
-        return f"Invite code for {cleaned_data['url']} created."
+    def get_success_url(self):
+        return reverse("federation:reveal_invite_code", kwargs={"pk": self.object.pk})
+
+
+class InviteCodeRevealView(StaffRequiredMixin, TemplateView):
+    template_name = "federation/invitecode_reveal.html"
+
+    def get(self, request, *args, **kwargs):
+        invite = get_object_or_404(InviteCode, pk=kwargs["pk"])
+        if invite.is_expired:
+            messages.error(request, _("Invite code has expired."))
+            return redirect("federation:settings")
+        context = self.get_context_data(invite=invite, **kwargs)
+        return self.render_to_response(context)
 
 
 class RedeemInviteCodeView(FormView):
     form_class = RedeemInviteCodeForm
     template_name = "federation/redeem_invite_code.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if "code" in self.request.GET:
+            kwargs["initial"] = {"code": self.request.GET["code"]}
+        return kwargs
+
     def form_valid(self, form):
-        messages.success(self.request, "Incoming share setup was successful.")
+        messages.success(
+            self.request,
+            _(
+                "Invite code redeemded successfully. You are now receiving events from this instance."
+            ),
+        )
         return redirect(reverse("federation:settings"))
 
 

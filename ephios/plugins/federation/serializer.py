@@ -1,10 +1,8 @@
-import datetime
 import secrets
 from urllib.parse import urljoin
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 from rest_framework import serializers
 
@@ -38,7 +36,7 @@ class FederatedGuestCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         try:
             attrs["code"] = InviteCode.objects.get(code=attrs["code"], url=attrs["url"])
-            if timezone.now() - attrs["code"].created_at > datetime.timedelta(hours=48):
+            if attrs["code"].is_expired:
                 raise serializers.ValidationError("Invite code is expired")
             return attrs
         except InviteCode.DoesNotExist as exc:

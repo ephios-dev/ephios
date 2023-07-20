@@ -51,7 +51,7 @@ def federation_settings_section(sender, request, **kwargs):
     return (
         [
             {
-                "label": _("Federation"),
+                "label": _("Federation") + " (beta)",
                 "url": reverse("federation:settings"),
                 "active": request.resolver_match.app_name == "federation",
             },

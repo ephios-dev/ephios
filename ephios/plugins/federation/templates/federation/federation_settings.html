@@ -2,6 +2,9 @@
 {% load i18n %}
 
 {% block settings_content %}
+    <div class="alert alert-warning" role="alert">
+        {% translate "This feature is experimental!" %}
+    </div>
     <h3>{% translate "ephios instances that you share events with" %}</h3>
     <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Share events with another instance</a>
     <table class="table table-striped display mt-2">
@@ -29,7 +32,6 @@
         <thead>
         <tr>
             <th>{% translate "URL" %}</th>
-            <th>{% translate "Invite code" %}</th>
             <th>{% translate "Action" %}</th>
         </tr>
         </thead>
@@ -37,10 +39,7 @@
         {% for invite in invites %}
             <tr>
                 <td>{{ invite.url }}</td>
-                <td>{{ invite.get_share_string }}</td>
-                <td>
-
-                </td>
+                <td><a class="btn btn-secondary" href="{% url "federation:reveal_invite_code" invite.pk %}">{% translate "Show invite code" %}</a></td>
             </tr>
         {% endfor %}
         </tbody>

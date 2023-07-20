@@ -39,6 +39,11 @@ urlpatterns = [
         name="delete_guest",
     ),
     path(
+        "settings/federation/invite/<int:pk>/",
+        frontend.InviteCodeRevealView.as_view(),
+        name="reveal_invite_code",
+    ),
+    path(
         "api/federation/events/",
         api.SharedEventListView.as_view(),
         name="shared_event_list_view",

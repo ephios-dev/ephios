@@ -1,7 +1,9 @@
 import datetime
+from urllib.parse import urljoin
 
 from django import template
 from django.template.defaultfilters import floatformat
+from django.urls import reverse
 
 register = template.Library()
 
@@ -55,3 +57,13 @@ def timedelta_in_hours(delta):
         if isinstance(delta, datetime.timedelta)
         else delta
     )
+
+
+@register.filter(name="urljoin")
+def _urljoin(url, path):
+    return urljoin(url, path)
+
+
+@register.filter(name="reverse_url")
+def reverse_url(absolute_url, urlname):
+    return urljoin(absolute_url, reverse(urlname))

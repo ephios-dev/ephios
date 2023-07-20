@@ -1,11 +1,13 @@
 import base64
 import dataclasses
+import datetime
 import json
 from secrets import token_hex
 
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -42,6 +44,10 @@ class InviteCode(models.Model):
 
     def __str__(self):
         return f"Federation invite code for {self.url}"
+
+    @property
+    def is_expired(self):
+        return timezone.now() - self.created_at > datetime.timedelta(hours=48)
 
     def get_share_string(self):
         return base64.b64encode(
