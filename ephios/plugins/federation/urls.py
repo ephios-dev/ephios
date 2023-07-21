@@ -3,6 +3,7 @@ from django.urls import path
 from ephios.plugins.federation.views import api, frontend
 
 app_name = "federation"
+
 urlpatterns = [
     path(
         "events/external/",
