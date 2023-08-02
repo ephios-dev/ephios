@@ -32,7 +32,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-EPHIOS_VERSION = "v" + importlib_metadata.version("ephios")
+EPHIOS_VERSION = importlib_metadata.version("ephios")
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import include, path
 from oauth2_provider import views as oauth2_views
 from rest_framework import routers
@@ -19,12 +20,6 @@ router.register(r"events", EventViewSet)
 
 app_name = "api"
 urlpatterns = [
-    path("", include(router.urls)),
-    path(
-        "schema/",
-        get_schema_view(title="ephios", description="ephios API", version="1.0.0"),
-        name="openapi-schema",
-    ),
     path(
         "settings/",
         include(
@@ -79,4 +74,15 @@ urlpatterns = [
             ]
         ),
     ),
+    path(
+        "schema/",
+        get_schema_view(
+            title="ephios",
+            description="ephios API",
+            version=settings.EPHIOS_VERSION,
+            url=settings.GET_SITE_URL(),
+        ),
+        name="openapi-schema",
+    ),
+    path("", include(router.urls)),
 ]
