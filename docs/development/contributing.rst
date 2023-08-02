@@ -17,8 +17,14 @@ Development setup
 
 To set up a development version on your local machine, you need to execute the following steps:
 
+#. Install external packages required for developing ephios
+
+   * ``git`` (to check out the repository)
+   * ``python`` version 3.8 or higher including dev and virtualenv tooling
+   * ``gettext`` (to compile translations, might also be named ``msgfmt``)
+
 #. Check out the `repository <https://github.com/ephios-dev/ephios>`_ and cd to it
-#. Set up a virtualenv for the project with Python >=3.8 and activate it
+#. Set up a virtualenv for the project activate it
 #. Install poetry (if not already installed): `Installation guide <https://python-poetry.org/docs/#installation>`_
 #. Install dependencies with ``poetry install``
 #. Create env file with ``cp .env.example .env``
@@ -27,6 +33,12 @@ To set up a development version on your local machine, you need to execute the f
 #. Load data for testing with ``python manage.py devdata``
 #. Start the development server with ``python manage.py runserver``
 #. Open your web browser, visit ``http://localhost:8000`` and log in with the default credentials (user ``admin@localhost`` and password ``admin``)
+
+If those steps did not work for you, please contact us or open an issue in the GitHub repository.
+
+.. warning::
+    The default development server is not suitable for production use. It is not secure and not performant.
+    If you want to run ephios in production, please follow the :doc:`deployment guide </admin/deployment/index>`
 
 Tests
 -----
