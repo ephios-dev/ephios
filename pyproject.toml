@@ -43,6 +43,7 @@ redis = {version = "^4.3.4", optional = true}
 django-oauth-toolkit = "^2.3.0"
 mozilla-django-oidc = "^3.0.0"
 urllib3 = "^1.26.0,<2.0.0"  # pinned because of poetry issues with urllib3 2.0.0
+pyyaml = "^6.0.1"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]

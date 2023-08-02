@@ -48,7 +48,7 @@ class ServiceWorkerView(TemplateView):
         context["offline_url"] = reverse("core:pwa_offline")
         # Cache name: we serve /static/ files with a cache first strategy, so
         # we need to use a new cache name when the static files change with a new ephios version.
-        context["cache_name"] = f"ephios-pwa-{settings.EPHIOS_VERSION}"
+        context["cache_name"] = f"ephios-pwa-v{settings.EPHIOS_VERSION}"
         return context
 
 
