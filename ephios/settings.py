@@ -32,7 +32,11 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-EPHIOS_VERSION = importlib_metadata.version("ephios")
+try:
+    EPHIOS_VERSION = importlib_metadata.version("ephios")
+except importlib_metadata.PackageNotFoundError:
+    # ephios is not installed as a package (e.g. development setup)
+    pass
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
