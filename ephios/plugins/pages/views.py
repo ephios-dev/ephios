@@ -29,7 +29,7 @@ class PageView(DetailView):
 class PageCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Page
     permission_required = "pages.add_page"
-    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+    fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
         messages.success(self.request, _("Page saved successfully."))
@@ -39,7 +39,7 @@ class PageCreateView(CustomPermissionRequiredMixin, CreateView):
 class PageUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Page
     permission_required = "pages.change_page"
-    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+    fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
         messages.success(self.request, _("Page saved successfully."))
