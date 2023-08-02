@@ -1,4 +1,5 @@
 import copy
+import datetime
 import os
 from datetime import timedelta
 from email.utils import getaddresses
@@ -212,11 +213,16 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
+LOGGING_FILE = env.str("LOGGING_FILE", default=None)
+use_file_logging = not DEBUG and LOGGING_FILE is not None
+if use_file_logging:
+    Path(LOGGING_FILE).parent.mkdir(parents=True, exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "default": {"format": "%(levelname)s %(asctime)s %(name)s %(module)s %(message)s"},
+        "default": {"format": "[%(levelname)s] %(asctime)s %(name)s :: %(message)s"},
     },
     "filters": {
         "require_debug_false": {
@@ -227,26 +233,56 @@ LOGGING = {
         },
     },
     "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+            "filters": ["require_debug_true"],
+        },
         "mail_admins": {
             "level": "ERROR",
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
         },
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
+        "file": {
+            "level": "DEBUG",
             "formatter": "default",
+            "filters": ["require_debug_false"],
+            **(
+                {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "filename": LOGGING_FILE,
+                    "when": "midnight",
+                    "backupCount": env.int("LOGGING_BACKUP_DAYS", default=14),
+                    "atTime": datetime.time(4),
+                    "encoding": "utf-8",
+                }
+                if use_file_logging
+                else {
+                    "class": "logging.NullHandler",
+                }
+            ),
         },
     },
     "loggers": {
-        "django": {
-            "handlers": ["mail_admins", "console"],
-            "level": "INFO",
+        "ephios": {
+            "handlers": ["mail_admins", "console", "file"],
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
+        },
+        "django": {
+            "handlers": [],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "django.server": {
+            "handlers": [],
+            "level": "INFO",
+            "propagate": True,
         },
     },
     "root": {
-        "handlers": ["mail_admins", "console"],
+        "handlers": ["mail_admins", "console", "file"],
         "level": "INFO",
     },
 }
