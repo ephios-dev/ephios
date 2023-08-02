@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         "events/external/",
         frontend.ExternalEventListView.as_view(),
-        name="external_event_list_view",
+        name="external_event_list",
     ),
     path(
         "events/shared/<int:pk>/", frontend.FederatedEventDetailView.as_view(), name="event_detail"

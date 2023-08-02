@@ -62,7 +62,7 @@ class CheckFederatedAccessTokenMixin:
 
     def get_context_data(self, object):
         context = super().get_context_data()
-        context["guest_url"] = FederatedGuest.objects.get(pk=self.request.session["guest"]).url
+        context["guest"] = FederatedGuest.objects.get(pk=self.request.session["guest"])
         return context
 
 
@@ -83,7 +83,7 @@ class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
         return obj
 
 
-class FederatedUserShiftActionView(BaseShiftActionView):
+class FederatedUserShiftActionView(CheckFederatedAccessTokenMixin, BaseShiftActionView):
     def get_participant(self):
         try:
             return FederatedUser.objects.get(
@@ -93,7 +93,7 @@ class FederatedUserShiftActionView(BaseShiftActionView):
             raise PermissionDenied from e
 
 
-class FederationSettingsView(TemplateView):
+class FederationSettingsView(StaffRequiredMixin, TemplateView):
     template_name = "federation/federation_settings.html"
 
     def get_context_data(self, **kwargs):
@@ -104,7 +104,7 @@ class FederationSettingsView(TemplateView):
         return context
 
 
-class CreateInviteCodeView(CreateView):
+class CreateInviteCodeView(StaffRequiredMixin, CreateView):
     model = InviteCode
     form_class = InviteCodeForm
     success_url = reverse_lazy("federation:settings")
@@ -125,7 +125,7 @@ class InviteCodeRevealView(StaffRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class RedeemInviteCodeView(FormView):
+class RedeemInviteCodeView(StaffRequiredMixin, FormView):
     form_class = RedeemInviteCodeForm
     template_name = "federation/redeem_invite_code.html"
 
@@ -145,7 +145,7 @@ class RedeemInviteCodeView(FormView):
         return redirect(reverse("federation:settings"))
 
 
-class FederatedGuestDeleteView(SuccessMessageMixin, DeleteView):
+class FederatedGuestDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteView):
     model = FederatedGuest
     success_url = reverse_lazy("federation:settings")
     success_message = _("You are no longer sharing events with this instance.")
@@ -157,7 +157,7 @@ class FederatedGuestDeleteView(SuccessMessageMixin, DeleteView):
         return response
 
 
-class FederatedHostDeleteView(SuccessMessageMixin, DeleteView):
+class FederatedHostDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteView):
     model = FederatedHost
     success_url = reverse_lazy("federation:settings")
     success_message = _("You are no longer receiving events from this instance.")

@@ -14,3 +14,10 @@ def available_management_settings_sections(request):
 @register.simple_tag
 def oidc_client_enabled():
     return settings.ENABLE_OIDC_CLIENT
+
+
+@register.simple_tag
+def organization_name():
+    from dynamic_preferences.registries import global_preferences_registry
+
+    return global_preferences_registry.manager()["general__organization_name"]

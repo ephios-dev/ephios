@@ -2,6 +2,7 @@ import datetime
 
 from django.db.models import Q
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.fields import SerializerMethodField
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.relations import SlugRelatedField
@@ -62,4 +63,6 @@ class UserProfileMeView(RetrieveAPIView):
     required_scopes = ["ME_READ"]
 
     def get_object(self):
+        if self.request.user is None:
+            raise PermissionDenied()
         return self.request.user

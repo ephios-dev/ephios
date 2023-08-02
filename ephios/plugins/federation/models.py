@@ -116,7 +116,9 @@ class FederatedParticipant(AbstractParticipant):
     @property
     def icon(self):
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{_("Federated user")}"></span>'
+            '<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'.format(
+                title=_("Federated user")
+            )
         )
 
 
