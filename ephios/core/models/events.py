@@ -52,10 +52,6 @@ class EventType(Model):
         verbose_name_plural = _("event types")
         db_table = "eventtype"
 
-    @property
-    def color_hex(self):
-        return "#FF0"
-
     def __str__(self):
         return str(self.title)
 
