@@ -28,7 +28,7 @@ class LogEntry(models.Model):
     )
     attached_to_object_id = models.PositiveIntegerField(db_index=True)
     attached_to_object = GenericForeignKey("attached_to_object_type", "attached_to_object_id")
-    datetime = models.DateTimeField(auto_now_add=True)
+    datetime = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
