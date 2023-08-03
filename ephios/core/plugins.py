@@ -1,11 +1,9 @@
-import functools
 import logging
 
 from django.apps import AppConfig, apps
 from django.conf import settings
-from django.dispatch import Signal, receiver
+from django.dispatch import Signal
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.signals import preference_updated
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +42,6 @@ def get_enabled_plugins():
     )
 
 
-@functools.lru_cache()
 def is_receiver_path_enabled(searchpath):
     """
     Return True only if ``searchpath`` (e.g. 'ephios.plugins.basesignup.signals')
@@ -62,18 +59,6 @@ def is_receiver_path_enabled(searchpath):
             searchpath, _ = split
         else:
             return False
-
-
-@receiver(preference_updated, dispatch_uid="ephios.core.plugins.clear_receiver_path_cache")
-def clear_receiver_path_cache(sender, **kwargs):
-    from ephios.core.dynamic_preferences_registry import EnabledPlugins
-
-    if kwargs.get("name") == EnabledPlugins.name:
-        logger.debug(
-            "Resetting plugin path cache. Now enabled: %s",
-            ", ".join(str(plugin.name) for plugin in get_enabled_plugins()),
-        )
-        is_receiver_path_enabled.cache_clear()
 
 
 class PluginSignal(Signal):
