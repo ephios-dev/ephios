@@ -12,6 +12,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import DurationField, ExpressionWrapper, F, Sum
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
 from guardian.shortcuts import get_objects_for_user
@@ -22,19 +23,22 @@ from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.extra.widgets import CustomDateInput
 
 
-class WorkingHourPermissionMixin:
-    def setup(self, request, *args, **kwargs):
-        result = super().setup(request, *args, **kwargs)
-        can_grant_for_group_ids = get_objects_for_user(
+class CanGrantMixin:
+    @cached_property
+    def can_grant(self):
+        """
+        Return whether the current request user can grant
+        working hours to the target user (which might be themselves).
+        """
+        if self.request.user.is_anonymous:
+            return False
+        can_grant_for_groups = get_objects_for_user(
             self.request.user, "decide_workinghours_for_group", klass=Group
-        ).values_list("id", flat=True)
-        self.can_grant = (
-            self._get_target_user().groups.filter(id__in=can_grant_for_group_ids).exists()
         )
-        return result
+        return self._get_target_user().groups.filter(id__in=can_grant_for_groups).exists()
 
     def _get_target_user(self):
-        """Return the working hour user"""
+        """Return the user whose working hours are being managed."""
         return get_object_or_404(UserProfile, pk=self.kwargs["pk"])
 
 
@@ -126,9 +130,7 @@ class OwnWorkingHourView(LoginRequiredMixin, DetailView):
         return super().get_context_data(**kwargs)
 
 
-class UserProfileWorkingHourView(
-    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, DetailView
-):
+class UserProfileWorkingHourView(CanGrantMixin, CustomPermissionRequiredMixin, DetailView):
     model = UserProfile
     permission_required = "core.view_userprofile"
     template_name = "core/userprofile_workinghours.html"
@@ -153,9 +155,7 @@ class WorkingHourRequestView(LoginRequiredMixin, FormView):
         return redirect(reverse("core:workinghours_own"))
 
 
-class WorkingHourCreateView(
-    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, WorkingHourRequestView
-):
+class WorkingHourCreateView(CanGrantMixin, CustomPermissionRequiredMixin, WorkingHourRequestView):
     def has_permission(self):
         return self.can_grant
 
@@ -173,7 +173,7 @@ class WorkingHourCreateView(
         return redirect(reverse("core:workinghours_list"))
 
 
-class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequiredMixin, UpdateView):
+class WorkingHourUpdateView(CanGrantMixin, CustomPermissionRequiredMixin, UpdateView):
     model = WorkingHours
     form_class = WorkingHourRequestForm
 
@@ -194,7 +194,7 @@ class WorkingHourUpdateView(WorkingHourPermissionMixin, CustomPermissionRequired
 
 
 class WorkingHourDeleteView(
-    WorkingHourPermissionMixin, CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView
+    CanGrantMixin, CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView
 ):
     permission_required = "core.decide_workinghours_for_group"
     model = WorkingHours
