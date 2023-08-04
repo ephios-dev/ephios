@@ -63,3 +63,33 @@ class TestWorkingHours:
         response.form["hours"] = 2
         response.form.submit()
         assert WorkingHours.objects.get(pk=workinghours[0].pk).hours == 2
+
+    def test_workinghours_detail(self, django_app, superuser, volunteer, workinghours, groups):
+        response = django_app.get(
+            reverse("core:workinghours_detail", kwargs={"pk": workinghours[0].user.pk}),
+            user=superuser,
+        )
+        assert response.html.find(string=workinghours[0].reason)
+
+    def test_workinghours_detail_nologin(self, django_app, workinghours):
+        response = django_app.get(
+            reverse("core:workinghours_detail", kwargs={"pk": workinghours[0].user.pk}),
+            status=302,
+        )
+        assert "/accounts/login" in response.url
+
+    def test_workinghours_add(self, django_app, superuser, volunteer, groups):
+        response = django_app.get(
+            reverse("core:workinghours_add", kwargs={"pk": volunteer.pk}), user=superuser
+        )
+        response.form["date"] = datetime.date(2020, 1, 1)
+        response.form["hours"] = 1
+        response.form["reason"] = "new years cleanup"
+        response.form.submit()
+        assert WorkingHours.objects.filter(user=volunteer, reason="new years cleanup").exists()
+
+    def test_workinghours_add_nologin(self, django_app, volunteer):
+        response = django_app.get(
+            reverse("core:workinghours_add", kwargs={"pk": volunteer.pk}), status=302
+        )
+        assert "/accounts/login" in response.url
