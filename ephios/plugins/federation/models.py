@@ -18,8 +18,8 @@ from ephios.core.signup.participants import AbstractParticipant
 
 class FederatedGuest(models.Model):
     name = models.CharField(max_length=255)
-    url = models.URLField()
-    access_token = models.ForeignKey(AccessToken, on_delete=models.CASCADE)
+    url = models.URLField(verbose_name=_("URL"))
+    access_token = models.OneToOneField(AccessToken, on_delete=models.CASCADE)
     client_id = models.CharField(max_length=255)
     client_secret = models.CharField(max_length=255)
 
@@ -29,9 +29,9 @@ class FederatedGuest(models.Model):
 
 class FederatedHost(models.Model):
     name = models.CharField(max_length=255)
-    url = models.URLField()
+    url = models.URLField(verbose_name=_("URL"))
     access_token = models.CharField(max_length=255)
-    oauth_application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    oauth_application = models.OneToOneField(Application, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.name)
@@ -39,7 +39,7 @@ class FederatedHost(models.Model):
 
 class InviteCode(models.Model):
     code = models.CharField(max_length=255, default=token_hex)
-    url = models.URLField()
+    url = models.URLField(verbose_name=_("URL"))
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -128,7 +128,7 @@ class FederatedParticipation(AbstractParticipation):
     )
 
     def __str__(self):
-        return f"Federated participation for {self.federated_user} in {self.shift}"
+        return f"{self.federated_user.first_name} {self.federated_user.last_name} @ {self.shift}"
 
     @property
     def participant(self) -> "AbstractParticipant":

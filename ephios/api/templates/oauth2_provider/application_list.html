@@ -33,7 +33,7 @@
                         <td>{{ application.created }}</td>
                         <td class="d-flex">
                             <div>
-                                {% if application.federatedhost_set.exists %}
+                                {% if application.federatedhost %}
                                 <a class="btn btn-secondary"
                                    href="{% url "federation:settings" %}">
                                     <span class="fa fa-cog"></span>

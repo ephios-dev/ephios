@@ -34,7 +34,8 @@ class SharedEventListView(ListAPIView):
 
     def get_queryset(self):
         try:
-            guest = self.request.auth.federatedguest_set.get()
+            # request.auth is an auth token, federatedguest is the reverse relation
+            guest = self.request.auth.federatedguest
         except FederatedGuest.DoesNotExist as exc:
             raise PermissionDenied from exc
         return Event.objects.filter(federatedeventshare__shared_with=guest)
@@ -84,7 +85,7 @@ class FederationOAuthView(View):
         oauth = OAuth2Session(client=oauth_client)
         token = oauth.fetch_token(
             urljoin(self.guest.url, "api/oauth/token/"),
-            authorization_response=self.request.get_full_path(),
+            authorization_response=urljoin(settings.GET_SITE_URL(), self.request.get_full_path()),
             client_secret=self.guest.client_secret,
             code_verifier=self.request.session["code_verifier"],
         )

@@ -19,9 +19,9 @@
     <div class="mb-3">
         <label for="url" class="form-label">Invite URL</label>
             <div class="input-group">
+                {% url "federation:frontend_redeem_invite_code" as redeem_invite_code_url  %}
                 <input id="url" class="form-control" type="text" aria-label="token"
-                       value="{{ invite.url|reverse_url:"federation:frontend_redeem_invite_code" }}?code={{ invite.get_share_string }}"
-                       readonly>
+                       value="{{ invite.url }}{{ redeem_invite_code_url }}?code={{ invite.get_share_string }}">
                 <button id="url-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
                         data-clipboard-target="#url" data-trigger="manual"
                         title="Copied!">{% translate "Copy" %}</button>

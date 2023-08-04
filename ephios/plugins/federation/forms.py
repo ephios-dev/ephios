@@ -2,7 +2,7 @@ import base64
 import binascii
 import json
 from json import JSONDecodeError
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from django import forms
@@ -60,6 +60,14 @@ class InviteCodeForm(forms.ModelForm):
     class Meta:
         model = InviteCode
         fields = ["url"]
+        widgets = {
+            "url": forms.URLInput(attrs={"placeholder": _("https://other-instance.ephios.de/")})
+        }
+
+    def clean_url(self):
+        result = urlparse(self.cleaned_data["url"])
+        cleaned_result = f"{result.scheme}://{result.netloc}{result.path.strip('/')}"
+        return cleaned_result
 
 
 class RedeemInviteCodeForm(forms.Form):
