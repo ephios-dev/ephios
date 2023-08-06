@@ -23,9 +23,10 @@ from django.db.models import (
     Model,
     Q,
     Sum,
+    UniqueConstraint,
     Value,
 )
-from django.db.models.functions import TruncDate
+from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -80,6 +81,10 @@ class UserProfileManager(BaseUserManager):
         user.save()
         return user
 
+    def get_by_natural_key(self, username):
+        # postgres uses case-sensitive collations, so we need to use iexact here
+        return self.get(**{f"{self.model.USERNAME_FIELD}__iexact": username})
+
 
 class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
@@ -124,6 +129,15 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         db_table = "userprofile"
         base_manager_name = "all_objects"
         default_manager_name = "all_objects"
+
+        constraints = [
+            UniqueConstraint(
+                Lower("email"),
+                name="user_email_ci_uniqueness",
+                violation_error_message=_("User profile with this email address already exists."),
+                # we want to allow case insensitive signin, so we need to ensure that the email is unique in all cases
+            ),
+        ]
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
