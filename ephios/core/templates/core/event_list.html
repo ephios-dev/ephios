@@ -134,17 +134,17 @@
             {% endif %}
 
             {% if event_list %}
-                <div class="list-group mb-3">
+                <ul class="list-group mb-3">
                     {% if perms.core.add_event %}
-                        <div class="list-group-item px-0">
+                        <li class="list-group-item px-0">
                             <div class="ps-2">
                                 <input type="checkbox" id="checkall">
                             </div>
-                        </div>
+                        </li>
                     {% endif %}
                     {% for event in event_list %}
                         {% with counter=event|event_list_signup_state_counts stats=event.get_signup_stats %}
-                            <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
+                            <li class="list-group-item p-0 d-flex flex-row">
                                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
                                             {% if counter %}
@@ -171,7 +171,7 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                <a class="list-group-item-action py-2 event-list-item-link"
+                                <a class="w-100 py-2 text-reset event-list-item-link"
                                    href="{{ event.get_absolute_url }}">
                                     <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                                         <div class="grid-title">
@@ -219,10 +219,10 @@
                                         </div>
                                     </div>
                                 </a>
-                            </div>
+                            </li>
                         {% endwith %}
                     {% endfor %}
-                </div>
+                </ul>
                 {% include 'core/pagination.html' %}
             {% else %}
                 <div class="mb-3">
