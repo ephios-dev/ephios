@@ -452,11 +452,16 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, event: Event, content: str):
         participants = set()
+        responsible_users = get_users_with_perms(
+            event, with_superusers=False, only_with_perms_in=["change_event"]
+        )
         for shift in event.shifts.all():
             participants.update(shift.get_participants())
         notifications = []
         for participant in participants:
             user = participant.user if isinstance(participant, LocalUserParticipant) else None
+            if user in responsible_users:
+                continue
             notifications.append(
                 Notification(
                     slug=cls.slug,
@@ -469,9 +474,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                     },
                 )
             )
-        for responsible in get_users_with_perms(
-            event, with_superusers=False, only_with_perms_in=["change_event"]
-        ):
+        for responsible in responsible_users:
             notifications.append(
                 Notification(
                     slug=cls.slug,
