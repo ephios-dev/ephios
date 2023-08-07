@@ -504,13 +504,21 @@ class Notification(Model):
 
     @property
     def subject(self):
+        """The subject of the notification."""
         return self.notification_type.get_subject(self)
 
-    def as_plaintext(self):
-        return self.notification_type.as_plaintext(self)
+    @property
+    def body(self):
+        """The body text of the notification."""
+        return self.notification_type.get_body(self)
 
     def as_html(self):
+        """The notification rendered as HTML."""
         return self.notification_type.as_html(self)
 
-    def get_url(self):
-        return self.notification_type.get_url(self)
+    def as_plaintext(self):
+        """The notification rendered as plaintext."""
+        return self.notification_type.as_plaintext(self)
+
+    def get_actions(self):
+        return self.notification_type.get_actions(self)

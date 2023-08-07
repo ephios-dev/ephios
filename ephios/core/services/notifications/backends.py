@@ -111,11 +111,11 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
     def send(cls, notification):
         payload = {
             "head": str(notification.subject),
-            "body": notification.as_plaintext(),
+            "body": notification.body,
             "icon": "/static/ephios/img/ephios-symbol-red.svg",
         }
-        if url := notification.get_url():
-            payload["url"] = url
+        if actions := notification.get_actions():
+            payload["url"] = actions[0][1]
         send_user_notification(user=notification.user, payload=payload, ttl=1000)
 
 

@@ -1,10 +1,12 @@
 {% load i18n %}
-{{ notification.title }}
+{{ subject }}
 
-{{ notification.content }}
+{{ body }}
 
-{% trans "You receive these emails based on your notification settings." %}
-{% trans "Click here to view and change your notification settings:" %}
-{{ notifications_settings_url }}
-{% trans "Click here disable all notifications immediately:" %}
-{{ notifications_disable_url }}
+{% for label, url in notification.get_actions %}{{ label }}: {{ url }}
+{% endfor %}
+{% blocktranslate trimmed %}
+You are receiving this email as a member of {{ organization_name }}.
+{% endblocktranslate %}
+{% translate "Click here to view and change your notification settings:" %}
+{{ notification_settings_url }}

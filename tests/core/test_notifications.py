@@ -103,7 +103,7 @@ class TestNotifications:
         assert set(Notification.objects.all().values_list("slug", flat=True)) == {
             ResponsibleConfirmedParticipationCustomizedNotification.slug
         }
-        plaintext = ResponsibleConfirmedParticipationCustomizedNotification.as_plaintext(
+        plaintext = ResponsibleConfirmedParticipationCustomizedNotification.get_body(
             Notification.objects.first()
         )
         assert "7:42" in plaintext
@@ -131,9 +131,7 @@ class TestNotifications:
         # assert only notification of the correct type exist
         assert Notification.objects.get().slug == ParticipationCustomizationNotification.slug
 
-        plaintext = ParticipationCustomizationNotification.as_plaintext(
-            Notification.objects.first()
-        )
+        plaintext = ParticipationCustomizationNotification.get_body(Notification.objects.first())
         assert "7:42" in plaintext
         call_command("send_notifications")
         assert Notification.objects.count() == 0
