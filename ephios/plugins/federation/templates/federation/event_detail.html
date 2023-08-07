@@ -5,6 +5,6 @@
 {% block messages %}
     <div class="alert alert-info" role="alert">
         {% blocktranslate trimmed %}You are currently viewing an event at {{ organization_name }}.{% endblocktranslate %}
-        <a href="{{ guest.url }}">{% blocktranslate with name=guest.name trimmed %}Back to {{ name }}{% endblocktranslate %}</a>
+        <a href="{{ federation_guest.url }}">{% blocktranslate with name=federation_guest.name trimmed %}Back to {{ name }}{% endblocktranslate %}</a>
     </div>
 {% endblock %}

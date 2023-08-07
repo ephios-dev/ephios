@@ -16,7 +16,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for guest in guests %}
+        {% for guest in federation_guests %}
             <tr>
                 <td>{{ guest.name }}</td>
                 <td>{{ guest.url }}</td>
@@ -26,7 +26,7 @@
         </tbody>
     </table>
 
-    {% if invites %}
+    {% if federation_invites %}
         <h4>{% translate "Pending invites" %}</h4>
         <table class="table table-striped display mt-2">
         <thead>
@@ -36,7 +36,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for invite in invites %}
+        {% for invite in federation_invites %}
             <tr>
                 <td>{{ invite.url }}</td>
                 <td><a class="btn btn-secondary" href="{% url "federation:reveal_invite_code" invite.pk %}">{% translate "Show invite code" %}</a></td>
@@ -57,7 +57,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for host in hosts %}
+        {% for host in federation_hosts %}
             <tr>
                 <td>{{ host.name }}</td>
                 <td>{{ host.url }}</td>

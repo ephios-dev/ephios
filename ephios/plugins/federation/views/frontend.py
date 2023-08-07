@@ -27,6 +27,10 @@ from ephios.plugins.federation.views.api import FederationOAuthView
 
 
 class ExternalEventListView(LoginRequiredMixin, TemplateView):
+    """
+    View that lists all events that are shared with this instance.
+    """
+
     template_name = "federation/external_event_list.html"
 
     def get_context_data(self, **kwargs):
@@ -56,55 +60,74 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
 
 class CheckFederatedAccessTokenMixin:
     def dispatch(self, request, *args, **kwargs):
-        if "access_token" not in request.session.keys():
+        if "federation_access_token" not in request.session.keys():
             return FederationOAuthView.as_view()(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, object):
         context = super().get_context_data()
-        context["guest"] = FederatedGuest.objects.get(pk=self.request.session["guest"])
+        context["federation_guest"] = FederatedGuest.objects.get(
+            pk=self.request.session["federation_guest_pk"]
+        )
         return context
 
 
 class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
+    """
+    View that displays a shared event to a federated user from another instance
+    """
+
     model = Event
     template_name = "federation/event_detail.html"
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         try:
-            guest = self.request.session["guest"]
+            guest = self.request.session["federation_guest_pk"]
             FederatedEventShare.objects.get(
                 event=obj,
                 shared_with__in=[FederatedGuest.objects.get(pk=guest)],
             )
         except (KeyError, FederatedEventShare.DoesNotExist) as exc:
+            self.request.session.flush()
             raise PermissionDenied from exc
         return obj
 
 
 class FederatedUserShiftActionView(CheckFederatedAccessTokenMixin, BaseShiftActionView):
+    """
+    View that allows a federated user from another instanceto sign up for a shift
+    """
+
     def get_participant(self):
         try:
             return FederatedUser.objects.get(
-                pk=self.request.session["federated_user"]
+                pk=self.request.session["federation_user"]
             ).as_participant()
         except FederatedUser.DoesNotExist as e:
             raise PermissionDenied from e
 
 
 class FederationSettingsView(StaffRequiredMixin, TemplateView):
+    """
+    View that displays the federation settings page where new instances can be connected
+    """
+
     template_name = "federation/federation_settings.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["guests"] = FederatedGuest.objects.all()
-        context["hosts"] = FederatedHost.objects.all()
-        context["invites"] = InviteCode.objects.all()
+        context["federation_guests"] = FederatedGuest.objects.all()
+        context["federation_hosts"] = FederatedHost.objects.all()
+        context["federation_invites"] = InviteCode.objects.all()
         return context
 
 
 class CreateInviteCodeView(StaffRequiredMixin, CreateView):
+    """
+    View that allows staff users to create new invite codes (to share events with another instance)
+    """
+
     model = InviteCode
     form_class = InviteCodeForm
     success_url = reverse_lazy("federation:settings")
@@ -114,6 +137,10 @@ class CreateInviteCodeView(StaffRequiredMixin, CreateView):
 
 
 class InviteCodeRevealView(StaffRequiredMixin, TemplateView):
+    """
+    View that displays an invite code to a staff user
+    """
+
     template_name = "federation/invitecode_reveal.html"
 
     def get(self, request, *args, **kwargs):
@@ -126,6 +153,10 @@ class InviteCodeRevealView(StaffRequiredMixin, TemplateView):
 
 
 class RedeemInviteCodeView(StaffRequiredMixin, FormView):
+    """
+    View that allows staff users to redeem an invite code (to receive events from another instance)
+    """
+
     form_class = RedeemInviteCodeForm
     template_name = "federation/redeem_invite_code.html"
 
@@ -146,6 +177,10 @@ class RedeemInviteCodeView(StaffRequiredMixin, FormView):
 
 
 class FederatedGuestDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteView):
+    """
+    View that allows staff users to remove a guest instance (to stop sharing events with another instance)
+    """
+
     model = FederatedGuest
     success_url = reverse_lazy("federation:settings")
     success_message = _("You are no longer sharing events with this instance.")
@@ -158,6 +193,10 @@ class FederatedGuestDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteVi
 
 
 class FederatedHostDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteView):
+    """
+    View that allows staff users to remove a host instance (to stop receiving events from another instance)
+    """
+
     model = FederatedHost
     success_url = reverse_lazy("federation:settings")
     success_message = _("You are no longer receiving events from this instance.")

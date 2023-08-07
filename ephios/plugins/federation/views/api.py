@@ -2,6 +2,7 @@ from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
+from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
@@ -21,6 +22,10 @@ from ephios.plugins.federation.serializers import (
 
 
 class RedeemInviteCodeView(CreateAPIView):
+    """
+    API view that accepts an InviteCode and creates a FederatedGuest (to start sharing events with that instance).
+    """
+
     serializer_class = FederatedGuestCreateSerializer
     queryset = FederatedGuest.objects.all()
     authentication_classes = []
@@ -28,6 +33,10 @@ class RedeemInviteCodeView(CreateAPIView):
 
 
 class SharedEventListView(ListAPIView):
+    """
+    API view that lists all events that are shared with the instance corresponding to the access token.
+    """
+
     serializer_class = SharedEventSerializer
     permission_classes = [TokenHasScope]
     required_scopes = []
@@ -42,20 +51,26 @@ class SharedEventListView(ListAPIView):
 
 
 class FederationOAuthView(View):
+    """
+    View that handles the OAuth2 flow for federated users from another instance.
+    """
+
     def get(self, request, *args, **kwargs):
         try:
             self.guest = (
-                FederatedGuest.objects.get(pk=self.request.session["guest"])
-                if "guest" in self.request.session.keys()
+                FederatedGuest.objects.get(pk=self.request.session["federation_guest_pk"])
+                if "federation_guest_pk" in self.request.session.keys()
                 else FederatedGuest.objects.get(url=self.request.GET["referrer"])
             )
-        except (KeyError, FederatedGuest.DoesNotExist) as exc:
+        except (KeyError, FederatedGuest.DoesNotExist, MultipleObjectsReturned) as exc:
             raise PermissionDenied from exc
         if "error" in request.GET.keys():
             return redirect(urljoin(self.guest.url, reverse("federation:external_event_list")))
         elif "code" in request.GET.keys():
             self._oauth_callback()
-            return redirect("federation:event_detail", pk=self.request.session.pop("event"))
+            return redirect(
+                "federation:event_detail", pk=self.request.session.pop("federation_event")
+            )
         else:
             return redirect(self._get_authorization_url())
 
@@ -68,8 +83,8 @@ class FederationOAuthView(View):
         )
         verifier = oauth_client.create_code_verifier(64)
         self.request.session["code_verifier"] = verifier
-        self.request.session["event"] = self.kwargs["pk"]
-        self.request.session["guest"] = self.guest.pk
+        self.request.session["federation_event"] = self.kwargs["pk"]
+        self.request.session["federation_guest_pk"] = self.guest.pk
         challenge = oauth_client.create_code_challenge(verifier, "S256")
         authorization_url, _ = oauth.authorization_url(
             urljoin(self.guest.url, "api/oauth/authorize/"),
@@ -89,7 +104,7 @@ class FederationOAuthView(View):
             client_secret=self.guest.client_secret,
             code_verifier=self.request.session["code_verifier"],
         )
-        self.request.session["access_token"] = token["access_token"]
+        self.request.session["federation_access_token"] = token["access_token"]
         self.request.session.set_expiry(token["expires_in"])
         user_data = requests.get(
             urljoin(self.guest.url, "api/users/me/"),
@@ -101,27 +116,31 @@ class FederationOAuthView(View):
                 federated_instance=self.guest, email=user_data.json()["email"]
             )
         except FederatedUser.DoesNotExist:
-            user = FederatedUser.objects.create(
-                federated_instance=self.guest,
-                email=user_data.json()["email"],
-                first_name=user_data.json()["first_name"],
-                last_name=user_data.json()["last_name"],
-                date_of_birth=user_data.json()["date_of_birth"],
-            )
-            for qualification in user_data.json()["qualifications"]:
-                try:
-                    # Note that we assign the qualification on the host instance without further checks.
-                    # This may lead to incorrect qualifications if the inclusions for the qualification
-                    # are defined differently on the guest instance. We are accepting this as it should
-                    # not happen with the pre-defined qualifications as we are displaying a warning if
-                    # the user adapt these and custom qualifications will have different uuids anyway.
-                    user.qualifications.add(Qualification.objects.get(uuid=qualification["uuid"]))
-                except Qualification.DoesNotExist:
-                    for included_qualification in qualification["includes"]:
-                        try:
-                            user.qualifications.add(
-                                Qualification.objects.get(uuid=included_qualification["uuid"])
-                            )
-                        except Qualification.DoesNotExist:
-                            continue
-        self.request.session["federated_user"] = user.pk
+            user = self._create_user(user_data)
+        self.request.session["federation_user"] = user.pk
+
+    def _create_user(self, user_data):
+        user = FederatedUser.objects.create(
+            federated_instance=self.guest,
+            email=user_data.json()["email"],
+            first_name=user_data.json()["first_name"],
+            last_name=user_data.json()["last_name"],
+            date_of_birth=user_data.json()["date_of_birth"],
+        )
+        for qualification in user_data.json()["qualifications"]:
+            try:
+                # Note that we assign the qualification on the host instance without further checks.
+                # This may lead to incorrect qualifications if the inclusions for the qualification
+                # are defined differently on the guest instance. We are accepting this as it should
+                # not happen with the pre-defined qualifications as we are displaying a warning if
+                # the user adapt these and custom qualifications will have different uuids anyway.
+                user.qualifications.add(Qualification.objects.get(uuid=qualification["uuid"]))
+            except Qualification.DoesNotExist:
+                for included_qualification in qualification["includes"]:
+                    try:
+                        user.qualifications.add(
+                            Qualification.objects.get(uuid=included_qualification["uuid"])
+                        )
+                    except Qualification.DoesNotExist:
+                        continue
+        return user

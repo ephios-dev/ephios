@@ -18,10 +18,15 @@
                href="{{ event.signup_url }}?referrer={{ SITE_URL }}">
                 <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                     <div class="grid-title">
-                        <h5 class="mb-0 text-break">
-                            {{ event.title }}
-
-                        </h5>
+                        <div>
+                            <h5 class="mb-0 text-break d-inline-block">
+                                {{ event.title }}
+                            </h5>
+                            <small class="text-muted ms-1">
+                                <span class="fas fa-share"></span>
+                                <span class="">{{ event.host }}</span>
+                            </small>
+                        </div>
                         <span class="w-100 text-muted text-break">
                         {{ event.location }}
                     </span>
@@ -30,7 +35,6 @@
                             class="badge bg-primary">{{ event.type }}</span>
                     </div>
                     <div class="grid-signup">
-                        <span class="fas fa-share"></span><span class="text-nowrap">{{ event.host }}</span>
                     </div>
                     <div class="grid-time">
                         {{ event.start_time|date:"D" }},
