@@ -76,7 +76,6 @@ class AbstractNotificationHandler:
             "organization_name": global_preferences_registry.manager().get(
                 "general__organization_name"
             ),
-            "EPHIOS_VERSION": settings.EPHIOS_VERSION,
             "SITE_URL": settings.GET_SITE_URL(),
         }
 
