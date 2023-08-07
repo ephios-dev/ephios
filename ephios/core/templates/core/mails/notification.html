@@ -1,0 +1,42 @@
+{% extends "core/mails/base.html" %}
+{% load rich_text %}
+{% load i18n %}
+
+{% block emailcss %}
+    div.actions {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    }
+    .supertitle {
+    font-weight: bold;
+    color: #76858f;
+    }
+{% endblock %}
+
+{% block header %}
+    <span class="supertitle">
+        {{ organization_name }}
+    </span>
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {{ body|rich_text }}
+
+    <div class="actions">
+        {% for label, url in notification.get_actions %}
+            <a class="btn-action" href="{{ url }}">{{ label }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <small>
+        {% blocktranslate trimmed %}
+            You are receiving this email as a member of {{ organization_name }}.
+        {% endblocktranslate %}
+        <br/>
+        <a href="{{ notification_settings_url }}">{% translate "Notification settings" %}</a> ·
+    </small>
+    {{ block.super }}
+{% endblock %}
