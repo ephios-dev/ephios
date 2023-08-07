@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import (
     CheckboxSelectMultiple,
@@ -223,6 +224,11 @@ class UserProfileForm(ModelForm):
                 self.fields["groups"].help_text = _(
                     "The user is also member of <b>{groups}</b>, but you are not allowed to manage memberships for those groups."
                 ).format(groups=", ".join((group.name for group in self.locked_groups)))
+        if not request.user.is_staff:
+            self.fields["is_staff"].disabled = True
+            self.fields["is_staff"].help_text += " " + _(
+                "Only other technical administrators can change this."
+            )
 
     field_order = [
         "email",
@@ -232,16 +238,36 @@ class UserProfileForm(ModelForm):
         "phone",
         "groups",
         "is_active",
+        "is_staff",
     ]
 
     class Meta:
         model = UserProfile
-        fields = ["email", "first_name", "last_name", "date_of_birth", "phone", "is_active"]
+        fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "date_of_birth",
+            "phone",
+            "is_active",
+            "is_staff",
+        ]
         widgets = {"date_of_birth": CustomDateInput}
         help_texts = {
             "is_active": _("Inactive users cannot log in and do not get any notifications.")
         }
         labels = {"is_active": _("Active user")}
+
+    def clean_is_staff(self):
+        if self.initial.get("is_staff", False) and not self.cleaned_data["is_staff"]:
+            other_staff = UserProfile.objects.filter(is_staff=True).exclude(pk=self.instance.pk)
+            if not other_staff.exists():
+                raise ValidationError(
+                    _(
+                        "At least one user must be technical administrator. Please promote another user before demoting this one."
+                    )
+                )
+        return self.cleaned_data["is_staff"]
 
     def save(self, commit=True):
         userprofile = super().save(commit)
