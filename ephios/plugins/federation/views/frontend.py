@@ -51,7 +51,12 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
                     event["end_time"] = datetime.fromisoformat(event["end_time"])
                     event["host"] = host.name
                 events += results
-            except (HTTPError, JSONDecodeError, ReadTimeout):
+            except HTTPError as exc:
+                if exc.response.status_code == 403:
+                    # the host does not accept our token anymore, so the share needs to be set up again
+                    host.oauth_application.delete()
+                    host.delete()
+            except (JSONDecodeError, ReadTimeout):
                 continue
         events.sort(key=lambda e: e["start_time"])
         context["events"] = events
@@ -203,6 +208,17 @@ class FederatedHostDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteVie
 
     def form_valid(self, form):
         oauth_app = self.object.oauth_application
+        guest_response = requests.delete(
+            urljoin(self.object.url, reverse("federation:api_delete_guest")),
+            headers={"Authorization": f"Bearer {self.object.access_token}"},
+            timeout=5,
+        )
+        if guest_response.status_code != 204:
+            messages.error(
+                self.request,
+                _("Failed to remove this instance. Please try again later."),
+            )
+            return redirect("federation:settings")
         response = super().form_valid(form)
         oauth_app.delete()
         return response

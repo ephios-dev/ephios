@@ -59,4 +59,9 @@ urlpatterns = [
         api.RedeemInviteCodeView.as_view(),
         name="redeem_invite_code",
     ),
+    path(
+        "api/federation/guest/delete/",
+        api.FederatedGuestDeleteView.as_view(),
+        name="api_delete_guest",
+    ),
 ]

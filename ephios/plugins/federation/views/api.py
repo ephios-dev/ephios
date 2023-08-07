@@ -10,7 +10,7 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import AllowAny
 
 from ephios.core.models import Event, Qualification
@@ -30,6 +30,23 @@ class RedeemInviteCodeView(CreateAPIView):
     queryset = FederatedGuest.objects.all()
     authentication_classes = []
     permission_classes = [AllowAny]
+
+
+class FederatedGuestDeleteView(DestroyAPIView):
+    """
+    API view that deletes a FederatedGuest (to stop sharing events with that instance).
+    """
+
+    queryset = FederatedGuest.objects.all()
+    permission_classes = [TokenHasScope]
+    required_scopes = []
+
+    def get_object(self):
+        try:
+            # request.auth is an auth token, federatedguest is the reverse relation
+            return self.request.auth.federatedguest
+        except FederatedGuest.DoesNotExist as exc:
+            raise PermissionDenied from exc
 
 
 class SharedEventListView(ListAPIView):
