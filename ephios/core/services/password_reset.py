@@ -20,7 +20,10 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
             text_content = _(
                 "Your password for {site} has been changed. If you didn't request this change, contact an administrator immediately."
             ).format(site=settings.GET_SITE_URL())
-            html_content = render_to_string("email_base.html", {"message_text": text_content})
+            html_content = render_to_string(
+                "core/mails/base.html",
+                {"subject": _("Your ephios password has been changed"), "body": text_content},
+            )
             message = EmailMultiAlternatives(
                 to=[user.email],
                 subject=_("Your password has been changed"),
