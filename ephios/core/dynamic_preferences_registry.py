@@ -36,7 +36,7 @@ general_global_section = Section("general")
 @global_preferences_registry.register
 class OrganizationName(StringPreference):
     name = "organization_name"
-    verbose_name = _("Organization name")
+    verbose_name = _("Organization display name")
     default = ""
     section = general_global_section
     required = False

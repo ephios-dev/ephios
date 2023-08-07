@@ -1,8 +1,7 @@
-{% extends "email_base.html" %}
+{% extends "core/mails/base.html" %}
 {% load i18n %}
 
 {% block content %}
-    <h1>{{ event.type }} {% translate "added" %}: {{ event.title }}</h1>
     {% with start_time=event.get_start_time end_time=event.get_end_time %}
         {% if start_time %}
             <h2>
@@ -20,8 +19,12 @@
         {% endif %}
     {% endwith %}
     <div>
-        {{ event.description }}<br/>
-        {% translate "Location" %}: {{ event.location }}<br/>
-        <a href="{{ site_url }}{{ event.get_absolute_url }}">{% translate "View" %}</a>
+        <p>
+            {{ event.description }}
+        </p>
+        <p>
+            {% translate "Location" %}: {{ event.location }}<br/>
+        </p>
+        <a class="btn-action" href="{{ SITE_URL }}{{ event.get_absolute_url }}">{% translate "View" %}</a>
     </div>
 {% endblock %}
