@@ -115,8 +115,9 @@ class FederatedParticipant(AbstractParticipant):
 
     @property
     def icon(self):
+        # pylint: disable-next=consider-using-f-string
         return mark_safe(
-            '<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'.format(  # noqa
+            '<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'.format(
                 title=_("Federated user")
             )
         )
