@@ -80,7 +80,7 @@ urlpatterns = [
             title="ephios",
             description="ephios API",
             version=settings.EPHIOS_VERSION,
-            url=settings.GET_SITE_URL(),
+            # url=LazyObject(settings.GET_SITE_URL()),
         ),
         name="openapi-schema",
     ),
