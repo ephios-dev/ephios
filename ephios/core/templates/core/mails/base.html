@@ -73,7 +73,7 @@
         {% block emailcss %}{% endblock %}
     </style>
 </head>
-<body align="center">
+<body>
 <div class="container">
     {% block header %}
         <h1>{{ subject }}</h1>
@@ -83,21 +83,22 @@
             {{ body|rich_text }}
         {% endblock %}
     </div>
-    <div class="footer">
-        {% block footer %}
-            <small>
-                {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
-                    powered by {{ brand }}
-                {% endblocktranslate %}
-                <samp>v{{ EPHIOS_VERSION }}</samp>
-            </small>
-            <br/>
-            <a href="https://ephios.de">
-                <img style="margin-top: 20px;" id="ephios-logo" width="32px" height="32px" alt=""
-                     src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTkuODcgMjM1LjA0Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmMDMzZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9IkxheWVyXzIiIGRhdGEtbmFtZT0iTGF5ZXIgMiI+PGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0uOSw5NS41NWMtMy41OCwxNCwzLjc2LDQxLjU3LDE3Ljg3LDcyLjE5LDExLDIzLjg4LDMxLDUzLjE4LDQxLjc5LDY2LjFhMy4zNSwzLjM1LDAsMCwwLDUuNC0uMzVjOC0xMi40MywyNC42My01OC45MSwyOS44Mi03NC44NSw5Ljg4LTMwLjI4LDEyLjA3LTM5LDE5LjI1LTY0LjEyQzEyNi4yMyw1NS4zNiwxMTguMTksMjEsODguNzYsMS4xNiw4My40NC0yLjQzLDYxLjgzLDMsNjksOC4wNiw5MC4yMiwyMyw5Ni4wNywzMS42OCw5OC42Niw0Ny42M2MyLjExLDEzLDMuODIsNDIuMzQtMzAuMDksNDAuNDctMTMuODctLjc2LTI2Ljc0LTkuOTEtNDMuMTctOS45MVMyLjY1LDg4LjY0LjksOTUuNTVaIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTEiIGN4PSI1OS45MyIgY3k9IjUwLjczIiByPSIyNS40MyIvPjwvZz48L2c+PC9zdmc+"/>
-            </a>
-        {% endblock %}
-    </div>
 </div>
+<div class="footer">
+    {% block footer %}
+        <small>
+            {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
+                powered by {{ brand }}
+            {% endblocktranslate %}
+            <samp>v{{ EPHIOS_VERSION }}</samp>
+        </small>
+        <br/>
+        <a href="https://ephios.de">
+            <img style="margin-top: 20px;" id="ephios-logo" width="32px" height="32px" alt=""
+                 src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTkuODcgMjM1LjA0Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmMDMzZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9IkxheWVyXzIiIGRhdGEtbmFtZT0iTGF5ZXIgMiI+PGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0uOSw5NS41NWMtMy41OCwxNCwzLjc2LDQxLjU3LDE3Ljg3LDcyLjE5LDExLDIzLjg4LDMxLDUzLjE4LDQxLjc5LDY2LjFhMy4zNSwzLjM1LDAsMCwwLDUuNC0uMzVjOC0xMi40MywyNC42My01OC45MSwyOS44Mi03NC44NSw5Ljg4LTMwLjI4LDEyLjA3LTM5LDE5LjI1LTY0LjEyQzEyNi4yMyw1NS4zNiwxMTguMTksMjEsODguNzYsMS4xNiw4My40NC0yLjQzLDYxLjgzLDMsNjksOC4wNiw5MC4yMiwyMyw5Ni4wNywzMS42OCw5OC42Niw0Ny42M2MyLjExLDEzLDMuODIsNDIuMzQtMzAuMDksNDAuNDctMTMuODctLjc2LTI2Ljc0LTkuOTEtNDMuMTctOS45MVMyLjY1LDg4LjY0LjksOTUuNTVaIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTEiIGN4PSI1OS45MyIgY3k9IjUwLjczIiByPSIyNS40MyIvPjwvZz48L2c+PC9zdmc+"/>
+        </a>
+    {% endblock %}
+</div>
+
 </body>
 </html>
