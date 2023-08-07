@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes
 from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
+from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
@@ -36,6 +37,7 @@ def notification_type_from_slug(slug):
 
 class AbstractNotificationHandler:
     unsubscribe_allowed = True
+    email_template_name = "core/mails/base.html"
 
     @property
     def slug(self):
@@ -55,7 +57,23 @@ class AbstractNotificationHandler:
 
     @classmethod
     def as_html(cls, notification):
-        return render_to_string("email_base.html", {"message_text": cls.as_plaintext(notification)})
+        return render_to_string(cls.email_template_name, cls.get_html_context(notification))
+
+    @classmethod
+    def get_html_context(cls, notification):
+        return {
+            "subject": cls.get_subject(notification),
+            "body": cls.as_plaintext(notification),
+            "notification": notification,
+            "notification_settings_url": urljoin(
+                settings.GET_SITE_URL(), reverse("core:settings_notifications")
+            ),
+            "organization_name": global_preferences_registry.manager().get(
+                "general__organization_name"
+            ),
+            "EPHIOS_VERSION": settings.EPHIOS_VERSION,
+            "SITE_URL": settings.GET_SITE_URL(),
+        }
 
     @classmethod
     def get_url(cls, notification):
@@ -91,6 +109,7 @@ class NewProfileNotification(AbstractNotificationHandler):
     slug = "ephios_new_profile"
     title = _("A new profile has been created")
     unsubscribe_allowed = False
+    email_template_name = "core/mails/new_account_email.html"
 
     @classmethod
     def send(cls, user: UserProfile, **kwargs):
@@ -106,27 +125,24 @@ class NewProfileNotification(AbstractNotificationHandler):
 
     @classmethod
     def as_plaintext(cls, notification):
-        reset_link = reverse("password_reset_confirm", kwargs=notification.data)
-        return _(
-            "You're receiving this email because a new account has been created for you at ephios.\n"
-            "Please go to the following page and choose a password: {url}\n"
-            "Your username is your email address: {email}\n"
-        ).format(url=urljoin(settings.GET_SITE_URL(), reset_link), email=notification.user.email)
-
-    @classmethod
-    def as_html(cls, notification):
-        return render_to_string(
-            "core/mails/new_account_email.html",
-            {
-                **{"site_url": settings.GET_SITE_URL(), "email": notification.user.email},
-                **notification.data,
+        reset_link = reverse(
+            "password_reset_confirm",
+            kwargs={
+                "uidb64": notification.data["uidb64"],
+                "token": notification.data["token"],
             },
         )
+        return _(
+            "You're receiving this email because a new account has been created for you at ephios.\n"
+            "Please go to the following page and choose a password: {url} \n"
+            "Your username is your email address: {email}\n"
+        ).format(url=urljoin(settings.GET_SITE_URL(), reset_link), email=notification.user.email)
 
 
 class NewEventNotification(AbstractNotificationHandler):
     slug = "ephios_new_event"
     title = _("A new event has been added")
+    email_template_name = "core/mails/new_event.html"
 
     @classmethod
     def send(cls, event: Event, **kwargs):
@@ -158,11 +174,11 @@ class NewEventNotification(AbstractNotificationHandler):
         )
 
     @classmethod
-    def as_html(cls, notification):
+    def get_html_context(cls, notification):
+        context = super().get_html_context(notification)
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return render_to_string(
-            "core/mails/new_event.html", {"event": event, "site_url": settings.GET_SITE_URL()}
-        )
+        context["event"] = event
+        return context
 
     @classmethod
     def get_url(cls, notification):
@@ -349,7 +365,7 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
                 participant=participation.participant,
                 disposition_url=notification.data.get("disposition_url"),
             )
-        return _("{participant} signed up for {shift}").format(
+        return _("{participant} signed up for {shift}.").format(
             participant=participation.participant, shift=participation.shift
         )
 

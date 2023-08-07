@@ -1,0 +1,102 @@
+{% load rich_text %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=false">
+    <style type="text/css">
+        body {
+            background-color: #f3f5f6;
+            font-family: "Open Sans", "OpenSans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 22px;
+            color: #0c1012;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        p {
+            margin: 0 0 10px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            -ms-word-break: break-all;
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
+
+        p a {
+            word-wrap: anywhere;
+            word-break: break-all;
+        }
+
+        .footer {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        a {
+            color: #014065;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fcfdfd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .btn-action {
+            /* stripped down bootstrap button */
+            cursor: pointer;
+            color: #fff;
+            background-color: #014065;
+            text-align: center;
+            border: 1px solid #014065;
+            text-decoration: none;
+            user-select: none;
+            line-height: 1.5;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+        }
+
+        {% block emailcss %}{% endblock %}
+    </style>
+</head>
+<body align="center">
+<div class="container">
+    {% block header %}
+        <h1>{{ subject }}</h1>
+    {% endblock %}
+    <div class="content">
+        {% block content %}
+            {{ body|rich_text }}
+        {% endblock %}
+    </div>
+    <div class="footer">
+        {% block footer %}
+            <small>
+                {% blocktranslate %}
+                    You are receiving this email as a member of {{ organization_name }}.
+                {% endblocktranslate %}
+                <br/>
+                <a href="{{ notification_settings_url }}">{% translate "Notification settings" %}</a> ·
+                {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
+                    powered by {{ brand }}
+                {% endblocktranslate %}
+                <samp>v{{ EPHIOS_VERSION }}</samp>
+            </small>
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>
