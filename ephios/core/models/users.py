@@ -97,7 +97,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     email = EmailField(_("email address"), unique=True)
     is_active = BooleanField(default=True, verbose_name=_("Active"))
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
-    is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
+    is_staff = BooleanField(
+        default=False,
+        verbose_name=_("Technical Administrator"),
+        help_text=_("If checked, this user can change technical ephios settings."),
+    )
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
     date_of_birth = DateField(_("date of birth"), null=True, blank=False)

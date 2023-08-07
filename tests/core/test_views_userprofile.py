@@ -141,7 +141,9 @@ class TestUserProfileView:
         response.form.submit()
         assert response.status_code == 200
 
-    def test_userprofile_edit_by_hr_allowed(self, django_app, volunteer, hr_group, groups):
+    def test_userprofile_group_membership_edit_by_hr_allowed(
+        self, django_app, volunteer, hr_group, groups
+    ):
         managers, planners, volunteers = groups
         form = django_app.get(
             reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
@@ -151,7 +153,9 @@ class TestUserProfileView:
         assert response.status_code == 302
         assert set(volunteer.groups.all()) == {volunteers}
 
-    def test_userprofile_edit_by_hr_forbidden(self, django_app, volunteer, hr_group, groups):
+    def test_userprofile_group_membership_edit_by_hr_forbidden(
+        self, django_app, volunteer, hr_group, groups
+    ):
         managers, planners, volunteers = groups
         assert set(volunteer.groups.all()) == {hr_group, volunteers}
         form = django_app.get(
@@ -161,3 +165,22 @@ class TestUserProfileView:
         response = form.submit()
         assert response.status_code == 200
         assert set(volunteer.groups.all()) == {hr_group, volunteers}
+
+    def test_is_staff_flag_cannot_be_changed_by_non_staff_user(
+        self, django_app, volunteer, manager, groups
+    ):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=manager
+        ).form
+        form["is_staff"] = True
+        response = form.submit()
+        assert not manager.is_staff
+        assert not UserProfile.objects.get(id=volunteer.id).is_staff
+
+    def test_staffuser_can_change_is_staff_flag(self, django_app, volunteer, superuser, groups):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=superuser
+        ).form
+        form["is_staff"] = True
+        form.submit()
+        assert UserProfile.objects.get(id=volunteer.id).is_staff
