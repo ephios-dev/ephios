@@ -90,7 +90,9 @@
             {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
                 powered by {{ brand }}
             {% endblocktranslate %}
-            <samp>v{{ EPHIOS_VERSION }}</samp>
+            {% if EPHIOS_VERSION %}
+                <samp>v{{ EPHIOS_VERSION }}</samp>
+            {% endif %}
         </small>
         <br/>
         <a href="https://ephios.de">
