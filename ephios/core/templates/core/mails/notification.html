@@ -48,7 +48,8 @@
             You are receiving this email as a member of {{ organization_name }}.
         {% endblocktranslate %}
         {% if notification.notification_type.title %}
-            ({{ notification.notification_type.title }})
+            <br/>
+            {{ notification.notification_type.title }}.
         {% endif %}
         <br/>
         <a href="{{ notification_settings_url }}">{% translate "Notification settings" %}</a> ·

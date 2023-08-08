@@ -75,7 +75,7 @@ class TestNotifications:
         )
         ParticipationConfirmedNotification.send(participation)
         ParticipationRejectedNotification.send(participation)
-        ResponsibleParticipationRequestedNotification(participation).send()
+        ResponsibleParticipationRequestedNotification.send(participation)
         assert Notification.objects.count() == 2 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
