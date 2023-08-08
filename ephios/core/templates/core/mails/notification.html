@@ -4,11 +4,14 @@
 
 {% block emailcss %}
     td.actions {
-    padding-top: 2rem;
+    padding-top: 28px;
     text-align: center;
     margin: 0 auto;
     }
     .organization-name {
+    margin-bottom: 14px;
+    }
+    .organization-name a {
     font-weight: bold;
     color: #76858f;
     text-decoration: none;
@@ -16,9 +19,11 @@
 {% endblock %}
 
 {% block header %}
-    <a href="{{ SITE_URL }}" class="organization-name">
-        {{ organization_name }}
-    </a>
+    <div class="organization-name">
+        <a href="{{ SITE_URL }}">
+            {{ organization_name }}
+        </a>
+    </div>
     {{ block.super }}
 {% endblock %}
 
