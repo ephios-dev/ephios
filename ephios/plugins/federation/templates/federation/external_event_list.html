@@ -7,14 +7,15 @@
 
 {% block content %}
     <h1>{% translate "External events" %}</h1>
+    <ul class="list-group mb-3">
     {% for event in events %}
-        <div class="list-group-item list-group-item-action p-0 d-flex flex-row">
+        <li class="list-group-item list-group-item-action p-0 d-flex flex-row">
             <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                 <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon">
                         <span class="text-muted far fa-user ps-2"></span>
                 </div>
             </div>
-            <a class="list-group-item-action py-2 event-list-item-link"
+            <a class="w-100 text-reset py-2 event-list-item-link"
                href="{{ event.signup_url }}?referrer={{ SITE_URL }}">
                 <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                     <div class="grid-title">
@@ -58,7 +59,7 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </li>
     {% empty %}
         <div class="mb-3">
             <h5 class="mt-5 text-center">
@@ -66,4 +67,5 @@
             </h5>
         </div>
     {% endfor %}
+    </ul>
 {% endblock %}
