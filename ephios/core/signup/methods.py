@@ -303,7 +303,7 @@ class BaseSignupView(FormView):
     def customize_pressed(self, form):
         form.save()
         if claims := form.get_customization_notification_info():
-            ResponsibleConfirmedParticipationCustomizedNotification(form.instance, claims).send()
+            ResponsibleConfirmedParticipationCustomizedNotification.send(form.instance, claims)
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -648,7 +648,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
-        ResponsibleParticipationRequestedNotification(participation).send()
+        ResponsibleParticipationRequestedNotification.send(participation)
         return participation
 
     def perform_decline(self, participant, participation=None, **kwargs):
@@ -658,7 +658,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
-        ResponsibleConfirmedParticipationDeclinedNotification(participation).send()
+        ResponsibleConfirmedParticipationDeclinedNotification.send(participation)
         return participation
 
     def _configure_participation(

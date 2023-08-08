@@ -213,7 +213,7 @@ class ParticipationMixin:
         return [(str(_("View event")), urljoin(settings.GET_SITE_URL(), shift.get_absolute_url()))]
 
     @classmethod
-    def send(cls, participation: AbstractParticipation):
+    def send(cls, participation: AbstractParticipation, **additional_data):
         user = (
             participation.user
             if participation.get_real_instance_class() == LocalParticipation
@@ -222,7 +222,11 @@ class ParticipationMixin:
         Notification.objects.create(
             slug=cls.slug,
             user=user,
-            data={"participation_id": participation.id, "email": participation.participant.email},
+            data={
+                "participation_id": participation.id,
+                "email": participation.participant.email,
+                **additional_data,
+            },
         )
 
 
@@ -276,23 +280,8 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
     title = _("A confirmed participation of yours has been tweaked by a responsible")
 
     @classmethod
-    def send(
-        cls, participation: AbstractParticipation, claims: List[str]
-    ):  # pylint: disable=arguments-differ
-        user = (
-            participation.user
-            if participation.get_real_instance_class() == LocalParticipation
-            else None
-        )
-        Notification.objects.create(
-            slug=cls.slug,
-            user=user,
-            data={
-                "participation_id": participation.id,
-                "email": participation.participant.email,
-                "claims": claims,
-            },
-        )
+    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+        super().send(participation, claims=claims)
 
     @classmethod
     def get_subject(cls, notification):
@@ -314,37 +303,37 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
 
 
 class ResponsibleMixin:
-    def __init__(self, participation: AbstractParticipation):
-        self.participation = participation
-
-    def responsible_users(self):
+    @classmethod
+    def _responsible_users(cls, participation: AbstractParticipation):
         users = get_users_with_perms(
-            self.participation.shift.event, only_with_perms_in=["change_event"]
+            participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         for user in users:
             if (
-                self.participation.get_real_instance_class() != LocalParticipation
-                or user != self.participation.user
+                participation.get_real_instance_class() != LocalParticipation
+                or user != participation.user
             ):
                 yield user
 
-    def get_data(self, **kwargs):
-        kwargs["disposition_url"] = urljoin(
-            settings.GET_SITE_URL(),
-            reverse("core:shift_disposition", kwargs={"pk": self.participation.shift.pk}),
-        )
-        kwargs["participation_id"] = self.participation.id
-        return kwargs
-
-    def send(self):
+    @classmethod
+    def send(cls, participation: AbstractParticipation, **additional_data):
         Notification.objects.bulk_create(
             [
                 Notification(
-                    slug=self.slug,
+                    slug=cls.slug,
                     user=user,
-                    data=self.get_data(),
+                    data={
+                        "disposition_url": urljoin(
+                            settings.GET_SITE_URL(),
+                            reverse(
+                                "core:shift_disposition", kwargs={"pk": participation.shift.pk}
+                            ),
+                        ),
+                        "participation_id": participation.id,
+                        **additional_data,
+                    },
                 )
-                for user in self.responsible_users()
+                for user in cls._responsible_users(participation)
             ]
         )
 
@@ -426,12 +415,9 @@ class ResponsibleConfirmedParticipationCustomizedNotification(
         )
         return _("Participation altered for {event}").format(event=participation.shift.event)
 
-    def __init__(self, participation: AbstractParticipation, claims: List[str]):
-        super().__init__(participation)
-        self.claims = claims
-
-    def get_data(self, **kwargs):
-        return super().get_data(claims=self.claims)
+    @classmethod
+    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+        super().send(participation, claims=claims or [])
 
     @classmethod
     def get_body(cls, notification):

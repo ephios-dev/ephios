@@ -22,7 +22,11 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
             ).format(site=settings.GET_SITE_URL())
             html_content = render_to_string(
                 "core/mails/base.html",
-                {"subject": _("Your ephios password has been changed"), "body": text_content},
+                {
+                    "subject": _("Your ephios password has been changed"),
+                    "body": text_content,
+                    "SITE_URL": settings.GET_SITE_URL(),
+                },
             )
             message = EmailMultiAlternatives(
                 to=[user.email],
