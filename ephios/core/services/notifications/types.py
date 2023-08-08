@@ -279,6 +279,7 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
     slug = "ephios_participation_customized"
     title = _("A confirmed participation of yours has been tweaked by a responsible")
 
+    # pylint: disable=arguments-differ
     @classmethod
     def send(cls, participation: AbstractParticipation, claims: List[str] = None):
         super().send(participation, claims=claims)
@@ -415,6 +416,7 @@ class ResponsibleConfirmedParticipationCustomizedNotification(
         )
         return _("Participation altered for {event}").format(event=participation.shift.event)
 
+    # pylint: disable=arguments-differ
     @classmethod
     def send(cls, participation: AbstractParticipation, claims: List[str] = None):
         super().send(participation, claims=claims or [])
