@@ -93,7 +93,7 @@ class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
                 event=obj,
                 shared_with__in=[FederatedGuest.objects.get(pk=guest)],
             )
-        except (KeyError, FederatedEventShare.DoesNotExist) as exc:
+        except (KeyError, FederatedEventShare.DoesNotExist, FederatedGuest.DoesNotExist) as exc:
             self.request.session.flush()
             raise PermissionDenied from exc
         return obj

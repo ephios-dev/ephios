@@ -43,7 +43,7 @@ class InviteCode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Federation invite code for {self.url}"
+        return _("Federation invite code for {url}").format(url=self.url)
 
     @property
     def is_expired(self):
@@ -62,7 +62,7 @@ class FederatedEventShare(models.Model):
     shared_with = models.ManyToManyField(FederatedGuest)
 
     def __str__(self):
-        return f"Federated event share for {self.event}"
+        return _("Federated event share for {event}").format(event=self.event)
 
 
 class FederatedUser(models.Model):
@@ -76,7 +76,9 @@ class FederatedUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Federated user {self.first_name} {self.last_name}"
+        return _("Federated user {first_name} {last_name}").format(
+            first_name=self.first_name, last_name=self.last_name
+        )
 
     def as_participant(self) -> "FederatedParticipant":
         return FederatedParticipant(
@@ -115,11 +117,9 @@ class FederatedParticipant(AbstractParticipant):
 
     @property
     def icon(self):
-        # pylint: disable-next=consider-using-f-string
+        title = _("Federated user")
         return mark_safe(
-            '<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'.format(
-                title=_("Federated user")
-            )
+            f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'
         )
 
 

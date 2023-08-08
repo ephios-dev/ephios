@@ -10,23 +10,28 @@ from ephios.core.signals import (
     periodic_signal,
 )
 from ephios.plugins.federation.forms import EventAllowFederationForm
-from ephios.plugins.federation.models import FederatedUser
+from ephios.plugins.federation.models import FederatedHost, FederatedUser
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.federation.signals.nav_link")
 def add_nav_link(sender, request, **kwargs):
-    return [
-        {
-            "label": _("External events"),
-            "url": reverse("federation:external_event_list"),
-            "active": request.resolver_match and request.resolver_match.app_name == "federation",
-        }
-    ]
+    return (
+        [
+            {
+                "label": _("External events"),
+                "url": reverse("federation:external_event_list"),
+                "active": request.resolver_match
+                and request.resolver_match.app_name == "federation",
+            }
+        ]
+        if FederatedHost.objects.exists()
+        else []
+    )
 
 
 @receiver(
     participant_from_request,
-    dispatch_uid="ephios.plugins.federation.signals.guest_participant_from_request",
+    dispatch_uid="ephios.plugins.federation.signals.federated_participant_from_request",
 )
 def federated_participant_from_request(sender, request, **kwargs):
     if "federated_user" in request.session.keys():
@@ -52,7 +57,7 @@ def federation_settings_section(sender, request, **kwargs):
     return (
         [
             {
-                "label": _("Federation") + " (beta)",
+                "label": _("Federation"),
                 "url": reverse("federation:settings"),
                 "active": request.resolver_match.app_name == "federation",
             },
