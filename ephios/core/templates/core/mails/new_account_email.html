@@ -1,10 +1,15 @@
 {% extends "core/mails/notification.html" %}
 {% load i18n %}
 {% block content %}
-    {% translate "You're receiving this email because a new account has been created for you at ephios." %}
-    {% translate "Please go to the following page and choose a new password:" %}
-    {% block reset_link %}
-        <a href="{{ SITE_URL }}{% url 'password_reset_confirm' uidb64=notification.data.uidb64 token=notification.data.token %}">{% trans "Set password" %}</a>
-    {% endblock %}
-    {% translate "Your username is your email address:" %} {{ notification.user.email }}
+    <tr>
+        <td>
+            {% translate "You're receiving this email because a new account has been created for you at ephios." %}
+            {% translate "Please go to the following page and choose a new password:" %}
+            {% block reset_link %}
+                <a href="
+                        {{ SITE_URL }}{% url 'password_reset_confirm' uidb64=notification.data.uidb64 token=notification.data.token %}">{% trans "Set password" %}</a>
+            {% endblock %}
+            {% translate "Your username is your email address:" %} {{ notification.user.email }}
+        </td>
+    </tr>
 {% endblock %}
