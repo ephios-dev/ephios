@@ -2,29 +2,36 @@
 {% load i18n %}
 
 {% block content %}
-    {% with start_time=event.get_start_time end_time=event.get_end_time %}
-        {% if start_time %}
-            <h2>
-                {{ start_time|date:"D" }},
-                {% if not event.is_multi_day %}
-                    {{ start_time|date:"SHORT_DATE_FORMAT" }}
-                    {{ start_time|date:"TIME_FORMAT" }} –
-                    {{ end_time|date:"TIME_FORMAT" }}
-                {% else %}
-                    {{ start_time|date:"SHORT_DATE_FORMAT" }}
-                    {% translate "to" %}
-                    {{ end_time|date:"SHORT_DATE_FORMAT" }}
+    <tr>
+        <td>
+            {% with start_time=event.get_start_time end_time=event.get_end_time %}
+                {% if start_time %}
+                    <h2>
+                        {{ start_time|date:"D" }},
+                        {% if not event.is_multi_day %}
+                            {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                            {{ start_time|date:"TIME_FORMAT" }} –
+                            {{ end_time|date:"TIME_FORMAT" }}
+                        {% else %}
+                            {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                            {% translate "to" %}
+                            {{ end_time|date:"SHORT_DATE_FORMAT" }}
+                        {% endif %}
+                    </h2>
                 {% endif %}
-            </h2>
-        {% endif %}
-    {% endwith %}
-    <div>
-        <p>
-            {{ event.description }}
-        </p>
-        <p>
-            {% translate "Location" %}: {{ event.location }}<br/>
-        </p>
-        <a class="btn-action" href="{{ SITE_URL }}{{ event.get_absolute_url }}">{% translate "View" %}</a>
-    </div>
+            {% endwith %}
+            <p>
+                {{ event.description }}
+            </p>
+            <p>
+                {% translate "Location" %}: {{ event.location }}<br/>
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td class="actions">
+            <a class="btn btn-primary"
+               href="{{ SITE_URL }}{{ event.get_absolute_url }}">{% translate "View event" %}</a>
+        </td>
+    </tr>
 {% endblock %}

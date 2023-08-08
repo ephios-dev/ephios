@@ -3,31 +3,41 @@
 {% load i18n %}
 
 {% block emailcss %}
-    div.actions {
-    margin-top: 2rem;
+    td.actions {
+    padding-top: 2rem;
+    text-align: center;
+    margin: 0 auto;
     }
-    .supertitle {
+    .organization-name {
     font-weight: bold;
     color: #76858f;
+    text-decoration: none;
     }
 {% endblock %}
 
 {% block header %}
-    <span class="supertitle">
+    <a href="{{ SITE_URL }}" class="organization-name">
         {{ organization_name }}
-    </span>
+    </a>
     {{ block.super }}
 {% endblock %}
 
 {% block content %}
-    {{ body|rich_text }}
+    <tr>
+        <td>
+            {{ body|rich_text }}
+        </td>
+    </tr>
+
     {% with notification.get_actions as actions %}
         {% if actions %}
-            <div class="actions">
-                {% for label, url in notification.get_actions %}
-                    <a class="btn-action" href="{{ url }}">{{ label }}</a>
-                {% endfor %}
-            </div>
+            <tr>
+                <td class="actions">
+                    {% for label, url in notification.get_actions %}
+                        <a class="btn{% if forloop.first %} btn-primary{% endif %}" href="{{ url }}">{{ label }}</a>
+                    {% endfor %}
+                </td>
+            </tr>
         {% endif %}
     {% endwith %}
 {% endblock %}
