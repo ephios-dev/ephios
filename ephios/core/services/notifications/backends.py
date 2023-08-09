@@ -94,10 +94,16 @@ class EmailNotificationBackend(AbstractNotificationBackend):
 
     @classmethod
     def send(cls, notification):
+        headers = {
+            "X-Auto-Response-Suppress": "OOF, NRN, AutoReply, RN",
+            "Auto-Submitted": "auto-generated",
+        }
+
         email = EmailMultiAlternatives(
             to=[cls._get_mailaddress(notification)],
             subject=notification.subject,
             body=notification.as_plaintext(),
+            headers=headers,
         )
         email.attach_alternative(notification.as_html(), "text/html")
         email.send()
