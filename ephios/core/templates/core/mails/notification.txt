@@ -1,7 +1,7 @@
 {% load i18n %}
-{{ subject }}
+{{ subject|wordwrap:80 }}
 
-{{ body }}
+{{ body|wordwrap:80 }}
 
 {% for label, url in notification.get_actions %}{{ label }}: {{ url }}
 {% endfor %}
