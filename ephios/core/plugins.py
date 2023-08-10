@@ -48,7 +48,7 @@ def is_receiver_path_enabled(searchpath):
     relies in a module that is either an enabled plugin or considered ephios core.
     Uses a cache that gets reset when enabled plugins preference changes.
     """
-    enabled_paths = settings.EPHIOS_CORE_MODULES + [
+    enabled_paths = settings.EPHIOS_APP_MODULES + [
         plugin.module for plugin in get_enabled_plugins()
     ]
     # Not using `startwith`, as we don't want to match "ephios_foobar" against "ephios_foo"

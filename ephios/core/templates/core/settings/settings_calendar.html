@@ -1,4 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
+{% load settings_extras %}
 {% load static %}
 {% load crispy_forms_filters %}
 {% load i18n %}
@@ -10,7 +11,7 @@
     </p>
     <div class="input-group mb-3">
         <input type="text" id="calendar-url" class="form-control" aria-label="calendar-url"
-               value="{{ SITE_URL }}{% url "core:user_event_feed" userprofile.calendar_token %}"
+               value="{% site_url %}{% url "core:user_event_feed" userprofile.calendar_token %}"
                readonly>
         <button id="calendar-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
                 data-clipboard-target="#calendar-url" data-trigger="manual"

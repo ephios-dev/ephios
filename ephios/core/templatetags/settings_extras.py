@@ -14,3 +14,8 @@ def available_management_settings_sections(request):
 @register.simple_tag
 def oidc_client_enabled():
     return settings.ENABLE_OIDC_CLIENT
+
+
+@register.simple_tag
+def site_url():
+    return settings.GET_SITE_URL()

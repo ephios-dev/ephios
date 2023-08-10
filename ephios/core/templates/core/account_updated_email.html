@@ -1,7 +1,8 @@
 {% extends "email_base.html" %}
+{% load settings_extras %}
 {% load i18n %}
 {% block content %}
     {% trans "You're receiving this email because your account at ephios has been updated." %}
-    {% trans "You can see the changes in your profile:" %} {{ SITE_URL }}{{ url }}
+    {% trans "You can see the changes in your profile:" %} {% site_url %}{{ url }}
     {% trans "Your username is your email address:" %} {{ email }}
 {% endblock %}
