@@ -52,6 +52,11 @@ if not DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    # we need to import our own modules before everything else to allow template
+    # customizing e.g. for django-oauth-toolkit
+    "ephios.core",
+    "ephios.extra",
+    "ephios.api",
     "django.contrib.admin",
     "django.contrib.auth",
     "polymorphic",
@@ -76,15 +81,12 @@ INSTALLED_APPS = [
     "ephios.modellogging",
 ]
 
-EPHIOS_CORE_MODULES = [
+EPHIOS_APP_MODULES = [
+    # core modules always receive plugin signals
     "ephios.core",
     "ephios.extra",
     "ephios.api",
 ]
-# we need to import our own modules before everything else to allow template
-# customizing for django-oauth-toolkit
-INSTALLED_APPS = EPHIOS_CORE_MODULES + INSTALLED_APPS
-
 CORE_PLUGINS = [
     "ephios.plugins.basesignup.apps.PluginApp",
     "ephios.plugins.pages.apps.PluginApp",
