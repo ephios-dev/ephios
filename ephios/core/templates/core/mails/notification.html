@@ -22,7 +22,7 @@
 {% block header %}
     <div class="organization-name">
         <a href="{% site_url %}">
-            {{ organization_name }}
+            {% organization_name %}
         </a>
     </div>
     {{ block.super }}
@@ -50,6 +50,7 @@
 
 {% block footer %}
     <small>
+        {% organization_name as organization_name %}
         {% blocktranslate trimmed %}
             You are receiving this email as a member of {{ organization_name }}.
         {% endblocktranslate %}
