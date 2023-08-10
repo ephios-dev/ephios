@@ -21,6 +21,5 @@ def ephios_base_context(request):
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": settings.EPHIOS_VERSION,
-        "SITE_URL": settings.GET_SITE_URL(),
         "PWA_APP_ICONS": settings.PWA_APP_ICONS,
     }

@@ -1,4 +1,5 @@
 {% extends "core/mails/base.html" %}
+{% load settings_extras %}
 {% load rich_text %}
 {% load i18n %}
 
@@ -20,7 +21,7 @@
 
 {% block header %}
     <div class="organization-name">
-        <a href="{{ SITE_URL }}">
+        <a href="{% site_url %}">
             {{ organization_name }}
         </a>
     </div>

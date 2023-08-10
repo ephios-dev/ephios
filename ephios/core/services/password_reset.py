@@ -25,7 +25,6 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
                 {
                     "subject": _("Your ephios password has been changed"),
                     "body": text_content,
-                    "SITE_URL": settings.GET_SITE_URL(),
                 },
             )
             message = EmailMultiAlternatives(
