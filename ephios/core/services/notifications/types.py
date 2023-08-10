@@ -9,7 +9,6 @@ from django.utils.encoding import force_bytes
 from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
-from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
@@ -72,9 +71,6 @@ class AbstractNotificationHandler:
             "notification": notification,
             "notification_settings_url": urljoin(
                 settings.GET_SITE_URL(), reverse("core:settings_notifications")
-            ),
-            "organization_name": global_preferences_registry.manager().get(
-                "general__organization_name"
             ),
         }
 

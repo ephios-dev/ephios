@@ -1,0 +1,2 @@
+{% block content %}{{ body|wordwrap:80 }}{% endblock %}
+{% block footer %}{% endblock %}
