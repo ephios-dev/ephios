@@ -1,7 +1,4 @@
-from urllib.parse import urljoin
-
 import django_filters
-from django.conf import settings
 from django.db.models import Max, Min, Prefetch
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import filters, serializers, viewsets
@@ -9,6 +6,7 @@ from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
 from ephios.core.models import Event, EventType, Shift
+from ephios.core.templatetags.settings_extras import make_absolute
 
 
 class SignupStatsSerializer(serializers.Serializer):
@@ -53,7 +51,7 @@ class EventSerializer(serializers.ModelSerializer):
     frontend_url = serializers.SerializerMethodField()
 
     def get_frontend_url(self, obj):
-        return urljoin(settings.GET_SITE_URL(), obj.get_absolute_url())
+        return make_absolute(obj.get_absolute_url())
 
     class Meta:
         model = Event

@@ -32,7 +32,7 @@
     <tr>
         <td class="actions">
             <a class="btn btn-primary"
-               href="{% site_url %}{{ event.get_absolute_url }}">{% translate "View event" %}</a>
+               href="{{ event.get_absolute_url|make_absolute }}">{% translate "View event" %}</a>
         </td>
     </tr>
 {% endblock %}
