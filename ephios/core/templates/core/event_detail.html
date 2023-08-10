@@ -57,6 +57,12 @@
                                 {% trans "Add another shift" %}
                             </a></li>
                             <li><a class="dropdown-item"
+                                       href="{% url "core:event_cancel" event.pk %}">
+                                    <span class="fas fa-ban"></span>
+                                    {% translate "Cancel event" %}
+                                </a>
+                                </li>
+                            <li><a class="dropdown-item"
                                    href="{% url "core:event_delete" event.pk %}">
                                 <span class="fas fa-trash-alt"></span>
                                 {% trans "Delete event" %}

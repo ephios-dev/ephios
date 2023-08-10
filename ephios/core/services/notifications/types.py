@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -528,6 +528,48 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
         return notification.data.get("content")
 
 
+class EventCancellationNotification(AbstractNotificationHandler):
+    slug = "ephios_event_cancellation"
+    title = _("An event has been cancelled")
+    unsubscribe_allowed = False
+
+    @classmethod
+    def send(cls, event: Event, explanation: Optional[str]):
+        participants = set()
+        for shift in event.shifts.all():
+            participants.update(shift.get_participants())
+        notifications = []
+        for participant in participants:
+            notifications.append(
+                Notification(
+                    slug=cls.slug,
+                    data={
+                        "email": participant.email,
+                        "event_title": event.title,
+                        "start_time": date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
+                        "end_time": date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
+                        "explanation": explanation,
+                    },
+                )
+            )
+        Notification.objects.bulk_create(notifications)
+
+    @classmethod
+    def get_subject(cls, notification):
+        return _("{title} has been cancelled").format(title=notification.data.get("event_title"))
+
+    @classmethod
+    def as_plaintext(cls, notification):
+        result = _("{title} ({start_time} - {end_time}) has been cancelled.").format(
+            title=notification.data.get("event_title"),
+            start_time=notification.data.get("start_time"),
+            end_time=notification.data.get("end_time"),
+        )
+        if explanation := notification.data.get("explanation"):
+            result += _(" Further information:\n{explanation}").format(explanation=explanation)
+        return result
+
+
 class ConsequenceApprovedNotification(AbstractNotificationHandler):
     slug = "ephios_consequence_approved"
     title = _("Your request has been approved")
@@ -580,6 +622,7 @@ CORE_NOTIFICATION_TYPES = [
     NewEventNotification,
     EventReminderNotification,
     CustomEventParticipantNotification,
+    EventCancellationNotification,
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
 ]
