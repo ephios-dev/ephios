@@ -2,12 +2,13 @@ import logging
 import os
 import re
 from email.mime.image import MIMEImage
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, SafeMIMEMultipart
+
+from ephios.core.templatetags.settings_extras import make_absolute
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +95,7 @@ def convert_image_to_cid(image_src, cid_id, verify_ssl=True):
         else:
             # replaced normalize_image_url with these two lines
             if "://" not in image_src:
-                image_src = urljoin(settings.GET_SITE_URL(), image_src)
+                image_src = make_absolute(image_src)
             path = urlparse(image_src).path
             guess_subtype = os.path.splitext(path)[1][1:]
             response = requests.get(image_src, verify=verify_ssl)

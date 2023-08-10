@@ -1,7 +1,5 @@
 from typing import List
-from urllib.parse import urljoin
 
-from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -15,6 +13,7 @@ from ephios.core.models import AbstractParticipation, Event, LocalParticipation,
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import LocalUserParticipant
+from ephios.core.templatetags.settings_extras import make_absolute
 
 
 def installed_notification_types():
@@ -69,9 +68,7 @@ class AbstractNotificationHandler:
             "subject": cls.get_subject(notification),
             "body": cls.get_body(notification),
             "notification": notification,
-            "notification_settings_url": urljoin(
-                settings.GET_SITE_URL(), reverse("core:settings_notifications")
-            ),
+            "notification_settings_url": make_absolute(reverse("core:settings_notifications")),
         }
 
     @classmethod
@@ -109,7 +106,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
     @classmethod
     def _get_personal_data_url(cls, notification):
-        return urljoin(settings.GET_SITE_URL(), reverse("core:settings_personal_data"))
+        return make_absolute(reverse("core:settings_personal_data"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
@@ -151,7 +148,7 @@ class NewProfileNotification(AbstractNotificationHandler):
                 "token": notification.data["token"],
             },
         )
-        return urljoin(settings.GET_SITE_URL(), reset_link)
+        return make_absolute(reset_link)
 
 
 class NewEventNotification(AbstractNotificationHandler):
@@ -196,7 +193,7 @@ class NewEventNotification(AbstractNotificationHandler):
     @classmethod
     def get_actions(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return [(str(_("View event")), urljoin(settings.GET_SITE_URL(), event.get_absolute_url()))]
+        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
 
 
 class ParticipationMixin:
@@ -205,7 +202,7 @@ class ParticipationMixin:
         shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift
-        return [(str(_("View event")), urljoin(settings.GET_SITE_URL(), shift.get_absolute_url()))]
+        return [(str(_("View event")), make_absolute(shift.get_absolute_url()))]
 
     @classmethod
     def send(cls, participation: AbstractParticipation, **additional_data):
@@ -319,8 +316,7 @@ class ResponsibleMixin:
                     slug=cls.slug,
                     user=user,
                     data={
-                        "disposition_url": urljoin(
-                            settings.GET_SITE_URL(),
+                        "disposition_url": make_absolute(
                             reverse(
                                 "core:shift_disposition", kwargs={"pk": participation.shift.pk}
                             ),
@@ -341,7 +337,7 @@ class ResponsibleMixin:
         return [
             (
                 str(_("View event")),
-                urljoin(settings.GET_SITE_URL(), participation.shift.get_absolute_url()),
+                make_absolute(participation.shift.get_absolute_url()),
             ),
             (str(_("Disposition")), notification.data.get("disposition_url")),
         ]
@@ -464,7 +460,7 @@ class EventReminderNotification(AbstractNotificationHandler):
     @classmethod
     def get_actions(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return [(str(_("View event")), urljoin(settings.GET_SITE_URL(), event.get_absolute_url()))]
+        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
 
 
 class CustomEventParticipantNotification(AbstractNotificationHandler):

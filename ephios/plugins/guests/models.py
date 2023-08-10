@@ -1,7 +1,6 @@
 import dataclasses
 import secrets
 
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -10,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.core.templatetags.settings_extras import make_absolute
 from ephios.modellogging.log import register_model_for_logging
 
 
@@ -23,8 +23,11 @@ class EventGuestShare(models.Model):
 
     @property
     def url(self):
-        return settings.GET_SITE_URL() + reverse(
-            "guests:register", kwargs={"public_signup_token": self.token, "event_id": self.event.id}
+        return make_absolute(
+            reverse(
+                "guests:register",
+                kwargs={"public_signup_token": self.token, "event_id": self.event.id},
+            )
         )
 
 
