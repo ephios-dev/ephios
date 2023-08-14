@@ -6,11 +6,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: python:3.11
     steps:
     - uses: actions/checkout@v3
     - name: Build and publish to pypi
-      uses: JRubics/poetry-publish@v1.17
+      uses: JRubics/poetry-publish@v1.16
       with:
         pypi_token: ${{ secrets.PYPI_TOKEN }}
         plugins: "poetry-dynamic-versioning[plugin]"
