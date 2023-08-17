@@ -25,6 +25,7 @@ Markdown = "^3.3.7"
 
 psycopg2 = {version = "^2.9.3", optional = true}
 mysqlclient = {version = "^2.1.1", optional = true}
+redis = {extras = ["hiredis"], version = "^5.0.0", optional = true}
 django-compressor = "^4.3"
 django-statici18n = "^2.3.1"
 django-dynamic-preferences = "^1.13.0"
@@ -39,7 +40,6 @@ django-filter = ">=23.2,<24.0"
 djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 django-recurrence = "^1.11.1"
-redis = {version = ">=5.0.0,<6.0.0", optional = true}
 django-oauth-toolkit = "^2.3.0"
 mozilla-django-oidc = "^3.0.0"
 urllib3 = "^1.26.0,<2.0.0"  # pinned because of poetry issues with urllib3 2.0.0
