@@ -244,6 +244,14 @@ def conflicting_event(event, training_event_type, volunteer, groups):
 
 
 @pytest.fixture
+def event_with_required_qualification(event, qualifications):
+    shift = event.shifts.first()
+    shift.signup_configuration = {"required_qualification_ids": [qualifications.nfs.pk]}
+    shift.save()
+    return event
+
+
+@pytest.fixture
 def event_to_next_day(groups, service_event_type, planner, tz):
     managers, planners, volunteers = groups
 
