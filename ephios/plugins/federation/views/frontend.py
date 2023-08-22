@@ -135,7 +135,6 @@ class CreateInviteCodeView(StaffRequiredMixin, CreateView):
 
     model = InviteCode
     form_class = InviteCodeForm
-    success_url = reverse_lazy("federation:settings")
 
     def get_success_url(self):
         return reverse("federation:reveal_invite_code", kwargs={"pk": self.object.pk})
