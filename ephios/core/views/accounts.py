@@ -10,7 +10,12 @@ from django.views.generic.detail import SingleObjectMixin
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.api.access.auth import revoke_all_access_tokens
-from ephios.core.forms.users import GroupForm, QualificationGrantFormset, UserProfileForm
+from ephios.core.forms.users import (
+    DeleteUserProfileForm,
+    GroupForm,
+    QualificationGrantFormset,
+    UserProfileForm,
+)
 from ephios.core.models import QualificationGrant, UserProfile
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
@@ -130,6 +135,12 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = UserProfile
     permission_required = "core.delete_userprofile"
     template_name = "core/userprofile_confirm_delete.html"
+    form_class = DeleteUserProfileForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = self.object
+        return kwargs
 
     def get_success_url(self):
         messages.info(
