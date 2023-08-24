@@ -139,7 +139,9 @@ TEMPLATES = [
     },
 ]
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, "ephios/locale"),)
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "ephios/locale"),
+]
 
 WSGI_APPLICATION = "ephios.wsgi.application"
 
