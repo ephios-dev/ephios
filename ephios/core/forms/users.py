@@ -280,6 +280,22 @@ class UserProfileForm(ModelForm):
         return userprofile
 
 
+class DeleteUserProfileForm(Form):
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        other_staff = UserProfile.objects.filter(is_staff=True).exclude(pk=self.instance.pk)
+        if self.instance.is_staff and not other_staff.exists():
+            raise ValidationError(
+                _(
+                    "At least one user must be technical administrator. "
+                    "Please promote another user before deleting this one."
+                )
+            )
+
+
 class QualificationGrantForm(ModelForm):
     model = QualificationGrant
 

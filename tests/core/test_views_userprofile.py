@@ -184,3 +184,23 @@ class TestUserProfileView:
         form["is_staff"] = True
         form.submit()
         assert UserProfile.objects.get(id=volunteer.id).is_staff
+
+    def test_staff_flag_cannot_be_removed_from_last_staff_user(self, django_app, superuser):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": superuser.id}), user=superuser
+        ).form
+        form["is_staff"] = False
+        response = form.submit()
+        assert response.status_code == 200
+        assert "least one user must be technical administrator" in response.text
+        assert UserProfile.objects.get(id=superuser.id).is_staff
+
+    def test_last_staff_user_cannot_be_deleted(self, django_app, groups, manager, superuser):
+        response = django_app.get(
+            reverse("core:userprofile_delete", kwargs={"pk": superuser.id}),
+            user=manager,
+        )
+        response = response.form.submit()
+        assert response.status_code == 200
+        assert "least one user must be technical administrator" in response.text
+        assert UserProfile.objects.get(id=superuser.id).is_staff
