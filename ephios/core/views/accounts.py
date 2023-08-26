@@ -11,6 +11,7 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.api.access.auth import revoke_all_access_tokens
 from ephios.core.forms.users import (
+    DeleteGroupForm,
     DeleteUserProfileForm,
     GroupForm,
     QualificationGrantFormset,
@@ -145,8 +146,8 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.info(
             self.request,
-            _("The user {name} ({user}) was deleted.").format(
-                name=self.object.get_full_name(), user=self.object
+            _("The user {name} ({mail}) was deleted.").format(
+                name=self.object.get_full_name(), mail=self.object.email
             ),
         )
         return reverse("core:userprofile_list")
@@ -244,6 +245,12 @@ class GroupDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = Group
     permission_required = "auth.delete_group"
     template_name = "core/group_confirm_delete.html"
+    form_class = DeleteGroupForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = self.object
+        return kwargs
 
     def get_success_url(self):
         messages.info(self.request, _('The group "{group}" was deleted.').format(group=self.object))

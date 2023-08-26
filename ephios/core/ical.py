@@ -39,7 +39,7 @@ class EventFeed(ICalFeed):
         return f"{item.pk}@{settings.GET_SITE_URL()}"
 
     def item_organizer(self, item):
-        user = get_users_with_perms(item.event, only_with_perms_in=["change_event"]).first()
+        user = get_users_with_perms(item.event, only_with_perms_in=["core.change_event"]).first()
         email = user.email if user else ""
         return vCalAddress(f"MAILTO:{email}")
 

@@ -25,7 +25,7 @@ from ephios.core.services.notifications.types import enabled_notification_types
 from ephios.core.signals import register_group_permission_fields
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.crispy import AbortLink
-from ephios.extra.permissions import PermissionField, PermissionFormMixin
+from ephios.extra.permissions import PermissionField, PermissionFormMixin, get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
@@ -176,6 +176,23 @@ class GroupForm(PermissionFormMixin, ModelForm):
             ),
         )
 
+    def clean_is_management_group(self):
+        is_management_group = self.cleaned_data["is_management_group"]
+        if self.initial.get("is_management_group", False) and not is_management_group:
+            other_management_groups = get_groups_with_perms(
+                only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS
+            ).exclude(pk=self.instance.pk)
+            if not other_management_groups.exists():
+                raise ValidationError(
+                    _(
+                        "At least one group with management permissions must exist. "
+                        "Please promote another group before demoting this one."
+                    )
+                )
+        if is_management_group:
+            self.cleaned_data["is_hr_group"] = True
+        return is_management_group
+
     def save(self, commit=True):
         add_log_recorder(self.instance, DerivedFieldsLogRecorder(get_group_permission_log_fields))
         group = super().save(commit)
@@ -292,6 +309,26 @@ class DeleteUserProfileForm(Form):
                 _(
                     "At least one user must be technical administrator. "
                     "Please promote another user before deleting this one."
+                )
+            )
+
+
+class DeleteGroupForm(Form):
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        management_groups = get_groups_with_perms(only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS)
+
+        if (
+            self.instance in management_groups
+            and not management_groups.exclude(pk=self.instance.pk).exists()
+        ):
+            raise ValidationError(
+                _(
+                    "At least one group with management permissions must exist. "
+                    "Please promote another group before deleting this one."
                 )
             )
 
