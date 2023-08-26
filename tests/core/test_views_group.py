@@ -110,3 +110,15 @@ class TestGroupView:
         assert response.status_code == 302
         with pytest.raises(Group.DoesNotExist):
             Group.objects.get(name=group.name).exists()
+
+    def test_cannot_delete_last_management_group(self, django_app, groups, manager):
+        group = Group.objects.get(name="Managers")
+        response = django_app.get(
+            reverse("core:group_delete", kwargs={"pk": group.id}),
+            user=manager,
+            status=200,
+        )
+        response = response.form.submit()
+        assert response.status_code == 200
+        assert "least one group with management permissions" in response.text
+        assert Group.objects.filter(name="Managers").exists()

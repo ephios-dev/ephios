@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 {% load i18n %}
 {% load static %}
 
@@ -12,6 +13,7 @@
     </div>
 
     <form method="post">{% csrf_token %}
+        {{ form|as_crispy_errors }}
         <p>{% blocktrans %}Are you sure you want to delete the group "{{ group }}"?{% endblocktrans %}</p>
         <a role="button" class="btn btn-secondary" href="{% url "core:group_list" %}">{% trans "Back" %}</a>
         <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>

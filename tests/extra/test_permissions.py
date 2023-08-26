@@ -1,0 +1,25 @@
+from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
+from ephios.extra.permissions import get_groups_with_perms
+
+
+def test_querying_get_groups_with_perms(groups, event):
+    managers, planners, volunteers = groups
+
+    groups_with_perms = get_groups_with_perms(
+        event,
+        only_with_perms_in=["core.view_event", "core.change_event"],
+        must_have_all_perms=False,
+    )
+    # `only_with_perms_in` is a list of permissions that all groups must have **any** of
+    # as every group in `groups` can view the event/events, all groups should be returned
+    assert set(groups) == set(groups_with_perms)
+
+    change_event_groups_by_list = get_groups_with_perms(
+        event, only_with_perms_in=["core.view_event", "core.change_event"], must_have_all_perms=True
+    )
+    assert set(change_event_groups_by_list) == {managers, planners}
+
+    management_groups_by_list = get_groups_with_perms(
+        only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS
+    )
+    assert set(management_groups_by_list) == {managers}

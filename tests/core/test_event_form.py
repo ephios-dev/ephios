@@ -29,15 +29,17 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     event = shift_form.submit().follow().context["event"]
     assert event.title == "Seeed Concert"
     assert event.type == service_event_type
-    assert set(get_groups_with_perms(event, only_with_perms_in=["view_event"])) == {
+    assert set(get_groups_with_perms(event, only_with_perms_in=["core.view_event"])) == {
         volunteers,
         planners,
     }
-    assert set(get_groups_with_perms(event, only_with_perms_in=["change_event"])) == {planners}
+    assert set(get_groups_with_perms(event, only_with_perms_in=["core.change_event"])) == {planners}
     assert set(
-        get_users_with_perms(event, only_with_perms_in=["change_event"], with_group_users=False)
+        get_users_with_perms(
+            event, only_with_perms_in=["core.change_event"], with_group_users=False
+        )
     ) == {planner}
-    assert set(get_users_with_perms(event, only_with_perms_in=["change_event"])) == {
+    assert set(get_users_with_perms(event, only_with_perms_in=["core.change_event"])) == {
         planner,
         superuser,
     }  # superuser is in planner group
@@ -65,7 +67,9 @@ def test_add_responsible_user_to_event(django_app, planner, event, responsible_u
     response.form["responsible_users"].force_value([responsible_user.id])
     event = response.form.submit().follow().context["event"]
     assert set(
-        get_users_with_perms(event, only_with_perms_in=["change_event"], with_group_users=False)
+        get_users_with_perms(
+            event, only_with_perms_in=["core.change_event"], with_group_users=False
+        )
     ) == {responsible_user}
 
 
