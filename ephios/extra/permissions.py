@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import Optional
 
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
@@ -25,33 +26,41 @@ def staff_required(view_func):
     return _wrapped_view
 
 
-def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms=False):
-    group_perms_model = get_group_obj_perms_model(obj)
-    group_perms_rel_name = group_perms_model.group.field.related_query_name()
-
-    qs = Group.objects.all()
+def _make_permission_names_qualified(permission_names, obj: Optional):
+    """
+    Return a list of permission names in the form "app_label.codename" for the given permissions codenames.
+    If obj is given, the app_label is inferred from the object's meta.
+    Otherwise, the permission name must already be qualified.
+    """
     qualified_permission_names = []
-    for name in only_with_perms_in or []:
+    for name in permission_names or []:
         if "." in name:
             qualified_permission_names.append(name)
         elif obj is not None:
-            qualified_permission_names.append(f"{obj._meta.app_label}.{name}")
+            app_label = obj._meta.app_label  # pylint: disable=protected-access
+            qualified_permission_names.append(f"{app_label}.{name}")
         else:
             raise ValueError("Cannot infer permission app_label from name without obj")
+    return qualified_permission_names
+
+
+def get_groups_with_perms(obj=None, *, only_with_perms_in=None, must_have_all_perms=False):
+    qs = Group.objects.all()
+    qualified_permission_names = _make_permission_names_qualified(only_with_perms_in or [], obj)
     required_perms = get_permissions_from_qualified_names(qualified_permission_names)
 
-    obj_filter = None
+    group_perms_model = get_group_obj_perms_model(obj)
+    group_perms_rel_name = group_perms_model.group.field.related_query_name()
+    obj_filter = {}
     if obj is not None:
         ctype = get_content_type(obj)
         if group_perms_model.objects.is_generic():
-            obj_filter = Q(
-                **{
-                    f"{group_perms_rel_name}__content_type": ctype,
-                    f"{group_perms_rel_name}__object_pk": obj.pk,
-                }
-            )
+            obj_filter = {
+                f"{group_perms_rel_name}__content_type": ctype,
+                f"{group_perms_rel_name}__object_pk": obj.pk,
+            }
         else:
-            obj_filter = Q(**{f"{group_perms_rel_name}__content_object": obj})
+            obj_filter = {f"{group_perms_rel_name}__content_object": obj}
 
     if must_have_all_perms:
         for perm in required_perms:
@@ -61,6 +70,7 @@ def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms
                     | Q(
                         **{
                             f"{group_perms_rel_name}__permission": perm,
+                            **obj_filter,
                         }
                     )
                 )
@@ -73,6 +83,7 @@ def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms
                 | Q(
                     **{
                         f"{group_perms_rel_name}__permission__in": required_perms,
+                        **obj_filter,
                     }
                 )
             )
