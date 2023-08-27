@@ -15,7 +15,7 @@ class TestEventNotifications:
         assert response.status_code == 302
         assert (
             Notification.objects.count()
-            == get_users_with_perms(event, only_with_perms_in=["core.view_event"]).count()
+            == get_users_with_perms(event, only_with_perms_in=["view_event"]).count()
         )
 
     def test_mail_reminder(self, django_app, event, volunteer, planner, groups):
@@ -29,7 +29,7 @@ class TestEventNotifications:
             pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
                 "localparticipation__user", flat=True
             )
-        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["core.view_event"]))
+        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["view_event"]))
         assert Notification.objects.count() == users_not_participating.count()
 
     def test_mail_participants(self, django_app, event, volunteer, planner, groups):
@@ -46,7 +46,7 @@ class TestEventNotifications:
         response = form.submit()
         assert response.status_code == 302
         assert Notification.objects.count() == 1 + len(
-            get_users_with_perms(event, only_with_perms_in=["core.change_event"])
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
 
     def test_mail_participants_content_required(
@@ -75,6 +75,6 @@ class TestEventNotifications:
         form["mail_content"] = "hey Franz was here"
         form.submit()
         number_of_responsible_users = len(
-            get_users_with_perms(event, only_with_perms_in=["core.change_event"])
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
         assert Notification.objects.count() == number_of_responsible_users

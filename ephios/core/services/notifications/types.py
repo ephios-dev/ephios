@@ -159,7 +159,7 @@ class NewEventNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, event: Event, **kwargs):
         notifications = []
-        for user in get_users_with_perms(event, only_with_perms_in=["core.view_event"]):
+        for user in get_users_with_perms(event, only_with_perms_in=["view_event"]):
             notifications.append(
                 Notification(slug=cls.slug, user=user, data={"event_id": event.id, **kwargs})
             )
@@ -299,7 +299,7 @@ class ResponsibleMixin:
     @classmethod
     def _responsible_users(cls, participation: AbstractParticipation):
         users = get_users_with_perms(
-            participation.shift.event, only_with_perms_in=["core.change_event"]
+            participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         for user in users:
             if (
@@ -435,7 +435,7 @@ class EventReminderNotification(AbstractNotificationHandler):
             pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
                 "localparticipation__user", flat=True
             )
-        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["core.view_event"]))
+        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["view_event"]))
         notifications = []
         for user in users_not_participating:
             notifications.append(
@@ -472,7 +472,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     def send(cls, event: Event, content: str):
         participants = set()
         responsible_users = get_users_with_perms(
-            event, with_superusers=False, only_with_perms_in=["core.change_event"]
+            event, with_superusers=False, only_with_perms_in=["change_event"]
         )
         for shift in event.shifts.all():
             participants.update(shift.get_participants())

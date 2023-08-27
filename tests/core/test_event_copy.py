@@ -63,7 +63,7 @@ class TestEventCopy:
         assert Event.objects.all().count() == event_count + 2
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 2
         self.assert_dates(event, occurrences, volunteers, planners)
-        assert volunteer.has_perm("change_event", new_event)
+        assert planner.has_perm("change_event", new_event)
         assert set(get_groups_with_perms(new_event, ["change_event"])) == set(
             get_groups_with_perms(event, ["change_event"])
         )
