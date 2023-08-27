@@ -119,7 +119,7 @@ class EventForm(forms.ModelForm):
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
         for group in get_groups_with_perms(
-            event, only_with_perms_in=["view_event", "change_event"]
+            event, only_with_perms_in=["view_event", "change_event"], must_have_all_perms=False
         ):
             remove_perm("view_event", group, event)
             remove_perm("change_event", group, event)

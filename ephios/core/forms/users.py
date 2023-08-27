@@ -180,7 +180,8 @@ class GroupForm(PermissionFormMixin, ModelForm):
         is_management_group = self.cleaned_data["is_management_group"]
         if self.initial.get("is_management_group", False) and not is_management_group:
             other_management_groups = get_groups_with_perms(
-                only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS
+                only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS,
+                must_have_all_perms=True,
             ).exclude(pk=self.instance.pk)
             if not other_management_groups.exists():
                 raise ValidationError(
@@ -319,7 +320,9 @@ class DeleteGroupForm(Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
-        management_groups = get_groups_with_perms(only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS)
+        management_groups = get_groups_with_perms(
+            only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS, must_have_all_perms=True
+        )
 
         if (
             self.instance in management_groups

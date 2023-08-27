@@ -18,6 +18,7 @@ def test_querying_get_groups_with_perms(groups, event):
     assert set(groups_with_all_perms) == {managers, planners}
 
     management_groups_by_list = get_groups_with_perms(
-        only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS
+        only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS,
+        must_have_all_perms=True,
     )
     assert set(management_groups_by_list) == {managers}

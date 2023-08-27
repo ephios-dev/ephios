@@ -1,5 +1,4 @@
 from functools import wraps
-from typing import Iterable
 
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
@@ -26,7 +25,7 @@ def staff_required(view_func):
     return _wrapped_view
 
 
-def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms=True):
+def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms=False):
     group_perms_model = get_group_obj_perms_model(obj)
     group_perms_rel_name = group_perms_model.group.field.related_query_name()
 
@@ -56,32 +55,30 @@ def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms
 
     if must_have_all_perms:
         for perm in required_perms:
-            obj_perm_filter = Q_FALSE
             if obj is not None:
-                obj_perm_filter = obj_filter & Q(
+                qs = qs.filter(
+                    Q(permissions=perm)
+                    | Q(
+                        **{
+                            f"{group_perms_rel_name}__permission": perm,
+                        }
+                    )
+                )
+            else:
+                qs = qs.filter(permissions=perm)
+    else:
+        if obj is not None:
+            qs = qs.filter(
+                Q(permissions__in=required_perms)
+                | Q(
                     **{
-                        f"{group_perms_rel_name}__permission": perm,
+                        f"{group_perms_rel_name}__permission__in": required_perms,
                     }
                 )
-            qs = qs.filter(obj_perm_filter | Q(permissions=perm))
-    else:
-        obj_perm_filter = Q_FALSE
-        if obj is not None:
-            obj_perm_filter = obj_filter & Q(
-                **{
-                    f"{group_perms_rel_name}__permission__in": required_perms,
-                }
             )
-        qs = qs.filter(obj_perm_filter | Q(permissions__in=required_perms))
+        else:
+            qs = qs.filter(Q(permissions__in=required_perms))
     return qs.distinct()
-
-
-def get_groups_with_all_permissions_in(permission_list: Iterable[str]):
-    permissions = get_permissions_from_qualified_names(permission_list)
-    qs = Group.objects.all()
-    for permission in permissions:
-        qs = qs.filter(permissions=permission)
-    return qs
 
 
 def get_permissions_from_qualified_names(qualified_names):
