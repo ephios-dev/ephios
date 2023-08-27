@@ -412,10 +412,14 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             event.pk = None
             event.save()
             assign_perm(
-                "view_event", get_groups_with_perms(self.get_object(), ["view_event"]), event
+                "view_event",
+                get_groups_with_perms(self.get_object(), only_with_perms_in=["view_event"]),
+                event,
             )
             assign_perm(
-                "change_event", get_groups_with_perms(self.get_object(), ["change_event"]), event
+                "change_event",
+                get_groups_with_perms(self.get_object(), only_with_perms_in=["change_event"]),
+                event,
             )
             assign_perm(
                 "change_event",

@@ -16,8 +16,12 @@ class TestEventCopy:
             assert shift.event.get_start_time() == shift.start_time
             assert shift.meeting_time.date() == shift.start_time.date()
             assert shift.end_time.date() == shift.start_time.date()
-            assert (volunteers and planners) in get_groups_with_perms(shift.event, ["view_event"])
-            assert planners in get_groups_with_perms(shift.event, ["change_event"])
+            assert (volunteers and planners) in get_groups_with_perms(
+                shift.event, only_with_perms_in=["view_event"]
+            )
+            assert planners in get_groups_with_perms(
+                shift.event, only_with_perms_in=["change_event"]
+            )
 
     def test_event_copy_by_rule(self, django_app, planner, event, groups):
         managers, planners, volunteers = groups
@@ -64,8 +68,8 @@ class TestEventCopy:
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 2
         self.assert_dates(event, occurrences, volunteers, planners)
         assert planner.has_perm("change_event", new_event)
-        assert set(get_groups_with_perms(new_event, ["change_event"])) == set(
-            get_groups_with_perms(event, ["change_event"])
+        assert set(get_groups_with_perms(new_event, only_with_perms_in=["change_event"])) == set(
+            get_groups_with_perms(event, only_with_perms_in=["change_event"])
         )
 
     def test_event_multi_shift_copy(self, django_app, planner, groups, multi_shift_event):
@@ -99,8 +103,12 @@ class TestEventCopy:
                 shift.start_time.date(),
                 shift.start_time.date() + timedelta(days=1),
             ]
-            assert (volunteers and planners) in get_groups_with_perms(shift.event, ["view_event"])
-            assert planners in get_groups_with_perms(shift.event, ["change_event"])
+            assert (volunteers and planners) in get_groups_with_perms(
+                shift.event, only_with_perms_in=["view_event"]
+            )
+            assert planners in get_groups_with_perms(
+                shift.event, only_with_perms_in=["change_event"]
+            )
             second_shift = shift.event.shifts.get(start_time__date=shift_date + timedelta(days=1))
             assert second_shift.start_time.date() == shift.start_time.date() + timedelta(days=1)
 
@@ -131,5 +139,9 @@ class TestEventCopy:
             assert shift.event.get_start_time() == shift.start_time
             assert shift.meeting_time.date() == shift.start_time.date()
             assert shift.end_time.date() == shift.start_time.date() + timedelta(days=1)
-            assert (volunteers and planners) in get_groups_with_perms(shift.event, ["view_event"])
-            assert planners in get_groups_with_perms(shift.event, ["change_event"])
+            assert (volunteers and planners) in get_groups_with_perms(
+                shift.event, only_with_perms_in=["view_event"]
+            )
+            assert planners in get_groups_with_perms(
+                shift.event, only_with_perms_in=["change_event"]
+            )
