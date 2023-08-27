@@ -69,14 +69,12 @@ class EventForm(forms.ModelForm):
         if (event := kwargs.get("instance", None)) is not None:
             self.eventtype = event.type
             responsible_users = get_users_with_perms(
-                event, only_with_perms_in=["core.change_event"], with_group_users=False
+                event, only_with_perms_in=["change_event"], with_group_users=False
             )
-            responsible_groups = get_groups_with_perms(
-                event, only_with_perms_in=["core.change_event"]
+            responsible_groups = get_groups_with_perms(event, only_with_perms_in=["change_event"])
+            visible_for = get_groups_with_perms(event, only_with_perms_in=["view_event"]).exclude(
+                id__in=responsible_groups
             )
-            visible_for = get_groups_with_perms(
-                event, only_with_perms_in=["core.view_event"]
-            ).exclude(id__in=responsible_groups)
 
             self.locked_visible_for_groups = set(visible_for.exclude(id__in=can_publish_for_groups))
             kwargs["initial"] = {
@@ -121,13 +119,11 @@ class EventForm(forms.ModelForm):
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
         for group in get_groups_with_perms(
-            event, only_with_perms_in=["core.view_event", "core.change_event"]
+            event, only_with_perms_in=["view_event", "change_event"]
         ):
             remove_perm("view_event", group, event)
             remove_perm("change_event", group, event)
-        for user in get_users_with_perms(
-            event, only_with_perms_in=["core.view_event", "core.change_event"]
-        ):
+        for user in get_users_with_perms(event, only_with_perms_in=["view_event", "change_event"]):
             remove_perm("view_event", user, event)
             remove_perm("change_event", user, event)
 

@@ -61,7 +61,7 @@ class TestNotifications:
         NewEventNotification.send(event)
         EventReminderNotification.send(event)
         assert Notification.objects.count() == 2 * len(
-            get_users_with_perms(event, only_with_perms_in=["core.view_event"])
+            get_users_with_perms(event, only_with_perms_in=["view_event"])
         )
         call_command("send_notifications")
         assert Notification.objects.count() == 0
@@ -77,7 +77,7 @@ class TestNotifications:
         ParticipationRejectedNotification.send(participation)
         ResponsibleParticipationRequestedNotification.send(participation)
         assert Notification.objects.count() == 2 + len(
-            get_users_with_perms(event, only_with_perms_in=["core.change_event"])
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
         call_command("send_notifications")
         assert Notification.objects.count() == 0

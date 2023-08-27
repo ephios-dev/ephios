@@ -31,40 +31,48 @@ def get_groups_with_perms(obj=None, only_with_perms_in=None, must_have_all_perms
     group_perms_rel_name = group_perms_model.group.field.related_query_name()
 
     qs = Group.objects.all()
-    required_perms = get_permissions_from_qualified_names(only_with_perms_in or [])
+    qualified_permission_names = []
+    for name in only_with_perms_in or []:
+        if "." in name:
+            qualified_permission_names.append(name)
+        elif obj is not None:
+            qualified_permission_names.append(f"{obj._meta.app_label}.{name}")
+        else:
+            raise ValueError("Cannot infer permission app_label from name without obj")
+    required_perms = get_permissions_from_qualified_names(qualified_permission_names)
 
-    obj_filter = {}
+    obj_filter = None
     if obj is not None:
         ctype = get_content_type(obj)
         if group_perms_model.objects.is_generic():
-            obj_filter = {
-                f"{group_perms_rel_name}__content_type": ctype,
-                f"{group_perms_rel_name}__object_pk": obj.pk,
-            }
+            obj_filter = Q(
+                **{
+                    f"{group_perms_rel_name}__content_type": ctype,
+                    f"{group_perms_rel_name}__object_pk": obj.pk,
+                }
+            )
         else:
-            obj_filter = {f"{group_perms_rel_name}__content_object": obj}
+            obj_filter = Q(**{f"{group_perms_rel_name}__content_object": obj})
 
     if must_have_all_perms:
         for perm in required_perms:
-            qs = qs.filter(
-                Q(
+            obj_perm_filter = Q_FALSE
+            if obj is not None:
+                obj_perm_filter = obj_filter & Q(
                     **{
                         f"{group_perms_rel_name}__permission": perm,
-                        **obj_filter,
                     }
                 )
-                | Q(permissions=perm)
-            )
+            qs = qs.filter(obj_perm_filter | Q(permissions=perm))
     else:
-        qs = qs.filter(
-            Q(
+        obj_perm_filter = Q_FALSE
+        if obj is not None:
+            obj_perm_filter = obj_filter & Q(
                 **{
                     f"{group_perms_rel_name}__permission__in": required_perms,
-                    **obj_filter,
                 }
             )
-            | Q(permissions__in=required_perms)
-        )
+        qs = qs.filter(obj_perm_filter | Q(permissions__in=required_perms))
     return qs.distinct()
 
 
