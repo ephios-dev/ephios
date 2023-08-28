@@ -47,7 +47,9 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
     SECURE_REFERRER_POLICY = "same-origin"
+    CONN_MAX_AGE = 120
 
 # Application definition
 
