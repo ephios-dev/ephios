@@ -218,13 +218,21 @@ class GroupForm(PermissionFormMixin, ModelForm):
         return group
 
 
-class UserProfileForm(ModelForm):
+class UserProfileForm(PermissionFormMixin, ModelForm):
     groups = ModelMultipleChoiceField(
         label=_("Groups"),
         queryset=Group.objects.all(),
         widget=Select2MultipleWidget,
         required=False,
         disabled=True,  # explicitly enable for users with `change_group` permission
+    )
+    is_staff = PermissionField(
+        label=_("Administrator"),
+        help_text=_(
+            "If checked, this user can change technical ephios settings as well as edit all user profiles, "
+            "groups, qualifications, events and event types."
+        ),
+        permissions=CORE_MANAGEMENT_PERMISSIONS,
     )
 
     def __init__(self, *args, **kwargs):
@@ -247,6 +255,10 @@ class UserProfileForm(ModelForm):
             self.fields["is_staff"].help_text += " " + _(
                 "Only other technical administrators can change this."
             )
+
+    @property
+    def permission_target(self):
+        return self.instance
 
     field_order = [
         "email",

@@ -117,8 +117,8 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
             qualification_formset.save()
             messages.success(
                 self.request,
-                _("User {name} ({user}) updated successfully.").format(
-                    name=self.object.get_full_name(), user=self.object
+                _("User {name} ({email}) updated successfully.").format(
+                    name=self.object.get_full_name(), email=self.object.email
                 ),
             )
             if request.user != userprofile:
@@ -146,8 +146,8 @@ class UserProfileDeleteView(CustomPermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.info(
             self.request,
-            _("The user {name} ({mail}) was deleted.").format(
-                name=self.object.get_full_name(), mail=self.object.email
+            _("The user {name} ({email}) was deleted.").format(
+                name=self.object.get_full_name(), email=self.object.email
             ),
         )
         return reverse("core:userprofile_list")

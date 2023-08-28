@@ -104,8 +104,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(
         default=False,
-        verbose_name=_("Technical Administrator"),
-        help_text=_("If checked, this user can change technical ephios settings."),
+        verbose_name=_("Administrator"),
     )
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
