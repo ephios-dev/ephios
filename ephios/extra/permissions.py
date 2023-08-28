@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import Optional
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -114,7 +115,14 @@ class PermissionField(BooleanField):
     def set_initial_value(self, user_or_group):
         self.target = user_or_group
         wanted_permission_objects = get_permissions_from_qualified_names(self.permission_set)
-        self.initial = set(wanted_permission_objects) <= set(self.target.permissions.all())
+        self.initial = set(wanted_permission_objects) <= set(
+            self._get_permissions_from_user_or_group(self.target)
+        )
+
+    def _get_permissions_from_user_or_group(self, user_or_group):
+        if isinstance(user_or_group, get_user_model()):
+            return user_or_group.user_permissions.all()
+        return user_or_group.permissions.all()
 
     def assign_permissions(self, target):
         for permission in self.permission_set:
