@@ -178,7 +178,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
 
     def clean_is_management_group(self):
         is_management_group = self.cleaned_data["is_management_group"]
-        if self.initial.get("is_management_group", False) and not is_management_group:
+        if self.fields["is_management_group"].initial and not is_management_group:
             other_management_groups = get_groups_with_perms(
                 only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS,
                 must_have_all_perms=True,

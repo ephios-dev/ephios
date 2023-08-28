@@ -3,6 +3,9 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 from guardian.shortcuts import get_group_perms
 
+from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
+from ephios.extra.permissions import get_groups_with_perms
+
 
 class TestGroupView:
     def test_group_list_permission_required(self, django_app, volunteer):
@@ -79,9 +82,16 @@ class TestGroupView:
         assert group.permissions.filter(codename="view_group").exists()
 
     def test_group_edit(self, django_app, groups, manager):
-        group = manager.groups.first()
+        managers, planners, volunteers = groups
+        # promote planning group to management group, so we can delete the management group
         form = django_app.get(
-            reverse("core:group_edit", kwargs={"pk": group.id}), user=manager
+            reverse("core:group_edit", kwargs={"pk": planners.id}), user=manager
+        ).form
+        form["is_management_group"] = True
+        form.submit()
+
+        form = django_app.get(
+            reverse("core:group_edit", kwargs={"pk": managers.id}), user=manager
         ).form
         group_name = "New name"
         form["name"] = group_name
@@ -91,12 +101,12 @@ class TestGroupView:
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         response = form.submit()
         assert response.status_code == 302
-        group.refresh_from_db()
-        assert group.name == group_name
-        assert set(group.user_set.all()) == {manager}
-        assert not group.permissions.filter(codename="add_event").exists()
+        managers.refresh_from_db()
+        assert managers.name == group_name
+        assert set(managers.user_set.all()) == {manager}
+        assert not managers.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" not in get_group_perms(
-            group, Group.objects.get(name="Volunteers")
+            managers, Group.objects.get(name="Volunteers")
         )
 
     def test_group_delete(self, django_app, groups, manager):
@@ -122,3 +132,20 @@ class TestGroupView:
         assert response.status_code == 200
         assert "least one group with management permissions" in response.text
         assert Group.objects.filter(name="Managers").exists()
+
+    def test_management_perms_cannot_be_removed_from_last_management_group(
+        self, django_app, superuser, groups
+    ):
+        group = Group.objects.get(name="Managers")
+        form = django_app.get(
+            reverse("core:group_edit", kwargs={"pk": group.id}),
+            user=superuser,
+            status=200,
+        ).form
+        form["is_management_group"] = False
+        response = form.submit()
+        assert response.status_code == 200
+        assert "least one group with management permissions must exist" in response.text
+        assert Group.objects.get(name="Managers") in get_groups_with_perms(
+            only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS, must_have_all_perms=True
+        )
