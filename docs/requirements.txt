@@ -1,3 +1,5 @@
 sphinx-github-changelog
 sphinxcontrib-openapi
 sphinx-notfound-page
+# 2023-08-28: pin sphinx to 7.1.2 to avoid import error in sphinx-notfound-page with sphinx 7.2.4 and notfound 0.8
+sphinx==7.1.2
