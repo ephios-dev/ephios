@@ -39,8 +39,9 @@ class TestUserProfileView:
     def test_userprofile_list(self, django_app, superuser):
         response = django_app.get(reverse("core:userprofile_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(
-            string=UserProfile.objects.all().values_list("email", flat=True)
+        assert all(
+            email in response.text
+            for email in UserProfile.objects.all().values_list("email", flat=True)
         )
         edit_links = [
             reverse("core:userprofile_edit", kwargs={"pk": userprofile_id})
