@@ -1,64 +1,111 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load utils %}
 {% load user_extras %}
 {% load static %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "Users" %}
+    {% translate "Users" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Users" %}</h1>
+        <h1>
+            {% translate "Users" %}
+        </h1>
     </div>
-    {% if perms.core.add_userprofile %}
-        <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
-                class="fa fa-plus"></span> {% trans "Add user" %}</a>
-    {% endif %}
+
+    <form method="GET" id="filter-form" class="row row-cols-lg-auto g-3 align-items-center">
+        {% if perms.core.add_userprofile %}
+            <div class="col-12">
+                <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
+                        class="fa fa-plus"></span> {% translate "Add user" %}</a>
+            </div>
+        {% endif %}
+        {% crispy_field filter_form.query wrapper_class="col-12" show_labels=False %}
+        {% crispy_field filter_form.groups wrapper_class="col-12 flex-grow-1" show_labels=False %}
+
+        <div class="col-12 mb-3">
+            <button type="submit" class="btn btn-primary">
+                <span class="fa fa-funnel"></span> {% translate "Apply" %}
+            </button>
+            <a class="btn btn-secondary" href="?">{% translate "Reset" %}</a>
+        </div>
+    </form>
+
     {% with global_preferences.general__relevant_qualification_categories as relevant_qualification_categories %}
-        <table id="userprofile_table" class="table table-striped display">
-            <thead>
-            <tr>
-                <th>{% trans "Last name" %}</th>
-                <th>{% trans "First name" %}</th>
-                <th class="d-none d-md-table-cell">{% trans "Email address" %}</th>
-                {% for category in relevant_qualification_categories %}
-                    <th class="d-none d-lg-table-cell">{{ category.title }}</th>
-                {% endfor %}
-                <th class="d-none d-lg-table-cell">{% trans "Information" %}</th>
-                <th>{% trans "Action" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for userprofile in userprofile_list %}
+        <div class="overflow-x-auto">
+            <table id="userprofile_table" class="table table-striped display">
+                <thead>
                 <tr>
-                    <td>{{ userprofile.last_name }}</td>
-                    <td>{{ userprofile.first_name }}</td>
-                    <td class="d-none d-md-table-cell">{{ userprofile.email }}</td>
+                    <th>{% translate "Last name" %}</th>
+                    <th>{% translate "First name" %}</th>
+                    <th class="d-none d-md-table-cell">{% translate "Email address" %}</th>
                     {% for category in relevant_qualification_categories %}
-                        <td class="d-none d-lg-table-cell">{{ userprofile|qualifications_for_category:category.pk }}</td>
+                        <th class="d-none d-lg-table-cell">{{ category.title }}</th>
                     {% endfor %}
-                    <td class="d-none d-lg-table-cell">{% include "core/userprofile_badges.html" with userprofile=userprofile %}</td>
-                    <td class="d-flex">
-                        <a class="btn btn-secondary btn-sm text-nowrap"
+                    <th class="d-none d-lg-table-cell">{% translate "Information" %}</th>
+                    <th>{% translate "Action" %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for userprofile in userprofile_list %}
+                    <tr>
+                        <td>{{ userprofile.last_name }}</td>
+                        <td>{{ userprofile.first_name }}</td>
+                        <td class="d-none d-md-table-cell">
+                            <a href="mailto:{{ userprofile.email }}">
+                                {{ userprofile.email }}
+                            </a>
+                        </td>
+                        {% for category in relevant_qualification_categories %}
+                            <td class="d-none d-lg-table-cell">
+                                {% for abbreviation in userprofile|abbreviations_for_category:category.pk %}
+                                    <span class="badge bg-secondary text-dark">{{ abbreviation }}</span>
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                        <td class="d-none d-lg-table-cell">
+                            {% for group in userprofile.groups.all %}
+                                {% if group|has_permission:"core.change_userprofile" %}
+                                <span class="badge bg-secondary text-dark">{{ group.name }}</span>
+                                {% elif group|has_permission:"core.add_event" %}
+                                    <span class="badge bg-light text-dark">{{ group.name }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-body-secondary">{{ group.name }}</span>
+                                {% endif %}
+                            {% empty %}
+                                <span class="badge bg-danger">{% translate "no group" %}</span>
+                            {% endfor %}
+                            {% if userprofile.is_minor %}
+                                <span class="badge bg-warning">{% translate "Minor" %}</span>
+                            {% endif %}
+                            {% if not userprofile.is_active %}
+                                <span class="badge bg-danger">{% translate "Inactive" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="d-flex">
+                            <a class="btn btn-secondary btn-sm text-nowrap"
                                href="{% url "core:workinghours_detail" userprofile.pk %}"><span
                                     class="fa fa-eye"></span> <span
-                                    class="d-none d-md-inline">{% trans "View working hours" %}</span></a>
-                        <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                           href="{% url "core:userprofile_edit" userprofile.pk %}"><span
-                                class="fa fa-edit"></span> <span
-                                class="d-none d-md-inline">{% trans "Edit" %}</span></a>
-                        {% if perms.core.delete_userprofile %}
+                                    class="d-none d-md-inline">{% translate "View working hours" %}</span></a>
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                               href="{% url "core:userprofile_delete" userprofile.pk %}"><span
-                                    class="fa fa-trash-alt"></span> <span
-                                    class="d-none d-md-inline">{% trans "Delete" %}</span></a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                               href="{% url "core:userprofile_edit" userprofile.pk %}"><span
+                                    class="fa fa-edit"></span> <span
+                                    class="d-none d-md-inline">{% translate "Edit" %}</span></a>
+                            {% if perms.core.delete_userprofile %}
+                                <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                                   href="{% url "core:userprofile_delete" userprofile.pk %}"><span
+                                        class="fa fa-trash-alt"></span> <span
+                                        class="d-none d-md-inline">{% translate "Delete" %}</span></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'core/pagination.html' %}
     {% endwith %}
 {% endblock %}

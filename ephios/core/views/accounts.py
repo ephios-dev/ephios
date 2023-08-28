@@ -1,12 +1,15 @@
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q, QuerySet
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
+from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.api.access.auth import revoke_all_access_tokens
@@ -25,10 +28,57 @@ from ephios.core.services.notifications.types import (
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
+class UserProfileFilterForm(forms.Form):
+    query = forms.CharField(
+        label=_("Search for…"),
+        widget=forms.TextInput(attrs={"placeholder": _("Search for…"), "autofocus": "autofocus"}),
+        required=False,
+    )
+    groups = forms.ModelMultipleChoiceField(
+        label=_("groups"),
+        # help_text=_("Only show users that are in any of these groups."),
+        queryset=Group.objects.all(),
+        required=False,
+        widget=Select2MultipleWidget(
+            attrs={
+                "data-placeholder": _("restrict to groups"),
+                "classes": "w-auto",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
+    def filter(self, qs: QuerySet[UserProfile]):
+        fdata = self.cleaned_data
+
+        if groups := fdata.get("groups"):
+            qs = qs.filter(groups__in=groups)
+
+        if query := fdata.get("query"):
+            qs = qs.filter(
+                Q(first_name__icontains=query)
+                | Q(last_name__icontains=query)
+                | Q(email__icontains=query)
+            )
+        return qs.distinct()
+
+
 class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "core.view_userprofile"
-    ordering = "last_name"
+    paginate_by = 100
+
+    @cached_property
+    def filter_form(self):
+        return UserProfileFilterForm(data=self.request.GET or None, request=self.request)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["filter_form"] = self.filter_form
+        return ctx
 
     def get_queryset(self):
         global_preferences = global_preferences_registry.manager()
@@ -44,6 +94,8 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
                     to_attr=f"qualifications_for_category_{category.pk}",
                 )
             )
+        if self.filter_form.is_valid():
+            qs = self.filter_form.filter(qs)
         return qs.order_by("last_name", "first_name")
 
 

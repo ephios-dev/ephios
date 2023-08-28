@@ -62,7 +62,7 @@ class EventFilterForm(forms.Form):
         required=False,
         widget=forms.SelectMultiple(
             attrs={"class": "flex-grow-1 h-0"}
-        ),  # can't set it using cripsy tag
+        ),  # can't set it using crispy tag
     )
     direction = forms.ChoiceField(
         label=_("Date"),

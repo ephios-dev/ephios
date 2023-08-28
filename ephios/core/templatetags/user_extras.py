@@ -27,13 +27,11 @@ def workhour_items(user):
     return user.get_workhour_items()
 
 
-@register.filter(name="qualifications_for_category")
-def render_qualifications_for_category(userprofile, category_id):
-    return ", ".join(
-        map(
-            lambda grant: grant.qualification.abbreviation,
-            getattr(userprofile, f"qualifications_for_category_{category_id}"),
-        )
+@register.filter(name="abbreviations_for_category")
+def abbreviations_for_category(userprofile, category_id):
+    return map(
+        lambda grant: grant.qualification.abbreviation,
+        getattr(userprofile, f"qualifications_for_category_{category_id}"),
     )
 
 
@@ -79,3 +77,9 @@ def shifts_needing_disposition(user):
 @register.filter(name="intersects")
 def intersects(a, b):
     return bool(set(a) & set(b))
+
+
+@register.filter(name="has_permission")
+def group_has_permission(group, permission):
+    app_label, codename = permission.split(".")
+    return group.permissions.filter(content_type__app_label=app_label, codename=codename).exists()
