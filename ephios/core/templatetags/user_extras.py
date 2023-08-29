@@ -26,14 +26,6 @@ def workhour_items(user):
     return user.get_workhour_items()
 
 
-@register.filter(name="abbreviations_to_show_with_user")
-def abbreviations_to_show_with_user(qualification_queryset):
-    qs = qualification_queryset.filter(category__show_with_user=True).order_by(
-        "category", "abbreviation"
-    )
-    return qs.values_list("abbreviation", flat=True)
-
-
 @register.filter(name="conflicting_participations")
 def participation_conflicts(participation):
     return get_conflicting_participations(
@@ -62,6 +54,11 @@ def shifts_needing_disposition(user):
         )
         .filter(request_count__gt=0)
     )
+
+
+@register.filter(name="grants_to_abbreviation")
+def grants_to_abbreviation(grants):
+    return list(g.qualification.abbreviation for g in grants)
 
 
 @register.filter(name="intersects")

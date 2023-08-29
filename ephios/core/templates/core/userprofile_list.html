@@ -34,55 +34,42 @@
         </div>
     </form>
 
-    <div class="overflow-x-auto">
-        <table id="userprofile_table" class="table table-striped display">
-            <thead>
-            <tr>
-                <th>{% translate "Last name" %}</th>
-                <th>{% translate "First name" %}</th>
-                <th class="d-none d-md-table-cell">{% translate "Email address" %}</th>
-                <th class="d-none d-lg-table-cell">Qualification</th>
-                <th class="d-none d-lg-table-cell">{% translate "Information" %}</th>
-                <th>{% translate "Action" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for userprofile in userprofile_list %}
-                <tr>
-                    <td>{{ userprofile.last_name }}</td>
-                    <td>{{ userprofile.first_name }}</td>
-                    <td class="d-none d-md-table-cell">
-                        <a href="mailto:{{ userprofile.email }}">
-                            {{ userprofile.email }}
-                        </a>
-                    </td>
-                    <td class="d-none d-lg-table-cell">
-                        <span class="badge bg-secondary text-dark">a thing</span>
-                    </td>
-                    <td class="d-none d-lg-table-cell">
-                        {% for group in userprofile.groups.all %}
-                            {% if group|has_permission:"core.change_userprofile" %}
-                                <span class="badge bg-secondary text-dark">{{ group.name }}</span>
-                            {% elif group|has_permission:"core.add_event" %}
-                                <span class="badge bg-light text-dark">{{ group.name }}</span>
-                            {% else %}
-                                <span class="badge bg-light text-body-secondary">{{ group.name }}</span>
-                            {% endif %}
-                        {% empty %}
-                            <span class="badge bg-danger">{% translate "no group" %}</span>
-                        {% endfor %}
+    <ul class="list-group mb-3">
+        {% for userprofile in userprofile_list %}
+            <li class="list-group-item">
+                <div class="row mb-0">
+                    <div class="col-8 col-lg-3">
+                        <h5 class="mb-0">
+                            {{ userprofile.get_full_name }}
+                        </h5>
+                        <a class="link-dark link-underline-opacity-0 link-opacity-50 link-underline-opacity-50-hover link-opacity-100-hover"
+                           href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
+                    </div>
+                    <div class="col-4 col-lg-3 d-flex justify-content-end align-items-start pt-1 gap-1">
                         {% if userprofile.is_minor %}
                             <span class="badge bg-warning">{% translate "Minor" %}</span>
                         {% endif %}
                         {% if not userprofile.is_active %}
                             <span class="badge bg-danger">{% translate "Inactive" %}</span>
+                        {% elif userprofile.is_staff %}
+                            <span class="badge bg-info">{% translate "Admin" %}</span>
                         {% endif %}
-                    </td>
-                    <td class="d-flex">
+                    </div>
+                    <div class="col-8 col-lg">
+                        <div class="text-body-secondary">
+                            <span class="fa fa-users"></span>
+                            {{ userprofile.groups.all|join:", " }}
+                        </div>
+                        <div class="text-body-secondary">
+                            <span class="fa fa-certificate"></span>
+                            {{ userprofile.show_grants|grants_to_abbreviation|join:", " }}
+                        </div>
+                    </div>
+                    <div class="col-4 col-lg-auto d-flex align-items-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "core:workinghours_detail" userprofile.pk %}"><span
                                 class="fa fa-eye"></span> <span
-                                class="d-none d-md-inline">{% translate "View working hours" %}</span></a>
+                                class="d-none d-md-inline">{% translate "Working hours" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                            href="{% url "core:userprofile_edit" userprofile.pk %}"><span
                                 class="fa fa-edit"></span> <span
@@ -91,13 +78,13 @@
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                                href="{% url "core:userprofile_delete" userprofile.pk %}"><span
                                     class="fa fa-trash-alt"></span> <span
-                                    class="d-none d-md-inline">{% translate "Delete" %}</span></a>
+                                    class="visually-hidden">{% translate "Delete" %}</span></a>
                         {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
     {% include 'core/pagination.html' %}
 {% endblock %}

@@ -26,8 +26,10 @@
         {% if participation.participant.is_minor %}
             <span class="badge bg-warning">{% trans "Minor" %}</span>
         {% endif %}
-        {% for abbreviation in participation.participant.qualifications|abbreviations_to_show_with_user %}
-            <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
+        {% for qualification in participation.participant.qualifications %}
+            {% if qualification.category.show_with_user %}
+                <span class='badge bg-secondary text-dark'>{{ qualification.abbreviation }}</span>
+            {% endif %}
         {% endfor %}
     </div>
 </div>

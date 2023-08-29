@@ -21,6 +21,7 @@ from django.db.models import (
     ForeignKey,
     Max,
     Model,
+    Prefetch,
     Q,
     Sum,
     UniqueConstraint,
@@ -39,6 +40,20 @@ from ephios.modellogging.log import (
     register_model_for_logging,
 )
 from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
+
+
+class UserProfileQuerySet(models.QuerySet):
+    def prefetch_show_grants(self):
+        return self.prefetch_related(
+            Prefetch(
+                "qualification_grants",
+                queryset=QualificationGrant.objects.unexpired()
+                .filter(qualification__category__show_with_user=True)
+                .select_related("qualification")
+                .order_by("qualification__category", "qualification__abbreviation"),
+                to_attr="show_grants",
+            )
+        )
 
 
 class UserProfileManager(BaseUserManager):
@@ -120,8 +135,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "date_of_birth",
     ]
 
-    objects = VisibleUserProfileManager()
-    all_objects = UserProfileManager()
+    objects = VisibleUserProfileManager.from_queryset(UserProfileQuerySet)()
+    all_objects = UserProfileManager.from_queryset(UserProfileQuerySet)()
 
     class Meta:
         verbose_name = _("user profile")
@@ -173,6 +188,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 
     @property
     def qualifications(self):
+        """
+        Returns a queryset with all qualifications that are granted to this user and not expired.
+        Be careful to not use this in a loop, as it will perform a query for each iteration.
+        """
         return Qualification.objects.filter(
             pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
         ).annotate(

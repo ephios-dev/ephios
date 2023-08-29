@@ -81,8 +81,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         return ctx
 
     def get_queryset(self):
-        qs = UserProfile.objects.all()
-        # TODO annotate show_with_user qualis
+        qs = UserProfile.objects.all().prefetch_related("groups").prefetch_show_grants()
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
         return qs.order_by("last_name", "first_name")
