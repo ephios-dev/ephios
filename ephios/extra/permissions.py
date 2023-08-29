@@ -103,8 +103,9 @@ def get_permissions_from_qualified_names(qualified_names):
 
 class PermissionField(BooleanField):
     """
-    This field takes a list of permissions and a permission_target and renders a checkbox that is checked if the target
-    has all given permissions. It requires a permission_target attribute on the form as well as calling the appropriate
+    This boolean field takes an additional list of permissions and a permission_target and ist true by default if the
+    permission_target (user or group) has all given permissions.
+    It requires a permission_target attribute on the form as well as calling the appropriate
     methods which is taken care of by PermissionFormMixin
     """
 
