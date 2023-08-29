@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import QuerySet
@@ -90,7 +91,7 @@ class LogView(CustomPermissionRequiredMixin, ListView):
     template_name = "core/logentry_list.html"
     model = LogEntry
     permission_required = "modellogging.view_logentry"
-    paginate_by = 20
+    paginate_by = settings.DEFAULT_LISTVIEW_PAGINATION
 
     @cached_property
     def filter_form(self):

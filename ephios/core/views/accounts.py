@@ -1,3 +1,4 @@
+import settings
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
@@ -69,7 +70,7 @@ class UserProfileFilterForm(forms.Form):
 class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     model = UserProfile
     permission_required = "core.view_userprofile"
-    paginate_by = 100
+    paginate_by = settings.DEFAULT_LISTVIEW_PAGINATION
 
     @cached_property
     def filter_form(self):

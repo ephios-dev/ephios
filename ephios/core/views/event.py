@@ -3,6 +3,7 @@ from calendar import _nextmonth, _prevmonth
 from datetime import datetime, time, timedelta
 
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -194,7 +195,7 @@ class EventFilterForm(forms.Form):
 
 class EventListView(LoginRequiredMixin, ListView):
     model = Event
-    paginate_by = 100
+    paginate_by = settings.DEFAULT_LISTVIEW_PAGINATION
 
     def get_queryset(self):
         qs = (
