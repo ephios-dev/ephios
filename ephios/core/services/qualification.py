@@ -1,3 +1,7 @@
+from django.core.cache import cache
+from django.db.models.signals import m2m_changed, post_delete, post_save
+from django.dispatch import receiver
+
 from ephios.core.models import Qualification
 from ephios.extra.graphs import DirectedGraph
 
@@ -6,22 +10,14 @@ class QualificationUniverse:
     """
     This class stores all qualifications and their inclusions as a graph.
     You can get a copy of the graph with get_graph() and use it to do computations on qualifications.
-    The graph is invalidated on every change to a qualification using the post_save signal in signals.py.
+    The graph is invalidated after changes to qualifications.
     """
 
-    _qualifications = None
+    cache_key = "ephios.core.services.qualification.QualificationUniverse.qualifications"
 
     @classmethod
     def get_graph(cls):
         return cls.build_graph(cls.get_qualifications())
-
-    @classmethod
-    def get_qualifications(cls):
-        if cls._qualifications is None:
-            cls._qualifications = (
-                Qualification.objects.all().prefetch_related("includes").select_related("category")
-            )
-        return cls._qualifications
 
     @classmethod
     def build_graph(cls, qualifications):
@@ -33,8 +29,26 @@ class QualificationUniverse:
         )
 
     @classmethod
+    def get_qualifications(cls):
+        def _get_qualifications():
+            qs = Qualification.objects.all().prefetch_related("includes").select_related("category")
+            bool(qs)  # force evaluation
+            return qs
+
+        return cache.get_or_set(cls.cache_key, _get_qualifications)
+
+    @classmethod
     def clear(cls):
-        cls._qualifications = None
+        cache.delete(cls.cache_key)
+
+
+@receiver(post_save, sender=Qualification)
+@receiver(post_delete, sender=Qualification)
+@receiver(m2m_changed, sender=Qualification.includes.through)
+def clear_universe_graph_on_request_finished(sender, instance, **kwargs):
+    # The graph is invalidated after qualifications were saved, deleted or m2m relations changed.
+    # This should cover most cases in regular use.
+    QualificationUniverse.clear()
 
 
 def essential_set_of_qualifications(

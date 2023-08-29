@@ -182,10 +182,16 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         Returns a queryset with all qualifications that are granted to this user and not expired.
         Be careful to not use this in a loop, as it will perform a query for each iteration.
         """
-        return Qualification.objects.filter(
-            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
-        ).annotate(
-            expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+        return (
+            Qualification.objects.filter(
+                pk__in=self.qualification_grants.unexpired().values_list(
+                    "qualification_id", flat=True
+                )
+            )
+            .annotate(
+                expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+            )
+            .select_related("category")
         )
 
     def get_workhour_items(self):

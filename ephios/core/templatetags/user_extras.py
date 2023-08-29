@@ -61,11 +61,14 @@ def shifts_needing_disposition(user):
 
 @register.filter(name="grants_to_essential_abbreviations")
 def grants_to_essential_abbreviations(grants: Iterable[QualificationGrant]):
-    essentials = list(
-        essential_set_of_qualifications_to_show_with_user(
-            grant.qualification for grant in grants if grant.is_valid()
-        )
+    return qualifications_to_essential_abbreviations(
+        grant.qualification for grant in grants if grant.is_valid()
     )
+
+
+@register.filter(name="qualifications_to_essential_abbreviations")
+def qualifications_to_essential_abbreviations(qualifications):
+    essentials = list(essential_set_of_qualifications_to_show_with_user(qualifications))
     essentials.sort(key=lambda q: (q.category_id, q.abbreviation))
     return list(qualification.abbreviation for qualification in essentials)
 
