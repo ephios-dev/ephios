@@ -178,7 +178,7 @@ QualificationCategoryFormset = forms.modelformset_factory(
     formset=BaseQualificationCategoryFormset,
     can_delete=True,
     extra=0,
-    fields=["title", "uuid"],
+    fields=["title", "show_with_user", "uuid"],
 )
 
 

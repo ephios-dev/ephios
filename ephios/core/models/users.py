@@ -237,7 +237,7 @@ class QualificationCategory(Model):
     title = CharField(_("title"), max_length=254)
     show_with_user = BooleanField(
         default=True,
-        verbose_name=_("Show qualifications of this category everywhere a user is presented."),
+        verbose_name=_("Show qualifications of this category everywhere a user is presented"),
     )
 
     objects = QualificationCategoryManager()
