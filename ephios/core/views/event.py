@@ -240,7 +240,7 @@ class EventListView(LoginRequiredMixin, ListView):
         if self.filter_form.is_valid():
             qs = self.filter_form.filter_events(qs)
         else:
-            # saveguard for not loading too many events
+            # safeguard for not loading too many events
             qs = qs.filter(end_time__gte=timezone.now()).order_by("start_time", "end_time")
         return qs
 

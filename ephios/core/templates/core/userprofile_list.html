@@ -39,31 +39,37 @@
         {% for userprofile in userprofile_list %}
             <li class="list-group-item">
                 <div class="row mb-0">
-                    <div class="col-8 col-lg-3">
-                        <h5 class="mb-0">
+                    <div class="col-12 col-lg-5">
+                        <h5 class="mb-0 d-inline">
                             {{ userprofile.get_full_name }}
                         </h5>
+                        <span class="float-end">
+                            {% if userprofile.is_minor %}
+                                <span class="badge bg-warning">{% translate "Minor" %}</span>
+                            {% endif %}
+                            {% if not userprofile.is_active %}
+                                <span class="badge bg-danger">{% translate "Inactive" %}</span>
+                            {% elif userprofile.is_staff %}
+                                <span class="badge bg-info">{% translate "Admin" %}</span>
+                            {% endif %}
+                        </span>
+                        <br/>
                         <a class="link-dark link-underline-opacity-0 link-opacity-50 link-underline-opacity-50-hover link-opacity-100-hover"
                            href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
                     </div>
-                    <div class="col-4 col-lg-3 d-flex justify-content-end align-items-start pt-1 gap-1">
-                        {% if userprofile.is_minor %}
-                            <span class="badge bg-warning">{% translate "Minor" %}</span>
-                        {% endif %}
-                        {% if not userprofile.is_active %}
-                            <span class="badge bg-danger">{% translate "Inactive" %}</span>
-                        {% elif userprofile.is_staff %}
-                            <span class="badge bg-info">{% translate "Admin" %}</span>
-                        {% endif %}
-                    </div>
                     <div class="col-8 col-lg">
-                        <div class="text-body-secondary">
-                            <span class="fa fa-users"></span>
-                            {{ userprofile.groups.all|join:", " }}
+                        <div class="text-">
+                            {% if userprofile.groups.all %}
+                                <span class="fas fa-users"></span>
+                                {{ userprofile.groups.all|join:", " }}
+                            {% else %}
+                                <span class="fas fa-users-slash" title="{% translate "no groups" %}"></span>
+                            {% endif %}
                         </div>
                         <div class="text-body-secondary">
-                            <span class="fa fa-certificate"></span>
-                            {{ userprofile.qualification_grants.all|grants_to_essential_abbreviations|join:", " }}
+                            {% for abbreviation in userprofile.qualification_grants.all|grants_to_essential_abbreviations %}
+                                <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="col-4 col-lg-auto d-flex align-items-center justify-content-end">
