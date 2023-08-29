@@ -16,17 +16,18 @@
         </h1>
     </div>
 
-    <form method="GET" id="filter-form" class="row row-cols-lg-auto g-3 align-items-center">
+    <form method="GET" id="filter-form" class="row align-items-center">
         {% if perms.core.add_userprofile %}
-            <div class="col-12">
+            <div class="col-12 col-lg-auto">
                 <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
                         class="fa fa-plus"></span> {% translate "Add user" %}</a>
             </div>
         {% endif %}
-        {% crispy_field filter_form.query wrapper_class="col-12" show_labels=False %}
-        {% crispy_field filter_form.groups wrapper_class="col-12 flex-grow-1" show_labels=False %}
+        {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.groups wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.qualifications wrapper_class="col-12 col-lg" show_labels=False %}
 
-        <div class="col-12 mb-3">
+        <div class="col-12 col-lg-auto mb-3">
             <button type="submit" class="btn btn-primary">
                 <span class="fa fa-funnel"></span> {% translate "Apply" %}
             </button>

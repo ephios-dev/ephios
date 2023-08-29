@@ -6,6 +6,7 @@ from django.urls import reverse
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import Qualification
+from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.plugins.qualification_management.importing import (
     RepoError,
     fetch_deserialized_qualifications_from_repo,
@@ -66,9 +67,7 @@ def test_import_view(django_app, superuser):
     assert Qualification.objects.count() == 2
     assert not Qualification.objects.exclude(uuid__in=[SANH_UUID, NOTSAN_UUID]).exists()
     assert set(
-        Qualification.collect_all_included_qualifications(
-            [Qualification.objects.get(uuid=NOTSAN_UUID)]
-        )
+        collect_all_included_qualifications([Qualification.objects.get(uuid=NOTSAN_UUID)])
     ) == set(Qualification.objects.all())
 
 

@@ -319,21 +319,6 @@ class Qualification(Model):
 
     natural_key.dependencies = ["core.QualificationCategory"]
 
-    @classmethod
-    def collect_all_included_qualifications(cls, given_qualifications) -> set:
-        """We collect using breadth first search with one query for every layer of inclusion."""
-        all_qualifications = set(given_qualifications)
-        current = set(given_qualifications)
-        while current:
-            new = (
-                Qualification.objects.filter(included_by__in=current)
-                .exclude(id__in=(q.id for q in all_qualifications))
-                .distinct()
-            )
-            all_qualifications |= set(new)
-            current = new
-        return all_qualifications
-
 
 class CustomQualificationGrantQuerySet(models.QuerySet):
     # Available on both Manager and QuerySet.

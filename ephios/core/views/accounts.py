@@ -20,7 +20,7 @@ from ephios.core.forms.users import (
     QualificationGrantFormset,
     UserProfileForm,
 )
-from ephios.core.models import UserProfile
+from ephios.core.models import Qualification, QualificationGrant, UserProfile
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
     ProfileUpdateNotification,
@@ -35,13 +35,23 @@ class UserProfileFilterForm(forms.Form):
         required=False,
     )
     groups = forms.ModelMultipleChoiceField(
-        label=_("groups"),
-        # help_text=_("Only show users that are in any of these groups."),
+        label=_("Groups"),
         queryset=Group.objects.all(),
         required=False,
         widget=Select2MultipleWidget(
             attrs={
                 "data-placeholder": _("restrict to groups"),
+                "classes": "w-auto",
+            }
+        ),
+    )
+    qualifications = forms.ModelMultipleChoiceField(
+        label=_("Qualifications"),
+        queryset=Qualification.objects.all(),
+        required=False,
+        widget=Select2MultipleWidget(
+            attrs={
+                "data-placeholder": _("restrict to qualification"),
                 "classes": "w-auto",
             }
         ),
@@ -54,15 +64,23 @@ class UserProfileFilterForm(forms.Form):
     def filter(self, qs: QuerySet[UserProfile]):
         fdata = self.cleaned_data
 
-        if groups := fdata.get("groups"):
-            qs = qs.filter(groups__in=groups)
-
         if query := fdata.get("query"):
             qs = qs.filter(
                 Q(first_name__icontains=query)
                 | Q(last_name__icontains=query)
                 | Q(email__icontains=query)
             )
+
+            if groups := fdata.get("groups"):
+                qs = qs.filter(groups__in=groups)
+
+        if qualifications := fdata.get("qualifications"):
+            qs = qs.filter(
+                qualification_grants__in=QualificationGrant.objects.unexpired().filter(
+                    qualification__in=qualifications
+                )
+            )
+
         return qs.distinct()
 
 

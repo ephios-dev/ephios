@@ -9,8 +9,9 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification
+from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.core.models.events import PlaceholderParticipation
+from ephios.core.services.qualification import collect_all_included_qualifications
 
 
 @dataclasses.dataclass(frozen=True)
@@ -49,10 +50,10 @@ class AbstractParticipant:
 
     @functools.lru_cache(maxsize=64)
     def collect_all_qualifications(self) -> set:
-        return Qualification.collect_all_included_qualifications(self.qualifications)
+        return collect_all_included_qualifications(self.qualifications)
 
     def has_qualifications(self, qualifications):
-        return set(qualifications) <= self.collect_all_qualifications()
+        return set(qualifications) <= set(self.collect_all_qualifications())
 
     def reverse_signup_action(self, shift):
         raise NotImplementedError
