@@ -21,7 +21,6 @@ from django.db.models import (
     ForeignKey,
     Max,
     Model,
-    Prefetch,
     Q,
     Sum,
     UniqueConstraint,
@@ -43,17 +42,8 @@ from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorde
 
 
 class UserProfileQuerySet(models.QuerySet):
-    def prefetch_show_grants(self):
-        return self.prefetch_related(
-            Prefetch(
-                "qualification_grants",
-                queryset=QualificationGrant.objects.unexpired()
-                .filter(qualification__category__show_with_user=True)
-                .select_related("qualification")
-                .order_by("qualification__category", "qualification__abbreviation"),
-                to_attr="show_grants",
-            )
-        )
+    def visible(self):
+        return self.filter(is_visible=True)
 
 
 class UserProfileManager(BaseUserManager):
@@ -104,7 +94,7 @@ class UserProfileManager(BaseUserManager):
 
 class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_visible=True)
+        return super().get_queryset().visible()
 
     # mozilla-django-oidc looks here for a method to create users
     def create_user(self, username, email):
@@ -357,6 +347,12 @@ class QualificationGrant(Model):
     expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
 
     objects = CustomQualificationGrantQuerySet.as_manager()
+
+    def is_expired(self):
+        return self.expires and self.expires < timezone.now()
+
+    def is_valid(self):
+        return not self.is_expired()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"

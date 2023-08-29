@@ -1,9 +1,10 @@
 import pytest
 
-from ephios.core.models import QualificationGrant
+from ephios.core.models import QualificationCategory, QualificationGrant
 from ephios.core.services.qualification import (
     collect_all_included_qualifications,
     essential_set_of_qualifications,
+    essential_set_of_qualifications_to_show_with_user,
 )
 
 
@@ -32,3 +33,31 @@ def test_collect_all_included_qualifications(qualifications, qualified_volunteer
         qualifications.nfs,
         qualifications.rs,
     }
+
+
+def test_essential_set_of_qualifications_to_show_with_user(overqualified_volunteer, qualifications):
+    essentials = essential_set_of_qualifications_to_show_with_user(
+        overqualified_volunteer.qualifications.all()
+    )
+    assert essentials == {qualifications.nfs, qualifications.c, qualifications.be}
+    driverslicense_category = qualifications.c.category
+    driverslicense_category.show_with_user = False
+    driverslicense_category.save()
+    essentials = essential_set_of_qualifications_to_show_with_user(
+        overqualified_volunteer.qualifications.all()
+    )
+    assert essentials == {qualifications.nfs}
+
+
+def test_essential_set_of_qualifications_to_show_with_user_special_cases():
+    assert not essential_set_of_qualifications_to_show_with_user([])
+    A = QualificationCategory.objects.create(title="A", show_with_user=True)
+    B = QualificationCategory.objects.create(title="B", show_with_user=False)
+    a1 = A.qualifications.create(title="a1", category=A)
+    b1 = B.qualifications.create(title="b1", category=B)
+    b1.includes.add(a1)
+    a2 = A.qualifications.create(title="a2", category=A)
+    a2.includes.add(b1)
+    b2 = B.qualifications.create(title="b2", category=B)
+    b2.includes.add(a2)
+    assert {a2} == essential_set_of_qualifications_to_show_with_user([a1, b1, a2, b2])

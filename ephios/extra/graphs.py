@@ -61,6 +61,12 @@ class DirectedGraph:
         """
         return self._bfs(nodes, extend_with=self.children)
 
+    def spread_reverse(self, nodes):
+        """
+        Return all nodes that can reach any of the given nodes.
+        """
+        return self._bfs(nodes, extend_with=self.parents)
+
     def _bfs(self, starts, extend_with):
         """
         Return all nodes reachable from the given node. Avoids cycles.

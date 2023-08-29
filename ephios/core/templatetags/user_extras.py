@@ -1,10 +1,13 @@
+from typing import Iterable
+
 from django import template
 from django.db.models import Count, Q
 from django.utils import timezone
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
-from ephios.core.models import AbstractParticipation, Shift
+from ephios.core.models import AbstractParticipation, QualificationGrant, Shift
+from ephios.core.services.qualification import essential_set_of_qualifications_to_show_with_user
 from ephios.core.signup.methods import get_conflicting_participations
 
 register = template.Library()
@@ -56,9 +59,15 @@ def shifts_needing_disposition(user):
     )
 
 
-@register.filter(name="grants_to_abbreviation")
-def grants_to_abbreviation(grants):
-    return list(g.qualification.abbreviation for g in grants)
+@register.filter(name="grants_to_essential_abbreviations")
+def grants_to_essential_abbreviations(grants: Iterable[QualificationGrant]):
+    essentials = list(
+        essential_set_of_qualifications_to_show_with_user(
+            grant.qualification for grant in grants if grant.is_valid()
+        )
+    )
+    essentials.sort(key=lambda q: (q.category_id, q.abbreviation))
+    return list(qualification.abbreviation for qualification in essentials)
 
 
 @register.filter(name="intersects")

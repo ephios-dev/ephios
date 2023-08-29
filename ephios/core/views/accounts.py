@@ -25,6 +25,7 @@ from ephios.core.services.notifications.types import (
     NewProfileNotification,
     ProfileUpdateNotification,
 )
+from ephios.core.services.qualification import uuids_of_qualifications_fulfilling_any_of
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -40,7 +41,7 @@ class UserProfileFilterForm(forms.Form):
         required=False,
         widget=Select2MultipleWidget(
             attrs={
-                "data-placeholder": _("restrict to groups"),
+                "data-placeholder": _("Group membership"),
                 "classes": "w-auto",
             }
         ),
@@ -51,7 +52,7 @@ class UserProfileFilterForm(forms.Form):
         required=False,
         widget=Select2MultipleWidget(
             attrs={
-                "data-placeholder": _("restrict to qualification"),
+                "data-placeholder": _("Qualification"),
                 "classes": "w-auto",
             }
         ),
@@ -77,7 +78,9 @@ class UserProfileFilterForm(forms.Form):
         if qualifications := fdata.get("qualifications"):
             qs = qs.filter(
                 qualification_grants__in=QualificationGrant.objects.unexpired().filter(
-                    qualification__in=qualifications
+                    qualification__uuid__in=uuids_of_qualifications_fulfilling_any_of(
+                        qualifications
+                    )
                 )
             )
 
@@ -99,7 +102,9 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         return ctx
 
     def get_queryset(self):
-        qs = UserProfile.objects.all().prefetch_related("groups").prefetch_show_grants()
+        qs = UserProfile.objects.all().prefetch_related(
+            "groups", "qualification_grants__qualification"
+        )
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
         return qs.order_by("last_name", "first_name")

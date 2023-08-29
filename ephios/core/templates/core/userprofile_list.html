@@ -63,7 +63,7 @@
                         </div>
                         <div class="text-body-secondary">
                             <span class="fa fa-certificate"></span>
-                            {{ userprofile.show_grants|grants_to_abbreviation|join:", " }}
+                            {{ userprofile.qualification_grants.all|grants_to_essential_abbreviations|join:", " }}
                         </div>
                     </div>
                     <div class="col-4 col-lg-auto d-flex align-items-center justify-content-end">
