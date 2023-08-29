@@ -1,7 +1,6 @@
 from django import template
 from django.db.models import Count, Q
 from django.utils import timezone
-from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
@@ -27,20 +26,11 @@ def workhour_items(user):
     return user.get_workhour_items()
 
 
-@register.filter(name="abbreviations_for_category")
-def abbreviations_for_category(userprofile, category_id):
-    return map(
-        lambda grant: grant.qualification.abbreviation,
-        getattr(userprofile, f"qualifications_for_category_{category_id}"),
+@register.filter(name="abbreviations_to_show_with_user")
+def abbreviations_to_show_with_user(qualification_queryset):
+    qs = qualification_queryset.filter(category__show_with_user=True).order_by(
+        "category", "abbreviation"
     )
-
-
-@register.filter(name="get_relevant_qualifications")
-def get_relevant_qualifications(qualification_queryset):
-    global_preferences = global_preferences_registry.manager()
-    qs = qualification_queryset.filter(
-        category__in=global_preferences["general__relevant_qualification_categories"]
-    ).order_by("category", "abbreviation")
     return qs.values_list("abbreviation", flat=True)
 
 

@@ -1,9 +1,9 @@
-import settings
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
-from django.db.models import Prefetch, Q, QuerySet
+from django.db.models import Q, QuerySet
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -11,7 +11,6 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import Select2MultipleWidget
-from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.api.access.auth import revoke_all_access_tokens
 from ephios.core.forms.users import (
@@ -21,7 +20,7 @@ from ephios.core.forms.users import (
     QualificationGrantFormset,
     UserProfileForm,
 )
-from ephios.core.models import QualificationGrant, UserProfile
+from ephios.core.models import UserProfile
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
     ProfileUpdateNotification,
@@ -82,19 +81,8 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         return ctx
 
     def get_queryset(self):
-        global_preferences = global_preferences_registry.manager()
-        categories = global_preferences["general__relevant_qualification_categories"]
         qs = UserProfile.objects.all()
-        for category in categories:
-            qs = qs.prefetch_related(
-                Prefetch(
-                    "qualification_grants",
-                    queryset=QualificationGrant.objects.filter(
-                        qualification__category=category,
-                    ).select_related("qualification"),
-                    to_attr=f"qualifications_for_category_{category.pk}",
-                )
-            )
+        # TODO annotate show_with_user qualis
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
         return qs.order_by("last_name", "first_name")
