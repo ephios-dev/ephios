@@ -1,26 +1,40 @@
-from copy import copy
-
 from ephios.core.models import Qualification
 from ephios.extra.graphs import DirectedGraph
 
-_UNIVERSE_GRAPH = None
 
+class QualificationUniverse:
+    """
+    This class stores all qualifications and their inclusions as a graph.
+    You can get a copy of the graph with get_graph() and use it to do computations on qualifications.
+    The graph is invalidated on every change to a qualification using the post_save signal in signals.py.
+    """
 
-def _get_universe_graph():
-    global _UNIVERSE_GRAPH
-    if _UNIVERSE_GRAPH is None:
-        _UNIVERSE_GRAPH = DirectedGraph(
+    _qualifications = None
+
+    @classmethod
+    def get_graph(cls):
+        return cls.build_graph(cls.get_qualifications())
+
+    @classmethod
+    def get_qualifications(cls):
+        if cls._qualifications is None:
+            cls._qualifications = (
+                Qualification.objects.all().prefetch_related("includes").select_related("category")
+            )
+        return cls._qualifications
+
+    @classmethod
+    def build_graph(cls, qualifications):
+        return DirectedGraph(
             {
                 qualification.uuid: [inc.uuid for inc in qualification.includes.all()]
-                for qualification in Qualification.objects.all().prefetch_related("includes")
+                for qualification in qualifications
             }
         )
-    return copy(_UNIVERSE_GRAPH)
 
-
-def clear_universe_graph():
-    global _UNIVERSE_GRAPH
-    _UNIVERSE_GRAPH = None
+    @classmethod
+    def clear(cls):
+        cls._qualifications = None
 
 
 def essential_set_of_qualifications(
@@ -30,7 +44,7 @@ def essential_set_of_qualifications(
     Compute a minimum set of qualifications that include every qualification in the given set, assuming
     all (transitive) inclusions from the given universe.
     """
-    graph = _get_universe_graph()
+    graph = QualificationUniverse.get_graph()
     has_uuids = {qualification.uuid for qualification in qualifications}
     graph.keep_only(has_uuids)
     return {q for q in qualifications if q.uuid in graph.roots()}
@@ -54,7 +68,7 @@ def essential_set_of_qualifications_to_show_with_user(qualifications):
     # If the roots contain an element not to be shown, we remove it
     # from the graph and repead, until we can return roots that should
     # all be shown
-    graph = _get_universe_graph()
+    graph = QualificationUniverse.get_graph()
     qualifications = set(qualifications)
     graph.keep_only({qualification.uuid for qualification in qualifications})
 
@@ -75,7 +89,7 @@ def collect_all_included_qualifications(qualifications):
     Compute the set of all qualifications that are included in the given set of qualifications, assuming
     all (transitive) inclusions from the given universe.
     """
-    graph = _get_universe_graph()
+    graph = QualificationUniverse.get_graph()
     all_uuids = graph.spread_from([qualification.uuid for qualification in qualifications])
     return Qualification.objects.filter(uuid__in=all_uuids)
 
@@ -85,5 +99,5 @@ def uuids_of_qualifications_fulfilling_any_of(qualifications):
     Return uuids of all qualifications fulfilling any of the given qualifications,
     assuming all (transitive) inclusions from the given universe.
     """
-    graph = _get_universe_graph()
+    graph = QualificationUniverse.get_graph()
     return graph.spread_reverse([qualification.uuid for qualification in qualifications])

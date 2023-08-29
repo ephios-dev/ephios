@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
-from django.db.models import Q, QuerySet
+from django.db.models import Prefetch, Q, QuerySet
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -103,7 +103,13 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         qs = UserProfile.objects.all().prefetch_related(
-            "groups", "qualification_grants__qualification"
+            "groups",
+            Prefetch(
+                "qualification_grants",
+                queryset=QualificationGrant.objects.select_related(
+                    "qualification", "qualification__category"
+                ),
+            ),
         )
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
