@@ -256,6 +256,23 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
                 "Only other technical administrators can change this."
             )
 
+        # email change can be used for account takeover, so only allow that in specific cases
+        if not (
+            request.user.is_staff  # staff user can change email
+            or self.instance == request.user  # user can change own email
+            or not self.instance.is_staff
+            and (  # if modifying a non-staff user
+                # users that can modify groups can change email
+                request.user.has_perm("auth.change_group")
+                # or the modified user is not in a group that the modifying user is not in
+                or set(request.user.groups.all()) >= set(self.instance.groups.all())
+            )
+        ):
+            self.fields["email"].disabled = True
+            self.fields["email"].help_text = _(
+                "You are not allowed to change the email address of this user."
+            )
+
     @property
     def permission_target(self):
         return self.instance
