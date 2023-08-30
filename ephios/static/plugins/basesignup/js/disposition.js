@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#id_user").djangoSelect2({
-        theme: "bootstrap5",
+        theme: "bootstrap-5",
         insertTag: function (data, tag) {
             // Insert the tag at the end of the results
             if (data.length === 0) {

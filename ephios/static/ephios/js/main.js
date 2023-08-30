@@ -18,7 +18,7 @@ function handleForms(elem) {
     });
 
     elem.find(".django-select2").djangoSelect2({
-        theme: "bootstrap5"
+        theme: "bootstrap-5"
     });
     elem.find("[data-formset]").formset({
         animateForms: true,

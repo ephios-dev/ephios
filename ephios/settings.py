@@ -151,7 +151,12 @@ WSGI_APPLICATION = "ephios.wsgi.application"
 DATABASES = {"default": env.db_url()}
 
 # Caches
-CACHES = {"default": env.cache_url(default="locmemcache://")}
+CACHES = {
+    "default": {
+        "TIMEOUT": 60 * 60 * 12,  # 12 hours
+        **env.cache_url(default="locmemcache://"),
+    }
+}
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 DJANGO_REDIS_IGNORE_EXCEPTIONS = True
 DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
@@ -304,6 +309,8 @@ GUARDIAN_MONKEY_PATCH = False
 SELECT2_JS = ""
 SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""
+SELECT2_CACHE_BACKEND = "default"
+SELECT2_THEME = "bootstrap-5"
 
 # django-debug-toolbar
 if DEBUG and env.bool("DEBUG_TOOLBAR", True):
