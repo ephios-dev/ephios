@@ -57,5 +57,11 @@ $theme-colors: map-merge($theme-colors, $custom-theme-colors);
 @import "../../bootstrap/scss/utilities/api";
 
 // 8. Add additional custom code here
+
+// fix for integrating the select2-bootstrap-5-theme with bootstrap 5.3
+// https://github.com/apalfrey/select2-bootstrap-5-theme/pull/82#issuecomment-1573261275
+$s2bs5-border-color: $border-color;
+
+@import "../../select2-bootstrap-5-theme/select2-bootstrap-5-theme.scss";
 @import "ephios_utilities";
 @import "ephios_custom";
