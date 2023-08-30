@@ -40,22 +40,26 @@
             <li class="list-group-item">
                 <div class="row mb-0">
                     <div class="col-12 col-lg-5">
-                        <h5 class="mb-0 d-inline">
-                            {{ userprofile.get_full_name }}
-                        </h5>
-                        <span class="float-end">
-                            {% if userprofile.is_minor %}
-                                <span class="badge bg-warning">{% translate "Minor" %}</span>
-                            {% endif %}
-                            {% if not userprofile.is_active %}
-                                <span class="badge bg-danger">{% translate "Inactive" %}</span>
-                            {% elif userprofile.is_staff %}
-                                <span class="badge bg-info">{% translate "Admin" %}</span>
-                            {% endif %}
-                        </span>
-                        <br/>
-                        <a class="link-dark link-underline-opacity-0 link-opacity-50 link-underline-opacity-50-hover link-opacity-100-hover"
-                           href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
+                        <div class="row">
+                            <div class="col col-lg-6 col-xxl-8">
+                                <h5 class="mb-0 d-inline">
+                                    {{ userprofile.get_full_name }}
+                                </h5>
+                                <br/>
+                                <a class="link-dark link-underline-opacity-0 link-opacity-50 link-underline-opacity-50-hover link-opacity-100-hover"
+                                   href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
+                            </div>
+                            <div class="col-auto col-lg-6 col-xxl-4">
+                                {% if userprofile.is_minor %}
+                                    <span class="badge bg-warning">{% translate "Minor" %}</span>
+                                {% endif %}
+                                {% if not userprofile.is_active %}
+                                    <span class="badge bg-danger">{% translate "Inactive" %}</span>
+                                {% elif userprofile.is_staff %}
+                                    <span class="badge bg-info">{% translate "Admin" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                     <div class="col-8 col-lg">
                         <div>
