@@ -12,7 +12,7 @@ function handleForms(elem) {
                 return $(query).html();
             },
             title: function () {
-                return $(el.getAttribute("data-title-ref")).html();
+                return $(el.getAttribute("data-bs-title-ref")).html();
             }
         });
     });

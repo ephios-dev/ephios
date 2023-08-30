@@ -2,8 +2,8 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import Group
-from django.db.models import Prefetch, Q, QuerySet
+from django.contrib.auth.models import Group, Permission
+from django.db.models import Count, Exists, OuterRef, Prefetch, Q, QuerySet
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -14,6 +14,9 @@ from django_select2.forms import Select2MultipleWidget
 
 from ephios.api.access.auth import revoke_all_access_tokens
 from ephios.core.forms.users import (
+    HR_TEST_PERMISSION,
+    MANAGEMENT_TEST_PERMISSION,
+    PLANNING_TEST_PERMISSION,
     DeleteGroupForm,
     DeleteUserProfileForm,
     GroupForm,
@@ -281,6 +284,32 @@ class GroupListView(CustomPermissionRequiredMixin, ListView):
     permission_required = "auth.view_group"
     template_name = "core/group_list.html"
     ordering = "name"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "user_set",
+            )
+            .annotate(
+                user_count=Count("user"),
+                **{
+                    attr: Exists(
+                        Permission.objects.filter(
+                            codename=codename,
+                            group=OuterRef("pk"),
+                            content_type__app_label=app_label,
+                        )
+                    )
+                    for attr, app_label, codename in [
+                        ("is_planning_group", *PLANNING_TEST_PERMISSION.split(".")),
+                        ("is_hr_group", *HR_TEST_PERMISSION.split(".")),
+                        ("is_management_group", *MANAGEMENT_TEST_PERMISSION.split(".")),
+                    ]
+                },
+            )
+        )
 
 
 class GroupCreateView(CustomPermissionRequiredMixin, CreateView):

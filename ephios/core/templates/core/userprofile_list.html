@@ -58,7 +58,7 @@
                            href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
                     </div>
                     <div class="col-8 col-lg">
-                        <div class="text-">
+                        <div>
                             {% if userprofile.groups.all %}
                                 <span class="fas fa-users"></span>
                                 {{ userprofile.groups.all|join:", " }}

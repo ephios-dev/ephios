@@ -30,7 +30,25 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import add_log_recorder
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
-CORE_MANAGEMENT_PERMISSIONS = [
+PLANNING_TEST_PERMISSION = "core.add_event"
+
+PLANNING_PERMISSIONS = [
+    "core.add_event",
+    "core.delete_event",
+]
+
+HR_TEST_PERMISSION = "core.change_userprofile"
+
+HR_PERMISSIONS = [
+    "core.add_userprofile",
+    "core.change_userprofile",
+    "core.delete_userprofile",
+    "core.view_userprofile",
+]
+
+MANAGEMENT_TEST_PERMISSION = "auth.change_group"
+
+MANAGEMENT_PERMISSIONS = [
     "auth.add_group",
     "auth.change_group",
     "auth.delete_group",
@@ -65,7 +83,7 @@ def get_group_permission_log_fields(group):
     return {
         _("Can add events"): "add_event" in perms,
         _("Can edit users"): "change_userprofile" in perms,
-        _("Can manage ephios"): "change_group" in perms,
+        _("Can manage ephios"): "change_group" in perms,  # FIXME "change_group" is ambigous
         # force evaluation of querysets
         _("Can publish events for groups"): set(
             get_objects_for_group(group, "publish_event_for_group", klass=Group)
@@ -79,7 +97,7 @@ def get_group_permission_log_fields(group):
 class GroupForm(PermissionFormMixin, ModelForm):
     is_planning_group = PermissionField(
         label=_("Can add events"),
-        permissions=["core.add_event", "core.delete_event"],
+        permissions=PLANNING_PERMISSIONS,
         required=False,
     )
     publish_event_for_group = ModelMultipleChoiceField(
@@ -104,12 +122,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         help_text=_(
             "If checked, users in this group can view, add, edit and delete users. They can also manage group memberships for their own groups."
         ),
-        permissions=[
-            "core.add_userprofile",
-            "core.change_userprofile",
-            "core.delete_userprofile",
-            "core.view_userprofile",
-        ],
+        permissions=HR_PERMISSIONS,
         required=False,
     )
     is_management_group = PermissionField(
@@ -117,7 +130,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         help_text=_(
             "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
         ),
-        permissions=CORE_MANAGEMENT_PERMISSIONS,
+        permissions=MANAGEMENT_PERMISSIONS,
         required=False,
     )
 
@@ -180,7 +193,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
         is_management_group = self.cleaned_data["is_management_group"]
         if self.fields["is_management_group"].initial and not is_management_group:
             other_management_groups = get_groups_with_perms(
-                only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS,
+                only_with_perms_in=MANAGEMENT_PERMISSIONS,
                 must_have_all_perms=True,
             ).exclude(pk=self.instance.pk)
             if not other_management_groups.exists():
@@ -232,7 +245,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
             "If checked, this user can change technical ephios settings as well as edit all user profiles, "
             "groups, qualifications, events and event types."
         ),
-        permissions=CORE_MANAGEMENT_PERMISSIONS,
+        permissions=MANAGEMENT_PERMISSIONS,
     )
 
     def __init__(self, *args, **kwargs):
@@ -350,7 +363,7 @@ class DeleteGroupForm(Form):
 
     def clean(self):
         management_groups = get_groups_with_perms(
-            only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS, must_have_all_perms=True
+            only_with_perms_in=MANAGEMENT_PERMISSIONS, must_have_all_perms=True
         )
 
         if (

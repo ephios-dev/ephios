@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 from guardian.shortcuts import get_group_perms
 
-from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
+from ephios.core.forms.users import MANAGEMENT_PERMISSIONS
 from ephios.extra.permissions import get_groups_with_perms
 
 
@@ -147,5 +147,5 @@ class TestGroupView:
         assert response.status_code == 200
         assert "least one group with management permissions must exist" in response.text
         assert Group.objects.get(name="Managers") in get_groups_with_perms(
-            only_with_perms_in=CORE_MANAGEMENT_PERMISSIONS, must_have_all_perms=True
+            only_with_perms_in=MANAGEMENT_PERMISSIONS, must_have_all_perms=True
         )
