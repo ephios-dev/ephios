@@ -49,6 +49,75 @@ class TestUserProfileView:
         ]
         assert response.html.findAll("a", href=edit_links)
 
+    @pytest.fixture()
+    def userprofile_list_filter_form(self, django_app, superuser, groups):
+        return django_app.get(reverse("core:userprofile_list"), user=superuser, status=200).form
+
+    @pytest.mark.parametrize(
+        "filter_groups,filter_qualifications,query,expected",
+        [
+            (
+                ["Managers", "Planners", "Volunteers"],
+                [],
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            (
+                ["Managers"],
+                [],
+                "rica",
+                ["rica@localhost"],
+            ),
+            (
+                ["Planners"],
+                ["Notfallsanitäter"],
+                "",
+                [],
+            ),
+            (
+                ["Volunteers"],
+                ["Notfallsanitäter"],
+                "",
+                ["marianne@localhost"],
+            ),
+            (
+                [],
+                [],
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            ([], ["Rettungssanitäter"], "", ["marianne@localhost"]),
+            ([], ["Notarzt", "Rettungssanitäter"], "", ["marianne@localhost"]),
+            ([], ["Notarzt"], "", []),
+        ],
+    )
+    def test_userprofile_list_filter_select(
+        self, userprofile_list_filter_form, filter_groups, filter_qualifications, query, expected
+    ):
+        userprofile_list_filter_form["groups"].select_multiple(texts=filter_groups)
+        userprofile_list_filter_form["qualifications"].select_multiple(texts=filter_qualifications)
+        userprofile_list_filter_form["query"] = query
+        response = userprofile_list_filter_form.submit()
+        assert all(email in response.text for email in expected)
+        assert not any(
+            email in response.text
+            for email in UserProfile.objects.exclude(email__in=expected).values_list(
+                "email", flat=True
+            )
+        )
+
     def test_userprofile_create_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_create"), user=volunteer, status=403)
         assert response.status_code == 403

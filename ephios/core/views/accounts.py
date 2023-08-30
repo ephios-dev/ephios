@@ -75,8 +75,8 @@ class UserProfileFilterForm(forms.Form):
                 | Q(email__icontains=query)
             )
 
-            if groups := fdata.get("groups"):
-                qs = qs.filter(groups__in=groups)
+        if groups := fdata.get("groups"):
+            qs = qs.filter(groups__in=groups)
 
         if qualifications := fdata.get("qualifications"):
             qs = qs.filter(

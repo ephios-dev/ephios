@@ -49,8 +49,11 @@ def test_essential_set_of_qualifications_to_show_with_user(overqualified_volunte
     assert essentials == {qualifications.nfs}
 
 
-def test_essential_set_of_qualifications_to_show_with_user_special_cases():
+def test_essential_set_of_qualifications_to_show_with_user_with_empty_graph():
     assert not essential_set_of_qualifications_to_show_with_user([])
+
+
+def test_essential_set_of_qualifications_to_show_with_user_with_root_removal():
     A = QualificationCategory.objects.create(title="A", show_with_user=True)
     B = QualificationCategory.objects.create(title="B", show_with_user=False)
     a1 = A.qualifications.create(title="a1", category=A)

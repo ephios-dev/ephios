@@ -15,7 +15,8 @@ class TestGroupView:
     def test_group_list(self, django_app, superuser, groups):
         response = django_app.get(reverse("core:group_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(string=Group.objects.all().values_list("name", flat=True))
+        for group_name in Group.objects.all().values_list("name", flat=True):
+            assert group_name in response.text
         edit_links = [
             reverse("core:group_edit", kwargs={"pk": group_id})
             for group_id in Group.objects.all().values_list("id", flat=True)
