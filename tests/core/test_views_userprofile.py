@@ -6,6 +6,7 @@ import pytest
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
+from guardian.shortcuts import assign_perm
 
 from ephios.core.models import Notification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
@@ -204,3 +205,17 @@ class TestUserProfileView:
         assert response.status_code == 200
         assert "least one user must be technical administrator" in response.text
         assert UserProfile.objects.get(id=superuser.id).is_staff
+
+    def test_email_cannot_be_changed_if_user_is_in_more_groups(
+        self, django_app, groups, planner, manager
+    ):
+        managers, planners, volunteers = groups
+        # promote planners to user management
+        assign_perm("core.change_userprofile", planners)
+
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": manager.id}),
+            user=planner,
+        ).form
+
+        assert "disabled" in form.fields["email"][0].attrs
