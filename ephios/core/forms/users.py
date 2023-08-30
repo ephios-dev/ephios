@@ -78,12 +78,15 @@ def get_group_permission_log_fields(group):
     # This lives here because it is closely related to the fields on GroupForm below
     if not group.pk:
         return {}
-    perms = set(group.permissions.values_list("codename", flat=True))
+    perms = set(
+        f"{g[0]}.{g[1]}"
+        for g in group.permissions.values_list("content_type__app_label", "codename")
+    )
 
     return {
-        _("Can add events"): "add_event" in perms,
-        _("Can edit users"): "change_userprofile" in perms,
-        _("Can manage ephios"): "change_group" in perms,  # FIXME "change_group" is ambigous
+        _("Can add events"): PLANNING_TEST_PERMISSION in perms,
+        _("Can edit users"): HR_TEST_PERMISSION in perms,
+        _("Can change permissions"): MANAGEMENT_TEST_PERMISSION in perms,
         # force evaluation of querysets
         _("Can publish events for groups"): set(
             get_objects_for_group(group, "publish_event_for_group", klass=Group)
@@ -156,7 +159,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
             }
             self.permission_target = group
         extra_fields = [
-            item for _, result in register_group_permission_fields.send(None) for item in result
+            item for __, result in register_group_permission_fields.send(None) for item in result
         ]
         for field_name, field in extra_fields:
             self.base_fields[field_name] = field
