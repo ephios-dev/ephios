@@ -36,7 +36,7 @@ for plugin in get_all_plugins():
     except ModuleNotFoundError:
         pass
 
-if settings.DEBUG:
+if settings.ENABLE_DEBUG_TOOLBAR:
     import debug_toolbar
 
     urlpatterns = [

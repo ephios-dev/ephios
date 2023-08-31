@@ -25,13 +25,14 @@ env_path = env.str("ENV_PATH", default=os.path.join(BASE_DIR, ".env"))
 print(f"Loading ephios environment from {Path(env_path).absolute()}")
 environ.Env.read_env(env_file=env_path)
 
-DATA_DIR = env.str("DATA_DIR", default=os.path.join(BASE_DIR, "data"))
-if not os.path.exists(DATA_DIR):
-    os.mkdir(DATA_DIR)
-
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+
+data_dir = os.path.join(BASE_DIR, "data")
+if DEBUG and not os.path.exists(data_dir):
+    # create data dir for development
+    os.mkdir(data_dir)
 
 try:
     EPHIOS_VERSION = importlib_metadata.version("ephios")
@@ -202,7 +203,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = env.str("STATIC_URL")
+STATIC_URL = env.str("STATIC_URL", default="/static/")
 
 STATIC_ROOT = env.str("STATIC_ROOT")
 if not os.path.isabs(STATIC_ROOT):
@@ -313,7 +314,8 @@ SELECT2_CACHE_BACKEND = "default"
 SELECT2_THEME = "bootstrap-5"
 
 # django-debug-toolbar
-if DEBUG and env.bool("DEBUG_TOOLBAR", True):
+ENABLE_DEBUG_TOOLBAR = env.bool("ENABLE_DEBUG_TOOLBAR", False)
+if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")

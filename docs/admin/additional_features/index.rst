@@ -1,5 +1,5 @@
-Configuring additional features
-===============================
+Additional features
+===================
 
 This section shows how to configure optional features in ephios.
 
