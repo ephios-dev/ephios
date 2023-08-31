@@ -14,7 +14,7 @@ def test_create_invitecode(django_app, superuser):
     assert InviteCode.objects.get().url == "https://example.com"
 
 
-def test_redeem_invitecode(
+def test_redeem_invitecode_frontend(
     django_app, superuser, invite_code, live_server, django_db_serialized_rollback
 ):
     global_preferences_registry.manager()["general__organization_name"] = "Test"
@@ -25,5 +25,17 @@ def test_redeem_invitecode(
         ).encode("ascii")
     ).decode("ascii")
     response = form.submit().follow()
+    assert FederatedGuest.objects.count() == 1
+    assert FederatedHost.objects.count() == 1
+
+
+def test_redeem_invitecode_api(django_app, superuser, invite_code):
+    response = django_app.post_json(
+        reverse("federation:redeem_invite_code"),
+        {"code": invite_code.code, "url": "https://example.com"},
+        user=superuser,
+    )
+    assert response.json["guest_url"] == invite_code.url
+    assert response.json["host_url"] == "https://example.com"
     assert FederatedGuest.objects.count() == 1
     assert FederatedHost.objects.count() == 1
