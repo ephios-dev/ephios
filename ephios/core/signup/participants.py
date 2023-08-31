@@ -1,5 +1,4 @@
 import dataclasses
-import functools
 from datetime import date
 from typing import Optional
 
@@ -48,7 +47,6 @@ class AbstractParticipant:
         """Return all participations for this participant"""
         raise NotImplementedError
 
-    @functools.lru_cache(maxsize=64)
     def collect_all_qualifications(self) -> set:
         return collect_all_included_qualifications(self.qualifications)
 

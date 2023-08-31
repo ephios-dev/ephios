@@ -314,7 +314,7 @@ SELECT2_CACHE_BACKEND = "default"
 SELECT2_THEME = "bootstrap-5"
 
 # django-debug-toolbar
-ENABLE_DEBUG_TOOLBAR = env.bool("ENABLE_DEBUG_TOOLBAR", False)
+ENABLE_DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR", False)
 if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")

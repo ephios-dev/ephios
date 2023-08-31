@@ -51,12 +51,12 @@
                             </div>
                             <div class="col-auto col-lg-6 col-xxl-4">
                                 {% if userprofile.is_minor %}
-                                    <span class="badge bg-warning">{% translate "Minor" %}</span>
+                                    <span class="badge bg-warning">{% translate "minor" %}</span>
                                 {% endif %}
                                 {% if not userprofile.is_active %}
-                                    <span class="badge bg-danger">{% translate "Inactive" %}</span>
+                                    <span class="badge bg-danger">{% translate "inactive" %}</span>
                                 {% elif userprofile.is_staff %}
-                                    <span class="badge bg-info">{% translate "Admin" %}</span>
+                                    <span class="badge bg-info">{% translate "admin" %}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -79,8 +79,8 @@
                     <div class="col-4 col-lg-auto d-flex align-items-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "core:workinghours_detail" userprofile.pk %}"><span
-                                class="fa fa-eye"></span> <span
-                                class="d-none d-md-inline">{% translate "Working hours" %}</span></a>
+                                class="fa fa-list-ol"></span> <span
+                                class="d-none d-lg-inline">{% translate "Working hours" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                            href="{% url "core:userprofile_edit" userprofile.pk %}"><span
                                 class="fa fa-edit"></span> <span
@@ -89,7 +89,7 @@
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                                href="{% url "core:userprofile_delete" userprofile.pk %}"><span
                                     class="fa fa-trash-alt"></span> <span
-                                    class="visually-hidden">{% translate "Delete" %}</span></a>
+                                    class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
                         {% endif %}
                     </div>
                 </div>
