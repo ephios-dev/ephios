@@ -69,17 +69,18 @@ class UserProfileManager(BaseUserManager):
         date_of_birth,
         password=None,
     ):
-        user = self.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            date_of_birth=date_of_birth,
-        )
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
-        return user
+        with transaction.atomic():
+            user = self.create_user(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth,
+            )
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            return user
 
     def get_by_natural_key(self, username):
         # postgres uses case-sensitive collations, so we need to use iexact here
