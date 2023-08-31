@@ -280,13 +280,20 @@ class EventListView(LoginRequiredMixin, ListView):
             .prefetch_related("participations")
         )
         year, month = self.filter_form.get_calendar_month()
-        shifts = shifts.filter(start_time__year=year, start_time__month=month)
+        prevyear, prevmonth = _prevmonth(year, month)
+        nextyear, nextmonth = _nextmonth(year, month)
+
+        from_time = datetime.min.replace(year=year, month=month, tzinfo=get_current_timezone())
+        to_time = datetime.min.replace(
+            year=nextyear, month=nextmonth, tzinfo=get_current_timezone()
+        )
+        # not using start_time__month/__year because of issues with some mysql implementations
+        shifts = shifts.filter(start_time__gte=from_time, start_time__lt=to_time)
+
         if self.filter_form.is_valid():
             shifts = self.filter_form.filter_shifts(shifts)
         calendar = ShiftCalendar(shifts)
 
-        prevyear, prevmonth = _prevmonth(year, month)
-        nextyear, nextmonth = _nextmonth(year, month)
         return {
             "calendar": mark_safe(calendar.formatmonth(year, month)),
             "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
