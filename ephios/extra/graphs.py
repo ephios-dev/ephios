@@ -69,13 +69,13 @@ class DirectedGraph:
 
     def _bfs(self, starts, extend_with):
         """
-        Return all nodes reachable from the given node. Avoids cycles.
+        Return all nodes reachable starting at the given nodes.
         Use `extend_with` to define what nodes to expand to.
         """
         visited = set()
         queue = list(starts)
         while queue:
-            node = queue.pop()
+            node = queue.pop(0)
             if node not in visited:
                 visited.add(node)
                 queue.extend(extend_with(node))
