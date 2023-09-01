@@ -25,7 +25,11 @@
         {% if event %}
             <h1>{% translate "Edit event" %}</h1>
         {% else %}
-            <h1>{% blocktranslate with title=eventtype.title %}Create new {{ title }}{% endblocktranslate %}</h1>
+            <h1>
+                {% blocktranslate trimmed with title=eventtype.title %}
+                    Create new {{ title }}
+                {% endblocktranslate %}
+            </h1>
         {% endif %}
     </div>
     <form method="post" class="form">
