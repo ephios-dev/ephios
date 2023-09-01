@@ -10,7 +10,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
-from django_select2.forms import Select2MultipleWidget
+from django_select2.forms import ModelSelect2Widget, Select2Widget
 
 from ephios.api.access.auth import revoke_all_access_tokens
 from ephios.core.forms.users import (
@@ -38,26 +38,27 @@ class UserProfileFilterForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": _("Search for…"), "autofocus": "autofocus"}),
         required=False,
     )
-    groups = forms.ModelMultipleChoiceField(
-        label=_("Groups"),
+    group = forms.ModelChoiceField(
+        label=_("Group"),
         queryset=Group.objects.all(),
         required=False,
-        widget=Select2MultipleWidget(
+        widget=Select2Widget(
             attrs={
                 "data-placeholder": _("Group membership"),
                 "classes": "w-auto",
             }
         ),
     )
-    qualifications = forms.ModelMultipleChoiceField(
-        label=_("Qualifications"),
+    qualification = forms.ModelChoiceField(
+        label=_("Qualification"),
         queryset=Qualification.objects.all(),
         required=False,
-        widget=Select2MultipleWidget(
+        widget=ModelSelect2Widget(
+            search_fields=["title__icontains", "abbreviation__icontains"],
             attrs={
                 "data-placeholder": _("Qualification"),
                 "classes": "w-auto",
-            }
+            },
         ),
     )
 
@@ -75,14 +76,14 @@ class UserProfileFilterForm(forms.Form):
                 | Q(email__icontains=query)
             )
 
-        if groups := fdata.get("groups"):
-            qs = qs.filter(groups__in=groups)
+        if group := fdata.get("group"):
+            qs = qs.filter(groups=group)
 
-        if qualifications := fdata.get("qualifications"):
+        if qualification := fdata.get("qualification"):
             qs = qs.filter(
                 qualification_grants__in=QualificationGrant.objects.unexpired().filter(
                     qualification__uuid__in=uuids_of_qualifications_fulfilling_any_of(
-                        qualifications
+                        [qualification]
                     )
                 )
             )

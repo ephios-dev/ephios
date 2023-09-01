@@ -1,15 +1,18 @@
 import re
 from collections import OrderedDict
 from datetime import date, datetime
+from unittest import mock
 
 import pytest
+from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
 from guardian.shortcuts import assign_perm
 
-from ephios.core.models import Notification, UserProfile
+from ephios.core.models import Notification, Qualification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
+from ephios.core.views.accounts import UserProfileFilterForm
 
 
 class TestUserProfileView:
@@ -51,14 +54,26 @@ class TestUserProfileView:
 
     @pytest.fixture()
     def userprofile_list_filter_form(self, django_app, superuser, groups):
-        return django_app.get(reverse("core:userprofile_list"), user=superuser, status=200).form
+        # patch UserProfileFilterForm qualification widget to be a plain django select widget
+        # so that we can easily check the rendered options
+
+        class MockedUserProfileFilterForm(UserProfileFilterForm):
+            qualification = forms.ModelChoiceField(
+                queryset=Qualification.objects.all(),
+                required=False,
+            )
+
+        with mock.patch(
+            "ephios.core.views.accounts.UserProfileFilterForm", MockedUserProfileFilterForm
+        ):
+            yield django_app.get(reverse("core:userprofile_list"), user=superuser, status=200).form
 
     @pytest.mark.parametrize(
-        "filter_groups,filter_qualifications,query,expected",
+        "filter_group,filter_qualification,query,expected",
         [
             (
-                ["Managers", "Planners", "Volunteers"],
-                [],
+                None,
+                None,
                 "",
                 [
                     "rica@localhost",
@@ -69,26 +84,26 @@ class TestUserProfileView:
                 ],
             ),
             (
-                ["Managers"],
-                [],
+                "Managers",
+                None,
                 "rica",
                 ["rica@localhost"],
             ),
             (
-                ["Planners"],
-                ["Notfallsanitäter"],
+                "Planners",
+                "Notfallsanitäter",
                 "",
                 [],
             ),
             (
-                ["Volunteers"],
-                ["Notfallsanitäter"],
+                "Volunteers",
+                "Notfallsanitäter",
                 "",
                 ["marianne@localhost"],
             ),
             (
-                [],
-                [],
+                None,
+                None,
                 "",
                 [
                     "rica@localhost",
@@ -98,16 +113,17 @@ class TestUserProfileView:
                     "marianne@localhost",
                 ],
             ),
-            ([], ["Rettungssanitäter"], "", ["marianne@localhost"]),
-            ([], ["Notarzt", "Rettungssanitäter"], "", ["marianne@localhost"]),
-            ([], ["Notarzt"], "", []),
+            (None, "Rettungssanitäter", "", ["marianne@localhost"]),
+            (None, "Notarzt", "", []),
         ],
     )
     def test_userprofile_list_filter_select(
-        self, userprofile_list_filter_form, filter_groups, filter_qualifications, query, expected
+        self, userprofile_list_filter_form, filter_group, filter_qualification, query, expected
     ):
-        userprofile_list_filter_form["groups"].select_multiple(texts=filter_groups)
-        userprofile_list_filter_form["qualifications"].select_multiple(texts=filter_qualifications)
+        if filter_group:
+            userprofile_list_filter_form["group"].select(text=filter_group)
+        if filter_qualification:
+            userprofile_list_filter_form["qualification"].select(text=filter_qualification)
         userprofile_list_filter_form["query"] = query
         response = userprofile_list_filter_form.submit()
         assert all(email in response.text for email in expected)
