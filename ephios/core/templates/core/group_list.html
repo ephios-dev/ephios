@@ -24,8 +24,14 @@
                         </h5>
                         <div id="popover-title-{{ group.id }}" class="d-none"></div>
                         <div id="popover-content-{{ group.id }}" class="d-none">
-                            {% for user in group.user_set.all %}{% if not forloop.first %}, {% endif %}
+                            {% for user in group.user_set.all|slice:":20" %}{% if not forloop.first %}<br/>{% endif %}
                                 {{ user.get_full_name }}{% endfor %}
+                            {% if group.user_set.all|length > 20 %}
+                                <br/>
+                                {% blocktranslate trimmed context "group user list" with more_count=group.user_set.all|length|add:"-20" %}
+                                    and {{ more_count }} more
+                                {% endblocktranslate %}
+                            {% endif %}
                         </div>
                         <span class="float-end pe-1"
                               tabindex="0"
