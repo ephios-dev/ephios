@@ -51,7 +51,7 @@ def clear_universe_graph_on_request_finished(sender, instance, **kwargs):
     QualificationUniverse.clear()
 
 
-def essential_set_of_qualifications(
+def top_level_set_of_qualifications(
     qualifications,
 ):
     """
@@ -64,13 +64,14 @@ def essential_set_of_qualifications(
     return {q for q in qualifications if q.uuid in graph.roots()}
 
 
-def essential_set_of_qualifications_to_show_with_user(qualifications):
+def essential_set_of_qualifications(qualifications):
     """
     This function takes an iterable of qualifications and
     returns the qualifications that are essential in the
-    given set and the category is meant to be shown with the user.
+    given set while the category is meant to be shown with the user.
     """
-    # this is a little tricky. Imagine the following situation:
+    # This is not a trivial concatenation of top_level and show_with_user filter!
+    # Imagine the following situation:
     # - categories A and B with qualifications a2 > b2 > a1 > b1
     # - (> is inclusion); B should not be shown
     # - if we first filter for essential qualifications, we get b2
@@ -80,7 +81,7 @@ def essential_set_of_qualifications_to_show_with_user(qualifications):
     #
     # Therefore we look at the roots of the graph of these qualifications
     # If the roots contain an element not to be shown, we remove it
-    # from the graph and repead, until we can return roots that should
+    # from the graph and repeat, until we can return roots that should
     # all be shown
     graph = QualificationUniverse.get_graph()
     qualifications = set(qualifications)

@@ -7,7 +7,7 @@ from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
 from ephios.core.models import AbstractParticipation, QualificationGrant, Shift
-from ephios.core.services.qualification import essential_set_of_qualifications_to_show_with_user
+from ephios.core.services.qualification import essential_set_of_qualifications
 from ephios.core.signup.methods import get_conflicting_participations
 
 register = template.Library()
@@ -68,7 +68,7 @@ def grants_to_essential_abbreviations(grants: Iterable[QualificationGrant]):
 
 @register.filter(name="qualifications_to_essential_abbreviations")
 def qualifications_to_essential_abbreviations(qualifications):
-    essentials = list(essential_set_of_qualifications_to_show_with_user(qualifications))
+    essentials = list(essential_set_of_qualifications(qualifications))
     essentials.sort(key=lambda q: (q.category_id, q.abbreviation))
     return list(qualification.abbreviation for qualification in essentials)
 
