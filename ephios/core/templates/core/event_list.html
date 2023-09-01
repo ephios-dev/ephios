@@ -26,12 +26,12 @@
                 </button>
                 <div class="btn-group">
                     <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                            {% if filter_form.was_submitted %}
-                       href="?{% param_replace mode="list" %}"
-                            {% else %}
+                       {% if filter_form.was_submitted %}
+                           href="?{% param_replace mode="list" %}"
+                       {% else %}
                                 {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                       href="?{% param_replace mode="list" date=None %}"
-                            {% endif %}
+                           href="?{% param_replace mode="list" date=None %}"
+                       {% endif %}
                     ><span class="fa fa-list"></span></a>
                     <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                        href="?{% param_replace mode="calendar" %}"
@@ -127,7 +127,7 @@
                     <div class="bulk-actions">
                         <button class="btn btn-secondary btn-sm m-1 ms-0" type="submit" name="delete"
                                 formaction="{% url "core:event_bulk_delete" %}"><span
-                                class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                         {% event_bulk_actions %}
                     </div>
                 </div>
@@ -147,11 +147,11 @@
                             <li class="list-group-item p-0 d-flex flex-row">
                                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                            {% if counter %}
-                                         data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                         title="{% for state in counter %}<div>
-                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
-                                            {% endif %}>
+                                         {% if counter %}
+                                             data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                             title="{% for state in counter %}<div>
+                                                        {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                         {% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -179,11 +179,11 @@
                                                 {{ event.title }}
                                             </h5>
                                             <span class="w-100 text-body-secondary text-break">
-                                            {{ event.location }}
-                                        </span>
+                                                {{ event.location }}
+                                            </span>
                                         </div>
                                         <div class="grid-batch"><span
-                                                class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                                            class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                                         </div>
                                         <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                             <div class="position-relative">

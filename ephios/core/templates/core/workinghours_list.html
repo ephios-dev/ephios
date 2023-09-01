@@ -26,42 +26,42 @@
     </form>
     <table id="userprofile_table" class="table table-striped display">
         <thead>
-        <tr>
-            <th>{% translate "Last name" %}</th>
-            <th>{% translate "First name" %}</th>
-            <th>{% translate "Hours" %}</th>
-            <th>{% translate "Action" %}</th>
-        </tr>
+            <tr>
+                <th>{% translate "Last name" %}</th>
+                <th>{% translate "First name" %}</th>
+                <th>{% translate "Hours" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
         </thead>
         <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.last_name }}</td>
-                <td>{{ user.first_name }}</td>
-                <td>{{ user.hours|floatformat:2 }}</td>
-                <td class="d-flex">
-                    <a class="btn btn-secondary btn-sm text-nowrap"
-                       href="{% url "core:workinghours_detail" user.pk %}"><span
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.hours|floatformat:2 }}</td>
+                    <td class="d-flex">
+                        <a class="btn btn-secondary btn-sm text-nowrap"
+                           href="{% url "core:workinghours_detail" user.pk %}"><span
                             class="fa fa-eye"></span> <span
-                            class="d-none d-md-inline">{% translate "View" %}</span></a>
-                    {% with groups_by_user|get:user.pk as user_groups %}
-                        {% if can_grant_for|intersects:user_groups %}
-                            <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                               href="{% url "core:workinghours_add" user.pk %}"><span
+                                class="d-none d-md-inline">{% translate "View" %}</span></a>
+                        {% with groups_by_user|get:user.pk as user_groups %}
+                            {% if can_grant_for|intersects:user_groups %}
+                                <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                                   href="{% url "core:workinghours_add" user.pk %}"><span
                                     class="fa fa-plus"></span> <span
-                                    class="d-none d-md-inline">{% translate "Add" %}</span></a>
-                        {% endif %}
-                    {% endwith %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td><em>{% translate "No entries" %}</em></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        {% endfor %}
+                                        class="d-none d-md-inline">{% translate "Add" %}</span></a>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td><em>{% translate "No entries" %}</em></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

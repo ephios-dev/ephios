@@ -95,7 +95,7 @@
                 <span class="me-1 badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                 <span class="text-body-secondary me-1 d-inline-block">
                     <i class="fas fa-map-marker-alt"></i>
-                                {{ event.location }}
+                    {{ event.location }}
                 </span>
                 {% with start_time=event.get_start_time end_time=event.get_end_time %}
                     {% if start_time %}

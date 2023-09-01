@@ -37,7 +37,7 @@
                                         {% if not category_form.fields.DELETE.disabled %}
                                             <button class="btn btn-link" type="button"
                                                     data-formset-delete-button><span
-                                                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
                                         {% else %}
                                             <p class="text-body-secondary">
                                                 {% translate "cannot delete, has resources" %}
@@ -62,23 +62,23 @@
                 <script type="form-template" data-formset-empty-form>
                     {% escapescript %}
                         <li class="list-group-item" data-formset-form>
-                            {{ category_form.id }}
-                            <div class="row align-items-start">
-                                <div class="col-lg-6 pt-3">
-                                    {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
-                                </div>
-                                <div class="col-lg-4 pt-3">
-                                    {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
-                                </div>
-                                <div class="col-lg-1 pt-2">
-                                    <button class="btn btn-link" type="button"
-                                            data-formset-delete-button><span
-                                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
-                                </div>
-                            </div>
-                            <div class="d-none">
-                                {{ category_form.DELETE }}
-                            </div>
+                        {{ category_form.id }}
+                        <div class="row align-items-start">
+                        <div class="col-lg-6 pt-3">
+                        {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        </div>
+                        <div class="col-lg-4 pt-3">
+                        {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        </div>
+                        <div class="col-lg-1 pt-2">
+                        <button class="btn btn-link" type="button"
+                        data-formset-delete-button><span
+                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                        </div>
+                        </div>
+                        <div class="d-none">
+                        {{ category_form.DELETE }}
+                        </div>
                         </li>
                     {% endescapescript %}
                 </script>

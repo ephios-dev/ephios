@@ -16,8 +16,8 @@
                     <span class="fa fa-exclamation-triangle text-danger"
                           data-bs-toggle="tooltip"
                           title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicts|join:", " %}
-                                  {{ participant }} already participates in {{ conflicts }} at the same time.
-                              {% endblocktranslate %}"></span>
+                                     {{ participant }} already participates in {{ conflicts }} at the same time.
+                                 {% endblocktranslate %}"></span>
                 {% endif %}
             {% endwith %}
 
@@ -25,7 +25,7 @@
                 <span class="badge bg-warning">{% trans "Minor" %}</span>
             {% endif %}
             {% for abbreviation in form.instance.participant.qualifications|qualifications_to_essential_abbreviations %}
-                    <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
+                <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
             {% endfor %}
 
             {% block participation_detail %}
@@ -37,10 +37,10 @@
             <button class="btn" type="button" data-bs-toggle="collapse"
                     data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
                     aria-controls="collapseExample">
-                    <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
-                        <i class="fas fa-cog"></i>
-                        <i class="fas fa-exclamation{% if not form.instance.has_customized_signup %} invisible{% endif %}"></i>
-                    </span>
+                <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
+                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-exclamation{% if not form.instance.has_customized_signup %} invisible{% endif %}"></i>
+                </span>
                 <span class="visually-hidden">{% translate "Customize" %}</span>
             </button>
             {% if form.can_delete %}
