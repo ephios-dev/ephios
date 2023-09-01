@@ -41,6 +41,11 @@ from ephios.modellogging.log import (
 from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
 
 
+class UserProfileQuerySet(models.QuerySet):
+    def visible(self):
+        return self.filter(is_visible=True)
+
+
 class UserProfileManager(BaseUserManager):
     def create_user(
         self,
@@ -89,7 +94,7 @@ class UserProfileManager(BaseUserManager):
 
 class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_visible=True)
+        return super().get_queryset().visible()
 
     # mozilla-django-oidc looks here for a method to create users
     def create_user(self, username, email):
@@ -120,8 +125,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "date_of_birth",
     ]
 
-    objects = VisibleUserProfileManager()
-    all_objects = UserProfileManager()
+    objects = VisibleUserProfileManager.from_queryset(UserProfileQuerySet)()
+    all_objects = UserProfileManager.from_queryset(UserProfileQuerySet)()
 
     class Meta:
         verbose_name = _("user profile")
@@ -173,10 +178,20 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 
     @property
     def qualifications(self):
-        return Qualification.objects.filter(
-            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
-        ).annotate(
-            expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+        """
+        Returns a queryset with all qualifications that are granted to this user and not expired.
+        Be careful to not use this in a loop, as it will perform a query for each iteration.
+        """
+        return (
+            Qualification.objects.filter(
+                pk__in=self.qualification_grants.unexpired().values_list(
+                    "qualification_id", flat=True
+                )
+            )
+            .annotate(
+                expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+            )
+            .select_related("category")
         )
 
     def get_workhour_items(self):
@@ -212,7 +227,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 register_model_for_logging(
     UserProfile,
     ModelFieldsLogConfig(
-        unlogged_fields={"id", "password", "calendar_token", "last_login"},
+        unlogged_fields={"id", "password", "calendar_token", "last_login", "user_permissions"},
     ),
 )
 
@@ -235,6 +250,10 @@ class QualificationCategoryManager(models.Manager):
 class QualificationCategory(Model):
     uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+    show_with_user = BooleanField(
+        default=True,
+        verbose_name=_("Show qualifications of this category everywhere a user is presented"),
+    )
 
     objects = QualificationCategoryManager()
 
@@ -296,21 +315,6 @@ class Qualification(Model):
 
     natural_key.dependencies = ["core.QualificationCategory"]
 
-    @classmethod
-    def collect_all_included_qualifications(cls, given_qualifications) -> set:
-        """We collect using breadth first search with one query for every layer of inclusion."""
-        all_qualifications = set(given_qualifications)
-        current = set(given_qualifications)
-        while current:
-            new = (
-                Qualification.objects.filter(included_by__in=current)
-                .exclude(id__in=(q.id for q in all_qualifications))
-                .distinct()
-            )
-            all_qualifications |= set(new)
-            current = new
-        return all_qualifications
-
 
 class CustomQualificationGrantQuerySet(models.QuerySet):
     # Available on both Manager and QuerySet.
@@ -349,6 +353,12 @@ class QualificationGrant(Model):
     expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
 
     objects = CustomQualificationGrantQuerySet.as_manager()
+
+    def is_expired(self):
+        return self.expires and self.expires < timezone.now()
+
+    def is_valid(self):
+        return not self.is_expired()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"

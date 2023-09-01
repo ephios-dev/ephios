@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
-from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.methods import (
@@ -144,15 +143,12 @@ class QualificationMinMaxBaseSignupMethod(
         raise NotImplementedError()
 
     def get_participation_display(self):
-        relevant_qualification_categories = global_preferences_registry.manager()[
-            "general__relevant_qualification_categories"
-        ]
         participation_info = [
             [
                 f"{participant.first_name} {participant.last_name}",
                 ", ".join(
                     participant.qualifications.filter(
-                        category__in=relevant_qualification_categories
+                        category__show_with_user=True,
                     )
                     .order_by("category", "title")
                     .values_list("title", flat=True)

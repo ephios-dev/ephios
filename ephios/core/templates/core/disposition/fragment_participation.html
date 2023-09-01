@@ -24,8 +24,8 @@
             {% if form.instance.participant.is_minor %}
                 <span class="badge bg-warning">{% trans "Minor" %}</span>
             {% endif %}
-            {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
-                <span class="badge bg-secondary text-dark">{{ qualification }}</span>
+            {% for abbreviation in form.instance.participant.qualifications|qualifications_to_essential_abbreviations %}
+                    <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
             {% endfor %}
 
             {% block participation_detail %}
@@ -50,7 +50,8 @@
             {% endif %}
         </div>
     </div>
-    <div class="collapse {% if form.errors %}show{% endif %} mt-3 do-not-drag card bg-light" data-bs-parent="#participations-form"
+    <div class="collapse {% if form.errors %}show{% endif %} mt-3 do-not-drag card bg-light"
+         data-bs-parent="#participations-form"
          id="participation-collapse-{{ form.instance.id }}">
         <div class="card-body">
             {{ form.individual_start_time|as_crispy_field }}

@@ -1,15 +1,18 @@
 import re
 from collections import OrderedDict
 from datetime import date, datetime
+from unittest import mock
 
 import pytest
+from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
 from guardian.shortcuts import assign_perm
 
-from ephios.core.models import Notification, UserProfile
+from ephios.core.models import Notification, Qualification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
+from ephios.core.views.accounts import UserProfileFilterForm
 
 
 class TestUserProfileView:
@@ -39,14 +42,97 @@ class TestUserProfileView:
     def test_userprofile_list(self, django_app, superuser):
         response = django_app.get(reverse("core:userprofile_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(
-            string=UserProfile.objects.all().values_list("email", flat=True)
+        assert all(
+            email in response.text
+            for email in UserProfile.objects.all().values_list("email", flat=True)
         )
         edit_links = [
             reverse("core:userprofile_edit", kwargs={"pk": userprofile_id})
             for userprofile_id in UserProfile.objects.all().values_list("id", flat=True)
         ]
         assert response.html.findAll("a", href=edit_links)
+
+    @pytest.fixture()
+    def userprofile_list_filter_form(self, django_app, superuser, groups):
+        # patch UserProfileFilterForm qualification widget to be a plain django select widget
+        # so that we can easily check the rendered options
+
+        class MockedUserProfileFilterForm(UserProfileFilterForm):
+            qualification = forms.ModelChoiceField(
+                queryset=Qualification.objects.all(),
+                required=False,
+            )
+
+        with mock.patch(
+            "ephios.core.views.accounts.UserProfileFilterForm", MockedUserProfileFilterForm
+        ):
+            yield django_app.get(reverse("core:userprofile_list"), user=superuser, status=200).form
+
+    @pytest.mark.parametrize(
+        "filter_group,filter_qualification,query,expected",
+        [
+            (
+                None,
+                None,
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            (
+                "Managers",
+                None,
+                "rica",
+                ["rica@localhost"],
+            ),
+            (
+                "Planners",
+                "Notfallsanitäter",
+                "",
+                [],
+            ),
+            (
+                "Volunteers",
+                "Notfallsanitäter",
+                "",
+                ["marianne@localhost"],
+            ),
+            (
+                None,
+                None,
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            (None, "Rettungssanitäter", "", ["marianne@localhost"]),
+            (None, "Notarzt", "", []),
+        ],
+    )
+    def test_userprofile_list_filter_select(
+        self, userprofile_list_filter_form, filter_group, filter_qualification, query, expected
+    ):
+        if filter_group:
+            userprofile_list_filter_form["group"].select(text=filter_group)
+        if filter_qualification:
+            userprofile_list_filter_form["qualification"].select(text=filter_qualification)
+        userprofile_list_filter_form["query"] = query
+        response = userprofile_list_filter_form.submit()
+        assert all(email in response.text for email in expected)
+        assert not any(
+            email in response.text
+            for email in UserProfile.objects.exclude(email__in=expected).values_list(
+                "email", flat=True
+            )
+        )
 
     def test_userprofile_create_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_create"), user=volunteer, status=403)

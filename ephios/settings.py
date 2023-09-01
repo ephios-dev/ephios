@@ -38,7 +38,7 @@ try:
     EPHIOS_VERSION = importlib_metadata.version("ephios")
 except importlib_metadata.PackageNotFoundError:
     # ephios is not installed as a package (e.g. development setup)
-    pass
+    EPHIOS_VERSION = "dev"
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
@@ -314,7 +314,7 @@ SELECT2_CACHE_BACKEND = "default"
 SELECT2_THEME = "bootstrap-5"
 
 # django-debug-toolbar
-ENABLE_DEBUG_TOOLBAR = env.bool("ENABLE_DEBUG_TOOLBAR", False)
+ENABLE_DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR", False)
 if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
@@ -391,6 +391,8 @@ def GET_SITE_URL():
         site_url = site_url[:-1]
     return site_url
 
+
+DEFAULT_LISTVIEW_PAGINATION = 100
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],

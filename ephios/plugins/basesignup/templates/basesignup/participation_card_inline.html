@@ -26,8 +26,8 @@
         {% if participation.participant.is_minor %}
             <span class="badge bg-warning">{% trans "Minor" %}</span>
         {% endif %}
-        {% for qualification in participation.participant.qualifications|get_relevant_qualifications %}
-            <span class='badge bg-secondary text-dark'>{{ qualification }}</span>
+        {% for abbreviation in participation.participant.qualifications|qualifications_to_essential_abbreviations %}
+            <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
         {% endfor %}
     </div>
 </div>
@@ -41,7 +41,7 @@
    data-bs-trigger="hover"
    data-bs-placement="bottom"
    data-html="true"
-   data-title-ref="#popover-title-{{ participation.id }}"
+   data-bs-title-ref="#popover-title-{{ participation.id }}"
    data-bs-content-ref="#popover-content-{{ participation.id }}"
 >
     {% if participation.state == participation.States.CONFIRMED %}

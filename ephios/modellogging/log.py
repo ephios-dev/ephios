@@ -1,5 +1,5 @@
+import contextvars
 import itertools
-import threading
 from typing import Dict
 
 from django.contrib.contenttypes.models import ContentType
@@ -90,7 +90,8 @@ class ModelFieldsLogConfig(BaseLogConfig):
             yield from self.initial_recorders_func(instance)
 
 
-log_request_store = threading.local()
+log_request = contextvars.ContextVar("Current request")
+log_request_id = contextvars.ContextVar("Current request id")
 
 LOGGED_MODELS: Dict[models.Model, BaseLogConfig] = {}
 
@@ -141,10 +142,10 @@ def update_log(instance, action_type: InstanceActionType):
         logentry.data.update(log_data)
     else:
         try:
-            user = log_request_store.request.user
+            user = log_request.get(None).user
             if not user.is_authenticated:
                 user = None
-            request_id = log_request_store.request_id
+            request_id = log_request_id.get(None)
         except AttributeError:
             user = None
             request_id = None

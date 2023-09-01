@@ -8,11 +8,10 @@ function handleForms(elem) {
         new bootstrap.Popover(el, {
             html: true,
             content: function () {
-                const query = el.getAttribute("data-bs-content-ref");
-                return $(query).html();
+                return $("html").find(el.getAttribute("data-bs-content-ref")).html();
             },
             title: function () {
-                return $(el.getAttribute("data-title-ref")).html();
+                return $("html").find(el.getAttribute("data-bs-title-ref")).html();
             }
         });
     });

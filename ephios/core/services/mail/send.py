@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 
-from css_inline import css_inline
+import css_inline
 from django.conf import settings
 from django.core.mail import SafeMIMEMultipart, SafeMIMEText
 from django.template.loader import render_to_string

@@ -44,6 +44,8 @@ class OrganizationName(StringPreference):
 
 @global_preferences_registry.register
 class RelevantQualificationCategories(ModelMultipleChoicePreference):
+    """deprecated"""
+
     name = "relevant_qualification_categories"
     section = general_global_section
     model = QualificationCategory

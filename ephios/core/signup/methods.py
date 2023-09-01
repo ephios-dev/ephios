@@ -569,12 +569,12 @@ class BaseSignupMethod:
                     errors.append(error)
         return errors
 
-    @functools.lru_cache(maxsize=64)
+    @functools.lru_cache(maxsize=200)
     def get_signup_errors(self, participant) -> List[ParticipationError]:
         """Return a list of ParticipationErrors that describe reasons for not being able to sign up."""
         return self._run_checkers(participant, self._signup_checkers)
 
-    @functools.lru_cache(maxsize=64)
+    @functools.lru_cache(maxsize=200)
     def get_decline_errors(self, participant):
         """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
         return self._run_checkers(participant, self._decline_checkers)
