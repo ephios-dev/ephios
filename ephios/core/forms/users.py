@@ -123,15 +123,17 @@ class GroupForm(PermissionFormMixin, ModelForm):
     is_hr_group = PermissionField(
         label=_("Can edit users"),
         help_text=_(
-            "If checked, users in this group can view, add, edit and delete users. They can also manage group memberships for their own groups."
+            "If checked, users in this group can view, add, edit and delete users. "
+            "They can also manage group memberships for their own groups."
         ),
         permissions=HR_PERMISSIONS,
         required=False,
     )
     is_management_group = PermissionField(
-        label=_("Can manage permissions and qualifications"),
+        label=_("Can change permissions and manage ephios"),
         help_text=_(
-            "If checked, users in this group can manage users, groups, all group memberships, eventtypes and qualifications"
+            "If checked, users in this group can edit all users, change groups, their permissions and memberships "
+            "as well as define eventtypes and qualifications."
         ),
         permissions=MANAGEMENT_PERMISSIONS,
         required=False,
