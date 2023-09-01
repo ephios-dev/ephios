@@ -13,23 +13,23 @@
         {% trans "Working hours of" %} {{ userprofile }}
     </h1>
     {% if can_grant %}
-                    <a class="btn btn-primary"
-                       href="{% url "core:workinghours_add" userprofile.pk %}">{% translate "Add working hours" %}</a>
-                {% elif own_profile %}
-                    <a class="btn btn-primary"
-                       href="{% url "core:workinghours_request" %}">{% translate "Request working hours" %}</a>
-                {% endif %}
+        <a class="btn btn-primary"
+           href="{% url "core:workinghours_add" userprofile.pk %}">{% translate "Add working hours" %}</a>
+    {% elif own_profile %}
+        <a class="btn btn-primary"
+           href="{% url "core:workinghours_request" %}">{% translate "Request working hours" %}</a>
+    {% endif %}
     <table id="workinghours_table" class="table table-striped display">
-            <thead>
+        <thead>
             <tr>
                 <th>{% trans "Date" %}</th>
                 <th>{% trans "Reason" %}</th>
                 <th>{% trans "Hours" %}</th>
                 <th>{% trans "Action" %}</th>
             </tr>
-            </thead>
-            <tbody>
-                {% with userprofile|workhour_items as workhour_items %}
+        </thead>
+        <tbody>
+            {% with userprofile|workhour_items as workhour_items %}
                 <tr>
                     <td><b>{% translate "Total" %}</b></td>
                     <td></td>
@@ -54,7 +54,7 @@
                     </tr>
                 {% endfor %}
             {% endwith %}
-            </tbody>
+        </tbody>
     </table>
 {% endblock %}
 

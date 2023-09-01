@@ -43,7 +43,7 @@
                         {% if object and object.event.shifts.count > 1 %}
                             <a role="button" class="btn btn-danger"
                                href="{% url "core:shift_delete" object.pk %}"><span
-                                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
+                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
                         {% endif %}
                         <button type="submit" class="btn btn-primary float-end ms-1">
                             <span class="fas fa-save"></span> {% trans "Save" %}

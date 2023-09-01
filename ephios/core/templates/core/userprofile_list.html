@@ -20,7 +20,7 @@
         {% if perms.core.add_userprofile %}
             <div class="col-12 col-lg-auto">
                 <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
-                        class="fa fa-plus"></span> {% translate "Add user" %}</a>
+                    class="fa fa-plus"></span> {% translate "Add user" %}</a>
             </div>
         {% endif %}
         {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
@@ -79,16 +79,16 @@
                     <div class="col-4 col-lg-auto d-flex align-items-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "core:workinghours_detail" userprofile.pk %}"><span
-                                class="fa fa-list-ol"></span> <span
+                            class="fa fa-list-ol"></span> <span
                                 class="d-none d-lg-inline">{% translate "Working hours" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                            href="{% url "core:userprofile_edit" userprofile.pk %}"><span
-                                class="fa fa-edit"></span> <span
+                            class="fa fa-edit"></span> <span
                                 class="d-none d-md-inline">{% translate "Edit" %}</span></a>
                         {% if perms.core.delete_userprofile %}
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                                href="{% url "core:userprofile_delete" userprofile.pk %}"><span
-                                    class="fa fa-trash-alt"></span> <span
+                                class="fa fa-trash-alt"></span> <span
                                     class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
                         {% endif %}
                     </div>

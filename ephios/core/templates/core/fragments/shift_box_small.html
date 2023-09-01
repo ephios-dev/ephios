@@ -9,7 +9,7 @@
                     <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>{% trans "Edit" %}</a><br>
                     {% if shift.event.shifts.count > 1 %}
                         <a href="{% url "core:shift_delete" shift.pk %}"><span
-                                class="fas fa-trash-alt"></span>  {% trans "Delete" %}</a>
+                            class="fas fa-trash-alt"></span>  {% trans "Delete" %}</a>
                     {% endif %}            </small>
             {% endif %}
         </h5><br>

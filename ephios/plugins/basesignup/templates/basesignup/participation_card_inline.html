@@ -33,9 +33,9 @@
 </div>
 
 <a class="badge
-{% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-body-secondary{% endif %}
-{% if participation.participant.is_minor %}participation-card-minor{% endif %}
-"
+          {% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-body-secondary{% endif %}
+          {% if participation.participant.is_minor %}participation-card-minor{% endif %}
+         "
    tabindex="0"
    data-bs-toggle="popover"
    data-bs-trigger="hover"

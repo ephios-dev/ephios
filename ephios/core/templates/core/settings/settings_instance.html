@@ -4,8 +4,8 @@
 
 {% block settings_content %}
     <form method="post">
-     {% csrf_token %}
-    {{ form|crispy }}
-    <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
     </form>
 {% endblock %}

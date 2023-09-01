@@ -57,7 +57,7 @@
                                     <div class="col-md-1">
                                         <button class="btn btn-link" type="button"
                                                 data-formset-delete-button><span
-                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
@@ -74,22 +74,22 @@
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
                     <li class="list-group-item" data-formset-form>
-                        <div class="row align-items-center">
-                            <div class="col-md-5">
-                                {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
-                            </div>
-                            <div class="col-md-1"></div>
-                            <div class="col-md-4">
-                                {% crispy_field qualification_formset.empty_form.expires label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
-                            </div>
-                            <div class="col-md-1"></div>
-                            <div class="col-md-1">
-                                <button class="btn btn-link" type="button"
-                                        data-formset-delete-button><span
-                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
-                            </div>
-                        </div>
-                        <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
+                    <div class="row align-items-center">
+                    <div class="col-md-5">
+                    {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                    {% crispy_field qualification_formset.empty_form.expires label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                    <button class="btn btn-link" type="button"
+                    data-formset-delete-button><span
+                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                    </div>
+                    </div>
+                    <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
                     </li>
                 {% endescapescript %}
             </script>
@@ -107,7 +107,7 @@
                         <a class="btn btn-secondary text-nowrap mt-1"
                            href="{% url "core:userprofile_password_reset" userprofile.pk %}">
                             {% translate "Send password reset email" %}</a>
-                                                <a class="btn btn-secondary text-nowrap ms-1 mt-1"
+                        <a class="btn btn-secondary text-nowrap ms-1 mt-1"
                            href="{% url "core:userprofile_password_token_revoke" userprofile.pk %}">
                             {% translate "Revoke password and API Tokens" %}</a>
 

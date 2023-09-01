@@ -4,8 +4,8 @@
     {% for section in sections.values %}
         <span class="pe-1">
             <strong>
-            {{ section.stats.confirmed_count }}{% if section.stats.max_count %}/{{ section.stats.max_count }}{% endif %}
-        </strong>
+                {{ section.stats.confirmed_count }}{% if section.stats.max_count %}/{{ section.stats.max_count }}{% endif %}
+            </strong>
             {{ section.title }}
             <span class="text-body-secondary float-end">{{ section.qualifications_label }}</span>
         </span>
