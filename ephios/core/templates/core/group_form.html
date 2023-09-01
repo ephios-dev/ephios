@@ -5,18 +5,18 @@
 
 {% block title %}
     {% if group %}
-        {% trans "Edit group" %}
+        {% translate "Edit group" %}
     {% else %}
-        {% trans "Create new group" %}
+        {% translate "Create new group" %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
         {% if group %}
-            <h1>{% trans "Edit group" %}</h1>
+            <h1>{% translate "Edit group" %}</h1>
         {% else %}
-            <h1>{% trans "Create new group" %}</h1>
+            <h1>{% translate "Create new group" %}</h1>
         {% endif %}
     </div>
     {% crispy form %}

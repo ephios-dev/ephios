@@ -5,12 +5,12 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Working hours of" %} {{ userprofile }}
+    {% translate "Working hours of" %} {{ userprofile }}
 {% endblock %}
 
 {% block content %}
     <h1 class="page-header">
-        {% trans "Working hours of" %} {{ userprofile }}
+        {% translate "Working hours of" %} {{ userprofile }}
     </h1>
     {% if can_grant %}
         <a class="btn btn-primary"
@@ -22,10 +22,10 @@
     <table id="workinghours_table" class="table table-striped display">
         <thead>
             <tr>
-                <th>{% trans "Date" %}</th>
-                <th>{% trans "Reason" %}</th>
-                <th>{% trans "Hours" %}</th>
-                <th>{% trans "Action" %}</th>
+                <th>{% translate "Date" %}</th>
+                <th>{% translate "Reason" %}</th>
+                <th>{% translate "Hours" %}</th>
+                <th>{% translate "Action" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -44,10 +44,10 @@
                         <td class="whitespace-nowrap">
                             {% if can_grant %}
                                 {% if item.type == "event" %}
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% trans "View event" %}</span></a>
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View event" %}</span></a>
                                 {% else %}
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_edit" item.origin_id %}"><span class="fa fa-edit"></span> <span class="d-none d-md-inline">{% trans "Edit" %}</span></a>
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_delete" item.origin_id %}"><span class="fa fa-trash"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_edit" item.origin_id %}"><span class="fa fa-edit"></span> <span class="d-none d-md-inline">{% translate "Edit" %}</span></a>
+                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_delete" item.origin_id %}"><span class="fa fa-trash"></span> <span class="d-none d-md-inline">{% translate "Delete" %}</span></a>
                                 {% endif %}
                             {% endif %}
                         </td>

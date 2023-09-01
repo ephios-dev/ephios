@@ -3,22 +3,22 @@
 <div class="card mb-2 {% if shift == editing_shift %}border-info{% endif %}">
     <div class="card-body">
         <h5 class="card-subtitle mb-2 text-body-secondary">
-            {% trans "Shift" %}
+            {% translate "Shift" %}
             {% if can_change and not shift == editing_shift %}
                 <small class="float-end">
-                    <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>{% trans "Edit" %}</a><br>
+                    <a href="{% url "core:shift_edit" shift.pk %}"><span class="fas fa-edit"></span>{% translate "Edit" %}</a><br>
                     {% if shift.event.shifts.count > 1 %}
                         <a href="{% url "core:shift_delete" shift.pk %}"><span
-                            class="fas fa-trash-alt"></span>  {% trans "Delete" %}</a>
+                            class="fas fa-trash-alt"></span>  {% translate "Delete" %}</a>
                     {% endif %}            </small>
             {% endif %}
         </h5><br>
         <p class="card-text">
-            <b>{% trans "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
-            <b>{% trans "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
-            <b>{% trans "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
-            <b>{% trans "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
-            <b>{% trans "Signup method" %}:</b> {{ shift.signup_method.verbose_name }}
+            <b>{% translate "Date" %}:</b> {{ shift.start_time | date:"d.m.Y" }} <br>
+            <b>{% translate "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
+            <b>{% translate "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
+            <b>{% translate "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
+            <b>{% translate "Signup method" %}:</b> {{ shift.signup_method.verbose_name }}
         </p>
     </div>
 </div>
