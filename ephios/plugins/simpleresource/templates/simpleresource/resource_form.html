@@ -4,18 +4,18 @@
 
 {% block title %}
     {% if resource %}
-        {% trans "Edit resource" %}
+        {% translate "Edit resource" %}
     {% else %}
-        {% trans "Create new resource" %}
+        {% translate "Create new resource" %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
         {% if resource %}
-            <h2>{% trans "Edit resource" %}</h2>
+            <h2>{% translate "Edit resource" %}</h2>
         {% else %}
-            <h2>{% trans "Create new resource" %}</h2>
+            <h2>{% translate "Create new resource" %}</h2>
         {% endif %}
     </div>
 

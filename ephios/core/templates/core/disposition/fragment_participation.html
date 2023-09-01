@@ -22,7 +22,7 @@
             {% endwith %}
 
             {% if form.instance.participant.is_minor %}
-                <span class="badge bg-warning">{% trans "Minor" %}</span>
+                <span class="badge bg-warning">{% translate "Minor" %}</span>
             {% endif %}
             {% for abbreviation in form.instance.participant.qualifications|qualifications_to_essential_abbreviations %}
                 <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>

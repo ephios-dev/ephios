@@ -4,7 +4,7 @@
 {% block content %}
     {% if not error %}
         <form id="authorizationForm" method="post">
-            <h3 class="block-center-heading">{% trans "Authorize" %} {{ application.name }}?</h3>
+            <h3 class="block-center-heading">{% translate "Authorize" %} {{ application.name }}?</h3>
             {% csrf_token %}
 
                 {# pass query params through the submit process for saving #}
@@ -14,7 +14,7 @@
                 {% endif %}
             {% endfor %}
 
-            <p>{% trans "The application requires the following permissions:" %}</p>
+            <p>{% translate "The application requires the following permissions:" %}</p>
             <ul>
                 {% for scope in scopes_descriptions %}
                     <li>{{ scope }}</li>

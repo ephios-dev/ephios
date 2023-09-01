@@ -4,11 +4,11 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Login" %}
+    {% translate "Login" %}
 {% endblock %}
 
 {% block content %}
-    {% trans "Login" as login_message %}
+    {% translate "Login" as login_message %}
     <h2>{{ login_message }}</h2>
     {% oidc_client_enabled as oidc_enabled %}
     {% if not oidc_enabled or request.GET.local %}

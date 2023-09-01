@@ -3,16 +3,16 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Groups" %}
+    {% translate "Groups" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Groups" %}</h1>
+        <h1>{% translate "Groups" %}</h1>
     </div>
     {% if perms.auth.add_group %}
         <a class="btn btn-secondary mb-3" href="{% url "core:group_add" %}"><span
-            class="fa fa-plus"></span> {% trans "Add group" %}</a>
+            class="fa fa-plus"></span> {% translate "Add group" %}</a>
     {% endif %}
     <ul class="list-group mb-3">
         {% for group in group_list %}
@@ -60,11 +60,11 @@
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "core:group_edit" group.pk %}"><span
                             class="fa fa-edit"></span> <span
-                                class="d-none d-md-inline">{% trans "Edit" %}</span></a>
+                                class="d-none d-md-inline">{% translate "Edit" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                            href="{% url "core:group_delete" group.pk %}"><span
                             class="fa fa-trash-alt"></span> <span
-                                class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+                                class="d-none d-md-inline">{% translate "Delete" %}</span></a>
                     </div>
                 </div>
             </li>

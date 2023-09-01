@@ -6,7 +6,7 @@
 
 {% block settings_content %}
     <div class="page-header">
-        <h2>{% trans "Edit qualification categories" %}</h2>
+        <h2>{% translate "Edit qualification categories" %}</h2>
     </div>
 
     <form method="post">
@@ -32,7 +32,7 @@
                                         {% if not category_form.fields.DELETE.disabled %}
                                             <button class="btn btn-link" type="button"
                                                     data-formset-delete-button><span
-                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                                class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
                                         {% else %}
                                             <p class="text-body-secondary">
                                                 {% translate "cannot be deleted, has qualifications" %}
@@ -67,7 +67,7 @@
                         {% crispy_field category_form.show_with_user %}
                         <button class="btn btn-link" type="button"
                         data-formset-delete-button><span
-                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                        class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
 
                         </div>
                         </div>

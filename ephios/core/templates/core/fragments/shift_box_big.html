@@ -57,10 +57,10 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionDropdownButton">
                     <li><a class="dropdown-item" href="{% url "core:shift_edit" shift.pk %}"><span
                         class="fas fa-edit"></span>
-                        {% trans "Edit" %}</a></li>
+                        {% translate "Edit" %}</a></li>
                     {% if shift.event.shifts.count > 1 %}
                         <a class="dropdown-item" href="{% url "core:shift_delete" shift.pk %}"><span
-                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
+                            class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
                     {% endif %}
                 </ul>
             </div>
@@ -124,7 +124,7 @@
                     {% if can_decline %}
                         <span class="d-inline-block" tabindex="1">
                             <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
-                                {% trans "Decline" %}
+                                {% translate "Decline" %}
                             </button>
                         </span>
                     {% endif %}

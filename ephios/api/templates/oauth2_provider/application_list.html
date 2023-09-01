@@ -12,15 +12,15 @@
             {% endblocktranslate %}
         </p>
         <h4>{% translate "OAuth2 applications" %}</h4>
-        <a class="btn btn-primary" href="{% url "api:settings-oauth-app-register" %}">{% trans "New Application" %}</a>
+        <a class="btn btn-primary" href="{% url "api:settings-oauth-app-register" %}">{% translate "New Application" %}</a>
         {% if applications %}
             <table id="userprofile_table" class="table table-striped display">
                 <thead>
                     <tr>
-                        <th>{% trans "Name" %}</th>
-                        <th>{% trans "User" %}</th>
-                        <th>{% trans "Created" %}</th>
-                        <th>{% trans "Action" %}</th>
+                        <th>{% translate "Name" %}</th>
+                        <th>{% translate "User" %}</th>
+                        <th>{% translate "Created" %}</th>
+                        <th>{% translate "Action" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,7 +46,7 @@
                                     <a class="btn btn-secondary ms-1"
                                        href="{% url "api:settings-oauth-app-delete" application.id %}">
                                         <span class="fa fa-trash-alt"></span>
-                                        <span class="d-none d-lg-inline">{% trans "Delete" %}</span>
+                                        <span class="d-none d-lg-inline">{% translate "Delete" %}</span>
                                     </a>
                                 </div>
                             </td>
@@ -55,7 +55,7 @@
                 </tbody>
             </table>
         {% else %}
-            <p>{% trans "No applications defined" %}.</p>
+            <p>{% translate "No applications defined" %}.</p>
         {% endif %}
     </div>
 {% endblock %}

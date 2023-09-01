@@ -9,18 +9,18 @@
 
 {% block title %}
     {% if userprofile %}
-        {% trans "Edit user" %}
+        {% translate "Edit user" %}
     {% else %}
-        {% trans "Add new user" %}
+        {% translate "Add new user" %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
         {% if userprofile %}
-            <h1>{% trans "Edit user" %}</h1>
+            <h1>{% translate "Edit user" %}</h1>
         {% else %}
-            <h1>{% trans "Add new user" %}</h1>
+            <h1>{% translate "Add new user" %}</h1>
         {% endif %}
     </div>
     <form method="post" class="form">
@@ -57,7 +57,7 @@
                                     <div class="col-md-1">
                                         <button class="btn btn-link" type="button"
                                                 data-formset-delete-button><span
-                                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                            class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
@@ -86,7 +86,7 @@
                     <div class="col-md-1">
                     <button class="btn btn-link" type="button"
                     data-formset-delete-button><span
-                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                    class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
                     </div>
                     </div>
                     <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
@@ -115,8 +115,8 @@
                 </div>
             {% endif %}
         </div>
-        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-end mt-1">
+        <input type="submit" value="{% translate "Save" %}" class="btn btn-primary float-end mt-1">
         <a role="button" class="btn btn-secondary mt-1"
-           href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
+           href="{% url "core:userprofile_list" %}">{% translate "Cancel" %}</a>
     </form>
 {% endblock %}
