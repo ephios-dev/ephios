@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-01 22:44+0200\n"
-"PO-Revision-Date: 2023-09-01 22:51+0200\n"
+"PO-Revision-Date: 2023-09-02 18:26+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -653,7 +653,7 @@ msgid ""
 "At least one group with management permissions must exist. Please promote "
 "another group before demoting this one."
 msgstr ""
-"Wenigstens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
+"Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
 #: ephios/core/forms/users.py:241 ephios/core/templates/core/group_list.html:6
@@ -707,7 +707,7 @@ msgid ""
 "At least one user must be technical administrator. Please promote another "
 "user before demoting this one."
 msgstr ""
-"Wenigstens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
+"Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie ihn hier entfernen."
 
 #: ephios/core/forms/users.py:358
@@ -715,7 +715,7 @@ msgid ""
 "At least one user must be technical administrator. Please promote another "
 "user before deleting this one."
 msgstr ""
-"Wenigstens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
+"Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie diesen löschen."
 
 #: ephios/core/forms/users.py:380
@@ -723,7 +723,7 @@ msgid ""
 "At least one group with management permissions must exist. Please promote "
 "another group before deleting this one."
 msgstr ""
-"Wenigstens eine Gruppe mit Managementrechten muss existieren. Setzen Sie "
+"Mindestens eine Gruppe mit Managementrechten muss existieren. Setzen Sie "
 "diesen Status zunächst bei einer anderen Gruppe, bevor Sie diese löschen."
 
 #: ephios/core/models/events.py:47 ephios/core/models/events.py:60
@@ -904,7 +904,7 @@ msgstr "Ein Nutzer-Account mit dieser E-Mail existiert bereits."
 #: ephios/core/models/users.py:255
 msgid "Show qualifications of this category everywhere a user is presented"
 msgstr ""
-"Zeige Qualifikationen dieser Kategorie überall wo ein Nutzer präsentiert wird"
+"Zeige Qualifikationen dieser Kategorie überall wo ein Nutzer angezeigt wird"
 
 #: ephios/core/models/users.py:261
 msgid "qualification category"
@@ -3228,11 +3228,6 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
-
-#~ msgid "If checked, this user can change technical ephios settings."
-#~ msgstr ""
-#~ "Falls diese Option aktiviert ist kann dieser Nutzer technische ephios-"
-#~ "Einstellungen vornehmen."
 
 #~ msgid "Email address"
 #~ msgstr "E-Mail-Adresse"
