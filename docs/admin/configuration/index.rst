@@ -76,6 +76,14 @@ The following variables are available (plugins and some niche features might req
     Path to the private key used to sign web push notifications. If not provided, web push notifications wont work
     on some platforms. See :ref:`web_push_notifications` for details.
 
+`SECURE_HSTS_SECONDS`:
+    Number of seconds to set the `Strict-Transport-Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__
+    header to. Defaults to the amount of seconds in 370 days, meaning the header is not set.
+
+`SECURE_HSTS_INCLUDE_SUBDOMAINS`:
+    Include subdomains in the `Strict-Transport-Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__
+    header. Defaults to `True`.
+
 `DJANGO_SETTINGS_MODULE`:
     Defaults to `ephios.settings`. If you want to use your own settings file,
     set this to the path to your settings file. This variable cannot be set in the environment file.
