@@ -80,7 +80,7 @@
     <div class="card-footer">
         {% if event.active %}
             {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
-                <form method="POST" class="form"
+                <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
                       action="{{ request|reverse_signup_action:shift }}">
 
                     {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
