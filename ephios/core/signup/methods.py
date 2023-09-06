@@ -240,8 +240,8 @@ class BaseSignupForm(BaseParticipationForm):
             return
         if conflicts := get_conflicting_participations(
             participant=form.instance.participant,
-            start_time=form.cleaned_data["individual_start_time"] or self.shift.start_time,
-            end_time=form.cleaned_data["individual_end_time"] or self.shift.end_time,
+            start_time=form.cleaned_data.get("individual_start_time") or self.shift.start_time,
+            end_time=form.cleaned_data.get("individual_end_time") or self.shift.end_time,
             shift=self.shift,
             total=False,
         ):
