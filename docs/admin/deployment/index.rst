@@ -268,9 +268,7 @@ For apache you can build on this:
     </VirtualHost>
 
 Remember to replace all the domain names and certificate paths with your own.
-Also check out `this Mozilla page <https://mozilla.github.io/server-side-tls/ssl-config-generator/>`_ on
-how to configure your SSL ciphers and protocols.
-
+Make sure to use secure SSL settings.
 To obtain SSL certificates, you can use `certbot <https://certbot.eff.org/>`_ with Let's Encrypt.
 
 Next steps
@@ -285,6 +283,8 @@ You can now create your first user account by running:
     $ export ENV_PATH="/home/ephios/ephios.env"
     $ source /home/ephios/venv/bin/activate
     $ python -m ephios createsuperuser
+
+You should now secure your installation. Try starting with the tips below.
 
 To install a plugin install them via pip and restart the ephios-gunicorn service:
 
@@ -311,3 +311,35 @@ Then, as root, restart the gunicorn service:
 .. code-block:: console
 
     # systemctl restart ephios-gunicorn
+
+Securing your installation
+--------------------------
+
+ephios is a web application and as such it is exposed to the internet. It is therefore important to
+take some security measures to protect your user data.
+
+You are already using SSL, which is a good start. You should also make sure that your server is
+up-to-date and that you have a firewall configured to only allow access to the ports you need.
+
+SSL
+'''''
+
+You might want to check out `this Mozilla page <https://mozilla.github.io/server-side-tls/ssl-config-generator/>`_ on
+how to configure your SSL ciphers and protocols.
+
+HSTS
+'''''
+
+The `HSTS header <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`_
+is set by ephios to a default of 1 day. After you confirmed your pages and assets are served via
+SSL correctly, you should increase this value to a year.
+To do so, add the following environment variables to your ephios environment:
+
+.. code-block:: console
+
+    SECURE_HSTS_SECONDS=31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+    SECURE_HSTS_PRELOAD=True
+
+Restart and maybe also add your domain to the `HSTS preload list <https://hstspreload.org/>`_.
+

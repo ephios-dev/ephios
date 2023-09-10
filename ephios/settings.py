@@ -46,11 +46,13 @@ if not DEBUG:
     X_FRAME_OPTIONS = "DENY"
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=3600 * 24 * 366)
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True)
     SECURE_REFERRER_POLICY = "same-origin"
+    # 1 day by default, change to 1 year in production (see deployment docs)
+    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=3600 * 24)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
+    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
 
-# Application definition
+    CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
 
 INSTALLED_APPS = [
     # we need to import our own modules before everything else to allow template
