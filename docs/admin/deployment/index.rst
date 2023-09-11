@@ -322,20 +322,20 @@ You are already using SSL, which is a good start. You should also make sure that
 up-to-date and that you have a firewall configured to only allow access to the ports you need.
 
 SSL
-'''''
+~~~
 
 You might want to check out `this Mozilla page <https://mozilla.github.io/server-side-tls/ssl-config-generator/>`_ on
 how to configure your SSL ciphers and protocols.
 
 HSTS
-'''''
+~~~~
 
 The `HSTS header <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`_
 is set by ephios to a default of 1 day. After you confirmed your pages and assets are served via
 SSL correctly, you should increase this value to a year.
 To do so, add the following environment variables to your ephios environment:
 
-.. code-block:: console
+.. code-block::
 
     SECURE_HSTS_SECONDS=31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS=True
@@ -343,3 +343,21 @@ To do so, add the following environment variables to your ephios environment:
 
 Restart and maybe also add your domain to the `HSTS preload list <https://hstspreload.org/>`_.
 
+Troubleshooting
+---------------
+
+Error with None values for date fields when using MySQL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are using MySQL, you might encounter errors on date computations like this:
+
+.. code-block::
+
+    TypeError: "Exception Value: '<' not supported between instances of 'NoneType' and 'NoneType'"
+
+This may be caused by MySQL `missing timezone information <https://stackoverflow.com/a/60844090/4837975>`_.
+You can fix this by running:
+
+.. code-block:: console
+
+    # mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
