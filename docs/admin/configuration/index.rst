@@ -76,6 +76,22 @@ The following variables are available (plugins and some niche features might req
     Path to the private key used to sign web push notifications. If not provided, web push notifications wont work
     on some platforms. See :ref:`web_push_notifications` for details.
 
+`SECURE_HSTS_SECONDS`:
+    Number of seconds to set the `Strict-Transport-Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__
+    header to. Defaults to the amount of seconds in 1 day, but should be set to a higher value in production.
+
+`SECURE_HSTS_INCLUDE_SUBDOMAINS`:
+    Include subdomains in the `Strict-Transport-Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__
+    header. Defaults to `False`.
+
+`SECURE_HSTS_PRELOAD`:
+    Set the `preload <https://hstspreload.org/>`__ flag in the `Strict-Transport-Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__
+    header. Defaults to `False`.
+
+`CONN_MAX_AGE`:
+    Number of seconds to keep database connections open. Defaults to 0, meaning connections are closed after each request.
+    Refer to the `django docs <https://docs.djangoproject.com/en/4.2/ref/databases/#persistent-database-connections>`__ for details.
+
 `DJANGO_SETTINGS_MODULE`:
     Defaults to `ephios.settings`. If you want to use your own settings file,
     set this to the path to your settings file. This variable cannot be set in the environment file.
