@@ -288,7 +288,6 @@ class EventListView(LoginRequiredMixin, ListView):
         to_time = datetime.min.replace(
             year=nextyear, month=nextmonth, tzinfo=get_current_timezone()
         )
-        # not using start_time__month/__year because of issues with some mysql implementations
         shifts = shifts.filter(start_time__gte=from_time, start_time__lt=to_time)
 
         if self.filter_form.is_valid():
