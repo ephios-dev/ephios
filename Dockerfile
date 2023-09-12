@@ -11,7 +11,6 @@ WORKDIR /usr/src/ephios
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             gettext \
-            cron \
             supervisor \
             locales && \
     apt-get clean && \
@@ -37,7 +36,6 @@ RUN poetry install -E pgsql -E redis -E mysql
 COPY deployment/docker/entrypoint.sh /usr/local/bin/ephios
 RUN chmod +x /usr/local/bin/ephios
 
-COPY deployment/docker/cronjob /etc/cron.d/ephios-cron
 COPY deployment/docker/supervisord.conf /etc/supervisord.conf
 COPY deployment/docker/cron.sh /usr/local/bin/cron.sh
 RUN chmod +x /usr/local/bin/cron.sh

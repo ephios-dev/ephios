@@ -1,4 +1,0 @@
-SHELL=/bin/bash
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-*/1 * * * * root    /usr/local/bin/python -m ephios run_periodic
-*/1 * * * * root    /usr/bin/touch /$(/usr/bin/date +%s).txt
