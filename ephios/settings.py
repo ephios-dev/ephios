@@ -271,7 +271,7 @@ LOGGING = {
         "file": {
             "level": "DEBUG",
             "formatter": "default",
-            "filters": ["require_debug_false"],
+            "filters": [],
             **(
                 {
                     "class": "logging.handlers.TimedRotatingFileHandler",
