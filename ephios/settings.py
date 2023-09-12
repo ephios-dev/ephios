@@ -458,6 +458,9 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
     CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
 
+    if env.bool("TRUST_X_FORWARDED_PROTO", default=False):
+        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 """
 OIDC SETTINGS
 """

@@ -22,11 +22,15 @@ RUN dpkg-reconfigure locales && \
 	/usr/sbin/update-locale LANG=C.UTF-8
 
 RUN pip install "poetry==$POETRY_VERSION" gunicorn
+RUN poetry self add "poetry-dynamic-versioning[plugin]"
 
 RUN mkdir -p /var/ephios/data/ && \
     mkdir -p /var/log/supervisord/ && \
     mkdir -p /var/run/supervisord/
 
+#COPY pyproject.toml poetry.lock .git /usr/src/ephios/
+#RUN poetry install -E pgsql -E redis -E mysql
+# good caching point
 COPY . /usr/src/ephios
 RUN poetry install -E pgsql -E redis -E mysql
 
