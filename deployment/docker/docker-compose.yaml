@@ -11,6 +11,11 @@ services:
     volumes:
       - ephios_django_data:/var/ephios/data/
 
+  ephios_redis:
+    image: redis:7-alpine
+    command: redis-server
+    restart: unless-stopped
+
   ephios_postgres:
     image: postgres:12
     restart: unless-stopped
