@@ -1,6 +1,7 @@
 import copy
 import datetime
 import os
+import string
 from datetime import timedelta
 from email.utils import getaddresses
 from pathlib import Path
@@ -8,6 +9,7 @@ from pathlib import Path
 import environ
 from cryptography.hazmat.primitives import serialization
 from django.contrib.messages import constants
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy
 from py_vapid import Vapid, b64urlencode
 
@@ -16,7 +18,9 @@ try:
 except ImportError:
     import importlib.metadata as importlib_metadata
 
+# BASE_DIR is the directory containing the ephios package
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
@@ -25,34 +29,47 @@ env_path = env.str("ENV_PATH", default=os.path.join(BASE_DIR, ".env"))
 print(f"Loading ephios environment from {Path(env_path).absolute()}")
 environ.Env.read_env(env_file=env_path)
 
-SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+if DEBUG:
+    DATA_DIR = env.str("DATA_DIR", os.path.join(BASE_DIR, "data"))
+else:
+    # DATA_DIR must be set explicitly in production
+    DATA_DIR = env.str("DATA_DIR")
 
-data_dir = os.path.join(BASE_DIR, "data")
-if DEBUG and not os.path.exists(data_dir):
-    # create data dir for development
-    os.mkdir(data_dir)
+LOG_DIR = env.str("LOG_DIR", os.path.join(DATA_DIR, "logs"))
+MEDIA_ROOT = env.str("MEDIA_ROOT", os.path.join(DATA_DIR, "media"))
+STATIC_ROOT = env.str("STATIC_ROOT", os.path.join(DATA_DIR, "static"))
+
+for path in [LOG_DIR, MEDIA_ROOT, STATIC_ROOT]:
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+
+if "SECRET_KEY" in env:
+    SECRET_KEY = env.str("SECRET_KEY")
+else:
+    SECRET_FILE = os.path.join(DATA_DIR, ".secret")
+    if os.path.exists(SECRET_FILE):
+        with open(SECRET_FILE, "r") as f:
+            SECRET_KEY = f.read().strip()
+    else:
+        chars = string.ascii_letters + string.digits + string.punctuation
+        SECRET_KEY = get_random_string(50, chars)
+        with open(SECRET_FILE, "w") as f:
+            os.chmod(SECRET_FILE, 0o600)
+            try:
+                os.chown(SECRET_FILE, os.getuid(), os.getgid())
+            except AttributeError:
+                pass  # os.chown is not available on Windows
+            f.write(SECRET_KEY)
+
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 try:
     EPHIOS_VERSION = importlib_metadata.version("ephios")
 except importlib_metadata.PackageNotFoundError:
     # ephios is not installed as a package (e.g. development setup)
     EPHIOS_VERSION = "dev"
-
-if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = "DENY"
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_SSL_REDIRECT = True
-    SECURE_REFERRER_POLICY = "same-origin"
-    # 1 day by default, change to 1 year in production (see deployment docs)
-    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=3600 * 24)
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
-    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
-
-    CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
 
 INSTALLED_APPS = [
     # we need to import our own modules before everything else to allow template
@@ -207,10 +224,6 @@ USE_TZ = True
 
 STATIC_URL = env.str("STATIC_URL", default="/static/")
 
-STATIC_ROOT = env.str("STATIC_ROOT")
-if not os.path.isabs(STATIC_ROOT):
-    STATIC_ROOT = os.path.join(BASE_DIR, STATIC_ROOT)
-
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -229,11 +242,6 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
-LOGGING_FILE = env.str("LOGGING_FILE", default=None)
-use_file_logging = not DEBUG and LOGGING_FILE is not None
-if use_file_logging:
-    Path(LOGGING_FILE).parent.mkdir(parents=True, exist_ok=True)
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -267,15 +275,11 @@ LOGGING = {
             **(
                 {
                     "class": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": LOGGING_FILE,
+                    "filename": os.path.join(LOG_DIR, "ephios.log"),
                     "when": "midnight",
                     "backupCount": env.int("LOGGING_BACKUP_DAYS", default=14),
                     "atTime": datetime.time(4),
                     "encoding": "utf-8",
-                }
-                if use_file_logging
-                else {
-                    "class": "logging.NullHandler",
                 }
             ),
         },
@@ -303,6 +307,14 @@ LOGGING = {
     },
 }
 
+
+def GET_SITE_URL():
+    site_url = env.str("SITE_URL")
+    if site_url.endswith("/"):
+        site_url = site_url[:-1]
+    return site_url
+
+
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
@@ -321,7 +333,7 @@ if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    INTERNAL_IPS = env.str("INTERNAL_IPS")
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # django-csp
 # Bootstrap requires embedded SVG files loaded via a data URI. This is not ideal, but will only be fixed in
@@ -374,24 +386,23 @@ PWA_APP_ICONS = [
 ]
 
 # django-webpush
-if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
-    vp = Vapid().from_file(vapid_private_key_path)
-    WEBPUSH_SETTINGS = {
-        "VAPID_PUBLIC_KEY": b64urlencode(
-            vp.public_key.public_bytes(
-                serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
-            )
-        ),
-        "VAPID_PRIVATE_KEY": vp,
-        "VAPID_ADMIN_EMAIL": ADMINS[0][1],
-    }
+VAPID_PRIVATE_KEY_PATH = env.str("VAPID_PRIVATE_KEY_PATH", os.path.join(DATA_DIR, "vapid_key.pem"))
+if not os.path.exists(VAPID_PRIVATE_KEY_PATH):
+    vapid = Vapid()
+    vapid.generate_keys()
+    vapid.save_key(VAPID_PRIVATE_KEY_PATH)
+    vapid.save_public_key(VAPID_PRIVATE_KEY_PATH + ".pub")
 
-
-def GET_SITE_URL():
-    site_url = env.str("SITE_URL")
-    if site_url.endswith("/"):
-        site_url = site_url[:-1]
-    return site_url
+vp = Vapid().from_file(VAPID_PRIVATE_KEY_PATH)
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": b64urlencode(
+        vp.public_key.public_bytes(
+            serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+        )
+    ),
+    "VAPID_PRIVATE_KEY": vp,
+    "VAPID_ADMIN_EMAIL": ADMINS[0][1],
+}
 
 
 DEFAULT_LISTVIEW_PAGINATION = 100
@@ -431,6 +442,25 @@ OAUTH2_PROVIDER = {
     "REFRESH_TOKEN_EXPIRE_SECONDS": timedelta(days=90),
 }
 
+"""
+SECURITY SETTINGS
+"""
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_REFERRER_POLICY = "same-origin"
+    # 1 day by default, change to 1 year in production (see deployment docs)
+    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=3600 * 24)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
+    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
+    CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
+
+"""
+OIDC SETTINGS
+"""
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     INSTALLED_APPS.append("mozilla_django_oidc")
     AUTHENTICATION_BACKENDS.append("ephios.extra.auth.EphiosOIDCAB")
