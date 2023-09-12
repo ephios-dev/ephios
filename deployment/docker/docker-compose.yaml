@@ -3,11 +3,18 @@ services:
     build: ../../
     restart: unless-stopped
     environment:
-      - EMAIL_URL=consolemail://
-    env_file:
-      - ephios-docker-defaults.env
-    ports:
-      - 8000:80
+      DEBUG: "False"
+      TRUST_X_FORWARDED_PROTO: "True"
+      DATA_DIR: "/var/ephios/data/"
+      DATABASE_URL: "postgres://ephios:ephios@ephios_postgres/ephios"
+      CACHE_URL: "redis://ephios_redis/0"
+      ALLOWED_HOSTS: "*"
+      # change the following to your needs
+      EMAIL_URL: "consolemail://"
+      SITE_URL: "http://localhost"
+      DEFAULT_FROM_EMAIL: "webmaster@localhost"
+      SERVER_EMAIL: "root@localhost"
+      ADMINS: "Root User <root@localhost.dev>"
     volumes:
       - ephios_django_data:/var/ephios/data/
 
@@ -31,7 +38,6 @@ services:
     restart: unless-stopped
     ports:
       - 80:80
-      - 443:443
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ephios_django_data:/var/ephios/data/
