@@ -63,13 +63,9 @@ The reverse proxy needs to be able to read the static files stored in there.
 VAPID keys
 ''''''''''
 
-ephios uses `VAPID <https://tools.ietf.org/html/rfc8292>`_ to send push notifications. Create a VAPID key pair:
-
-.. code-block:: console
-
-    # sudo -u ephios mkdir -p /home/ephios/vapid
-    # cd /home/ephios/vapid
-    # sudo -u ephios /home/ephios/venv/bin/vapid --gen
+ephios uses `VAPID <https://tools.ietf.org/html/rfc8292>`_ to send push notifications.
+Vapid keys will be generated automatically if they are not present.
+If you want to use your own keys, you can generate them with ``/home/ephios/venv/bin/vapid --gen``.
 
 Config file
 '''''''''''
@@ -80,7 +76,8 @@ content, replacing the values with your own:
 
 .. code-block::
 
-    SECRET_KEY=<set-some-random-secret-key>
+    DEBUG=False
+    DATA_DIR=/var/ephios/data
     DATABASE_URL=psql://dbuser:dbpass@localhost:5432/ephios
     ALLOWED_HOSTS="your.domain.org"
     SITE_URL=https://your.domain.org
@@ -88,11 +85,7 @@ content, replacing the values with your own:
     DEFAULT_FROM_EMAIL=ephios@domain.org
     SERVER_EMAIL=ephios@domain.org
     ADMINS=Org Admin <admin@domain.org>
-    VAPID_PRIVATE_KEY_PATH=/home/ephios/vapid/private_key.pem
     CACHE_URL="redis://127.0.0.1:6379/1"
-    STATIC_ROOT=/var/ephios/data/static/
-    LOGGING_FILE=/var/ephios/data/logs/ephios.log
-    DEBUG=False
 
 
 For details on the configuration options and syntax, see :ref:`configuration options <env_file_options>`.

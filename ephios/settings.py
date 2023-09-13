@@ -30,12 +30,8 @@ print(f"Loading ephios environment from {Path(env_path).absolute()}")
 environ.Env.read_env(env_file=env_path)
 
 DEBUG = env.bool("DEBUG")
-if DEBUG:
-    DATA_DIR = env.str("DATA_DIR", os.path.join(BASE_DIR, "data"))
-else:
-    # DATA_DIR must be set explicitly in production
-    DATA_DIR = env.str("DATA_DIR")
 
+DATA_DIR = env.str("DATA_DIR")
 LOG_DIR = env.str("LOG_DIR", os.path.join(DATA_DIR, "logs"))
 MEDIA_ROOT = env.str("MEDIA_ROOT", os.path.join(DATA_DIR, "media"))
 STATIC_ROOT = env.str("STATIC_ROOT", os.path.join(DATA_DIR, "static"))
