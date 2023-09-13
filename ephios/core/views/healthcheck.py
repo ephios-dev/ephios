@@ -6,19 +6,21 @@ from ephios.core.services.health.healthchecks import HealthCheckStatus, run_heal
 
 class HealthCheckView(View):
     def get(self, request, *args, **kwargs):
-        messages = []
-        errors = []
+        okays = []
+        not_okays = []
 
         for check, status, message in run_healthchecks():
             text = f"{check.name}: {message}"
             if status == HealthCheckStatus.OK:
-                messages.append(text)
+                okays.append(text)
             else:
-                errors.append(text)
+                not_okays.append(text)
 
-        if errors:
-            return HttpResponse(
-                "<br/>".join(errors) + "<br/><br/>" + "<br/>".join(messages), status=503
-            )
-
-        return HttpResponse("<br/>".join(messages), status=200)
+        status = 200
+        message = ""
+        if not_okays:
+            status = 503
+            message += "NOT OK<br/><br/>" + "<br/>".join(not_okays) + "<br/><br/>"
+        if okays:
+            message += "OK<br/><br/>" + "<br/>".join(okays) + "<br/><br/>"
+        return HttpResponse(message, status=status)

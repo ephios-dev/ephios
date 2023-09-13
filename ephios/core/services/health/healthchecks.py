@@ -82,7 +82,7 @@ class DBHealthCheck(AbstractHealthCheck):
 
         if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
             return HealthCheckStatus.WARNING, _(
-                "Using SQLite, this is not recommended in production."
+                "Using SQLite, which should not be used in production."
             )
 
         return HealthCheckStatus.OK, _("Database connection established.")
@@ -109,7 +109,7 @@ class CacheHealthCheck(AbstractHealthCheck):
             == "django.core.cache.backends.locmem.LocMemCache"
         ):
             return HealthCheckStatus.WARNING, _(
-                "Using LocMemCache, this is not recommended in production."
+                "Using LocMemCache, which should not be used in production."
             )
 
         return HealthCheckStatus.OK, _("Cache connection established.")
@@ -166,7 +166,7 @@ class WritableMediaRootHealthCheck(AbstractHealthCheck):
             )
         return (
             HealthCheckStatus.OK,
-            mark_safe(_("Media root writable by application server.")),
+            mark_safe(_("Media root is writable by application server.")),
         )
 
 
