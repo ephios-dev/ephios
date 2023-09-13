@@ -10,7 +10,13 @@ database, redis and some ssl-terminating webserver/proxy
 to be set up. Also, static files need to be served by
 a webserver from a common volume.
 
-The image is available on the Github Container Registry.
+The image is available on the Github Container Registry under
+`ghcr.io/ephios-dev/ephios <https://github.com/ephios-dev/ephios/pkgs/container/ephios>`_.
+
+The image is based on the official python image. Tags are ``main`` for the latest commit
+on the main branch, ``latest`` for the latest release and ``v0.x.y`` for a specific
+release.
+
 
 Deployment with Docker Compose
 ------------------------------
