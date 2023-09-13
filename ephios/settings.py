@@ -433,7 +433,7 @@ OAUTH2_PROVIDER = {
 
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     INSTALLED_APPS.append("mozilla_django_oidc")
-    AUTHENTICATION_BACKENDS.append("mozilla_django_oidc.auth.OIDCAuthenticationBackend")
+    AUTHENTICATION_BACKENDS.append("ephios.extra.auth.EphiosOIDCAB")
     OIDC_RP_CLIENT_ID = env.str("OIDC_RP_CLIENT_ID")
     OIDC_RP_CLIENT_SECRET = env.str("OIDC_RP_CLIENT_SECRET")
     OIDC_RP_SIGN_ALGO = env.str("OIDC_RP_SIGN_ALGO")
@@ -441,3 +441,4 @@ if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     OIDC_OP_TOKEN_ENDPOINT = env.str("OIDC_OP_TOKEN_ENDPOINT")
     OIDC_OP_USER_ENDPOINT = env.str("OIDC_OP_USER_ENDPOINT")
     OIDC_OP_JWKS_ENDPOINT = env.str("OIDC_OP_JWKS_ENDPOINT")
+    OIDC_RP_SCOPES = env.str("OIDC_RP_SCOPES", "openid profile email")
