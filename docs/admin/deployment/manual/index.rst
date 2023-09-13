@@ -118,7 +118,7 @@ Now that the configuration is in place, we can build the static files and the tr
 Setup cron
 ''''''''''
 
-ephios needs to have the ``run_periodic`` management command run periodically (every few minutes).
+ephios needs to have the ``run_periodic`` management command run periodically (at least every five minutes).
 This command sends notifications and performs other tasks that need to be done regularly.
 Run ``crontab -e -u ephios`` and add the following line:
 

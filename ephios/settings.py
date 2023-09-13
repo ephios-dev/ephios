@@ -402,9 +402,13 @@ WEBPUSH_SETTINGS = {
     "VAPID_ADMIN_EMAIL": ADMINS[0][1],
 }
 
+# Health check
+# interval for calls to the run_periodic_tasks management command over which the cronjob is considered to be broken
+RUN_PERIODIC_MAX_INTERVAL = 60 * 5 + 30  # 5 minutes + 30 seconds
 
+
+# django-rest-framework
 DEFAULT_LISTVIEW_PAGINATION = 100
-
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
@@ -440,9 +444,7 @@ OAUTH2_PROVIDER = {
     "REFRESH_TOKEN_EXPIRE_SECONDS": timedelta(days=90),
 }
 
-"""
-SECURITY SETTINGS
-"""
+# SECURITY SETTINGS
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -459,9 +461,8 @@ if not DEBUG:
 if env.bool("TRUST_X_FORWARDED_PROTO", default=False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-"""
-OIDC SETTINGS
-"""
+
+# OIDC SETTINGS
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     INSTALLED_APPS.append("mozilla_django_oidc")
     AUTHENTICATION_BACKENDS.append("ephios.extra.auth.EphiosOIDCAB")
