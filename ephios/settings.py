@@ -442,3 +442,4 @@ if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     OIDC_OP_USER_ENDPOINT = env.str("OIDC_OP_USER_ENDPOINT")
     OIDC_OP_JWKS_ENDPOINT = env.str("OIDC_OP_JWKS_ENDPOINT")
     OIDC_RP_SCOPES = env.str("OIDC_RP_SCOPES", "openid profile email")
+    LOGOUT_REDIRECT_URL = env.str("LOGOUT_REDIRECT_URL", None)
