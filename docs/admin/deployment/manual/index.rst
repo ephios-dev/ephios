@@ -51,11 +51,11 @@ Data directory
 ''''''''''''''
 
 ephios stores some data in the file system. Create the folders and make sure the ephios user can write to them.
-The reverse proxy needs to be able to read the static files stored in there.
+The reverse proxy needs to be able to read the static files stored in ``/var/ephios/data/public/static``.
 
 .. code-block:: console
 
-    # mkdir -p /var/ephios/data/static
+    # mkdir -p /var/ephios/data/
     # chown -R ephios:ephios /var/ephios
 
 .. _web_push_notifications:
@@ -194,7 +194,7 @@ Configure your reverse proxy to forward requests to ephios. For nginx, you can s
         }
 
         location /static/ {
-            alias /var/ephios/data/static/;
+            alias /var/ephios/data/public/static/;
             access_log off;
             expires 1d;
             add_header Cache-Control "public";
@@ -217,8 +217,8 @@ For apache you can build on this:
         SSLCertificateKeyFile /etc/letsencrypt/certificates/your.domain.org.key
 
         ProxyPass /static/ !
-        Alias /static/ /var/ephios/data/static/
-        <Directory /var/ephios/data/static/>
+        Alias /static/ /var/ephios/data/public/static/
+        <Directory /var/ephios/data/public/static/>
             Require all granted
         </Directory>
 

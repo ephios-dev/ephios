@@ -7,7 +7,8 @@ Docker Image
 We automatically build a Docker image for every release.
 It uses gunicorn as a WSGI-server and still requires a
 database, redis and some ssl-terminating webserver/proxy
-to be set up.
+to be set up. Also, static files need to be served by
+a webserver from a common volume.
 
 The image is available on the Github Container Registry.
 
