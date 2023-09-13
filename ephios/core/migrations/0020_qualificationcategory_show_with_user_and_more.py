@@ -2,6 +2,7 @@
 import logging
 
 from django.db import migrations, models
+from dynamic_preferences.exceptions import NotFoundInRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -10,9 +11,13 @@ def show_with_user_from_relevant_qualification_categories(apps, schema_editor):
     from dynamic_preferences.registries import global_preferences_registry
 
     global_preferences = global_preferences_registry.manager()
-    relevant_categories_pks = {
-        category.pk for category in global_preferences["general__relevant_qualification_categories"]
-    }
+    try:
+        relevant_categories_pks = {
+            category.pk
+            for category in global_preferences["general__relevant_qualification_categories"]
+        }
+    except NotFoundInRegistry:
+        return
 
     QualificationCategory = apps.get_model("core", "QualificationCategory")
     for category in QualificationCategory.objects.all():
