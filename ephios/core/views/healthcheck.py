@@ -28,9 +28,12 @@ class HealthcheckView(View):
 
         # check cronjob
         if LastRunPeriodicCall.is_stuck():
-            errors.append(
-                f"Cronjob stuck, last run {date_format(LastRunPeriodicCall.get_last_call(),format='SHORT_DATETIME_FORMAT')}"
-            )
+            if last_call := LastRunPeriodicCall.get_last_call():
+                errors.append(
+                    f"Cronjob stuck, last run {date_format(last_call,format='SHORT_DATETIME_FORMAT')}"
+                )
+            else:
+                errors.append("Cronjob stuck, no last run")
         else:
             messages.append("Cronjob OK")
 

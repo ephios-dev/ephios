@@ -1,7 +1,8 @@
 import os
 
 from django.conf import settings
-from django.core.checks import Warning, register
+from django.core.checks import Warning as DjangoWarning
+from django.core.checks import register
 
 
 @register("ephios", deploy=True)
@@ -14,7 +15,7 @@ def check_data_dir_is_not_inside_base_dir(app_configs, **kwargs):
     for name, directory in settings.DIRECTORIES.items():
         if os.path.commonpath([settings.BASE_DIR, directory]) == settings.BASE_DIR:
             errors.append(
-                Warning(
+                DjangoWarning(
                     "ephios data is stored near the ephios package directory.",
                     hint=f"You probably don't want to have {name} at {directory} to "
                     f"be inside or next to the ephios python package at "
