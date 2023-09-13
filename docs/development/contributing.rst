@@ -76,12 +76,12 @@ the `locale/**/.po` files for translation:
 Calling ``makemessages`` in the ``djangojs`` domain will find gettext calls in javascript files in the
 current working directory. Therefore, we need to ignore the ``data`` which contains static files from
 3rd-party-packages already translated and the ``docs`` directory. Some 3rd-party-javascript comes without
-a translation. To add them, do run ``makemessages`` from the ``data/static/`` directory after running
+a translation. To add them, do run ``makemessages`` from the ``data/public/static/`` directory after running
 ``collectstatic``, but ignore all directories of 3rd-party-packages that are already translated, e.g.:
 
 .. code-block:: bash
 
-   cd data/static/
-   python ../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
+   cd data/public/static/
+   python ../../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
 
 We tend to edit our .po files using weblate, but a local editor like poedit works as well.

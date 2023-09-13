@@ -1,7 +1,6 @@
 import copy
 import datetime
 import os
-import string
 from datetime import timedelta
 from email.utils import getaddresses
 from pathlib import Path
@@ -9,9 +8,10 @@ from pathlib import Path
 import environ
 from cryptography.hazmat.primitives import serialization
 from django.contrib.messages import constants
-from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy
 from py_vapid import Vapid, b64urlencode
+
+from ephios.extra.secrets import django_secret_from_file
 
 try:
     import importlib_metadata  # importlib is broken on python3.8, using backport
@@ -32,31 +32,31 @@ environ.Env.read_env(env_file=env_path)
 DEBUG = env.bool("DEBUG")
 
 DATA_DIR = env.str("DATA_DIR", os.path.join(BASE_DIR, "data"))
-LOG_DIR = env.str("LOG_DIR", os.path.join(DATA_DIR, "logs"))
-MEDIA_ROOT = env.str("MEDIA_ROOT", os.path.join(DATA_DIR, "media"))
-STATIC_ROOT = env.str("STATIC_ROOT", os.path.join(DATA_DIR, "static"))
+PUBLIC_DIR = env.str("PUBLIC_DIR", os.path.join(DATA_DIR, "public"))
+STATIC_ROOT = env.str("STATIC_ROOT", os.path.join(PUBLIC_DIR, "static"))
 
-for path in [LOG_DIR, MEDIA_ROOT, STATIC_ROOT]:
+PRIVATE_DIR = env.str("PRIVATE_DIR", os.path.join(DATA_DIR, "private"))
+LOG_DIR = env.str("LOG_DIR", os.path.join(PRIVATE_DIR, "logs"))
+MEDIA_ROOT = env.str("MEDIA_ROOT", os.path.join(PRIVATE_DIR, "media"))
+
+DIRECTORIES = {
+    "DATA_DIR": DATA_DIR,
+    "PUBLIC_DIR": PUBLIC_DIR,
+    "STATIC_ROOT": STATIC_ROOT,
+    "PRIVATE_DIR": PRIVATE_DIR,
+    "LOG_DIR": LOG_DIR,
+    "MEDIA_ROOT": MEDIA_ROOT,
+}
+
+for path in DIRECTORIES.values():
     if not os.path.exists(path):
         os.makedirs(path, exist_ok=True)
 
 if "SECRET_KEY" in env:
     SECRET_KEY = env.str("SECRET_KEY")
 else:
-    SECRET_FILE = os.path.join(DATA_DIR, ".secret")
-    if os.path.exists(SECRET_FILE):
-        with open(SECRET_FILE, "r") as f:
-            SECRET_KEY = f.read().strip()
-    else:
-        chars = string.ascii_letters + string.digits + string.punctuation
-        SECRET_KEY = get_random_string(50, chars)
-        with open(SECRET_FILE, "w") as f:
-            os.chmod(SECRET_FILE, 0o600)
-            try:
-                os.chown(SECRET_FILE, os.getuid(), os.getgid())
-            except AttributeError:
-                pass  # os.chown is not available on Windows
-            f.write(SECRET_KEY)
+    SECRET_FILE = os.path.join(PRIVATE_DIR, ".secret")
+    SECRET_KEY = django_secret_from_file(SECRET_FILE)
 
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
@@ -382,7 +382,9 @@ PWA_APP_ICONS = [
 ]
 
 # django-webpush
-VAPID_PRIVATE_KEY_PATH = env.str("VAPID_PRIVATE_KEY_PATH", os.path.join(DATA_DIR, "vapid_key.pem"))
+VAPID_PRIVATE_KEY_PATH = env.str(
+    "VAPID_PRIVATE_KEY_PATH", os.path.join(PRIVATE_DIR, "vapid_key.pem")
+)
 if not os.path.exists(VAPID_PRIVATE_KEY_PATH):
     vapid = Vapid()
     vapid.generate_keys()

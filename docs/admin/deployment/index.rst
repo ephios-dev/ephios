@@ -67,6 +67,10 @@ Restart and maybe also add your domain to the `HSTS preload list <https://hstspr
 Troubleshooting
 ---------------
 
+You can find the logs of the ephios application inside
+the ``DATA_DIR``, e.g.
+``/var/ephios/data/private/logs``.
+
 Error with None values for date fields when using MySQL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

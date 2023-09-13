@@ -13,6 +13,7 @@ class CoreAppConfig(AppConfig):
     def ready(self):
         from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 
+        from . import checks  # pylint: disable=unused-import
         from . import signals  # pylint: disable=unused-import
 
         EventTypePreference = self.get_model("EventTypePreference")
