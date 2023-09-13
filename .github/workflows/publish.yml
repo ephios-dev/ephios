@@ -1,10 +1,10 @@
-name: Publish to pypi
+name: Publish to PyPI
 on:
   push:
     tags:
       - 'v*.*.*'
 jobs:
-  build:
+  pypi:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
