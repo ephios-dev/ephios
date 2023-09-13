@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import FormView, TemplateView
 from dynamic_preferences.forms import global_preference_form_builder
 
+from ephios.core.dynamic_preferences_registry import LastRunPeriodicCall
 from ephios.core.forms.users import UserNotificationPreferenceForm
 from ephios.core.signals import management_settings_sections
 from ephios.extra.mixins import StaffRequiredMixin
@@ -54,6 +55,18 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):
 
     def get_success_url(self):
         return reverse("core:settings_instance")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            kwargs.update(self._get_healthcheck_context())
+        return super().get_context_data(**kwargs)
+
+    def _get_healthcheck_context(self):
+        return {
+            "show_system_health": True,
+            "last_run_periodic_call": LastRunPeriodicCall.get_last_call(),
+            "last_run_periodic_call_stuck": LastRunPeriodicCall.is_stuck(),
+        }
 
 
 class PersonalDataSettingsView(LoginRequiredMixin, TemplateView):

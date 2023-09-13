@@ -27,11 +27,8 @@ RUN mkdir -p /var/ephios/data/ && \
     mkdir -p /var/log/supervisord/ && \
     mkdir -p /var/run/supervisord/
 
-#COPY pyproject.toml poetry.lock .git /usr/src/ephios/
-#RUN poetry install -E pgsql -E redis -E mysql
-# good caching point
 COPY . /usr/src/ephios
-RUN poetry install -E pgsql -E redis -E mysql
+RUN poetry install --all-extras --without=dev
 
 COPY deployment/docker/entrypoint.sh /usr/local/bin/ephios
 RUN chmod +x /usr/local/bin/ephios
