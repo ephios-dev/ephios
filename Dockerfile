@@ -42,3 +42,4 @@ RUN chmod +x /usr/local/bin/cron.sh
 
 ENTRYPOINT ["ephios"]
 CMD ["run"]
+HEALTHCHECK CMD curl -f http://localhost:80/healthcheck || exit 1
