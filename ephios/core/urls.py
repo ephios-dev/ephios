@@ -39,6 +39,7 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.healthcheck import HealthcheckView
 from ephios.core.views.log import LogView
 from ephios.core.views.pwa import OfflineView, PWAManifestView, ServiceWorkerView
 from ephios.core.views.settings import (
@@ -68,6 +69,10 @@ from ephios.core.views.workinghour import (
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
+    path("manifest.json", PWAManifestView.as_view(), name="pwa_manifest"),
+    path("serviceworker.js", ServiceWorkerView.as_view(), name="pwa_serviceworker"),
+    path("offline/", OfflineView.as_view(), name="pwa_offline"),
+    path("healthcheck/", HealthcheckView.as_view(), name="healthcheck"),
     path("events/", EventListView.as_view(), name="event_list"),
     path(
         "events/<int:pk>/edit/",
@@ -225,9 +230,6 @@ urlpatterns = [
         name="consequence_edit",
     ),
     path("log/", LogView.as_view(), name="log"),
-    path("manifest.json", PWAManifestView.as_view(), name="pwa_manifest"),
-    path("serviceworker.js", ServiceWorkerView.as_view(), name="pwa_serviceworker"),
-    path("offline/", OfflineView.as_view(), name="pwa_offline"),
     path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
         "workinghours/own/request/",
