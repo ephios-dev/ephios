@@ -95,6 +95,12 @@ This signal is sent out to get all backends that can handle sending out notifica
 Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractNotificationBackend``
 """
 
+register_healthchecks = PluginSignal()
+"""
+This signal is sent out to get all health checks that can be run to monitor the health of the application.
+Receivers should return a list of subclasses of ``ephios.core.services.health.AbstractHealthCheck``
+"""
+
 periodic_signal = PluginSignal()
 """
 This signal is called periodically, at least every 15 minutes.
