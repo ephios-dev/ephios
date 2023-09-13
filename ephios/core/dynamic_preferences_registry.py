@@ -16,7 +16,7 @@ from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
 from ephios.core import plugins
-from ephios.core.models import Qualification, QualificationCategory, UserProfile
+from ephios.core.models import Qualification, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.extra.preferences import JSONPreference
@@ -40,18 +40,6 @@ class OrganizationName(StringPreference):
     default = ""
     section = general_global_section
     required = False
-
-
-@global_preferences_registry.register
-class RelevantQualificationCategories(ModelMultipleChoicePreference):
-    """deprecated"""
-
-    name = "relevant_qualification_categories"
-    section = general_global_section
-    model = QualificationCategory
-    default = QualificationCategory.objects.none()
-    verbose_name = _("Relevant qualification categories (for user list and disposition view)")
-    field_kwargs = {"widget": Select2MultipleWidget}
 
 
 @global_preferences_registry.register
