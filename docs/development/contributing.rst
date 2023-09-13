@@ -82,8 +82,6 @@ a translation. To add them, do run ``makemessages`` from the ``data/static/`` di
 .. code-block:: bash
 
    cd data/static/
-   # if django complains about not finding VAPID files when running from this bizare directory,
-   # prepend VAPID_PRIVATE_KEY_PATH="" to the following command
    python ../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
 
 We tend to edit our .po files using weblate, but a local editor like poedit works as well.
