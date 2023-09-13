@@ -30,5 +30,14 @@ These values as well as ``ENABLE_OIDC_CLIENT=True`` must be provided to the ephi
 After completing these steps, users will see a "Login" button that starts the OIDC authentication flow. If you want to
 log in with a local user account, you can still do so by navigating to ``/accounts/login/?local=true``.
 
+The following additional configuration options are available:
+
+============================== =================================================== ========================
+Value                          Usage                                               Default value
+============================== =================================================== ========================
+OIDC_RP_SCOPES                 Scopes to request from the RP (for additional data) ``openid profile email``
+LOGOUT_REDIRECT_URL            redirect the user to the RP logout page             None (no redirect)
+============================== =================================================== ========================
+
 .. toctree::
     :maxdepth: 2
