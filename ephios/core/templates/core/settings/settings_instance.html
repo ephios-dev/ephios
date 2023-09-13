@@ -10,50 +10,47 @@
         <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
     </form>
 
-    {% if show_system_health %}
-        <div class="mb-3">
-            <h3>
-                {% translate "System health" %}
-            </h3>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        {% translate "Cron job" %}
-                        {% if last_run_periodic_call_stuck %}
-                            <i class="fas fa-times-circle text-danger"></i>
-                        {% else %}
-                            <i class="fas fa-check-circle text-success"></i>
-                        {% endif %}
-                    </h5>
-                    <p class="card-text">
-                        {% blocktranslate trimmed %}
-                            A cron job must regularly call ephios to do recurring tasks
-                            like sending reminder emails.
-                        {% endblocktranslate %}
-                        <a href="https://docs.ephios.de/en/stable/admin/deployment/manual/index.html#setup-cron"
-                           target="_blank">
-                            <i class="fas fa-question-circle"></i>
-                            <span class="visually-hidden">
-                                {% translate "Learn more" %}
-                            </span>
-                        </a>
-                        <br/>
-                        {% if last_run_periodic_call == None %}
-                            {% translate "Last run:" %}
-                            <span class="text-danger fw-bold">
-                                {% translate "never" %}
-                            </span>
-                        {% elif last_run_periodic_call_stuck %}
-                            {% translate "Last run:" %}
-                            <span class="text-danger fw-bold">
-                                {{ last_run_periodic_call|naturaltime }}
-                            </span>
-                        {% else %}
-                            {% translate "Last run:" %} {{ last_run_periodic_call|naturaltime }}
-                        {% endif %}
-                    </p>
+    {% if healthchecks %}
+
+        <h3>
+            {% translate "System health" %}
+        </h3>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {% for check, status, message in healthchecks %}
+                <div class="col">
+                    <div class="card mb-1">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ check.name }}
+                                {% if status == "error" %}
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span class="visually-hidden">{% translate "Error" %}</span>
+                                {% elif status == "warning" %}
+                                    <i class="fas fa-exclamation-circle text-warning"></i>
+                                    <span class="visually-hidden">{% translate "Warning" %}</span>
+                                {% elif status == "ok" %}
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="visually-hidden">{% translate "OK" %}</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text">
+                                {{ check.description }}
+                                {% if check.documentation_link %}
+                                    <a href="{{ check.documentation_link }}" target="_blank" rel="noreferrer">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="visually-hidden">
+                                            {% translate "Learn more" %}
+                                        </span>
+                                    </a>
+                                {% endif %}
+                            </p>
+                            <p class="card-text">
+                                {{ message }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
     {% endif %}
 
