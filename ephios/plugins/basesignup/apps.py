@@ -9,7 +9,7 @@ class PluginApp(PluginConfig):
     class EphiosPluginMeta:
         name = _("Base Signup Plugin")
         author = "Ephios Team"
-        description = _("This plugins adds basic signup methods.")
+        description = _("This plugins adds the standard signup methods.")
 
     def ready(self):
         from . import signals  # pylint: disable=unused-import
