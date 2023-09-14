@@ -1,6 +1,7 @@
 services:
   ephios:
-    build: ../../
+    # to build locally use `build: "../../"` instead of `image: ...`
+    image: ghcr.io/ephios-dev/ephios:latest
     restart: unless-stopped
     environment:
       DEBUG: "False"

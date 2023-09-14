@@ -47,10 +47,8 @@ DIRECTORIES = {
     "LOG_DIR": LOG_DIR,
     "MEDIA_ROOT": MEDIA_ROOT,
 }
-
-for path in DIRECTORIES.values():
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
+for directory in DIRECTORIES.values():
+    os.makedirs(directory, exist_ok=True)
 
 if "SECRET_KEY" in env:
     SECRET_KEY = env.str("SECRET_KEY")
@@ -385,22 +383,19 @@ PWA_APP_ICONS = [
 VAPID_PRIVATE_KEY_PATH = env.str(
     "VAPID_PRIVATE_KEY_PATH", os.path.join(PRIVATE_DIR, "vapid_key.pem")
 )
-if not os.path.exists(VAPID_PRIVATE_KEY_PATH):
-    vapid = Vapid()
-    vapid.generate_keys()
-    vapid.save_key(VAPID_PRIVATE_KEY_PATH)
-    vapid.save_public_key(VAPID_PRIVATE_KEY_PATH + ".pub")
+WEBPUSH_SETTINGS = {}
+if os.path.exists(VAPID_PRIVATE_KEY_PATH):
+    vp = Vapid().from_file(VAPID_PRIVATE_KEY_PATH)
+    WEBPUSH_SETTINGS = {
+        "VAPID_PUBLIC_KEY": b64urlencode(
+            vp.public_key.public_bytes(
+                serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+            )
+        ),
+        "VAPID_PRIVATE_KEY": vp,
+        "VAPID_ADMIN_EMAIL": ADMINS[0][1],
+    }
 
-vp = Vapid().from_file(VAPID_PRIVATE_KEY_PATH)
-WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": b64urlencode(
-        vp.public_key.public_bytes(
-            serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
-        )
-    ),
-    "VAPID_PRIVATE_KEY": vp,
-    "VAPID_ADMIN_EMAIL": ADMINS[0][1],
-}
 
 # Health check
 # interval for calls to the run_periodic_tasks management command over which the cronjob is considered to be broken

@@ -1,10 +1,10 @@
 import os
-from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.dispatch import receiver
+from django.template.defaultfilters import floatformat
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -149,24 +149,45 @@ class CronJobHealthCheck(AbstractHealthCheck):
             )
 
 
-class WritableMediaRootHealthCheck(AbstractHealthCheck):
-    slug = "writable_media_root"
-    name = _("Writable Media Root")
-    description = _("The media root must be writable by the application server.")
+class DiskSpaceHealthCheck(AbstractHealthCheck):
+    slug = "disk_space"
+    name = _("Disk space")
+    description = _("Disk space needs to be available to store data.")
     documentation_link = (
         "https://docs.ephios.de/en/stable/admin/deployment/manual/index.html#data-directory"
     )
 
     def check(self):
-        media_root = Path(settings.MEDIA_ROOT)
-        if not os.access(media_root, os.W_OK):
+        # if under 100 MB are available, we consider this an error
+        # if under 1 GB are available, we consider this a warning
+        # otherwise, we consider this ok
+        disk_usage = os.statvfs(settings.MEDIA_ROOT)
+        free_bytes = disk_usage.f_bavail * disk_usage.f_frsize
+        MEGA = 1024 * 1024
+        if free_bytes < 100 * MEGA:
             return (
                 HealthCheckStatus.ERROR,
-                mark_safe(_("Media root not writable by application server.")),
+                mark_safe(
+                    _(
+                        "Less than 100 MB of disk space available. "
+                        "Please free up some disk space."
+                    )
+                ),
+            )
+        if free_bytes < 1024 * MEGA:
+            return (
+                HealthCheckStatus.WARNING,
+                mark_safe(
+                    _("Less than 1 GB of disk space available. Please free up some disk space.")
+                ),
             )
         return (
             HealthCheckStatus.OK,
-            mark_safe(_("Media root is writable by application server.")),
+            mark_safe(
+                _("{disk_space} of disk space available.").format(
+                    disk_space=f"{floatformat(free_bytes / MEGA / 1024,1)} GB"
+                )
+            ),
         )
 
 
@@ -175,4 +196,4 @@ def register_core_healthchecks(sender, **kwargs):
     yield DBHealthCheck
     yield CacheHealthCheck
     yield CronJobHealthCheck
-    yield WritableMediaRootHealthCheck
+    yield DiskSpaceHealthCheck

@@ -60,13 +60,6 @@ The reverse proxy needs to be able to read the static files stored in ``/var/eph
 
 .. _web_push_notifications:
 
-VAPID keys
-''''''''''
-
-ephios uses `VAPID <https://tools.ietf.org/html/rfc8292>`_ to send push notifications.
-Vapid keys will be generated automatically if they are not present.
-If you want to use your own keys, you can generate them with ``/home/ephios/venv/bin/vapid --gen``.
-
 Config file
 '''''''''''
 
@@ -111,9 +104,7 @@ Now that the configuration is in place, we can build the static files and the tr
     $ export ENV_PATH="/home/ephios/ephios.env"
     $ source /home/ephios/venv/bin/activate
     $ python -m ephios migrate
-    $ python -m ephios collectstatic --noinput
-    $ python -m ephios compilemessages
-    $ python -m ephios compilejsi18n
+    $ python -m ephios build
 
 Setup cron
 ''''''''''
@@ -247,12 +238,16 @@ You can now create your first user account by running:
 
 You should now secure your installation. Try starting with the tips below.
 
-To install a plugin install them via pip and restart the ephios-gunicorn service:
+To install a plugin install them via pip:
 
 .. code-block:: console
 
-    # ENV_PATH="/home/ephios/ephios.env" sudo -u ephios /home/ephios/venv/bin/pip install ephios-<plugin>
-    # systemctl restart ephios-gunicorn
+    # sudo -u ephios -i
+    $ export ENV_PATH="/home/ephios/ephios.env"
+    $ source /home/ephios/venv/bin/activate
+    $ pip install "ephios-<plugin>"
+    $ python -m ephios migrate
+    $ python -m ephios build
 
 To update ephios create a backup of your database and files and run:
 
@@ -263,11 +258,9 @@ To update ephios create a backup of your database and files and run:
     $ source /home/ephios/venv/bin/activate
     $ pip install -U "ephios[redis,pgsql]"
     $ python -m ephios migrate
-    $ python -m ephios collectstatic --noinput
-    $ python -m ephios compilemessages
-    $ python -m ephios compilejsi18n
+    $ python -m ephios build
 
-Then, as root, restart the gunicorn service:
+After installing plugins or updating, restart the gunicorn service:
 
 .. code-block:: console
 

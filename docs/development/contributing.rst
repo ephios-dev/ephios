@@ -29,7 +29,7 @@ To set up a development version on your local machine, you need to execute the f
 #. Install dependencies with ``poetry install``
 #. Create env file with ``cp .env.example .env``
 #. Migrate the database with ``python manage.py migrate``
-#. Compile translations with ``python manage.py compilemessages`` and ``python manage.py compilejsi18n``
+#. Prepare files for the installation with ``python manage.py build``
 #. Load data for testing with ``python manage.py devdata``
 #. Start the development server with ``python manage.py runserver``
 #. Open your web browser, visit ``http://localhost:8000`` and log in with the default credentials (user ``admin@localhost`` and password ``admin``)

@@ -78,9 +78,7 @@ jobs:
     - name: Prepare files for test run
       run: |
         cp .env.example .env
-        poetry run python manage.py compilemessages
-        poetry run python manage.py collectstatic
-        poetry run python manage.py compilejsi18n
+        poetry run python manage.py build
 
     - name: Setup postgres # postgres 14 on ubuntu 22.04
       run: |

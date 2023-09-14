@@ -11,7 +11,7 @@ class HealthCheckView(View):
 
         for check, status, message in run_healthchecks():
             text = f"{check.name}: {message}"
-            if status == HealthCheckStatus.OK:
+            if status in {HealthCheckStatus.OK, HealthCheckStatus.WARNING}:
                 okays.append(text)
             else:
                 not_okays.append(text)
