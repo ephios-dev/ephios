@@ -17,14 +17,17 @@ class BuildingBlock(models.Model):
         blank=False,
     )
     block_type = models.CharField(verbose_name=_("Type"), choices=BuildingBlockType.choices)
-    allow_more = models.BooleanField(
-        verbose_name=_("allow more"),
-        default=False,
+
+    # composite blocks
+    sub_blocks = models.ManyToManyField(
+        "self", through="BlockComposition", through_fields=("composite_block", "sub_block")
     )
 
-    # for composite blocks
-    children = models.ManyToManyField(
-        "self", through="BlockComposition", through_fields=("parent", "child")
+    # atomic blocks
+    allow_more = models.BooleanField(
+        verbose_name=_("allow more"),
+        help_text=_("Allow more participants that qualify for any of the positions."),
+        default=False,
     )
 
 
@@ -33,7 +36,9 @@ class BlockQualificationRequirement(models.Model):
         BuildingBlock, on_delete=models.CASCADE, related_name="qualification_requirements"
     )
     everyone = models.BooleanField()
-    at_least = models.PositiveSmallIntegerField()
+    at_least = models.PositiveSmallIntegerField(
+        default=0,
+    )
     qualifications = models.ManyToManyField(Qualification)
 
 
@@ -49,12 +54,14 @@ class Position(models.Model):
     )
     qualifications = models.ManyToManyField(
         Qualification,
+        verbose_name=_("required qualifications"),
+        blank=True,
     )
 
 
 class BlockComposition(models.Model):
-    parent = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
-    child = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
+    composite_block = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
+    sub_block = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
     optional = models.BooleanField(
         verbose_name=_("optional"),
         default=False,
