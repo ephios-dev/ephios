@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load rich_text %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "complexsignup/editor.js" %}"></script>
+{% endblock %}
+
+{% block title %}
+    {% translate "Signup Blocks Editor" %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="editor" class="row">
+        <div class="col-6" id="current-block">
+
+        </div>
+        <div class="col-6" id="block-list">
+
+        </div>
+    </div>
+
+{% endblock %}

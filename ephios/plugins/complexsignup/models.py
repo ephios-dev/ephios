@@ -16,7 +16,9 @@ class BuildingBlock(models.Model):
         max_length=255,
         blank=False,
     )
-    block_type = models.CharField(verbose_name=_("Type"), choices=BuildingBlockType.choices)
+    block_type = models.CharField(
+        verbose_name=_("Type"), choices=BuildingBlockType.choices, max_length=64
+    )
 
     # composite blocks
     sub_blocks = models.ManyToManyField(
@@ -43,6 +45,7 @@ class BlockQualificationRequirement(models.Model):
 
 
 class Position(models.Model):
+    block = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE, related_name="positions")
     label = models.CharField(
         verbose_name=_("Label"),
         max_length=255,
@@ -60,8 +63,12 @@ class Position(models.Model):
 
 
 class BlockComposition(models.Model):
-    composite_block = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
-    sub_block = models.ForeignKey(BuildingBlock, on_delete=models.CASCADE)
+    composite_block = models.ForeignKey(
+        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
+    )
+    sub_block = models.ForeignKey(
+        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
+    )
     optional = models.BooleanField(
         verbose_name=_("optional"),
         default=False,
