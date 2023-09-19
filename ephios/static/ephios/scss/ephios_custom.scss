@@ -1,7 +1,7 @@
 header {
   position: sticky;
   top: 0;
-  z-index: 500;  // somewhere between the normal widgets and popups (defined by bootstrap)
+  z-index: 500; // somewhere between the normal widgets and popups (defined by bootstrap)
 }
 
 .container-main {
@@ -229,5 +229,36 @@ a.badge {
 
   .calendar-truncate {
     text-overflow: ellipsis;
+  }
+}
+
+// complexsignup editor
+
+.btn-insert-subblock {
+  // add a whiping effect to the button
+  border: none;
+  border-radius: 0;
+  color: $dark;
+  background: repeating-linear-gradient(to left,
+          transparent 0%,
+          transparent 65%,
+          $secondary 75%,
+          transparent 80%,
+          transparent 100%
+  );
+  background-size: 300%;
+  animation: btn-insert-subblock-animation 4s linear infinite;
+  transition: width 0.5s;
+}
+
+@keyframes btn-insert-subblock-animation {
+  0% {
+    background-position: -100%;
+  }
+  25% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 100%;
   }
 }

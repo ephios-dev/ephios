@@ -1,9 +1,14 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
-from ephios.plugins.complexsignup.views import BuildingBlockEditorView, new_atomic_block_hx
+from ephios.plugins.complexsignup.api import BuildingBlockViewSet
+from ephios.plugins.complexsignup.views import BuildingBlockEditorView
+
+router = routers.DefaultRouter()
+router.register(r"buildingblocks", BuildingBlockViewSet)
 
 app_name = "complexsignup"
 urlpatterns = [
     path("settings/signup-blocks/", BuildingBlockEditorView.as_view(), name="blocks_editor"),
-    path("settings/signup-blocks/new-atomic/", new_atomic_block_hx, name="blocks_atomic_create"),
+    path("api/", include(router.urls)),  # can we integrate this into the main router?
 ]

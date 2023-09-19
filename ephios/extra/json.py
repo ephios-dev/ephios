@@ -1,4 +1,5 @@
 import json
+from uuid import UUID
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model, QuerySet
@@ -11,6 +12,8 @@ class CustomJSONEncoder(DjangoJSONEncoder):
             return list(o)
         if isinstance(o, Model):
             return o.pk
+        if isinstance(o, UUID):
+            return str(o)
         return super().default(o)
 
 
