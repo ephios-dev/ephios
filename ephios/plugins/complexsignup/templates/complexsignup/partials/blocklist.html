@@ -1,9 +1,0 @@
-{% load i18n %}
-<div class="col-2" id="block-list">
-    <button type="button" class="btn btn-sm btn-secondary"
-            hx-get="{% url "complexsignup:blocks_atomic_create" %}"
-            hx-target="#current-block"
-    >
-        {% translate "Add atomic block" %}
-    </button>
-</div>

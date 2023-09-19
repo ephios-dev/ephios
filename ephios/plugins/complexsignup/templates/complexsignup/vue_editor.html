@@ -4,7 +4,6 @@
 {% load rich_text %}
 
 {% block javascript %}
-    <script type="text/javascript" src="{% static "complexsignup/editor.js" %}"></script>
 {% endblock %}
 
 {% block title %}
@@ -14,12 +13,163 @@
 {% block content %}
 
     <div id="editor" class="row">
-        <div class="col-6" id="current-block">
+        <div class="col-8" id="current-block">
+            <div class="card" v-if="currentBlock">
+                <div class="card-body">
+                    <input id="block-name" type="text" required
+                           v-model="currentBlock.name" class="form-control"
+                           placeholder="{% translate "Block Name" %}" autofocus>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li v-for="position in currentBlock.positions" :key="position.id" class="list-group-item">
+                        <div class="row g-1">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="text"
+                                               v-model="position.label" class="form-control form-control-sm"
+                                               placeholder="{% translate "Label" %}">
+                                    </div>
+                                    <div class="col-auto d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input type="checkbox" v-model="position.optional"
+                                                   class="form-check-input"
+                                                   :id="'position-' + position.clientId"
+                                            />
+                                            <label class="form-check-label" :for="'position-' + position.clientId">
+                                                {% translate "optional" %}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a @click="removePosition(position)" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                            {% translate "Remove" %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                {% translate "qualified as" %}
+                                <span v-for="qualification in position.qualifications" :key="qualification.pk">
+                                    <b>
+                                        [[ qualification.title ]]
+                                    </b>
+                                    <a href="#" class="link-underline-opacity-0 link-danger ms-1"
+                                       @click="removeQualification(position, qualification)">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="visually-hidden">
+                                            {% translate "Remove" %}
+                                        </span>
+                                    </a>
+                                    {% translate "and" %}
+                                </span>
+                                <select class="select-auto-width d-inline-block form-select form-select-sm"
+                                        value=""
+                                        @change="event => addQualification(event, position, value)">
+                                    <option disabled value="">
+                                        {% translate "select qualification" %}
+                                    </option>
+                                    {% for qualification in qualifications %}
+                                        <option value="{{ qualification.pk }}">
+                                            {{ qualification.title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="w-100 mb-1">
+                            <span class="me-3">
+                                <i class="fa fa-users"></i>
+                                <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
+                            </span>
+                            <div class="form-check d-inline-block">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="allow-more"
+                                       v-model="currentBlock.allowMore"
+                                />
+                                <label class="form-check-label" for="allow-more">
+                                    {% translate "Allow more participants that qualify for any of the positions." %}
+                                </label>
+                            </div>
+                        </div>
 
+                        <button type="button" class="btn btn-sm btn-secondary" @click="addPosition">
+                            <i class="fas fa-plus"></i>
+                            {% translate "Add position" %}
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="col-6" id="block-list">
+        <div class="col-4" id="block-list">
+            <form method="POST" id="editor-form">
+                {% csrf_token %}
+                <input type="hidden" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
+                       value="{{ form.blocks.value }}">
+                <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
+                    {% translate "Save" %}
+                </button>
+            </form>
+            <button class="btn btn-sm btn-secondary" type="button" id="add-block" @click="addAtomicBlock">
+                {% translate "Add atomic block" %}
+            </button>
+
+            <ul class="list-group mt-2">
+                <li class="list-group-item list-group-item-action" :class="{active: currentBlock === block}"
+                    v-for="block in undeletedBlocks" :key="block.id">
+                    <div class="row">
+                        <div class="col d-flex align-items-center" @click="selectBlock(block)">
+                            <div>
+                                <span class="me-1">
+                                    <i v-if="block.block_type === 'composite'" class="fas fa-network-wired"></i>
+                                    <i v-else class="fas fa-list-ul"></i>
+                                </span>
+                                <b v-if="block.name">[[ block.name ]]</b>
+                                <span v-else>{% translate "unnamed" %}</span>
+                                <span class="ms-3">
+                                    <i class="fa fa-users"></i>
+                                    <span class="ms-1" v-html="participantCountInfo(block)"></span>
+                                </span>
+                                <br/>
+                                <small class="">
+                                    <span v-for="position in block.positions" :key="position.clientId"
+                                          class="badge text-bg-secondary me-1">
+                                        <span v-if="position.label">
+                                            [[ position.label ]]
+                                        </span>
+                                        <span v-else-if="position.qualifications.length > 0">
+                                            <span v-for="(qualification, index) in position.qualifications"
+                                                  :key="qualification.pk">[[ qualification.abbreviation ]]<span
+                                                v-if="index != position.qualifications.length - 1">, </span>
+                                            </span>
+                                        </span>
+                                        <span v-else>
+                                            {% translate "unnamed" %}
+                                        </span>
+                                    </span>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" @click="removeBlock(block)" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                                <span class="visually-hidden">{% translate "Remove" %}</span>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
 
         </div>
     </div>
+
+    <input id="qualifications_json" value="{{ qualifications_json }}" type="hidden">
+    <script nonce="{{ request.csp_nonce }}" type="text/javascript"
+            src="{% static "complexsignup/editor.js" %}"></script>
+
 
 {% endblock %}

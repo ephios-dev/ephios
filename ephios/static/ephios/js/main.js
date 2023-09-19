@@ -31,6 +31,26 @@ function handleForms(elem) {
     elem.find(".action-navigate-back").click(function () {
         window.history.back();
     });
+    elem.find(".select-auto-width").each((index, select) => {
+        // https://stackoverflow.com/a/49693251/4837975
+        select.addEventListener('change', function () {
+            const span = document.createElement('span');
+            const option = select.options[select.selectedIndex];
+            if (option) {
+                span.textContent = option.textContent;
+                const optionStyles = getComputedStyle(option);
+                span.style.fontFamily = optionStyles.fontFamily;
+                span.style.fontStyle = optionStyles.fontStyle;
+                span.style.fontWeight = optionStyles.fontWeight;
+                span.style.fontSize = optionStyles.fontSize;
+            }
+            document.body.appendChild(span);
+            select.style.width = `${span.offsetWidth + 45}px`;
+            document.body.removeChild(span);
+        });
+        // Trigger for the first time
+        select.dispatchEvent(new Event('change'));
+    });
 }
 
 $(document).ready(function () {

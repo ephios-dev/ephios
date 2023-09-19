@@ -6,8 +6,8 @@ from ephios.core.models import Qualification
 
 
 class BuildingBlockType(Choices):
-    atomic = _("atomic")
-    composite = _("composite")
+    atomic = "atomic"
+    composite = "composite"
 
 
 class BuildingBlock(models.Model):
@@ -32,6 +32,9 @@ class BuildingBlock(models.Model):
         default=False,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class BlockQualificationRequirement(models.Model):
     block = models.ForeignKey(
@@ -42,6 +45,18 @@ class BlockQualificationRequirement(models.Model):
         default=0,
     )
     qualifications = models.ManyToManyField(Qualification)
+
+    def __str__(self):
+        if self.everyone:
+            return _("everyone on {block} needs {qualifications}").format(
+                block=self.block, qualifications=", ".join(map(str, self.qualifications.all()))
+            )
+        else:
+            return _("at least {at_least} on {block} need {qualifications}").format(
+                at_least=self.at_least,
+                block=self.block,
+                qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
+            )
 
 
 class Position(models.Model):
@@ -60,6 +75,9 @@ class Position(models.Model):
         verbose_name=_("required qualifications"),
         blank=True,
     )
+
+    def __str__(self):
+        return self.label or f"{self.block.name} #{self.pk}"
 
 
 class BlockComposition(models.Model):
