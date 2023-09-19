@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.db.models import Choices
 from django.utils.translation import gettext_lazy as _
@@ -6,11 +8,12 @@ from ephios.core.models import Qualification
 
 
 class BuildingBlockType(Choices):
-    atomic = _("atomic")
-    composite = _("composite")
+    ATOMIC = "atomic"
+    COMPOSITE = "composite"
 
 
 class BuildingBlock(models.Model):
+    id = models.UUIDField("UUID", unique=True, default=uuid.uuid4, primary_key=True)
     name = models.CharField(
         verbose_name=_("Name"),
         max_length=255,
@@ -32,6 +35,9 @@ class BuildingBlock(models.Model):
         default=False,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class BlockQualificationRequirement(models.Model):
     block = models.ForeignKey(
@@ -42,6 +48,18 @@ class BlockQualificationRequirement(models.Model):
         default=0,
     )
     qualifications = models.ManyToManyField(Qualification)
+
+    def __str__(self):
+        if self.everyone:
+            return _("everyone on {block} needs {qualifications}").format(
+                block=self.block, qualifications=", ".join(map(str, self.qualifications.all()))
+            )
+        else:
+            return _("at least {at_least} on {block} need {qualifications}").format(
+                at_least=self.at_least,
+                block=self.block,
+                qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
+            )
 
 
 class Position(models.Model):
@@ -61,13 +79,16 @@ class Position(models.Model):
         blank=True,
     )
 
+    def __str__(self):
+        return self.label or f"{self.block.name} #{self.pk}"
+
 
 class BlockComposition(models.Model):
     composite_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
+        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
     )
     sub_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
+        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
     )
     optional = models.BooleanField(
         verbose_name=_("optional"),

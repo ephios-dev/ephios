@@ -81,7 +81,7 @@ async function networkThenCacheOrOffline(event) {
     return fetchAndCacheOrCatch(event, async (err) => {
         let response = await caches.match(event.request)
         if (response) {
-            if (event.request.mode === "navigate"){
+            if (event.request.mode === "navigate") {
                 // mark the response document as offline, so the frontend can display a message
                 response = await markResponseAsOffline(response);
             }
@@ -92,8 +92,9 @@ async function networkThenCacheOrOffline(event) {
 }
 
 self.addEventListener("fetch", event => {
-    const isStatic = new URL(event.request.url).pathname.startsWith("/static/");
-    if (isStatic) {
+    const isStatic = new URL(event.request.url).pathname.startsWith("{{ static_url }}");
+    const enableCache = "{{ enable_cache }}" === "True";
+    if (enableCache && isStatic) {
         event.respondWith(cacheThenNetwork(event));
     } else {
         event.respondWith(networkThenCacheOrOffline(event));
