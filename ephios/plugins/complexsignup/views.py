@@ -49,7 +49,8 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
                 form.save()
         except Exception as e:
             messages.error(self.request, _("Failed to save building blocks."))
-            return self.form_invalid(form)
+            raise e
+            # return self.form_invalid(form)
         messages.success(self.request, _("Saved blocks."))
         return super().form_valid(form)
 

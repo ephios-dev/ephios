@@ -12,9 +12,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const blocks = ref(blocksInputValue ? JSON.parse(blocksInputValue) : []);
             blocks.value.forEach(block => {
                 block.deleted = false;
-                block.uuid = `${block.id}`;
                 block.positions.forEach(position => {
-                    position.uuid = `${position.id}`;
+                    position.clientId = `${position.id}`;
                 });
             });
 
@@ -26,11 +25,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     positions: [],
                     qualification_requirements: [],
                     id: null,
-                    uuid: `new-${Math.random().toString(36).substring(7)}`,
+                    uuid: self.crypto.randomUUID(),
                 }
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
-                // addPosition();
                 await nextTick()
                 document.getElementById("block-name").focus();
             }
@@ -41,13 +39,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         label: "",
                         qualifications: [],
                         id: null,
-                        uuid: `new-${Math.random().toString(36).substring(7)}`,
+                        clientId: `new-${Math.random().toString(36).substring(7)}`,
                     }
                 );
             }
 
             function removePosition(position) {
-                currentBlock.value.positions = currentBlock.value.positions.filter(p => p.uuid !== position.uuid);
+                currentBlock.value.positions = currentBlock.value.positions.filter(p => p.clientId !== position.clientId);
             }
 
             function removeQualification(position, qualification) {
@@ -60,7 +58,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             function removeBlock(block) {
                 block.deleted = true;
-                if (block.uuid.startsWith("new-")) {
+                if (!block.id) {
+                    // remove block from list if it was not saved yet
                     blocks.value = blocks.value.filter(b => b.uuid !== block.uuid);
                 }
                 if (currentBlock.value === block) {

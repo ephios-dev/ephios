@@ -34,9 +34,9 @@
                                         <div class="form-check">
                                             <input type="checkbox" v-model="position.optional"
                                                    class="form-check-input"
-                                                   :id="'position-' + position.uuid"
+                                                   :id="'position-' + position.clientId"
                                             />
-                                            <label class="form-check-label" :for="'position-' + position.uuid">
+                                            <label class="form-check-label" :for="'position-' + position.clientId">
                                                 {% translate "optional" %}
                                             </label>
                                         </div>
@@ -133,7 +133,7 @@
                                 </span>
                                 <br/>
                                 <small class="">
-                                    <span v-for="position in block.positions" :key="position.uuid"
+                                    <span v-for="position in block.positions" :key="position.clientId"
                                           class="badge text-bg-secondary me-1">
                                         <span v-if="position.label">
                                             [[ position.label ]]

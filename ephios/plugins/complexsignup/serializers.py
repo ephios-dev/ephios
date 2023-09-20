@@ -1,3 +1,5 @@
+import uuid
+
 from rest_framework import serializers
 
 from ephios.core.models import Qualification
@@ -128,6 +130,9 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
 
+    # explicit field to avoid unique check broken in nested serializers
+    uuid = serializers.UUIDField(required=False, default=uuid.uuid4)
+
     def create_update_with_context(self, validated_data, instance_getter):
         positions_data = validated_data.pop("positions")
         qualification_requirements_data = validated_data.pop("qualification_requirements")
@@ -165,6 +170,7 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         model = BuildingBlock
         fields = [
             "id",
+            "uuid",
             "name",
             "block_type",
             "sub_blocks",
