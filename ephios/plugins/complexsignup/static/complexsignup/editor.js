@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const blocks = ref(blocksInputValue ? JSON.parse(blocksInputValue) : []);
             blocks.value.forEach(block => {
                 block.deleted = false;
-                block.clientId = `${block.id}`;
+                block.uuid = `${block.id}`;
+                block.positions.forEach(position => {
+                    position.uuid = `${position.id}`;
+                });
             });
 
             async function addAtomicBlock() {
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     positions: [],
                     qualification_requirements: [],
                     id: null,
-                    clientId: `new-${Math.random().toString(36).substring(7)}`,
+                    uuid: `new-${Math.random().toString(36).substring(7)}`,
                 }
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
@@ -38,13 +41,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         label: "",
                         qualifications: [],
                         id: null,
-                        clientId: `new-${Math.random().toString(36).substring(7)}`,
+                        uuid: `new-${Math.random().toString(36).substring(7)}`,
                     }
                 );
             }
 
             function removePosition(position) {
-                currentBlock.value.positions = currentBlock.value.positions.filter(p => p.clientId !== position.clientId);
+                currentBlock.value.positions = currentBlock.value.positions.filter(p => p.uuid !== position.uuid);
             }
 
             function removeQualification(position, qualification) {
@@ -57,8 +60,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             function removeBlock(block) {
                 block.deleted = true;
-                if (block.clientId.startsWith("new-")) {
-                    blocks.value = blocks.value.filter(b => b.clientId !== block.clientId);
+                if (block.uuid.startsWith("new-")) {
+                    blocks.value = blocks.value.filter(b => b.uuid !== block.uuid);
                 }
                 if (currentBlock.value === block) {
                     currentBlock.value = null;

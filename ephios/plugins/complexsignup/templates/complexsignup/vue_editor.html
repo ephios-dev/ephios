@@ -17,11 +17,11 @@
             <div class="card" v-if="currentBlock">
                 <div class="card-body">
                     <input id="block-name" type="text" required
-                           v-model="currentBlock.name" class="form-control"
+                           v-model="currentBlock.name" class="form-control form-control-lg2"
                            placeholder="{% translate "Block Name" %}" autofocus>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li v-for="position in currentBlock.positions" :key="position.id" class="list-group-item">
+                <ul class="list-group mx-3">
+                    <li v-for="position in currentBlock.positions" :key="position.id" class="list-group-item list-group-item-secondary">
                         <div class="row g-1">
                             <div class="col-12">
                                 <div class="row">
@@ -34,9 +34,9 @@
                                         <div class="form-check">
                                             <input type="checkbox" v-model="position.optional"
                                                    class="form-check-input"
-                                                   :id="'position-' + position.clientId"
+                                                   :id="'position-' + position.uuid"
                                             />
-                                            <label class="form-check-label" :for="'position-' + position.clientId">
+                                            <label class="form-check-label" :for="'position-' + position.uuid">
                                                 {% translate "optional" %}
                                             </label>
                                         </div>
@@ -79,30 +79,27 @@
                             </div>
                         </div>
                     </li>
-                    <li class="list-group-item">
-                        <div class="w-100 mb-1">
-                            <span class="me-3">
-                                <i class="fa fa-users"></i>
-                                <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
-                            </span>
-                            <div class="form-check d-inline-block">
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       id="allow-more"
-                                       v-model="currentBlock.allowMore"
-                                />
-                                <label class="form-check-label" for="allow-more">
-                                    {% translate "Allow more participants that qualify for any of the positions." %}
-                                </label>
-                            </div>
-                        </div>
-
-                        <button type="button" class="btn btn-sm btn-secondary" @click="addPosition">
-                            <i class="fas fa-plus"></i>
-                            {% translate "Add position" %}
-                        </button>
-                    </li>
+                    <a class="list-group-item list-group-item-action list-group-item-secondary text-center" @click="addPosition">
+                        <i class="fas fa-plus"></i>
+                        {% translate "Add position" %}
+                    </a>
                 </ul>
+                <div class="card-body">
+                    <span class="me-3">
+                        <i class="fa fa-users"></i>
+                        <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
+                    </span>
+                    <div class="form-check d-inline-block">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="allow-more"
+                               v-model="currentBlock.allowMore"
+                        />
+                        <label class="form-check-label" for="allow-more">
+                            {% translate "Allow more participants that qualify for any of the positions." %}
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-4" id="block-list">
@@ -123,7 +120,7 @@
                     v-for="block in undeletedBlocks" :key="block.id">
                     <div class="row">
                         <div class="col d-flex align-items-center" @click="selectBlock(block)">
-                            <div>
+                            <div class="text-break">
                                 <span class="me-1">
                                     <i v-if="block.block_type === 'composite'" class="fas fa-network-wired"></i>
                                     <i v-else class="fas fa-list-ul"></i>
@@ -136,7 +133,7 @@
                                 </span>
                                 <br/>
                                 <small class="">
-                                    <span v-for="position in block.positions" :key="position.clientId"
+                                    <span v-for="position in block.positions" :key="position.uuid"
                                           class="badge text-bg-secondary me-1">
                                         <span v-if="position.label">
                                             [[ position.label ]]
@@ -163,7 +160,6 @@
                     </div>
                 </li>
             </ul>
-
         </div>
     </div>
 
