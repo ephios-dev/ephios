@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
 from ephios.core.models import Qualification
+from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.complexsignup.models import BuildingBlock
 from ephios.plugins.complexsignup.serializers import BuildingBlockSerializer
@@ -21,6 +22,7 @@ class BuildingBlocksForm(forms.Form):
                 ":value": "JSON.stringify(blocks)",
             }
         ),
+        encoder=CustomJSONEncoder,
         required=False,
     )
 

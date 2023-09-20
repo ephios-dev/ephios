@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from ephios.core.models import Qualification
 from ephios.plugins.complexsignup.models import (
+    BlockComposition,
     BlockQualificationRequirement,
     BuildingBlock,
     Position,
@@ -125,10 +126,25 @@ class BlockQualificationRequirementSerializer(NestedQualificationsModelSerialize
         list_serializer_class = QualificationRequirementListSerializer
 
 
+class BlockCompositionSerializer(serializers.ModelSerializer):
+    optional = serializers.BooleanField(required=True)
+    sub_block = serializers.SlugRelatedField(
+        slug_field="uuid", queryset=BuildingBlock.objects.all(), required=True
+    )
+
+    class Meta:
+        model = BlockComposition
+        fields = [
+            "optional",
+            "sub_block",
+        ]
+
+
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True, read_only=False)
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
+    sub_compositions = BlockCompositionSerializer(many=True, required=False)
 
     # explicit field to avoid unique check broken in nested serializers
     uuid = serializers.UUIDField(required=False, default=uuid.uuid4)
@@ -173,7 +189,7 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
             "uuid",
             "name",
             "block_type",
-            "sub_blocks",
+            "sub_compositions",
             "allow_more",
             "qualification_requirements",
             "positions",

@@ -85,10 +85,10 @@ class Position(models.Model):
 
 class BlockComposition(models.Model):
     composite_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
+        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
     )
     sub_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
+        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
     )
     optional = models.BooleanField(
         verbose_name=_("optional"),
