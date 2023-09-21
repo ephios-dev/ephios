@@ -1,5 +1,9 @@
 const {createApp, ref, onUpdated, computed, watch, nextTick} = Vue
 
+function randomClientId() {
+    return `${Math.random().toString(36).substring(7)}`;
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     const blocksInput = document.getElementById("id_blocks");
     const blocksInputValue = blocksInput.value;
@@ -25,22 +29,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 });
             });
 
-            async function addBlock(block_type) {
+            async function addBlock(block_type, copy_from) {
                 const newBlock = {
+                    id: self.crypto.randomUUID(),
+                    created: true,
                     block_type: block_type,
                     name: "",
                     allowMore: false,
                     positions: [],
                     qualification_requirements: [],
                     sub_compositions: [],
-                    id: self.crypto.randomUUID(),
-                    created: true,
+                }
+                if (copy_from) {
+                    let i = 2;
+                    while (blocks.value.some(b => b.name === `${copy_from.name} ${i}`)) {
+                        i++;
+                    }
+                    newBlock.name = `${copy_from.name} ${i}`;
+                    newBlock.allowMore = copy_from.allowMore;
+                    newBlock.positions = copy_from.positions.map(p => ({
+                        ...p,
+                        id: null,
+                        clientId: randomClientId()
+                    }));
+                    newBlock.qualification_requirements = copy_from.qualification_requirements.map(q => ({
+                        ...q,
+                        id: null,
+                        clientId: randomClientId()
+                    }));
+                    newBlock.sub_compositions = copy_from.sub_compositions.map(sc => ({
+                        ...sc,
+                        id: null,
+                        clientId: randomClientId()
+                    }));
                 }
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
                 await nextTick()
                 blockNameInput.value.focus();
             }
+
 
             function selectBlock(block) {
                 currentBlock.value = block;
@@ -67,7 +95,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         label: "",
                         qualifications: [],
                         id: null,
-                        clientId: `new-${Math.random().toString(36).substring(7)}`,
+                        clientId: randomClientId(),
                     }
                 );
             }
@@ -79,7 +107,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             function addQualificationRequirement(e) {
                 currentBlock.value.qualification_requirements.push({
                         id: null,
-                        clientId: `new-${Math.random().toString(36).substring(7)}`,
+                        clientId: randomClientId(),
                         qualifications: [],
                         at_least: 1,
                         everyone: false,
@@ -153,7 +181,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     sub_block: sub_block.id,
                     optional: false,
                     id: null,
-                    clientId: `new-${Math.random().toString(36).substring(7)}`,
+                    clientId: randomClientId(),
                 });
             }
 
@@ -170,7 +198,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 block.sub_compositions.forEach(composition => {
                     const sub_block = getBlockById(composition.sub_block);
                     const {min: sub_min, max: sub_max, allowMore: sub_allowMore} = getParticipantCount(sub_block);
-                    if(!composition.optional) {
+                    if (!composition.optional) {
                         min += sub_min;
                     }
                     max += sub_max;

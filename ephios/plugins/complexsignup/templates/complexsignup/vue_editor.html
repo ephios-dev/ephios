@@ -299,7 +299,8 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <button type="button" class="btn btn-secondary btn-sm me-1">
+                                <button type="button" class="btn btn-secondary btn-sm me-1"
+                                        @click.stop="addBlock(block.block_type, block)">
                                     <i class="far fa-clone"></i>
                                     <span class="visually-hidden">{% translate "Clone" %}</span>
                                 </button>
@@ -342,9 +343,6 @@
                     </div>
                 </li>
             </ul>
-        </div>
-        <div class="col-12 mt-5">
-            <textarea id="someteststuff" style="width: 100%; height: 300px;">[[ JSON.stringify(blocks) ]]</textarea>
         </div>
     </form>
 
