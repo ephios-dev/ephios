@@ -11,8 +11,10 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" id="editor" class="row">
-        <div class="col-7" id="current-block">
+    {# TODO Form validation #}
+    {# prevent submit if any block name is missin! #}
+    <form method="POST" id="editor" class="row" @submit.prevent="submitForm">
+        <div class="col-12 mb-3 order-2 order-lg-1 col-lg-7" id="current-block">
             <div class="card" v-if="currentBlock">
                 <div class="card-body">
                     <h2 class="d-flex align-items-center mb-3">
@@ -252,7 +254,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-5" id="block-list">
+        <div class="col-12 mb-3 order-1 order-lg-2 or col-lg-5" id="block-list">
             {% csrf_token %}
             <input type="hidden" autocomplete=off :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
                    value="{{ form.blocks.value }}">
@@ -272,15 +274,17 @@
                 </button>
             </div>
 
-            <input type="text" name="asdasdui" id="asdisajd" class="form-control form-control-sm mt-2" placeholder="{% translate "Search" %}"
+            <input type="text" name="asdasdui" id="asdisajd" class="form-control form-control-sm mt-2"
+                   placeholder="{% translate "Search" %}"
                    v-model="searchQuery">
 
             <ul class="list-group mt-2">
-                <li class="list-group-item list-group-item-action d-flex p-0" :class="{active: currentBlock === block}"
+                <li class="list-group-item list-group-item-action d-flex p-0 overflow-hidden"
+                    :class="{active: currentBlock === block}"
                     v-for="block in blocksSearched" :key="block.id"
                     @click.stop="selectBlock(block)">
                     <div v-if="canAddSubBlock(currentBlock, block)">
-                        <button type="button" class="h-100 btn btn-lg btn-link"
+                        <button type="button" class="h-100 btn btn-lg btn-insert-subblock"
                                 @click.stop="addSubComposition(currentBlock, block)">
                             <i class="fa fa-arrow-left"></i>
                         </button>
@@ -348,7 +352,6 @@
             </ul>
         </div>
     </form>
-
     <input id="qualifications_json" value="{{ qualifications_json }}" type="hidden">
     <script nonce="{{ request.csp_nonce }}" type="text/javascript"
             src="{% static "complexsignup/editor.js" %}"></script>

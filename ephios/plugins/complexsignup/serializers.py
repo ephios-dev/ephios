@@ -8,6 +8,7 @@ from ephios.plugins.complexsignup.models import (
     BlockComposition,
     BlockQualificationRequirement,
     BuildingBlock,
+    BuildingBlockType,
     Position,
 )
 
@@ -182,6 +183,19 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         return self.create_update_with_context(
             validated_data, lambda: update(instance, validated_data)
         )
+
+    def validate(self, attrs):
+        if attrs.get("block_type") == BuildingBlockType.COMPOSITE:
+            if attrs.get("positions"):
+                raise serializers.ValidationError(
+                    "Composite blocks cannot have positions", code="invalid"
+                )
+        if attrs.get("block_type") == BuildingBlockType.ATOMIC:
+            if attrs.get("sub_compositions"):
+                raise serializers.ValidationError(
+                    "Position blocks cannot have sub compositions", code="invalid"
+                )
+        return attrs
 
     class Meta:
         model = BuildingBlock

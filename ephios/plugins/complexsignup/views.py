@@ -27,14 +27,21 @@ class BuildingBlocksForm(forms.Form):
         required=False,
     )
 
-    def save(self):
-        serializer = BuildingBlockSerializer(
+    def is_valid(self):
+        if not super().is_valid():
+            return False
+        self.serializer = BuildingBlockSerializer(
             instance=BuildingBlock.objects.all(),
             many=True,
             data=self.cleaned_data["blocks"],
         )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if not self.serializer.is_valid():
+            self.add_error("blocks", self.serializer.errors)
+            return False
+        return True
+
+    def save(self):
+        self.serializer.save()
 
 
 class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
@@ -57,6 +64,10 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
         messages.success(self.request, _("Saved blocks."))
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, _("There were errors in the form."))
+        return super().form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         qualifications = Qualification.objects.all()
@@ -74,6 +85,7 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
             },
             cls=CustomJSONEncoder,
         )
+        return context
         return context
 
     @classmethod

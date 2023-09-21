@@ -234,6 +234,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return ret;
             });
 
+            function submitForm(event) {
+                event.target.submit();
+            }
+
 
             return {
                 blocks,
@@ -261,6 +265,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 getSubBlocks,
                 getBlockById,
                 addableQualifications,
+
+                submitForm,
             }
         },
         delimiters: ['[[', ']]']

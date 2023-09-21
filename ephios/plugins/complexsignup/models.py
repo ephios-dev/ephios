@@ -8,8 +8,8 @@ from ephios.core.models import Qualification
 
 
 class BuildingBlockType(Choices):
-    atomic = "atomic"
-    composite = "composite"
+    ATOMIC = "atomic"
+    COMPOSITE = "composite"
 
 
 class BuildingBlock(models.Model):
