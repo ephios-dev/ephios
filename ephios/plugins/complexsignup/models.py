@@ -13,7 +13,7 @@ class BuildingBlockType(Choices):
 
 
 class BuildingBlock(models.Model):
-    uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
+    id = models.UUIDField("UUID", unique=True, default=uuid.uuid4, primary_key=True)
     name = models.CharField(
         verbose_name=_("Name"),
         max_length=255,

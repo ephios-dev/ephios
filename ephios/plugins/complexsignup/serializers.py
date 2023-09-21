@@ -1,7 +1,6 @@
 import uuid
 
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from ephios.core.models import Qualification
 from ephios.plugins.complexsignup.models import (
@@ -10,6 +9,18 @@ from ephios.plugins.complexsignup.models import (
     BuildingBlock,
     Position,
 )
+
+
+class IdempotentSlugRelatedField(serializers.SlugRelatedField):
+    """
+    This is a workaround for the native SlugRelatedField not accepting
+    model objects as input.
+    """
+
+    def to_internal_value(self, data):
+        if isinstance(data, self.get_queryset().model):
+            return data
+        return super().to_internal_value(data)
 
 
 class BulkUpdateListSerializer(serializers.ListSerializer):
@@ -56,47 +67,20 @@ class DeletedFlagModelSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class QualificationSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=True, read_only=False)
-
-    # explicit field to avoid unique check broken in nested serializers
-    uuid = serializers.UUIDField(required=False, default=uuid.uuid4)
-
-    def create(self, validated_data):
-        raise ValidationError("Qualifications cannot be created via this endpoint.")
-
-    def update(self, instance, validated_data):
-        raise ValidationError("Qualifications cannot be updated via this endpoint.")
-
-    class Meta:
-        model = Qualification
-        fields = ["id", "uuid", "title", "abbreviation"]
-
-
-class NestedQualificationsModelSerializer(serializers.ModelSerializer):
+class NestedQualificationsObjectSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
-    qualifications = QualificationSerializer(many=True, required=False)
-
-    def _set_qualifications(self, instance, qualification_data):
-        instance.qualifications.set(
-            Qualification.objects.filter(pk__in=[dict(q)["id"] for q in qualification_data])
-        )
-
-    def update(self, instance, validated_data):
-        qualification_data = validated_data.pop("qualifications")
-        instance = super().update(instance, validated_data)
-        self._set_qualifications(instance, qualification_data)
-        return instance
+    qualifications = IdempotentSlugRelatedField(
+        slug_field="id",
+        queryset=Qualification.objects.all(),
+        many=True,
+    )
 
     def create(self, validated_data):
-        qualification_data = validated_data.pop("qualifications")
         validated_data["block"] = self.context["block"]
-        instance = super().create(validated_data)
-        self._set_qualifications(instance, qualification_data)
-        return instance
+        return super().create(validated_data)
 
 
-class PositionSerializer(NestedQualificationsModelSerializer):
+class PositionSerializer(NestedQualificationsObjectSerializer):
     class Meta:
         model = Position
         fields = [
@@ -108,7 +92,7 @@ class PositionSerializer(NestedQualificationsModelSerializer):
         list_serializer_class = DeleteAbsentBulkUpdateListSerializer
 
 
-class BlockQualificationRequirementSerializer(NestedQualificationsModelSerializer):
+class BlockQualificationRequirementSerializer(NestedQualificationsObjectSerializer):
     class Meta:
         model = BlockQualificationRequirement
         fields = [
@@ -118,18 +102,6 @@ class BlockQualificationRequirementSerializer(NestedQualificationsModelSerialize
             "at_least",
         ]
         list_serializer_class = DeleteAbsentBulkUpdateListSerializer
-
-
-class IdempotentSlugRelatedField(serializers.SlugRelatedField):
-    """
-    This is a workaround for the native SlugRelatedField not accepting
-    model objects as input.
-    """
-
-    def to_internal_value(self, data):
-        if isinstance(data, self.get_queryset().model):
-            return data
-        return super().to_internal_value(data)
 
 
 class BlockCompositionSerializer(serializers.ModelSerializer):
@@ -148,13 +120,12 @@ class BlockCompositionSerializer(serializers.ModelSerializer):
 
 
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
-    id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
+    # explicit field to avoid unique check broken in nested serializers
+    id = serializers.UUIDField(required=False, default=uuid.uuid4)
+
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
     sub_compositions = BlockCompositionSerializer(many=True, required=False)
-
-    # explicit field to avoid unique check broken in nested serializers
-    uuid = serializers.UUIDField(required=False, default=uuid.uuid4)
 
     def create_update_with_context(self, validated_data, instance_getter):
         positions_data = validated_data.pop("positions")
@@ -203,7 +174,6 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         model = BuildingBlock
         fields = [
             "id",
-            "uuid",
             "name",
             "block_type",
             "sub_compositions",

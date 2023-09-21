@@ -59,10 +59,10 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         qualifications = Qualification.objects.all()
-        context["qualifications"] = qualifications
         context["qualifications_json"] = json.dumps(
             {
                 q.id: {
+                    "id": q.id,
                     "title": q.title,
                     "abbreviation": q.abbreviation,
                 }

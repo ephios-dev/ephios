@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const blocks = ref(blocksInputValue ? JSON.parse(blocksInputValue) : []);
             blocks.value.forEach(block => {
                 block.deleted = false;
+                block.created = false;
                 block.positions.forEach(position => {
                     position.clientId = `${position.id}`;
                 });
@@ -28,8 +29,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     positions: [],
                     qualification_requirements: [],
                     sub_compositions: [],
-                    id: null,
-                    uuid: self.crypto.randomUUID(),
+                    id: self.crypto.randomUUID(),
+                    created: true,
                 }
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
@@ -43,9 +44,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             function removeBlock(block) {
                 block.deleted = true;
-                if (!block.id) {
+                if (block.created) {
                     // remove block from list if it was not saved yet
-                    blocks.value = blocks.value.filter(b => b.uuid !== block.uuid);
+                    blocks.value = blocks.value.filter(b => b.id !== block.id);
                 }
                 if (currentBlock.value === block) {
                     currentBlock.value = null;
@@ -82,25 +83,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 currentBlock.value.qualification_requirements = currentBlock.value.qualification_requirements.filter(r => r.clientId !== requirement.clientId);
             }
 
-            function addQualificationToObject(event, object) {
+            function addQualificationToObjectFromSelect(event, object) {
                 if (!event.target.value) {
                     return;
                 }
                 // add new qualification to list
-                const newQualification = {
-                    id: event.target.value,
-                    title: event.target.options[event.target.selectedIndex].text,
-                    abbreviation: qualifications[event.target.value].abbreviation,
-                };
+                const newQualification = event.target.value;
                 event.target.value = "";
                 // return if the pk already exists in the list
-                if (!object.qualifications.some(q => q.id === newQualification.id)) {
+                if (!object.qualifications.some(q => q === newQualification)) {
                     object.qualifications.push(newQualification);
                 }
             }
 
-            function removeQualificationFromObject(position, object) {
-                position.qualifications = position.qualifications.filter(q => q.id !== object.id);
+            function removeQualificationFromObject(object, qualification_id) {
+                object.qualifications = object.qualifications.filter(q => q !== qualification_id);
             }
 
 
@@ -162,6 +159,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             return {
                 blocks,
+                qualifications,
                 currentBlock,
                 undeletedBlocks,
 
@@ -171,7 +169,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
                 addPosition,
                 removePosition,
-                addQualificationToObject,
+                addQualificationToObjectFromSelect,
                 removeQualificationFromObject,
                 addQualificationRequirement,
                 removeQualificationRequirement,

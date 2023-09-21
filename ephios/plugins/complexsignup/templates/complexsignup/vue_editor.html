@@ -12,7 +12,7 @@
 
 {% block content %}
 
-    <div id="editor" class="row">
+    <form method="POST" id="editor" class="row">
         <div class="col-8" id="current-block">
             <div class="card" v-if="currentBlock">
                 <div class="card-body">
@@ -58,12 +58,12 @@
                             </div>
                             <div class="col-12">
                                 {% translate "qualified as" %}
-                                <span v-for="qualification in position.qualifications" :key="qualification.pk">
+                                <span v-for="qualification_id in position.qualifications" :key="qualification_id">
                                     <b>
-                                        [[ qualification.title ]]
+                                        [[ qualifications[qualification_id].title ]]
                                     </b>
                                     <a class="link-underline-opacity-0 link-danger ms-1"
-                                       @click="removeQualificationFromObject(position, qualification)">
+                                       @click="removeQualificationFromObject(position, qualification_id)">
                                         <i class="fas fa-trash"></i>
                                         <span class="visually-hidden">
                                             {% translate "Remove" %}
@@ -72,16 +72,14 @@
                                     {% translate "and" %}
                                 </span>
                                 <select class="select-auto-width d-inline-block form-select form-select-sm"
-                                        value=""
-                                        @change="event => addQualificationToObject(event, position, value)">
-                                    <option disabled value="">
+                                        @change="event => addQualificationToObjectFromSelect(event, position)">
+                                    <option disabled selected value="">
                                         {% translate "select qualification" %}
                                     </option>
-                                    {% for qualification in qualifications %}
-                                        <option value="{{ qualification.pk }}">
-                                            {{ qualification.title }}
-                                        </option>
-                                    {% endfor %}
+                                    <option v-for="qualification in qualifications" :key="qualification.id"
+                                            :value="qualification.id">
+                                        [[ qualification.title ]]
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -174,13 +172,13 @@
                                 <span v-else>
                                     {% translate "must be qualified as" context "block qualification requirements singular" %}
                                 </span>
-                                <span v-for="qualification in requirement.qualifications"
-                                      :key="qualification.pk">
+                                <span v-for="qualification_id in requirement.qualifications"
+                                      :key="qualification_id">
                                     <b>
-                                        [[ qualification.title ]]
+                                        [[ qualifications[qualification_id].title ]]
                                     </b>
                                     <a class="link-underline-opacity-0 link-danger ms-1"
-                                       @click="removeQualificationFromObject(requirement, qualification)">
+                                       @click="removeQualificationFromObject(requirement, qualification_id)">
                                         <i class="fas fa-trash"></i>
                                         <span class="visually-hidden">
                                             {% translate "Remove" %}
@@ -189,16 +187,15 @@
                                     {% translate "and" %}
                                 </span>
                                 <select class="select-auto-width d-inline-block form-select form-select-sm mt-1"
-                                        value=""
-                                        @change="event => addQualificationToObject(event, requirement, value)">
-                                    <option disabled value="">
+                                        @change="event => addQualificationToObjectFromSelect(event, requirement)">
+                                    <option disabled selected value="">
                                         {% translate "select qualification" %}
                                     </option>
-                                    {% for qualification in qualifications %}
-                                        <option value="{{ qualification.pk }}">
-                                            {{ qualification.title }}
-                                        </option>
-                                    {% endfor %}
+                                    <option v-for="qualification in qualifications"
+                                            :key="qualification.id"
+                                            :value="qualification.id">
+                                        [[ qualification.title ]]
+                                    </option>
                                 </select>
 
                             </div>
@@ -220,20 +217,24 @@
             </div>
         </div>
         <div class="col-4" id="block-list">
-            <form method="POST" id="editor-form">
-                {% csrf_token %}
-                <input type="text" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
-                       value="{{ form.blocks.value }}">
-                <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
-                    {% translate "Save" %}
+            {% csrf_token %}
+            <input type="hidden" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
+                   value="{{ form.blocks.value }}">
+            <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
+                {% translate "Save" %}
+            </button>
+            <div class="w-100 d-flex justify-content-between">
+                <button class="btn btn-sm btn-secondary me-1 flex-grow-1" type="button" id="add-block"
+                        @click="addBlock('atomic')">
+                    <i class="fa fa-list-ul"></i>
+                    {% translate "Add atomic block" %}
                 </button>
-            </form>
-            <button class="btn btn-sm btn-secondary" type="button" id="add-block" @click="addBlock('atomic')">
-                {% translate "Add atomic block" %}
-            </button>
-            <button class="btn btn-sm btn-secondary" type="button" id="add-block" @click="addBlock('composite')">
-                {% translate "Add composite block" %}
-            </button>
+                <button class="btn btn-sm btn-secondary flex-grow-1" type="button" id="add-block"
+                        @click="addBlock('composite')">
+                    <i class="fa fa-network-wired"></i>
+                    {% translate "Add composite block" %}
+                </button>
+            </div>
 
             <ul class="list-group mt-2">
                 <li class="list-group-item list-group-item-action" :class="{active: currentBlock === block}"
@@ -259,8 +260,8 @@
                                             [[ position.label ]]
                                         </span>
                                         <span v-else-if="position.qualifications.length > 0">
-                                            <span v-for="(qualification, index) in position.qualifications"
-                                                  :key="qualification.pk">[[ qualification.abbreviation ]]<span
+                                            <span v-for="(qualification_id, index) in position.qualifications"
+                                                  :key="qualification_id">[[ qualifications[qualification_id].title ]]<span
                                                 v-if="index != position.qualifications.length - 1">, </span>
                                             </span>
                                         </span>
@@ -291,7 +292,10 @@
                 </li>
             </ul>
         </div>
-    </div>
+        <div class="col-12 mt-5">
+            <textarea id="block-json" style="width: 100%; height: 300px;">[[ JSON.stringify(blocks) ]]</textarea>
+        </div>
+    </form>
 
     <input id="qualifications_json" value="{{ qualifications_json }}" type="hidden">
     <script nonce="{{ request.csp_nonce }}" type="text/javascript"
