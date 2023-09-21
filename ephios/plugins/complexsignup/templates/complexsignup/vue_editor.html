@@ -20,7 +20,7 @@
                             <i v-if="currentBlock.block_type === 'composite'" class="fas fa-network-wired"></i>
                             <i v-else class="fas fa-list-ul"></i>
                         </div>
-                        <input ref="blockNameInput" type="text" required
+                        <input id="blockNameInput" type="text" required
                                v-model="currentBlock.name" class="form-control form-control-lg"
                                placeholder="{% translate "Block Name" %}" autofocus>
                         <div class="ms-3 text-nowrap">
@@ -271,6 +271,9 @@
                     {% translate "Add composite block" %}
                 </button>
             </div>
+
+            <input type="text" name="asdasdui" id="asdisajd" class="form-control form-control-sm mt-2" placeholder="{% translate "Search" %}"
+                   v-model="searchQuery">
 
             <ul class="list-group mt-2">
                 <li class="list-group-item list-group-item-action d-flex p-0" :class="{active: currentBlock === block}"

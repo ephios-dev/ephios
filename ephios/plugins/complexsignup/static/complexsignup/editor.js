@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     createApp({
         setup() {
-            const blockNameInput = ref(null);
             const currentBlock = ref(null);
+            const searchQuery = ref("");
             const blocks = ref(blocksInputValue ? JSON.parse(blocksInputValue) : []);
             blocks.value.forEach(block => {
                 block.deleted = false;
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
                 await nextTick()
-                blockNameInput.value.focus();
+                document.getElementById("blockNameInput").focus();
             }
 
 
@@ -227,7 +227,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
 
             const blocksSearched = computed(() => {
-                return blocks.value.filter(b => !b.deleted)
+                let ret = blocks.value.filter(b => !b.deleted)
+                if (searchQuery.value) {
+                    ret = ret.filter(b => b.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+                }
+                return ret;
             });
 
 
@@ -235,6 +239,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 blocks,
                 qualifications,
                 currentBlock,
+                searchQuery,
                 blocksSearched,
 
                 addBlock,
