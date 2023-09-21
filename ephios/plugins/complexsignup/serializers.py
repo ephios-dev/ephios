@@ -119,6 +119,10 @@ class BlockCompositionSerializer(serializers.ModelSerializer):
         ]
         list_serializer_class = DeleteAbsentBulkUpdateListSerializer
 
+    def create(self, validated_data):
+        validated_data["composite_block"] = self.context["block"]
+        return super().create(validated_data)
+
 
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
     id = serializers.UUIDField(required=False, default=uuid.uuid4)

@@ -11,213 +11,248 @@
 {% endblock %}
 
 {% block content %}
-
     <form method="POST" id="editor" class="row">
-        <div class="col-8" id="current-block">
+        <div class="col-7" id="current-block">
             <div class="card" v-if="currentBlock">
                 <div class="card-body">
-                    <h2 class="d-flex align-items-center">
-                        <span class="me-3">
+                    <h2 class="d-flex align-items-center mb-3">
+                        <div class="me-3">
                             <i v-if="currentBlock.block_type === 'composite'" class="fas fa-network-wired"></i>
                             <i v-else class="fas fa-list-ul"></i>
-                        </span>
-                        <input id="block-name" type="text" required
-                               v-model="currentBlock.name" class="form-control form-control-lg2"
+                        </div>
+                        <input ref="blockNameInput" type="text" required
+                               v-model="currentBlock.name" class="form-control form-control-lg"
                                placeholder="{% translate "Block Name" %}" autofocus>
-                    </h2>
-                </div>
-                <ul v-if="currentBlock.block_type === 'atomic'" id="ul-positions" class="list-group mx-3">
-                    <li v-for="position in currentBlock.positions" :key="position.clientId"
-                        class="list-group-item list-group-item-secondary">
-                        <div class="row g-1">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="text"
-                                               v-model="position.label" class="form-control form-control-sm"
-                                               placeholder="{% translate "Label" %}">
-                                    </div>
-                                    <div class="col-auto d-flex align-items-center">
-                                        <div class="form-check">
-                                            <input type="checkbox" v-model="position.optional"
-                                                   class="form-check-input"
-                                                   :id="'position-' + position.clientId"
-                                            />
-                                            <label class="form-check-label" :for="'position-' + position.clientId">
-                                                {% translate "optional" %}
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a @click="removePosition(position)" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                            {% translate "Remove" %}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                {% translate "qualified as" %}
-                                <span v-for="qualification_id in position.qualifications" :key="qualification_id">
-                                    <b>
-                                        [[ qualifications[qualification_id].title ]]
-                                    </b>
-                                    <a class="link-underline-opacity-0 link-danger ms-1"
-                                       @click="removeQualificationFromObject(position, qualification_id)">
-                                        <i class="fas fa-trash"></i>
-                                        <span class="visually-hidden">
-                                            {% translate "Remove" %}
-                                        </span>
-                                    </a>
-                                    {% translate "and" %}
-                                </span>
-                                <select class="select-auto-width d-inline-block form-select form-select-sm"
-                                        @change="event => addQualificationToObjectFromSelect(event, position)">
-                                    <option disabled selected value="">
-                                        {% translate "select qualification" %}
-                                    </option>
-                                    <option v-for="qualification in addableQualifications(position.qualifications)"
-                                            :key="qualification.id"
-                                            :value="qualification.id">
-                                        [[ qualification.title ]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </li>
-                    <a class="list-group-item list-group-item-action list-group-item-secondary text-center"
-                       @click="addPosition">
-                        <i class="fas fa-plus"></i>
-                        {% translate "Add position" %}
-                    </a>
-                </ul>
-                <ul v-if="currentBlock.block_type === 'composite'" id="ul-sub_compositions" class="list-group mx-3">
-                    <li v-for="composition in currentBlock.sub_compositions" :key="composition.clientId"
-                        class="list-group-item list-group-item-secondary">
-                        <div class="row">
-                            <div class="col">
-                                <h4 v-html="getBlockById(composition.sub_block).name">
-
-                                </h4>
-                            </div>
-                            <div class="col-auto d-flex align-items-center">
-                                <div class="form-check">
-                                    <input type="checkbox" v-model="composition.optional"
-                                           class="form-check-input"
-                                           :id="'composition-' + composition.clientId"
-                                    />
-                                    <label class="form-check-label" :for="'composition-' + composition.clientId">
-                                        {% translate "optional" %}
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <a class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    {% translate "Remove" %}
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                    <a class="list-group-item list-group-item-action list-group-item-secondary text-center"
-                    >
-                        <i class="fas fa-plus"></i>
-                        {% translate "Add sub-block" %}
-                    </a>
-                </ul>
-
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-auto">
+                        <div class="ms-3 text-nowrap">
                             <i class="fa fa-users"></i>
                             <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
                         </div>
-                        <div v-if="currentBlock.block_type === 'atomic'" class="col">
-                            <div class="form-check d-inline-block">
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       id="allow-more"
-                                       v-model="currentBlock.allowMore"
-                                />
-                                <label class="form-check-label" for="allow-more">
-                                    {% translate "Allow more participants that qualify for any of the positions." %}
-                                </label>
+                    </h2>
+                    <ul v-if="currentBlock.block_type === 'atomic'" class="mb-3 list-group">
+                        <li v-for="position in currentBlock.positions" :key="position.clientId"
+                            class="list-group-item list-group-item-secondary">
+                            <div class="row g-1">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="text"
+                                                   v-model="position.label" class="form-control form-control-sm"
+                                                   placeholder="{% translate "Label" %}">
+                                        </div>
+                                        <div class="col-auto d-flex align-items-center">
+                                            <div class="form-check">
+                                                <input type="checkbox" v-model="position.optional"
+                                                       class="form-check-input"
+                                                       :id="'position-' + position.clientId"
+                                                />
+                                                <label class="form-check-label" :for="'position-' + position.clientId">
+                                                    {% translate "optional" %}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a @click="removePosition(position)" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                                {% translate "Remove" %}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    {% translate "qualified as" %}
+                                    <span v-for="qualification_id in position.qualifications" :key="qualification_id">
+                                        <b>
+                                            [[ qualifications[qualification_id].title ]]
+                                        </b>
+                                        <a class="link-underline-opacity-0 link-danger ms-1"
+                                           @click="removeQualificationFromObject(position, qualification_id)">
+                                            <i class="fas fa-trash"></i>
+                                            <span class="visually-hidden">
+                                                {% translate "Remove" %}
+                                            </span>
+                                        </a>
+                                        {% translate "and" %}
+                                    </span>
+                                    <select class="select-auto-width d-inline-block form-select form-select-sm"
+                                            @change="event => addQualificationToObjectFromSelect(event, position)">
+                                        <option disabled selected value="">
+                                            {% translate "select qualification" %}
+                                        </option>
+                                        <option v-for="qualification in addableQualifications(position.qualifications)"
+                                                :key="qualification.id"
+                                                :value="qualification.id">
+                                            [[ qualification.title ]]
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <ul class="list-group mx-3 mb-3">
-                    <li v-for="requirement in currentBlock.qualification_requirements"
-                        :key="requirement.clientId"
-                        class="list-group-item list-group-item-secondary">
-                        <div class="row">
-                            <div class="col">
-                                <select class="select-auto-width d-inline-block form-select form-select-sm"
-                                        v-model="requirement.everyone">
-                                    <option :value="true">
-                                        {% translate "everyone" context "block qualification requirement" %}
-                                    </option>
-                                    <option :value="false">
-                                        {% translate "at least" %}
-                                    </option>
-                                </select>
-                                <span class="ms-1" v-if="!requirement.everyone">
-                                    <input type="number" min="1" style="width: 5rem"
-                                           v-model="requirement.at_least"
-                                           class="form-control form-control-sm d-inline-block"
-                                           placeholder="{% translate "number" %}">
-                                </span>
-                                <span v-if="requirement.everyone || requirement.at_least > 1">
-                                    {% translate "must be qualified as" context "block qualification requirements plural" %}
-                                </span>
-                                <span v-else>
-                                    {% translate "must be qualified as" context "block qualification requirements singular" %}
-                                </span>
-                                <span v-for="qualification_id in requirement.qualifications"
-                                      :key="qualification_id">
-                                    <b>
-                                        [[ qualifications[qualification_id].title ]]
-                                    </b>
-                                    <a class="link-underline-opacity-0 link-danger ms-1"
-                                       @click="removeQualificationFromObject(requirement, qualification_id)">
-                                        <i class="fas fa-trash"></i>
-                                        <span class="visually-hidden">
-                                            {% translate "Remove" %}
+                        </li>
+                        <a class="list-group-item list-group-item-action list-group-item-secondary text-center"
+                           @click="addPosition">
+                            <i class="fas fa-plus"></i>
+                            {% translate "Add position" %}
+                        </a>
+                    </ul>
+                    <ul v-if="currentBlock.block_type === 'composite'" class="mb-3 list-group">
+                        <li v-for="composition in currentBlock.sub_compositions" :key="composition.clientId"
+                            class="list-group-item list-group-item-secondary">
+                            <div class="row" v-for="subBlock in [getBlockById(composition.sub_block)]"
+                                 :key="subBlock.uuid">
+                                <div class="col">
+                                    <h6 class="">
+                                        <span class="me-1">
+                                            <i v-if="subBlock.block_type === 'composite'"
+                                               class="fas fa-network-wired"></i>
+                                            <i v-else class="fas fa-list-ul"></i>
                                         </span>
-                                    </a>
-                                    {% translate "and" %}
-                                </span>
-                                <select class="select-auto-width d-inline-block form-select form-select-sm mt-1"
-                                        @change="event => addQualificationToObjectFromSelect(event, requirement)">
-                                    <option disabled selected value="">
-                                        {% translate "select qualification" %}
-                                    </option>
-                                    <option v-for="qualification in addableQualifications(requirement.qualifications)"
-                                            :key="qualification.id"
-                                            :value="qualification.id">
-                                        [[ qualification.title ]]
-                                    </option>
-                                </select>
+                                        <span v-if="!subBlock.name">
+                                            {% translate "unnamed" %}
+                                        </span>
+                                        <span v-else>
+                                            [[ subBlock.name ]]
+                                        </span>
+                                        <span class="ms-1">
+                                            <i class="fa fa-users"></i>
+                                            <span class="ms-1"
+                                                  v-html="participantCountInfo(getBlockById(composition.sub_block))"></span>
+                                        </span>
+                                    </h6>
+                                    <small class="">
+                                        <span v-for="position in getBlockById(composition.sub_block).positions"
+                                              :key="position.clientId"
+                                              class="badge text-bg-secondary me-1">
+                                            <span v-if="position.label">
+                                                [[ position.label ]]
+                                            </span>
+                                            <span v-else-if="position.qualifications.length > 0">
+                                                <span v-for="(qualification_id, index) in position.qualifications"
+                                                      :key="qualification_id">[[ qualifications[qualification_id].title ]]<span
+                                                    v-if="index != position.qualifications.length - 1">, </span>
+                                                </span>
+                                            </span>
+                                            <span v-else>
+                                                {% translate "unnamed" %}
+                                            </span>
+                                        </span>
+                                        <span v-for="sub_block in getSubBlocks(getBlockById(composition.sub_block))"
+                                              :key="sub_block.uuid"
+                                              class="badge text-bg-secondary me-1">
+                                            <span v-if="sub_block.name">
+                                                [[ sub_block.name ]]
+                                            </span>
+                                            <span v-else>
+                                                {% translate "unnamed" %}
+                                            </span>
+                                        </span>
+                                    </small>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input type="checkbox" v-model="composition.optional"
+                                               class="form-check-input"
+                                               :id="'composition-' + composition.clientId"
+                                        />
+                                        <label class="form-check-label" :for="'composition-' + composition.clientId">
+                                            {% translate "optional" %}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                            @click="removeSubComposition(currentBlock, composition)">
+                                        <i class="fas fa-trash"></i>
+                                        {% translate "Remove" %}
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item list-group-item-secondary text-center">
+                            {% translate "Add items using the list on the right" %}
+                        </li>
+                    </ul>
+                    <div v-if="currentBlock.block_type === 'atomic'" class="mb-3 form-check d-inline-block">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="allow-more"
+                               v-model="currentBlock.allowMore"
+                        />
+                        <label class="form-check-label" for="allow-more">
+                            {% translate "Allow more participants that qualify for any of the positions." %}
+                        </label>
+                    </div>
+                    <ul class="list-group">
+                        <li v-for="requirement in currentBlock.qualification_requirements"
+                            :key="requirement.clientId"
+                            class="list-group-item list-group-item-secondary">
+                            <div class="row">
+                                <div class="col">
+                                    <select class="select-auto-width d-inline-block form-select form-select-sm"
+                                            v-model="requirement.everyone">
+                                        <option :value="true">
+                                            {% translate "everyone" context "block qualification requirement" %}
+                                        </option>
+                                        <option :value="false">
+                                            {% translate "at least" %}
+                                        </option>
+                                    </select>
+                                    <span class="ms-1" v-if="!requirement.everyone">
+                                        <input type="number" min="1" style="width: 5rem"
+                                               v-model="requirement.at_least"
+                                               class="form-control form-control-sm d-inline-block"
+                                               placeholder="{% translate "number" %}">
+                                    </span>
+                                    <span v-if="requirement.everyone || requirement.at_least > 1">
+                                        {% translate "must be qualified as" context "block qualification requirements plural" %}
+                                    </span>
+                                    <span v-else>
+                                        {% translate "must be qualified as" context "block qualification requirements singular" %}
+                                    </span>
+                                    <span v-for="qualification_id in requirement.qualifications"
+                                          :key="qualification_id">
+                                        <b>
+                                            [[ qualifications[qualification_id].title ]]
+                                        </b>
+                                        <a class="link-underline-opacity-0 link-danger ms-1"
+                                           @click="removeQualificationFromObject(requirement, qualification_id)">
+                                            <i class="fas fa-trash"></i>
+                                            <span class="visually-hidden">
+                                                {% translate "Remove" %}
+                                            </span>
+                                        </a>
+                                        {% translate "and" %}
+                                    </span>
+                                    <select class="select-auto-width d-inline-block form-select form-select-sm mt-1"
+                                            @change="event => addQualificationToObjectFromSelect(event, requirement)">
+                                        <option disabled selected value="">
+                                            {% translate "select qualification" %}
+                                        </option>
+                                        <option v-for="qualification in addableQualifications(requirement.qualifications)"
+                                                :key="qualification.id"
+                                                :value="qualification.id">
+                                            [[ qualification.title ]]
+                                        </option>
+                                    </select>
 
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-sm btn-danger"
+                                       @click="removeQualificationRequirement(requirement)">
+                                        <i class="fas fa-trash"></i>
+                                        {% translate "Remove" %}
+                                    </a>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <a class="btn btn-sm btn-danger"
-                                   @click="removeQualificationRequirement(requirement)">
-                                    <i class="fas fa-trash"></i>
-                                    {% translate "Remove" %}
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                    <a class="list-group-item list-group-item-action list-group-item-secondary text-center"
-                       @click="addQualificationRequirement">
-                        <i class="fas fa-plus"></i>
-                        {% translate "Add condition" %}
-                    </a>
-                </ul>
+                        </li>
+                        <a class="list-group-item list-group-item-action list-group-item-secondary text-center"
+                           @click="addQualificationRequirement">
+                            <i class="fas fa-plus"></i>
+                            {% translate "Add condition" %}
+                        </a>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="col-4" id="block-list">
+        <div class="col-5" id="block-list">
             {% csrf_token %}
             <input type="hidden" autocomplete=off :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
                    value="{{ form.blocks.value }}">
@@ -238,27 +273,44 @@
             </div>
 
             <ul class="list-group mt-2">
-                <li class="list-group-item list-group-item-action" :class="{active: currentBlock === block}"
-                    v-for="block in undeletedBlocks" :key="block.id">
-                    <div class="row">
-                        <div class="col-auto" v-if="canAddSubBlock(currentBlock, block)">
-                            <button type="button" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i>
-                            </button>
+                <li class="list-group-item list-group-item-action d-flex p-0" :class="{active: currentBlock === block}"
+                    v-for="block in undeletedBlocks" :key="block.id"
+                    @click.stop="selectBlock(block)">
+                    <div v-if="canAddSubBlock(currentBlock, block)">
+                        <button type="button" class="h-100 btn btn-lg btn-link"
+                                @click.stop="addSubComposition(currentBlock, block)">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                    </div>
+                    <div class="px-3 py-2 flex-grow-1">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <div class="text-break">
+                                    <span class="me-1">
+                                        <i v-if="block.block_type === 'composite'" class="fas fa-network-wired"></i>
+                                        <i v-else class="fas fa-list-ul"></i>
+                                    </span>
+                                    <b v-if="block.name">[[ block.name ]]</b>
+                                    <span v-else>{% translate "unnamed" %}</span>
+                                    <span class="ms-1">
+                                        <i class="fa fa-users"></i>
+                                        <span class="ms-1" v-html="participantCountInfo(block)"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary btn-sm me-1">
+                                    <i class="far fa-clone"></i>
+                                    <span class="visually-hidden">{% translate "Clone" %}</span>
+                                </button>
+                                <button type="button" @click.stop="removeBlock(block)" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="visually-hidden">{% translate "Remove" %}</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="col d-flex align-items-center" @click="selectBlock(block)">
-                            <div class="text-break">
-                                <span class="me-1">
-                                    <i v-if="block.block_type === 'composite'" class="fas fa-network-wired"></i>
-                                    <i v-else class="fas fa-list-ul"></i>
-                                </span>
-                                <b v-if="block.name">[[ block.name ]]</b>
-                                <span v-else>{% translate "unnamed" %}</span>
-                                <span class="ms-3">
-                                    <i class="fa fa-users"></i>
-                                    <span class="ms-1" v-html="participantCountInfo(block)"></span>
-                                </span>
-                                <br/>
+                        <div class="row">
+                            <div class="col-12">
                                 <small class="">
                                     <span v-for="position in block.positions" :key="position.clientId"
                                           class="badge text-bg-secondary me-1">
@@ -287,16 +339,6 @@
                                 </small>
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-secondary btn-sm me-1">
-                                <i class="far fa-clone"></i>
-                                <span class="visually-hidden">{% translate "Clone" %}</span>
-                            </button>
-                            <button type="button" @click="removeBlock(block)" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                                <span class="visually-hidden">{% translate "Remove" %}</span>
-                            </button>
-                        </div>
                     </div>
                 </li>
             </ul>
@@ -309,6 +351,4 @@
     <input id="qualifications_json" value="{{ qualifications_json }}" type="hidden">
     <script nonce="{{ request.csp_nonce }}" type="text/javascript"
             src="{% static "complexsignup/editor.js" %}"></script>
-
-
 {% endblock %}

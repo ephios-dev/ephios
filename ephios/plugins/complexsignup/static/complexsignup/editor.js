@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     createApp({
         setup() {
+            const blockNameInput = ref(null);
             const currentBlock = ref(null);
             const blocks = ref(blocksInputValue ? JSON.parse(blocksInputValue) : []);
             blocks.value.forEach(block => {
@@ -18,6 +19,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 });
                 block.qualification_requirements.forEach(requirement => {
                     requirement.clientId = `${requirement.id}`;
+                });
+                block.sub_compositions.forEach(sub_composition => {
+                    sub_composition.clientId = `${sub_composition.id}`;
                 });
             });
 
@@ -35,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
                 await nextTick()
-                document.getElementById("block-name").focus();
+                blockNameInput.value.focus();
             }
 
             function selectBlock(block) {
@@ -144,14 +148,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return !getDescendants(sub_block).some(descendant => descendant.id === block.id);
             }
 
+            function addSubComposition(block, sub_block) {
+                block.sub_compositions.push({
+                    sub_block: sub_block.id,
+                    optional: false,
+                    id: null,
+                    clientId: `new-${Math.random().toString(36).substring(7)}`,
+                });
+            }
+
+            function removeSubComposition(block, composition) {
+                block.sub_compositions = block.sub_compositions.filter(c => c !== composition);
+            }
+
             function getParticipantCount(block) {
                 let min = 0;
                 let max = 0;
                 let allowMore = false;
 
-                getSubBlocks(block).forEach(sub_block => {
+
+                block.sub_compositions.forEach(composition => {
+                    const sub_block = getBlockById(composition.sub_block);
                     const {min: sub_min, max: sub_max, allowMore: sub_allowMore} = getParticipantCount(sub_block);
-                    min += sub_min;
+                    if(!composition.optional) {
+                        min += sub_min;
+                    }
                     max += sub_max;
                     allowMore = allowMore || sub_allowMore;
                 });
@@ -191,6 +212,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 removeBlock,
 
                 canAddSubBlock,
+                addSubComposition,
+                removeSubComposition,
 
                 addPosition,
                 removePosition,
