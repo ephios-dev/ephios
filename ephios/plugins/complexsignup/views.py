@@ -67,7 +67,8 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
                     "abbreviation": q.abbreviation,
                 }
                 for q in qualifications
-            }
+            },
+            cls=CustomJSONEncoder,
         )
         return context
 
