@@ -76,7 +76,8 @@
                                     <option disabled selected value="">
                                         {% translate "select qualification" %}
                                     </option>
-                                    <option v-for="qualification in qualifications" :key="qualification.id"
+                                    <option v-for="qualification in addableQualifications(position.qualifications)"
+                                            :key="qualification.id"
                                             :value="qualification.id">
                                         [[ qualification.title ]]
                                     </option>
@@ -95,7 +96,7 @@
                         class="list-group-item list-group-item-secondary">
                         <div class="row">
                             <div class="col">
-                                <h4 v-html="getBlockByUUID(composition.sub_block).name">
+                                <h4 v-html="getBlockById(composition.sub_block).name">
 
                                 </h4>
                             </div>
@@ -191,7 +192,7 @@
                                     <option disabled selected value="">
                                         {% translate "select qualification" %}
                                     </option>
-                                    <option v-for="qualification in qualifications"
+                                    <option v-for="qualification in addableQualifications(requirement.qualifications)"
                                             :key="qualification.id"
                                             :value="qualification.id">
                                         [[ qualification.title ]]
@@ -218,7 +219,7 @@
         </div>
         <div class="col-4" id="block-list">
             {% csrf_token %}
-            <input type="hidden" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
+            <input type="hidden" autocomplete=off :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
                    value="{{ form.blocks.value }}">
             <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
                 {% translate "Save" %}
@@ -240,6 +241,11 @@
                 <li class="list-group-item list-group-item-action" :class="{active: currentBlock === block}"
                     v-for="block in undeletedBlocks" :key="block.id">
                     <div class="row">
+                        <div class="col-auto" v-if="canAddSubBlock(currentBlock, block)">
+                            <button type="button" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i>
+                            </button>
+                        </div>
                         <div class="col d-flex align-items-center" @click="selectBlock(block)">
                             <div class="text-break">
                                 <span class="me-1">
@@ -278,11 +284,14 @@
                                             {% translate "unnamed" %}
                                         </span>
                                     </span>
-
                                 </small>
                             </div>
                         </div>
                         <div class="col-auto">
+                            <button type="button" class="btn btn-secondary btn-sm me-1">
+                                <i class="far fa-clone"></i>
+                                <span class="visually-hidden">{% translate "Clone" %}</span>
+                            </button>
                             <button type="button" @click="removeBlock(block)" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>
                                 <span class="visually-hidden">{% translate "Remove" %}</span>
@@ -293,7 +302,7 @@
             </ul>
         </div>
         <div class="col-12 mt-5">
-            <textarea id="block-json" style="width: 100%; height: 300px;">[[ JSON.stringify(blocks) ]]</textarea>
+            <textarea id="someteststuff" style="width: 100%; height: 300px;">[[ JSON.stringify(blocks) ]]</textarea>
         </div>
     </form>
 

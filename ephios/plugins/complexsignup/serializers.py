@@ -14,7 +14,8 @@ from ephios.plugins.complexsignup.models import (
 class IdempotentSlugRelatedField(serializers.SlugRelatedField):
     """
     This is a workaround for the native SlugRelatedField not accepting
-    model objects as input.
+    model objects as input. With this we can feed validated data into
+    nested serializers again.
     """
 
     def to_internal_value(self, data):
@@ -107,7 +108,7 @@ class BlockQualificationRequirementSerializer(NestedQualificationsObjectSerializ
 class BlockCompositionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
     optional = serializers.BooleanField(required=True)
-    sub_block = IdempotentSlugRelatedField(slug_field="uuid", queryset=BuildingBlock.objects.all())
+    sub_block = IdempotentSlugRelatedField(slug_field="id", queryset=BuildingBlock.objects.all())
 
     class Meta:
         model = BlockComposition
@@ -120,9 +121,7 @@ class BlockCompositionSerializer(serializers.ModelSerializer):
 
 
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
-    # explicit field to avoid unique check broken in nested serializers
     id = serializers.UUIDField(required=False, default=uuid.uuid4)
-
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
     sub_compositions = BlockCompositionSerializer(many=True, required=False)

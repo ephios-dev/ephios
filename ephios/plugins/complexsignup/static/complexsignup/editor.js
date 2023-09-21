@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 if (currentBlock.value === block) {
                     currentBlock.value = null;
                 }
+                // remove this block from all sub_compositions
+                blocks.value.forEach(b => {
+                    b.sub_compositions = b.sub_compositions.filter(sc => sc.sub_block !== block.id);
+                });
             }
 
             function addPosition(e) {
@@ -87,10 +91,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 if (!event.target.value) {
                     return;
                 }
-                // add new qualification to list
-                const newQualification = event.target.value;
+                const newQualification = parseInt(event.target.value);
                 event.target.value = "";
-                // return if the pk already exists in the list
                 if (!object.qualifications.some(q => q === newQualification)) {
                     object.qualifications.push(newQualification);
                 }
@@ -100,25 +102,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 object.qualifications = object.qualifications.filter(q => q !== qualification_id);
             }
 
+            function addableQualifications(existing_ids) {
+                return Object.values(qualifications).filter(q => !existing_ids.some(existing_id => qualifications[existing_id].included.includes(q.id)));
+            }
 
             onUpdated(() => {
                 handleForms($('#editor'));
             });
 
-            function getBlockByUUID(uuid) {
-                return blocks.value.find(b => b.uuid === uuid);
+            function getBlockById(id) {
+                return blocks.value.find(b => b.id === id);
             }
 
             function getSubBlocks(block) {
                 const subBlocks = [];
                 block.sub_compositions.forEach(composition => {
-                    const sub_block = getBlockByUUID(composition.sub_block);
-                    if(!sub_block) {
+                    const sub_block = getBlockById(composition.sub_block);
+                    if (!sub_block) {
                         return;
                     }
                     subBlocks.push(sub_block);
                 });
                 return subBlocks;
+            }
+
+            function getDescendants(block) {
+                const descendants = [];
+                getSubBlocks(block).forEach(sub_block => {
+                    descendants.push(sub_block);
+                    descendants.push(...getDescendants(sub_block));
+                });
+                // remove duplicates
+                return [...new Set(descendants)];
+            }
+
+            function canAddSubBlock(block, sub_block) {
+                if (!block || block.block_type !== 'composite' || !sub_block || block.id === sub_block.id) {
+                    return false;
+                }
+                // check if block is a descendant of sub_block
+                return !getDescendants(sub_block).some(descendant => descendant.id === block.id);
             }
 
             function getParticipantCount(block) {
@@ -167,6 +190,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 selectBlock,
                 removeBlock,
 
+                canAddSubBlock,
+
                 addPosition,
                 removePosition,
                 addQualificationToObjectFromSelect,
@@ -176,7 +201,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
                 participantCountInfo,
                 getSubBlocks,
-                getBlockByUUID,
+                getBlockById,
+                addableQualifications,
             }
         },
         delimiters: ['[[', ']]']

@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
 from ephios.core.models import Qualification
+from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.complexsignup.models import BuildingBlock
@@ -65,6 +66,9 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
                     "id": q.id,
                     "title": q.title,
                     "abbreviation": q.abbreviation,
+                    "included": collect_all_included_qualifications([q]).values_list(
+                        "id", flat=True
+                    ),
                 }
                 for q in qualifications
             },
