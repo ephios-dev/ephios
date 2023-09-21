@@ -226,14 +226,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return gettext("{min} to {max}").replace("{min}", min).replace("{max}", max);
             }
 
-            const undeletedBlocks = computed(() => blocks.value.filter(b => !b.deleted));
+            const blocksSearched = computed(() => {
+                return blocks.value.filter(b => !b.deleted)
+            });
 
 
             return {
                 blocks,
                 qualifications,
                 currentBlock,
-                undeletedBlocks,
+                blocksSearched,
 
                 addBlock,
                 selectBlock,

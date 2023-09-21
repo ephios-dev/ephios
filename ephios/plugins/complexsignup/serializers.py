@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ephios.core.models import Qualification
@@ -11,16 +12,25 @@ from ephios.plugins.complexsignup.models import (
 )
 
 
-class IdempotentSlugRelatedField(serializers.SlugRelatedField):
+class NestedSlugRelatedField(serializers.SlugRelatedField):
     """
     This is a workaround for the native SlugRelatedField not accepting
     model objects as input. With this we can feed validated data into
     nested serializers again.
+    If the object does not exist, we keep the original value and let
+    custom serializers handle it.
     """
 
     def to_internal_value(self, data):
-        if isinstance(data, self.get_queryset().model):
+        queryset = self.get_queryset()
+        if isinstance(data, queryset.model):
             return data
+        try:
+            return queryset.get(**{self.slug_field: data})
+        except ObjectDoesNotExist:
+            return data  # let custom serializers handle it
+        except (TypeError, ValueError):
+            self.fail("invalid")
         return super().to_internal_value(data)
 
 
@@ -70,7 +80,7 @@ class DeletedFlagModelSerializer(serializers.ModelSerializer):
 
 class NestedQualificationsObjectSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
-    qualifications = IdempotentSlugRelatedField(
+    qualifications = NestedSlugRelatedField(
         slug_field="id",
         queryset=Qualification.objects.all(),
         many=True,
@@ -108,7 +118,7 @@ class BlockQualificationRequirementSerializer(NestedQualificationsObjectSerializ
 class BlockCompositionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
     optional = serializers.BooleanField(required=True)
-    sub_block = IdempotentSlugRelatedField(slug_field="id", queryset=BuildingBlock.objects.all())
+    sub_block = NestedSlugRelatedField(slug_field="id", queryset=BuildingBlock.objects.all())
 
     class Meta:
         model = BlockComposition
