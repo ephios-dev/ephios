@@ -36,20 +36,30 @@ class NestedSlugRelatedField(serializers.SlugRelatedField):
 
 
 class BulkUpdateListSerializer(serializers.ListSerializer):
+    identification_field = "id"
+
     def update(self, instance, validated_data):
         # Maps for id->instance and id->data item.
-        object_mapping = {object.id: object for object in instance}
+        object_mapping = {getattr(object, self.identification_field): object for object in instance}
         create_ids = iter(range(-1, -len(validated_data) - 1, -1))
-        data_mapping = {item["id"] or next(create_ids): item for item in validated_data}
+        data_mapping = {
+            item[self.identification_field] or next(create_ids): item for item in validated_data
+        }
 
         # Perform creations and updates.
         ret = []
         for object_id, data in data_mapping.items():
             object = object_mapping.get(object_id, None)
             if object is None:
-                ret.append(self.child.create(data))
+                ret.append(self.child.create(data.copy()))
             else:
                 ret.append(self.child.update(object, data))
+
+        for instance in ret:
+            if hasattr(instance, "_save_m2m"):
+                # you can defer validating/saving relationships on the serializer
+                # by putting into this optional method
+                instance._save_m2m()
 
         # Perform deletions.
         for object_id, object in object_mapping.items():
@@ -63,12 +73,14 @@ class BulkUpdateListSerializer(serializers.ListSerializer):
 
 class DeleteFlagBulkUpdateListSerializer(BulkUpdateListSerializer):
     def should_delete(self, object, data_mapping):
-        return object.id in data_mapping and data_mapping[object.id].get("deleted", False)
+        object_id = getattr(object, self.identification_field)
+        return object_id in data_mapping and data_mapping[object_id].get("deleted", False)
 
 
 class DeleteAbsentBulkUpdateListSerializer(BulkUpdateListSerializer):
     def should_delete(self, object, data_mapping):
-        return object.id not in data_mapping
+        object_id = getattr(object, self.identification_field)
+        return object_id not in data_mapping
 
 
 class DeletedFlagModelSerializer(serializers.ModelSerializer):
@@ -119,7 +131,7 @@ class BlockQualificationRequirementSerializer(NestedQualificationsObjectSerializ
 class BlockCompositionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
     optional = serializers.BooleanField(required=True)
-    sub_block = NestedSlugRelatedField(slug_field="id", queryset=BuildingBlock.objects.all())
+    sub_block = NestedSlugRelatedField(slug_field="uuid", queryset=BuildingBlock.objects.all())
 
     class Meta:
         model = BlockComposition
@@ -135,8 +147,13 @@ class BlockCompositionSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class BuildingBlockListSerializer(DeleteFlagBulkUpdateListSerializer):
+    identification_field = "uuid"
+
+
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
-    id = serializers.UUIDField(required=False, default=uuid.uuid4)
+    id = serializers.IntegerField(required=False, read_only=True)
+    uuid = serializers.UUIDField(required=False, default=uuid.uuid4)
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
     sub_compositions = BlockCompositionSerializer(many=True, required=False)
@@ -171,8 +188,14 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
             many=True,
             context={"block": instance},
         )
-        sub_compositions.is_valid(raise_exception=True)
-        sub_compositions.save()
+
+        def _save_m2m():
+            # because we would error if the sub_block doesn't exist in the database yet
+            # we defer saving the sub compositions to after the whole list was saved
+            sub_compositions.is_valid(raise_exception=True)
+            sub_compositions.save()
+
+        instance._save_m2m = _save_m2m
         return instance
 
     def create(self, validated_data):
@@ -186,12 +209,12 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         )
 
     def validate(self, attrs):
-        if attrs.get("block_type") == BuildingBlockType.COMPOSITE:
+        if attrs.get("block_type") == BuildingBlockType.COMPOSITE.value:
             if attrs.get("positions"):
                 raise serializers.ValidationError(
                     "Composite blocks cannot have positions", code="invalid"
                 )
-        if attrs.get("block_type") == BuildingBlockType.ATOMIC:
+        if attrs.get("block_type") == BuildingBlockType.ATOMIC.value:
             if attrs.get("sub_compositions"):
                 raise serializers.ValidationError(
                     "Position blocks cannot have sub compositions", code="invalid"
@@ -205,6 +228,7 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         model = BuildingBlock
         fields = [
             "id",
+            "uuid",
             "name",
             "block_type",
             "sub_compositions",
@@ -213,4 +237,4 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
             "positions",
             "deleted",
         ]
-        list_serializer_class = DeleteFlagBulkUpdateListSerializer
+        list_serializer_class = BuildingBlockListSerializer
