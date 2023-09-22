@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             async function addBlock(block_type, copy_from) {
                 const newBlock = {
-                    id: self.crypto.randomUUID(),
+                    uuid: self.crypto.randomUUID(),
                     created: true,
                     deleted: false,
                     invalidFields: [],
@@ -89,14 +89,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 block.deleted = true;
                 if (block.created) {
                     // remove block from list if it was not saved yet
-                    blocks.value = blocks.value.filter(b => b.id !== block.id);
+                    blocks.value = blocks.value.filter(b => b.uuid !== block.uuid);
                 }
                 if (currentBlock.value === block) {
                     currentBlock.value = null;
                 }
                 // remove this block from all sub_compositions
                 blocks.value.forEach(b => {
-                    b.sub_compositions = b.sub_compositions.filter(sc => sc.sub_block !== block.id);
+                    b.sub_compositions = b.sub_compositions.filter(sc => sc.sub_block !== block.uuid);
                 });
             }
 
@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             });
 
-            function getBlockById(id) {
-                return blocks.value.find(b => b.id === id);
+            function getBlockById(uuid) {
+                return blocks.value.find(b => b.uuid === uuid);
             }
 
             function getSubBlocks(block) {
@@ -188,17 +188,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return [...new Set(descendants)];
             }
 
-            function canAddSubBlock(block, sub_block) {
-                if (!block || block.block_type !== 'composite' || !sub_block || block.id === sub_block.id) {
+            function canAddSubBlock(block, candidate) {
+                if (!block || block.block_type !== 'composite' || !candidate || block.uuid === candidate.uuid) {
                     return false;
                 }
                 // check if block is a descendant of sub_block
-                return !getDescendants(sub_block).some(descendant => descendant.id === block.id);
+                return !getDescendants(candidate).some(descendant => descendant.uuid === block.uuid);
             }
 
             function addSubComposition(block, sub_block) {
                 block.sub_compositions.push({
-                    sub_block: sub_block.id,
+                    sub_block: sub_block.uuid,
                     optional: false,
                     id: null,
                     clientId: randomClientId(),

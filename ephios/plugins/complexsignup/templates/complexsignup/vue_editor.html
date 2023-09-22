@@ -290,7 +290,7 @@
             <ul class="list-group mt-2">
                 <li class="list-group-item list-group-item-action d-flex p-0 overflow-hidden"
                     :class="{active: currentBlock === block}"
-                    v-for="block in blocksSearched" :key="block.id"
+                    v-for="block in blocksSearched" :key="block.uuid"
                     @click.stop="selectBlock(block)">
                     <div v-if="canAddSubBlock(currentBlock, block)">
                         <button type="button" class="h-100 btn btn-lg btn-insert-subblock"

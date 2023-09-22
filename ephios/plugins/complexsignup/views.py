@@ -2,6 +2,7 @@ import json
 
 from csp.decorators import csp_exempt
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.urls import reverse_lazy
@@ -35,7 +36,7 @@ class BuildingBlocksForm(forms.Form):
             many=True,
             data=self.cleaned_data["blocks"],
         )
-        if not self.serializer.is_valid():
+        if not self.serializer.is_valid(raise_exception=settings.DEBUG):
             self.add_error("blocks", self.serializer.errors)
             return False
         return True
