@@ -91,7 +91,9 @@ class EmailNotificationBackend(AbstractNotificationBackend):
 
     @classmethod
     def _get_mailaddress(cls, notification):
-        return notification.user.email if notification.user else notification.data.get("email")
+        if notification.user:
+            return f"{notification.user.get_full_name()} <{notification.user.email}>"
+        return notification.data.get("email")
 
     @classmethod
     def send(cls, notification):
