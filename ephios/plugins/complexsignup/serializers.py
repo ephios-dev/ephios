@@ -140,6 +140,7 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
     positions = PositionSerializer(many=True, required=False)
     qualification_requirements = BlockQualificationRequirementSerializer(many=True, required=False)
     sub_compositions = BlockCompositionSerializer(many=True, required=False)
+    name = serializers.CharField(required=True, allow_blank=True)
 
     def create_update_with_context(self, validated_data, instance_getter):
         positions_data = validated_data.pop("positions")
@@ -195,6 +196,9 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
                 raise serializers.ValidationError(
                     "Position blocks cannot have sub compositions", code="invalid"
                 )
+        if attrs.get("deleted") is False:
+            if attrs.get("name") == "":
+                raise serializers.ValidationError("Name cannot be blank.", code="invalid")
         return attrs
 
     class Meta:

@@ -1,4 +1,4 @@
-const {createApp, ref, onUpdated, computed, watch, nextTick} = Vue
+const {createApp, ref, onUpdated, computed, onMounted, nextTick} = Vue
 
 function randomClientId() {
     return `${Math.random().toString(36).substring(7)}`;
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             blocks.value.forEach(block => {
                 block.deleted = false;
                 block.created = false;
+                block.invalidFields = [];
                 block.positions.forEach(position => {
                     position.clientId = `${position.id}`;
                 });
@@ -27,12 +28,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 block.sub_compositions.forEach(sub_composition => {
                     sub_composition.clientId = `${sub_composition.id}`;
                 });
-            });
+                validateBlock(block);
+            })
 
             async function addBlock(block_type, copy_from) {
                 const newBlock = {
                     id: self.crypto.randomUUID(),
                     created: true,
+                    deleted: false,
+                    invalidFields: [],
                     block_type: block_type,
                     name: "",
                     allowMore: false,
@@ -63,6 +67,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         clientId: randomClientId()
                     }));
                 }
+                validateBlock(currentBlock.value);
                 blocks.value.push(newBlock);
                 currentBlock.value = newBlock;
                 await nextTick()
@@ -70,8 +75,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
 
 
-            function selectBlock(block) {
+            async function selectBlock(block) {
+                if (currentBlock.value === block) {
+                    return;
+                }
+                validateBlock(currentBlock.value);
                 currentBlock.value = block;
+                await nextTick();
+                validateBlock(currentBlock.value);
             }
 
             function removeBlock(block) {
@@ -140,6 +151,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             onUpdated(() => {
                 handleForms($('#editor'));
+            });
+
+            onMounted(async () => {
+                const firstInvalidBlock = blocks.value.find(block => !!block.invalidFields.length);
+                if (firstInvalidBlock) {
+                    await selectBlock(firstInvalidBlock);
+                    await nextTick();
+                    document.getElementById("blockNameInput").focus();
+                }
             });
 
             function getBlockById(id) {
@@ -238,6 +258,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 event.target.submit();
             }
 
+            function validateBlock(block) {
+                /*
+                * Validate a block: return true if block is valid, also save invalid
+                * fields as attribute.
+                * Is called on selecting a block on the old and new block.
+                 */
+                if (!block) {
+                    return false;
+                }
+                let invalidFields = [];
+                if (!block.name) {
+                    invalidFields.push("name");
+                }
+                block.invalidFields = invalidFields;
+                return !invalidFields.length;
+            }
 
             return {
                 blocks,
@@ -266,6 +302,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 getBlockById,
                 addableQualifications,
 
+                validateBlock,
                 submitForm,
             }
         },

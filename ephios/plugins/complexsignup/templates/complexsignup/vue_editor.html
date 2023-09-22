@@ -11,25 +11,30 @@
 {% endblock %}
 
 {% block content %}
-    {# TODO Form validation #}
-    {# prevent submit if any block name is missin! #}
     <form method="POST" id="editor" class="row" @submit.prevent="submitForm">
-        <div class="col-12 mb-3 order-2 order-lg-1 col-lg-7" id="current-block">
+        <div class="col-12 mb-3 order-2 order-lg-1 col-lg-7" id="currentBlock">
             <div class="card" v-if="currentBlock">
                 <div class="card-body">
-                    <h2 class="d-flex align-items-center mb-3">
-                        <div class="me-3">
-                            <i v-if="currentBlock.block_type === 'composite'" class="fas fa-network-wired"></i>
-                            <i v-else class="fas fa-list-ul"></i>
+                    <div class="mb-3">
+                        <h2 class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i v-if="currentBlock.block_type === 'composite'" class="fas fa-network-wired"></i>
+                                <i v-else class="fas fa-list-ul"></i>
+                            </div>
+                            <input id="blockNameInput" type="text" required
+                                   v-model="currentBlock.name" class="form-control form-control-lg"
+                                   :class="{'was-validated': currentBlock.invalidFields.includes('name'), 'is-invalid': currentBlock.invalidFields.includes('name')}"
+                                   placeholder="{% translate "Block Name" %}" autofocus>
+                            <div class="ms-3 text-nowrap">
+                                <i class="fa fa-users"></i>
+                                <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
+                            </div>
+                        </h2>
+                        <div v-if="currentBlock.invalidFields.includes('name')" id="blockNameInputFeedback"
+                             class="invalid-feedback">
+                            {% translate "Please provide a name." %}
                         </div>
-                        <input id="blockNameInput" type="text" required
-                               v-model="currentBlock.name" class="form-control form-control-lg"
-                               placeholder="{% translate "Block Name" %}" autofocus>
-                        <div class="ms-3 text-nowrap">
-                            <i class="fa fa-users"></i>
-                            <span class="ms-1" v-html="participantCountInfo(currentBlock)"></span>
-                        </div>
-                    </h2>
+                    </div>
                     <ul v-if="currentBlock.block_type === 'atomic'" class="mb-3 list-group">
                         <li v-for="position in currentBlock.positions" :key="position.clientId"
                             class="list-group-item list-group-item-secondary">
@@ -55,7 +60,9 @@
                                         <div class="col-auto">
                                             <a @click="removePosition(position)" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i>
-                                                {% translate "Remove" %}
+                                                <span class="visually-hidden">
+                                                    {% translate "Remove" %}
+                                                </span>
                                             </a>
                                         </div>
                                     </div>
@@ -163,13 +170,15 @@
                                     <button type="button" class="btn btn-sm btn-danger"
                                             @click="removeSubComposition(currentBlock, composition)">
                                         <i class="fas fa-trash"></i>
-                                        {% translate "Remove" %}
+                                        <span class="visually-hidden">
+                                            {% translate "Remove" %}
+                                        </span>
                                     </button>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item list-group-item-secondary text-center">
-                            {% translate "Add items using the list on the right" %}
+                            {% translate "Add items using the buttons in the list" %}
                         </li>
                     </ul>
                     <div v-if="currentBlock.block_type === 'atomic'" class="mb-3 form-check d-inline-block">
@@ -240,7 +249,9 @@
                                     <a class="btn btn-sm btn-danger"
                                        @click="removeQualificationRequirement(requirement)">
                                         <i class="fas fa-trash"></i>
-                                        {% translate "Remove" %}
+                                        <span class="visually-hidden">
+                                            {% translate "Remove" %}
+                                        </span>
                                     </a>
                                 </div>
                             </div>
@@ -256,7 +267,7 @@
         </div>
         <div class="col-12 mb-3 order-1 order-lg-2 or col-lg-5" id="block-list">
             {% csrf_token %}
-            <input type="hidden" autocomplete=off :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
+            <input type="hidden" autocomplete="off" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
                    value="{{ form.blocks.value }}">
             <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
                 {% translate "Save" %}
@@ -273,11 +284,9 @@
                     {% translate "Add composite block" %}
                 </button>
             </div>
-
             <input type="text" name="asdasdui" id="asdisajd" class="form-control form-control-sm mt-2"
-                   placeholder="{% translate "Search" %}"
+                   placeholder="{% translate "Search" %}" autocomplete="off"
                    v-model="searchQuery">
-
             <ul class="list-group mt-2">
                 <li class="list-group-item list-group-item-action d-flex p-0 overflow-hidden"
                     :class="{active: currentBlock === block}"
@@ -287,6 +296,9 @@
                         <button type="button" class="h-100 btn btn-lg btn-insert-subblock"
                                 @click.stop="addSubComposition(currentBlock, block)">
                             <i class="fa fa-arrow-left"></i>
+                            <span class="visually-hidden">
+                                {% translate "Add as sub-block" %}
+                            </span>
                         </button>
                     </div>
                     <div class="px-3 py-2 flex-grow-1">
@@ -302,6 +314,10 @@
                                     <span class="ms-1">
                                         <i class="fa fa-users"></i>
                                         <span class="ms-1" v-html="participantCountInfo(block)"></span>
+                                    </span>
+                                    <span v-if="block.invalidFields.length" class="ms-1 text-warning">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                        {% translate "Invalid" %}
                                     </span>
                                 </div>
                             </div>
