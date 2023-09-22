@@ -1,19 +1,19 @@
 import uuid
 
 from django.db import models
-from django.db.models import Choices
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Qualification
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
-class BuildingBlockType(Choices):
-    ATOMIC = "atomic"
-    COMPOSITE = "composite"
+class BuildingBlockType(models.TextChoices):
+    ATOMIC = "atomic", _("atomic")
+    COMPOSITE = "composite", _("composite")
 
 
 class BuildingBlock(models.Model):
-    id = models.UUIDField("UUID", unique=True, default=uuid.uuid4, primary_key=True)
+    uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     name = models.CharField(
         verbose_name=_("Name"),
         max_length=255,
@@ -25,7 +25,10 @@ class BuildingBlock(models.Model):
 
     # composite blocks
     sub_blocks = models.ManyToManyField(
-        "self", through="BlockComposition", through_fields=("composite_block", "sub_block")
+        "self",
+        through="BlockComposition",
+        through_fields=("composite_block", "sub_block"),
+        verbose_name=_("sub blocks"),
     )
 
     # atomic blocks
@@ -38,16 +41,36 @@ class BuildingBlock(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _("building block")
+        verbose_name_plural = _("building blocks")
+
+
+register_model_for_logging(
+    BuildingBlock,
+    ModelFieldsLogConfig(
+        unlogged_fields=["uuid", "id"],
+    ),
+)
+
 
 class BlockQualificationRequirement(models.Model):
     block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="qualification_requirements"
+        BuildingBlock,
+        on_delete=models.CASCADE,
+        related_name="qualification_requirements",
+        verbose_name=_("block"),
     )
-    everyone = models.BooleanField()
+    everyone = models.BooleanField(
+        verbose_name=_("everyone"),
+    )
     at_least = models.PositiveSmallIntegerField(
         default=0,
+        verbose_name=_("at least"),
     )
-    qualifications = models.ManyToManyField(Qualification)
+    qualifications = models.ManyToManyField(
+        Qualification, verbose_name=_("required qualifications")
+    )
 
     def __str__(self):
         if self.everyone:
@@ -60,6 +83,19 @@ class BlockQualificationRequirement(models.Model):
                 block=self.block,
                 qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
             )
+
+    class Meta:
+        verbose_name = _("qualification requirement")
+        verbose_name_plural = _("qualification requirements")
+
+
+register_model_for_logging(
+    BlockQualificationRequirement,
+    ModelFieldsLogConfig(
+        unlogged_fields=["block", "id"],
+        attach_to_func=lambda instance: (BuildingBlock, instance.pk),
+    ),
+)
 
 
 class Position(models.Model):
@@ -80,17 +116,57 @@ class Position(models.Model):
     )
 
     def __str__(self):
-        return self.label or f"{self.block.name} #{self.pk}"
+        return _("{label_or_pk} on {block_name}").format(
+            label_or_pk=self.label or self.pk, block_name=self.block.name
+        )
+
+    class Meta:
+        verbose_name = _("position")
+        verbose_name_plural = _("positions")
+
+
+register_model_for_logging(
+    Position,
+    ModelFieldsLogConfig(
+        unlogged_fields=["block", "id"],
+        attach_to_func=lambda instance: (BuildingBlock, instance.block.pk),
+    ),
+)
 
 
 class BlockComposition(models.Model):
     composite_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="sub_compositions"
+        BuildingBlock,
+        on_delete=models.CASCADE,
+        related_name="sub_compositions",
+        verbose_name=_("composite block"),
     )
     sub_block = models.ForeignKey(
-        BuildingBlock, on_delete=models.CASCADE, related_name="super_compositions"
+        BuildingBlock,
+        on_delete=models.CASCADE,
+        related_name="super_compositions",
+        verbose_name=_("sub block"),
     )
     optional = models.BooleanField(
         verbose_name=_("optional"),
         default=False,
     )
+
+    def __str__(self):
+        return _("{sub_block} on {composite_blocK}").format(
+            sub_block=f"{self.sub_block.name} #{self.id}",
+            composite_blocK=self.composite_block,
+        )
+
+    class Meta:
+        verbose_name = _("block composition")
+        verbose_name_plural = _("block compositions")
+
+
+register_model_for_logging(
+    BlockComposition,
+    ModelFieldsLogConfig(
+        unlogged_fields=["composite_block", "id"],
+        attach_to_func=lambda instance: (BuildingBlock, instance.composite_block.pk),
+    ),
+)
