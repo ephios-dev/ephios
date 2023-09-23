@@ -104,6 +104,14 @@ class DirectedGraph:
             raise ValueError("Graph contains cycles")
         return result
 
+    def is_acyclic(self):
+        """Return True if the graph is acyclic."""
+        try:
+            self.topological_sort()
+        except ValueError:
+            return False
+        return True
+
     def roots(self):
         """Return all nodes that have no parents."""
         parent_counter = Counter(itertools.chain(*self.adjancent_nodes.values()))
