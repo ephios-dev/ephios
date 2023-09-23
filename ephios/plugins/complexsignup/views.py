@@ -37,7 +37,7 @@ class BuildingBlocksForm(forms.Form):
             data=self.cleaned_data["blocks"],
         )
         if not self.serializer.is_valid(raise_exception=settings.DEBUG):
-            self.add_error("blocks", self.serializer.errors)
+            self.add_error("blocks", str(self.serializer.errors))
             return False
         return True
 

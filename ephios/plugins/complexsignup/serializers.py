@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ephios.core.models import Qualification
+from ephios.extra.graphs import DirectedGraph
 from ephios.plugins.complexsignup.models import (
     BlockComposition,
     BlockQualificationRequirement,
@@ -149,6 +150,20 @@ class BlockCompositionSerializer(serializers.ModelSerializer):
 
 class BuildingBlockListSerializer(DeleteFlagBulkUpdateListSerializer):
     identification_field = "uuid"
+
+    def validate(self, attrs):
+        # validate that there are no circles
+        graph = DirectedGraph()
+        for block in attrs:
+            graph.add(
+                str(block["uuid"]),
+                [str(composition["sub_block"]) for composition in block["sub_compositions"]],
+            )
+        if not graph.is_acyclic():
+            raise serializers.ValidationError(
+                "Sub compositions must be free of cycles.", code="invalid"
+            )
+        return attrs
 
 
 class BuildingBlockSerializer(DeletedFlagModelSerializer):
