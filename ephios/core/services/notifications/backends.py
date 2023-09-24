@@ -4,6 +4,7 @@ import traceback
 
 from django.conf import settings
 from django.core.mail import mail_admins
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
@@ -32,6 +33,8 @@ def send_all_notifications():
         for notification in Notification.objects.filter(failed=False):
             if backend.can_send(notification) and backend.user_prefers_sending(notification):
                 try:
+                    if notification.user:
+                        translation.activate(notification.user.language)
                     backend.send(notification)
                 except Exception as e:  # pylint: disable=broad-except
                     if settings.DEBUG:
