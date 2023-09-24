@@ -14,7 +14,9 @@ def test_create_invitecode(django_app, superuser):
     assert InviteCode.objects.get().url == "https://example.com"
 
 
-def test_redeem_invitecode_frontend(django_app, superuser, invite_code, live_server):
+def test_redeem_invitecode_frontend(
+    django_app, superuser, invite_code, live_server, django_db_serialized_rollback
+):
     global_preferences_registry.manager()["general__organization_name"] = "Test"
     form = django_app.get(reverse("federation:frontend_redeem_invite_code"), user=superuser).form
     form["code"] = base64.b64encode(
