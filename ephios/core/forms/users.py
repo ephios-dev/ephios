@@ -464,3 +464,9 @@ class UserNotificationPreferenceForm(Form):
 
     def update_preferences(self):
         self.user.preferences["notifications__notifications"] = self.cleaned_data
+
+
+class UserOwnDataForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ["language"]

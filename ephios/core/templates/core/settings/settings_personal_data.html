@@ -29,4 +29,10 @@
             <i>{% translate "You have not been assigned any qualificiations." %}</i>
         {% endfor %}
     </ul>
+    <h3>{% translate "Language" %}</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+    </form>
 {% endblock %}
