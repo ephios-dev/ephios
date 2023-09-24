@@ -3,9 +3,7 @@ from django.urls import reverse
 from ephios.plugins.federation.models import FederatedEventShare
 
 
-def test_federation_get_shared_events(
-    django_app, volunteer, live_server, django_db_serialized_rollback, federation, event
-):
+def test_federation_get_shared_events(django_app, volunteer, live_server, federation, event):
     host, guest = federation(live_server.url)
     share = FederatedEventShare.objects.create(event=event)
     share.shared_with.add(guest)
@@ -18,7 +16,7 @@ def test_federation_get_shared_events(
 
 
 def test_federation_shared_event_detail(
-    django_app, volunteer, live_server, django_db_serialized_rollback, federation, event, settings
+    django_app, volunteer, live_server, federation, event, settings
 ):
     settings.GET_SITE_URL = lambda: live_server.url
     host, guest = federation(live_server.url)
