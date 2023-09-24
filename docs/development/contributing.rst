@@ -29,7 +29,7 @@ To set up a development version on your local machine, you need to execute the f
 #. Install dependencies with ``poetry install``
 #. Create env file with ``cp .env.example .env``
 #. Migrate the database with ``python manage.py migrate``
-#. Compile translations with ``python manage.py compilemessages`` and ``python manage.py compilejsi18n``
+#. Prepare files for the installation with ``python manage.py build``
 #. Load data for testing with ``python manage.py devdata``
 #. Start the development server with ``python manage.py runserver``
 #. Open your web browser, visit ``http://localhost:8000`` and log in with the default credentials (user ``admin@localhost`` and password ``admin``)
@@ -64,7 +64,7 @@ Next to that, we also run ``pylint ephios`` to check for semantic issues in the 
 Translations
 ------------
 
-We are using djangos translation system for translations in python, html and javascript.
+We are using the django translation system for translations in python, html and javascript.
 After adding new strings to translate, run this to generate
 the `locale/**/.po` files for translation:
 
@@ -76,15 +76,12 @@ the `locale/**/.po` files for translation:
 Calling ``makemessages`` in the ``djangojs`` domain will find gettext calls in javascript files in the
 current working directory. Therefore, we need to ignore the ``data`` which contains static files from
 3rd-party-packages already translated and the ``docs`` directory. Some 3rd-party-javascript comes without
-a translation. To add them, do run ``makemessages`` from the ``data/static/`` directory after running
+a translation. To add them, do run ``makemessages`` from the ``data/public/static/`` directory after running
 ``collectstatic``, but ignore all directories of 3rd-party-packages that are already translated, e.g.:
 
 .. code-block:: bash
 
-   cd data/static/
-   # if django complains about not finding VAPID files when running from this bizare directory,
-   # prepend VAPID_PRIVATE_KEY_PATH="" to the following command
-   python ../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
-
+   cd data/public/static/
+   python ../../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
 
 We tend to edit our .po files using weblate, but a local editor like poedit works as well.

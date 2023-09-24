@@ -240,8 +240,8 @@ class BaseSignupForm(BaseParticipationForm):
             return
         if conflicts := get_conflicting_participations(
             participant=form.instance.participant,
-            start_time=form.cleaned_data["individual_start_time"] or self.shift.start_time,
-            end_time=form.cleaned_data["individual_end_time"] or self.shift.end_time,
+            start_time=form.cleaned_data.get("individual_start_time") or self.shift.start_time,
+            end_time=form.cleaned_data.get("individual_end_time") or self.shift.end_time,
             shift=self.shift,
             total=False,
         ):
@@ -303,7 +303,7 @@ class BaseSignupView(FormView):
     def customize_pressed(self, form):
         form.save()
         if claims := form.get_customization_notification_info():
-            ResponsibleConfirmedParticipationCustomizedNotification(form.instance, claims).send()
+            ResponsibleConfirmedParticipationCustomizedNotification.send(form.instance, claims)
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -569,12 +569,12 @@ class BaseSignupMethod:
                     errors.append(error)
         return errors
 
-    @functools.lru_cache(maxsize=64)
+    @functools.lru_cache(maxsize=200)
     def get_signup_errors(self, participant) -> List[ParticipationError]:
         """Return a list of ParticipationErrors that describe reasons for not being able to sign up."""
         return self._run_checkers(participant, self._signup_checkers)
 
-    @functools.lru_cache(maxsize=64)
+    @functools.lru_cache(maxsize=200)
     def get_decline_errors(self, participant):
         """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
         return self._run_checkers(participant, self._decline_checkers)
@@ -648,7 +648,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
-        ResponsibleParticipationRequestedNotification(participation).send()
+        ResponsibleParticipationRequestedNotification.send(participation)
         return participation
 
     def perform_decline(self, participant, participation=None, **kwargs):
@@ -658,7 +658,7 @@ class BaseSignupMethod:
         participation = participation or self.get_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
-        ResponsibleConfirmedParticipationDeclinedNotification(participation).send()
+        ResponsibleConfirmedParticipationDeclinedNotification.send(participation)
         return participation
 
     def _configure_participation(

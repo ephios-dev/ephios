@@ -1,0 +1,12 @@
+# not docker execution related files
+.github
+.pytest_cache
+data
+docs
+tests
+dist
+build
+.env
+.idea
+.env.example
+

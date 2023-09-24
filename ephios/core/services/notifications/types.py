@@ -1,7 +1,5 @@
 from typing import List
-from urllib.parse import urljoin
 
-from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -15,6 +13,7 @@ from ephios.core.models import AbstractParticipation, Event, LocalParticipation,
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import LocalUserParticipant
+from ephios.core.templatetags.settings_extras import make_absolute
 
 
 def installed_notification_types():
@@ -36,6 +35,8 @@ def notification_type_from_slug(slug):
 
 class AbstractNotificationHandler:
     unsubscribe_allowed = True
+    email_template_name = "core/mails/notification.html"
+    plaintext_template_name = "core/mails/notification.txt"
 
     @property
     def slug(self):
@@ -50,16 +51,33 @@ class AbstractNotificationHandler:
         raise NotImplementedError
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         raise NotImplementedError
 
     @classmethod
-    def as_html(cls, notification):
-        return render_to_string("email_base.html", {"message_text": cls.as_plaintext(notification)})
+    def as_plaintext(cls, notification):
+        return render_to_string(cls.plaintext_template_name, cls.get_render_context(notification))
 
     @classmethod
-    def get_url(cls, notification):
-        return None
+    def as_html(cls, notification):
+        return render_to_string(cls.email_template_name, cls.get_render_context(notification))
+
+    @classmethod
+    def get_render_context(cls, notification):
+        return {
+            "subject": cls.get_subject(notification),
+            "body": cls.get_body(notification),
+            "notification": notification,
+            "notification_settings_url": make_absolute(reverse("core:settings_notifications")),
+        }
+
+    @classmethod
+    def get_actions(cls, notification):
+        """
+        Return a list of (label, url) tuples that make this notification actionable.
+        The first url will be used as the primary action in push notifications.
+        """
+        return []
 
 
 class ProfileUpdateNotification(AbstractNotificationHandler):
@@ -75,22 +93,27 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
         return _("ephios account updated")
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         return _(
             "You're receiving this email because your account at ephios has been updated.\n"
             "You can see the changes in your profile: {url}\n"
-            "Your username is your email address: {email}\n"
-        ).format(url=notification.get_url(), email=notification.user.email)
+            "Your username is your email address: {email}"
+        ).format(url=cls._get_personal_data_url(notification), email=notification.user.email)
 
     @classmethod
-    def get_url(cls, notification):
-        return urljoin(settings.GET_SITE_URL(), reverse("core:settings_personal_data"))
+    def get_actions(cls, notification):
+        return [(str(_("View profile")), cls._get_personal_data_url(notification))]
+
+    @classmethod
+    def _get_personal_data_url(cls, notification):
+        return make_absolute(reverse("core:settings_personal_data"))
 
 
 class NewProfileNotification(AbstractNotificationHandler):
     slug = "ephios_new_profile"
     title = _("A new profile has been created")
     unsubscribe_allowed = False
+    email_template_name = "core/mails/new_account_email.html"
 
     @classmethod
     def send(cls, user: UserProfile, **kwargs):
@@ -105,28 +128,33 @@ class NewProfileNotification(AbstractNotificationHandler):
         return _("Welcome to ephios!")
 
     @classmethod
-    def as_plaintext(cls, notification):
-        reset_link = reverse("password_reset_confirm", kwargs=notification.data)
+    def get_body(cls, notification):
         return _(
             "You're receiving this email because a new account has been created for you at ephios.\n"
-            "Please go to the following page and choose a password: {url}\n"
-            "Your username is your email address: {email}\n"
-        ).format(url=urljoin(settings.GET_SITE_URL(), reset_link), email=notification.user.email)
+            "Please go to the following page and choose a password: {url} \n"
+            "Your username is your email address: {email}"
+        ).format(url=cls._get_reset_url(notification), email=notification.user.email)
 
     @classmethod
-    def as_html(cls, notification):
-        return render_to_string(
-            "core/mails/new_account_email.html",
-            {
-                **{"site_url": settings.GET_SITE_URL(), "email": notification.user.email},
-                **notification.data,
+    def get_actions(cls, notification):
+        return [(str(_("Set password")), cls._get_reset_url(notification))]
+
+    @classmethod
+    def _get_reset_url(cls, notification):
+        reset_link = reverse(
+            "password_reset_confirm",
+            kwargs={
+                "uidb64": notification.data["uidb64"],
+                "token": notification.data["token"],
             },
         )
+        return make_absolute(reset_link)
 
 
 class NewEventNotification(AbstractNotificationHandler):
     slug = "ephios_new_event"
     title = _("A new event has been added")
+    email_template_name = "core/mails/new_event.html"
 
     @classmethod
     def send(cls, event: Event, **kwargs):
@@ -143,43 +171,41 @@ class NewEventNotification(AbstractNotificationHandler):
         return _("New {type}: {title}").format(type=event.type, title=event.title)
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
         return _(
             "A new {type} ({title}, {location}) has been added.\n"
-            "Further information: {description}\n"
-            "You can view the event here: {url}"
+            "Further information: {description}"
         ).format(
             type=event.type,
             title=event.title,
             location=event.location,
             description=event.description,
-            url=notification.get_url(),
         )
 
     @classmethod
-    def as_html(cls, notification):
+    def get_render_context(cls, notification):
+        context = super().get_render_context(notification)
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return render_to_string(
-            "core/mails/new_event.html", {"event": event, "site_url": settings.GET_SITE_URL()}
-        )
+        context["event"] = event
+        return context
 
     @classmethod
-    def get_url(cls, notification):
+    def get_actions(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
+        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
 
 
 class ParticipationMixin:
     @classmethod
-    def get_url(cls, notification):
+    def get_actions(cls, notification):
         shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift
-        return urljoin(settings.GET_SITE_URL(), shift.get_absolute_url())
+        return [(str(_("View event")), make_absolute(shift.get_absolute_url()))]
 
     @classmethod
-    def send(cls, participation: AbstractParticipation):
+    def send(cls, participation: AbstractParticipation, **additional_data):
         user = (
             participation.user
             if participation.get_real_instance_class() == LocalParticipation
@@ -188,7 +214,11 @@ class ParticipationMixin:
         Notification.objects.create(
             slug=cls.slug,
             user=user,
-            data={"participation_id": participation.id, "email": participation.participant.email},
+            data={
+                "participation_id": participation.id,
+                "email": participation.participant.email,
+                **additional_data,
+            },
         )
 
 
@@ -204,7 +234,7 @@ class ParticipationConfirmedNotification(ParticipationMixin, AbstractNotificatio
         return _("Participation confirmed for {event}").format(event=event)
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
@@ -228,7 +258,7 @@ class ParticipationRejectedNotification(ParticipationMixin, AbstractNotification
         return _("Participation rejected for {event}").format(event=event)
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift
@@ -241,24 +271,10 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
     slug = "ephios_participation_customized"
     title = _("A confirmed participation of yours has been tweaked by a responsible")
 
+    # pylint: disable=arguments-differ
     @classmethod
-    def send(
-        cls, participation: AbstractParticipation, claims: List[str]
-    ):  # pylint: disable=arguments-differ
-        user = (
-            participation.user
-            if participation.get_real_instance_class() == LocalParticipation
-            else None
-        )
-        Notification.objects.create(
-            slug=cls.slug,
-            user=user,
-            data={
-                "participation_id": participation.id,
-                "email": participation.participant.email,
-                "claims": claims,
-            },
-        )
+    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+        super().send(participation, claims=claims)
 
     @classmethod
     def get_subject(cls, notification):
@@ -268,7 +284,7 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
         return _("Participation tweaked for {shift}").format(shift=shift)
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift
@@ -280,43 +296,51 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
 
 
 class ResponsibleMixin:
-    def __init__(self, participation: AbstractParticipation):
-        self.participation = participation
-
-    def responsible_users(self):
+    @classmethod
+    def _responsible_users(cls, participation: AbstractParticipation):
         users = get_users_with_perms(
-            self.participation.shift.event, only_with_perms_in=["change_event"]
+            participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         for user in users:
             if (
-                self.participation.get_real_instance_class() != LocalParticipation
-                or user != self.participation.user
+                participation.get_real_instance_class() != LocalParticipation
+                or user != participation.user
             ):
                 yield user
 
-    def get_data(self, **kwargs):
-        kwargs["disposition_url"] = urljoin(
-            settings.GET_SITE_URL(),
-            reverse("core:shift_disposition", kwargs={"pk": self.participation.shift.pk}),
-        )
-        kwargs["participation_id"] = self.participation.id
-        return kwargs
-
-    def send(self):
+    @classmethod
+    def send(cls, participation: AbstractParticipation, **additional_data):
         Notification.objects.bulk_create(
             [
                 Notification(
-                    slug=self.slug,
+                    slug=cls.slug,
                     user=user,
-                    data=self.get_data(),
+                    data={
+                        "disposition_url": make_absolute(
+                            reverse(
+                                "core:shift_disposition", kwargs={"pk": participation.shift.pk}
+                            ),
+                        ),
+                        "participation_id": participation.id,
+                        **additional_data,
+                    },
                 )
-                for user in self.responsible_users()
+                for user in cls._responsible_users(participation)
             ]
         )
 
     @classmethod
-    def get_url(cls, notification):
-        return notification.data.get("disposition_url")
+    def get_actions(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return [
+            (
+                str(_("View event")),
+                make_absolute(participation.shift.get_absolute_url()),
+            ),
+            (str(_("Disposition")), notification.data.get("disposition_url")),
+        ]
 
     @classmethod
     def get_subject(cls, notification):
@@ -334,7 +358,7 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
     title = _("A participation has been requested for your event")
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
@@ -349,7 +373,7 @@ class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNo
                 participant=participation.participant,
                 disposition_url=notification.data.get("disposition_url"),
             )
-        return _("{participant} signed up for {shift}").format(
+        return _("{participant} signed up for {shift}.").format(
             participant=participation.participant, shift=participation.shift
         )
 
@@ -361,7 +385,7 @@ class ResponsibleConfirmedParticipationDeclinedNotification(
     title = _("A participant declined after having been confirmed for your event")
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
@@ -383,15 +407,13 @@ class ResponsibleConfirmedParticipationCustomizedNotification(
         )
         return _("Participation altered for {event}").format(event=participation.shift.event)
 
-    def __init__(self, participation: AbstractParticipation, claims: List[str]):
-        super().__init__(participation)
-        self.claims = claims
-
-    def get_data(self, **kwargs):
-        return super().get_data(claims=self.claims)
+    # pylint: disable=arguments-differ
+    @classmethod
+    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+        super().send(participation, claims=claims or [])
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
@@ -427,21 +449,18 @@ class EventReminderNotification(AbstractNotificationHandler):
         return _("Help needed for {title}").format(title=event.title)
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _(
-            "Your support is needed for {title} ({start} - {end}). \nYou can view the event here: {url}"
-        ).format(
+        return _("Your support is needed for {title} ({start} - {end}).").format(
             title=event.title,
             start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
             end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
-            url=notification.get_url(),
         )
 
     @classmethod
-    def get_url(cls, notification):
+    def get_actions(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return urljoin(settings.GET_SITE_URL(), event.get_absolute_url())
+        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
 
 
 class CustomEventParticipantNotification(AbstractNotificationHandler):
@@ -496,7 +515,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
         )
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         return notification.data.get("content")
 
 
@@ -515,7 +534,7 @@ class ConsequenceApprovedNotification(AbstractNotificationHandler):
         return _("Your request has been approved")
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
         return _('"{consequence}" has been approved.').format(consequence=consequence)
 
@@ -535,7 +554,7 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
         return _("Your request has been denied")
 
     @classmethod
-    def as_plaintext(cls, notification):
+    def get_body(cls, notification):
         consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
         return _('"{consequence}" has been denied.').format(consequence=consequence)
 

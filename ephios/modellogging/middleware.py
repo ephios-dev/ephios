@@ -1,6 +1,6 @@
 import uuid
 
-from .log import log_request_store
+from ephios.modellogging.log import log_request, log_request_id
 
 
 class LoggingRequestMiddleware:
@@ -14,11 +14,11 @@ class LoggingRequestMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        log_request_store.request = request
-        log_request_store.request_id = str(uuid.uuid4())
+        log_request.set(request)
+        log_request_id.set(str(uuid.uuid4()))
 
         response = self.get_response(request)
 
-        del log_request_store.request
-        del log_request_store.request_id
+        log_request.set(None)
+        log_request_id.set(None)
         return response

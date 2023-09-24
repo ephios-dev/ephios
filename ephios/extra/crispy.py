@@ -16,7 +16,7 @@ class AbortLink:
     def render(self, form, context, template_pack=TEMPLATE_PACK, **kwargs):
         context.update({"href": self.href})
         return Template(
-            '{% load i18n %}<a role="button" class="btn btn-secondary mt-1" href="{{ href }}">{% trans "Cancel" %}</a>'
+            '{% load i18n %}<a role="button" class="btn btn-secondary mt-1" href="{{ href }}">{% translate "Cancel" %}</a>'
         ).render(context)
 
 

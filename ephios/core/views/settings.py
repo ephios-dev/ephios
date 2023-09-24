@@ -7,6 +7,7 @@ from django.views.generic import FormView, TemplateView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.forms.users import UserNotificationPreferenceForm
+from ephios.core.services.health.healthchecks import run_healthchecks
 from ephios.core.signals import management_settings_sections
 from ephios.extra.mixins import StaffRequiredMixin
 
@@ -54,6 +55,11 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):
 
     def get_success_url(self):
         return reverse("core:settings_instance")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            kwargs["healthchecks"] = list(run_healthchecks())
+        return super().get_context_data(**kwargs)
 
 
 class PersonalDataSettingsView(LoginRequiredMixin, TemplateView):

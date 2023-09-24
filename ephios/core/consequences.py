@@ -8,6 +8,7 @@ from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
 from django.template.defaultfilters import floatformat
 from django.utils.formats import date_format
+from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
 
@@ -158,7 +159,9 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         )
         if not created:
             qg.expires = max(
-                qg.expires, consequence.data["expires"], key=lambda dt: dt or datetime.max
+                qg.expires,
+                consequence.data["expires"],
+                key=lambda dt: dt or make_aware(datetime.max),
             )
             qg.save()
 

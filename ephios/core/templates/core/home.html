@@ -8,7 +8,7 @@
 
 
 {% block title %}
-    {% trans "Home" %}
+    {% translate "Home" %}
 {% endblock %}
 
 {% block javascript %}
@@ -17,7 +17,7 @@
 
 {% block content %}
     <h1 class="page-header">
-        {% trans "Welcome to ephios!" %}
+        {% translate "Welcome to ephios!" %}
     </h1>
 
     <style nonce="{{ request.csp_nonce }}">
@@ -29,7 +29,7 @@
     {% with request.user|confirmed_participations as confirmed_participations %}
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title mb-0">{% trans "Your upcoming events" %}</h5>
+                <h5 class="card-title mb-0">{% translate "Your upcoming events" %}</h5>
             </div>
             <ul class="list-group list-group-flush">
                 {% for participation in confirmed_participations %}
@@ -40,21 +40,21 @@
                             </div>
                             <div class="col">
                                 <div class="row">
-                                        <span class="col col-lg-6 text-break">
-                                            {{ participation.shift.event.title }}
-                                        </span>
+                                    <span class="col col-lg-6 text-break">
+                                        {{ participation.shift.event.title }}
+                                    </span>
                                     <span class="col-auto col-lg-2">
-                                            <span class="badge eventtype-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
-                                        </span>
+                                        <span class="badge eventtype-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
+                                    </span>
                                     <span class="col-lg-4">
-                                              {{ participation.start_time|date:"D" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}, {{ participation.get_time_display }}
-                                        </span>
+                                        {{ participation.start_time|date:"D" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}, {{ participation.get_time_display }}
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <a class="btn btn-outline-primary btn-sm"
                                    href="{{ participation.shift.get_absolute_url }}"><span
-                                        class="fa fa-eye"></span> <span
+                                    class="fa fa-eye"></span> <span
                                         class="d-none d-md-inline">{% translate "View" %}</span></a>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
         {% if shifts|length > 0 %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title mb-0">{% trans "Events with requested participations" %}</h5>
+                    <h5 class="card-title mb-0">{% translate "Events with requested participations" %}</h5>
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for shift in shifts %}
@@ -92,18 +92,18 @@
                                             <span class="badge eventtype-{{ shift.event.type.pk }}-color">{{ shift.event.type }}</span>
                                         </span>
                                         <span class="col-lg-4">
-                                              {{ shift.start_time|date:"D" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}, {{ shift.get_time_display }}
+                                            {{ shift.start_time|date:"D" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}, {{ shift.get_time_display }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <a class="btn btn-outline-primary btn-sm"
                                        href="{% url "core:event_detail" shift.event.pk shift.event.get_canonical_slug %}"><span
-                                            class="fa fa-eye"></span> <span
+                                        class="fa fa-eye"></span> <span
                                             class="d-none d-md-inline">{% translate "View" %}</span></a>
                                     <a class="btn btn-outline-primary btn-sm"
                                        href="{% url "core:shift_disposition" shift.pk %}"><span
-                                            class="fas fa-hand-point-right"></span> <span
+                                        class="fas fa-hand-point-right"></span> <span
                                             class="d-none d-md-inline">{% translate "Disposition" %}</span></a>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title mb-0">
-                        {% trans "Edit history" %}
+                        {% translate "Edit history" %}
                         <a class="btn btn-outline-primary btn-sm float-end" href="{% url "core:log" %}">
                             <span class="fas fa-eye"></span>
                             <span class="d-none d-md-inline">{% translate "View everything" %}</span>

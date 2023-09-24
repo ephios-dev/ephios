@@ -15,3 +15,8 @@
 .h-0 {
   height: 0;
 }
+
+.tabular-numbers {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-numbers;
+}

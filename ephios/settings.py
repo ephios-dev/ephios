@@ -11,12 +11,16 @@ from django.contrib.messages import constants
 from django.utils.translation import gettext_lazy
 from py_vapid import Vapid, b64urlencode
 
+from ephios.extra.secrets import django_secret_from_file
+
 try:
     import importlib_metadata  # importlib is broken on python3.8, using backport
 except ImportError:
     import importlib.metadata as importlib_metadata
 
+# BASE_DIR is the directory containing the ephios package
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
@@ -25,33 +29,48 @@ env_path = env.str("ENV_PATH", default=os.path.join(BASE_DIR, ".env"))
 print(f"Loading ephios environment from {Path(env_path).absolute()}")
 environ.Env.read_env(env_file=env_path)
 
-DATA_DIR = env.str("DATA_DIR", default=os.path.join(BASE_DIR, "data"))
-if not os.path.exists(DATA_DIR):
-    os.mkdir(DATA_DIR)
-
-SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
+
+DATA_DIR = env.str("DATA_DIR", os.path.join(BASE_DIR, "data"))
+PUBLIC_DIR = env.str("PUBLIC_DIR", os.path.join(DATA_DIR, "public"))
+STATIC_ROOT = env.str("STATIC_ROOT", os.path.join(PUBLIC_DIR, "static"))
+
+PRIVATE_DIR = env.str("PRIVATE_DIR", os.path.join(DATA_DIR, "private"))
+LOG_DIR = env.str("LOG_DIR", os.path.join(PRIVATE_DIR, "logs"))
+MEDIA_ROOT = env.str("MEDIA_ROOT", os.path.join(PRIVATE_DIR, "media"))
+
+DIRECTORIES = {
+    "DATA_DIR": DATA_DIR,
+    "PUBLIC_DIR": PUBLIC_DIR,
+    "STATIC_ROOT": STATIC_ROOT,
+    "PRIVATE_DIR": PRIVATE_DIR,
+    "LOG_DIR": LOG_DIR,
+    "MEDIA_ROOT": MEDIA_ROOT,
+}
+for directory in DIRECTORIES.values():
+    os.makedirs(directory, exist_ok=True)
+
+if "SECRET_KEY" in env:
+    SECRET_KEY = env.str("SECRET_KEY")
+else:
+    SECRET_FILE = os.path.join(PRIVATE_DIR, ".secret")
+    SECRET_KEY = django_secret_from_file(SECRET_FILE)
+
+
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 try:
     EPHIOS_VERSION = importlib_metadata.version("ephios")
 except importlib_metadata.PackageNotFoundError:
     # ephios is not installed as a package (e.g. development setup)
-    pass
-
-if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = "DENY"
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 3600
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_REFERRER_POLICY = "same-origin"
-
-# Application definition
+    EPHIOS_VERSION = "dev"
 
 INSTALLED_APPS = [
+    # we need to import our own modules before everything else to allow template
+    # customizing e.g. for django-oauth-toolkit
+    "ephios.core",
+    "ephios.extra",
+    "ephios.api",
     "django.contrib.admin",
     "django.contrib.auth",
     "polymorphic",
@@ -76,15 +95,12 @@ INSTALLED_APPS = [
     "ephios.modellogging",
 ]
 
-EPHIOS_CORE_MODULES = [
+EPHIOS_APP_MODULES = [
+    # core modules always receive plugin signals
     "ephios.core",
     "ephios.extra",
     "ephios.api",
 ]
-# we need to import our own modules before everything else to allow template
-# customizing for django-oauth-toolkit
-INSTALLED_APPS = EPHIOS_CORE_MODULES + INSTALLED_APPS
-
 CORE_PLUGINS = [
     "ephios.plugins.basesignup.apps.PluginApp",
     "ephios.plugins.pages.apps.PluginApp",
@@ -138,7 +154,9 @@ TEMPLATES = [
     },
 ]
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, "ephios/locale"),)
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "ephios/locale"),
+]
 
 WSGI_APPLICATION = "ephios.wsgi.application"
 
@@ -148,7 +166,12 @@ WSGI_APPLICATION = "ephios.wsgi.application"
 DATABASES = {"default": env.db_url()}
 
 # Caches
-CACHES = {"default": env.cache_url(default="locmemcache://")}
+CACHES = {
+    "default": {
+        "TIMEOUT": 60 * 60 * 12,  # 12 hours
+        **env.cache_url(default="locmemcache://"),
+    }
+}
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 DJANGO_REDIS_IGNORE_EXCEPTIONS = True
 DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
@@ -194,11 +217,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = env.str("STATIC_URL")
-
-STATIC_ROOT = env.str("STATIC_ROOT")
-if not os.path.isabs(STATIC_ROOT):
-    STATIC_ROOT = os.path.join(BASE_DIR, STATIC_ROOT)
+STATIC_URL = env.str("STATIC_URL", default="/static/")
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
@@ -218,11 +237,6 @@ SERVER_EMAIL = env.str("SERVER_EMAIL")
 ADMINS = getaddresses([env("ADMINS")])
 
 # logging
-LOGGING_FILE = env.str("LOGGING_FILE", default=None)
-use_file_logging = not DEBUG and LOGGING_FILE is not None
-if use_file_logging:
-    Path(LOGGING_FILE).parent.mkdir(parents=True, exist_ok=True)
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -252,19 +266,15 @@ LOGGING = {
         "file": {
             "level": "DEBUG",
             "formatter": "default",
-            "filters": ["require_debug_false"],
+            "filters": [],
             **(
                 {
                     "class": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": LOGGING_FILE,
+                    "filename": os.path.join(LOG_DIR, "ephios.log"),
                     "when": "midnight",
                     "backupCount": env.int("LOGGING_BACKUP_DAYS", default=14),
                     "atTime": datetime.time(4),
                     "encoding": "utf-8",
-                }
-                if use_file_logging
-                else {
-                    "class": "logging.NullHandler",
                 }
             ),
         },
@@ -292,6 +302,14 @@ LOGGING = {
     },
 }
 
+
+def GET_SITE_URL():
+    site_url = env.str("SITE_URL")
+    if site_url.endswith("/"):
+        site_url = site_url[:-1]
+    return site_url
+
+
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False
@@ -301,13 +319,16 @@ GUARDIAN_MONKEY_PATCH = False
 SELECT2_JS = ""
 SELECT2_CSS = ""
 SELECT2_I18N_PATH = ""
+SELECT2_CACHE_BACKEND = "default"
+SELECT2_THEME = "bootstrap-5"
 
 # django-debug-toolbar
-if DEBUG and env.bool("DEBUG_TOOLBAR", True):
+ENABLE_DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR", False)
+if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("django_extensions")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    INTERNAL_IPS = env.str("INTERNAL_IPS")
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # django-csp
 # Bootstrap requires embedded SVG files loaded via a data URI. This is not ideal, but will only be fixed in
@@ -360,8 +381,12 @@ PWA_APP_ICONS = [
 ]
 
 # django-webpush
-if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
-    vp = Vapid().from_file(vapid_private_key_path)
+VAPID_PRIVATE_KEY_PATH = env.str(
+    "VAPID_PRIVATE_KEY_PATH", os.path.join(PRIVATE_DIR, "vapid_key.pem")
+)
+WEBPUSH_SETTINGS = {}
+if os.path.exists(VAPID_PRIVATE_KEY_PATH):
+    vp = Vapid().from_file(VAPID_PRIVATE_KEY_PATH)
     WEBPUSH_SETTINGS = {
         "VAPID_PUBLIC_KEY": b64urlencode(
             vp.public_key.public_bytes(
@@ -373,13 +398,13 @@ if vapid_private_key_path := env.str("VAPID_PRIVATE_KEY_PATH", None):
     }
 
 
-def GET_SITE_URL():
-    site_url = env.str("SITE_URL")
-    if site_url.endswith("/"):
-        site_url = site_url[:-1]
-    return site_url
+# Health check
+# interval for calls to the run_periodic_tasks management command over which the cronjob is considered to be broken
+RUN_PERIODIC_MAX_INTERVAL = 60 * 5 + 30  # 5 minutes + 30 seconds
 
 
+# django-rest-framework
+DEFAULT_LISTVIEW_PAGINATION = 100
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
@@ -415,9 +440,28 @@ OAUTH2_PROVIDER = {
     "REFRESH_TOKEN_EXPIRE_SECONDS": timedelta(days=90),
 }
 
+# SECURITY SETTINGS
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_REFERRER_POLICY = "same-origin"
+    # 1 day by default, change to 1 year in production (see deployment docs)
+    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=3600 * 24)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
+    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
+    CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
+
+if env.bool("TRUST_X_FORWARDED_PROTO", default=False):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
+# OIDC SETTINGS
 if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     INSTALLED_APPS.append("mozilla_django_oidc")
-    AUTHENTICATION_BACKENDS.append("mozilla_django_oidc.auth.OIDCAuthenticationBackend")
+    AUTHENTICATION_BACKENDS.append("ephios.extra.auth.EphiosOIDCAB")
     OIDC_RP_CLIENT_ID = env.str("OIDC_RP_CLIENT_ID")
     OIDC_RP_CLIENT_SECRET = env.str("OIDC_RP_CLIENT_SECRET")
     OIDC_RP_SIGN_ALGO = env.str("OIDC_RP_SIGN_ALGO")
@@ -425,3 +469,5 @@ if ENABLE_OIDC_CLIENT := env.bool("ENABLE_OIDC_CLIENT", False):
     OIDC_OP_TOKEN_ENDPOINT = env.str("OIDC_OP_TOKEN_ENDPOINT")
     OIDC_OP_USER_ENDPOINT = env.str("OIDC_OP_USER_ENDPOINT")
     OIDC_OP_JWKS_ENDPOINT = env.str("OIDC_OP_JWKS_ENDPOINT")
+    OIDC_RP_SCOPES = env.str("OIDC_RP_SCOPES", "openid profile email")
+    LOGOUT_REDIRECT_URL = env.str("LOGOUT_REDIRECT_URL", None)

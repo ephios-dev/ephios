@@ -32,8 +32,12 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     assert set(get_groups_with_perms(event, only_with_perms_in=["view_event"])) == {
         volunteers,
         planners,
+        managers,
     }
-    assert set(get_groups_with_perms(event, only_with_perms_in=["change_event"])) == {planners}
+    assert set(get_groups_with_perms(event, only_with_perms_in=["change_event"])) == {
+        planners,
+        managers,
+    }
     assert set(
         get_users_with_perms(event, only_with_perms_in=["change_event"], with_group_users=False)
     ) == {planner}

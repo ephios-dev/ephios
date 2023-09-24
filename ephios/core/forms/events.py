@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.forms.utils import from_current_timezone
 from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
@@ -119,7 +120,7 @@ class EventForm(forms.ModelForm):
         # delete existing permissions
         # (better implement https://github.com/django-guardian/django-guardian/issues/654)
         for group in get_groups_with_perms(
-            event, only_with_perms_in=["view_event", "change_event"]
+            event, only_with_perms_in=["view_event", "change_event"], must_have_all_perms=False
         ):
             remove_perm("view_event", group, event)
             remove_perm("change_event", group, event)
@@ -210,20 +211,25 @@ class ShiftForm(forms.ModelForm):
             ),
         )
 
+    def clean_meeting_time(self):
+        return from_current_timezone(
+            datetime.combine(self.cleaned_data["date"], self.cleaned_data["meeting_time"])
+        )
+
+    def clean_start_time(self):
+        return from_current_timezone(
+            datetime.combine(self.cleaned_data["date"], self.cleaned_data["start_time"])
+        )
+
+    def clean_end_time(self):
+        end_time = datetime.combine(self.cleaned_data["date"], self.cleaned_data["end_time"])
+        if make_aware(end_time) <= self.cleaned_data["start_time"]:
+            end_time += timedelta(days=1)
+        return from_current_timezone(end_time)
+
     def clean(self):
         cleaned_data = super().clean()
-        if {"date", "meeting_time", "start_time", "end_time"} <= set(cleaned_data.keys()):
-            cleaned_data["meeting_time"] = make_aware(
-                datetime.combine(cleaned_data["date"], cleaned_data["meeting_time"])
-            )
-            cleaned_data["start_time"] = make_aware(
-                datetime.combine(cleaned_data["date"], cleaned_data["start_time"])
-            )
-            cleaned_data["end_time"] = make_aware(
-                datetime.combine(self.cleaned_data["date"], cleaned_data["end_time"])
-            )
-            if self.cleaned_data["end_time"] <= self.cleaned_data["start_time"]:
-                cleaned_data["end_time"] = cleaned_data["end_time"] + timedelta(days=1)
+        if {"meeting_time", "start_time"} <= set(cleaned_data.keys()):
             if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
                 raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data

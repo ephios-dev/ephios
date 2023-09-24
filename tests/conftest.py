@@ -12,7 +12,7 @@ from guardian.shortcuts import assign_perm
 
 from ephios.core import plugins
 from ephios.core.consequences import QualificationConsequenceHandler, WorkingHoursConsequenceHandler
-from ephios.core.forms.users import CORE_MANAGEMENT_PERMISSIONS
+from ephios.core.forms.users import MANAGEMENT_PERMISSIONS
 from ephios.core.models import (
     AbstractParticipation,
     Event,
@@ -169,7 +169,7 @@ def groups(superuser, manager, planner, volunteer, qualified_volunteer):
     assign_perm("publish_event_for_group", planners, volunteers)
     assign_perm("core.add_event", planners)
     assign_perm("core.delete_event", planners)
-    for perm in CORE_MANAGEMENT_PERMISSIONS:
+    for perm in MANAGEMENT_PERMISSIONS:
         assign_perm(perm, managers)
     assign_perm("decide_workinghours_for_group", managers, volunteers)
     return managers, planners, volunteers
@@ -241,6 +241,14 @@ def conflicting_event(event, training_event_type, volunteer, groups):
     )
 
     return conflicting_event
+
+
+@pytest.fixture
+def event_with_required_qualification(event, qualifications):
+    shift = event.shifts.first()
+    shift.signup_configuration = {"required_qualification_ids": [qualifications.nfs.pk]}
+    shift.save()
+    return event
 
 
 @pytest.fixture

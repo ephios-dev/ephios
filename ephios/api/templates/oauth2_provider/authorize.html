@@ -11,14 +11,14 @@
             </h3>
             {% csrf_token %}
 
-            {# pass query params through the submit process for saving #}
+                {# pass query params through the submit process for saving #}
             {% for field in form %}
                 {% if field.is_hidden %}
                     {{ field }}
                 {% endif %}
             {% endfor %}
 
-            <p>{% trans "The application requires the following permissions:" %}</p>
+            <p>{% translate "The application requires the following permissions:" %}</p>
             <ul>
                 {% for scope in scopes_descriptions %}
                     <li>{{ scope }}</li>
@@ -31,8 +31,7 @@
             <div class="control-group">
                 <div class="controls">
                     <input type="submit" class="btn btn-large btn-secondary" value="{% translate "Cancel" %}"/>
-                    <input type="submit" class="btn btn-large btn-primary" name="allow"
-                           value="{% translate "Authorize" %}"/>
+                    <input type="submit" class="btn btn-large btn-primary" name="allow" value="{% translate "Authorize" %}"/>
                 </div>
             </div>
         </form>

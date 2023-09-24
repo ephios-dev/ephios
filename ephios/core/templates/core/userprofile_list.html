@@ -1,64 +1,101 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load utils %}
 {% load user_extras %}
 {% load static %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "Users" %}
+    {% translate "Users" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Users" %}</h1>
+        <h1>
+            {% translate "Users" %}
+        </h1>
     </div>
-    {% if perms.core.add_userprofile %}
-        <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
-                class="fa fa-plus"></span> {% trans "Add user" %}</a>
-    {% endif %}
-    {% with global_preferences.general__relevant_qualification_categories as relevant_qualification_categories %}
-        <table id="userprofile_table" class="table table-striped display">
-            <thead>
-            <tr>
-                <th>{% trans "Last name" %}</th>
-                <th>{% trans "First name" %}</th>
-                <th class="d-none d-md-table-cell">{% trans "Email address" %}</th>
-                {% for category in relevant_qualification_categories %}
-                    <th class="d-none d-lg-table-cell">{{ category.title }}</th>
-                {% endfor %}
-                <th class="d-none d-lg-table-cell">{% trans "Information" %}</th>
-                <th>{% trans "Action" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for userprofile in userprofile_list %}
-                <tr>
-                    <td>{{ userprofile.last_name }}</td>
-                    <td>{{ userprofile.first_name }}</td>
-                    <td class="d-none d-md-table-cell">{{ userprofile.email }}</td>
-                    {% for category in relevant_qualification_categories %}
-                        <td class="d-none d-lg-table-cell">{{ userprofile|qualifications_for_category:category.pk }}</td>
-                    {% endfor %}
-                    <td class="d-none d-lg-table-cell">{% include "core/userprofile_badges.html" with userprofile=userprofile %}</td>
-                    <td class="d-flex">
+
+    <form method="GET" id="filter-form" class="row align-items-center">
+        {% if perms.core.add_userprofile %}
+            <div class="col-12 col-lg-auto">
+                <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
+                    class="fa fa-plus"></span> {% translate "Add user" %}</a>
+            </div>
+        {% endif %}
+        {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.group wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.qualification wrapper_class="col-12 col-lg" show_labels=False %}
+
+        <div class="col-12 col-lg-auto mb-3">
+            <button type="submit" class="btn btn-primary">
+                <span class="fa fa-funnel"></span> {% translate "Apply" %}
+            </button>
+            <a class="btn btn-secondary" href="?">{% translate "Reset" %}</a>
+        </div>
+    </form>
+
+    <ul class="list-group mb-3">
+        {% for userprofile in userprofile_list %}
+            <li class="list-group-item">
+                <div class="row mb-0">
+                    <div class="col-12 col-lg-5">
+                        <div class="row">
+                            <div class="col col-lg-6 col-xxl-8">
+                                <h5 class="mb-0 d-inline">
+                                    {{ userprofile.get_full_name }}
+                                </h5>
+                                <br/>
+                                <a class="link-dark link-underline-opacity-0 link-opacity-50 link-underline-opacity-50-hover link-opacity-100-hover"
+                                   href="mailto:{{ userprofile.email }}">{{ userprofile.email }}</a>
+                            </div>
+                            <div class="col-auto col-lg-6 col-xxl-4">
+                                {% if userprofile.is_minor %}
+                                    <span class="badge bg-warning">{% translate "minor" %}</span>
+                                {% endif %}
+                                {% if not userprofile.is_active %}
+                                    <span class="badge bg-danger">{% translate "inactive" %}</span>
+                                {% elif userprofile.is_staff %}
+                                    <span class="badge bg-info">{% translate "admin" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8 col-lg">
+                        <div>
+                            {% if userprofile.groups.all %}
+                                <span class="fas fa-users"></span>
+                                {{ userprofile.groups.all|join:", " }}
+                            {% else %}
+                                <span class="fas fa-users-slash" title="{% translate "no groups" %}"></span>
+                            {% endif %}
+                        </div>
+                        <div class="text-body-secondary">
+                            {% for abbreviation in userprofile.qualification_grants.all|grants_to_essential_abbreviations %}
+                                <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-4 col-lg-auto d-flex align-items-end align-items-lg-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
-                               href="{% url "core:workinghours_detail" userprofile.pk %}"><span
-                                    class="fa fa-eye"></span> <span
-                                    class="d-none d-md-inline">{% trans "View working hours" %}</span></a>
+                           href="{% url "core:workinghours_detail" userprofile.pk %}"><span
+                            class="fa fa-list-ol"></span> <span
+                                class="d-none d-lg-inline">{% translate "Working hours" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                            href="{% url "core:userprofile_edit" userprofile.pk %}"><span
-                                class="fa fa-edit"></span> <span
-                                class="d-none d-md-inline">{% trans "Edit" %}</span></a>
+                            class="fa fa-edit"></span> <span
+                                class="d-none d-md-inline">{% translate "Edit" %}</span></a>
                         {% if perms.core.delete_userprofile %}
                             <a class="btn btn-secondary btn-sm text-nowrap ms-1"
                                href="{% url "core:userprofile_delete" userprofile.pk %}"><span
-                                    class="fa fa-trash-alt"></span> <span
-                                    class="d-none d-md-inline">{% trans "Delete" %}</span></a>
+                                class="fa fa-trash-alt"></span> <span
+                                    class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
                         {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endwith %}
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% include 'core/pagination.html' %}
 {% endblock %}

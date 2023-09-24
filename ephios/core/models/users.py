@@ -23,9 +23,10 @@ from django.db.models import (
     Model,
     Q,
     Sum,
+    UniqueConstraint,
     Value,
 )
-from django.db.models.functions import TruncDate
+from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -38,6 +39,11 @@ from ephios.modellogging.log import (
     register_model_for_logging,
 )
 from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
+
+
+class UserProfileQuerySet(models.QuerySet):
+    def visible(self):
+        return self.filter(is_visible=True)
 
 
 class UserProfileManager(BaseUserManager):
@@ -68,29 +74,27 @@ class UserProfileManager(BaseUserManager):
         date_of_birth,
         password=None,
     ):
-        user = self.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            date_of_birth=date_of_birth,
-        )
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
-        return user
+        with transaction.atomic():
+            user = self.create_user(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth,
+            )
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            return user
+
+    def get_by_natural_key(self, username):
+        # postgres uses case-sensitive collations, so we need to use iexact here
+        return self.get(**{f"{self.model.USERNAME_FIELD}__iexact": username})
 
 
 class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_visible=True)
-
-    # mozilla-django-oidc looks here for a method to create users
-    def create_user(self, username, email):
-        user = self.model(email=email)
-        user.set_unusable_password()
-        user.save()
-        return user
+        return super().get_queryset().visible()
 
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
@@ -99,8 +103,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(
         default=False,
-        verbose_name=_("Technical Administrator"),
-        help_text=_("If checked, this user can change technical ephios settings."),
+        verbose_name=_("Administrator"),
     )
     first_name = CharField(_("first name"), max_length=254)
     last_name = CharField(_("last name"), max_length=254)
@@ -115,8 +118,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         "date_of_birth",
     ]
 
-    objects = VisibleUserProfileManager()
-    all_objects = UserProfileManager()
+    objects = VisibleUserProfileManager.from_queryset(UserProfileQuerySet)()
+    all_objects = UserProfileManager.from_queryset(UserProfileQuerySet)()
 
     class Meta:
         verbose_name = _("user profile")
@@ -124,6 +127,15 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         db_table = "userprofile"
         base_manager_name = "all_objects"
         default_manager_name = "all_objects"
+
+        constraints = [
+            UniqueConstraint(
+                Lower("email"),
+                name="user_email_ci_uniqueness",
+                violation_error_message=_("User profile with this email address already exists."),
+                # we want to allow case insensitive signin, so we need to ensure that the email is unique in all cases
+            ),
+        ]
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -159,10 +171,20 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 
     @property
     def qualifications(self):
-        return Qualification.objects.filter(
-            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
-        ).annotate(
-            expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+        """
+        Returns a queryset with all qualifications that are granted to this user and not expired.
+        Be careful to not use this in a loop, as it will perform a query for each iteration.
+        """
+        return (
+            Qualification.objects.filter(
+                pk__in=self.qualification_grants.unexpired().values_list(
+                    "qualification_id", flat=True
+                )
+            )
+            .annotate(
+                expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+            )
+            .select_related("category")
         )
 
     def get_workhour_items(self):
@@ -198,7 +220,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 register_model_for_logging(
     UserProfile,
     ModelFieldsLogConfig(
-        unlogged_fields={"id", "password", "calendar_token", "last_login"},
+        unlogged_fields={"id", "password", "calendar_token", "last_login", "user_permissions"},
     ),
 )
 
@@ -221,6 +243,10 @@ class QualificationCategoryManager(models.Manager):
 class QualificationCategory(Model):
     uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+    show_with_user = BooleanField(
+        default=True,
+        verbose_name=_("Show qualifications of this category everywhere a user is presented"),
+    )
 
     objects = QualificationCategoryManager()
 
@@ -282,21 +308,6 @@ class Qualification(Model):
 
     natural_key.dependencies = ["core.QualificationCategory"]
 
-    @classmethod
-    def collect_all_included_qualifications(cls, given_qualifications) -> set:
-        """We collect using breadth first search with one query for every layer of inclusion."""
-        all_qualifications = set(given_qualifications)
-        current = set(given_qualifications)
-        while current:
-            new = (
-                Qualification.objects.filter(included_by__in=current)
-                .exclude(id__in=(q.id for q in all_qualifications))
-                .distinct()
-            )
-            all_qualifications |= set(new)
-            current = new
-        return all_qualifications
-
 
 class CustomQualificationGrantQuerySet(models.QuerySet):
     # Available on both Manager and QuerySet.
@@ -335,6 +346,12 @@ class QualificationGrant(Model):
     expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
 
     objects = CustomQualificationGrantQuerySet.as_manager()
+
+    def is_expired(self):
+        return self.expires and self.expires < timezone.now()
+
+    def is_valid(self):
+        return not self.is_expired()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"
@@ -490,13 +507,21 @@ class Notification(Model):
 
     @property
     def subject(self):
+        """The subject of the notification."""
         return self.notification_type.get_subject(self)
 
-    def as_plaintext(self):
-        return self.notification_type.as_plaintext(self)
+    @property
+    def body(self):
+        """The body text of the notification."""
+        return self.notification_type.get_body(self)
 
     def as_html(self):
+        """The notification rendered as HTML."""
         return self.notification_type.as_html(self)
 
-    def get_url(self):
-        return self.notification_type.get_url(self)
+    def as_plaintext(self):
+        """The notification rendered as plaintext."""
+        return self.notification_type.as_plaintext(self)
+
+    def get_actions(self):
+        return self.notification_type.get_actions(self)

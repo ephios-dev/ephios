@@ -1,4 +1,5 @@
 from django.dispatch import receiver
+from django.utils import timezone
 
 from ephios.core.plugins import PluginSignal
 from ephios.core.services.notifications.backends import send_all_notifications
@@ -94,6 +95,12 @@ This signal is sent out to get all backends that can handle sending out notifica
 Receivers should return a list of subclasses of ``ephios.core.notifications.backends.AbstractNotificationBackend``
 """
 
+register_healthchecks = PluginSignal()
+"""
+This signal is sent out to get all health checks that can be run to monitor the health of the application.
+Receivers should return a list of subclasses of ``ephios.core.services.health.AbstractHealthCheck``
+"""
+
 periodic_signal = PluginSignal()
 """
 This signal is called periodically, at least every 15 minutes.
@@ -172,6 +179,13 @@ def register_core_notification_backends(sender, **kwargs):
 @receiver(periodic_signal, dispatch_uid="ephios.core.signals.send_notifications")
 def send_notifications(sender, **kwargs):
     send_all_notifications()
+
+
+@receiver(periodic_signal, dispatch_uid="ephios.core.signals.update_last_run_periodic_call")
+def update_last_run_periodic_call(sender, **kwargs):
+    from ephios.core.dynamic_preferences_registry import LastRunPeriodicCall
+
+    LastRunPeriodicCall.set_last_call(timezone.now())
 
 
 periodic_signal.connect(

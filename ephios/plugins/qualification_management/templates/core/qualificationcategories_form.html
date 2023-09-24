@@ -6,7 +6,7 @@
 
 {% block settings_content %}
     <div class="page-header">
-        <h2>{% trans "Edit qualification categories" %}</h2>
+        <h2>{% translate "Edit qualification categories" %}</h2>
     </div>
 
     <form method="post">
@@ -23,20 +23,19 @@
                             <li class="list-group-item" data-formset-form>
                                 {{ category_form.id }}
                                 <div class="row align-items-center">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-7">
                                         {% crispy_field category_form.title label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                        {% crispy_field category_form.uuid label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
                                     </div>
-                                    <div class="col-lg-6">
-                                        {% crispy_field category_form.uuid label_class="col-lg-2" field_class="col-lg-10" wrapper_class="row" %}
-                                    </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-5">
+                                        {% crispy_field category_form.show_with_user %}
                                         {% if not category_form.fields.DELETE.disabled %}
                                             <button class="btn btn-link" type="button"
                                                     data-formset-delete-button><span
-                                                    class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                                class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
                                         {% else %}
                                             <p class="text-body-secondary">
-                                                {% translate "cannot delete, has qualifications" %}
+                                                {% translate "cannot be deleted, has qualifications" %}
                                             </p>
                                         {% endif %}
                                     </div>
@@ -58,23 +57,23 @@
                 <script type="form-template" data-formset-empty-form>
                     {% escapescript %}
                         <li class="list-group-item" data-formset-form>
-                            {{ category_form.id }}
-                            <div class="row align-items-center">
-                                <div class="col-lg-4">
-                                    {% crispy_field category_form.title label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
-                                </div>
-                                <div class="col-lg-6">
-                                    {% crispy_field category_form.uuid label_class="col-lg-2" field_class="col-lg-10" wrapper_class="row" %}
-                                </div>
-                                <div class="col-lg-1">
-                                    <button class="btn btn-link" type="button"
-                                            data-formset-delete-button><span
-                                            class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
-                                </div>
-                            </div>
-                            <div class="d-none">
-                                {{ category_form.DELETE }}
-                            </div>
+                        {{ category_form.id }}
+                        <div class="row align-items-center">
+                        <div class="col-lg-7">
+                        {% crispy_field category_form.title label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        {% crispy_field category_form.uuid label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        </div>
+                        <div class="col-lg-5">
+                        {% crispy_field category_form.show_with_user %}
+                        <button class="btn btn-link" type="button"
+                        data-formset-delete-button><span
+                        class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+
+                        </div>
+                        </div>
+                        <div class="d-none">
+                        {{ category_form.DELETE }}
+                        </div>
                         </li>
                     {% endescapescript %}
                 </script>

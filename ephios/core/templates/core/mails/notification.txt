@@ -1,0 +1,19 @@
+{% extends "core/mails/base.txt" %}
+{% load i18n %}
+{% load settings_extras %}
+
+{% block content %}
+{{ block.super }}
+
+{% for label, url in notification.get_actions %}{{ label }}: {{ url }}
+{% endfor %}
+{% endblock %}
+
+{% block footer %}{% organization_name as organization_name %}{% blocktranslate trimmed %}
+You are receiving this email as a member of {{ organization_name }}.
+{% endblocktranslate %}
+{% site_url %}
+
+{% translate "Click here to view and change your notification settings" %}:
+{{ notification_settings_url }}
+{% endblock %}

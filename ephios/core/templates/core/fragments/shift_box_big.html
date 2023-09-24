@@ -18,7 +18,7 @@
                     {% if participation.start_time|date:"SHORT_DATE_FORMAT" != shift.start_time|date:"SHORT_DATE_FORMAT" and participation.is_in_positive_state %}
                         <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="top"
                               title="{% translate "originally" %} {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}">
-                              {{ participation.start_time|date:"l" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}
+                            {{ participation.start_time|date:"l" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}
                         </span>
                     {% else %}
                         {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}
@@ -26,12 +26,12 @@
                 </small>
                 <br/>
                 <span class="fw-bold fs-2">
-                        {% if participation.individual_start_time and participation.is_in_positive_state %}
-                            <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                  title="{% translate "originally" %} {{ shift.start_time|time }}">{{ participation.start_time|time }}</span>
-                        {% else %}
-                            {{ shift.start_time|time }}
-                        {% endif %}
+                    {% if participation.individual_start_time and participation.is_in_positive_state %}
+                        <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                              title="{% translate "originally" %} {{ shift.start_time|time }}">{{ participation.start_time|time }}</span>
+                    {% else %}
+                        {{ shift.start_time|time }}
+                    {% endif %}
                     -
                     {% if participation.individual_end_time and participation.is_in_positive_state %}
                         <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -39,7 +39,7 @@
                     {% else %}
                         {{ shift.end_time|time }}
                     {% endif %}
-                    </span>
+                </span>
                 <small class="fw-bold text-body-secondary d-inline-block">
                     <span class="d-inline-block">
                         {{ shift.meeting_time|time }} {% translate "Meetup" %}
@@ -56,11 +56,11 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionDropdownButton">
                     <li><a class="dropdown-item" href="{% url "core:shift_edit" shift.pk %}"><span
-                            class="fas fa-edit"></span>
-                        {% trans "Edit" %}</a></li>
+                        class="fas fa-edit"></span>
+                        {% translate "Edit" %}</a></li>
                     {% if shift.event.shifts.count > 1 %}
                         <a class="dropdown-item" href="{% url "core:shift_delete" shift.pk %}"><span
-                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</a>
+                            class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
                     {% endif %}
                 </ul>
             </div>
@@ -80,7 +80,7 @@
     <div class="card-footer">
         {% if event.active %}
             {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
-                <form method="POST" class="form"
+                <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
                       action="{{ request|reverse_signup_action:shift }}">
 
                     {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
@@ -124,7 +124,7 @@
                     {% if can_decline %}
                         <span class="d-inline-block" tabindex="1">
                             <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
-                                {% trans "Decline" %}
+                                {% translate "Decline" %}
                             </button>
                         </span>
                     {% endif %}

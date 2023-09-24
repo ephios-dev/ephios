@@ -31,7 +31,7 @@
                             <div class="col-md-1">
                                 <button class="btn btn-link" type="button"
                                         data-formset-delete-button><span
-                                        class="fas fa-trash-alt"></span></button>
+                                    class="fas fa-trash-alt"></span></button>
                             </div>
                         </div>
                         <div class="d-none">
@@ -51,29 +51,29 @@
     <script type="form-template" data-formset-empty-form>
         {% escapescript %}
             <li class="list-group-item" data-formset-form>
-                <div class="row align-items-center">
-                    <div class="col-md-3">
-                        {{ form.sections_formset.empty_form.title|as_crispy_field }}
-                    </div>
-                    <div class="col-md-2">
-                        {{ form.sections_formset.empty_form.min_count|as_crispy_field }}
-                    </div>
-                    <div class="col-md-2">
-                        {{ form.sections_formset.empty_form.max_count|as_crispy_field }}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form.sections_formset.empty_form.qualifications|as_crispy_field }}
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-link" type="button"
-                                data-formset-delete-button><span
-                                class="fas fa-trash-alt"></span></button>
-                    </div>
-                </div>
-                <div class="d-none">
-                    {{ form.sections_formset.empty_form.DELETE }}
-                    {{ form.sections_formset.empty_form.uuid }}
-                </div>
+            <div class="row align-items-center">
+            <div class="col-md-3">
+            {{ form.sections_formset.empty_form.title|as_crispy_field }}
+            </div>
+            <div class="col-md-2">
+            {{ form.sections_formset.empty_form.min_count|as_crispy_field }}
+            </div>
+            <div class="col-md-2">
+            {{ form.sections_formset.empty_form.max_count|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+            {{ form.sections_formset.empty_form.qualifications|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+            <button class="btn btn-link" type="button"
+            data-formset-delete-button><span
+            class="fas fa-trash-alt"></span></button>
+            </div>
+            </div>
+            <div class="d-none">
+            {{ form.sections_formset.empty_form.DELETE }}
+            {{ form.sections_formset.empty_form.uuid }}
+            </div>
             </li>
         {% endescapescript %}
     </script>

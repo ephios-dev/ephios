@@ -1,5 +1,10 @@
+from datetime import datetime, timedelta
+
+from django.conf import settings
 from django.contrib.auth.models import Group
+from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
@@ -8,6 +13,7 @@ from dynamic_preferences.registries import (
     global_preferences_registry,
 )
 from dynamic_preferences.types import (
+    DateTimePreference,
     ModelMultipleChoicePreference,
     MultipleChoicePreference,
     StringPreference,
@@ -16,7 +22,7 @@ from dynamic_preferences.users.registries import user_preferences_registry
 
 import ephios
 from ephios.core import plugins
-from ephios.core.models import Qualification, QualificationCategory, UserProfile
+from ephios.core.models import Qualification, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 from ephios.core.services.notifications.types import CORE_NOTIFICATION_TYPES
 from ephios.extra.preferences import JSONPreference
@@ -31,25 +37,16 @@ event_type_preference_registry = EventTypeRegistry()
 notifications_user_section = Section("notifications")
 responsible_notifications_user_section = Section("responsible_notifications")
 general_global_section = Section("general")
+internal_section = Section("internal")  # for settings/stats that should not be exposed to users
 
 
 @global_preferences_registry.register
 class OrganizationName(StringPreference):
     name = "organization_name"
-    verbose_name = _("Organization name")
+    verbose_name = _("Organization display name")
     default = ""
     section = general_global_section
     required = False
-
-
-@global_preferences_registry.register
-class RelevantQualificationCategories(ModelMultipleChoicePreference):
-    name = "relevant_qualification_categories"
-    section = general_global_section
-    model = QualificationCategory
-    default = QualificationCategory.objects.none()
-    verbose_name = _("Relevant qualification categories (for user list and disposition view)")
-    field_kwargs = {"widget": Select2MultipleWidget}
 
 
 @global_preferences_registry.register
@@ -70,6 +67,38 @@ class EnabledPlugins(MultipleChoicePreference):
             for plugin in plugins.get_all_plugins()
             if getattr(plugin, "visible", True)
         ]
+
+
+@global_preferences_registry.register
+class LastRunPeriodicCall(DateTimePreference):
+    NONE_VALUE = make_aware(datetime(1970, 1, 1))
+    name = "last_run_periodic_call"
+    verbose_name = _("Last run periodic call")
+    section = internal_section
+    required = False
+
+    def get_default(self):
+        return self.NONE_VALUE
+
+    @classmethod
+    def get_last_call(cls):
+        preferences = global_preferences_registry.manager()
+        last_call = preferences[f"{cls.section.name}__{cls.name}"]
+        if last_call == cls.NONE_VALUE:
+            return None
+        return last_call
+
+    @classmethod
+    def is_stuck(cls):
+        last_call = cls.get_last_call()
+        return last_call is None or (
+            (timezone.now() - last_call) > timedelta(seconds=settings.RUN_PERIODIC_MAX_INTERVAL)
+        )
+
+    @classmethod
+    def set_last_call(cls, value):
+        preferences = global_preferences_registry.manager()
+        preferences[f"{cls.section.name}__{cls.name}"] = value
 
 
 @user_preferences_registry.register

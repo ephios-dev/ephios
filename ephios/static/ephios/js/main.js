@@ -8,17 +8,16 @@ function handleForms(elem) {
         new bootstrap.Popover(el, {
             html: true,
             content: function () {
-                const query = el.getAttribute("data-bs-content-ref");
-                return $(query).html();
+                return $("html").find(el.getAttribute("data-bs-content-ref")).html();
             },
             title: function () {
-                return $(el.getAttribute("data-title-ref")).html();
+                return $("html").find(el.getAttribute("data-bs-title-ref")).html();
             }
         });
     });
 
     elem.find(".django-select2").djangoSelect2({
-        theme: "bootstrap5"
+        theme: "bootstrap-5"
     });
     elem.find("[data-formset]").formset({
         animateForms: true,
