@@ -1,12 +1,14 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import FormView, TemplateView
+from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
 
-from ephios.core.forms.users import UserNotificationPreferenceForm
+from ephios.core.forms.users import UserNotificationPreferenceForm, UserOwnDataForm
 from ephios.core.services.health.healthchecks import run_healthchecks
 from ephios.core.signals import management_settings_sections
 from ephios.extra.mixins import StaffRequiredMixin
@@ -62,12 +64,18 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):
         return super().get_context_data(**kwargs)
 
 
-class PersonalDataSettingsView(LoginRequiredMixin, TemplateView):
+class PersonalDataSettingsView(LoginRequiredMixin, UpdateView):
     template_name = "core/settings/settings_personal_data.html"
+    form_class = UserOwnDataForm
+    success_url = reverse_lazy("core:settings_personal_data")
 
-    def get_context_data(self, **kwargs):
-        kwargs["userprofile"] = self.request.user
-        return super().get_context_data(**kwargs)
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, form.cleaned_data["language"])
+        return response
 
 
 class CalendarSettingsView(LoginRequiredMixin, TemplateView):

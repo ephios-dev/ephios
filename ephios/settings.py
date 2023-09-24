@@ -122,6 +122,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "ephios.extra.middleware.EphiosLocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -206,6 +207,10 @@ PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = "de"
+LANGUAGES = [
+    ("de", gettext_lazy("German")),
+    ("en", gettext_lazy("English")),
+]
 
 TIME_ZONE = "Europe/Berlin"
 
