@@ -1,6 +1,5 @@
-import datetime
-
 from django.db.models import Q
+from django.utils import timezone
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.fields import SerializerMethodField
@@ -47,10 +46,7 @@ class UserProfileSerializer(ModelSerializer):
         return QualificationSerializer(
             Qualification.objects.filter(
                 Q(grants__user=obj)
-                & (
-                    Q(grants__expires__gte=datetime.datetime.now())
-                    | Q(grants__expires__isnull=True)
-                )
+                & (Q(grants__expires__gte=timezone.now()) | Q(grants__expires__isnull=True))
             ),
             many=True,
         ).data
