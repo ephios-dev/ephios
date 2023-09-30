@@ -66,7 +66,7 @@ class LogJSONDecoder(json.JSONDecoder):
                 return ContentType.objects.get_for_id(d["contenttype_id"]).get_object_for_this_type(
                     pk=d["pk"]
                 )
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, AttributeError):
                 return d["str"]
         for k, v in d.items():
             if isinstance(v, str):
