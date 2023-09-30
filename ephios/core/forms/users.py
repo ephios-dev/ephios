@@ -469,4 +469,4 @@ class UserNotificationPreferenceForm(Form):
 class UserOwnDataForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["language"]
+        fields = ["preferred_language"]

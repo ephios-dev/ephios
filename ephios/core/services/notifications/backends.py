@@ -34,7 +34,7 @@ def send_all_notifications():
             if backend.can_send(notification) and backend.user_prefers_sending(notification):
                 try:
                     if notification.user:
-                        translation.activate(notification.user.language)
+                        translation.activate(notification.user.preferred_language)
                     backend.send(notification)
                 except Exception as e:  # pylint: disable=broad-except
                     if settings.DEBUG:

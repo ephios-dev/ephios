@@ -111,8 +111,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     date_of_birth = DateField(_("date of birth"), null=True, blank=False)
     phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
-    language = CharField(
-        _("language"), max_length=10, default=settings.LANGUAGE_CODE, choices=settings.LANGUAGES
+    preferred_language = CharField(
+        _("preferred language"),
+        max_length=10,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES,
     )
 
     USERNAME_FIELD = "email"

@@ -74,7 +74,7 @@ class PersonalDataSettingsView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, form.cleaned_data["language"])
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, form.cleaned_data["preferred_language"])
         return response
 
 
