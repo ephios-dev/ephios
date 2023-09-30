@@ -4,12 +4,12 @@ import traceback
 
 from django.conf import settings
 from django.core.mail import mail_admins
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
 from ephios.core.models.users import Notification
 from ephios.core.services.mail.send import send_mail
+from ephios.extra.i18n import language
 
 logger = logging.getLogger(__name__)
 
@@ -32,25 +32,24 @@ def send_all_notifications():
     for backend in installed_notification_backends():
         for notification in Notification.objects.filter(failed=False):
             if backend.can_send(notification) and backend.user_prefers_sending(notification):
-                try:
-                    if notification.user:
-                        translation.activate(notification.user.preferred_language)
-                    backend.send(notification)
-                except Exception as e:  # pylint: disable=broad-except
-                    if settings.DEBUG:
-                        raise e
-                    notification.failed = True
-                    notification.save()
+                with language((notification.user and notification.user.preferred_language) or None):
                     try:
-                        mail_admins(
-                            "Notification sending failed",
-                            f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
+                        backend.send(notification)
+                    except Exception as e:  # pylint: disable=broad-except
+                        if settings.DEBUG:
+                            raise e
+                        notification.failed = True
+                        notification.save()
+                        try:
+                            mail_admins(
+                                "Notification sending failed",
+                                f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
+                            )
+                        except smtplib.SMTPConnectError:
+                            pass  # if the mail backend threw this, mail admin will probably throw this as well
+                        logger.warning(
+                            f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
                         )
-                    except smtplib.SMTPConnectError:
-                        pass  # if the mail backend threw this, mail admin will probably throw this as well
-                    logger.warning(
-                        f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
-                    )
     Notification.objects.filter(failed=False).delete()
 
 
