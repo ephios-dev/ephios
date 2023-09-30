@@ -31,6 +31,9 @@
                                 {% elif status == "ok" %}
                                     <i class="fas fa-check-circle text-success"></i>
                                     <span class="visually-hidden">{% translate "OK" %}</span>
+                                {% elif status == "unknown" %}
+                                    <i class="fas fa-question-circle text-secondary"></i>
+                                    <span class="visually-hidden">{% translate "Unknown" %}</span>
                                 {% endif %}
                             </h5>
                             <p class="card-text">
