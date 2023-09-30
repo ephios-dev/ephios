@@ -73,7 +73,7 @@ class EnabledPlugins(MultipleChoicePreference):
 class LastRunPeriodicCall(DateTimePreference):
     NONE_VALUE = make_aware(datetime(1970, 1, 1))
     name = "last_run_periodic_call"
-    verbose_name = _("Last run periodic call")
+    verbose_name = _("Last run_periodic call")
     section = internal_section
     required = False
 
