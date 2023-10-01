@@ -25,6 +25,7 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
     path("webpush/", include("webpush.urls")),
     path("", include("ephios.core.urls")),
+    path("oidc/", include("mozilla_django_oidc.urls")),
     path("api/oauth/", include("ephios.api.access.oauth2_urls", namespace="oauth2_provider")),
     path("api/", include("ephios.api.urls")),
 ]
@@ -42,6 +43,3 @@ if settings.ENABLE_DEBUG_TOOLBAR:
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
     ] + urlpatterns
-
-if settings.ENABLE_OIDC_CLIENT:
-    urlpatterns.append(path("oidc/", include("mozilla_django_oidc.urls")))
