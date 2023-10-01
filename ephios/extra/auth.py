@@ -13,8 +13,9 @@ class EphiosOIDCAB(OIDCAuthenticationBackend):
         return user
 
     def update_user(self, user, claims):
-        user.first_name = claims.get("given_name", "")
-        user.last_name = claims.get("family_name", "")
+        if "given_name" in claims:
+            user.first_name = claims["given_name"]
+        if "family_name" in claims:
+            user.last_name = claims["family_name"]
         user.save()
-
         return user
