@@ -544,6 +544,9 @@ class EphiosOIDCClient(Model):
     user_endpoint = models.URLField()
     jwks_endpoint = models.URLField(blank=True, null=True)
 
+    def __str__(self):
+        return _("OIDC client {label}").format(label=self.label)
+
     def get_mozilla_oidc_attribute(self, attr, *args):
         values = {
             "OIDC_RP_CLIENT_ID": self.client_id,

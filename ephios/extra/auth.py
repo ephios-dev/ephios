@@ -8,7 +8,6 @@ from ephios.core.models.users import EphiosOIDCClient
 class EphiosOIDCAB(OIDCAuthenticationBackend):
     def __init__(self, *args, **kwargs):
         self.client = None
-        self.UserModel = get_user_model()
 
     def create_user(self, claims):
         user = get_user_model()(email=claims.get("email"))
