@@ -19,7 +19,7 @@ from ephios.core.views.accounts import (
     UserProfilePasswordTokenRevokationView,
     UserProfileUpdateView,
 )
-from ephios.core.views.auth import OAuthRequestView
+from ephios.core.views.auth import OAuthCallbackView, OAuthRequestView
 from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
@@ -253,4 +253,5 @@ urlpatterns = [
         name="workinghours_add",
     ),
     path("oauth-test/<int:client>", OAuthRequestView.as_view(), name="oauth_test"),
+    path("oauth-callback/", OAuthCallbackView.as_view(), name="oauth_callback"),
 ]

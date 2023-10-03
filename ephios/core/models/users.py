@@ -546,16 +546,3 @@ class EphiosOIDCClient(Model):
 
     def __str__(self):
         return _("OIDC client {label}").format(label=self.label)
-
-    def get_mozilla_oidc_attribute(self, attr, *args):
-        values = {
-            "OIDC_RP_CLIENT_ID": self.client_id,
-            "OIDC_RP_CLIENT_SECRET": self.client_secret,
-            "OIDC_RP_SCOPES": self.scopes,
-            "OIDC_RP_SIGN_ALGO": "RS256" if self.jwks_endpoint else "HS256",
-            "OIDC_OP_AUTHORIZATION_ENDPOINT": self.auth_endpoint,
-            "OIDC_OP_TOKEN_ENDPOINT": self.token_endpoint,
-            "OIDC_OP_JWKS_ENDPOINT": self.jwks_endpoint,
-            "OIDC_OP_USER_ENDPOINT": self.user_endpoint,
-        }
-        return values.get(attr, args[0] if args else None)

@@ -1,13 +1,26 @@
+from typing import Any, Dict
+from urllib.parse import urljoin
+
+import jwt
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import SuspiciousOperation
-from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+from django.urls import reverse
+from jwt import DecodeError
+from oauthlib.oauth2 import WebApplicationClient
+from requests_oauthlib import OAuth2Session
 
 from ephios.core.models.users import EphiosOIDCClient
 
 
-class EphiosOIDCAB(OIDCAuthenticationBackend):
-    def __init__(self, *args, **kwargs):
-        self.client = None
+class EphiosOIDCAB(ModelBackend):
+    def decode_jwt_token(self, token: str) -> Dict[str, Any]:
+        jwks_client = jwt.PyJWKClient(self.client.jwks_endpoint)
+        header = jwt.get_unverified_header(token)
+        key = jwks_client.get_signing_key(header["kid"]).key
+        decoded = jwt.decode(token, key, [header["alg"]], audience=self.client.client_id)
+        return decoded
 
     def create_user(self, claims):
         user = get_user_model()(email=claims.get("email"))
@@ -29,11 +42,29 @@ class EphiosOIDCAB(OIDCAuthenticationBackend):
     def authenticate(self, request, **kwargs):
         try:
             self.client = EphiosOIDCClient.objects.get(id=request.session["oidc_client_id"])
-            super().__init__(request)
             request.session.pop("oidc_client_id")
-            return super().authenticate(request, **kwargs)
-        except (KeyError, EphiosOIDCClient.DoesNotExist):
-            raise SuspiciousOperation("Could not determine OIDC client")
-
-    def get_settings(self, attr, *args):
-        return self.client and self.client.get_mozilla_oidc_attribute(attr, *args)
+            oauth = OAuth2Session(
+                client=WebApplicationClient(client_id=self.client.client_id),
+                redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oauth_callback")),
+            )
+            token = oauth.fetch_token(
+                self.client.token_endpoint,
+                code=request.GET["code"],
+                client_secret=self.client.client_secret,
+                include_client_id=True,
+            )
+            self.decode_jwt_token(
+                token["id_token"]
+            )  # this already contains the claims for the tested OP, check the standard to see if we can omit the call to the user endpoint
+            user_info = oauth.request("GET", self.client.user_endpoint).json()
+            if "email" not in user_info:
+                raise SuspiciousOperation("OIDC client did not return email address")
+            users = get_user_model().objects.filter(email__iexact=user_info["email"])
+            if len(users) == 1:
+                return self.update_user(users.first(), user_info)
+            elif len(users) > 1:
+                raise SuspiciousOperation("Multiple users with same email address")
+            else:
+                return self.create_user(user_info)
+        except (KeyError, EphiosOIDCClient.DoesNotExist, DecodeError):
+            return None
