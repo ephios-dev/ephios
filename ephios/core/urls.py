@@ -252,5 +252,5 @@ urlpatterns = [
         WorkingHourCreateView.as_view(),
         name="workinghours_add",
     ),
-    path("oauth-test/", OAuthRequestView.as_view(), name="oauth_test"),
+    path("oauth-test/<int:client>", OAuthRequestView.as_view(), name="oauth_test"),
 ]

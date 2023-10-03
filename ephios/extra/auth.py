@@ -1,8 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import SuspiciousOperation
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+
+from ephios.core.models.users import EphiosOIDCClient
 
 
 class EphiosOIDCAB(OIDCAuthenticationBackend):
+    def __init__(self, *args, **kwargs):
+        self.client = None
+        self.UserModel = get_user_model()
+
     def create_user(self, claims):
         user = get_user_model()(email=claims.get("email"))
         user.set_unusable_password()
@@ -20,17 +27,14 @@ class EphiosOIDCAB(OIDCAuthenticationBackend):
         user.save()
         return user
 
-    @staticmethod
-    def get_settings(attr, *args):
-        test = {
-            "OIDC_RP_CLIENT_ID": "3c23327f-416a-4862-b8a8-928d1b7bcfc9",
-            "OIDC_RP_CLIENT_SECRET": "827f4954956a0a74fa4af0205339cb3d4e83f02ecdb199d9223519b076edb0a5951dc3b41d791a97381747ea84327aa9aa598f913b187d21656d0823351394ee",
-            "OIDC_RP_SCOPES": "openid profile email",
-            "OIDC_RP_SIGN_ALGO": "RS256",
-            "OIDC_OP_AUTHORIZATION_ENDPOINT": "https://oidc.hpi.de/auth",
-            "OIDC_AUTHENTICATION_CALLBACK_URL": "oidc_authentication_callback",
-            "OIDC_OP_TOKEN_ENDPOINT": "https://oidc.hpi.de/token",
-            "OIDC_OP_JWKS_ENDPOINT": "https://oidc.hpi.de/certs",
-            "OIDC_OP_USER_ENDPOINT": "https://oidc.hpi.de/me",
-        }
-        return test.get(attr, args[0] if args else None)
+    def authenticate(self, request, **kwargs):
+        try:
+            self.client = EphiosOIDCClient.objects.get(id=request.session["oidc_client_id"])
+            super().__init__(request)
+            request.session.pop("oidc_client_id")
+            return super().authenticate(request, **kwargs)
+        except (KeyError, EphiosOIDCClient.DoesNotExist):
+            raise SuspiciousOperation("Could not determine OIDC client")
+
+    def get_settings(self, attr, *args):
+        return self.client and self.client.get_mozilla_oidc_attribute(attr, *args)

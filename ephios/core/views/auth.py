@@ -1,14 +1,17 @@
 from mozilla_django_oidc.views import OIDCAuthenticationRequestView
 
+from ephios.core.models.users import EphiosOIDCClient
+
 
 class OAuthRequestView(OIDCAuthenticationRequestView):
-    @staticmethod
-    def get_settings(attr, *args):
-        test = {
-            "OIDC_RP_CLIENT_ID": "3c23327f-416a-4862-b8a8-928d1b7bcfc9",
-            "OIDC_OP_AUTHORIZATION_ENDPOINT": "https://oidc.hpi.de/auth",
-            "OIDC_AUTHENTICATION_CALLBACK_URL": "oidc_authentication_callback",
-            "OIDC_OP_TOKEN_ENDPOINT": "https://oidc.hpi.de/token",
-            "OIDC_RP_SCOPES": "openid profile email",
-        }
-        return test.get(attr, args[0] if args else None)
+    def get(self, request, *args, **kwargs):
+        self.client = EphiosOIDCClient.objects.get(id=self.kwargs["client"])
+        self.OIDC_OP_AUTH_ENDPOINT = self.get_settings("OIDC_OP_AUTHORIZATION_ENDPOINT")
+        self.OIDC_RP_CLIENT_ID = self.get_settings("OIDC_RP_CLIENT_ID")
+        request.session["oidc_client_id"] = self.client.id
+        return super().get(request)
+
+    def get_settings(self, attr, *args):
+        return (
+            self.client.get_mozilla_oidc_attribute(attr, *args) if hasattr(self, "client") else ""
+        )

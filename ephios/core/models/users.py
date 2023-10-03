@@ -532,3 +532,27 @@ class Notification(Model):
 
     def get_actions(self):
         return self.notification_type.get_actions(self)
+
+
+class EphiosOIDCClient(Model):
+    label = models.CharField(max_length=255)
+    client_id = models.CharField(max_length=255)
+    client_secret = models.CharField(max_length=255)
+    scopes = models.CharField(max_length=255, default="openid profile email")
+    auth_endpoint = models.URLField()
+    token_endpoint = models.URLField()
+    user_endpoint = models.URLField()
+    jwks_endpoint = models.URLField(blank=True, null=True)
+
+    def get_mozilla_oidc_attribute(self, attr, *args):
+        values = {
+            "OIDC_RP_CLIENT_ID": self.client_id,
+            "OIDC_RP_CLIENT_SECRET": self.client_secret,
+            "OIDC_RP_SCOPES": self.scopes,
+            "OIDC_RP_SIGN_ALGO": "RS256" if self.jwks_endpoint else "HS256",
+            "OIDC_OP_AUTHORIZATION_ENDPOINT": self.auth_endpoint,
+            "OIDC_OP_TOKEN_ENDPOINT": self.token_endpoint,
+            "OIDC_OP_JWKS_ENDPOINT": self.jwks_endpoint,
+            "OIDC_OP_USER_ENDPOINT": self.user_endpoint,
+        }
+        return values.get(attr, args[0] if args else None)

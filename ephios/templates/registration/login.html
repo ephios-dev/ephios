@@ -10,15 +10,24 @@
 {% block content %}
     {% translate "Login" as login_message %}
     <h2>{{ login_message }}</h2>
-    {% oidc_client_enabled as oidc_enabled %}
-    {% if not oidc_enabled or request.GET.local %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button class="btn btn-primary" type="submit">{{ login_message }}</button>
-            <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
-        </form>
-    {% else %}
-        <a class="btn btn-primary" href="{% url 'oidc_authentication_init' %}">Login</a>
-    {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-primary" type="submit">{{ login_message }}</button>
+                    <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
+                </form>
+            </div>
+            <div class="col-lg pt-4">
+                {% oidc_clients as clients %}
+                {% for client in clients %}
+                    <div class="mb-1">
+                        <a class="btn btn-primary w-100" href="{% url 'core:oauth_test' client.id %}">{% blocktranslate trimmed with label=client.label %}Login with {{ label }}{% endblocktranslate %}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
