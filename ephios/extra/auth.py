@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
-from jwt import DecodeError
+from jwt import InvalidTokenError
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 
@@ -66,5 +66,5 @@ class EphiosOIDCAB(ModelBackend):
                 raise SuspiciousOperation("Multiple users with same email address")
             else:
                 return self.create_user(user_info)
-        except (KeyError, EphiosOIDCClient.DoesNotExist, DecodeError):
+        except (KeyError, EphiosOIDCClient.DoesNotExist, InvalidTokenError):
             return None

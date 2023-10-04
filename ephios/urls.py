@@ -25,7 +25,6 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
     path("webpush/", include("webpush.urls")),
     path("", include("ephios.core.urls")),
-    path("oidc/", include("mozilla_django_oidc.urls")),
     path("api/oauth/", include("ephios.api.access.oauth2_urls", namespace="oauth2_provider")),
     path("api/", include("ephios.api.urls")),
 ]

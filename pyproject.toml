@@ -41,7 +41,6 @@ djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 django-recurrence = "^1.11.1"
 django-oauth-toolkit = "^2.3.0"
-mozilla-django-oidc = "^3.0.0"
 urllib3 = "^1.26.0,<2.0.0"  # pinned because of uberspace issues with urllib3 2.0.0
 pyyaml = "^6.0.1"
 lxml = "^4.9.3"
@@ -50,6 +49,7 @@ css-inline = ">=0.10.3,<0.12.0"
 requests = "^2.31.0"
 requests-oauthlib = "^1.3.1"
 pyjwt = "^2.8.0"
+requests-oauthlib = "^1.3.1"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]

@@ -92,7 +92,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "webpush",
-    "mozilla_django_oidc",
     "ephios.modellogging",
 ]
 

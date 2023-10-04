@@ -1,11 +1,12 @@
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib import auth, messages
 from django.urls import reverse
-from django.utils.crypto import get_random_string
 from django.utils.translation import gettext as _
 from django.views.generic import RedirectView
+from oauthlib.oauth2 import WebApplicationClient
+from requests_oauthlib import OAuth2Session
 
 from ephios.core.models.users import EphiosOIDCClient
 
@@ -13,20 +14,18 @@ from ephios.core.models.users import EphiosOIDCClient
 class OAuthRequestView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         client = EphiosOIDCClient.objects.get(id=self.kwargs["client"])
-        state = get_random_string(32)
+        oauth_client = WebApplicationClient(client_id=client.client_id)
+        oauth = OAuth2Session(
+            client=oauth_client,
+            redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oauth_callback")),
+            scope=client.scopes,
+        )
 
-        params = {
-            "response_type": "code",
-            "scope": client.scopes,
-            "client_id": client.client_id,
-            "redirect_uri": urljoin(settings.GET_SITE_URL(), reverse("core:oauth_callback")),
-            "state": state,
-        }
-
+        authorization_url, state = oauth.authorization_url(client.auth_endpoint)
         self.request.session["oidc_state"] = state
         self.request.session["oidc_client_id"] = client.id
         self.request.session["oidc_login_next"] = self.request.GET.get("next", None)
-        return f"{client.auth_endpoint}?{urlencode(params)}"
+        return authorization_url
 
 
 class OAuthCallbackView(RedirectView):
