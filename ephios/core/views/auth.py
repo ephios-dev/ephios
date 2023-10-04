@@ -49,3 +49,15 @@ class OAuthCallbackView(RedirectView):
                 auth.login(self.request, user)
             return self.request.session.get("oidc_login_next") or "/"
         return self.failure_url()
+
+
+class OAuthLogoutView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        logout_url = reverse("login")
+        if "oidc_client_id" in self.request.session:
+            client = EphiosOIDCClient.objects.get(id=self.request.session.get("oidc_client_id"))
+            if client.logout_url:
+                logout_url = client.logout_url
+        auth.logout(self.request)
+        messages.info(self.request, _("Logged out successfully."))
+        return logout_url

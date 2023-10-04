@@ -543,6 +543,7 @@ class EphiosOIDCClient(Model):
     token_endpoint = models.URLField()
     user_endpoint = models.URLField()
     jwks_endpoint = models.URLField(blank=True, null=True)
+    logout_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return _("OIDC client {label}").format(label=self.label)

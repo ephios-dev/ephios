@@ -25,7 +25,7 @@
                 <div class="col-lg pt-4">
                     {% for client in clients %}
                         <div class="mb-1">
-                            <a class="btn btn-primary w-100" href="{% url 'core:oauth_test' client.id %}">{% blocktranslate trimmed with label=client.label %}Login with {{ label }}{% endblocktranslate %}</a>
+                            <a class="btn btn-primary w-100" href="{% url 'core:oauth_test' client.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{% blocktranslate trimmed with label=client.label %}Login with {{ label }}{% endblocktranslate %}</a>
                         </div>
                     {% endfor %}
                 </div>
