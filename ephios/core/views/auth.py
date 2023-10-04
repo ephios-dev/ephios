@@ -2,6 +2,7 @@ from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib import auth, messages
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import RedirectView
@@ -13,7 +14,7 @@ from ephios.core.models.users import EphiosOIDCClient
 
 class OAuthRequestView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        client = EphiosOIDCClient.objects.get(id=self.kwargs["client"])
+        client = get_object_or_404(EphiosOIDCClient, id=self.kwargs["client"])
         oauth_client = WebApplicationClient(client_id=client.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
@@ -37,17 +38,19 @@ class OAuthCallbackView(RedirectView):
         if "error" in self.request.GET:
             return self.failure_url()
         if "state" in self.request.GET and "code" in self.request.GET:
-            if "oidc_state" not in self.request.session:
+            if (
+                "oidc_state" not in self.request.session
+                or self.request.session.pop("oidc_state") != self.request.GET["state"]
+            ):
                 return self.failure_url()
-            self.request.session.pop("oidc_state")
 
-        user = auth.authenticate(self.request)
+            user = auth.authenticate(self.request)
 
-        if user and user.is_active:
-            request_user = getattr(self.request, "user", None)
-            if not request_user or not request_user.is_authenticated or request_user != user:
-                auth.login(self.request, user)
-            return self.request.session.get("oidc_login_next") or "/"
+            if user and user.is_active:
+                request_user = getattr(self.request, "user", None)
+                if not request_user or not request_user.is_authenticated or request_user != user:
+                    auth.login(self.request, user)
+                return self.request.session.get("oidc_login_next") or "/"
         return self.failure_url()
 
 
@@ -55,8 +58,8 @@ class OAuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         logout_url = reverse("login")
         if "oidc_client_id" in self.request.session:
-            client = EphiosOIDCClient.objects.get(id=self.request.session.get("oidc_client_id"))
-            if client.logout_url:
+            clients = EphiosOIDCClient.objects.filter(id=self.request.session.get("oidc_client_id"))
+            if clients.exists() and (client := clients.first()).logout_url:
                 logout_url = client.logout_url
         auth.logout(self.request)
         messages.info(self.request, _("Logged out successfully."))
