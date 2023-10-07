@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-01 22:44+0200\n"
-"PO-Revision-Date: 2023-09-02 18:26+0200\n"
+"POT-Creation-Date: 2023-09-30 17:06+0200\n"
+"PO-Revision-Date: 2023-09-30 17:12+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -73,8 +73,9 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/event_detail.html:28
 #: ephios/core/templates/core/event_form.html:65
 #: ephios/core/templates/core/eventtype_form.html:20
-#: ephios/core/templates/core/settings/settings_instance.html:9
+#: ephios/core/templates/core/settings/settings_instance.html:10
 #: ephios/core/templates/core/settings/settings_notifications.html:30
+#: ephios/core/templates/core/settings/settings_personal_data.html:36
 #: ephios/core/templates/core/shift_form.html:49
 #: ephios/core/templates/core/userprofile_form.html:118
 #: ephios/plugins/qualification_management/forms.py:121
@@ -313,7 +314,7 @@ msgid "Edit application"
 msgstr "Anwendung bearbeiten"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:6
-#: ephios/core/views/settings.py:26
+#: ephios/core/views/settings.py:29
 msgid "App integrations"
 msgstr "App-Integrationen"
 
@@ -379,67 +380,67 @@ msgstr "Autorisieren"
 msgid "The application requires the following permissions:"
 msgstr "Die Anwendung fordert die folgenden Berechtigungen an:"
 
-#: ephios/core/consequences.py:35
+#: ephios/core/consequences.py:36
 #, python-brace-format
 msgid "Consequence Handler '{slug}' was not found."
 msgstr "Konsequenzbehandler '{slug}' wurde nicht gefunden."
 
-#: ephios/core/consequences.py:112
+#: ephios/core/consequences.py:113
 #, python-brace-format
 msgid "{user} obtains {hours} working hours for {reason} on {date}"
 msgstr ""
 "{user} bekommt {hours} Arbeitsstunden für {reason} am {date} gutgeschrieben"
 
-#: ephios/core/consequences.py:191
+#: ephios/core/consequences.py:194
 #, python-brace-format
 msgid "{user} acquires '{qualification}' after participating in {event}."
 msgstr ""
 "{user} erhält die Qualifikation '{qualification}' durch die Teilnahme an "
 "{event}."
 
-#: ephios/core/consequences.py:195
+#: ephios/core/consequences.py:198
 #, python-brace-format
 msgid "{user} acquires '{qualification}'."
 msgstr "{user} erhält die Qualifikation '{qualification}'."
 
-#: ephios/core/consequences.py:201
+#: ephios/core/consequences.py:204
 #, python-brace-format
 msgid "(valid until {expires_str})"
 msgstr "(gültig bis {expires_str})"
 
-#: ephios/core/dynamic_preferences_registry.py:39
+#: ephios/core/dynamic_preferences_registry.py:46
 msgid "Organization display name"
 msgstr "Anzeigename der Organisation"
 
-#: ephios/core/dynamic_preferences_registry.py:53
-msgid "Relevant qualification categories (for user list and disposition view)"
-msgstr "Relevante Qualifikationskategorien (für Benutzliste und Disposition)"
-
-#: ephios/core/dynamic_preferences_registry.py:60
+#: ephios/core/dynamic_preferences_registry.py:55
 msgid "Enabled plugins"
 msgstr "Aktivierte Plugins"
 
-#: ephios/core/dynamic_preferences_registry.py:80
+#: ephios/core/dynamic_preferences_registry.py:76
+msgid "Last run_periodic call"
+msgstr "Letzter run_periodic Aufruf"
+
+#: ephios/core/dynamic_preferences_registry.py:107
 msgid "Notification preferences"
 msgstr "Benachrichtigungseinstellungen"
 
-#: ephios/core/dynamic_preferences_registry.py:94
+#: ephios/core/dynamic_preferences_registry.py:121
 msgid "Events of this type should by default be visible for"
 msgstr "Veranstaltungen diesen Typs sind standardmäßig sichtbar für"
 
-#: ephios/core/dynamic_preferences_registry.py:103
+#: ephios/core/dynamic_preferences_registry.py:130
 msgid "Users that are responsible for this event type by default"
 msgstr "Benutzer die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:112
+#: ephios/core/dynamic_preferences_registry.py:139
 msgid "Groups that are responsible for this event type by default"
 msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:121
+#: ephios/core/dynamic_preferences_registry.py:148
 msgid "General required qualifications for this event type"
 msgstr "Allgemein erforderliche Qualifikationen für diesen Veranstaltungstyp"
 
-#: ephios/core/dynamic_preferences_registry.py:123
+#: ephios/core/dynamic_preferences_registry.py:150
 msgid ""
 "These qualifications are required for all events of this event type. Users "
 "without these qualification will not be able to sign up, so make sure to use "
@@ -449,11 +450,11 @@ msgstr ""
 "erforderlich. Nutzer ohne diese Qualifikationen können sich nicht anmelden. "
 "Nutzen Sie dieses Feld mit Bedacht."
 
-#: ephios/core/forms/events.py:41 ephios/core/forms/events.py:116
+#: ephios/core/forms/events.py:42 ephios/core/forms/events.py:117
 msgid "Visible for"
 msgstr "Sichtbar für"
 
-#: ephios/core/forms/events.py:43
+#: ephios/core/forms/events.py:44
 msgid ""
 "Select groups which the event shall be visible for. Regardless, the event "
 "will be visible for users that already signed up."
@@ -462,15 +463,15 @@ msgstr ""
 "davon ist die Veranstaltung für alle Benutzer sichtbar, die sich bereits "
 "angemeldet haben."
 
-#: ephios/core/forms/events.py:51
+#: ephios/core/forms/events.py:52
 msgid "Responsible persons"
 msgstr "Verantwortliche Personen"
 
-#: ephios/core/forms/events.py:57
+#: ephios/core/forms/events.py:58
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
-#: ephios/core/forms/events.py:105
+#: ephios/core/forms/events.py:106
 #, python-brace-format
 msgid ""
 "Select groups which the event shall be visible for. This event is also "
@@ -481,11 +482,11 @@ msgstr ""
 "Veranstaltung ist außerdem für <b>{groups}</b> sichtbar, aber Sie haben "
 "keine Berechtigung, die Sichtbarkeit für diese Gruppen zu ändern."
 
-#: ephios/core/forms/events.py:117
+#: ephios/core/forms/events.py:118
 msgid "Responsibles"
 msgstr "Verantwortliche"
 
-#: ephios/core/forms/events.py:166 ephios/core/models/users.py:484
+#: ephios/core/forms/events.py:167 ephios/core/models/users.py:484
 #: ephios/core/pdf.py:63 ephios/core/pdf.py:129
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/templates/core/userprofile_workinghours.html:25
@@ -494,22 +495,22 @@ msgstr "Verantwortliche"
 msgid "Date"
 msgstr "Datum"
 
-#: ephios/core/forms/events.py:167 ephios/core/pdf.py:70 ephios/core/pdf.py:140
+#: ephios/core/forms/events.py:168 ephios/core/pdf.py:70 ephios/core/pdf.py:140
 #: ephios/core/templates/core/fragments/shift_box_small.html:18
 msgid "Meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/forms/events.py:168
+#: ephios/core/forms/events.py:169
 #: ephios/core/templates/core/fragments/shift_box_small.html:19
 msgid "Start time"
 msgstr "Beginn"
 
-#: ephios/core/forms/events.py:169
+#: ephios/core/forms/events.py:170
 #: ephios/core/templates/core/fragments/shift_box_small.html:20
 msgid "End time"
 msgstr "Ende"
 
-#: ephios/core/forms/events.py:179
+#: ephios/core/forms/events.py:180
 #, python-brace-format
 msgid ""
 "Signup method for this shift. Explanations for the signup methods can be "
@@ -518,7 +519,7 @@ msgstr ""
 "Anmeldeverfahren für diese Schicht. Erläuterungen hierzu gibt es in der <a "
 "href='{url}'>Dokumentation</a>."
 
-#: ephios/core/forms/events.py:183
+#: ephios/core/forms/events.py:184
 msgctxt "localized docs link"
 msgid ""
 "https://docs.ephios.de/en/stable/user/events/signup_methods.html#availabe-"
@@ -527,11 +528,11 @@ msgstr ""
 "https://docs.ephios.de/de/stable/user/events/signup_methods.html#availabe-"
 "signup-methods"
 
-#: ephios/core/forms/events.py:228
+#: ephios/core/forms/events.py:234
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
-#: ephios/core/forms/events.py:237
+#: ephios/core/forms/events.py:243
 msgid ""
 "This date will be used as the start date for recurring events that you "
 "create below, e.g. daily events will be created from this date onwards."
@@ -540,35 +541,35 @@ msgstr ""
 "verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
 "Veranstaltungen ab diesem Datum erstellt."
 
-#: ephios/core/forms/events.py:239
+#: ephios/core/forms/events.py:245
 msgid "Start date"
 msgstr "Beginn"
 
-#: ephios/core/forms/events.py:253
+#: ephios/core/forms/events.py:259
 msgid "You need to enter a valid color"
 msgstr "Sie müssen eine gültige Farbe eingeben"
 
-#: ephios/core/forms/events.py:286
+#: ephios/core/forms/events.py:292
 msgid "Send notification about new event to everyone"
 msgstr "Alle Benutzer über die neue Veranstaltung benachrichtigen"
 
-#: ephios/core/forms/events.py:287
+#: ephios/core/forms/events.py:293
 msgid "Send reminder to everyone that is not participating"
 msgstr "Alle nicht teilnehmenden Benutzer an die Veranstaltung erinnern"
 
-#: ephios/core/forms/events.py:288
+#: ephios/core/forms/events.py:294
 msgid "Send a message to all participants"
 msgstr "Nachricht an alle Teilnehmenden senden"
 
-#: ephios/core/forms/events.py:293
+#: ephios/core/forms/events.py:299
 msgid "Mail content"
 msgstr "Nachricht"
 
-#: ephios/core/forms/events.py:303
+#: ephios/core/forms/events.py:309
 msgid "Send"
 msgstr "Senden"
 
-#: ephios/core/forms/events.py:313
+#: ephios/core/forms/events.py:319
 msgid "You cannot send an empty mail."
 msgstr "Sie können keine leere Nachricht versenden."
 
@@ -661,7 +662,7 @@ msgstr ""
 msgid "Groups"
 msgstr "Gruppen"
 
-#: ephios/core/forms/users.py:248 ephios/core/models/users.py:113
+#: ephios/core/forms/users.py:248 ephios/core/models/users.py:107
 msgid "Administrator"
 msgstr "Administrator"
 
@@ -725,6 +726,26 @@ msgid ""
 msgstr ""
 "Mindestens eine Gruppe mit Managementrechten muss existieren. Setzen Sie "
 "diesen Status zunächst bei einer anderen Gruppe, bevor Sie diese löschen."
+
+#: ephios/core/management/commands/devdata.py:27
+msgid "Volunteers"
+msgstr "Helfer"
+
+#: ephios/core/management/commands/devdata.py:31
+msgid "Planners"
+msgstr "Planer"
+
+#: ephios/core/management/commands/devdata.py:35
+msgid "Managers"
+msgstr "Manager"
+
+#: ephios/core/management/commands/devdata.py:51
+msgid "Service"
+msgstr "Dienst"
+
+#: ephios/core/management/commands/devdata.py:52
+msgid "Training"
+msgstr "Ausbildung"
 
 #: ephios/core/models/events.py:47 ephios/core/models/events.py:60
 #: ephios/core/models/users.py:252 ephios/core/models/users.py:279
@@ -857,37 +878,41 @@ msgstr "Platzhalter-Teilnahme"
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
-#: ephios/core/models/users.py:108 ephios/plugins/guests/models.py:35
+#: ephios/core/models/users.py:102 ephios/plugins/guests/models.py:35
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: ephios/core/models/users.py:109
+#: ephios/core/models/users.py:103
 msgid "Active"
 msgstr "Aktiv"
 
-#: ephios/core/models/users.py:110
+#: ephios/core/models/users.py:104
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: ephios/core/models/users.py:115 ephios/plugins/guests/models.py:36
+#: ephios/core/models/users.py:109 ephios/plugins/guests/models.py:36
 msgid "first name"
 msgstr "Vorname"
 
-#: ephios/core/models/users.py:116 ephios/plugins/guests/models.py:37
+#: ephios/core/models/users.py:110 ephios/plugins/guests/models.py:37
 msgid "last name"
 msgstr "Nachname"
 
-#: ephios/core/models/users.py:117 ephios/plugins/guests/models.py:38
+#: ephios/core/models/users.py:111 ephios/plugins/guests/models.py:38
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: ephios/core/models/users.py:118 ephios/plugins/guests/models.py:39
+#: ephios/core/models/users.py:112 ephios/plugins/guests/models.py:39
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: ephios/core/models/users.py:119
+#: ephios/core/models/users.py:113
 msgid "calendar token"
 msgstr "Kalender-Token"
+
+#: ephios/core/models/users.py:115
+msgid "preferred language"
+msgstr "bevorzugte Sprache"
 
 #: ephios/core/models/users.py:132 ephios/core/models/users.py:351
 msgid "user profile"
@@ -1026,11 +1051,95 @@ msgstr "Zeit"
 msgid "Participants"
 msgstr "Teilnehmende"
 
-#: ephios/core/services/notifications/backends.py:86
+#: ephios/core/services/health/healthchecks.py:71
+msgid "Database"
+msgstr "Datenbank"
+
+#: ephios/core/services/health/healthchecks.py:72
+msgid "The database is the central storage for all data."
+msgstr "Die Datenbank ist zentraler Speicherort für alle Informationen."
+
+#: ephios/core/services/health/healthchecks.py:86
+msgid "Using SQLite, which should not be used in production."
+msgstr "Nutzt SQLite (ungeeignet für Produktionsumgebung)."
+
+#: ephios/core/services/health/healthchecks.py:89
+msgid "Database connection established."
+msgstr "Datenbankverbindung hergestellt."
+
+#: ephios/core/services/health/healthchecks.py:94
+msgid "Cache"
+msgstr "Cache"
+
+#: ephios/core/services/health/healthchecks.py:95
+msgid "The cache is used to store temporary data."
+msgstr "Im Cache werden Daten temporär gespeichert."
+
+#: ephios/core/services/health/healthchecks.py:113
+msgid "Using LocMemCache, which should not be used in production."
+msgstr "Nutzt LocMemCache (ungeeignet für Produktionsumgebung)."
+
+#: ephios/core/services/health/healthchecks.py:116
+msgid "Cache connection established."
+msgstr "Cache-Verbindung hergestellt."
+
+#: ephios/core/services/health/healthchecks.py:121
+msgid "Cronjob"
+msgstr "Cronjob"
+
+#: ephios/core/services/health/healthchecks.py:123
+msgid ""
+"A cron job must regularly call ephios to do recurring tasks like sending "
+"notifications."
+msgstr ""
+"Ein Cronjob muss regelmäßig ephios aufrufen um wiederkehrende Aufgaben wie "
+"das Senden von Benachrichtigungen durchzuführen."
+
+#: ephios/core/services/health/healthchecks.py:136
+#, python-brace-format
+msgid "Cronjob stuck, last run {last_call}."
+msgstr "Cronjob hängt, letzte Ausführung {last_call}."
+
+#: ephios/core/services/health/healthchecks.py:144
+msgid "Cronjob stuck, no last run."
+msgstr "Cronjob hängt, keine letzte Ausführung."
+
+#: ephios/core/services/health/healthchecks.py:149
+#, python-brace-format
+msgid "Last run {last_call}."
+msgstr "Letzte Ausführung {last_call}."
+
+#: ephios/core/services/health/healthchecks.py:155
+msgid "Disk space"
+msgstr "Speicherplatz"
+
+#: ephios/core/services/health/healthchecks.py:156
+msgid "Disk space needs to be available to store data."
+msgstr "Speicherplatz wird benötigt um Dateien abzulegen."
+
+#: ephios/core/services/health/healthchecks.py:171
+msgid "Disk space check not available."
+msgstr "Speicherplatz-Check nicht verfügbar."
+
+#: ephios/core/services/health/healthchecks.py:180
+msgid ""
+"Less than 100 MB of disk space available. Please free up some disk space."
+msgstr "Weniger als 100 MB Speicherplatz verfügbar. Bitte schaffen Sie Platz."
+
+#: ephios/core/services/health/healthchecks.py:189
+msgid "Less than 1 GB of disk space available. Please free up some disk space."
+msgstr "Weniger als 1 GB Speicherplatz verfügbar. Bitte schaffen Sie Platz."
+
+#: ephios/core/services/health/healthchecks.py:195
+#, python-brace-format
+msgid "{disk_space} of disk space available."
+msgstr "{disk_space} verfügbar."
+
+#: ephios/core/services/notifications/backends.py:88
 msgid "via email"
 msgstr "via E-Mail"
 
-#: ephios/core/services/notifications/backends.py:109
+#: ephios/core/services/notifications/backends.py:113
 msgid "via push notification"
 msgstr "via Push-Benachrichtigung"
 
@@ -1859,6 +1968,30 @@ msgstr ""
 "Kalender sehen. Um dies zu aktivieren, müssen Sie die Adresse des folgenden "
 "Links kopieren und den Kalender mit dieser URL abonnieren."
 
+#: ephios/core/templates/core/settings/settings_instance.html:16
+msgid "System health"
+msgstr "System-Gesundheit"
+
+#: ephios/core/templates/core/settings/settings_instance.html:27
+msgid "Error"
+msgstr "Fehler"
+
+#: ephios/core/templates/core/settings/settings_instance.html:30
+msgid "Warning"
+msgstr "Warnung"
+
+#: ephios/core/templates/core/settings/settings_instance.html:33
+msgid "OK"
+msgstr "OK"
+
+#: ephios/core/templates/core/settings/settings_instance.html:36
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: ephios/core/templates/core/settings/settings_instance.html:45
+msgid "Learn more"
+msgstr "Mehr erfahren"
+
 #: ephios/core/templates/core/settings/settings_notifications.html:14
 msgid "Activate push notifications on each device you want to receive them."
 msgstr ""
@@ -1916,6 +2049,10 @@ msgstr "bis"
 #: ephios/core/templates/core/settings/settings_personal_data.html:29
 msgid "You have not been assigned any qualificiations."
 msgstr "Ihnen wurden keine Qualifikationen zugewiesen."
+
+#: ephios/core/templates/core/settings/settings_personal_data.html:32
+msgid "Language"
+msgstr "Sprache"
 
 #: ephios/core/templates/core/shift_confirm_delete.html:6
 #: ephios/core/templates/core/shift_confirm_delete.html:11
@@ -2219,16 +2356,16 @@ msgstr "angefragt oder bestätigt"
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: ephios/core/views/event.py:384 ephios/core/views/shift.py:90
+#: ephios/core/views/event.py:383 ephios/core/views/shift.py:90
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:470
+#: ephios/core/views/event.py:469
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:524
+#: ephios/core/views/event.py:523
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -2267,23 +2404,23 @@ msgstr "Inhalte"
 msgid "Show the event list"
 msgstr "Zeig die Veranstaltungsliste"
 
-#: ephios/core/views/settings.py:19
+#: ephios/core/views/settings.py:22
 msgid "ephios instance"
 msgstr "ephios-Instanz"
 
-#: ephios/core/views/settings.py:34
+#: ephios/core/views/settings.py:37
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/views/settings.py:46
+#: ephios/core/views/settings.py:49
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:77
+#: ephios/core/views/settings.py:91
 msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:93
+#: ephios/core/views/settings.py:107
 msgid "Password changed successfully."
 msgstr "Passwort erfolgreich geändert."
 
@@ -2329,26 +2466,6 @@ msgstr "Arbeitsstunden wurden gelöscht."
 #: ephios/extra/bootstrap.py:13
 msgid "close"
 msgstr "schließen"
-
-#: ephios/extra/management/commands/devdata.py:27
-msgid "Volunteers"
-msgstr "Helfer"
-
-#: ephios/extra/management/commands/devdata.py:31
-msgid "Planners"
-msgstr "Planer"
-
-#: ephios/extra/management/commands/devdata.py:35
-msgid "Managers"
-msgstr "Manager"
-
-#: ephios/extra/management/commands/devdata.py:51
-msgid "Service"
-msgstr "Dienst"
-
-#: ephios/extra/management/commands/devdata.py:52
-msgid "Training"
-msgstr "Ausbildung"
 
 #: ephios/extra/utils.py:35
 msgid "None"
@@ -3100,27 +3217,35 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:418
+#: ephios/settings.py:212
+msgid "German"
+msgstr "Deutsch"
+
+#: ephios/settings.py:213
+msgid "English"
+msgstr "Englisch"
+
+#: ephios/settings.py:434
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:419
+#: ephios/settings.py:435
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:420
+#: ephios/settings.py:436
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:421
+#: ephios/settings.py:437
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:423
+#: ephios/settings.py:439
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:426
+#: ephios/settings.py:442
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -3228,6 +3353,11 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid ""
+#~ "Relevant qualification categories (for user list and disposition view)"
+#~ msgstr ""
+#~ "Relevante Qualifikationskategorien (für Benutzliste und Disposition)"
 
 #~ msgid "Email address"
 #~ msgstr "E-Mail-Adresse"

@@ -27,6 +27,7 @@ class HealthCheckStatus:
     OK = "ok"
     WARNING = "warning"
     ERROR = "error"
+    UNKNOWN = "unknown"
 
 
 class AbstractHealthCheck:
@@ -161,7 +162,14 @@ class DiskSpaceHealthCheck(AbstractHealthCheck):
         # if under 100 MB are available, we consider this an error
         # if under 1 GB are available, we consider this a warning
         # otherwise, we consider this ok
-        disk_usage = os.statvfs(settings.MEDIA_ROOT)
+        try:
+            disk_usage = os.statvfs(settings.MEDIA_ROOT)
+        except AttributeError:
+            # not available on windows
+            return (
+                HealthCheckStatus.UNKNOWN,
+                mark_safe(_("Disk space check not available.")),
+            )
         free_bytes = disk_usage.f_bavail * disk_usage.f_frsize
         MEGA = 1024 * 1024
         if free_bytes < 100 * MEGA:

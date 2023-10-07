@@ -7,6 +7,7 @@ from itertools import chain
 from typing import Optional
 
 import guardian.mixins
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Group, PermissionsMixin
@@ -110,6 +111,12 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     date_of_birth = DateField(_("date of birth"), null=True, blank=False)
     phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
+    preferred_language = CharField(
+        _("preferred language"),
+        max_length=10,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES,
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
