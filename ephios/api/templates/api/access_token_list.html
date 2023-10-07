@@ -25,6 +25,10 @@
                                 {{ token.application.name }}
                             </h5>
                             <p class="text-body-secondary">
+                                {# this belongs to the federation plugin, but we display the information here for better understanding #}
+                                {% if token.application.federatedhost %}
+                                    {% translate "ephios instance" %}
+                                {% endif %}
                             </p>
                         </div>
                         <div class="col-12 col-lg">

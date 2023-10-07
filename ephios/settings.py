@@ -108,6 +108,7 @@ CORE_PLUGINS = [
     "ephios.plugins.guests.apps.PluginApp",
     "ephios.plugins.eventautoqualification.apps.PluginApp",
     "ephios.plugins.simpleresource.apps.PluginApp",
+    "ephios.plugins.federation.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in importlib_metadata.entry_points(group="ephios.plugins"):

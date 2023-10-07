@@ -14,7 +14,7 @@ class CustomOAuth2Authentication(OAuth2Authentication):
         if oauth_result is None:
             return None
         user, token = oauth_result
-        if not user.is_active:
+        if user is not None and not user.is_active:
             return None
         return user, token
 

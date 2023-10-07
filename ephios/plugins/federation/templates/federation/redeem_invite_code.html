@@ -1,0 +1,22 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% block settings_content %}
+    <h3>{% translate "Enter invite code" %}</h3>
+    <div class="alert alert-warning" role="alert">
+        {% translate "This feature is experimental!" %}
+    </div>
+    <div class="alert alert-primary" role="alert">
+        {% blocktranslate trimmed %}
+            You can accept shared events from other ephios instances. You need an invite code from the instance that wants to share events with you. If you obtained such a code, enter it here.
+            By accepting the invitation, their events will appear in the "External events" section for everyone in your organisation. Your user will be able to view those events and sign up for them.
+            To enable this, the other instance will also be able to access data from your users, such as their names, email addresses and qualifications.
+        {% endblocktranslate %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="{% translate "Accept invitation" %}">
+    </form>
+{% endblock %}

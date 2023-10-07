@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-30 17:06+0200\n"
+"POT-Creation-Date: 2023-10-07 20:08+0200\n"
 "PO-Revision-Date: 2023-09-30 17:12+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -29,8 +29,8 @@ msgid "What is this token for?"
 msgstr "Wofür ist dieses Token?"
 
 #: ephios/api/access/views.py:70
-#: ephios/api/templates/api/access_token_list.html:31
-#: ephios/api/templates/api/access_token_list.html:99
+#: ephios/api/templates/api/access_token_list.html:35
+#: ephios/api/templates/api/access_token_list.html:103
 msgid "Scope"
 msgstr "Geltungsbereich"
 
@@ -85,7 +85,7 @@ msgstr "Speichern"
 
 #: ephios/api/templates/api/access_token_form.html:18
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:23
-#: ephios/api/templates/oauth2_provider/authorize.html:29
+#: ephios/api/templates/oauth2_provider/authorize.html:33
 #: ephios/core/templates/core/disposition/disposition.html:124
 #: ephios/core/templates/core/event_form.html:68
 #: ephios/core/templates/core/eventtype_form.html:21
@@ -115,57 +115,62 @@ msgstr ""
 msgid "Third party applications"
 msgstr "Drittanbieteranwendungen"
 
-#: ephios/api/templates/api/access_token_list.html:40
-#: ephios/api/templates/api/access_token_list.html:108
+#: ephios/api/templates/api/access_token_list.html:30
+#: ephios/core/views/settings.py:22
+msgid "ephios instance"
+msgstr "ephios-Instanz"
+
+#: ephios/api/templates/api/access_token_list.html:44
+#: ephios/api/templates/api/access_token_list.html:112
 msgid "Revoked"
 msgstr "Widerrufen"
 
-#: ephios/api/templates/api/access_token_list.html:46
-#: ephios/api/templates/api/access_token_list.html:116
+#: ephios/api/templates/api/access_token_list.html:50
+#: ephios/api/templates/api/access_token_list.html:120
 msgid "Revoke"
 msgstr "Widerrufen"
 
-#: ephios/api/templates/api/access_token_list.html:54
+#: ephios/api/templates/api/access_token_list.html:58
 msgid "No applications have been authorized."
 msgstr "Es wurden keine Anwendungen autorisiert."
 
-#: ephios/api/templates/api/access_token_list.html:59
+#: ephios/api/templates/api/access_token_list.html:63
 msgid "Personal API tokens"
 msgstr "Persönliche Zugriffstoken"
 
-#: ephios/api/templates/api/access_token_list.html:63
+#: ephios/api/templates/api/access_token_list.html:67
 msgid "Create new API token"
 msgstr "Neues API-Token anlegen"
 
-#: ephios/api/templates/api/access_token_list.html:77
+#: ephios/api/templates/api/access_token_list.html:81
 #, python-format
 msgid "created on %(created)s"
 msgstr "am %(created)s hinzugefügt"
 
-#: ephios/api/templates/api/access_token_list.html:82
+#: ephios/api/templates/api/access_token_list.html:86
 #, python-format
 msgid "revoked on %(revoked)s"
 msgstr "am %(revoked)s widerrufen"
 
-#: ephios/api/templates/api/access_token_list.html:86
+#: ephios/api/templates/api/access_token_list.html:90
 #, python-format
 msgid "expired on %(expires)s"
 msgstr "am %(expires)s abgelaufen"
 
-#: ephios/api/templates/api/access_token_list.html:90
+#: ephios/api/templates/api/access_token_list.html:94
 #, python-format
 msgid "expires on %(expires)s"
 msgstr "läuft am %(expires)s ab"
 
-#: ephios/api/templates/api/access_token_list.html:94
+#: ephios/api/templates/api/access_token_list.html:98
 msgid "does not expire"
 msgstr "läuft nicht ab"
 
-#: ephios/api/templates/api/access_token_list.html:110
+#: ephios/api/templates/api/access_token_list.html:114
 msgid "Expired"
 msgstr "Abgelaufen"
 
-#: ephios/api/templates/api/access_token_list.html:124
+#: ephios/api/templates/api/access_token_list.html:128
 msgid "There are no tokens."
 msgstr "Es gibt keine Token."
 
@@ -186,10 +191,13 @@ msgstr ""
 #: ephios/api/templates/oauth2_provider/application_detail.html:26
 #: ephios/core/templates/core/event_copy.html:50
 #: ephios/core/templates/core/settings/settings_calendar.html:19
+#: ephios/plugins/federation/templates/federation/invitecode_reveal.html:27
+#: ephios/plugins/federation/templates/federation/invitecode_reveal.html:38
 msgid "Copy"
 msgstr "Kopieren"
 
 #: ephios/api/templates/api/access_token_reveal.html:31
+#: ephios/plugins/federation/templates/federation/invitecode_reveal.html:43
 msgid "Done"
 msgstr "Fertig"
 
@@ -204,7 +212,7 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:24
 #: ephios/api/templates/oauth2_provider/application_detail.html:68
-#: ephios/api/templates/oauth2_provider/application_list.html:49
+#: ephios/api/templates/oauth2_provider/application_list.html:56
 #: ephios/core/templates/core/event_bulk_delete.html:24
 #: ephios/core/templates/core/event_confirm_delete.html:17
 #: ephios/core/templates/core/eventtype_confirm_delete.html:9
@@ -284,6 +292,8 @@ msgstr "Benutzer"
 #: ephios/core/templates/core/userprofile_confirm_password_reset.html:19
 #: ephios/core/templates/core/userprofile_confirm_password_token_revokation.html:21
 #: ephios/core/templates/core/workinghours_confirm_delete.html:16
+#: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:13
+#: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:13
 #: ephios/plugins/pages/templates/pages/page_confirm_delete.html:18
 #: ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:20
 #: ephios/plugins/qualification_management/templates/core/qualification_form.html:26
@@ -295,7 +305,7 @@ msgid "Back"
 msgstr "Zurück"
 
 #: ephios/api/templates/oauth2_provider/application_detail.html:66
-#: ephios/api/templates/oauth2_provider/application_list.html:44
+#: ephios/api/templates/oauth2_provider/application_list.html:51
 #: ephios/core/templates/core/eventtype_list.html:21
 #: ephios/core/templates/core/fragments/shift_box_big.html:60
 #: ephios/core/templates/core/fragments/shift_box_small.html:9
@@ -340,6 +350,8 @@ msgid "New Application"
 msgstr "Neue Anwendung"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:20
+#: ephios/plugins/federation/templates/federation/federation_settings.html:13
+#: ephios/plugins/federation/templates/federation/federation_settings.html:54
 #: ephios/plugins/simpleresource/models.py:8
 msgid "Name"
 msgstr "Name"
@@ -348,13 +360,22 @@ msgstr "Name"
 #: ephios/core/templates/core/eventtype_list.html:11
 #: ephios/core/templates/core/userprofile_workinghours.html:28
 #: ephios/core/templates/core/workinghours_list.html:33
+#: ephios/plugins/federation/templates/federation/federation_settings.html:15
+#: ephios/plugins/federation/templates/federation/federation_settings.html:35
+#: ephios/plugins/federation/templates/federation/federation_settings.html:56
 #: ephios/plugins/pages/templates/pages/page_list.html:11
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:32
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:21
 msgid "Action"
 msgstr "Aktion"
 
-#: ephios/api/templates/oauth2_provider/application_list.html:39
+#: ephios/api/templates/oauth2_provider/application_list.html:40
+#, fuzzy
+#| msgid "Manage event"
+msgid "Manage federation"
+msgstr "Veranstaltung verwalten"
+
+#: ephios/api/templates/oauth2_provider/application_list.html:46
 #: ephios/core/templates/core/event_form.html:20
 #: ephios/core/templates/core/home.html:58
 #: ephios/core/templates/core/home.html:103
@@ -363,7 +384,7 @@ msgstr "Aktion"
 msgid "View"
 msgstr "Anzeigen"
 
-#: ephios/api/templates/oauth2_provider/application_list.html:58
+#: ephios/api/templates/oauth2_provider/application_list.html:66
 msgid "No applications defined"
 msgstr "Keine Anwendungen vorhanden"
 
@@ -371,14 +392,18 @@ msgstr "Keine Anwendungen vorhanden"
 msgid "Register a new application"
 msgstr "Neue Anwendung registrieren"
 
-#: ephios/api/templates/oauth2_provider/authorize.html:7
-#: ephios/api/templates/oauth2_provider/authorize.html:30
-msgid "Authorize"
-msgstr "Autorisieren"
+#: ephios/api/templates/oauth2_provider/authorize.html:8
+#, python-format
+msgid "Authorize %(app_name)s?"
+msgstr ""
 
-#: ephios/api/templates/oauth2_provider/authorize.html:17
+#: ephios/api/templates/oauth2_provider/authorize.html:21
 msgid "The application requires the following permissions:"
 msgstr "Die Anwendung fordert die folgenden Berechtigungen an:"
+
+#: ephios/api/templates/oauth2_provider/authorize.html:34
+msgid "Authorize"
+msgstr "Autorisieren"
 
 #: ephios/core/consequences.py:36
 #, python-brace-format
@@ -878,7 +903,8 @@ msgstr "Platzhalter-Teilnahme"
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
-#: ephios/core/models/users.py:102 ephios/plugins/guests/models.py:35
+#: ephios/core/models/users.py:102 ephios/plugins/federation/models.py:69
+#: ephios/plugins/guests/models.py:35
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
@@ -890,19 +916,23 @@ msgstr "Aktiv"
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: ephios/core/models/users.py:109 ephios/plugins/guests/models.py:36
+#: ephios/core/models/users.py:109 ephios/plugins/federation/models.py:70
+#: ephios/plugins/guests/models.py:36
 msgid "first name"
 msgstr "Vorname"
 
-#: ephios/core/models/users.py:110 ephios/plugins/guests/models.py:37
+#: ephios/core/models/users.py:110 ephios/plugins/federation/models.py:71
+#: ephios/plugins/guests/models.py:37
 msgid "last name"
 msgstr "Nachname"
 
-#: ephios/core/models/users.py:111 ephios/plugins/guests/models.py:38
+#: ephios/core/models/users.py:111 ephios/plugins/federation/models.py:72
+#: ephios/plugins/guests/models.py:38
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: ephios/core/models/users.py:112 ephios/plugins/guests/models.py:39
+#: ephios/core/models/users.py:112 ephios/plugins/federation/models.py:73
+#: ephios/plugins/guests/models.py:39
 msgid "phone number"
 msgstr "Telefonnummer"
 
@@ -1627,6 +1657,7 @@ msgstr "Änderungsverlauf"
 #: ephios/core/templates/core/event_detail.html:111
 #: ephios/core/templates/core/event_list.html:211
 #: ephios/core/templates/core/mails/new_event.html:18
+#: ephios/plugins/federation/templates/federation/external_event_list.html:51
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:14
 msgid "to"
 msgstr "bis"
@@ -1694,10 +1725,12 @@ msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
 #: ephios/core/templates/core/event_list.html:217
+#: ephios/plugins/federation/templates/federation/external_event_list.html:57
 msgid "Show"
 msgstr "Anzeigen"
 
 #: ephios/core/templates/core/event_list.html:230
+#: ephios/plugins/federation/templates/federation/external_event_list.html:66
 msgid "No results."
 msgstr "Keine Ergebnisse."
 
@@ -1874,7 +1907,7 @@ msgid "Clear"
 msgstr "Zurücksetzen"
 
 #: ephios/core/templates/core/mails/base.html:149
-#: ephios/templates/base.html:167
+#: ephios/templates/base.html:168
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2404,10 +2437,6 @@ msgstr "Inhalte"
 msgid "Show the event list"
 msgstr "Zeig die Veranstaltungsliste"
 
-#: ephios/core/views/settings.py:22
-msgid "ephios instance"
-msgstr "ephios-Instanz"
-
 #: ephios/core/views/settings.py:37
 msgid "Event types"
 msgstr "Veranstaltungstypen"
@@ -2779,6 +2808,232 @@ msgid ""
 msgstr ""
 "Sie haben nicht die Berechtigung, Qualifikationen zu erteilen, sodass Sie "
 "diese Einstellungen nicht bearbeiten können."
+
+#: ephios/plugins/federation/apps.py:10 ephios/plugins/federation/signals.py:60
+#, fuzzy
+#| msgid "description"
+msgid "Federation"
+msgstr "Beschreibung"
+
+#: ephios/plugins/federation/apps.py:13
+msgid ""
+"This plugins provides the possibility to share events with other ephios "
+"instances."
+msgstr ""
+
+#: ephios/plugins/federation/forms.py:53
+msgid "Share event with other ephios instances"
+msgstr ""
+
+#: ephios/plugins/federation/forms.py:64
+msgid "https://other-instance.ephios.de/"
+msgstr ""
+
+#: ephios/plugins/federation/forms.py:74
+#: ephios/plugins/federation/templates/federation/invitecode_reveal.html:10
+msgid "Invite code"
+msgstr ""
+
+#: ephios/plugins/federation/forms.py:82
+msgid "This invite code is not issued for this instance."
+msgstr ""
+
+#: ephios/plugins/federation/forms.py:110
+#, fuzzy
+#| msgid "Invalid link"
+msgid "Invalid code"
+msgstr "Link ungültig"
+
+#: ephios/plugins/federation/models.py:21
+#: ephios/plugins/federation/models.py:32
+#: ephios/plugins/federation/models.py:42
+#: ephios/plugins/federation/templates/federation/federation_settings.html:14
+#: ephios/plugins/federation/templates/federation/federation_settings.html:34
+#: ephios/plugins/federation/templates/federation/federation_settings.html:55
+msgid "URL"
+msgstr ""
+
+#: ephios/plugins/federation/models.py:46
+#, python-brace-format
+msgid "Federation invite code for {url}"
+msgstr ""
+
+#: ephios/plugins/federation/models.py:65
+#, fuzzy, python-brace-format
+#| msgid "Create new shift for event"
+msgid "Federated event share for {event}"
+msgstr "Schicht hinzufügen"
+
+#: ephios/plugins/federation/models.py:79
+#, python-brace-format
+msgid "Federated user {first_name} {last_name}"
+msgstr ""
+
+#: ephios/plugins/federation/models.py:120
+#, fuzzy
+#| msgid "Delete user"
+msgid "Federated user"
+msgstr "Benutzer löschen"
+
+#: ephios/plugins/federation/models.py:128
+#, fuzzy
+#| msgid "guest participant"
+msgid "federated participant"
+msgstr "Gastteilnehmender"
+
+#: ephios/plugins/federation/signals.py:21
+#: ephios/plugins/federation/templates/federation/external_event_list.html:5
+#: ephios/plugins/federation/templates/federation/external_event_list.html:9
+#, fuzzy
+#| msgid "Delete events"
+msgid "External events"
+msgstr "Veranstaltungen löschen"
+
+#: ephios/plugins/federation/templates/federation/event_detail.html:7
+#, fuzzy, python-format
+#| msgid "You are receiving this email as a member of %(organization_name)s."
+msgid "You are currently viewing an event at %(organization_name)s."
+msgstr "Sie erhalten diese E-Mail als Mitglied von %(organization_name)s."
+
+#: ephios/plugins/federation/templates/federation/event_detail.html:8
+#, fuzzy, python-format
+#| msgid "Back to event"
+msgid "Back to %(name)s"
+msgstr "Zurück zur Veranstaltung"
+
+#: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:6
+#, fuzzy
+#| msgid "Your upcoming events"
+msgid "Stop sharing events"
+msgstr "Anstehende Schichten"
+
+#: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:9
+#, python-format
+msgid ""
+"Are you sure you want to remove the connection to \"%(name)s\" and stop "
+"sharing all events with them? This will also delete all participations that "
+"originated from there."
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:14
+#: ephios/plugins/federation/templates/federation/federation_settings.html:23
+msgid "Stop sharing"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:6
+#, fuzzy
+#| msgid "Your upcoming events"
+msgid "Stop receiving events"
+msgstr "Anstehende Schichten"
+
+#: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:9
+#, fuzzy, python-format
+#| msgid "Are you sure you want to delete the user %(name)s (%(userprofile)s)?"
+msgid ""
+"Are you sure you want to remove the connection to \"%(name)s\" and stop "
+"receiving events from them?"
+msgstr "Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen?"
+
+#: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:14
+#: ephios/plugins/federation/templates/federation/federation_settings.html:64
+msgid "Stop receiving"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:6
+#: ephios/plugins/federation/templates/federation/invitecode_form.html:8
+#: ephios/plugins/federation/templates/federation/redeem_invite_code.html:8
+msgid "This feature is experimental!"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:8
+msgid "ephios instances that you share events with"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:30
+msgid "Pending invites"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:42
+#, fuzzy
+#| msgid "Show in footer"
+msgid "Show invite code"
+msgstr "In der Fußzeile anzeigen"
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:49
+msgid "ephios instances that share events with you"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/federation_settings.html:50
+#: ephios/plugins/federation/templates/federation/redeem_invite_code.html:6
+msgid "Enter invite code"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/invitecode_form.html:6
+#, fuzzy
+#| msgid "The event is not active."
+msgid "Share events with another instance"
+msgstr "Die Veranstaltung {title} ist nicht aktiviert."
+
+#: ephios/plugins/federation/templates/federation/invitecode_form.html:11
+msgid ""
+"You can share events with another ephios instance. When sharing is enabled "
+"for an event, it will show up for users on the other instance as well. Their "
+"users can then sign up for your event. To set up sharing, enter the URL of "
+"the instance that you want to share events with below."
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/invitecode_form.html:19
+msgid "Invite"
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/invitecode_reveal.html:14
+#, python-format
+msgid ""
+"We created an invite code that allows the ephios instance at %(url)s to "
+"accept your invitation to share events with them. Please copy the URL or the "
+"code below and send it to the administrator of the other instance. They can "
+"then visit the URL or enter the code in their ephios instance to accept your "
+"invitation. It will expire in 48 hours."
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/redeem_invite_code.html:11
+msgid ""
+"You can accept shared events from other ephios instances. You need an invite "
+"code from the instance that wants to share events with you. If you obtained "
+"such a code, enter it here. By accepting the invitation, their events will "
+"appear in the \"External events\" section for everyone in your organisation. "
+"Your user will be able to view those events and sign up for them. To enable "
+"this, the other instance will also be able to access data from your users, "
+"such as their names, email addresses and qualifications."
+msgstr ""
+
+#: ephios/plugins/federation/templates/federation/redeem_invite_code.html:20
+#, fuzzy
+#| msgid "App integrations"
+msgid "Accept invitation"
+msgstr "App-Integrationen"
+
+#: ephios/plugins/federation/views/frontend.py:153
+msgid "Invite code has expired."
+msgstr ""
+
+#: ephios/plugins/federation/views/frontend.py:177
+msgid ""
+"Invite code redeemded successfully. You are now receiving events from this "
+"instance."
+msgstr ""
+
+#: ephios/plugins/federation/views/frontend.py:190
+msgid "You are no longer sharing events with this instance."
+msgstr ""
+
+#: ephios/plugins/federation/views/frontend.py:206
+msgid "You are no longer receiving events from this instance."
+msgstr ""
+
+#: ephios/plugins/federation/views/frontend.py:218
+msgid "Failed to remove this instance. Please try again later."
+msgstr ""
 
 #: ephios/plugins/guests/apps.py:10
 msgid "Guest Participations"
@@ -3217,35 +3472,35 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:212
+#: ephios/settings.py:213
 msgid "German"
 msgstr "Deutsch"
 
-#: ephios/settings.py:213
+#: ephios/settings.py:214
 msgid "English"
 msgstr "Englisch"
 
-#: ephios/settings.py:434
+#: ephios/settings.py:435
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:435
+#: ephios/settings.py:436
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:436
+#: ephios/settings.py:437
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:437
+#: ephios/settings.py:438
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:439
+#: ephios/settings.py:440
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:442
+#: ephios/settings.py:443
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -3368,7 +3623,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #~ msgid "View working hours"
 #~ msgstr "Arbeitsstunden anzeigen"
 
-#, python-brace-format
 #~ msgid "User {name} ({user}) updated successfully."
 #~ msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 
@@ -3411,7 +3665,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #~ msgid "qualification tracks"
 #~ msgstr "Qualifikationskategorien"
 
-#, python-format
 #~ msgid ""
 #~ "\n"
 #~ "            Are you sure you want to delete the page \"%(title)s\"?\n"
@@ -3422,7 +3675,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #~ "möchten?\n"
 #~ "        "
 
-#, python-format
 #~ msgid ""
 #~ "\n"
 #~ "                        powered by %(brand)s\n"
@@ -3524,9 +3776,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "You are bindingly signed up for {shift}."
 #~ msgstr "Sie sind verbindlich für {shift} eingeteilt."
-
-#~ msgid "Manage event"
-#~ msgstr "Veranstaltung verwalten"
 
 #~ msgid "There was an error performing that action."
 #~ msgstr "Beim Ausführen der Aktion ist ein Fehler aufgetreten."

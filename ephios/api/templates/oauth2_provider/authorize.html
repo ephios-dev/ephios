@@ -4,7 +4,11 @@
 {% block content %}
     {% if not error %}
         <form id="authorizationForm" method="post">
-            <h3 class="block-center-heading">{% translate "Authorize" %} {{ application.name }}?</h3>
+            <h3 class="block-center-heading">
+                {% blocktranslate trimmed with app_name=application.name %}
+                    Authorize {{ app_name }}?
+                {% endblocktranslate %}
+            </h3>
             {% csrf_token %}
 
                 {# pass query params through the submit process for saving #}

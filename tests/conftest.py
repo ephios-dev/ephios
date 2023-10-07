@@ -51,7 +51,7 @@ def csrf_exempt_django_app(django_app_factory):
 def pytest_collection_modifyitems(items):
     # mark all tests for use with django_db, as we basically need it everywhere
     for item in items:
-        item.add_marker("django_db")
+        item.add_marker(pytest.mark.django_db(transaction=True, serialized_rollback=True))
 
 
 @pytest.fixture(autouse=True)
