@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import RedirectView
 from oauthlib.oauth2 import WebApplicationClient
+from requests import PreparedRequest
 from requests_oauthlib import OAuth2Session
 
 from ephios.core.models.users import EphiosOIDCClient
@@ -59,8 +60,13 @@ class OAuthLogoutView(RedirectView):
         logout_url = reverse("login")
         if "oidc_client_id" in self.request.session:
             clients = EphiosOIDCClient.objects.filter(id=self.request.session.get("oidc_client_id"))
-            if clients.exists() and (client := clients.first()).logout_url:
-                logout_url = client.logout_url
+            if clients.exists() and (client := clients.first()).end_session_endpoint:
+                req = PreparedRequest()
+                req.prepare_url(
+                    client.end_session_endpoint,
+                    {"post_logout_redirect_uri": settings.GET_SITE_URL()},
+                )
+                logout_url = req.url
         auth.logout(self.request)
         messages.info(self.request, _("Logged out successfully."))
         return logout_url

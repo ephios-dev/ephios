@@ -10,6 +10,7 @@ from django.urls import reverse
 from jwt import InvalidTokenError
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
+from urllib3.exceptions import RequestError
 
 from ephios.core.models.users import EphiosOIDCClient
 
@@ -28,6 +29,8 @@ class EphiosOIDCAB(ModelBackend):
         user.first_name = claims.get("given_name", "")
         user.last_name = claims.get("family_name", "")
         user.save()
+        if hasattr(self, "client") and self.client.default_groups.exists():
+            user.groups.add(*self.client.default_groups.all())
 
         return user
 
@@ -37,6 +40,8 @@ class EphiosOIDCAB(ModelBackend):
         if "family_name" in claims:
             user.last_name = claims["family_name"]
         user.save()
+        if hasattr(self, "client") and self.client.default_groups.exists():
+            user.groups.add(*self.client.default_groups.all())
         return user
 
     def authenticate(self, request, **kwargs):
@@ -65,5 +70,12 @@ class EphiosOIDCAB(ModelBackend):
                 raise SuspiciousOperation("Multiple users with same email address")
             else:
                 return self.create_user(user_info)
-        except (KeyError, EphiosOIDCClient.DoesNotExist, InvalidTokenError):
+        except (
+            KeyError,
+            ValueError,
+            ConnectionError,
+            RequestError,
+            EphiosOIDCClient.DoesNotExist,
+            InvalidTokenError,
+        ):
             return None
