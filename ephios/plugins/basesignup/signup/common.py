@@ -9,10 +9,10 @@ from django_select2.forms import Select2MultipleWidget
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.methods import (
     BaseSignupMethod,
-    BaseSignupView,
     ParticipantUnfitError,
     SignupDisallowedError,
 )
+from ephios.core.signup.views import BaseSignupView
 
 _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 
