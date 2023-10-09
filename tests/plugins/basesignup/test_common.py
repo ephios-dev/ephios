@@ -10,7 +10,7 @@ def test_getting_dispatched_state_is_overwritten_by_participant_signup(
     shift = event.shifts.first()
 
     # create participation in getting-dispatched state
-    participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    participation = shift.signup_method.get_or_create_participation_for(volunteer.as_participant())
     participation.state = AbstractParticipation.States.GETTING_DISPATCHED
     participation.save()
 
@@ -41,7 +41,7 @@ def test_requested_participations_are_always_rendered(django_app, volunteer, pla
     shift.signup_method_slug = InstantConfirmationSignupMethod.slug
     shift.save()
 
-    participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    participation = shift.signup_method.get_or_create_participation_for(volunteer.as_participant())
     participation.state = AbstractParticipation.States.REQUESTED
     participation.save()
 
@@ -57,11 +57,15 @@ def test_disposition_delete_participations_getting_dispatched(
     # setup a participation
     shift = event.shifts.first()
 
-    volunteer_participation = shift.signup_method.get_participation_for(volunteer.as_participant())
+    volunteer_participation = shift.signup_method.get_or_create_participation_for(
+        volunteer.as_participant()
+    )
     volunteer_participation.state = AbstractParticipation.States.REQUESTED
     volunteer_participation.save()
 
-    planner_participation = shift.signup_method.get_participation_for(planner.as_participant())
+    planner_participation = shift.signup_method.get_or_create_participation_for(
+        planner.as_participant()
+    )
     planner_participation.state = AbstractParticipation.States.GETTING_DISPATCHED
     planner_participation.save()
 

@@ -87,7 +87,6 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
             cls=CustomJSONEncoder,
         )
         return context
-        return context
 
     @classmethod
     def as_view(cls, **initkwargs):
