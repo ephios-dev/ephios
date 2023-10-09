@@ -39,7 +39,7 @@ class BuildingBlock(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = _("building block")
@@ -77,12 +77,11 @@ class BlockQualificationRequirement(models.Model):
             return _("everyone on {block} needs {qualifications}").format(
                 block=self.block, qualifications=", ".join(map(str, self.qualifications.all()))
             )
-        else:
-            return _("at least {at_least} on {block} need {qualifications}").format(
-                at_least=self.at_least,
-                block=self.block,
-                qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
-            )
+        return _("at least {at_least} on {block} need {qualifications}").format(
+            at_least=self.at_least,
+            block=self.block,
+            qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
+        )
 
     class Meta:
         verbose_name = _("qualification requirement")

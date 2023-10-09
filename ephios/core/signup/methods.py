@@ -1,5 +1,6 @@
 import functools
 import logging
+from abc import ABC
 from argparse import Namespace
 from collections import OrderedDict
 from typing import List
@@ -9,7 +10,6 @@ from django.db.models import Q
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.dynamic_preferences_registry import GeneralRequiredQualificationPreference
@@ -188,15 +188,43 @@ def check_conflicting_participations(method, participant):
         )
 
 
-class BaseSignupMethod:
+class AbstractSignupMethod(ABC):
     # pylint: disable=too-many-public-methods
+
+    """
+    Abstract base class for signup methods.
+
+    A signup method is a way to sign up for a shift.
+    It combines logic for checking whether a participant can sign up for a shift,
+    and creating participations.
+
+    It also provides views for signing up using the web interface and forms for
+    disposition and configuration.
+    """
+
+    def __init__(self, shift, event=None):
+        self.shift = shift
+        self.event = getattr(shift, "event", event)
 
     @property
     def slug(self):
+        """
+        A unique identifier for this signup method.
+        """
         raise NotImplementedError()
 
     @property
     def verbose_name(self):
+        """
+        The human-readable name of this signup method.
+        """
+        raise NotImplementedError()
+
+    @property
+    def description(self):
+        """
+        A human-readable description of this signup method.
+        """
         raise NotImplementedError()
 
     @property
@@ -205,6 +233,137 @@ class BaseSignupMethod:
         This form will be used for participations in disposition.
         Set to None if you don't want to support the default disposition.
         """
+        raise NotImplementedError()
+
+    @property
+    def signup_view(self):
+        """
+        This view will be used to sign up for shifts.
+        """
+        raise NotImplementedError()
+
+    def get_configuration_form(self):
+        """
+        This form will be used to configure this signup method.
+        The cleaned data will be saved to shift.signup_configuration
+        """
+        raise NotImplementedError()
+
+    def render(self, context):
+        """
+        Render the state/participations of the shift.
+        Match the signature of template.render for use with the include template tag:
+        {% include shift.signup_method %}
+        By default, this loads `shift_state_template_name` and renders it using context from `get_shift_state_context_data`.
+        """
+        raise NotImplementedError()
+
+    @property
+    def registration_button_text(self):
+        """
+        The text of the registration button.
+        """
+        return _("Sign up")
+
+    @property
+    def uses_requested_state(self):
+        """
+        Whether this signup method uses the requested state.
+        """
+        return True
+
+    def get_signup_errors(self, participant) -> List[ParticipationError]:
+        """Return a list of ParticipationErrors that describe reasons for not being able to sign up."""
+        raise NotImplementedError()
+
+    def get_decline_errors(self, participant) -> List[ParticipationError]:
+        """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
+        raise NotImplementedError()
+
+    def can_decline(self, participant):
+        """
+        Return whether the participant is allowed to decline.
+        """
+        return not self.get_decline_errors(participant)
+
+    def can_sign_up(self, participant):
+        """
+        Return whether the participant is allowed to perform signup.
+        """
+        signupable_state = (
+            p := participant.participation_for(self.shift)
+        ) is None or not p.is_in_positive_state()
+        return signupable_state and not self.get_signup_errors(participant)
+
+    def can_customize_signup(self, participant):
+        """
+        Return whether the participant gets shown the option to customize their participation.
+        """
+        positive_state = (
+            p := participant.participation_for(self.shift)
+        ) is not None and p.is_in_positive_state()
+
+        if positive_state:
+            # If in a positive state, check that you can decline and then sign up again.
+            return self.can_decline(participant) and not self.get_signup_errors(participant)
+        return not self.get_signup_errors(participant)
+
+    def has_customized_signup(self, participation):
+        """
+        Return whether the participation was customized in a way specific to this signup method.
+        """
+        # This method should most likely check the participation's data attribute for modifications it has done.
+        # 'customized' in this context means that the dispositioning person should give special attention to this participation.
+        return False
+
+    def get_or_create_participation_for(self, participant) -> AbstractParticipation:
+        return participant.participation_for(self.shift) or participant.new_participation(
+            self.shift
+        )
+
+    def perform_signup(
+        self, participant: AbstractParticipant, participation=None, **kwargs
+    ) -> AbstractParticipation:
+        """
+        Perform the signup for the given participant.
+        kwargs are passed from the signup view and can be used to customize the signup.
+        Usually it's the cleaned_data from the signup form.
+        """
+        raise NotImplementedError()
+
+    def perform_decline(self, participant, participation=None, **kwargs):
+        """
+        Perform the decline for the given participant.
+        """
+        raise NotImplementedError()
+
+    def get_signup_info(self):
+        """Return key/value pairs about the configuration to show in exports etc."""
+        # TODO maybe move this to an exporter class?
+        raise NotImplementedError()
+
+    def get_participation_display(self):
+        # TODO move to exporter class?
+        raise NotImplementedError()
+
+    def get_participant_count_bounds(self):
+        """
+        Return a typle of min, max for how many participants are allowed for the shift.
+        Use None for any value if it is not specifiable."""
+        raise NotImplementedError()
+
+    def get_signup_stats(self) -> "SignupStats":
+        """
+        Return an instance of SignupStats for the shift.
+        """
+        raise NotImplementedError()
+
+
+class BaseSignupMethod(AbstractSignupMethod):
+    # pylint: disable=too-many-public-methods
+
+    @property
+    def disposition_participation_form_class(self):
         from .disposition import BaseDispositionParticipationForm
 
         return BaseDispositionParticipationForm
@@ -225,31 +384,7 @@ class BaseSignupMethod:
     def shift_state_template_name(self):
         raise NotImplementedError
 
-    description = """"""
-
-    # use _ == gettext_lazy!
-    registration_button_text = _("Sign up")
-    signup_success_message = _("You have successfully signed up for {shift}.")
-    signup_error_message = _("Signing up failed: {error}")
-    decline_success_message = _("You have successfully declined {shift}.")
-    decline_error_message = _("Declining failed: {error}")
-
-    uses_requested_state = True
-
-    def __init__(self, shift, event=None):
-        self.shift = shift
-        self.event = getattr(shift, "event", event)
-        self.configuration = Namespace(
-            **{
-                name: field.initial
-                for name, field in self.configuration_form_class.base_fields.items()
-            }
-        )
-        if shift is not None:
-            for key, value in shift.signup_configuration.items():
-                setattr(self.configuration, key, value)
-
-    @cached_property
+    @property
     def signup_view(self):
         return self.signup_view_class.as_view(method=self, shift=self.shift)
 
@@ -296,59 +431,6 @@ class BaseSignupMethod:
         """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
         return self._run_checkers(participant, self._decline_checkers)
 
-    def get_participant_errors(self, participant) -> List[ParticipationError]:
-        """
-        Return errors for whether the participant fulfills the requirements set by the signup methods for participation.
-        This runs a subset of the check for `get_signup_errors`.
-        """
-        return list(
-            filter(
-                lambda error: isinstance(error, ParticipantUnfitError),
-                self.get_signup_errors(participant),
-            )
-        )
-
-    def can_decline(self, participant):
-        """
-        Return whether the participant is allowed to decline.
-        """
-        return not self.get_decline_errors(participant)
-
-    def can_sign_up(self, participant):
-        """
-        Return whether the participant is allowed to perform signup.
-        """
-        signupable_state = (
-            p := participant.participation_for(self.shift)
-        ) is None or not p.is_in_positive_state()
-        return signupable_state and not self.get_signup_errors(participant)
-
-    def can_customize_signup(self, participant):
-        """
-        Return whether the participant gets shown the option to customize their participation.
-        """
-        positive_state = (
-            p := participant.participation_for(self.shift)
-        ) is not None and p.is_in_positive_state()
-
-        if positive_state:
-            # If in positive state, check that you can decline and then sign up again.
-            return self.can_decline(participant) and not self.get_signup_errors(participant)
-        return not self.get_signup_errors(participant)
-
-    def has_customized_signup(self, participation):
-        """
-        Return whether the participation was customized in a way specific to this signup method.
-        """
-        # This method should most likely check the participation's data attribute for modifications it has done.
-        # 'Customized' in this context means that the dispositioning person should give special attention to this participation.
-        return False
-
-    def get_participation_for(self, participant) -> AbstractParticipation:
-        return participant.participation_for(self.shift) or participant.new_participation(
-            self.shift
-        )
-
     def perform_signup(
         self, participant: AbstractParticipant, participation=None, **kwargs
     ) -> AbstractParticipation:
@@ -362,7 +444,7 @@ class BaseSignupMethod:
 
         if errors := self.get_signup_errors(participant):
             raise ParticipationError(errors)
-        participation = participation or self.get_participation_for(participant)
+        participation = participation or self.get_or_create_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
         ResponsibleParticipationRequestedNotification.send(participation)
@@ -372,7 +454,7 @@ class BaseSignupMethod:
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
         if errors := self.get_decline_errors(participant):
             raise ParticipationError(errors)
-        participation = participation or self.get_participation_for(participant)
+        participation = participation or self.get_or_create_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
         ResponsibleConfirmedParticipationDeclinedNotification.send(participation)
@@ -430,12 +512,6 @@ class BaseSignupMethod:
         )
 
     def render(self, context):
-        """
-        Render the state/participations of the shift.
-        Match the signature of template.render for use with the include template tag:
-        {% include shift.signup_method %}
-        By default, this loads `shift_state_template_name` and renders it using context from `get_shift_state_context_data`.
-        """
         try:
             with context.update(self.get_shift_state_context_data(context.request)):
                 return get_template(self.shift_state_template_name).template.render(context)
@@ -484,3 +560,15 @@ class BaseSignupMethod:
             kwargs.setdefault("event", self.event)
         form = self.configuration_form_class(*args, **kwargs)
         return form
+
+    def __init__(self, shift, event=None):
+        super().__init__(shift, event)
+        self.configuration = Namespace(
+            **{
+                name: field.initial
+                for name, field in self.configuration_form_class.base_fields.items()
+            }
+        )
+        if shift is not None:
+            for key, value in shift.signup_configuration.items():
+                setattr(self.configuration, key, value)

@@ -25,6 +25,10 @@ class BaseSignupView(FormView):
     method: "BaseSignupMethod" = ...
     form_class = BaseSignupForm
     template_name = "core/signup.html"
+    signup_success_message = _("You have successfully signed up for {shift}.")
+    signup_error_message = _("Signing up failed: {error}")
+    decline_success_message = _("You have successfully declined {shift}.")
+    decline_error_message = _("Declining failed: {error}")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -40,7 +44,7 @@ class BaseSignupView(FormView):
 
     @cached_property
     def participation(self):
-        return self.method.get_participation_for(self.participant)
+        return self.method.get_or_create_participation_for(self.participant)
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -74,11 +78,11 @@ class BaseSignupView(FormView):
                 self.method.perform_signup(self.participant, participation, **form.cleaned_data)
         except ParticipationError as errors:
             for error in errors:
-                messages.error(self.request, self.method.signup_error_message.format(error=error))
+                messages.error(self.request, self.signup_error_message.format(error=error))
         else:
             messages.success(
                 self.request,
-                self.method.signup_success_message.format(shift=self.shift),
+                self.signup_success_message.format(shift=self.shift),
             )
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -89,11 +93,9 @@ class BaseSignupView(FormView):
                 self.method.perform_decline(self.participant, participation, **form.cleaned_data)
         except ParticipationError as errors:
             for error in errors:
-                messages.error(self.request, self.method.decline_error_message.format(error=error))
+                messages.error(self.request, self.decline_error_message.format(error=error))
         else:
-            messages.info(
-                self.request, self.method.decline_success_message.format(shift=self.shift)
-            )
+            messages.info(self.request, self.decline_success_message.format(shift=self.shift))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
 

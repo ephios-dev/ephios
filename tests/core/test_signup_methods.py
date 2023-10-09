@@ -12,7 +12,11 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
-from ephios.core.signup.methods import ParticipationError, get_conflicting_participations
+from ephios.core.signup.methods import (
+    ParticipantUnfitError,
+    ParticipationError,
+    get_conflicting_participations,
+)
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
@@ -31,7 +35,12 @@ def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_vol
         datetime.min.replace(year=2020)
     )
     shift.save()
-    assert not shift.signup_method.get_participant_errors(qualified_volunteer.as_participant())
+    assert not list(
+        filter(
+            lambda error: isinstance(error, ParticipantUnfitError),
+            shift.signup_method.get_signup_errors(qualified_volunteer.as_participant()),
+        )
+    )
     assert shift.signup_method.get_signup_errors(qualified_volunteer.as_participant())
 
 

@@ -11,11 +11,19 @@ class RequestConfirmSignupMethod(QualificationMinMaxBaseSignupMethod):
         """This method lets people request participation. Responsibles can then confirm the participation."""
     )
     registration_button_text = _("Request")
-    signup_success_message = _("You have successfully requested a participation for {shift}.")
-    signup_error_message = _("Requesting a participation failed: {error}")
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         participation.state = AbstractParticipation.States.REQUESTED
         return participation
+
+    @property
+    def signup_view_class(self):
+        class SignupView(super().signup_view_class):
+            signup_success_message = _(
+                "You have successfully requested a participation for {shift}."
+            )
+            signup_error_message = _("Requesting a participation failed: {error}")
+
+        return SignupView
