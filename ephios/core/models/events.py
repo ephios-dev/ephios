@@ -33,8 +33,9 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup.methods import BaseSignupMethod, SignupStats
+    from ephios.core.signup.methods import BaseSignupMethod
     from ephios.core.signup.participants import AbstractParticipant
+    from ephios.core.signup.stats import SignupStats
 logger = logging.getLogger(__name__)
 
 

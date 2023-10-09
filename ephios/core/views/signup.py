@@ -2,7 +2,7 @@ from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.models import Shift
-from ephios.core.signup.methods import get_nonlocal_participant_from_request
+from ephios.core.signup.participants import get_nonlocal_participant_from_request
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
