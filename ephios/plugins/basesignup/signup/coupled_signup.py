@@ -114,7 +114,7 @@ def update_coupled_shifts(sender, instance, **kwargs):
 
     for coupled_shift in coupled_shifts:
         # make sure a type `instance` exists also for `coupled_shift`
-        coupled_participation = coupled_shift.signup_method.get_participation_for(
+        coupled_participation = coupled_shift.signup_method.get_or_create_participation_for(
             instance.participant
         )
         coupled_participation.state = instance.state
@@ -134,7 +134,7 @@ def fill_new_shift(sender, instance, **kwargs):
         state=AbstractParticipation.States.GETTING_DISPATCHED
     ):
         # make sure a type `instance` exists also for `coupled_shift`
-        coupled_participation = instance.signup_method.get_participation_for(
+        coupled_participation = instance.signup_method.get_or_create_participation_for(
             leader_participation.participant
         )
         coupled_participation.state = leader_participation.state

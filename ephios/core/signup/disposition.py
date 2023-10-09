@@ -160,7 +160,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
-            instance = shift.signup_method.get_participation_for(user.as_participant())
+            instance = shift.signup_method.get_or_create_participation_for(user.as_participant())
             instance.state = AbstractParticipation.States.GETTING_DISPATCHED
             instance.save()
 
@@ -194,7 +194,7 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
             email=None,
             date_of_birth=None,
         )
-        instance = shift.signup_method.get_participation_for(participant)
+        instance = shift.signup_method.get_or_create_participation_for(participant)
         instance.state = AbstractParticipation.States.GETTING_DISPATCHED
         instance.save()
 
