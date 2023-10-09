@@ -10,7 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod, SignupStats
+from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
+from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.common import (
     NoSignupSignupView,
     RenderParticipationPillsShiftStateMixin,

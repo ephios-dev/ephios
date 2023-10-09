@@ -11,13 +11,10 @@ from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
-from ephios.core.signup.methods import (
-    BaseSignupForm,
-    BaseSignupMethod,
-    BaseSignupView,
-    ParticipantUnfitError,
-)
+from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.methods import BaseSignupMethod, ParticipantUnfitError
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.core.signup.views import BaseSignupView
 
 NO_SECTION_UUID = "other"
 
@@ -220,7 +217,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
     def _get_signup_stats_per_section(self, participations=None):
-        from ephios.core.signup.methods import SignupStats
+        from ephios.core.signup.stats import SignupStats
 
         if participations is None:
             participations = list(self.shift.participations.all())
@@ -269,7 +266,7 @@ class SectionBasedSignupMethod(BaseSignupMethod):
         return d
 
     def get_signup_stats(self):
-        from ephios.core.signup.methods import SignupStats
+        from ephios.core.signup.stats import SignupStats
 
         participations = list(self.shift.participations.all())
 

@@ -12,11 +12,8 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
-from ephios.core.signup.methods import (
-    ParticipationError,
-    SignupStats,
-    get_conflicting_participations,
-)
+from ephios.core.signup.methods import ParticipationError, get_conflicting_participations
+from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
 

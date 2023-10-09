@@ -3,6 +3,7 @@ from datetime import date
 from typing import Optional
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -11,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.core.models.events import PlaceholderParticipation
 from ephios.core.services.qualification import collect_all_included_qualifications
+from ephios.core.signals import participant_from_request
 
 
 @dataclasses.dataclass(frozen=True)
@@ -119,3 +121,10 @@ class PlaceholderParticipant(AbstractParticipant):
         return mark_safe(
             f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{title}"></span>'
         )
+
+
+def get_nonlocal_participant_from_request(request):
+    for _, participant in participant_from_request.send(sender=None, request=request):
+        if participant is not None:
+            return participant
+    raise PermissionDenied

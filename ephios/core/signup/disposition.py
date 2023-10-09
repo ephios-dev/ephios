@@ -21,7 +21,7 @@ from ephios.core.services.notifications.types import (
     ParticipationCustomizationNotification,
     ParticipationRejectedNotification,
 )
-from ephios.core.signup.methods import BaseParticipationForm
+from ephios.core.signup.forms import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
