@@ -730,13 +730,13 @@ sqlparse = ">=0.2"
 
 [[package]]
 name = "django-dynamic-preferences"
-version = "1.15.0"
+version = "1.16.0"
 description = "Dynamic global and instance settings for your django project"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-dynamic-preferences-1.15.0.tar.gz", hash = "sha256:8ec6e3a1156346fd6c21fb9b12739910cff1c7582d61f2c10b8d3f2fd4b5b067"},
-    {file = "django_dynamic_preferences-1.15.0-py2.py3-none-any.whl", hash = "sha256:a37529ceefe2430a34e9906e1843102fb569c8086c6fe99a14f795f578c96d8c"},
+    {file = "django-dynamic-preferences-1.16.0.tar.gz", hash = "sha256:0d3d456626244d0bdaf312c81f2b3e14bd16134e8fcf53a33fd12e5d0bdd88dd"},
+    {file = "django_dynamic_preferences-1.16.0-py2.py3-none-any.whl", hash = "sha256:527b943d2b5a5c1ea2de8f941778a39efddf2b18ccf44e6aaab05290256ec82f"},
 ]
 
 [package.dependencies]
