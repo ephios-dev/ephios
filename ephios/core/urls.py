@@ -19,7 +19,13 @@ from ephios.core.views.accounts import (
     UserProfilePasswordTokenRevokationView,
     UserProfileUpdateView,
 )
-from ephios.core.views.auth import OAuthCallbackView, OAuthLogoutView, OAuthRequestView
+from ephios.core.views.auth import (
+    OAuthCallbackView,
+    OAuthLogoutView,
+    OAuthRequestView,
+    OIDCCreateView,
+    OIDCDiscoveryView,
+)
 from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
@@ -191,6 +197,8 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
+    path("settings/oidc/create/", OIDCCreateView.as_view(), name="settings_oidc_create"),
+    path("settings/oidc/discovery/", OIDCDiscoveryView.as_view(), name="settings_oidc_discovery"),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),

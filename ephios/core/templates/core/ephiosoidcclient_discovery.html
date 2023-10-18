@@ -1,0 +1,17 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% block settings_content %}
+    <div class="alert alert-info" role="alert">
+        {% blocktranslate trimmed %}
+            We can try to auto-discover certain values for your OpenID Connect Provider. To start the discovery, please enter the base URL of your OpenID Connect Provider below.
+        {% endblocktranslate %}
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input class="btn btn-primary" type="submit" value="{% translate "Start auto-discovery" %}">
+        <a class="btn btn-secondary" href="{% url "core:settings_oidc_create" %}">{% translate "Continue without auto-discovery" %}</a>
+    </form>
+{% endblock %}

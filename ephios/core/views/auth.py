@@ -1,15 +1,18 @@
 from urllib.parse import urljoin
 
+import requests
 from django.conf import settings
 from django.contrib import auth, messages
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import RedirectView
+from django.views.generic import CreateView, FormView, RedirectView
 from oauthlib.oauth2 import WebApplicationClient
-from requests import PreparedRequest
+from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
+from ephios.core.forms.users import OIDCDiscoveryForm
 from ephios.core.models.users import EphiosOIDCClient
 
 
@@ -70,3 +73,60 @@ class OAuthLogoutView(RedirectView):
         auth.logout(self.request)
         messages.info(self.request, _("Logged out successfully."))
         return logout_url
+
+
+class OIDCCreateView(SuccessMessageMixin, CreateView):
+    model = EphiosOIDCClient
+    fields = [
+        "label",
+        "client_id",
+        "client_secret",
+        "scopes",
+        "default_groups",
+        "auth_endpoint",
+        "token_endpoint",
+        "user_endpoint",
+        "end_session_endpoint",
+        "jwks_endpoint",
+    ]
+    success_url = reverse_lazy("core:settings_oidc_create")
+    success_message = _("OIDC client successfully created.")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if "url" in self.request.GET:
+            try:
+                oidc_configuration = requests.get(
+                    urljoin(self.request.GET["url"], ".well-known/openid-configuration")
+                ).json()
+                initial.update(
+                    {
+                        "auth_endpoint": oidc_configuration["authorization_endpoint"],
+                        "token_endpoint": oidc_configuration["token_endpoint"],
+                        "user_endpoint": oidc_configuration["userinfo_endpoint"],
+                        "end_session_endpoint": oidc_configuration["end_session_endpoint"],
+                        "jwks_endpoint": oidc_configuration["jwks_uri"],
+                    }
+                )
+                messages.success(
+                    self.request,
+                    _(
+                        "Successfully fetched OIDC configuration. Please fill in the remaining fields."
+                    ),
+                )
+            except (ConnectionError, RequestException, KeyError):
+                messages.warning(
+                    self.request,
+                    _(
+                        "Could not fetch OIDC configuration from the given URL. Please configure the client manually below."
+                    ),
+                )
+        return initial
+
+
+class OIDCDiscoveryView(FormView):
+    form_class = OIDCDiscoveryForm
+    template_name = "core/ephiosoidcclient_discovery.html"
+
+    def form_valid(self, form):
+        return redirect(f"{reverse('core:settings_oidc_create')}?url={form.cleaned_data['url']}")

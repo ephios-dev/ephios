@@ -1,0 +1,11 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% block settings_content %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+    </form>
+{% endblock %}
