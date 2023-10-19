@@ -2,6 +2,11 @@
 {% load i18n %}
 
 {% block settings_content %}
+    <div class="alert alert-info" role="alert">
+        {% blocktranslate trimmed %}
+            ephios can use other services (identity providers) to authenticate users via OpenID Connect (OIDC), e.g. a Nextcloud instance. You can set up multiple identity providers and users can choose which one to use when logging in.
+        {% endblocktranslate %}
+    </div>
     <a class="btn btn-secondary" href="{% url "core:settings_oidc_discovery" %}"><span
         class="fa fa-plus"></span> {% translate "Add identity provider" %}</a>
     <table id="event_table" class="table table-striped display mt-2">
