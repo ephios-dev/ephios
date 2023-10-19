@@ -44,7 +44,7 @@ class EphiosOIDCAB(ModelBackend):
             user.groups.add(*self.client.default_groups.all())
         return user
 
-    def authenticate(self, request, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             self.client = EphiosOIDCClient.objects.get(id=request.session["oidc_client_id"])
             oauth = OAuth2Session(
@@ -66,10 +66,9 @@ class EphiosOIDCAB(ModelBackend):
             users = get_user_model().objects.filter(email__iexact=user_info["email"])
             if len(users) == 1:
                 return self.update_user(users.first(), user_info)
-            elif len(users) > 1:
+            if len(users) > 1:
                 raise SuspiciousOperation("Multiple users with same email address")
-            else:
-                return self.create_user(user_info)
+            return self.create_user(user_info)
         except (
             KeyError,
             ValueError,

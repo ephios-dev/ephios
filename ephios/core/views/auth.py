@@ -104,7 +104,7 @@ class OIDCClientCreateView(SuccessMessageMixin, CreateView):
         if "url" in self.request.GET:
             try:
                 oidc_configuration = requests.get(
-                    urljoin(self.request.GET["url"], ".well-known/openid-configuration")
+                    urljoin(self.request.GET["url"], ".well-known/openid-configuration"), timeout=10
                 ).json()
                 initial.update(
                     {
