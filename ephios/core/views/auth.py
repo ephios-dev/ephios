@@ -25,17 +25,19 @@ from ephios.core.models.users import IdentityProvider
 
 class OIDCInitiateView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        client = get_object_or_404(IdentityProvider, id=self.kwargs["client"])
-        oauth_client = WebApplicationClient(client_id=client.client_id)
+        provider = get_object_or_404(IdentityProvider, id=self.kwargs["provider"])
+
+        # we are using the OAuth2 tooling here to generate the authorization URL
+        oauth_client = WebApplicationClient(client_id=provider.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
             redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
-            scope=client.scopes,
+            scope=provider.scopes,
         )
 
-        authorization_url, state = oauth.authorization_url(client.authorization_endpoint)
+        authorization_url, state = oauth.authorization_url(provider.authorization_endpoint)
         self.request.session["oidc_state"] = state
-        self.request.session["oidc_client_id"] = client.id
+        self.request.session["oidc_provider"] = provider.id
         self.request.session["oidc_login_next"] = self.request.GET.get("next", None)
         return authorization_url
 
@@ -68,12 +70,14 @@ class OIDCCallbackView(RedirectView):
 class OIDCLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         logout_url = reverse("login")
-        if "oidc_client_id" in self.request.session:
-            clients = IdentityProvider.objects.filter(id=self.request.session.get("oidc_client_id"))
-            if clients.exists() and (client := clients.first()).end_session_endpoint:
+        if "oidc_provider" in self.request.session:
+            providers = IdentityProvider.objects.filter(
+                id=self.request.session.get("oidc_provider")
+            )
+            if providers.exists() and (provider := providers.first()).end_session_endpoint:
                 req = PreparedRequest()
                 req.prepare_url(
-                    client.end_session_endpoint,
+                    provider.end_session_endpoint,
                     {"post_logout_redirect_uri": settings.GET_SITE_URL()},
                 )
                 logout_url = req.url
@@ -96,7 +100,7 @@ class IdentityProviderCreateView(SuccessMessageMixin, CreateView):
         "end_session_endpoint",
         "jwks_uri",
     ]
-    success_url = reverse_lazy("core:settings_oidc_list")
+    success_url = reverse_lazy("core:settings_idp_list")
     success_message = _("Identity provider saved.")
 
     def get_initial(self):
@@ -135,7 +139,7 @@ class IdentityProviderDiscoveryView(FormView):
     template_name = "core/identityprovider_discovery.html"
 
     def form_valid(self, form):
-        return redirect(f"{reverse('core:settings_oidc_create')}?url={form.cleaned_data['url']}")
+        return redirect(f"{reverse('core:settings_idp_create')}?url={form.cleaned_data['url']}")
 
 
 class IdentityProviderListView(ListView):
@@ -160,4 +164,4 @@ class IdentityProviderUpdateView(UpdateView):
 
 class IdentityProviderDeleteView(DeleteView):
     model = IdentityProvider
-    success_url = reverse_lazy("core:settings_oidc_list")
+    success_url = reverse_lazy("core:settings_idp_list")

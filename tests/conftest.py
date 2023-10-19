@@ -430,8 +430,8 @@ def oidc_client():
         client_id="test_client",
         client_secret="test_secret",
         scopes="openid profile email",
-        auth_endpoint="https://example.com/auth",
+        authorization_endpoint="https://example.com/auth",
         token_endpoint="https://example.com/token",
-        jwks_endpoint="https://example.com/jwks",
-        user_endpoint="https://example.com/userinfo",
+        jwks_uri="https://example.com/jwks",
+        userinfo_endpoint="https://example.com/userinfo",
     )

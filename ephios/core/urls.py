@@ -200,24 +200,22 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
-    path("settings/oidc/", IdentityProviderListView.as_view(), name="settings_oidc_list"),
+    path("settings/idp/", IdentityProviderListView.as_view(), name="settings_idp_list"),
+    path("settings/idp/create/", IdentityProviderCreateView.as_view(), name="settings_idp_create"),
     path(
-        "settings/oidc/create/", IdentityProviderCreateView.as_view(), name="settings_oidc_create"
-    ),
-    path(
-        "settings/oidc/discovery/",
+        "settings/idp/discovery/",
         IdentityProviderDiscoveryView.as_view(),
-        name="settings_oidc_discovery",
+        name="settings_idp_discovery",
     ),
     path(
-        "settings/oidc/<int:pk>/edit/",
+        "settings/idp/<int:pk>/edit/",
         IdentityProviderUpdateView.as_view(),
-        name="settings_oidc_edit",
+        name="settings_idp_edit",
     ),
     path(
-        "settings/oidc/<int:pk>/delete/",
+        "settings/idp/<int:pk>/delete/",
         IdentityProviderDeleteView.as_view(),
-        name="settings_oidc_delete",
+        name="settings_idp_delete",
     ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
@@ -280,7 +278,7 @@ urlpatterns = [
         WorkingHourCreateView.as_view(),
         name="workinghours_add",
     ),
-    path("oidc/initiate/<int:client>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
+    path("oidc/initiate/<int:provider>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
     path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
     path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
 ]

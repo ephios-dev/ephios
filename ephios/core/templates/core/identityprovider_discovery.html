@@ -13,6 +13,6 @@
         {% csrf_token %}
         {{ form|crispy }}
         <input class="btn btn-primary" type="submit" value="{% translate "Start auto-discovery" %}">
-        <a class="btn btn-secondary" href="{% url "core:settings_oidc_create" %}">{% translate "Continue without auto-discovery" %}</a>
+        <a class="btn btn-secondary" href="{% url "core:settings_idp_create" %}">{% translate "Continue without auto-discovery" %}</a>
     </form>
 {% endblock %}

@@ -19,7 +19,7 @@ def test_oidc_backend_authenticate(
 
     # setup request
     request = HttpRequest()
-    request.session = {"oidc_client_id": oidc_client.id}
+    request.session = {"oidc_provider": oidc_client.id}
     request.GET = {"code": "123"}
 
     # authenticate the volunteer
@@ -28,15 +28,15 @@ def test_oidc_backend_authenticate(
 
 
 def test_oidc_initiate(django_app, oidc_client):
-    response = django_app.get(reverse("core:oidc_initiate", kwargs={"client": oidc_client.id}))
+    response = django_app.get(reverse("core:oidc_initiate", kwargs={"provider": oidc_client.id}))
     assert response.status_code == 302
-    assert response.url.startswith(oidc_client.auth_endpoint)
+    assert response.url.startswith(oidc_client.authorization_endpoint)
 
 
 @patch("ephios.extra.auth.EphiosOIDCAB")
 def test_oidc_callback(MockEphiosOIDCAB, django_app, oidc_client, volunteer):
     session = django_app.session or import_module(settings.SESSION_ENGINE).SessionStore()
-    session["oidc_client_id"] = oidc_client.id
+    session["oidc_provider"] = oidc_client.id
     session["oidc_state"] = "123"
     session.save()
     django_app.set_cookie(settings.SESSION_COOKIE_NAME, session.session_key)

@@ -589,4 +589,4 @@ class IdentityProvider(Model):
     )
 
     def __str__(self):
-        return _("OIDC client {label}").format(label=self.label)
+        return _("Identity provider {label}").format(label=self.label)

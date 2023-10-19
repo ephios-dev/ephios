@@ -17,10 +17,10 @@ from ephios.core.models.users import IdentityProvider
 
 class EphiosOIDCAB(ModelBackend):
     def decode_jwt_token(self, token: str) -> Dict[str, Any]:
-        jwks_client = jwt.PyJWKClient(self.client.jwks_uri)
+        jwks_client = jwt.PyJWKClient(self.provider.jwks_uri)
         header = jwt.get_unverified_header(token)
         key = jwks_client.get_signing_key(header["kid"]).key
-        decoded = jwt.decode(token, key, [header["alg"]], audience=self.client.client_id)
+        decoded = jwt.decode(token, key, [header["alg"]], audience=self.provider.client_id)
         return decoded
 
     def create_user(self, claims):
@@ -29,8 +29,8 @@ class EphiosOIDCAB(ModelBackend):
         user.first_name = claims.get("given_name", "")
         user.last_name = claims.get("family_name", "")
         user.save()
-        if hasattr(self, "client") and self.client.default_groups.exists():
-            user.groups.add(*self.client.default_groups.all())
+        if hasattr(self, "provider") and self.provider.default_groups.exists():
+            user.groups.add(*self.provider.default_groups.all())
 
         return user
 
@@ -40,27 +40,27 @@ class EphiosOIDCAB(ModelBackend):
         if "family_name" in claims:
             user.last_name = claims["family_name"]
         user.save()
-        if hasattr(self, "client") and self.client.default_groups.exists():
-            user.groups.add(*self.client.default_groups.all())
+        if hasattr(self, "provider") and self.provider.default_groups.exists():
+            user.groups.add(*self.provider.default_groups.all())
         return user
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            self.client = IdentityProvider.objects.get(id=request.session["oidc_client_id"])
+            self.provider = IdentityProvider.objects.get(id=request.session["oidc_provider"])
             oauth = OAuth2Session(
-                client=WebApplicationClient(client_id=self.client.client_id),
+                client=WebApplicationClient(client_id=self.provider.client_id),
                 redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
             )
             token = oauth.fetch_token(
-                self.client.token_endpoint,
+                self.provider.token_endpoint,
                 code=request.GET["code"],
-                client_secret=self.client.client_secret,
+                client_secret=self.provider.client_secret,
                 include_client_id=True,
             )
             self.decode_jwt_token(
                 token["id_token"]
             )  # this already contains the claims for the tested OP, check the standard to see if we can omit the call to the user endpoint
-            user_info = oauth.request("GET", self.client.userinfo_endpoint).json()
+            user_info = oauth.request("GET", self.provider.userinfo_endpoint).json()
             if "email" not in user_info:
                 raise SuspiciousOperation("OIDC client did not return email address")
             users = get_user_model().objects.filter(email__iexact=user_info["email"])
