@@ -49,7 +49,7 @@ class EphiosOIDCAB(ModelBackend):
             self.client = EphiosOIDCClient.objects.get(id=request.session["oidc_client_id"])
             oauth = OAuth2Session(
                 client=WebApplicationClient(client_id=self.client.client_id),
-                redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oauth_callback")),
+                redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
             )
             token = oauth.fetch_token(
                 self.client.token_endpoint,

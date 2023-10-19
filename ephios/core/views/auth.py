@@ -23,13 +23,13 @@ from ephios.core.forms.users import OIDCDiscoveryForm
 from ephios.core.models.users import EphiosOIDCClient
 
 
-class OAuthRequestView(RedirectView):
+class OIDCInitiateView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         client = get_object_or_404(EphiosOIDCClient, id=self.kwargs["client"])
         oauth_client = WebApplicationClient(client_id=client.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
-            redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oauth_callback")),
+            redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
             scope=client.scopes,
         )
 
@@ -40,7 +40,7 @@ class OAuthRequestView(RedirectView):
         return authorization_url
 
 
-class OAuthCallbackView(RedirectView):
+class OIDCCallbackView(RedirectView):
     def failure_url(self):
         messages.error(self.request, _("Authentication failed."))
         return settings.LOGIN_URL
@@ -65,7 +65,7 @@ class OAuthCallbackView(RedirectView):
         return self.failure_url()
 
 
-class OAuthLogoutView(RedirectView):
+class OIDCLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         logout_url = reverse("login")
         if "oidc_client_id" in self.request.session:

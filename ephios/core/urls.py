@@ -20,14 +20,14 @@ from ephios.core.views.accounts import (
     UserProfileUpdateView,
 )
 from ephios.core.views.auth import (
-    OAuthCallbackView,
-    OAuthLogoutView,
-    OAuthRequestView,
+    OIDCCallbackView,
     OIDCClientCreateView,
     OIDCClientDeleteView,
     OIDCClientDiscoveryView,
     OIDCClientListView,
     OIDCClientUpdateView,
+    OIDCInitiateView,
+    OIDCLogoutView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
@@ -274,7 +274,7 @@ urlpatterns = [
         WorkingHourCreateView.as_view(),
         name="workinghours_add",
     ),
-    path("oauth-test/<int:client>", OAuthRequestView.as_view(), name="oauth_test"),
-    path("oauth-callback/", OAuthCallbackView.as_view(), name="oauth_callback"),
-    path("oauth-logout/", OAuthLogoutView.as_view(), name="oauth_logout"),
+    path("oidc/initiate/<int:client>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
+    path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
+    path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
 ]
