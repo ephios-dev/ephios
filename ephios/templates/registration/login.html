@@ -13,7 +13,7 @@
     <h2>{{ login_message }}</h2>
     <div class="container">
         <div class="row">
-            {% if not global_preferences.general__hide_login_form and clients.exists or request.GET.local %}
+            {% if not global_preferences.general__hide_login_form or not clients.exists or request.GET.local %}
                 <div class="col-lg">
                     <form method="post">
                         {% csrf_token %}
