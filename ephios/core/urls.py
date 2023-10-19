@@ -23,8 +23,11 @@ from ephios.core.views.auth import (
     OAuthCallbackView,
     OAuthLogoutView,
     OAuthRequestView,
-    OIDCCreateView,
-    OIDCDiscoveryView,
+    OIDCClientCreateView,
+    OIDCClientDeleteView,
+    OIDCClientDiscoveryView,
+    OIDCClientListView,
+    OIDCClientUpdateView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
@@ -197,8 +200,19 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
-    path("settings/oidc/create/", OIDCCreateView.as_view(), name="settings_oidc_create"),
-    path("settings/oidc/discovery/", OIDCDiscoveryView.as_view(), name="settings_oidc_discovery"),
+    path("settings/oidc/", OIDCClientListView.as_view(), name="settings_oidc_list"),
+    path("settings/oidc/create/", OIDCClientCreateView.as_view(), name="settings_oidc_create"),
+    path(
+        "settings/oidc/discovery/",
+        OIDCClientDiscoveryView.as_view(),
+        name="settings_oidc_discovery",
+    ),
+    path("settings/oidc/<int:pk>/edit/", OIDCClientUpdateView.as_view(), name="settings_oidc_edit"),
+    path(
+        "settings/oidc/<int:pk>/delete/",
+        OIDCClientDeleteView.as_view(),
+        name="settings_oidc_delete",
+    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),

@@ -7,7 +7,14 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, FormView, RedirectView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    FormView,
+    ListView,
+    RedirectView,
+    UpdateView,
+)
 from oauthlib.oauth2 import WebApplicationClient
 from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
@@ -75,7 +82,7 @@ class OAuthLogoutView(RedirectView):
         return logout_url
 
 
-class OIDCCreateView(SuccessMessageMixin, CreateView):
+class OIDCClientCreateView(SuccessMessageMixin, CreateView):
     model = EphiosOIDCClient
     fields = [
         "label",
@@ -124,9 +131,34 @@ class OIDCCreateView(SuccessMessageMixin, CreateView):
         return initial
 
 
-class OIDCDiscoveryView(FormView):
+class OIDCClientDiscoveryView(FormView):
     form_class = OIDCDiscoveryForm
     template_name = "core/ephiosoidcclient_discovery.html"
 
     def form_valid(self, form):
         return redirect(f"{reverse('core:settings_oidc_create')}?url={form.cleaned_data['url']}")
+
+
+class OIDCClientListView(ListView):
+    model = EphiosOIDCClient
+
+
+class OIDCClientUpdateView(UpdateView):
+    model = EphiosOIDCClient
+    fields = [
+        "label",
+        "client_id",
+        "client_secret",
+        "scopes",
+        "default_groups",
+        "auth_endpoint",
+        "token_endpoint",
+        "user_endpoint",
+        "end_session_endpoint",
+        "jwks_endpoint",
+    ]
+
+
+class OIDCClientDeleteView(DeleteView):
+    model = EphiosOIDCClient
+    success_url = reverse_lazy("core:settings_oidc_list")

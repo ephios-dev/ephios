@@ -31,6 +31,13 @@ def get_available_management_settings_sections(request):
                 "active": "settings-oauth" in request.resolver_match.url_name,
             }
         )
+        sections.append(
+            {
+                "label": _("Identity providers"),
+                "url": reverse("core:settings_oidc_list"),
+                "active": "settings_oidc" in request.resolver_match.url_name,
+            }
+        )
     if request.user.has_perm("core.view_eventtype"):
         sections.append(
             {
