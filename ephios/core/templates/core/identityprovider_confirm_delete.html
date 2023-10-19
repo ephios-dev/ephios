@@ -2,9 +2,10 @@
 {% load i18n %}
 
 {% block settings_content %}
+    <h3>{% translate "Delete identity provider" %}</h3>
     <form method="post">
         {% csrf_token %}
-        <p>{% blocktrans trimmed with label=ephiosoidcclient.label %}
+        <p>{% blocktrans trimmed with label=identityprovider.label %}
             Are you sure you want to delete the identity provider "{{ label }}"?
             Users will no longer be able to log in with this identity provider.
             Please make sure that they have an alternative means of logging in.

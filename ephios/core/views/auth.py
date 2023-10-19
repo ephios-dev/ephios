@@ -20,12 +20,12 @@ from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
 from ephios.core.forms.users import OIDCDiscoveryForm
-from ephios.core.models.users import EphiosOIDCClient
+from ephios.core.models.users import IdentityProvider
 
 
 class OIDCInitiateView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        client = get_object_or_404(EphiosOIDCClient, id=self.kwargs["client"])
+        client = get_object_or_404(IdentityProvider, id=self.kwargs["client"])
         oauth_client = WebApplicationClient(client_id=client.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
@@ -33,7 +33,7 @@ class OIDCInitiateView(RedirectView):
             scope=client.scopes,
         )
 
-        authorization_url, state = oauth.authorization_url(client.auth_endpoint)
+        authorization_url, state = oauth.authorization_url(client.authorization_endpoint)
         self.request.session["oidc_state"] = state
         self.request.session["oidc_client_id"] = client.id
         self.request.session["oidc_login_next"] = self.request.GET.get("next", None)
@@ -69,7 +69,7 @@ class OIDCLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         logout_url = reverse("login")
         if "oidc_client_id" in self.request.session:
-            clients = EphiosOIDCClient.objects.filter(id=self.request.session.get("oidc_client_id"))
+            clients = IdentityProvider.objects.filter(id=self.request.session.get("oidc_client_id"))
             if clients.exists() and (client := clients.first()).end_session_endpoint:
                 req = PreparedRequest()
                 req.prepare_url(
@@ -82,22 +82,22 @@ class OIDCLogoutView(RedirectView):
         return logout_url
 
 
-class OIDCClientCreateView(SuccessMessageMixin, CreateView):
-    model = EphiosOIDCClient
+class IdentityProviderCreateView(SuccessMessageMixin, CreateView):
+    model = IdentityProvider
     fields = [
         "label",
         "client_id",
         "client_secret",
         "scopes",
         "default_groups",
-        "auth_endpoint",
+        "authorization_endpoint",
         "token_endpoint",
-        "user_endpoint",
+        "userinfo_endpoint",
         "end_session_endpoint",
-        "jwks_endpoint",
+        "jwks_uri",
     ]
-    success_url = reverse_lazy("core:settings_oidc_create")
-    success_message = _("OIDC client successfully created.")
+    success_url = reverse_lazy("core:settings_oidc_list")
+    success_message = _("Identity provider saved.")
 
     def get_initial(self):
         initial = super().get_initial()
@@ -106,15 +106,14 @@ class OIDCClientCreateView(SuccessMessageMixin, CreateView):
                 oidc_configuration = requests.get(
                     urljoin(self.request.GET["url"], ".well-known/openid-configuration"), timeout=10
                 ).json()
-                initial.update(
-                    {
-                        "auth_endpoint": oidc_configuration["authorization_endpoint"],
-                        "token_endpoint": oidc_configuration["token_endpoint"],
-                        "user_endpoint": oidc_configuration["userinfo_endpoint"],
-                        "end_session_endpoint": oidc_configuration["end_session_endpoint"],
-                        "jwks_endpoint": oidc_configuration["jwks_uri"],
-                    }
-                )
+                config_keys = [
+                    "authorization_endpoint",
+                    "token_endpoint",
+                    "userinfo_endpoint",
+                    "end_session_endpoint",
+                    "jwks_uri",
+                ]
+                initial.update({k: oidc_configuration[k] for k in config_keys})
                 messages.success(
                     self.request,
                     _(
@@ -131,34 +130,34 @@ class OIDCClientCreateView(SuccessMessageMixin, CreateView):
         return initial
 
 
-class OIDCClientDiscoveryView(FormView):
+class IdentityProviderDiscoveryView(FormView):
     form_class = OIDCDiscoveryForm
-    template_name = "core/ephiosoidcclient_discovery.html"
+    template_name = "core/identityprovider_discovery.html"
 
     def form_valid(self, form):
         return redirect(f"{reverse('core:settings_oidc_create')}?url={form.cleaned_data['url']}")
 
 
-class OIDCClientListView(ListView):
-    model = EphiosOIDCClient
+class IdentityProviderListView(ListView):
+    model = IdentityProvider
 
 
-class OIDCClientUpdateView(UpdateView):
-    model = EphiosOIDCClient
+class IdentityProviderUpdateView(UpdateView):
+    model = IdentityProvider
     fields = [
         "label",
         "client_id",
         "client_secret",
         "scopes",
         "default_groups",
-        "auth_endpoint",
+        "authorization_endpoint",
         "token_endpoint",
-        "user_endpoint",
+        "userinfo_endpoint",
         "end_session_endpoint",
-        "jwks_endpoint",
+        "jwks_uri",
     ]
 
 
-class OIDCClientDeleteView(DeleteView):
-    model = EphiosOIDCClient
+class IdentityProviderDeleteView(DeleteView):
+    model = IdentityProvider
     success_url = reverse_lazy("core:settings_oidc_list")

@@ -534,7 +534,7 @@ class Notification(Model):
         return self.notification_type.get_actions(self)
 
 
-class EphiosOIDCClient(Model):
+class IdentityProvider(Model):
     label = models.CharField(
         max_length=255,
         verbose_name=_("label"),
@@ -558,28 +558,28 @@ class EphiosOIDCClient(Model):
             "The OIDC scopes to request from the provider. Separate multiple scopes with spaces. Use the default value if you are unsure."
         ),
     )
-    auth_endpoint = models.URLField(
+    authorization_endpoint = models.URLField(
         verbose_name=_("authorization endpoint"), help_text=_("The OIDC authorization endpoint.")
     )
     token_endpoint = models.URLField(
         verbose_name=_("token endpoint"), help_text=_("The OIDC token endpoint.")
     )
-    user_endpoint = models.URLField(
+    userinfo_endpoint = models.URLField(
         verbose_name=_("user endpoint"), help_text=_("The OIDC user endpoint.")
-    )
-    jwks_endpoint = models.URLField(
-        blank=True,
-        null=True,
-        verbose_name=_("JWKS endpoint"),
-        help_text=_(
-            "The OIDC JWKS endpoint. A less secure signing method will be used if this is not provided."
-        ),
     )
     end_session_endpoint = models.URLField(
         blank=True,
         null=True,
         verbose_name=_("end session endpoint"),
         help_text=_("The OIDC end session endpoint, if supported by your provider."),
+    )
+    jwks_uri = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("JWKS endpoint"),
+        help_text=_(
+            "The OIDC JWKS endpoint. A less secure signing method will be used if this is not provided."
+        ),
     )
     default_groups = models.ManyToManyField(
         Group,

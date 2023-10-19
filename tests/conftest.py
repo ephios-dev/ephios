@@ -25,7 +25,7 @@ from ephios.core.models import (
     UserProfile,
     WorkingHours,
 )
-from ephios.core.models.users import EphiosOIDCClient
+from ephios.core.models.users import IdentityProvider
 from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
 
 
@@ -425,7 +425,7 @@ def workinghours(volunteer):
 
 @pytest.fixture
 def oidc_client():
-    return EphiosOIDCClient.objects.create(
+    return IdentityProvider.objects.create(
         label="Test Client",
         client_id="test_client",
         client_secret="test_secret",

@@ -20,12 +20,12 @@ from ephios.core.views.accounts import (
     UserProfileUpdateView,
 )
 from ephios.core.views.auth import (
+    IdentityProviderCreateView,
+    IdentityProviderDeleteView,
+    IdentityProviderDiscoveryView,
+    IdentityProviderListView,
+    IdentityProviderUpdateView,
     OIDCCallbackView,
-    OIDCClientCreateView,
-    OIDCClientDeleteView,
-    OIDCClientDiscoveryView,
-    OIDCClientListView,
-    OIDCClientUpdateView,
     OIDCInitiateView,
     OIDCLogoutView,
 )
@@ -200,17 +200,23 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
-    path("settings/oidc/", OIDCClientListView.as_view(), name="settings_oidc_list"),
-    path("settings/oidc/create/", OIDCClientCreateView.as_view(), name="settings_oidc_create"),
+    path("settings/oidc/", IdentityProviderListView.as_view(), name="settings_oidc_list"),
+    path(
+        "settings/oidc/create/", IdentityProviderCreateView.as_view(), name="settings_oidc_create"
+    ),
     path(
         "settings/oidc/discovery/",
-        OIDCClientDiscoveryView.as_view(),
+        IdentityProviderDiscoveryView.as_view(),
         name="settings_oidc_discovery",
     ),
-    path("settings/oidc/<int:pk>/edit/", OIDCClientUpdateView.as_view(), name="settings_oidc_edit"),
+    path(
+        "settings/oidc/<int:pk>/edit/",
+        IdentityProviderUpdateView.as_view(),
+        name="settings_oidc_edit",
+    ),
     path(
         "settings/oidc/<int:pk>/delete/",
-        OIDCClientDeleteView.as_view(),
+        IdentityProviderDeleteView.as_view(),
         name="settings_oidc_delete",
     ),
     path("groups/", GroupListView.as_view(), name="group_list"),

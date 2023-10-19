@@ -12,12 +12,12 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 from urllib3.exceptions import RequestError
 
-from ephios.core.models.users import EphiosOIDCClient
+from ephios.core.models.users import IdentityProvider
 
 
 class EphiosOIDCAB(ModelBackend):
     def decode_jwt_token(self, token: str) -> Dict[str, Any]:
-        jwks_client = jwt.PyJWKClient(self.client.jwks_endpoint)
+        jwks_client = jwt.PyJWKClient(self.client.jwks_uri)
         header = jwt.get_unverified_header(token)
         key = jwks_client.get_signing_key(header["kid"]).key
         decoded = jwt.decode(token, key, [header["alg"]], audience=self.client.client_id)
@@ -46,7 +46,7 @@ class EphiosOIDCAB(ModelBackend):
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            self.client = EphiosOIDCClient.objects.get(id=request.session["oidc_client_id"])
+            self.client = IdentityProvider.objects.get(id=request.session["oidc_client_id"])
             oauth = OAuth2Session(
                 client=WebApplicationClient(client_id=self.client.client_id),
                 redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
@@ -60,7 +60,7 @@ class EphiosOIDCAB(ModelBackend):
             self.decode_jwt_token(
                 token["id_token"]
             )  # this already contains the claims for the tested OP, check the standard to see if we can omit the call to the user endpoint
-            user_info = oauth.request("GET", self.client.user_endpoint).json()
+            user_info = oauth.request("GET", self.client.userinfo_endpoint).json()
             if "email" not in user_info:
                 raise SuspiciousOperation("OIDC client did not return email address")
             users = get_user_model().objects.filter(email__iexact=user_info["email"])
@@ -74,7 +74,7 @@ class EphiosOIDCAB(ModelBackend):
             ValueError,
             ConnectionError,
             RequestError,
-            EphiosOIDCClient.DoesNotExist,
+            IdentityProvider.DoesNotExist,
             InvalidTokenError,
         ):
             return None

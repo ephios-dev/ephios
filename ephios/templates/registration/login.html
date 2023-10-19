@@ -9,11 +9,11 @@
 
 {% block content %}
     {% translate "Login" as login_message %}
-    {% oidc_clients as clients %}
+    {% identity_providers as providers %}
     <h2>{{ login_message }}</h2>
     <div class="container">
         <div class="row">
-            {% if not global_preferences.general__hide_login_form or not clients.exists or request.GET.local %}
+            {% if not global_preferences.general__hide_login_form or not providers.exists or request.GET.local %}
                 <div class="col-lg">
                     <form method="post">
                         {% csrf_token %}
@@ -23,11 +23,11 @@
                     </form>
                 </div>
             {% endif %}
-            {% if clients.exists %}
+            {% if providers.exists %}
                 <div class="col-lg pt-4">
-                    {% for client in clients %}
+                    {% for provider in providers %}
                         <div class="mb-1">
-                            <a class="btn btn-primary w-100" href="{% url 'core:oidc_initiate' client.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{% blocktranslate trimmed with label=client.label %}Login with {{ label }}{% endblocktranslate %}</a>
+                            <a class="btn btn-primary w-100" href="{% url 'core:oidc_initiate' provider.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{% blocktranslate trimmed with label=provider.label %}Login with {{ label }}{% endblocktranslate %}</a>
                         </div>
                     {% endfor %}
                 </div>

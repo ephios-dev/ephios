@@ -15,7 +15,7 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.events import PlaceholderParticipation
-from ephios.core.models.users import EphiosOIDCClient
+from ephios.core.models.users import IdentityProvider
 
 admin.site.register(UserProfile)
 admin.site.register(Qualification)
@@ -30,4 +30,4 @@ admin.site.register(EventType)
 admin.site.register(LocalParticipation)
 admin.site.register(PlaceholderParticipation)
 admin.site.register(Notification)
-admin.site.register(EphiosOIDCClient)
+admin.site.register(IdentityProvider)

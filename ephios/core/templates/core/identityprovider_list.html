@@ -2,11 +2,12 @@
 {% load i18n %}
 
 {% block settings_content %}
-    <div class="alert alert-info" role="alert">
+    <h3>{% translate "Identity providers" %}</h3>
+    <p>
         {% blocktranslate trimmed %}
             ephios can use other services (identity providers) to authenticate users via OpenID Connect (OIDC), e.g. a Nextcloud instance. You can set up multiple identity providers and users can choose which one to use when logging in.
         {% endblocktranslate %}
-    </div>
+    </p>
     <a class="btn btn-secondary" href="{% url "core:settings_oidc_discovery" %}"><span
         class="fa fa-plus"></span> {% translate "Add identity provider" %}</a>
     <table id="event_table" class="table table-striped display mt-2">
@@ -17,15 +18,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for client in ephiosoidcclient_list %}
+            {% for provider in identityprovider_list %}
                 <tr>
-                    <td class="break-word">{{ client.label }}</td>
+                    <td class="break-word">{{ provider.label }}</td>
                     <td class="d-flex">
                         <a class="btn btn-secondary btn-sm text-nowrap"
-                           href="{% url "core:settings_oidc_edit" client.pk %}"><span
+                           href="{% url "core:settings_oidc_edit" provider.pk %}"><span
                             class="fa fa-edit"></span> <span class="d-none d-md-inline">{% translate "Edit" %}</span></a>
                         <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                           href="{% url "core:settings_oidc_delete" client.pk %}"><span
+                           href="{% url "core:settings_oidc_delete" provider.pk %}"><span
                             class="fa fa-trash-alt"></span> <span class="d-none d-md-inline">{% translate "Delete" %}</span></a>
                     </td>
                 </tr>

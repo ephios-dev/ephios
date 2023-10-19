@@ -3,6 +3,13 @@
 {% load crispy_forms_filters %}
 
 {% block settings_content %}
+    <h3>
+        {% if identityprovider %}
+            {% translate "Edit identity provider" %}
+        {% else %}
+            {% translate "Add identity provider" %}
+        {% endif %}
+    </h3>
     <form method="POST">
         {% csrf_token %}
         {{ form|crispy }}

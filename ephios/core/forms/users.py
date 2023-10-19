@@ -476,3 +476,9 @@ class OIDCDiscoveryForm(Form):
     url = forms.URLField(
         label=_("OIDC Provider URL"), help_text=_("The base URL of the OIDC provider.")
     )
+
+    def clean_url(self):
+        url = self.cleaned_data["url"]
+        if not url.endswith("/"):
+            url += "/"
+        return url
