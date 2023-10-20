@@ -21,6 +21,7 @@ from requests_oauthlib import OAuth2Session
 
 from ephios.core.forms.users import OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
+from ephios.extra.mixins import StaffRequiredMixin
 
 
 class OIDCInitiateView(RedirectView):
@@ -86,7 +87,7 @@ class OIDCLogoutView(RedirectView):
         return logout_url
 
 
-class IdentityProviderCreateView(SuccessMessageMixin, CreateView):
+class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = IdentityProvider
     fields = [
         "label",
@@ -134,7 +135,7 @@ class IdentityProviderCreateView(SuccessMessageMixin, CreateView):
         return initial
 
 
-class IdentityProviderDiscoveryView(FormView):
+class IdentityProviderDiscoveryView(StaffRequiredMixin, FormView):
     form_class = OIDCDiscoveryForm
     template_name = "core/identityprovider_discovery.html"
 
@@ -142,11 +143,11 @@ class IdentityProviderDiscoveryView(FormView):
         return redirect(f"{reverse('core:settings_idp_create')}?url={form.cleaned_data['url']}")
 
 
-class IdentityProviderListView(ListView):
+class IdentityProviderListView(StaffRequiredMixin, ListView):
     model = IdentityProvider
 
 
-class IdentityProviderUpdateView(UpdateView):
+class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
     model = IdentityProvider
     fields = [
         "label",
@@ -162,6 +163,6 @@ class IdentityProviderUpdateView(UpdateView):
     ]
 
 
-class IdentityProviderDeleteView(DeleteView):
+class IdentityProviderDeleteView(StaffRequiredMixin, DeleteView):
     model = IdentityProvider
     success_url = reverse_lazy("core:settings_idp_list")
