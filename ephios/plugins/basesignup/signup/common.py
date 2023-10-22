@@ -7,36 +7,77 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup.methods import (
-    BaseSignupMethod,
+from ephios.core.signup.checker import (
+    ActionDisallowedError,
+    BaseSignupActionValidator,
     ParticipantUnfitError,
     SignupDisallowedError,
 )
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.views import BaseSignupView
 
 _Base = BaseSignupMethod if typing.TYPE_CHECKING else object
 
 
+class MinimumAgeConfigFormMixin(forms.Form):
+    minimum_age = forms.IntegerField(
+        required=False, min_value=0, max_value=999, initial=None, label=_("Minimum age")
+    )
+
+
+class MinimumAgeMixin(_Base):
+    @property
+    def signup_action_validator_class(self):
+        class Validator(super().signup_action_validator_class):
+            @staticmethod
+            def check_participant_age(method, participant):
+                minimum_age = getattr(method.configuration, "minimum_age", None)
+                day = method.shift.start_time.date()
+                age = participant.get_age(day)
+                if minimum_age is not None and age is not None and age < minimum_age:
+                    raise ParticipantUnfitError(
+                        _("You are too young. The minimum age is {age}.").format(age=minimum_age)
+                    )
+
+            def get_checkers(self):
+                return super().get_checkers() + [self.check_participant_age]
+
+        return Validator
+
+    @property
+    def configuration_form_class(self):
+        class ConfigurationForm(MinimumAgeConfigFormMixin, super().configuration_form_class):
+            pass
+
+        return ConfigurationForm
+
+
 class MinMaxParticipantsMixin(_Base):
     @property
-    def _signup_checkers(self):
-        return super()._signup_checkers + [self.check_maximum_number_of_participants]
+    def signup_action_validator_class(self):
+        class Validator(super().signup_action_validator_class):
+            @staticmethod
+            def check_maximum_number_of_participants(method, participant):
+                if (
+                    not method.uses_requested_state
+                    and method.configuration.maximum_number_of_participants is not None
+                ):
+                    current_count = len(
+                        [
+                            participation
+                            for participation in method.shift.participations.all()
+                            if participation.state == AbstractParticipation.States.CONFIRMED
+                        ]
+                    )
+                    if current_count >= method.configuration.maximum_number_of_participants:
+                        raise SignupDisallowedError(
+                            _("The maximum number of participants is reached.")
+                        )
 
-    @staticmethod
-    def check_maximum_number_of_participants(method, participant):
-        if (
-            not method.uses_requested_state
-            and method.configuration.maximum_number_of_participants is not None
-        ):
-            current_count = len(
-                [
-                    participation
-                    for participation in method.shift.participations.all()
-                    if participation.state == AbstractParticipation.States.CONFIRMED
-                ]
-            )
-            if current_count >= method.configuration.maximum_number_of_participants:
-                return SignupDisallowedError(_("The maximum number of participants is reached."))
+            def get_checkers(self):
+                return super().get_checkers() + [self.check_maximum_number_of_participants]
+
+        return Validator
 
     def get_participant_count_bounds(self):
         return (
@@ -77,15 +118,19 @@ class QualificationsRequiredSignupMixin(_Base):
             )
 
     @property
-    def _signup_checkers(self):
-        return super()._signup_checkers + [self.check_qualification]
+    def signup_action_validator_class(self):
+        class Validator(super().signup_action_validator_class):
+            @staticmethod
+            def check_qualification(method, participant):
+                if not participant.has_qualifications(method.configuration.required_qualifications):
+                    raise ParticipantUnfitError(
+                        _("You don't have all required qualifications for this shift.")
+                    )
 
-    @staticmethod
-    def check_qualification(method, participant):
-        if not participant.has_qualifications(method.configuration.required_qualifications):
-            return ParticipantUnfitError(
-                _("You don't have all required qualifications for this shift.")
-            )
+            def get_checkers(self):
+                return super().get_checkers() + [self.check_qualification]
+
+        return Validator
 
     @property
     def configuration_form_class(self):
@@ -136,6 +181,7 @@ class QualificationMinMaxBaseSignupMethod(
     RenderParticipationPillsShiftStateMixin,
     QualificationsRequiredSignupMixin,
     MinMaxParticipantsMixin,
+    MinimumAgeMixin,
     BaseSignupMethod,
 ):
     @property
@@ -177,3 +223,14 @@ class NoSignupSignupView(BaseSignupView):
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     post = get
+
+
+class NoSignupSignupActionValidator(BaseSignupActionValidator):
+    def get_no_signup_allowed_message(self):
+        return _("Signup for this shift is disabled.")
+
+    def signup_is_disabled(self, method, participant):
+        raise ActionDisallowedError(self.get_no_signup_allowed_message())
+
+    def get_checkers(self):
+        return [self.signup_is_disabled]

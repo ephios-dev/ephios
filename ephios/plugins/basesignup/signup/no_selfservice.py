@@ -2,8 +2,9 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import (
+    NoSignupSignupActionValidator,
     NoSignupSignupView,
     RenderParticipationPillsShiftStateMixin,
 )
@@ -22,6 +23,13 @@ class NoSelfserviceConfigurationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
 
+class NoSelfserviceSignupActionValidator(NoSignupSignupActionValidator):
+    def get_no_signup_allowed_message(self):
+        return self.signup_method.configuration.no_selfservice_explanation or _(
+            "Signup for this shift is disabled."
+        )
+
+
 class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = "no_selfservice"
     verbose_name = _("No Signup (only disposition)")
@@ -29,27 +37,9 @@ class NoSelfserviceSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSig
     uses_requested_state = False
     configuration_form_class = NoSelfserviceConfigurationForm
     signup_view_class = NoSignupSignupView
+    signup_action_validator_class = NoSelfserviceSignupActionValidator
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         raise TypeError(f"{self.__class__} does not support signup")
-
-    @staticmethod
-    def signup_is_disabled(method, participant):
-        return ActionDisallowedError(
-            method.configuration.no_selfservice_explanation
-            or _("Signup for this shift is disabled.")
-        )
-
-    @property
-    def _signup_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
-
-    @property
-    def _decline_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
