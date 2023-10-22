@@ -107,7 +107,7 @@ class FederatedUserShiftActionView(CheckFederatedAccessTokenMixin, BaseShiftActi
     def get_participant(self):
         try:
             return FederatedUser.objects.get(
-                pk=self.request.session["federation_user"]
+                pk=self.request.session["federated_user"]
             ).as_participant()
         except FederatedUser.DoesNotExist as e:
             raise PermissionDenied from e

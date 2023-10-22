@@ -7,6 +7,7 @@ from oauth2_provider.generators import generate_client_secret
 
 from ephios.api.models import AccessToken, Application
 from ephios.plugins.federation.models import (
+    FederatedEventShare,
     FederatedGuest,
     FederatedHost,
     FederatedUser,
@@ -56,3 +57,11 @@ def federated_user(federation):
         phone="12345",
         federated_instance=guest,
     )
+
+
+@pytest.fixture
+def federated_event(event, federation):
+    host, guest = federation
+    share = FederatedEventShare.objects.create(event=event)
+    share.shared_with.add(guest)
+    return event
