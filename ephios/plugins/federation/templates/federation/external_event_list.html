@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load settings_extras %}
 {% load i18n %}
 
 {% block title %}
@@ -16,7 +17,7 @@
                     </div>
                 </div>
                 <a class="w-100 text-reset py-2 event-list-item-link"
-                   href="{{ event.signup_url }}?referrer={{ SITE_URL }}">
+                   href="{{ event.signup_url }}?referrer={% site_url %}">
                     <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                         <div class="grid-title">
                             <div>
