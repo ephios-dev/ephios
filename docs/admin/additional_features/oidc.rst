@@ -45,11 +45,15 @@ The following additional configuration options are available:
 Value                          Usage                                               Default value
 ============================== =================================================== ========================
 scopes                         Scopes to request from the RP (for additional data) ``openid profile email``
-end_session_endpoint           redirect the user to the RP logout page             None (no redirect)
+end_session_endpoint           redirect the user to the logout page of the IDP     None (no redirect)
 default groups                 groups to add all users logging in with this IDP to None (no groups)
 ============================== =================================================== ========================
 
-If users are logged in exclusively, you can also hide the local login form with the appropriate settings under "ephios instance".
+If users are logged in exclusively using identity providers, you can also hide the local login form with the appropriate settings under "ephios instance".
+
+.. warning::
+    ephios uses the email adress provided by the IDP to identify a user account. If the IDP allows the user to change their email adress,
+    users could enter the email adress of another user and log in as that user. To prevent this, you should configure your IDP to not allow users to change their email adress.
 
 Usage
 -----
