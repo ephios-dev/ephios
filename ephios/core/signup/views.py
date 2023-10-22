@@ -38,7 +38,6 @@ class BaseSignupView(FormView):
                 "method": self.method,
                 "participant": self.participant,
                 "instance": self.participation,
-                "targets_positive_state": self.request.POST.get("signup_choice") == "sign_up",
             }
         )
         return kwargs
@@ -53,20 +52,18 @@ class BaseSignupView(FormView):
         prevent_getting_participant_from_request_user(request)
 
     def form_valid(self, form):
-        if (choice := self.request.POST.get("signup_choice")) is not None:
-            if choice == "sign_up" and self.method.get_validator(self.participant).can_sign_up():
-                return self.signup_pressed(form)
-            if (
-                choice == "customize"
-                and self.method.get_validator(self.participant).can_customize_signup()
-            ):
-                return self.customize_pressed(form)
-            if choice == "decline" and self.method.get_validator(self.participant).can_decline():
-                return self.decline_pressed(form)
-            messages.error(self.request, _("This action is not allowed."))
-            return redirect(self.participant.reverse_event_detail(self.shift.event))
-        form.add_error(None, _("Form submission is missing the mode of signup."))
-        return self.form_invalid(form)
+        choice = form.cleaned_data["signup_choice"]
+        if choice == "sign_up" and self.method.get_validator(self.participant).can_sign_up():
+            return self.signup_pressed(form)
+        if (
+            choice == "customize"
+            and self.method.get_validator(self.participant).can_customize_signup()
+        ):
+            return self.customize_pressed(form)
+        if choice == "decline" and self.method.get_validator(self.participant).can_decline():
+            return self.decline_pressed(form)
+        messages.error(self.request, _("This action is not allowed."))
+        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     def customize_pressed(self, form):
         form.save()

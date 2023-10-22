@@ -600,7 +600,7 @@ msgstr ""
 #: ephios.core.signup.methods.BaseSignupMethod.get_participant_count_bounds:1
 #: of
 msgid ""
-"Return a typle of min, max for how many participants are allowed for the "
+"Return a tuple of min, max for how many participants are allowed for the "
 "shift. Use None for any value if it is not specifiable. The default "
 "implementation returns None, None to signify both values are not "
 "specified."

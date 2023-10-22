@@ -15,15 +15,14 @@ class BaseSignupMethodError(ValidationError):
 
 class SignupDisallowedError(BaseSignupMethodError):
     """
-    Error to return if the participant cannot sign up for a shift,
-    even if formally fit, because of certain other circumstances.
+    Error to return if the participant cannot sign up.
     """
 
 
 class ParticipantUnfitError(SignupDisallowedError):
     """
-    Error to return if the participant is unfit for a shift,
-    regardless of participation state or situation.
+    More specific error to return if the participant cannot
+    sign up, because they do not meet the requirements.
     """
 
 
@@ -32,13 +31,13 @@ class DeclineDisallowedError(BaseSignupMethodError):
 
 
 class ActionDisallowedError(SignupDisallowedError, DeclineDisallowedError):
-    """Error to return if the participant cannot perform an action on a shift."""
+    """Error to return if the participant cannot perform any action on a shift."""
 
 
 class ImproperlyConfiguredError(ActionDisallowedError):
     """
-    Error to return if signup cannot be performed for
-    technical or configuration reasons.
+    Error to return if any signup action cannot be performed
+    for technical or configuration reasons.
     """
 
 

@@ -163,7 +163,7 @@ class AbstractSignupMethod(ABC):
 
     def get_participant_count_bounds(self):
         """
-        Return a typle of min, max for how many participants are allowed for the shift.
+        Return a tuple of min, max for how many participants are allowed for the shift.
         Use None for any value if it is not specifiable."""
         raise NotImplementedError()
 
@@ -262,17 +262,9 @@ class BaseSignupMethod(AbstractSignupMethod):
         )
 
     def get_participant_count_bounds(self):
-        """
-        Return a typle of min, max for how many participants are allowed for the shift.
-        Use None for any value if it is not specifiable.
-        The default implementation returns None, None to signify both values are not specified.
-        """
         return None, None
 
     def get_signup_stats(self) -> "SignupStats":
-        """
-        Return an instance of SignupStats for the shift.
-        """
         min_count, max_count = self.get_participant_count_bounds()
         participations = list(self.shift.participations.all())
         confirmed_count = sum(
