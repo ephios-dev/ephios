@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
+from ephios.core.signup.forms import AbstractSignupMethodConfigurationForm
 from ephios.core.signup.methods import BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import (
     NoSignupSignupActionValidator,
@@ -10,17 +11,12 @@ from ephios.plugins.basesignup.signup.common import (
 )
 
 
-class NoSelfserviceConfigurationForm(forms.Form):
-    template_name = "core/signup_configuration_form.html"
+class NoSelfserviceConfigurationForm(AbstractSignupMethodConfigurationForm):
     no_selfservice_explanation = forms.CharField(
         label=_("Explanation"),
         required=False,
         initial="",
     )
-
-    def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop("event")
-        super().__init__(*args, **kwargs)
 
 
 class NoSelfserviceSignupActionValidator(NoSignupSignupActionValidator):
