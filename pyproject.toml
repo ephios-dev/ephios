@@ -23,7 +23,7 @@ django-csp = "^3.7"
 bleach = ">=6.0.0,<7.0.0"
 Markdown = "^3.3.7"
 
-psycopg2 = {version = "^2.9.3", optional = true}
+psycopg = {version = "^3.1.12", optional = true}
 mysqlclient = {version = "^2.1.1", optional = true}
 redis = {extras = ["hiredis"], version = "^5.0.0", optional = true}
 django-compressor = "^4.3"
@@ -51,7 +51,7 @@ pyjwt = "^2.8.0"
 scipy = "^1.12.0"
 
 [tool.poetry.extras]
-pgsql = ["psycopg2"]
+pgsql = ["psycopg"]
 mysql = ["mysqlclient"]
 redis = ["redis"]
 
