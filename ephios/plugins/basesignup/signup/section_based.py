@@ -11,7 +11,7 @@ from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import BaseSignupForm, BaseSignupMethodConfigurationForm
 from ephios.core.signup.methods import BaseSignupMethod, ParticipantUnfitError
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.views import BaseSignupView
@@ -111,7 +111,7 @@ SectionsFormset = forms.formset_factory(
 )
 
 
-class SectionBasedConfigurationForm(BaseSignupMethod.configuration_form_class):
+class SectionBasedConfigurationForm(BaseSignupMethodConfigurationForm):
     template_name = "basesignup/section_based/configuration_form.html"
 
     choose_preferred_section = forms.BooleanField(
@@ -211,9 +211,8 @@ class SectionBasedSignupMethod(BaseSignupMethod):
     )
     registration_button_text = _("Request")
     signup_view_class = SectionBasedSignupView
-    disposition_participation_form_class = SectionBasedDispositionParticipationForm
-
     configuration_form_class = SectionBasedConfigurationForm
+    disposition_participation_form_class = SectionBasedDispositionParticipationForm
     shift_state_template_name = "basesignup/section_based/fragment_state.html"
 
     def _get_signup_stats_per_section(self, participations=None):
