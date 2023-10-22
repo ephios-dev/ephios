@@ -10,11 +10,13 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
+from ephios.core.signup.checker import ParticipantUnfitError
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.forms import BaseSignupForm, BaseSignupMethodConfigurationForm
-from ephios.core.signup.methods import BaseSignupMethod, ParticipantUnfitError
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.views import BaseSignupView
+from ephios.plugins.basesignup.signup.common import MinimumAgeConfigFormMixin, MinimumAgeMixin
 
 NO_SECTION_UUID = "other"
 
@@ -111,9 +113,8 @@ SectionsFormset = forms.formset_factory(
 )
 
 
-class SectionBasedConfigurationForm(BaseSignupMethodConfigurationForm):
+class SectionBasedConfigurationForm(MinimumAgeConfigFormMixin, BaseSignupMethodConfigurationForm):
     template_name = "basesignup/section_based/configuration_form.html"
-
     choose_preferred_section = forms.BooleanField(
         label=_("Participants must provide a preferred section"),
         help_text=_("This only makes sense if you configure multiple sections."),
@@ -202,7 +203,7 @@ class SectionBasedSignupView(BaseSignupView):
     signup_error_message = _("Requesting a participation failed: {error}")
 
 
-class SectionBasedSignupMethod(BaseSignupMethod):
+class SectionBasedSignupMethod(MinimumAgeMixin, BaseSignupMethod):
     slug = "section_based"
     verbose_name = _("Apply for sections")
     description = _(
@@ -275,14 +276,20 @@ class SectionBasedSignupMethod(BaseSignupMethod):
 
         return signup_stats
 
-    @staticmethod
-    def check_qualification(method, participant):
-        if not sections_participant_qualifies_for(method.configuration.sections, participant):
-            return ParticipantUnfitError(_("You are not qualified."))
-
     @property
-    def _signup_checkers(self):
-        return super()._signup_checkers + [self.check_qualification]
+    def signup_action_validator_class(self):
+        class SectionSignupActionValidator(super().signup_action_validator_class):
+            @staticmethod
+            def check_qualification(method, participant):
+                if not sections_participant_qualifies_for(
+                    method.configuration.sections, participant
+                ):
+                    raise ParticipantUnfitError(_("You are not qualified."))
+
+            def get_checkers(self):
+                return super().get_checkers() + [self.check_qualification]
+
+        return SectionSignupActionValidator
 
     # pylint: disable=arguments-differ
     def _configure_participation(

@@ -7,7 +7,8 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import get_conflicting_participations
+from ephios.core.signup.checker import get_conflicting_participations
+from ephios.core.signup.methods import AbstractSignupMethod
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
@@ -104,7 +105,7 @@ class BaseSignupForm(BaseParticipationForm):
                 f'<a class="btn btn-secondary mt-1" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
             )
         )
-        if self.method.can_decline(self.participant):
+        if self.method.get_validator(self.participant).can_decline():
             buttons.append(
                 HTML(
                     f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
@@ -113,7 +114,7 @@ class BaseSignupForm(BaseParticipationForm):
         return buttons
 
     def __init__(self, *args, **kwargs):
-        self.method = kwargs.pop("method")
+        self.method: AbstractSignupMethod = kwargs.pop("method")
         self.targets_positive_state = kwargs.pop("targets_positive_state")
         self.shift: Shift = self.method.shift
         self.participant: AbstractParticipant = kwargs.pop("participant")
@@ -154,9 +155,6 @@ class BaseSignupForm(BaseParticipationForm):
 
 class BaseSignupMethodConfigurationForm(forms.Form):
     template_name = "core/signup_configuration_form.html"
-    minimum_age = forms.IntegerField(
-        required=False, min_value=1, max_value=999, initial=None, label=_("Minimum age")
-    )
     signup_until = forms.SplitDateTimeField(
         required=False,
         widget=CustomSplitDateTimeWidget,

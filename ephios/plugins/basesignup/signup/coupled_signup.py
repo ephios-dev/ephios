@@ -10,9 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import ActionDisallowedError, BaseSignupMethod
+from ephios.core.signup.checker import ActionDisallowedError
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.common import (
+    NoSignupSignupActionValidator,
     NoSignupSignupView,
     RenderParticipationPillsShiftStateMixin,
 )
@@ -65,6 +67,22 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
         except Shift.DoesNotExist:
             return None
 
+    @property
+    def signup_action_validator_class(self):
+        class CoupledSignupActionValidator(NoSignupSignupActionValidator):
+            def get_no_signup_allowed_message(self):
+                if self.signup_method.leader_shift:
+                    return ActionDisallowedError(
+                        _("Participation is coupled to {}.").format(self.signup_method.leader_shift)
+                    )
+                # This is red as it requires responsibles to update the shift configuration.
+                text = _(
+                    "Participation is coupled to another shift, but the leading shift is missing."
+                )
+                return ActionDisallowedError(mark_safe(f'<span class="text-danger">{text}</span>'))
+
+        return CoupledSignupActionValidator
+
     @staticmethod
     def signup_is_disabled(method, participant):
         if method.leader_shift:
@@ -74,18 +92,6 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
         # This is red as it requires responsibles to update the shift configuration.
         text = _("Participation is coupled to another shift, but the leading shift is missing.")
         return ActionDisallowedError(mark_safe(f'<span class="text-danger">{text}</span>'))
-
-    @property
-    def _signup_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
-
-    @property
-    def _decline_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
 
     def get_signup_stats(self) -> "SignupStats":
         raw_signupstats = super().get_signup_stats()

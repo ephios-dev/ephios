@@ -3,21 +3,16 @@ import logging
 from abc import ABC
 from argparse import Namespace
 from collections import OrderedDict
-from typing import List
 
-from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.template.loader import get_template
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.dynamic_preferences_registry import GeneralRequiredQualificationPreference
-from ephios.core.models import AbstractParticipation, Shift
+from ephios.core.models import AbstractParticipation
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationDeclinedNotification,
 )
-from ephios.core.signals import check_participant_signup, register_signup_methods
+from ephios.core.signals import register_signup_methods
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.utils import format_anything
@@ -42,155 +37,7 @@ def signup_method_from_slug(slug, shift=None, event=None):
     raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
-class ParticipationError(ValidationError):
-    """Superclass of errors used in the signup mechanism."""
-
-
-class ActionDisallowedError(ValidationError):
-    """Error to return if the participant cannot perform an action on a shift."""
-
-
-class SignupDisallowedError(ActionDisallowedError):
-    """
-    Error to return if the participant cannot sign up for a shift,
-    even if formally fit, because of certain other circumstances.
-    """
-
-
-class DeclineDisallowedError(ActionDisallowedError):
-    """Error to return if the participant cannot decline a shift."""
-
-
-class ParticipantUnfitError(ParticipationError):
-    """
-    Error to return if the participant is unfit for a shift,
-    regardless of participation state or situation.
-    """
-
-
-class ImproperlyConfiguredError(ParticipationError):
-    """
-    Error to return if signup cannot be performed for
-    technical or configuration reasons.
-    """
-
-
-def check_event_is_active(method, participant):
-    if not method.shift.event.active:
-        return ActionDisallowedError(_("The event is not active."))
-
-
-def check_participation_state_for_signup(method, participant):
-    participation = participant.participation_for(method.shift)
-    if participation is not None:
-        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return SignupDisallowedError(_("You have been rejected."))
-
-
-def check_participation_state_for_decline(method, participant):
-    participation = participant.participation_for(method.shift)
-    if participation is not None:
-        if (
-            participation.state == AbstractParticipation.States.CONFIRMED
-            and not method.configuration.user_can_decline_confirmed
-        ):
-            return DeclineDisallowedError(_("You cannot decline by yourself."))
-        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            return DeclineDisallowedError(_("You have been rejected."))
-        if participation.state == AbstractParticipation.States.USER_DECLINED:
-            return DeclineDisallowedError(_("You have already declined participating."))
-
-
-def check_inside_signup_timeframe(method, participant):
-    last_time = method.shift.end_time
-    if method.configuration.signup_until is not None:
-        last_time = min(last_time, method.configuration.signup_until)
-    if timezone.now() > last_time:
-        return ActionDisallowedError(_("The signup period is over."))
-
-
-def check_participant_age(method, participant):
-    minimum_age = getattr(method.configuration, "minimum_age", None)
-    day = method.shift.start_time.date()
-    age = participant.get_age(day)
-    if minimum_age is not None and age is not None and age < minimum_age:
-        return ParticipantUnfitError(
-            _("You are too young. The minimum age is {age}.").format(age=minimum_age)
-        )
-
-
-def check_general_required_qualifications(method, participant):
-    if not participant.has_qualifications(
-        method.shift.event.type.preferences[GeneralRequiredQualificationPreference.name]
-    ):
-        return ParticipantUnfitError(
-            _(
-                "You lack the necessary qualification to participate in {eventtype} type events."
-            ).format(eventtype=method.shift.event.type)
-        )
-
-
-def check_participant_signup_signal(method, participant):
-    errors = []
-    for _, result in check_participant_signup.send(None, method=method, participant=participant):
-        if result is not None:
-            errors.append(result)
-    return errors
-
-
-def get_conflicting_participations(
-    participant: AbstractParticipant, shift: Shift, start_time=None, end_time=None, total=False
-):
-    """
-    Return a queryset of participations of a participant in conflict with
-    a (potential) participation specified by the arguments.
-
-        Parameters:
-            participant: AbstractParticipant to check conflict for
-            shift: conflicting participations for this shift
-            start_time, end_time: specify times other than the default times of `shift`
-            total (bool): If True, only return conflicts that can't be
-                          resolved by only participating in only part of `shift`.
-
-        Returns:
-            a queryset of participations
-    """
-    start_time = start_time or shift.start_time
-    end_time = end_time or shift.end_time
-    qs = participant.all_participations().filter(
-        ~Q(shift=shift)
-        & Q(state=AbstractParticipation.States.CONFIRMED)
-        & Q(start_time__lt=end_time, end_time__gt=start_time)
-    )
-    if total:
-        qs = qs.filter(start_time__lte=shift.start_time, end_time__gte=shift.end_time)
-    return qs
-
-
-def check_conflicting_participations(method, participant):
-    start_time, end_time = method.shift.start_time, method.shift.end_time
-    if participation := participant.participation_for(method.shift):
-        start_time, end_time = participation.start_time, participation.end_time
-
-    # if users can provide individual times, only total conflicts should block signup
-    total = getattr(method.configuration, "user_can_customize_signup_times", False)
-    if conflicts := get_conflicting_participations(
-        participant=participant,
-        shift=method.shift,
-        start_time=start_time,
-        end_time=end_time,
-        total=total,
-    ):
-        return SignupDisallowedError(
-            _("You are already confirmed for other shifts at this time: {shifts}.").format(
-                shifts=", ".join(str(shift) for shift in conflicts)
-            )
-        )
-
-
 class AbstractSignupMethod(ABC):
-    # pylint: disable=too-many-public-methods
-
     """
     Abstract base class for signup methods.
 
@@ -224,6 +71,12 @@ class AbstractSignupMethod(ABC):
     def description(self):
         """
         A human-readable description of this signup method.
+        """
+        raise NotImplementedError()
+
+    def get_validator(self, participant):
+        """
+        Return a SignupActionValidator for this signup method.
         """
         raise NotImplementedError()
 
@@ -271,42 +124,6 @@ class AbstractSignupMethod(ABC):
         Whether this signup method uses the requested state.
         """
         return True
-
-    def get_signup_errors(self, participant) -> List[ParticipationError]:
-        """Return a list of ParticipationErrors that describe reasons for not being able to sign up."""
-        raise NotImplementedError()
-
-    def get_decline_errors(self, participant) -> List[ParticipationError]:
-        """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
-        raise NotImplementedError()
-
-    def can_decline(self, participant):
-        """
-        Return whether the participant is allowed to decline.
-        """
-        return not self.get_decline_errors(participant)
-
-    def can_sign_up(self, participant):
-        """
-        Return whether the participant is allowed to perform signup.
-        """
-        signupable_state = (
-            p := participant.participation_for(self.shift)
-        ) is None or not p.is_in_positive_state()
-        return signupable_state and not self.get_signup_errors(participant)
-
-    def can_customize_signup(self, participant):
-        """
-        Return whether the participant gets shown the option to customize their participation.
-        """
-        positive_state = (
-            p := participant.participation_for(self.shift)
-        ) is not None and p.is_in_positive_state()
-
-        if positive_state:
-            # If in a positive state, check that you can decline and then sign up again.
-            return self.can_decline(participant) and not self.get_signup_errors(participant)
-        return not self.get_signup_errors(participant)
 
     def has_customized_signup(self, participation):
         """
@@ -389,47 +206,14 @@ class BaseSignupMethod(AbstractSignupMethod):
         return self.signup_view_class.as_view(method=self, shift=self.shift)
 
     @property
-    def _signup_checkers(self):
-        """Return a list of methods that check if the participant can sign up for the shift."""
-        return [
-            check_event_is_active,
-            check_participation_state_for_signup,
-            check_inside_signup_timeframe,
-            check_conflicting_participations,
-            check_participant_age,
-            check_general_required_qualifications,
-            check_participant_signup_signal,
-        ]
+    def signup_action_validator_class(self):
+        from ephios.core.signup.checker import BaseSignupActionValidator
 
-    @property
-    def _decline_checkers(self):
-        """Return a list of methods that check if the participant can decline the shift."""
-        return [
-            check_event_is_active,
-            check_participation_state_for_decline,
-            check_inside_signup_timeframe,
-        ]
+        return BaseSignupActionValidator
 
-    def _run_checkers(self, participant, checkers) -> List[ParticipationError]:
-        errors = []
-        for checker in checkers:
-            # checkers can return None, a single ParticipationError, or a list of them
-            if (error := checker(self, participant)) is not None:
-                if isinstance(error, list):
-                    errors.extend(error)
-                else:
-                    errors.append(error)
-        return errors
-
-    @functools.lru_cache(maxsize=200)
-    def get_signup_errors(self, participant) -> List[ParticipationError]:
-        """Return a list of ParticipationErrors that describe reasons for not being able to sign up."""
-        return self._run_checkers(participant, self._signup_checkers)
-
-    @functools.lru_cache(maxsize=200)
-    def get_decline_errors(self, participant):
-        """Return a list of ParticipationErrors that describe reasons for not being able to decline."""
-        return self._run_checkers(participant, self._decline_checkers)
+    @functools.lru_cache(1)
+    def get_validator(self, participant):
+        return self.signup_action_validator_class(self, participant)
 
     def perform_signup(
         self, participant: AbstractParticipant, participation=None, **kwargs
@@ -442,8 +226,6 @@ class BaseSignupMethod(AbstractSignupMethod):
             ResponsibleParticipationRequestedNotification,
         )
 
-        if errors := self.get_signup_errors(participant):
-            raise ParticipationError(errors)
         participation = participation or self.get_or_create_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
@@ -452,8 +234,6 @@ class BaseSignupMethod(AbstractSignupMethod):
 
     def perform_decline(self, participant, participation=None, **kwargs):
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
-        if errors := self.get_decline_errors(participant):
-            raise ParticipationError(errors)
         participation = participation or self.get_or_create_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()

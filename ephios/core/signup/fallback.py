@@ -5,7 +5,8 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signup.methods import BaseSignupMethod, ImproperlyConfiguredError
+from ephios.core.signup.checker import BaseSignupActionValidator, ImproperlyConfiguredError
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,14 @@ def get_signup_method_failed_error_list():
     return [ImproperlyConfiguredError(mark_safe(f'<span class="text-danger">{message}</span>'))]
 
 
+class FallbackSignupActionValidator(BaseSignupActionValidator):
+    def signup_is_disabled(self, method, participant):
+        raise get_signup_method_failed_error_list()[0]
+
+    def get_checkers(self):
+        return [self.signup_is_disabled]
+
+
 class FallbackSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = None
     verbose_name = _("Fallback for missing signup methods")
@@ -38,24 +47,9 @@ class FallbackSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMe
         """This method is used when the original signup method is not installed anymore."""
     )
     uses_requested_state = False
+    signup_action_validator_class = FallbackSignupActionValidator
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         raise TypeError(f"{self.__class__} does not support signup")
-
-    @staticmethod
-    def signup_is_disabled(method, participant):
-        return get_signup_method_failed_error_list()
-
-    @property
-    def _signup_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
-
-    @property
-    def _decline_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]

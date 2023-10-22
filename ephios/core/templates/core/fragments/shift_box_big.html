@@ -100,7 +100,7 @@
                         </div>
                     {% elif not can_sign_up or not can_decline %}
                         <div class="text-body-secondary mb-1">
-                            {% for error in request|signup_errors:shift %}
+                            {% for error in request|signup_action_errors:shift %}
                                 <span>{{ error.message }}</span>
                             {% endfor %}
                         </div>
