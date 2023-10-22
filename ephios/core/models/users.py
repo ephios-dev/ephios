@@ -532,3 +532,61 @@ class Notification(Model):
 
     def get_actions(self):
         return self.notification_type.get_actions(self)
+
+
+class IdentityProvider(Model):
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_("label"),
+        help_text=_("The label displayed to users attempting to log in with this provider."),
+    )
+    client_id = models.CharField(
+        max_length=255,
+        verbose_name=_("client id"),
+        help_text=_("Your client id provided by the OIDC provider."),
+    )
+    client_secret = models.CharField(
+        max_length=255,
+        verbose_name=_("client secret"),
+        help_text=_("Your client secret provided by the OIDC provider."),
+    )
+    scopes = models.CharField(
+        max_length=255,
+        default="openid profile email",
+        verbose_name=_("scopes"),
+        help_text=_(
+            "The OIDC scopes to request from the provider. Separate multiple scopes with spaces. Use the default value if you are unsure."
+        ),
+    )
+    authorization_endpoint = models.URLField(
+        verbose_name=_("authorization endpoint"), help_text=_("The OIDC authorization endpoint.")
+    )
+    token_endpoint = models.URLField(
+        verbose_name=_("token endpoint"), help_text=_("The OIDC token endpoint.")
+    )
+    userinfo_endpoint = models.URLField(
+        verbose_name=_("user endpoint"), help_text=_("The OIDC user endpoint.")
+    )
+    end_session_endpoint = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("end session endpoint"),
+        help_text=_("The OIDC end session endpoint, if supported by your provider."),
+    )
+    jwks_uri = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("JWKS endpoint"),
+        help_text=_(
+            "The OIDC JWKS endpoint. A less secure signing method will be used if this is not provided."
+        ),
+    )
+    default_groups = models.ManyToManyField(
+        Group,
+        blank=True,
+        verbose_name=_("default groups"),
+        help_text=_("The groups that users logging in with this provider will be added to."),
+    )
+
+    def __str__(self):
+        return _("Identity provider {label}").format(label=self.label)

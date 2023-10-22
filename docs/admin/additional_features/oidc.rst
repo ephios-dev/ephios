@@ -17,27 +17,49 @@ You will also need to know the following information about your OIDC provider:
 ============================== ===============================================
 Value                          Usual value
 ============================== ===============================================
-OIDC_RP_CLIENT_ID              *displayed after OIDC client registration*
-OIDC_RP_CLIENT_SECRET          *displayed after OIDC client registration*
-OIDC_RP_SIGN_ALGO              RS256
-OIDC_OP_AUTHORIZATION_ENDPOINT https://your-oidc-provider.com/auth
-OIDC_OP_TOKEN_ENDPOINT         https://your-oidc-provider.com/token
-OIDC_OP_USER_ENDPOINT          https://your-oidc-provider.com/me
-OIDC_OP_JWKS_ENDPOINT          https://your-oidc-provider.com/certs
+client id                      *displayed after OIDC client registration*
+client secret                  *displayed after OIDC client registration*
 ============================== ===============================================
 
-These values as well as ``ENABLE_OIDC_CLIENT=True`` must be provided to the ephios configuration as environment variables.
-After completing these steps, users will see a "Login" button that starts the OIDC authentication flow. If you want to
-log in with a local user account, you can still do so by navigating to ``/accounts/login/?local=true``.
+Configuration
+-------------
+
+To configure your ephios instance, head to Settings -> Identity Providers and add a new OIDC provider.
+You are then asked to provide the base url of your identity provider. This is the url that is used to access the OIDC endpoints and depends on your provider.
+For example, if you are using Keycloak, this would be ``https://your-keycloak-instance.com/realms/your-realm``.
+If your provider supports auto-discovery, we will automatically fetch the required information from the OIDC provider.
+Otherwise, you will need to provide the following information:
+
+============================== ===============================================
+Value                          Usual value
+============================== ===============================================
+AUTHORIZATION_ENDPOINT         https://your-oidc-provider.com/auth
+TOKEN_ENDPOINT                 https://your-oidc-provider.com/token
+USERINFO_ENDPOINT              https://your-oidc-provider.com/me
+JWKS_URI                       https://your-oidc-provider.com/certs
+============================== ===============================================
 
 The following additional configuration options are available:
 
 ============================== =================================================== ========================
 Value                          Usage                                               Default value
 ============================== =================================================== ========================
-OIDC_RP_SCOPES                 Scopes to request from the RP (for additional data) ``openid profile email``
-LOGOUT_REDIRECT_URL            redirect the user to the RP logout page             None (no redirect)
+scopes                         Scopes to request from the RP (for additional data) ``openid profile email``
+end_session_endpoint           redirect the user to the logout page of the IDP     None (no redirect)
+default groups                 groups to add all users logging in with this IDP to None (no groups)
 ============================== =================================================== ========================
+
+If users are logged in exclusively using identity providers, you can also hide the local login form with the appropriate settings under "ephios instance".
+
+.. warning::
+    ephios uses the email adress provided by the IDP to identify a user account. If the IDP allows the user to change their email adress,
+    users could enter the email adress of another user and log in as that user. To prevent this, you should configure your IDP to not allow users to change their email adress.
+
+Usage
+-----
+After you configured at least one identity providers, the login page will display a button for each identity provider.
+Clicking on this button will redirect you to the OIDC provider, where you can log in.
+To log in with a local user account when the login form is hidden, you can still do so by navigating to ``/accounts/login/?local=true``.
 
 .. toctree::
     :maxdepth: 2

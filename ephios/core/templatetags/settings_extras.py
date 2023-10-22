@@ -4,6 +4,8 @@ from django import template
 from django.conf import settings
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.models.users import IdentityProvider
+
 register = template.Library()
 
 
@@ -15,8 +17,8 @@ def available_management_settings_sections(request):
 
 
 @register.simple_tag
-def oidc_client_enabled():
-    return settings.ENABLE_OIDC_CLIENT
+def identity_providers():
+    return IdentityProvider.objects.all()
 
 
 @register.simple_tag

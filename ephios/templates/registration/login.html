@@ -9,16 +9,29 @@
 
 {% block content %}
     {% translate "Login" as login_message %}
+    {% identity_providers as providers %}
     <h2>{{ login_message }}</h2>
-    {% oidc_client_enabled as oidc_enabled %}
-    {% if not oidc_enabled or request.GET.local %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button class="btn btn-primary" type="submit">{{ login_message }}</button>
-            <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
-        </form>
-    {% else %}
-        <a class="btn btn-primary" href="{% url 'oidc_authentication_init' %}">Login</a>
-    {% endif %}
+    <div class="container">
+        <div class="row">
+            {% if not global_preferences.general__hide_login_form or not providers.exists or request.GET.local %}
+                <div class="col-lg">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button class="btn btn-primary" type="submit">{{ login_message }}</button>
+                        <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
+                    </form>
+                </div>
+            {% endif %}
+            {% if providers.exists %}
+                <div class="col-lg pt-4">
+                    {% for provider in providers %}
+                        <div class="mb-1">
+                            <a class="btn btn-primary w-100" href="{% url 'core:oidc_initiate' provider.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{% blocktranslate trimmed with label=provider.label %}Login with {{ label }}{% endblocktranslate %}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

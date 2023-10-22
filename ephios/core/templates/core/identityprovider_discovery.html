@@ -1,0 +1,18 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% block settings_content %}
+    <h3>{% translate "Add identity provider" %}</h3>
+    <div class="alert alert-info" role="alert">
+        {% blocktranslate trimmed %}
+            We can try to auto-discover certain values for your identity provider. To start the discovery, please enter the base URL for the OpenID Connect protocol at your provider below.
+        {% endblocktranslate %}
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input class="btn btn-primary" type="submit" value="{% translate "Start auto-discovery" %}">
+        <a class="btn btn-secondary" href="{% url "core:settings_idp_create" %}">{% translate "Continue without auto-discovery" %}</a>
+    </form>
+{% endblock %}

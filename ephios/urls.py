@@ -42,6 +42,3 @@ if settings.ENABLE_DEBUG_TOOLBAR:
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
     ] + urlpatterns
-
-if settings.ENABLE_OIDC_CLIENT:
-    urlpatterns.append(path("oidc/", include("mozilla_django_oidc.urls")))

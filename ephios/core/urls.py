@@ -19,6 +19,16 @@ from ephios.core.views.accounts import (
     UserProfilePasswordTokenRevokationView,
     UserProfileUpdateView,
 )
+from ephios.core.views.auth import (
+    IdentityProviderCreateView,
+    IdentityProviderDeleteView,
+    IdentityProviderDiscoveryView,
+    IdentityProviderListView,
+    IdentityProviderUpdateView,
+    OIDCCallbackView,
+    OIDCInitiateView,
+    OIDCLogoutView,
+)
 from ephios.core.views.bulk import EventBulkDeleteView
 from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
@@ -190,6 +200,23 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
+    path("settings/idp/", IdentityProviderListView.as_view(), name="settings_idp_list"),
+    path("settings/idp/create/", IdentityProviderCreateView.as_view(), name="settings_idp_create"),
+    path(
+        "settings/idp/discovery/",
+        IdentityProviderDiscoveryView.as_view(),
+        name="settings_idp_discovery",
+    ),
+    path(
+        "settings/idp/<int:pk>/edit/",
+        IdentityProviderUpdateView.as_view(),
+        name="settings_idp_edit",
+    ),
+    path(
+        "settings/idp/<int:pk>/delete/",
+        IdentityProviderDeleteView.as_view(),
+        name="settings_idp_delete",
+    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),
@@ -251,4 +278,7 @@ urlpatterns = [
         WorkingHourCreateView.as_view(),
         name="workinghours_add",
     ),
+    path("oidc/initiate/<int:provider>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
+    path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
+    path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
 ]

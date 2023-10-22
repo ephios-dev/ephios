@@ -25,6 +25,7 @@ from ephios.core.models import (
     UserProfile,
     WorkingHours,
 )
+from ephios.core.models.users import IdentityProvider
 from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
 
 
@@ -420,3 +421,17 @@ def workinghours(volunteer):
             user=volunteer, hours=21, reason="RTW checken", date=date(today.year, 1, 1)
         ),
     ]
+
+
+@pytest.fixture
+def oidc_client():
+    return IdentityProvider.objects.create(
+        label="Test Client",
+        client_id="test_client",
+        client_secret="test_secret",
+        scopes="openid profile email",
+        authorization_endpoint="https://example.com/auth",
+        token_endpoint="https://example.com/token",
+        jwks_uri="https://example.com/jwks",
+        userinfo_endpoint="https://example.com/userinfo",
+    )
