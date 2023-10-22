@@ -134,7 +134,7 @@ class FederationOAuthView(View):
             )
         except FederatedUser.DoesNotExist:
             user = self._create_user(user_data)
-        self.request.session["federation_user"] = user.pk
+        self.request.session["federated_user"] = user.pk
 
     def _create_user(self, user_data):
         user = FederatedUser.objects.create(

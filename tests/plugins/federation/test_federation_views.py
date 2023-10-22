@@ -1,35 +1,50 @@
+from importlib import import_module
+from unittest.mock import patch
+
 from django.urls import reverse
 
-from ephios.plugins.federation.models import FederatedEventShare
+from ephios.plugins.federation.models import FederatedParticipation
+from ephios.plugins.federation.serializers import SharedEventSerializer
 
 
-def test_federation_get_shared_events(
-    django_app, volunteer, live_server, federation, event, django_db_serialized_rollback
-):
-    host, guest = federation(live_server.url)
-    share = FederatedEventShare.objects.create(event=event)
-    share.shared_with.add(guest)
-
+def test_federation_get_shared_events(django_app, volunteer, federation, federated_event):
+    host, guest = federation
     response = django_app.get(
         reverse("federation:shared_event_list_view"),
         headers={"Authorization": f"Bearer {host.access_token}"},
     )
-    assert event.title in response.text
+    assert federated_event.title in response.text
 
 
-def test_federation_shared_event_detail(
-    django_app, volunteer, live_server, federation, event, settings, django_db_serialized_rollback
+@patch("ephios.plugins.federation.views.frontend.requests")
+def test_federation_shared_event_list(
+    mock_requests, django_app, volunteer, federation, federated_event, settings
 ):
-    settings.GET_SITE_URL = lambda: live_server.url
-    host, guest = federation(live_server.url)
-    share = FederatedEventShare.objects.create(event=event)
-    share.shared_with.add(guest)
+    host, guest = federation
+    mock_requests.get.return_value.json.return_value = {
+        "results": [SharedEventSerializer(federated_event).data]
+    }
 
-    event_url = reverse("federation:event_detail", kwargs={"pk": event.pk})
-    response = django_app.get(f"{event_url}?referrer={live_server.url}", user=volunteer)
-    response = response.follow()
+    response = django_app.get(reverse("federation:external_event_list"), user=volunteer)
     assert response.status_code == 200
-    assert "Authorize" in response.text
-    response = response.form.submit("allow").follow().follow()
+    assert federated_event.title in response.text
+
+
+def test_federation_shared_event_detail_and_signup(
+    django_app, volunteer, federation, federated_user, federated_event, settings
+):
+    host, guest = federation
+    session = django_app.session or import_module(settings.SESSION_ENGINE).SessionStore()
+    session["federation_access_token"] = "token"
+    session["federation_guest_pk"] = guest.pk
+    session["federated_user"] = federated_user.pk
+    session.save()
+    django_app.set_cookie(settings.SESSION_COOKIE_NAME, session.session_key)
+
+    response = django_app.get(reverse("federation:event_detail", kwargs={"pk": federated_event.pk}))
     assert response.status_code == 200
-    assert event.title in response.text
+    assert federated_event.title in response.text
+
+    response = response.form.submit(name="signup_choice", value="sign_up").follow()
+    assert response.status_code == 200
+    assert FederatedParticipation.objects.count() == 1

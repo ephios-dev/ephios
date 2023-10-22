@@ -1,5 +1,6 @@
 import base64
 import json
+from unittest.mock import patch
 
 from django.urls import reverse
 from dynamic_preferences.registries import global_preferences_registry
@@ -14,18 +15,25 @@ def test_create_invitecode(django_app, superuser):
     assert InviteCode.objects.get().url == "https://example.com"
 
 
-def test_redeem_invitecode_frontend(
-    django_app, superuser, invite_code, live_server, django_db_serialized_rollback
-):
+@patch("ephios.plugins.federation.forms.requests")
+def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite_code):
+    mock_requests.post.return_value.json.return_value = {
+        "name": "Test",
+        "host_url": "http://localhost:8000",
+        "access_token": "test",
+    }
     global_preferences_registry.manager()["general__organization_name"] = "Test"
     form = django_app.get(reverse("federation:frontend_redeem_invite_code"), user=superuser).form
     form["code"] = base64.b64encode(
         json.dumps(
-            {"guest_url": invite_code.url, "code": invite_code.code, "host_url": live_server.url}
+            {
+                "guest_url": invite_code.url,
+                "code": invite_code.code,
+                "host_url": "http://localhost:8000",
+            }
         ).encode("ascii")
     ).decode("ascii")
     response = form.submit().follow()
-    assert FederatedGuest.objects.count() == 1
     assert FederatedHost.objects.count() == 1
 
 
