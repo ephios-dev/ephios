@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from ephios.core.models import AbstractParticipation, EventType, UserProfile
+from ephios.core.models import AbstractParticipation, EventType, Shift, UserProfile
 from ephios.core.signals import (
     event_action,
     event_info,
@@ -26,12 +26,12 @@ register = template.Library()
 
 
 @register.filter(name="reverse_signup_action")
-def reverse_signup_action(request, shift):
+def reverse_signup_action(request, shift: Shift):
     return request_to_participant(request).reverse_signup_action(shift)
 
 
 @register.filter(name="participation_from_request")
-def participation_from_request(request, shift):
+def participation_from_request(request, shift: Shift):
     return request_to_participant(request).participation_for(shift)
 
 
@@ -63,29 +63,30 @@ def participation_mannequin_style(participation):
 
 @register.filter(name="can_sign_up")
 @catch_signup_method_fails(default=False)
-def can_sign_up(request, shift):
-    return shift.signup_method.can_sign_up(request_to_participant(request))
+def can_sign_up(request, shift: Shift):
+    participant = request_to_participant(request)
+    return shift.signup_method.get_validator(participant).can_sign_up()
 
 
 @register.filter(name="can_customize_signup")
 @catch_signup_method_fails(default=False)
-def can_customize_signup(request, shift):
-    return shift.signup_method.can_customize_signup(request_to_participant(request))
+def can_customize_signup(request, shift: Shift):
+    participant = request_to_participant(request)
+    return shift.signup_method.get_validator(participant).can_customize_signup()
 
 
-@register.filter(name="signup_errors")
+@register.filter(name="signup_action_errors")
 @catch_signup_method_fails(default=get_signup_method_failed_error_list)
-def signup_errors(request, shift):
-    return set(
-        shift.signup_method.get_signup_errors(request_to_participant(request))
-        + shift.signup_method.get_decline_errors(request_to_participant(request))
-    )
+def signup_action_errors(request, shift: Shift):
+    validator = shift.signup_method.get_validator(request_to_participant(request))
+    return validator.get_action_errors()
 
 
 @register.filter(name="can_decline")
 @catch_signup_method_fails(default=False)
-def can_decline(request, shift):
-    return shift.signup_method.can_decline(request_to_participant(request))
+def can_decline(request, shift: Shift):
+    participant = request_to_participant(request)
+    return shift.signup_method.get_validator(participant).can_decline()
 
 
 @register.filter(name="confirmed_participations")

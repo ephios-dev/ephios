@@ -12,11 +12,7 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
-from ephios.core.signup.methods import (
-    ParticipantUnfitError,
-    ParticipationError,
-    get_conflicting_participations,
-)
+from ephios.core.signup.checker import ParticipantUnfitError, get_conflicting_participations
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 
@@ -38,15 +34,21 @@ def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_vol
     assert not list(
         filter(
             lambda error: isinstance(error, ParticipantUnfitError),
-            shift.signup_method.get_signup_errors(qualified_volunteer.as_participant()),
+            shift.signup_method.get_validator(
+                qualified_volunteer.as_participant()
+            ).get_signup_errors(),
         )
     )
-    assert shift.signup_method.get_signup_errors(qualified_volunteer.as_participant())
+    assert shift.signup_method.get_validator(
+        qualified_volunteer.as_participant()
+    ).get_signup_errors()
 
 
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
-    assert not conflicting_event.shifts.first().signup_method.can_sign_up(
-        volunteer.as_participant()
+    assert (
+        not conflicting_event.shifts.first()
+        .signup_method.get_validator(volunteer.as_participant())
+        .can_sign_up()
     )
 
 
@@ -187,8 +189,13 @@ def test_general_required_qualifications(django_app, event, volunteer, qualifica
     event.type.preferences["general_required_qualifications"] = Qualification.objects.filter(
         pk=qualifications.b.pk
     )
-    with pytest.raises(ParticipationError):
-        event.shifts.first().signup_method.perform_signup(volunteer.as_participant())
+    assert (
+        not event.shifts.first()
+        .signup_method.get_validator(volunteer.as_participant())
+        .can_sign_up()
+    )
     QualificationGrant.objects.create(qualification=qualifications.b, user=volunteer)
     volunteer.refresh_from_db()
-    event.shifts.first().signup_method.perform_signup(volunteer.as_participant())
+    assert (
+        event.shifts.first().signup_method.get_validator(volunteer.as_participant()).can_sign_up()
+    )

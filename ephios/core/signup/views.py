@@ -9,8 +9,9 @@ from ephios.core.models import Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
+from ephios.core.signup.checker import BaseSignupMethodError
 from ephios.core.signup.forms import BaseSignupForm
-from ephios.core.signup.methods import BaseSignupMethod, ParticipationError
+from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.participants import AbstractParticipant
 
 
@@ -53,11 +54,14 @@ class BaseSignupView(FormView):
 
     def form_valid(self, form):
         if (choice := self.request.POST.get("signup_choice")) is not None:
-            if choice == "sign_up" and self.method.can_sign_up(self.participant):
+            if choice == "sign_up" and self.method.get_validator(self.participant).can_sign_up():
                 return self.signup_pressed(form)
-            if choice == "customize" and self.method.can_customize_signup(self.participant):
+            if (
+                choice == "customize"
+                and self.method.get_validator(self.participant).can_customize_signup()
+            ):
                 return self.customize_pressed(form)
-            if choice == "decline":
+            if choice == "decline" and self.method.get_validator(self.participant).can_decline():
                 return self.decline_pressed(form)
             messages.error(self.request, _("This action is not allowed."))
             return redirect(self.participant.reverse_event_detail(self.shift.event))
@@ -76,7 +80,7 @@ class BaseSignupView(FormView):
             with transaction.atomic():
                 participation = form.save()
                 self.method.perform_signup(self.participant, participation, **form.cleaned_data)
-        except ParticipationError as errors:
+        except BaseSignupMethodError as errors:
             for error in errors:
                 messages.error(self.request, self.signup_error_message.format(error=error))
         else:
@@ -91,7 +95,7 @@ class BaseSignupView(FormView):
             with transaction.atomic():
                 participation = form.save()
                 self.method.perform_decline(self.participant, participation, **form.cleaned_data)
-        except ParticipationError as errors:
+        except BaseSignupMethodError as errors:
             for error in errors:
                 messages.error(self.request, self.decline_error_message.format(error=error))
         else:
