@@ -11,6 +11,7 @@ from django.utils.translation import pgettext
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.signup.checker import ActionDisallowedError
+from ephios.core.signup.forms import AbstractSignupMethodConfigurationForm
 from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.common import (
@@ -29,8 +30,7 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
 
     @property
     def configuration_form_class(self):
-        class ConfigurationForm(forms.Form):
-            template_name = "core/signup_configuration_form.html"
+        class ConfigurationForm(AbstractSignupMethodConfigurationForm):
             leader_shift_id = forms.ModelChoiceField(
                 label=_("shift to mirror participation from"),
                 required=True,
@@ -39,10 +39,6 @@ class CoupledSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMet
                     | Q(signup_method_slug=self.slug)  # no chaining/no cycles!
                 ),
             )
-
-            def __init__(self, *args, **kwargs):
-                self.event = kwargs.pop("event")
-                super().__init__(*args, **kwargs)
 
             @staticmethod
             def format_leader_shift_id(value):

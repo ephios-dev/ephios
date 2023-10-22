@@ -156,11 +156,9 @@ class AbstractSignupMethod(ABC):
 
     def get_signup_info(self):
         """Return key/value pairs about the configuration to show in exports etc."""
-        # TODO maybe move this to an exporter class?
         raise NotImplementedError()
 
     def get_participation_display(self):
-        # TODO move to exporter class?
         raise NotImplementedError()
 
     def get_participant_count_bounds(self):

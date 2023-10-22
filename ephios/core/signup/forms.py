@@ -153,8 +153,23 @@ class BaseSignupForm(BaseParticipationForm):
             )
 
 
-class BaseSignupMethodConfigurationForm(forms.Form):
+class AbstractSignupMethodConfigurationForm(forms.Form):
+    """
+    Base class for signup method configuration forms. Has no fields.
+    """
+
     template_name = "core/signup_configuration_form.html"
+
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop("event")
+        super().__init__(*args, **kwargs)
+
+
+class BaseSignupMethodConfigurationForm(AbstractSignupMethodConfigurationForm):
+    """
+    Configuration form with basic fields relevant for most signup methods.
+    """
+
     signup_until = forms.SplitDateTimeField(
         required=False,
         widget=CustomSplitDateTimeWidget,
@@ -171,7 +186,3 @@ class BaseSignupMethodConfigurationForm(forms.Form):
         required=False,
         initial=True,
     )
-
-    def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop("event")
-        super().__init__(*args, **kwargs)

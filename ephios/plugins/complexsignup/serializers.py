@@ -50,22 +50,22 @@ class BulkUpdateListSerializer(serializers.ListSerializer):
         # Perform creations and updates.
         ret = []
         for object_id, data in data_mapping.items():
-            object = object_mapping.get(object_id, None)
-            if object is None:
+            obj = object_mapping.get(object_id, None)
+            if obj is None:
                 ret.append(self.child.create(data.copy()))
             else:
-                ret.append(self.child.update(object, data))
+                ret.append(self.child.update(obj, data))
 
-        for instance in ret:
-            if hasattr(instance, "_save_m2m"):
+        for obj in ret:
+            if hasattr(obj, "save_m2m"):
                 # you can defer validating/saving relationships on the serializer
                 # by putting into this optional method
-                instance._save_m2m()
+                obj.save_m2m()
 
         # Perform deletions.
-        for object_id, object in object_mapping.items():
-            if self.should_delete(object, data_mapping):
-                object.delete()
+        for object_id, obj in object_mapping.items():
+            if self.should_delete(obj, data_mapping):
+                obj.delete()
         return ret
 
     def should_delete(self, obj, data_mapping):
@@ -204,13 +204,13 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
             context={"block": instance},
         )
 
-        def _save_m2m():
+        def save_m2m():
             # because we would error if the sub_block doesn't exist in the database yet
             # we defer saving the sub compositions to after the whole list was saved
             sub_compositions.is_valid(raise_exception=True)
             sub_compositions.save()
 
-        instance._save_m2m = _save_m2m
+        instance.save_m2m = save_m2m
         return instance
 
     def create(self, validated_data):
