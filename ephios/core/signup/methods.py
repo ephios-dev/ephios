@@ -245,6 +245,7 @@ class AbstractSignupMethod(ABC):
     def get_configuration_form(self):
         """
         This form will be used to configure this signup method.
+        The cleaned data will be saved to shift.signup_configuration
         """
         raise NotImplementedError()
 
