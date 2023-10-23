@@ -326,10 +326,7 @@ class BaseSignupMethod(AbstractSignupMethod):
         size where each entry is rendered to a separate column.
         Ex.: [["participant1_name", "participant1_qualification"], ["participant2_name", "participant2_qualification"]]
         """
-        return [
-            [f"{participant.first_name} {participant.last_name}"]
-            for participant in self.shift.get_participants()
-        ]
+        return [[participant.display_name] for participant in self.shift.get_participants()]
 
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:

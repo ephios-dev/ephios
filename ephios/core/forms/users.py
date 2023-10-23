@@ -297,8 +297,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
 
     field_order = [
         "email",
-        "first_name",
-        "last_name",
+        "display_name",
         "date_of_birth",
         "phone",
         "groups",
@@ -310,8 +309,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
         model = UserProfile
         fields = [
             "email",
-            "first_name",
-            "last_name",
+            "display_name",
             "date_of_birth",
             "phone",
             "is_active",

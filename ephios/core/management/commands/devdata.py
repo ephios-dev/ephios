@@ -13,8 +13,7 @@ from ephios.core.models import Event, EventType, Shift, UserProfile
 def create_objects():
     admin_user = UserProfile(
         email="admin@localhost",
-        first_name="Admin",
-        last_name="Localhost",
+        display_name="Admin Localhost",
         date_of_birth=datetime(year=1970, month=1, day=1),
     )
     admin_user.is_staff = True
@@ -53,8 +52,7 @@ def create_objects():
 
     user = UserProfile(
         email="user@localhost",
-        first_name="User",
-        last_name="Localhost",
+        display_name="User Localhost",
         date_of_birth=datetime(year=1970, month=1, day=1),
     )
     user.password = make_password("user")

@@ -360,8 +360,7 @@ register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class PlaceholderParticipation(AbstractParticipation):
-    first_name = CharField(max_length=254)
-    last_name = CharField(max_length=254)
+    display_name = CharField(max_length=254)
 
     @property
     def participant(self) -> "AbstractParticipant":
@@ -369,15 +368,14 @@ class PlaceholderParticipation(AbstractParticipation):
         from ephios.core.signup.participants import PlaceholderParticipant
 
         return PlaceholderParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=Qualification.objects.none(),
             email=None,
             date_of_birth=None,
         )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} @ {self.shift}"
+        return f"{self.display_name} @ {self.shift}"
 
     class Meta:
         verbose_name = _("placeholder participation")

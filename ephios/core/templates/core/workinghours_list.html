@@ -27,8 +27,7 @@
     <table id="userprofile_table" class="table table-striped display">
         <thead>
             <tr>
-                <th>{% translate "Last name" %}</th>
-                <th>{% translate "First name" %}</th>
+                <th>{% translate "Name" %}</th>
                 <th>{% translate "Hours" %}</th>
                 <th>{% translate "Action" %}</th>
             </tr>
@@ -36,8 +35,7 @@
         <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.last_name }}</td>
-                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.display_name }}</td>
                     <td>{{ user.hours|floatformat:2 }}</td>
                     <td class="d-flex">
                         <a class="btn btn-secondary btn-sm text-nowrap"

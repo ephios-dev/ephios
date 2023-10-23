@@ -17,8 +17,7 @@ from ephios.core.signals import participant_from_request
 
 @dataclasses.dataclass(frozen=True)
 class AbstractParticipant:
-    first_name: str
-    last_name: str
+    display_name: str
     qualifications: QuerySet = dataclasses.field(hash=False)
     date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
@@ -36,7 +35,7 @@ class AbstractParticipant:
         return False
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.display_name
 
     def new_participation(self, shift):
         raise NotImplementedError
@@ -92,15 +91,11 @@ class LocalUserParticipant(AbstractParticipant):
 @dataclasses.dataclass(frozen=True)
 class PlaceholderParticipant(AbstractParticipant):
     def new_participation(self, shift):
-        return PlaceholderParticipation(
-            shift=shift, first_name=self.first_name, last_name=self.last_name
-        )
+        return PlaceholderParticipation(shift=shift, display_name=self.display_name)
 
     def participation_for(self, shift):
         try:
-            return PlaceholderParticipation.objects.get(
-                shift=shift, first_name=self.first_name, last_name=self.last_name
-            )
+            return PlaceholderParticipation.objects.get(shift=shift, display_name=self.display_name)
         except PlaceholderParticipation.DoesNotExist:
             return None
 

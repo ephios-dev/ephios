@@ -35,7 +35,7 @@ class TestWorkingHours:
     def test_workinghours_overview(self, django_app, superuser, volunteer, workinghours):
         response = django_app.get(reverse("core:workinghours_list"), user=superuser)
         assert response.html.find(string=floatformat(workinghours[1].hours, arg=2))
-        assert not response.html.find(string=superuser.last_name)
+        assert not response.html.find(string=superuser.display_name)
 
     def test_grant_permission(
         self, django_app, manager, superuser, groups, workinghours, volunteer

@@ -33,8 +33,7 @@ def test_case_insensitive_login(django_app, volunteer, django_username_field):
 def test_case_insensitive_email_constraint(django_app, volunteer, manager, groups):
     form = django_app.get(reverse("core:userprofile_create"), user=manager).form
     form["email"] = volunteer.email.upper()
-    form["first_name"] = "Test"
-    form["last_name"] = "User"
+    form["display_name"] = "Test User"
     form["date_of_birth"] = "2000-01-01"
     response = form.submit()
     assert response.status_code == 200
