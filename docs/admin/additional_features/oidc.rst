@@ -41,12 +41,12 @@ JWKS_URI                       https://your-oidc-provider.com/certs
 
 The following additional configuration options are available:
 
-============================== =================================================== ========================
-Value                          Usage                                               Default value
-============================== =================================================== ========================
-scopes                         Scopes to request from the RP (for additional data) ``openid profile email``
-end_session_endpoint           redirect the user to the logout page of the IDP     None (no redirect)
-============================== =================================================== ========================
+============================== ==================================================== ========================
+Value                          Usage                                                Default value
+============================== ==================================================== ========================
+scopes                         Scopes to request from the IDP (for additional data) ``openid profile email``
+end_session_endpoint           redirect the user to the logout page of the IDP      None (no redirect)
+============================== ==================================================== ========================
 
 Apart from the values above, you can also configure the handling of groups for each identity provider.
 If your identity providers supports exposing groups in the identity token, ephios can use this information to automatically assign users to groups.
