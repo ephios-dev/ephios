@@ -52,9 +52,11 @@ class BulkUpdateListSerializer(serializers.ListSerializer):
         for object_id, data in data_mapping.items():
             obj = object_mapping.get(object_id, None)
             if obj is None:
-                ret.append(self.child.create(data.copy()))
+                obj = self.child.create(data.copy())
             else:
-                ret.append(self.child.update(obj, data))
+                obj = self.child.update(obj, data.copy())
+            object_mapping[object_id] = obj  # update mapping for use in deletion later
+            ret.append(obj)
 
         for obj in ret:
             if hasattr(obj, "save_m2m"):

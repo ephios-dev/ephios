@@ -66,6 +66,21 @@ def test_name_cannot_be_empty_unless_deleted(django_app, superuser):
     assert BuildingBlock.objects.count() == 0
 
 
+def test_delete_unsaved_block_with_empty_name_and_invalid_form(django_app, superuser):
+    response = django_app.get(reverse("complexsignup:blocks_editor"), user=superuser, status=200)
+    response.form["blocks"] = json.dumps(
+        [
+            {
+                **NEW_ATOMIC_BLOCK_DATA,
+                "name": "",
+                "deleted": True,
+            },
+        ]
+    )
+    response = response.form.submit().follow()
+    assert BuildingBlock.objects.count() == 0
+
+
 def test_no_cycle_in_composite_blocks(django_app, superuser):
     response = django_app.get(reverse("complexsignup:blocks_editor"), user=superuser, status=200)
     response.form["blocks"] = json.dumps(
