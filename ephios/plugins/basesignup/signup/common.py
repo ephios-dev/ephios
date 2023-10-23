@@ -191,7 +191,7 @@ class QualificationMinMaxBaseSignupMethod(
     def get_participation_display(self):
         participation_info = [
             [
-                f"{participant.first_name} {participant.last_name}",
+                participant.display_name,
                 ", ".join(
                     participant.qualifications.filter(
                         category__show_with_user=True,

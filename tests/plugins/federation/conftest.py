@@ -51,8 +51,7 @@ def federated_user(federation):
     host, guest = federation
     return FederatedUser.objects.create(
         email="test@localhost",
-        first_name="Federated",
-        last_name="Testuser",
+        display_name="Federated Testuser",
         date_of_birth=date(2000, 1, 1),
         phone="12345",
         federated_instance=guest,

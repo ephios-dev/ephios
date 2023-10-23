@@ -5,10 +5,8 @@
 {% block settings_content %}
     <h3 class="mt-3">{% translate "Personal data" %}</h3>
     <dl class="row">
-        <dt class="col-lg-3">{% translate "First name" %}</dt>
-        <dd class="col-lg-9">{{ userprofile.first_name }}</dd>
-        <dt class="col-lg-3">{% translate "Last name" %}</dt>
-        <dd class="col-lg-9">{{ userprofile.last_name }}</dd>
+        <dt class="col-lg-3">{% translate "Name" %}</dt>
+        <dd class="col-lg-9">{{ userprofile.display_name }}</dd>
         <dt class="col-lg-3">{% translate "E-Mail address" %}</dt>
         <dd class="col-lg-9">{{ userprofile.email }}</dd>
         <dt class="col-lg-3">{% translate "Date of birth" %}</dt>

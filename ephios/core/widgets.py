@@ -4,7 +4,7 @@ from ephios.core.models import UserProfile
 
 
 class UserProfileWidget(ModelSelect2Widget):
-    search_fields = ["email__icontains", "first_name__icontains", "last_name__icontains"]
+    search_fields = ["email__icontains", "display_name__icontains"]
 
     def label_from_instance(self, obj):
         return obj.get_full_name()
@@ -13,7 +13,7 @@ class UserProfileWidget(ModelSelect2Widget):
 class MultiUserProfileWidget(ModelSelect2MultipleWidget):
     model = UserProfile
 
-    search_fields = ["email__icontains", "first_name__icontains", "last_name__icontains"]
+    search_fields = ["email__icontains", "display_name__icontains"]
 
     def label_from_instance(self, obj):
         return obj.get_full_name()

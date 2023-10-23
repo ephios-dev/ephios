@@ -33,8 +33,7 @@ class EventGuestShare(models.Model):
 
 class GuestUser(models.Model):
     email = models.EmailField(_("email address"))
-    first_name = models.CharField(_("first name"), max_length=254)
-    last_name = models.CharField(_("last name"), max_length=254)
+    display_name = models.CharField(_("name"), max_length=254)
     date_of_birth = models.DateField(_("date of birth"))
     phone = models.CharField(_("phone number"), max_length=254, blank=True)
     access_token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
@@ -44,8 +43,7 @@ class GuestUser(models.Model):
 
     def as_participant(self) -> "GuestParticipant":
         return GuestParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=self.qualifications.all(),
             date_of_birth=self.date_of_birth,
             email=self.email,
@@ -53,11 +51,11 @@ class GuestUser(models.Model):
         )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} @ {self.event}"
+        return f"{self.display_name} @ {self.event}"
 
     class Meta:
         # there might be two people using the same email *sigh*
-        unique_together = [["event", "email", "first_name", "last_name"]]
+        unique_together = [["event", "email", "display_name"]]
         verbose_name = _("guest user")
         verbose_name_plural = _("guest users")
 
@@ -72,7 +70,7 @@ class GuestParticipation(AbstractParticipation):
         return self.guest_user.as_participant()
 
     def __str__(self):
-        return f"{self.guest_user.first_name} {self.guest_user.last_name} @ {self.shift}"
+        return f"{self.guest_user.display_name} @ {self.shift}"
 
     class Meta:
         verbose_name = _("guest participation")

@@ -65,16 +65,16 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
                 ),
             )
             .annotate(hour_sum=Sum("duration"))
-            .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
+            .values_list("user__pk", "user__display_name", "hour_sum")
         )
         workinghours = (
             WorkingHours.objects.filter(date__gte=start, date__lte=end)
             .annotate(hour_sum=Sum("hours"))
-            .values_list("user__pk", "user__first_name", "user__last_name", "hour_sum")
+            .values_list("user__pk", "user__display_name", "hour_sum")
         )
         result = {}
         c = Counter()
-        for user_pk, first_name, last_name, hours in chain(participations, workinghours):
+        for user_pk, display_name, hours in chain(participations, workinghours):
             current_sum = (
                 hours.total_seconds() / (60 * 60)
                 if isinstance(hours, datetime.timedelta)
@@ -83,8 +83,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
             c[user_pk] += current_sum
             result[user_pk] = {
                 "pk": user_pk,
-                "first_name": first_name,
-                "last_name": last_name,
+                "display_name": display_name,
                 "hours": c[user_pk],
             }
         return sorted(result.values(), key=lambda x: x["hours"], reverse=True)

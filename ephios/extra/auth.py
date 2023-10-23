@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Any, Dict
 from urllib.parse import urljoin
 
@@ -26,19 +27,20 @@ class EphiosOIDCAB(ModelBackend):
     def create_user(self, claims):
         user = get_user_model()(email=claims.get("email"))
         user.set_unusable_password()
-        user.first_name = claims.get("given_name", "")
-        user.last_name = claims.get("family_name", "")
-        user.save()
-        if hasattr(self, "provider") and self.provider.default_groups.exists():
-            user.groups.add(*self.provider.default_groups.all())
-
-        return user
+        return self.update_user(user, claims)
 
     def update_user(self, user, claims):
-        if "given_name" in claims:
-            user.first_name = claims["given_name"]
-        if "family_name" in claims:
-            user.last_name = claims["family_name"]
+        if "name" in claims:
+            user.display_name = claims["name"]
+        elif "given_name" in claims and "family_name" in claims:
+            user.display_name = f"{claims['given_name']} {claims['family_name']}"
+        if "phone_number" in claims:
+            user.phone = claims["phone_number"]
+        if "birthdate" in claims:
+            try:
+                user.date_of_birth = date.fromisoformat(claims["birthdate"])
+            except ValueError:
+                pass
         user.save()
         if hasattr(self, "provider") and self.provider.default_groups.exists():
             user.groups.add(*self.provider.default_groups.all())

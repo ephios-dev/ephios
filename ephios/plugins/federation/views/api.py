@@ -140,8 +140,7 @@ class FederationOAuthView(View):
         user = FederatedUser.objects.create(
             federated_instance=self.guest,
             email=user_data.json()["email"],
-            first_name=user_data.json()["first_name"],
-            last_name=user_data.json()["last_name"],
+            display_name=user_data.json()["display_name"],
             date_of_birth=user_data.json()["date_of_birth"],
         )
         for qualification in user_data.json()["qualifications"]:

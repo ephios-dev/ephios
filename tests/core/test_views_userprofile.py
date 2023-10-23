@@ -22,8 +22,7 @@ class TestUserProfileView:
         users = [superuser, manager, planner, volunteer, responsible_user]
         for user in users:
             response = django_app.get(reverse("core:settings_personal_data"), user=user)
-            assert response.html.find("dd", string=user.first_name)
-            assert response.html.find("dd", string=user.last_name)
+            assert response.html.find("dd", string=user.display_name)
             assert response.html.find("dd", string=user.email)
             assert response.html.find(
                 "dd", string=date_format(user.date_of_birth, format="DATE_FORMAT")
@@ -147,8 +146,7 @@ class TestUserProfileView:
         POST_DATA = OrderedDict(
             {
                 "email": userprofile_email,
-                "first_name": "testfirst",
-                "last_name": "testlast",
+                "display_name": "testname",
                 "date_of_birth": "1999-01-01",
                 "phone": "",
                 "groups": volunteers.id,
@@ -176,8 +174,7 @@ class TestUserProfileView:
         assert Notification.objects.count() == 1
         assert Notification.objects.first().slug == NewProfileNotification.slug
 
-        assert userprofile.first_name == "testfirst"
-        assert userprofile.last_name == "testlast"
+        assert userprofile.display_name == "testname"
         assert userprofile.date_of_birth == date(1999, 1, 1)
         assert not userprofile.phone
         assert userprofile.is_active

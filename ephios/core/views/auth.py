@@ -161,6 +161,7 @@ class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
         "end_session_endpoint",
         "jwks_uri",
     ]
+    success_url = reverse_lazy("core:settings_idp_list")
 
 
 class IdentityProviderDeleteView(StaffRequiredMixin, DeleteView):

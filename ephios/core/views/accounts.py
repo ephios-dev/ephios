@@ -70,11 +70,7 @@ class UserProfileFilterForm(forms.Form):
         fdata = self.cleaned_data
 
         if query := fdata.get("query"):
-            qs = qs.filter(
-                Q(first_name__icontains=query)
-                | Q(last_name__icontains=query)
-                | Q(email__icontains=query)
-            )
+            qs = qs.filter(Q(display_name__icontains=query) | Q(email__icontains=query))
 
         if group := fdata.get("group"):
             qs = qs.filter(groups=group)
@@ -117,7 +113,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         )
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
-        return qs.order_by("last_name", "first_name")
+        return qs.order_by("display_name")
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):

@@ -71,8 +71,7 @@ def tz():
 @pytest.fixture
 def superuser():
     return UserProfile.objects.create(
-        first_name="Rica",
-        last_name="Boss",
+        display_name="Rica Boss",
         is_staff=True,
         is_superuser=True,
         email="rica@localhost",
@@ -84,8 +83,7 @@ def superuser():
 @pytest.fixture
 def manager():
     return UserProfile.objects.create(
-        first_name="Marie",
-        last_name="Hilfsboss",
+        display_name="Marie Hilfsboss",
         email="marie@localhost",
         date_of_birth=date(1975, 1, 1),
         password="dummy",
@@ -95,8 +93,7 @@ def manager():
 @pytest.fixture
 def planner():
     return UserProfile.objects.create(
-        first_name="Luisa",
-        last_name="Durchblick",
+        display_name="Luisa Durchblick",
         email="luisa@localhost",
         date_of_birth=date(1980, 1, 1),
         password="dummy",
@@ -106,8 +103,7 @@ def planner():
 @pytest.fixture
 def volunteer():
     return UserProfile.objects.create(
-        first_name="Heinrich",
-        last_name="Helper",
+        display_name="Heinrich Helper",
         email="heinrich@localhost",
         date_of_birth=date(1990, 1, 1),
         password="dummy",
@@ -117,8 +113,7 @@ def volunteer():
 @pytest.fixture
 def qualified_volunteer(qualifications, tz):
     volunteer = UserProfile.objects.create(
-        first_name="Marianne",
-        last_name="Medizinfrau",
+        display_name="Marianne Medizinfrau",
         email="marianne@localhost",
         date_of_birth=date(1985, 1, 1),
         password="dummy",
@@ -138,8 +133,7 @@ def qualified_volunteer(qualifications, tz):
 @pytest.fixture
 def responsible_user():
     return UserProfile.objects.create(
-        first_name="Hildegart",
-        last_name="Helper",
+        display_name="Hildegart Helper",
         email="hildegart@localhost",
         date_of_birth=date(1960, 1, 1),
         password="dummy",
