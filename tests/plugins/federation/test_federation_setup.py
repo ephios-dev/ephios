@@ -18,7 +18,7 @@ def test_create_invitecode(django_app, superuser):
 @patch("ephios.plugins.federation.forms.requests")
 def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite_code):
     mock_requests.post.return_value.json.return_value = {
-        "name": "Test",
+        "host_name": "Test",
         "host_url": "http://localhost:8000",
         "access_token": "test",
     }
@@ -49,5 +49,6 @@ def test_redeem_invitecode_api(django_app, superuser, invite_code):
         },
         user=superuser,
     )
+    assert response.status_code == 201
     assert response.json["url"] == invite_code.url
     assert FederatedGuest.objects.count() == 1
