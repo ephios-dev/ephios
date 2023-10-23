@@ -8,6 +8,7 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from ephios.core.models import Qualification, UserProfile
+from ephios.core.services.qualification import collect_all_included_qualifications
 
 
 class QualificationSerializer(ModelSerializer):
@@ -25,8 +26,7 @@ class QualificationSerializer(ModelSerializer):
         ]
 
     def get_includes(self, obj):
-        qualifications = Qualification.collect_all_included_qualifications(obj.includes.all())
-        return [q.uuid for q in qualifications]
+        return [q.uuid for q in collect_all_included_qualifications(obj.includes.all())]
 
 
 class UserProfileSerializer(ModelSerializer):
