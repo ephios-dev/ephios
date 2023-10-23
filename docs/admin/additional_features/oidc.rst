@@ -46,8 +46,21 @@ Value                          Usage                                            
 ============================== =================================================== ========================
 scopes                         Scopes to request from the RP (for additional data) ``openid profile email``
 end_session_endpoint           redirect the user to the logout page of the IDP     None (no redirect)
-default groups                 groups to add all users logging in with this IDP to None (no groups)
 ============================== =================================================== ========================
+
+Apart from the values above, you can also configure the handling of groups for each identity provider.
+If your identity providers supports exposing groups in the identity token, ephios can use this information to automatically assign users to groups.
+You may be required to configure your identity provider to expose the groups in the identity token, please refer to the documentation of your identity provider for more information.
+It may also be neccessary to request an additional scope from the identity provider, e.g. ``groups``. Append this scope to the ``scopes`` setting if required.
+To enable the functionality, you need to provide the name of the claim that contains the group information.
+For example, if your identity provider exposes the groups in a claim called ``groups``, you would enter ``groups`` there.
+You can also access nested claims by using a dot-separated path, e.g. ``extra_information.groups`` if the group list is situated inside an ``extra_information`` dict in the identity token.
+The value of the claim must be a list of strings, where each string is the name of a group in ephios (case-insensitive).
+The user will be a member of all groups that are listed in the claim, meaning they will be removed from groups that they have been manually assigned to in ephios and that are not listed in the claim.
+By default, any groups from the claim that do not exist in ephios will be ignored. You can change this behaviour by activating the ``create missing groups`` setting.
+
+If your identity provider does not expose the groups in the identity token, you can still assign users to groups by using the ``default groups`` setting.
+All users that log in using this identity provider will be added to the groups listed there. Existing group memberships will not be altered.
 
 If users are logged in exclusively using identity providers, you can also hide the local login form with the appropriate settings under "ephios instance".
 
