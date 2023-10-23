@@ -1,4 +1,5 @@
 from datetime import date
+from functools import reduce
 from typing import Any, Dict
 from urllib.parse import urljoin
 
@@ -6,6 +7,7 @@ import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
 from jwt import InvalidTokenError
@@ -42,7 +44,24 @@ class EphiosOIDCAB(ModelBackend):
             except ValueError:
                 pass
         user.save()
-        if hasattr(self, "provider") and self.provider.default_groups.exists():
+        if self.provider.group_claim:
+            groups = []
+            groups_in_claims = (
+                reduce(
+                    lambda d, key: d.get(key, None) if isinstance(d, dict) else None,
+                    self.provider.group_claim.split("."),
+                    claims,
+                )
+                or []
+            )
+            for group_name in groups_in_claims:
+                try:
+                    groups.append(Group.objects.get(name__iexact=group_name))
+                except Group.DoesNotExist:
+                    if self.provider.create_missing_groups:
+                        groups.append(Group.objects.create(name=group_name))
+            user.groups.set(groups)
+        elif self.provider.default_groups.exists():
             user.groups.add(*self.provider.default_groups.all())
         return user
 

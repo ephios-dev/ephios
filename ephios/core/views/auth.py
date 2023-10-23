@@ -95,6 +95,8 @@ class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, Create
         "client_secret",
         "scopes",
         "default_groups",
+        "group_claim",
+        "create_missing_groups",
         "authorization_endpoint",
         "token_endpoint",
         "userinfo_endpoint",
@@ -155,6 +157,8 @@ class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
         "client_secret",
         "scopes",
         "default_groups",
+        "group_claim",
+        "create_missing_groups",
         "authorization_endpoint",
         "token_endpoint",
         "userinfo_endpoint",
@@ -162,6 +166,7 @@ class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
         "jwks_uri",
     ]
     success_url = reverse_lazy("core:settings_idp_list")
+    success_message = _("Identity provider saved.")
 
 
 class IdentityProviderDeleteView(StaffRequiredMixin, DeleteView):

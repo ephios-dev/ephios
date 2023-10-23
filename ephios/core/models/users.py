@@ -577,6 +577,22 @@ class IdentityProvider(Model):
         verbose_name=_("default groups"),
         help_text=_("The groups that users logging in with this provider will be added to."),
     )
+    group_claim = models.CharField(
+        max_length=254,
+        blank=True,
+        null=True,
+        verbose_name=_("group claim"),
+        help_text=_(
+            "The name of the claim that contains the user's groups. Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+        ),
+    )
+    create_missing_groups = models.BooleanField(
+        default=False,
+        verbose_name=_("create missing groups"),
+        help_text=_(
+            "If enabled, groups from the claim defined above that do not exist yet will be created automatically."
+        ),
+    )
 
     def __str__(self):
         return _("Identity provider {label}").format(label=self.label)
