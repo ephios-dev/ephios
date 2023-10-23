@@ -3,8 +3,6 @@
 {% load i18n %}
 {% load rich_text %}
 
-{% block javascript %}
-{% endblock %}
 
 {% block title %}
     {% translate "Signup Blocks Editor" %}
@@ -185,7 +183,7 @@
                         <input type="checkbox"
                                class="form-check-input"
                                id="allow-more"
-                               v-model="currentBlock.allowMore"
+                               v-model="currentBlock.allow_more"
                         />
                         <label class="form-check-label" for="allow-more">
                             {% translate "Allow more participants that qualify for any of the positions." %}

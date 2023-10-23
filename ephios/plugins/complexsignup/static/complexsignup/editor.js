@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     invalidFields: [],
                     block_type: block_type,
                     name: "",
-                    allowMore: false,
+                    allow_more: false,
                     positions: [],
                     qualification_requirements: [],
                     sub_compositions: [],
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         i++;
                     }
                     newBlock.name = `${copy_from.name} ${i}`;
-                    newBlock.allowMore = copy_from.allowMore;
+                    newBlock.allow_more = copy_from.allow_more;
                     newBlock.positions = copy_from.positions.map(p => ({
                         ...p,
                         id: null,
@@ -212,17 +212,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
             function getParticipantCount(block) {
                 let min = 0;
                 let max = 0;
-                let allowMore = false;
+                let allow_more = false;
 
 
                 block.sub_compositions.forEach(composition => {
                     const sub_block = getBlockById(composition.sub_block);
-                    const {min: sub_min, max: sub_max, allowMore: sub_allowMore} = getParticipantCount(sub_block);
+                    const {min: sub_min, max: sub_max, allow_more: sub_allow_more} = getParticipantCount(sub_block);
                     if (!composition.optional) {
                         min += sub_min;
                     }
                     max += sub_max;
-                    allowMore = allowMore || sub_allowMore;
+                    allow_more = allow_more || sub_allow_more;
                 });
 
                 block.positions.forEach(position => {
@@ -231,13 +231,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     }
                     max += 1;
                 });
-                allowMore = allowMore || block.allowMore;
-                return {min, max, allowMore};
+                allow_more = allow_more || block.allow_more;
+                return {min, max, allow_more};
             }
 
             function participantCountInfo(block) {
-                const {min, max, allowMore} = getParticipantCount(block);
-                if (allowMore) {
+                const {min, max, allow_more} = getParticipantCount(block);
+                if (allow_more) {
                     return gettext("{min}+").replace("{min}", min);
                 }
                 if (min === max) {
