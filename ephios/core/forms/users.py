@@ -275,7 +275,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
             )
 
         # email change can be used for account takeover, so only allow that in specific cases
-        if not (
+        if self.instance.pk is not None and not (
             request.user.is_staff  # staff user can change email
             or self.instance == request.user  # user can change own email
             or not self.instance.is_staff
