@@ -8,8 +8,9 @@ from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
 
+from ephios.core.forms.users import HR_PERMISSIONS, MANAGEMENT_PERMISSIONS
 from ephios.core.models import Notification, Qualification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
 from ephios.core.views.accounts import UserProfileFilterForm
@@ -184,6 +185,19 @@ class TestUserProfileView:
         assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
             datetime.max.replace(2030, 1, 1)
         )
+
+    def test_hr_user_can_create_user(self, django_app, groups, manager, qualifications):
+        managers, planners, volunteers = groups
+
+        # demote managers to HR
+        for permission in set(MANAGEMENT_PERMISSIONS) - set(HR_PERMISSIONS):
+            remove_perm(permission, managers)
+
+        form = django_app.get(reverse("core:userprofile_create"), user=manager).form
+        form["email"] = "testuser@localhost"
+        form["display_name"] = "testname"
+        form["date_of_birth"] = "1999-01-01"
+        assert form.submit().follow()
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
