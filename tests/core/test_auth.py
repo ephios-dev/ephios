@@ -117,3 +117,18 @@ def test_create_groups_from_oidc(oidc_client, volunteer):
     backend.provider = oidc_client
     volunteer = backend.update_user(volunteer, claims)
     assert volunteer.groups.filter(name="test").exists()
+
+
+def test_assign_oidc_and_default_groups(oidc_client, groups, volunteer):
+    from ephios.extra.auth import EphiosOIDCAB
+
+    managers, planners, volunteers = groups
+    claims = {"email": volunteer.email, "roles": [planners.name]}
+    oidc_client.group_claim = "roles"
+    oidc_client.default_groups.set([managers])
+    assert not volunteer.groups.filter(pk=managers.pk).exists()
+    assert not volunteer.groups.filter(pk=planners.pk).exists()
+    backend = EphiosOIDCAB()
+    backend.provider = oidc_client
+    volunteer = backend.update_user(volunteer, claims)
+    assert set(volunteer.groups.all()) == {managers, planners}

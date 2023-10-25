@@ -19,7 +19,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
-from ephios.core.forms.users import OIDCDiscoveryForm
+from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
 from ephios.extra.mixins import StaffRequiredMixin
 
@@ -151,20 +151,7 @@ class IdentityProviderListView(StaffRequiredMixin, ListView):
 
 class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
     model = IdentityProvider
-    fields = [
-        "label",
-        "client_id",
-        "client_secret",
-        "scopes",
-        "default_groups",
-        "group_claim",
-        "create_missing_groups",
-        "authorization_endpoint",
-        "token_endpoint",
-        "userinfo_endpoint",
-        "end_session_endpoint",
-        "jwks_uri",
-    ]
+    form_class = IdentityProviderForm
     success_url = reverse_lazy("core:settings_idp_list")
     success_message = _("Identity provider saved.")
 

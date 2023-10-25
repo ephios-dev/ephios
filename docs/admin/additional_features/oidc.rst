@@ -57,6 +57,7 @@ For example, if your identity provider exposes the groups in a claim called ``gr
 You can also access nested claims by using a dot-separated path, e.g. ``extra_information.groups`` if the group list is situated inside an ``extra_information`` dict in the identity token.
 The value of the claim must be a list of strings, where each string is the name of a group in ephios (case-insensitive).
 The user will be a member of all groups that are listed in the claim, meaning they will be removed from groups that they have been manually assigned to in ephios and that are not listed in the claim.
+Default groups (if configured as described below) will be added to the user in addition to the groups from the claim.
 By default, any groups from the claim that do not exist in ephios will be ignored. You can change this behaviour by activating the ``create missing groups`` setting.
 
 If your identity provider does not expose the groups in the identity token, you can still assign users to groups by using the ``default groups`` setting.

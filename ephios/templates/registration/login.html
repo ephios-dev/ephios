@@ -27,7 +27,7 @@
                 <div class="col-lg pt-4">
                     {% for provider in providers %}
                         <div class="mb-1">
-                            <a class="btn btn-primary w-100" href="{% url 'core:oidc_initiate' provider.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{% blocktranslate trimmed with label=provider.label %}Login with {{ label }}{% endblocktranslate %}</a>
+                            <a class="btn btn-primary w-100" href="{% url 'core:oidc_initiate' provider.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">{{ provider.label }}</a>
                         </div>
                     {% endfor %}
                 </div>

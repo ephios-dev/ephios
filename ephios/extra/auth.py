@@ -45,7 +45,7 @@ class EphiosOIDCAB(ModelBackend):
                 pass
         user.save()
         if self.provider.group_claim:
-            groups = []
+            groups = set(self.provider.default_groups.all())
             groups_in_claims = (
                 reduce(
                     lambda d, key: d.get(key, None) if isinstance(d, dict) else None,
@@ -56,10 +56,10 @@ class EphiosOIDCAB(ModelBackend):
             )
             for group_name in groups_in_claims:
                 try:
-                    groups.append(Group.objects.get(name__iexact=group_name))
+                    groups.add(Group.objects.get(name__iexact=group_name))
                 except Group.DoesNotExist:
                     if self.provider.create_missing_groups:
-                        groups.append(Group.objects.create(name=group_name))
+                        groups.add(Group.objects.create(name=group_name))
             user.groups.set(groups)
         elif self.provider.default_groups.exists():
             user.groups.add(*self.provider.default_groups.all())
