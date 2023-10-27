@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-10-07 20:08+0200\n"
-"PO-Revision-Date: 2023-09-30 17:12+0200\n"
-"Last-Translator: Felix Rindt <felix@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2023-10-27 09:26+0000\n"
+"Last-Translator: Gernomaly <felixlindi@gmx.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Weblate 5.2-dev\n"
 
 #: ephios/api/access/views.py:65 ephios/api/models.py:33 ephios/core/pdf.py:76
 #: ephios/core/pdf.py:130
@@ -370,10 +370,8 @@ msgid "Action"
 msgstr "Aktion"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:40
-#, fuzzy
-#| msgid "Manage event"
 msgid "Manage federation"
-msgstr "Veranstaltung verwalten"
+msgstr "Föderation verwalten"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:46
 #: ephios/core/templates/core/event_form.html:20
@@ -2810,39 +2808,37 @@ msgstr ""
 "diese Einstellungen nicht bearbeiten können."
 
 #: ephios/plugins/federation/apps.py:10 ephios/plugins/federation/signals.py:60
-#, fuzzy
-#| msgid "description"
 msgid "Federation"
-msgstr "Beschreibung"
+msgstr "Föderation"
 
 #: ephios/plugins/federation/apps.py:13
 msgid ""
 "This plugins provides the possibility to share events with other ephios "
 "instances."
 msgstr ""
+"Diese Erweiterung ermöglicht Veranstaltungen an andere Ephios Instanzen zu "
+"teilen."
 
 #: ephios/plugins/federation/forms.py:53
 msgid "Share event with other ephios instances"
-msgstr ""
+msgstr "Teile die Veranstaltung mit anderen ephios Instanzen"
 
 #: ephios/plugins/federation/forms.py:64
 msgid "https://other-instance.ephios.de/"
-msgstr ""
+msgstr "https://other-instance.ephios.de/"
 
 #: ephios/plugins/federation/forms.py:74
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:10
 msgid "Invite code"
-msgstr ""
+msgstr "Einladungscode"
 
 #: ephios/plugins/federation/forms.py:82
 msgid "This invite code is not issued for this instance."
 msgstr ""
 
 #: ephios/plugins/federation/forms.py:110
-#, fuzzy
-#| msgid "Invalid link"
 msgid "Invalid code"
-msgstr "Link ungültig"
+msgstr "Code ungültig"
 
 #: ephios/plugins/federation/models.py:21
 #: ephios/plugins/federation/models.py:32
@@ -2851,7 +2847,7 @@ msgstr "Link ungültig"
 #: ephios/plugins/federation/templates/federation/federation_settings.html:34
 #: ephios/plugins/federation/templates/federation/federation_settings.html:55
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ephios/plugins/federation/models.py:46
 #, python-brace-format
@@ -2867,45 +2863,35 @@ msgstr "Schicht hinzufügen"
 #: ephios/plugins/federation/models.py:79
 #, python-brace-format
 msgid "Federated user {first_name} {last_name}"
-msgstr ""
+msgstr "Föderierter Nutzer {first_name} {last_name}"
 
 #: ephios/plugins/federation/models.py:120
-#, fuzzy
-#| msgid "Delete user"
 msgid "Federated user"
-msgstr "Benutzer löschen"
+msgstr "Föderierter Benutzer"
 
 #: ephios/plugins/federation/models.py:128
-#, fuzzy
-#| msgid "guest participant"
 msgid "federated participant"
-msgstr "Gastteilnehmender"
+msgstr "Föderierter Teilnehmender"
 
 #: ephios/plugins/federation/signals.py:21
 #: ephios/plugins/federation/templates/federation/external_event_list.html:5
 #: ephios/plugins/federation/templates/federation/external_event_list.html:9
-#, fuzzy
-#| msgid "Delete events"
 msgid "External events"
-msgstr "Veranstaltungen löschen"
+msgstr "Externe Veranstaltungen"
 
 #: ephios/plugins/federation/templates/federation/event_detail.html:7
-#, fuzzy, python-format
-#| msgid "You are receiving this email as a member of %(organization_name)s."
+#, python-format
 msgid "You are currently viewing an event at %(organization_name)s."
-msgstr "Sie erhalten diese E-Mail als Mitglied von %(organization_name)s."
+msgstr "Sie sehen gerade eine Veranstaltung von %(organization_name)s."
 
 #: ephios/plugins/federation/templates/federation/event_detail.html:8
-#, fuzzy, python-format
-#| msgid "Back to event"
+#, python-format
 msgid "Back to %(name)s"
-msgstr "Zurück zur Veranstaltung"
+msgstr "Zurück zu %(name)s"
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:6
-#, fuzzy
-#| msgid "Your upcoming events"
 msgid "Stop sharing events"
-msgstr "Anstehende Schichten"
+msgstr "Veranstaltung nicht mehr teilen"
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:9
 #, python-format
@@ -2921,10 +2907,8 @@ msgid "Stop sharing"
 msgstr ""
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:6
-#, fuzzy
-#| msgid "Your upcoming events"
 msgid "Stop receiving events"
-msgstr "Anstehende Schichten"
+msgstr "Keine Schichten mehr erhalten"
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:9
 #, fuzzy, python-format
