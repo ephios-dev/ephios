@@ -485,13 +485,6 @@ class OIDCDiscoveryForm(Form):
 
 
 class IdentityProviderForm(ModelForm):
-    client_secret = forms.CharField(
-        widget=PasswordInput(attrs={"placeholder": "********"}),
-        required=False,
-        label=_("Client secret"),
-        help_text=_("Leave empty to keep the current secret."),
-    )
-
     class Meta:
         model = IdentityProvider
         fields = [
@@ -512,8 +505,18 @@ class IdentityProviderForm(ModelForm):
             "default_groups": Select2MultipleWidget,
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["client_secret"] = forms.CharField(
+                widget=PasswordInput(attrs={"placeholder": "********"}),
+                required=False,
+                label=_("Client secret"),
+                help_text=_("Leave empty to keep the current secret."),
+            )
+
     def clean_client_secret(self):
         client_secret = self.cleaned_data["client_secret"]
-        if client_secret == "":
+        if self.instance.pk and client_secret == "":
             return self.instance.client_secret
         return client_secret
