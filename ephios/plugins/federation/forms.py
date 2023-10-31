@@ -98,10 +98,10 @@ class RedeemInviteCodeForm(forms.Form):
             )
             response.raise_for_status()
             response_data = response.json()
-            oauth_application.name = response_data["name"]
+            oauth_application.name = response_data["host_name"]
             oauth_application.save()
             FederatedHost.objects.create(
-                name=response_data["name"],
+                name=response_data["host_name"],
                 url=data["host_url"],
                 access_token=response_data["access_token"],
                 oauth_application=oauth_application,
