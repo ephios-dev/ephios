@@ -51,6 +51,18 @@ class OrganizationName(StringPreference):
 
 
 @global_preferences_registry.register
+class HideLoginForm(BooleanPreference):
+    name = "hide_login_form"
+    verbose_name = _("Hide login form")
+    help_text = _(
+        "Hide the login form on the login page. This only takes effect if you configured at least one identity provider."
+    )
+    default = False
+    section = general_global_section
+    required = False
+
+
+@global_preferences_registry.register
 class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
@@ -100,18 +112,6 @@ class LastRunPeriodicCall(DateTimePreference):
     def set_last_call(cls, value):
         preferences = global_preferences_registry.manager()
         preferences[f"{cls.section.name}__{cls.name}"] = value
-
-
-@global_preferences_registry.register
-class HideLoginForm(BooleanPreference):
-    name = "hide_login_form"
-    verbose_name = _("Hide login form")
-    help_text = _(
-        "Hide the login form on the login page. This only takes effect if you configured at least one identity provider."
-    )
-    default = False
-    section = general_global_section
-    required = False
 
 
 @user_preferences_registry.register

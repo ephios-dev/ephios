@@ -19,7 +19,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
-from ephios.core.forms.users import OIDCDiscoveryForm
+from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
 from ephios.extra.mixins import StaffRequiredMixin
 
@@ -89,24 +89,13 @@ class OIDCLogoutView(RedirectView):
 
 class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = IdentityProvider
-    fields = [
-        "label",
-        "client_id",
-        "client_secret",
-        "scopes",
-        "default_groups",
-        "authorization_endpoint",
-        "token_endpoint",
-        "userinfo_endpoint",
-        "end_session_endpoint",
-        "jwks_uri",
-    ]
+    form_class = IdentityProviderForm
     success_url = reverse_lazy("core:settings_idp_list")
     success_message = _("Identity provider saved.")
 
     def get_initial(self):
         initial = super().get_initial()
-        if "url" in self.request.GET:
+        if not self.request.POST and "url" in self.request.GET:
             try:
                 oidc_configuration = requests.get(
                     urljoin(self.request.GET["url"], ".well-known/openid-configuration"), timeout=10
@@ -147,21 +136,11 @@ class IdentityProviderListView(StaffRequiredMixin, ListView):
     model = IdentityProvider
 
 
-class IdentityProviderUpdateView(StaffRequiredMixin, UpdateView):
+class IdentityProviderUpdateView(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
     model = IdentityProvider
-    fields = [
-        "label",
-        "client_id",
-        "client_secret",
-        "scopes",
-        "default_groups",
-        "authorization_endpoint",
-        "token_endpoint",
-        "userinfo_endpoint",
-        "end_session_endpoint",
-        "jwks_uri",
-    ]
+    form_class = IdentityProviderForm
     success_url = reverse_lazy("core:settings_idp_list")
+    success_message = _("Identity provider saved.")
 
 
 class IdentityProviderDeleteView(StaffRequiredMixin, DeleteView):

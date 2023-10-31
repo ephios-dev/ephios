@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load settings_extras %}
 {% load i18n %}
 {% load settings_extras %}
 
@@ -20,8 +21,11 @@
                                         href="{% url "core:settings_notifications" %}">{% translate "Notifications" %}</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_calendar" %}active{% endif %}"
                                         href="{% url "core:settings_calendar" %}">{% translate "Calendar" %}</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_password_change" %}active{% endif %}"
-                                        href="{% url "core:settings_password_change" %}">{% translate "Change password" %}</a></li>
+                {% identity_providers as providers %}
+                {% if not global_preferences.general__hide_login_form or not providers.exists %}
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_password_change" %}active{% endif %}"
+                                            href="{% url "core:settings_password_change" %}">{% translate "Change password" %}</a></li>
+                {% endif %}
                 <li class="nav-item"><a class="nav-link {% if "settings-access-token" in request.resolver_match.url_name %}active{% endif %}"
                                         href="{% url "api:settings-access-token-list" %}">{% translate "Integrations" %}</a></li>
                 {% available_management_settings_sections request as management_settings_sections %}

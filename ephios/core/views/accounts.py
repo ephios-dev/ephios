@@ -24,6 +24,7 @@ from ephios.core.forms.users import (
     UserProfileForm,
 )
 from ephios.core.models import Qualification, QualificationGrant, UserProfile
+from ephios.core.models.users import IdentityProvider
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
     ProfileUpdateNotification,
@@ -175,6 +176,9 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
         self.object = self.get_object()
         kwargs.setdefault("userprofile_form", self.get_userprofile_form())
         kwargs.setdefault("qualification_formset", self.get_qualification_formset())
+        kwargs.setdefault(
+            "oidc_group_claims", IdentityProvider.objects.filter(group_claim__isnull=False).exists()
+        )
         return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -328,6 +332,12 @@ class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
     template_name = "core/group_form.html"
     form_class = GroupForm
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault(
+            "oidc_group_claims", IdentityProvider.objects.filter(group_claim__isnull=False).exists()
+        )
+        return super().get_context_data(**kwargs)
 
     def get_success_url(self):
         messages.success(
