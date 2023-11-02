@@ -119,7 +119,7 @@ class Event(Model):
         return str(self.title)
 
     def get_canonical_slug(self):
-        return slugify(self.title)
+        return slugify(self.title) or str(self.id)
 
     def get_absolute_url(self):
         from django.urls import reverse
