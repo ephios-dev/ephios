@@ -46,14 +46,7 @@ def check_event_is_active(method, participant):
         return ActionDisallowedError(_("The event is not active."))
 
 
-def check_participation_state_for_signup(method, participant):
-    participation = participant.participation_for(method.shift)
-    if participation is not None:
-        if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            raise SignupDisallowedError(_("You have been rejected."))
-
-
-def check_participation_state_for_decline(method, participant):
+def check_participation_state(method, participant):
     participation = participant.participation_for(method.shift)
     if participation is not None:
         if (
@@ -62,7 +55,7 @@ def check_participation_state_for_decline(method, participant):
         ):
             raise DeclineDisallowedError(_("You cannot decline by yourself."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-            raise DeclineDisallowedError(_("You have been rejected."))
+            raise ActionDisallowedError(_("You have been rejected."))
         if participation.state == AbstractParticipation.States.USER_DECLINED:
             raise DeclineDisallowedError(_("You have already declined participating."))
 
@@ -149,8 +142,7 @@ class BaseSignupActionValidator:
                 signal_checkers.extend(result)
         return [
             check_event_is_active,
-            check_participation_state_for_signup,
-            check_participation_state_for_decline,
+            check_participation_state,
             check_inside_signup_timeframe,
             check_general_required_qualifications,
             check_conflicting_participations,
