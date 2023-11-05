@@ -40,14 +40,6 @@ class FallbackSignupActionValidator(BaseSignupActionValidator):
         return [self.signup_is_disabled]
 
 
-class FallbackSignupActionValidator(BaseSignupActionValidator):
-    def signup_is_disabled(self, method, participant):
-        raise get_signup_method_failed_error_list()[0]
-
-    def get_checkers(self):
-        return [self.signup_is_disabled]
-
-
 class FallbackSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
     slug = None
     verbose_name = _("Fallback for missing signup methods")
