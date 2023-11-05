@@ -98,7 +98,8 @@
                                 {{ shift.signup_method.configuration.signup_until | naturaltime }}.
                             </span>
                         </div>
-                    {% elif not can_sign_up or not can_decline %}
+                    {% endif %}
+                    {% if not can_sign_up or not can_decline %}
                         <div class="text-body-secondary mb-1">
                             {% for error in request|signup_action_errors:shift %}
                                 <span>{{ error.message }}</span>
