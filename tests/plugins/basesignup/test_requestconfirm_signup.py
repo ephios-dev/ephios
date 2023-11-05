@@ -64,5 +64,5 @@ def test_request_confirm_add_user_in_disposition(django_app, volunteer, planner,
             "new_index": 0,
         },
     )
-    assert volunteer.first_name in response
+    assert volunteer.display_name in response
     assert volunteer.as_participant().participation_for(shift) is not None

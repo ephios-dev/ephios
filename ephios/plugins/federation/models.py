@@ -67,8 +67,7 @@ class FederatedEventShare(models.Model):
 
 class FederatedUser(models.Model):
     email = models.EmailField(_("email address"))
-    first_name = models.CharField(_("first name"), max_length=254)
-    last_name = models.CharField(_("last name"), max_length=254)
+    display_name = models.CharField(_("name"), max_length=254)
     date_of_birth = models.DateField(_("date of birth"))
     phone = models.CharField(_("phone number"), max_length=254, blank=True)
     qualifications = models.ManyToManyField(Qualification)
@@ -76,14 +75,11 @@ class FederatedUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return _("Federated user {first_name} {last_name}").format(
-            first_name=self.first_name, last_name=self.last_name
-        )
+        return _("Federated user {display_name}").format(display_name=self.display_name)
 
     def as_participant(self) -> "FederatedParticipant":
         return FederatedParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=self.qualifications.all(),
             date_of_birth=self.date_of_birth,
             email=self.email,
@@ -129,7 +125,7 @@ class FederatedParticipation(AbstractParticipation):
     )
 
     def __str__(self):
-        return f"{self.federated_user.first_name} {self.federated_user.last_name} @ {self.shift}"
+        return f"{self.federated_user.display_name} @ {self.shift}"
 
     @property
     def participant(self) -> "AbstractParticipant":

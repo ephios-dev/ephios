@@ -11,6 +11,7 @@ from django.forms import (
     ModelForm,
     ModelMultipleChoiceField,
     MultipleChoiceField,
+    PasswordInput,
     inlineformset_factory,
 )
 from django.urls import reverse
@@ -20,6 +21,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.core.consequences import WorkingHoursConsequenceHandler
 from ephios.core.models import QualificationGrant, UserProfile, WorkingHours
+from ephios.core.models.users import IdentityProvider
 from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import enabled_notification_types
 from ephios.core.signals import register_group_permission_fields
@@ -275,7 +277,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
             )
 
         # email change can be used for account takeover, so only allow that in specific cases
-        if not (
+        if self.instance.pk is not None and not (
             request.user.is_staff  # staff user can change email
             or self.instance == request.user  # user can change own email
             or not self.instance.is_staff
@@ -297,8 +299,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
 
     field_order = [
         "email",
-        "first_name",
-        "last_name",
+        "display_name",
         "date_of_birth",
         "phone",
         "groups",
@@ -310,8 +311,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
         model = UserProfile
         fields = [
             "email",
-            "first_name",
-            "last_name",
+            "display_name",
             "date_of_birth",
             "phone",
             "is_active",
@@ -482,3 +482,41 @@ class OIDCDiscoveryForm(Form):
         if not url.endswith("/"):
             url += "/"
         return url
+
+
+class IdentityProviderForm(ModelForm):
+    class Meta:
+        model = IdentityProvider
+        fields = [
+            "label",
+            "client_id",
+            "client_secret",
+            "scopes",
+            "default_groups",
+            "group_claim",
+            "create_missing_groups",
+            "authorization_endpoint",
+            "token_endpoint",
+            "userinfo_endpoint",
+            "end_session_endpoint",
+            "jwks_uri",
+        ]
+        widgets = {
+            "default_groups": Select2MultipleWidget,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["client_secret"] = forms.CharField(
+                widget=PasswordInput(attrs={"placeholder": "********"}),
+                required=False,
+                label=_("Client secret"),
+                help_text=_("Leave empty to keep the current secret."),
+            )
+
+    def clean_client_secret(self):
+        client_secret = self.cleaned_data["client_secret"]
+        if self.instance.pk and client_secret == "":
+            return self.instance.client_secret
+        return client_secret

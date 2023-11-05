@@ -28,8 +28,7 @@ def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     )
 
     response = django_app.get(share.url, status=200)
-    response.form["first_name"] = "Carlson"
-    response.form["last_name"] = "Carlsen"
+    response.form["display_name"] = "Carlson Carlsen"
     response.form["email"] = "guest@localhost"
     response.form["date_of_birth"] = "2000-01-01"
     response.form["qualifications"] = [qualifications.nfs.id]

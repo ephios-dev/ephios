@@ -102,16 +102,12 @@ $(document).ready(function () {
         if (e.params.data.guestUser) {
             const $spinner = showSpinner(spawn);
             const newIndex = $('#participations-form').formset('getOrCreate').totalFormCount();
-            const names = e.params.data.userName.split(" ");
-            const last_name = names.pop();
-            const first_names = names.join(" ");
             $.ajax({
                 url: $("#" + $(this)[0].form.id).data("placeholder-url"),
                 type: "post",
                 dataType: "html",
                 data: {
-                    "first_name": first_names,
-                    "last_name": last_name,
+                    "display_name": e.params.data.userName,
                     "new_index": newIndex,
                     "csrfmiddlewaretoken": getCookie("csrftoken"),
                 },

@@ -24,6 +24,7 @@ from ephios.core.forms.users import (
     UserProfileForm,
 )
 from ephios.core.models import Qualification, QualificationGrant, UserProfile
+from ephios.core.models.users import IdentityProvider
 from ephios.core.services.notifications.types import (
     NewProfileNotification,
     ProfileUpdateNotification,
@@ -70,11 +71,7 @@ class UserProfileFilterForm(forms.Form):
         fdata = self.cleaned_data
 
         if query := fdata.get("query"):
-            qs = qs.filter(
-                Q(first_name__icontains=query)
-                | Q(last_name__icontains=query)
-                | Q(email__icontains=query)
-            )
+            qs = qs.filter(Q(display_name__icontains=query) | Q(email__icontains=query))
 
         if group := fdata.get("group"):
             qs = qs.filter(groups=group)
@@ -117,7 +114,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         )
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
-        return qs.order_by("last_name", "first_name")
+        return qs.order_by("display_name")
 
 
 class UserProfileCreateView(CustomPermissionRequiredMixin, TemplateView):
@@ -179,6 +176,9 @@ class UserProfileUpdateView(CustomPermissionRequiredMixin, SingleObjectMixin, Te
         self.object = self.get_object()
         kwargs.setdefault("userprofile_form", self.get_userprofile_form())
         kwargs.setdefault("qualification_formset", self.get_qualification_formset())
+        kwargs.setdefault(
+            "oidc_group_claims", IdentityProvider.objects.filter(group_claim__isnull=False).exists()
+        )
         return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -332,6 +332,12 @@ class GroupUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
     template_name = "core/group_form.html"
     form_class = GroupForm
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault(
+            "oidc_group_claims", IdentityProvider.objects.filter(group_claim__isnull=False).exists()
+        )
+        return super().get_context_data(**kwargs)
 
     def get_success_url(self):
         messages.success(

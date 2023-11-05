@@ -112,7 +112,7 @@ class AddUserForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=ModelSelect2Widget(
             model=UserProfile,
-            search_fields=["first_name__icontains", "last_name__icontains"],
+            search_fields=["display_name__icontains"],
             attrs={
                 "form": "add-user-form",
                 "data-placeholder": _("search"),
@@ -188,8 +188,7 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
         from ephios.core.signup.participants import PlaceholderParticipant
 
         participant = PlaceholderParticipant(
-            first_name=request.POST["first_name"],
-            last_name=request.POST["last_name"],
+            display_name=request.POST["display_name"],
             qualifications=Qualification.objects.none(),
             email=None,
             date_of_birth=None,

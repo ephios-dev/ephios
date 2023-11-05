@@ -51,16 +51,14 @@ class UserProfileManager(BaseUserManager):
     def create_user(
         self,
         email,
-        first_name,
-        last_name,
+        display_name,
         date_of_birth,
         password=None,
     ):
         # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
         user = self.model(
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            display_name=display_name,
             date_of_birth=date_of_birth,
         )
         user.set_password(password)
@@ -70,8 +68,7 @@ class UserProfileManager(BaseUserManager):
     def create_superuser(
         self,
         email,
-        first_name,
-        last_name,
+        display_name,
         date_of_birth,
         password=None,
     ):
@@ -79,8 +76,7 @@ class UserProfileManager(BaseUserManager):
             user = self.create_user(
                 email=email,
                 password=password,
-                first_name=first_name,
-                last_name=last_name,
+                display_name=display_name,
                 date_of_birth=date_of_birth,
             )
             user.is_superuser = True
@@ -106,8 +102,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         default=False,
         verbose_name=_("Administrator"),
     )
-    first_name = CharField(_("first name"), max_length=254)
-    last_name = CharField(_("last name"), max_length=254)
+    display_name = CharField(_("name"), max_length=254)
     date_of_birth = DateField(_("date of birth"), null=True, blank=False)
     phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
@@ -120,8 +115,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
-        "first_name",
-        "last_name",
+        "display_name",
         "date_of_birth",
     ]
 
@@ -145,13 +139,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         ]
 
     def get_full_name(self):
-        return self.first_name + " " + self.last_name
+        return self.display_name
 
     def __str__(self):
-        return self.get_full_name()
-
-    def get_short_name(self):
-        return self.first_name
+        return str(self.get_full_name())
 
     @property
     def age(self) -> Optional[int]:
@@ -168,8 +159,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         from ephios.core.signup.participants import LocalUserParticipant
 
         return LocalUserParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=self.qualifications,
             date_of_birth=self.date_of_birth,
             email=self.email if self.is_active else None,
@@ -586,6 +576,22 @@ class IdentityProvider(Model):
         blank=True,
         verbose_name=_("default groups"),
         help_text=_("The groups that users logging in with this provider will be added to."),
+    )
+    group_claim = models.CharField(
+        max_length=254,
+        blank=True,
+        null=True,
+        verbose_name=_("group claim"),
+        help_text=_(
+            "The name of the claim that contains the user's groups. Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+        ),
+    )
+    create_missing_groups = models.BooleanField(
+        default=False,
+        verbose_name=_("create missing groups"),
+        help_text=_(
+            "If enabled, groups from the claim defined above that do not exist yet will be created automatically."
+        ),
     )
 
     def __str__(self):

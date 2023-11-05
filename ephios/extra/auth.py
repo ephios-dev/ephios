@@ -1,3 +1,5 @@
+from datetime import date
+from functools import reduce
 from typing import Any, Dict
 from urllib.parse import urljoin
 
@@ -5,6 +7,7 @@ import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
 from jwt import InvalidTokenError
@@ -26,21 +29,39 @@ class EphiosOIDCAB(ModelBackend):
     def create_user(self, claims):
         user = get_user_model()(email=claims.get("email"))
         user.set_unusable_password()
-        user.first_name = claims.get("given_name", "")
-        user.last_name = claims.get("family_name", "")
-        user.save()
-        if hasattr(self, "provider") and self.provider.default_groups.exists():
-            user.groups.add(*self.provider.default_groups.all())
-
-        return user
+        return self.update_user(user, claims)
 
     def update_user(self, user, claims):
-        if "given_name" in claims:
-            user.first_name = claims["given_name"]
-        if "family_name" in claims:
-            user.last_name = claims["family_name"]
+        if "name" in claims:
+            user.display_name = claims["name"]
+        elif "given_name" in claims and "family_name" in claims:
+            user.display_name = f"{claims['given_name']} {claims['family_name']}"
+        if "phone_number" in claims:
+            user.phone = claims["phone_number"]
+        if "birthdate" in claims:
+            try:
+                user.date_of_birth = date.fromisoformat(claims["birthdate"])
+            except ValueError:
+                pass
         user.save()
-        if hasattr(self, "provider") and self.provider.default_groups.exists():
+        if self.provider.group_claim:
+            groups = set(self.provider.default_groups.all())
+            groups_in_claims = (
+                reduce(
+                    lambda d, key: d.get(key, None) if isinstance(d, dict) else None,
+                    self.provider.group_claim.split("."),
+                    claims,
+                )
+                or []
+            )
+            for group_name in groups_in_claims:
+                try:
+                    groups.add(Group.objects.get(name__iexact=group_name))
+                except Group.DoesNotExist:
+                    if self.provider.create_missing_groups:
+                        groups.add(Group.objects.create(name=group_name))
+            user.groups.set(groups)
+        elif self.provider.default_groups.exists():
             user.groups.add(*self.provider.default_groups.all())
         return user
 

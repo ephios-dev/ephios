@@ -8,8 +8,9 @@ from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
 
+from ephios.core.forms.users import HR_PERMISSIONS, MANAGEMENT_PERMISSIONS
 from ephios.core.models import Notification, Qualification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
 from ephios.core.views.accounts import UserProfileFilterForm
@@ -22,8 +23,7 @@ class TestUserProfileView:
         users = [superuser, manager, planner, volunteer, responsible_user]
         for user in users:
             response = django_app.get(reverse("core:settings_personal_data"), user=user)
-            assert response.html.find("dd", string=user.first_name)
-            assert response.html.find("dd", string=user.last_name)
+            assert response.html.find("dd", string=user.display_name)
             assert response.html.find("dd", string=user.email)
             assert response.html.find(
                 "dd", string=date_format(user.date_of_birth, format="DATE_FORMAT")
@@ -147,8 +147,7 @@ class TestUserProfileView:
         POST_DATA = OrderedDict(
             {
                 "email": userprofile_email,
-                "first_name": "testfirst",
-                "last_name": "testlast",
+                "display_name": "testname",
                 "date_of_birth": "1999-01-01",
                 "phone": "",
                 "groups": volunteers.id,
@@ -176,8 +175,7 @@ class TestUserProfileView:
         assert Notification.objects.count() == 1
         assert Notification.objects.first().slug == NewProfileNotification.slug
 
-        assert userprofile.first_name == "testfirst"
-        assert userprofile.last_name == "testlast"
+        assert userprofile.display_name == "testname"
         assert userprofile.date_of_birth == date(1999, 1, 1)
         assert not userprofile.phone
         assert userprofile.is_active
@@ -187,6 +185,19 @@ class TestUserProfileView:
         assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
             datetime.max.replace(2030, 1, 1)
         )
+
+    def test_hr_user_can_create_user(self, django_app, groups, manager, qualifications):
+        managers, planners, volunteers = groups
+
+        # demote managers to HR
+        for permission in set(MANAGEMENT_PERMISSIONS) - set(HR_PERMISSIONS):
+            remove_perm(permission, managers)
+
+        form = django_app.get(reverse("core:userprofile_create"), user=manager).form
+        form["email"] = "testuser@localhost"
+        form["display_name"] = "testname"
+        form["date_of_birth"] = "1999-01-01"
+        assert form.submit().follow()
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
