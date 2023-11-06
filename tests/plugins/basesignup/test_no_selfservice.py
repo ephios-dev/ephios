@@ -1,4 +1,5 @@
 import pytest
+from django.urls import reverse
 
 from ephios.plugins.basesignup.signup.no_selfservice import NoSelfserviceSignupMethod
 
@@ -9,6 +10,14 @@ def no_selfservice_shift(event):
     shift.signup_method_slug = NoSelfserviceSignupMethod.slug
     shift.save()
     return shift
+
+
+def test_configuring_no_selfservice_shift(django_app, planner, no_selfservice_shift):
+    response = django_app.get(
+        reverse("core:shift_edit", kwargs={"pk": no_selfservice_shift.pk}), user=planner
+    )
+    response.form["no_selfservice_explanation"] = "this is just a test"
+    assert "this is just a test" in response.form.submit().follow()
 
 
 def test_no_selfservice_renders(django_app, volunteer, event, no_selfservice_shift):

@@ -15,10 +15,7 @@ from ephios.core.signals import (
     register_event_bulk_action,
     shift_info,
 )
-from ephios.core.signup.fallback import (
-    catch_signup_method_fails,
-    get_signup_method_failed_error_list,
-)
+from ephios.core.signup.fallback import catch_signup_method_fails, get_signup_method_failed_error
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
 
@@ -76,7 +73,7 @@ def can_customize_signup(request, shift: Shift):
 
 
 @register.filter(name="signup_action_errors")
-@catch_signup_method_fails(default=get_signup_method_failed_error_list)
+@catch_signup_method_fails(default=lambda: [get_signup_method_failed_error()])
 def signup_action_errors(request, shift: Shift):
     validator = shift.signup_method.get_validator(request_to_participant(request))
     return validator.get_action_errors()

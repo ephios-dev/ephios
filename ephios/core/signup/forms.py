@@ -82,8 +82,19 @@ class BaseParticipationForm(forms.ModelForm):
 
 
 class BaseSignupForm(BaseParticipationForm):
+    signup_choice = forms.ChoiceField(
+        label=_("Signup choice"),
+        choices=[
+            ("sign_up", _("Sign up")),
+            ("customize", _("Customize")),
+            ("decline", _("Decline")),
+        ],
+        widget=forms.HiddenInput,
+        required=True,
+    )
+
     def _get_field_layout(self):
-        return Layout(*(Field(name) for name in self.fields))
+        return Layout(*(Field(name) for name in self.fields if name != "signup_choice"))
 
     def _get_buttons(self):
         if (
@@ -115,7 +126,6 @@ class BaseSignupForm(BaseParticipationForm):
 
     def __init__(self, *args, **kwargs):
         self.method: AbstractSignupMethod = kwargs.pop("method")
-        self.targets_positive_state = kwargs.pop("targets_positive_state")
         self.shift: Shift = self.method.shift
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
@@ -131,21 +141,21 @@ class BaseSignupForm(BaseParticipationForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        self._validate_conflicting_participations(self, self.targets_positive_state)
+        self._validate_conflicting_participations()
         return cleaned_data
 
-    def _validate_conflicting_participations(self, form, targets_positive_state):
-        if not targets_positive_state:
+    def _validate_conflicting_participations(self):
+        if self.cleaned_data.get("signup_choice") == "decline":
             return
         if conflicts := get_conflicting_participations(
-            participant=form.instance.participant,
-            start_time=form.cleaned_data.get("individual_start_time") or self.shift.start_time,
-            end_time=form.cleaned_data.get("individual_end_time") or self.shift.end_time,
+            participant=self.instance.participant,
+            start_time=self.cleaned_data.get("individual_start_time") or self.shift.start_time,
+            end_time=self.cleaned_data.get("individual_end_time") or self.shift.end_time,
             shift=self.shift,
             total=False,
         ):
-            form.add_error("individual_start_time", "")
-            form.add_error(
+            self.add_error("individual_start_time", "")
+            self.add_error(
                 "individual_end_time",
                 _("You are already confirmed for other shifts at this time: {shifts}.").format(
                     shifts=", ".join(str(shift) for shift in conflicts)

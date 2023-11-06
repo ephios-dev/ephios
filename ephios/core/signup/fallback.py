@@ -27,14 +27,14 @@ def catch_signup_method_fails(default=None):
     return decorator
 
 
-def get_signup_method_failed_error_list():
+def get_signup_method_failed_error():
     message = _("Signup configuration is invalid!")
-    return [ImproperlyConfiguredError(mark_safe(f'<span class="text-danger">{message}</span>'))]
+    return ImproperlyConfiguredError(mark_safe(f'<span class="text-danger">{message}</span>'))
 
 
 class FallbackSignupActionValidator(BaseSignupActionValidator):
     def signup_is_disabled(self, method, participant):
-        raise get_signup_method_failed_error_list()[0]
+        raise get_signup_method_failed_error()
 
     def get_checkers(self):
         return [self.signup_is_disabled]

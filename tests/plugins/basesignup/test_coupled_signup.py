@@ -96,10 +96,11 @@ def test_editing_coupled_shift_with_missing_leader_shift(
     )
     assert "missing" in log_message
 
-    def test_coupled_signupstats(django_app, volunteer, event, create_coupled_shift):
-        shift = event.shifts.first()
-        shift.signup_configuration["maximum_number_of_participants"] = 1
-        shift.save()
-        coupled_shift = create_coupled_shift()
-        signup_stats = event.get_signup_stats()
-        assert signup_stats.free == 1
+
+def test_coupled_signupstats(django_app, volunteer, event, create_coupled_shift):
+    shift = event.shifts.first()
+    shift.signup_configuration["maximum_number_of_participants"] = 1
+    shift.save()
+    coupled_shift = create_coupled_shift()
+    signup_stats = event.get_signup_stats()
+    assert signup_stats.free == 1
