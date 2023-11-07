@@ -15,7 +15,7 @@ def test_create_invitecode(django_app, superuser):
     assert InviteCode.objects.get().url == "https://example.com"
 
 
-@patch("ephios.plugins.federation.forms.requests")
+@patch("ephios.plugins.federation.views.frontend.requests")
 def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite_code):
     mock_requests.post.return_value.json.return_value = {
         "host_name": "Test",
@@ -33,7 +33,7 @@ def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite
             }
         ).encode("ascii")
     ).decode("ascii")
-    response = form.submit().follow()
+    form.submit().follow()
     assert FederatedHost.objects.count() == 1
 
 
