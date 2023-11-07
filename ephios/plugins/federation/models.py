@@ -13,7 +13,9 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.api.models import AccessToken, Application
 from ephios.core.models import AbstractParticipation, Event, Qualification
+from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
 class FederatedGuest(models.Model):
@@ -35,6 +37,18 @@ class FederatedGuest(models.Model):
         verbose_name_plural = _("federated guests")
 
 
+register_model_for_logging(
+    FederatedGuest,
+    ModelFieldsLogConfig(
+        unlogged_fields=[
+            "id",
+            "access_token",
+            "client_secret",
+        ],
+    ),
+)
+
+
 class FederatedHost(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(verbose_name=_("URL"))
@@ -51,6 +65,17 @@ class FederatedHost(models.Model):
     class Meta:
         verbose_name = _("federated host")
         verbose_name_plural = _("federated hosts")
+
+
+register_model_for_logging(
+    FederatedHost,
+    ModelFieldsLogConfig(
+        unlogged_fields=[
+            "id",
+            "access_token",
+        ],
+    ),
+)
 
 
 class InviteCode(models.Model):
@@ -77,6 +102,18 @@ class InviteCode(models.Model):
         verbose_name_plural = _("invite codes")
 
 
+register_model_for_logging(
+    InviteCode,
+    ModelFieldsLogConfig(
+        unlogged_fields=[
+            "id",
+            "code",
+            "created_at",
+        ],
+    ),
+)
+
+
 class FederatedEventShare(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     shared_with = models.ManyToManyField(FederatedGuest)
@@ -87,6 +124,12 @@ class FederatedEventShare(models.Model):
     class Meta:
         verbose_name = _("federated event share")
         verbose_name_plural = _("federated event shares")
+
+
+register_model_for_logging(
+    FederatedEventShare,
+    ModelFieldsLogConfig(),
+)
 
 
 class FederatedUser(models.Model):
@@ -113,6 +156,12 @@ class FederatedUser(models.Model):
     class Meta:
         verbose_name = _("federated user")
         verbose_name_plural = _("federated users")
+
+
+register_model_for_logging(
+    FederatedUser,
+    ModelFieldsLogConfig(),
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -166,3 +215,9 @@ class FederatedParticipation(AbstractParticipation):
     class Meta:
         verbose_name = _("federated participation")
         verbose_name_plural = _("federated participations")
+
+
+register_model_for_logging(
+    FederatedParticipation,
+    PARTICIPATION_LOG_CONFIG,
+)

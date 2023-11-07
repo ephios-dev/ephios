@@ -28,7 +28,7 @@
                         <tr>
                             <td>{{ application.name }}</td>
                             <td>
-                                {{ application.user }}
+                                {{ application.user|default_if_none:"-" }}
                             </td>
                             <td>{{ application.created }}</td>
                             <td class="d-flex">
