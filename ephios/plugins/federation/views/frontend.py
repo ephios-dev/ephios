@@ -4,14 +4,17 @@ from urllib.parse import urljoin
 import requests
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, TemplateView
+from dynamic_preferences.registries import global_preferences_registry
 from guardian.mixins import LoginRequiredMixin
 from requests import HTTPError, JSONDecodeError, ReadTimeout
 from rest_framework.exceptions import PermissionDenied
 
+from ephios.api.models import Application
 from ephios.core.models import Event
 from ephios.core.views.signup import BaseShiftActionView
 from ephios.extra.mixins import StaffRequiredMixin
@@ -170,7 +173,44 @@ class RedeemInviteCodeView(StaffRequiredMixin, FormView):
             kwargs["initial"] = {"code": self.request.GET["code"]}
         return kwargs
 
+    @transaction.atomic
+    def _setup_federated_host(self, data):
+        oauth_application = Application(
+            client_type=Application.CLIENT_CONFIDENTIAL,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+            redirect_uris=urljoin(data["host_url"], reverse("federation:oauth_callback")),
+        )
+        response = requests.post(
+            urljoin(data["host_url"], reverse("federation:redeem_invite_code")),
+            data={
+                "name": global_preferences_registry.manager()["general__organization_name"],
+                "url": data["guest_url"],
+                "client_id": oauth_application.client_id,
+                "client_secret": oauth_application.client_secret,
+                "code": data["code"],
+            },
+            timeout=10,
+        )
+        response.raise_for_status()
+        response_data = response.json()
+        oauth_application.name = response_data["host_name"]
+        oauth_application.save()
+        FederatedHost.objects.create(
+            name=response_data["host_name"],
+            url=data["host_url"],
+            access_token=response_data["access_token"],
+            oauth_application=oauth_application,
+        )
+
     def form_valid(self, form):
+        try:
+            self._setup_federated_host(form.code_data)
+        except (KeyError, HTTPError, ReadTimeout):
+            messages.error(
+                self.request,
+                _("Could not connect to host instance. Please try again later."),
+            )
+            return self.form_invalid(form)
         messages.success(
             self.request,
             _(
