@@ -65,9 +65,7 @@ class RedeemInviteCodeForm(forms.Form):
 
     def clean_code(self):
         try:
-            data = json.loads(
-                base64.b64decode(self.cleaned_data["code"].encode("ascii")).decode("ascii")
-            )
+            data = json.loads(base64.b64decode(self.cleaned_data["code"].encode()).decode())
             if settings.GET_SITE_URL() != data["guest_url"]:
                 raise ValidationError(_("This invite code is not issued for this instance."))
         except (binascii.Error, JSONDecodeError, KeyError) as exc:

@@ -94,8 +94,8 @@ class InviteCode(models.Model):
         return base64.b64encode(
             json.dumps(
                 {"guest_url": self.url, "code": self.code, "host_url": settings.GET_SITE_URL()}
-            ).encode("ascii")
-        ).decode("ascii")
+            ).encode()
+        ).decode()
 
     class Meta:
         verbose_name = _("invite code")
