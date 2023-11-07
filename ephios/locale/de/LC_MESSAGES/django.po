@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-10-07 20:08+0200\n"
-"PO-Revision-Date: 2023-10-27 09:26+0000\n"
-"Last-Translator: Gernomaly <felixlindi@gmx.de>\n"
+"PO-Revision-Date: 2023-11-07 09:33+0000\n"
+"Last-Translator: Felix Rindt <felix@rindt.me>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
 "Language: de\n"
@@ -2821,7 +2821,7 @@ msgstr ""
 
 #: ephios/plugins/federation/forms.py:53
 msgid "Share event with other ephios instances"
-msgstr "Teile die Veranstaltung mit anderen ephios Instanzen"
+msgstr "Teile die Veranstaltung mit anderen ephios-Instanzen"
 
 #: ephios/plugins/federation/forms.py:64
 msgid "https://other-instance.ephios.de/"
@@ -2908,7 +2908,7 @@ msgstr ""
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:6
 msgid "Stop receiving events"
-msgstr "Keine Schichten mehr erhalten"
+msgstr "Keine Veranstaltungen mehr erhalten"
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:9
 #, fuzzy, python-format
