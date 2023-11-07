@@ -19,6 +19,10 @@ from ephios.core.signup.participants import AbstractParticipant
 class FederatedGuest(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(verbose_name=_("URL"))
+
+    # this ephios instance is sending events to the guest
+    # therefore this instance is registered as an oauth application
+    # on the guest instance to access user data like qualifications
     access_token = models.OneToOneField(AccessToken, on_delete=models.CASCADE)
     client_id = models.CharField(max_length=255)
     client_secret = models.CharField(max_length=255)
@@ -26,15 +30,27 @@ class FederatedGuest(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        verbose_name = _("federated guest")
+        verbose_name_plural = _("federated guests")
+
 
 class FederatedHost(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(verbose_name=_("URL"))
     access_token = models.CharField(max_length=255)
+
+    # this ephios instance is receiving events from the host
+    # therefore the host is registered as an oauth application
+    # on this instance to acceess user data like qualifications
     oauth_application = models.OneToOneField(Application, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.name)
+
+    class Meta:
+        verbose_name = _("federated host")
+        verbose_name_plural = _("federated hosts")
 
 
 class InviteCode(models.Model):
@@ -56,6 +72,10 @@ class InviteCode(models.Model):
             ).encode("ascii")
         ).decode("ascii")
 
+    class Meta:
+        verbose_name = _("invite code")
+        verbose_name_plural = _("invite codes")
+
 
 class FederatedEventShare(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -63,6 +83,10 @@ class FederatedEventShare(models.Model):
 
     def __str__(self):
         return _("Federated event share for {event}").format(event=self.event)
+
+    class Meta:
+        verbose_name = _("federated event share")
+        verbose_name_plural = _("federated event shares")
 
 
 class FederatedUser(models.Model):
@@ -85,6 +109,10 @@ class FederatedUser(models.Model):
             email=self.email,
             federated_user=self,
         )
+
+    class Meta:
+        verbose_name = _("federated user")
+        verbose_name_plural = _("federated users")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -118,6 +146,10 @@ class FederatedParticipant(AbstractParticipant):
             f'<span class="fa fa-user-tag" data-bs-toggle="tooltip" data-bs-placement="left" title="{title}"></span>'
         )
 
+    class Meta:
+        verbose_name = _("federated participant")
+        verbose_name_plural = _("federated participants")
+
 
 class FederatedParticipation(AbstractParticipation):
     federated_user = models.ForeignKey(
@@ -130,3 +162,7 @@ class FederatedParticipation(AbstractParticipation):
     @property
     def participant(self) -> "AbstractParticipant":
         return self.federated_user.as_participant()
+
+    class Meta:
+        verbose_name = _("federated participation")
+        verbose_name_plural = _("federated participations")

@@ -6,7 +6,9 @@
         {% translate "This feature is experimental!" %}
     </div>
     <h3>{% translate "ephios instances that you share events with" %}</h3>
-    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">Share events with another instance</a>
+    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">
+        {% translate "Share events with another instance" %}
+    </a>
     <table class="table table-striped display mt-2">
         <thead>
             <tr>
