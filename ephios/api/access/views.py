@@ -19,13 +19,33 @@ from ephios.extra.mixins import StaffRequiredMixin
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 
-class AllUserApplicationList(StaffRequiredMixin, oauth2_views.ApplicationList):
+class IgnoreApplicationOwnerMixin:
     def get_queryset(self):
         return get_application_model().objects.all()
 
 
-class ApplicationDelete(oauth2_views.ApplicationDelete):
+class AllUserApplicationList(
+    StaffRequiredMixin, IgnoreApplicationOwnerMixin, oauth2_views.ApplicationList
+):
+    pass
+
+
+class ApplicationDetail(
+    StaffRequiredMixin, IgnoreApplicationOwnerMixin, oauth2_views.ApplicationDetail
+):
+    pass
+
+
+class ApplicationDelete(
+    StaffRequiredMixin, IgnoreApplicationOwnerMixin, oauth2_views.ApplicationDelete
+):
     success_url = reverse_lazy("api:settings-oauth-app-list")
+
+
+class ApplicationUpdate(
+    StaffRequiredMixin, IgnoreApplicationOwnerMixin, oauth2_views.ApplicationUpdate
+):
+    pass
 
 
 class AccessTokensListView(oauth2_views.AuthorizedTokensListView):

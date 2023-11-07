@@ -11,6 +11,8 @@ from ephios.api.access.views import (
     AccessTokensListView,
     AllUserApplicationList,
     ApplicationDelete,
+    ApplicationDetail,
+    ApplicationUpdate,
 )
 from ephios.api.views.events import EventViewSet
 from ephios.api.views.users import UserProfileMeView
@@ -50,7 +52,7 @@ urlpatterns = [
                 # Application management views
                 path(
                     "applications/",
-                    staff_required(AllUserApplicationList.as_view()),
+                    AllUserApplicationList.as_view(),
                     name="settings-oauth-app-list",
                 ),
                 path(
@@ -60,17 +62,17 @@ urlpatterns = [
                 ),
                 path(
                     "applications/<int:pk>/",
-                    staff_required(oauth2_views.ApplicationDetail.as_view()),
+                    ApplicationDetail.as_view(),
                     name="settings-oauth-app-detail",
                 ),
                 path(
                     "applications/<int:pk>/delete/",
-                    staff_required(ApplicationDelete.as_view()),
+                    ApplicationDelete.as_view(),
                     name="settings-oauth-app-delete",
                 ),
                 path(
                     "applications/<int:pk>/update/",
-                    staff_required(oauth2_views.ApplicationUpdate.as_view()),
+                    ApplicationUpdate.as_view(),
                     name="settings-oauth-app-update",
                 ),
             ]
