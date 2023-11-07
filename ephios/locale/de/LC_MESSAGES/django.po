@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2023-10-07 20:08+0200\n"
-"PO-Revision-Date: 2023-09-30 17:12+0200\n"
-"Last-Translator: Felix Rindt <felix@ephios.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2023-11-07 09:55+0000\n"
+"Last-Translator: Gernomaly <felixlindi@gmx.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Weblate 5.2-dev\n"
 
 #: ephios/api/access/views.py:65 ephios/api/models.py:33 ephios/core/pdf.py:76
 #: ephios/core/pdf.py:130
@@ -370,10 +370,8 @@ msgid "Action"
 msgstr "Aktion"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:40
-#, fuzzy
-#| msgid "Manage event"
 msgid "Manage federation"
-msgstr "Veranstaltung verwalten"
+msgstr "Föderation verwalten"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:46
 #: ephios/core/templates/core/event_form.html:20
@@ -395,7 +393,7 @@ msgstr "Neue Anwendung registrieren"
 #: ephios/api/templates/oauth2_provider/authorize.html:8
 #, python-format
 msgid "Authorize %(app_name)s?"
-msgstr ""
+msgstr "%(app_name)s autorisieren?"
 
 #: ephios/api/templates/oauth2_provider/authorize.html:21
 msgid "The application requires the following permissions:"
@@ -2810,39 +2808,37 @@ msgstr ""
 "diese Einstellungen nicht bearbeiten können."
 
 #: ephios/plugins/federation/apps.py:10 ephios/plugins/federation/signals.py:60
-#, fuzzy
-#| msgid "description"
 msgid "Federation"
-msgstr "Beschreibung"
+msgstr "Föderation"
 
 #: ephios/plugins/federation/apps.py:13
 msgid ""
 "This plugins provides the possibility to share events with other ephios "
 "instances."
 msgstr ""
+"Diese Erweiterung ermöglicht Veranstaltungen an andere Ephios Instanzen zu "
+"teilen."
 
 #: ephios/plugins/federation/forms.py:53
 msgid "Share event with other ephios instances"
-msgstr ""
+msgstr "Teile die Veranstaltung mit anderen ephios-Instanzen"
 
 #: ephios/plugins/federation/forms.py:64
 msgid "https://other-instance.ephios.de/"
-msgstr ""
+msgstr "https://other-instance.ephios.de/"
 
 #: ephios/plugins/federation/forms.py:74
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:10
 msgid "Invite code"
-msgstr ""
+msgstr "Einladungscode"
 
 #: ephios/plugins/federation/forms.py:82
 msgid "This invite code is not issued for this instance."
-msgstr ""
+msgstr "Dieser Einladungs-Code wurde nicht für diese Instanz ausgestellt."
 
 #: ephios/plugins/federation/forms.py:110
-#, fuzzy
-#| msgid "Invalid link"
 msgid "Invalid code"
-msgstr "Link ungültig"
+msgstr "Code ungültig"
 
 #: ephios/plugins/federation/models.py:21
 #: ephios/plugins/federation/models.py:32
@@ -2851,61 +2847,50 @@ msgstr "Link ungültig"
 #: ephios/plugins/federation/templates/federation/federation_settings.html:34
 #: ephios/plugins/federation/templates/federation/federation_settings.html:55
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ephios/plugins/federation/models.py:46
 #, python-brace-format
 msgid "Federation invite code for {url}"
-msgstr ""
+msgstr "Föderations-Einladungs-Code für {url}"
 
 #: ephios/plugins/federation/models.py:65
-#, fuzzy, python-brace-format
-#| msgid "Create new shift for event"
+#, python-brace-format
 msgid "Federated event share for {event}"
-msgstr "Schicht hinzufügen"
+msgstr "Föderation von {event}"
 
 #: ephios/plugins/federation/models.py:79
 #, python-brace-format
 msgid "Federated user {first_name} {last_name}"
-msgstr ""
+msgstr "Föderierter Nutzer {first_name} {last_name}"
 
 #: ephios/plugins/federation/models.py:120
-#, fuzzy
-#| msgid "Delete user"
 msgid "Federated user"
-msgstr "Benutzer löschen"
+msgstr "Föderierter Benutzer"
 
 #: ephios/plugins/federation/models.py:128
-#, fuzzy
-#| msgid "guest participant"
 msgid "federated participant"
-msgstr "Gastteilnehmender"
+msgstr "Föderierter Teilnehmender"
 
 #: ephios/plugins/federation/signals.py:21
 #: ephios/plugins/federation/templates/federation/external_event_list.html:5
 #: ephios/plugins/federation/templates/federation/external_event_list.html:9
-#, fuzzy
-#| msgid "Delete events"
 msgid "External events"
-msgstr "Veranstaltungen löschen"
+msgstr "Externe Veranstaltungen"
 
 #: ephios/plugins/federation/templates/federation/event_detail.html:7
-#, fuzzy, python-format
-#| msgid "You are receiving this email as a member of %(organization_name)s."
+#, python-format
 msgid "You are currently viewing an event at %(organization_name)s."
-msgstr "Sie erhalten diese E-Mail als Mitglied von %(organization_name)s."
+msgstr "Sie sehen gerade eine Veranstaltung von %(organization_name)s."
 
 #: ephios/plugins/federation/templates/federation/event_detail.html:8
-#, fuzzy, python-format
-#| msgid "Back to event"
+#, python-format
 msgid "Back to %(name)s"
-msgstr "Zurück zur Veranstaltung"
+msgstr "Zurück zu %(name)s"
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:6
-#, fuzzy
-#| msgid "Your upcoming events"
 msgid "Stop sharing events"
-msgstr "Anstehende Schichten"
+msgstr "Veranstaltungen nicht mehr teilen"
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:9
 #, python-format
@@ -2914,65 +2899,63 @@ msgid ""
 "sharing all events with them? This will also delete all participations that "
 "originated from there."
 msgstr ""
+"Sind Sie sicher, dass Sie die Verbindung zu \"%(name)s\" entfernen und keine "
+"Veranstaltungen mehr dorthin teilen wollen? Dies wird auch Teilnahmen von "
+"dort entfernen."
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:14
 #: ephios/plugins/federation/templates/federation/federation_settings.html:23
 msgid "Stop sharing"
-msgstr ""
+msgstr "Nicht mehr Teilen"
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:6
-#, fuzzy
-#| msgid "Your upcoming events"
 msgid "Stop receiving events"
-msgstr "Anstehende Schichten"
+msgstr "Keine Veranstaltungen mehr erhalten"
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:9
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete the user %(name)s (%(userprofile)s)?"
+#, python-format
 msgid ""
 "Are you sure you want to remove the connection to \"%(name)s\" and stop "
 "receiving events from them?"
-msgstr "Möchten Sie den Benutzer %(name)s (%(userprofile)s) wirklich löschen?"
+msgstr ""
+"Sind Sie sicher, das Sie die Verbindung zu %(name)s entfernen und keine "
+"Veranstaltungen mehr von dort erhalten wollen?"
 
 #: ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:14
 #: ephios/plugins/federation/templates/federation/federation_settings.html:64
 msgid "Stop receiving"
-msgstr ""
+msgstr "Empfang beenden"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:6
 #: ephios/plugins/federation/templates/federation/invitecode_form.html:8
 #: ephios/plugins/federation/templates/federation/redeem_invite_code.html:8
 msgid "This feature is experimental!"
-msgstr ""
+msgstr "Diese Funktion ist experimentell!"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:8
 msgid "ephios instances that you share events with"
-msgstr ""
+msgstr "ephios-Instanzen mit denen Sie Veranstaltungen teilen"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:30
 msgid "Pending invites"
-msgstr ""
+msgstr "Ausstehende Einladungen"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:42
-#, fuzzy
-#| msgid "Show in footer"
 msgid "Show invite code"
-msgstr "In der Fußzeile anzeigen"
+msgstr "Einladungs-Code anzeigen"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:49
 msgid "ephios instances that share events with you"
-msgstr ""
+msgstr "ephios-Instanzen die mit Ihnen Veranstaltungen teilen"
 
 #: ephios/plugins/federation/templates/federation/federation_settings.html:50
 #: ephios/plugins/federation/templates/federation/redeem_invite_code.html:6
 msgid "Enter invite code"
-msgstr ""
+msgstr "Einladungs-Code eingeben"
 
 #: ephios/plugins/federation/templates/federation/invitecode_form.html:6
-#, fuzzy
-#| msgid "The event is not active."
 msgid "Share events with another instance"
-msgstr "Die Veranstaltung {title} ist nicht aktiviert."
+msgstr "Veranstaltungen mit einer anderen Instanz teilen"
 
 #: ephios/plugins/federation/templates/federation/invitecode_form.html:11
 msgid ""
@@ -2981,10 +2964,15 @@ msgid ""
 "users can then sign up for your event. To set up sharing, enter the URL of "
 "the instance that you want to share events with below."
 msgstr ""
+"Sie können Veranstaltungen mit einer anderen ephios-Instanz teilen. Wenn "
+"Teilen für eine Veranstaltung aktiviert wird, erscheint diese Veranstaltung "
+"auch bei Nutzenden der ausgewählten fremden Instanzen. Dort kann sich für "
+"die Veranstaltung angemeldet werden. Um die Verbindung einzurichten, geben "
+"Sie die URL der Instanz an, mit der Sie Veranstaltungen teilen wollen."
 
 #: ephios/plugins/federation/templates/federation/invitecode_form.html:19
 msgid "Invite"
-msgstr ""
+msgstr "Einladung"
 
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:14
 #, python-format
@@ -2995,6 +2983,12 @@ msgid ""
 "then visit the URL or enter the code in their ephios instance to accept your "
 "invitation. It will expire in 48 hours."
 msgstr ""
+"Wir haben einen Einladungscode erzeugt, der durch die ephios-Instanz auf "
+"%(url)s angenommen werden kann, um Veranstaltungen von Ihnen zu erhalten. "
+"Bitte kopieren Sie die URL oder den Code und senden Sie ihn an die "
+"Administration der anderen Instanz. Die URL kann direkt aufgerufen werden. "
+"Alternativ kann der Code in den Einstellungen eingegeben werden, um die "
+"Einladung anzunehmen. Der Code läuft in 48 Stunden ab."
 
 #: ephios/plugins/federation/templates/federation/redeem_invite_code.html:11
 msgid ""
@@ -3006,34 +3000,42 @@ msgid ""
 "this, the other instance will also be able to access data from your users, "
 "such as their names, email addresses and qualifications."
 msgstr ""
+"Sie können Veranstaltungen einer anderen ephios-Instanz auf Ihrer anzeigen. "
+"Dazu benötigen Sie einen Einladungs-Code der Instanz, die Veranstaltungen an "
+"Sie senden möchte. Wenn Sie einen solchen Code haben, können Sie ihn hier "
+"eingeben. Mit der Annahme der Einladung werden geteilte Veranstaltungen in "
+"der Ansicht \"Externe Veranstaltungen\" erscheinen. Ihre Nutzenden können "
+"sich dort für die Veranstaltungen anmelden. Dafür wird die einladende "
+"Instanz auf Daten Ihrer Nutzer (Name, E-Mail, Qualifikationen) zugreifen."
 
 #: ephios/plugins/federation/templates/federation/redeem_invite_code.html:20
-#, fuzzy
-#| msgid "App integrations"
 msgid "Accept invitation"
-msgstr "App-Integrationen"
+msgstr "Einladung annehmen"
 
 #: ephios/plugins/federation/views/frontend.py:153
 msgid "Invite code has expired."
-msgstr ""
+msgstr "Einladungs-Code ist abgelaufen."
 
 #: ephios/plugins/federation/views/frontend.py:177
 msgid ""
 "Invite code redeemded successfully. You are now receiving events from this "
 "instance."
 msgstr ""
+"Einladungs-Code erfolgreich eingelöst. Sie empfangen nun Veranstaltungen "
+"dieser Instanz."
 
 #: ephios/plugins/federation/views/frontend.py:190
 msgid "You are no longer sharing events with this instance."
-msgstr ""
+msgstr "Sie teilen nun keine Veranstaltungen mehr mit dieser Instanz."
 
 #: ephios/plugins/federation/views/frontend.py:206
 msgid "You are no longer receiving events from this instance."
-msgstr ""
+msgstr "Sie erhalten nun keine Veranstaltungen mehr von dieser Instanz."
 
 #: ephios/plugins/federation/views/frontend.py:218
 msgid "Failed to remove this instance. Please try again later."
 msgstr ""
+"Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
 
 #: ephios/plugins/guests/apps.py:10
 msgid "Guest Participations"
