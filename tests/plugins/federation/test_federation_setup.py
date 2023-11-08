@@ -15,6 +15,15 @@ def test_create_invitecode(django_app, superuser):
     assert InviteCode.objects.get().url == "https://example.com"
 
 
+def test_federation_oauth_detail_view(django_app, superuser, federation):
+    host, guest = federation
+    django_app.get(
+        reverse("api:settings-oauth-app-detail", args=[host.oauth_application.pk]),
+        user=superuser,
+        status=200,
+    )
+
+
 @patch("ephios.plugins.federation.views.frontend.requests")
 def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite_code):
     mock_requests.post.return_value.json.return_value = {
