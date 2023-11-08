@@ -176,6 +176,7 @@ class RedeemInviteCodeView(StaffRequiredMixin, FormView):
     @transaction.atomic
     def _setup_federated_host(self, data):
         oauth_application = Application(
+            user=self.request.user,
             client_type=Application.CLIENT_CONFIDENTIAL,
             authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
             redirect_uris=urljoin(data["host_url"], reverse("federation:oauth_callback")),
@@ -205,19 +206,25 @@ class RedeemInviteCodeView(StaffRequiredMixin, FormView):
     def form_valid(self, form):
         try:
             self._setup_federated_host(form.code_data)
-        except (KeyError, HTTPError, ReadTimeout):
+        except (KeyError, JSONDecodeError):
+            messages.error(
+                self.request,
+                _("Invalid code data. Please try again with a new invite code."),
+            )
+        except (HTTPError, ReadTimeout):
             messages.error(
                 self.request,
                 _("Could not connect to host instance. Please try again later."),
             )
-            return self.form_invalid(form)
-        messages.success(
-            self.request,
-            _(
-                "Invite code redeemded successfully. You are now receiving events from this instance."
-            ),
-        )
-        return redirect(reverse("federation:settings"))
+        else:
+            messages.success(
+                self.request,
+                _(
+                    "Invite code redeemded successfully. You are now receiving events from this instance."
+                ),
+            )
+            return redirect(reverse("federation:settings"))
+        return self.form_invalid(form)
 
 
 class FederatedGuestDeleteView(StaffRequiredMixin, SuccessMessageMixin, DeleteView):

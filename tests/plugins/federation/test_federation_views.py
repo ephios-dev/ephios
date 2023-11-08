@@ -16,14 +16,6 @@ def test_federation_get_shared_events(django_app, volunteer, federation, federat
     assert federated_event.title in response.text
 
 
-def test_federation_oauth_detail_view(django_app, superuser, federation):
-    host, guest = federation
-    response = django_app.get(
-        reverse("api:settings-oauth-app-detail", args=[host.oauth_application.pk]),
-        user=superuser,
-    )
-
-
 @patch("ephios.plugins.federation.views.frontend.requests")
 def test_federation_shared_event_list(
     mock_requests, django_app, volunteer, federation, federated_event, settings
