@@ -64,16 +64,23 @@ class PluginSignal(Signal):
     Signal that will only be send out to enabled plugins and ephios core.
     """
 
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def _live_receivers(self, sender):
-        return filter(
-            lambda rcv: is_receiver_path_enabled(rcv.__module__), super()._live_receivers(sender)
+        sync_receivers, async_receivers = super()._live_receivers(sender)
+        return (
+            filter(lambda rcv: is_receiver_path_enabled(rcv.__module__), sync_receivers),
+            filter(lambda rcv: is_receiver_path_enabled(rcv.__module__), async_receivers),
         )
 
     def send_to_all_plugins(self, sender, **named):
-        return [
-            (receiver, receiver(signal=self, sender=sender, **named))
-            for receiver in super()._live_receivers(sender)
-        ]
+        old_live_receivers = self._live_receivers
+        self._live_receivers = super()._live_receivers
+        try:
+            return self.send(sender, **named)
+        finally:
+            self._live_receivers = old_live_receivers
 
 
 class PluginConfig(AppConfig):
