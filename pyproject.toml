@@ -10,8 +10,8 @@ repository = "https://github.com/ephios-dev/ephios"
 documentation = "https://docs.ephios.de/en/stable/"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-Django = "^4.1"
+python = "^3.10"
+Django = "^5.0"
 django-environ = ">=0.11.2,<0.12"
 django-guardian = "^2.4.0"
 django-ical = "^1.8.3"
