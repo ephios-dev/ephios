@@ -14,7 +14,9 @@ from ephios.core.models import (
 )
 from ephios.core.signup.checker import ParticipantUnfitError, get_conflicting_participations
 from ephios.core.signup.stats import SignupStats
-from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
+from ephios.plugins.basesignup.signup.simple_qualification_required import (
+    SimpleQualificationRequiredSignupMethod,
+)
 
 
 def test_signup_stats_addition(django_app):
@@ -131,7 +133,7 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
     ],
 )
 def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, total, event, volunteer):
-    common = dict(signup_method_slug=InstantConfirmationSignupMethod.slug, event=event)
+    common = dict(signup_method_slug=SimpleQualificationRequiredSignupMethod.slug, event=event)
     aware = functools.partial(make_aware, timezone=tz)
     a = Shift.objects.create(
         start_time=aware(a_times[0]),

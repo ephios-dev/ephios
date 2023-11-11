@@ -1,7 +1,9 @@
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
-from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
+from ephios.plugins.basesignup.signup.simple_qualification_required import (
+    SimpleQualificationRequiredSignupMethod,
+)
 
 
 def test_getting_dispatched_state_is_overwritten_by_participant_signup(
@@ -38,7 +40,7 @@ def test_requested_participations_are_always_rendered(django_app, volunteer, pla
     InstantConfirmationSignupMethod doesn't use the requested state, but a requested participation exists. Test that.
     """
     shift = event.shifts.first()
-    shift.signup_method_slug = InstantConfirmationSignupMethod.slug
+    shift.signup_method_slug = SimpleQualificationRequiredSignupMethod.slug
     shift.save()
 
     participation = shift.signup_method.get_or_create_participation_for(volunteer.as_participant())
