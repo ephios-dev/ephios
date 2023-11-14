@@ -21,9 +21,7 @@ class AutomaticConfirmationMixin(_Base):
                 required=False,
                 initial=False,
                 label=_("Instant confirmation"),
-                help_text=_(
-                    "Instantly confirm every signup instead bypassing disposition and request state"
-                ),
+                help_text=_("Instantly confirm every signup (no disposition required)"),
             )
 
         return ConfigurationForm
@@ -39,16 +37,16 @@ class AutomaticConfirmationMixin(_Base):
 
     @property
     def signup_view_class(self):
-        if self.configuration.instant_confirmation:
-            return super().signup_view_class
+        if not self.configuration.instant_confirmation:
 
-        class SignupView(super().signup_view_class):
-            signup_success_message = _(
-                "You have successfully requested a participation for {shift}."
-            )
-            signup_error_message = _("Requesting a participation failed: {error}")
+            class SignupView(super().signup_view_class):
+                signup_success_message = _(
+                    "You have successfully requested a participation for {shift}."
+                )
+                signup_error_message = _("Requesting a participation failed: {error}")
 
-        return SignupView
+            return SignupView
+        return super().signup_view_class
 
     @property
     def registration_button_text(self):
@@ -65,5 +63,7 @@ class SimpleQualificationRequiredSignupMethod(
     AutomaticConfirmationMixin, QualificationMinMaxBaseSignupMethod
 ):
     slug = "simple_qualification_required"
-    verbose_name = _("Require uniform qualification")
-    description = _("""This method requires all participants to have the same qualification.""")
+    verbose_name = _("Signup where a qualification can be required")
+    description = _(
+        """With this method you can requires participants to have some qualification."""
+    )
