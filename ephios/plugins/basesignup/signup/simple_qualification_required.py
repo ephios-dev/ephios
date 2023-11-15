@@ -37,13 +37,11 @@ class AutomaticConfirmationMixin(_Base):
 
     @property
     def signup_view_class(self):
-        if not self.configuration.instant_confirmation:
+        if self.configuration.instant_confirmation:
 
             class SignupView(super().signup_view_class):
-                signup_success_message = _(
-                    "You have successfully requested a participation for {shift}."
-                )
-                signup_error_message = _("Requesting a participation failed: {error}")
+                signup_success_message = _("You have successfully signed up for {shift}.")
+                signup_error_message = _("Signing up failed: {error}")
 
             return SignupView
         return super().signup_view_class
@@ -51,8 +49,8 @@ class AutomaticConfirmationMixin(_Base):
     @property
     def registration_button_text(self):
         if self.configuration.instant_confirmation:
-            return super().registration_button_text
-        return pgettext_lazy("signup button text", "Request")
+            return pgettext_lazy("signup button text", "Sign up")
+        return super().registration_button_text
 
     @property
     def uses_requested_state(self):
@@ -64,6 +62,4 @@ class SimpleQualificationRequiredSignupMethod(
 ):
     slug = "simple_qualification_required"
     verbose_name = _("Signup where a qualification can be required")
-    description = _(
-        """With this method you can requires participants to have some qualification."""
-    )
+    description = _("""With this method you can require participants to have some qualification.""")

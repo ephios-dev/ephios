@@ -7,6 +7,7 @@ from collections import OrderedDict
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.services.notifications.types import (
@@ -116,7 +117,7 @@ class AbstractSignupMethod(ABC):
         """
         The text of the registration button.
         """
-        return _("Sign up")
+        return pgettext_lazy("signup button text", "Request")
 
     @property
     def uses_requested_state(self):

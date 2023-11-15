@@ -199,8 +199,6 @@ class SectionSignupForm(BaseSignupForm):
 
 class SectionBasedSignupView(BaseSignupView):
     form_class = SectionSignupForm
-    signup_success_message = _("You have successfully requested a participation for {shift}.")
-    signup_error_message = _("Requesting a participation failed: {error}")
 
 
 class SectionBasedSignupMethod(MinimumAgeMixin, BaseSignupMethod):
@@ -210,7 +208,6 @@ class SectionBasedSignupMethod(MinimumAgeMixin, BaseSignupMethod):
         """This method lets you define sections for which people can choose from.
         Sections contain qualifications that helpers need to fulfil."""
     )
-    registration_button_text = _("Request")
     signup_view_class = SectionBasedSignupView
     configuration_form_class = SectionBasedConfigurationForm
     disposition_participation_form_class = SectionBasedDispositionParticipationForm
