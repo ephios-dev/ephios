@@ -50,18 +50,20 @@
             {% endif %}
         </div>
     </div>
-    <div class="collapse {% if form.errors %}show{% endif %} mt-3 do-not-drag card bg-light"
+    <div class="collapse {% if form.errors %}show{% endif %} do-not-drag"
          data-bs-parent="#participations-form"
          id="participation-collapse-{{ form.instance.id }}">
-        <div class="card-body">
-            {{ form.individual_start_time|as_crispy_field }}
-            {{ form.individual_end_time|as_crispy_field }}
-            {% if form.comment.initial %}
-                {{ form.comment|as_crispy_field }}
-            {% endif %}
-            {% block participation_form %}
-            {% endblock %}
-            <div class="mb-n3"></div>
+        <div class="card bg-light mt-3">
+            <div class="card-body">
+                {{ form.individual_start_time|as_crispy_field }}
+                {{ form.individual_end_time|as_crispy_field }}
+                {% if form.comment.initial %}
+                    {{ form.comment|as_crispy_field }}
+                {% endif %}
+                {% block participation_form %}
+                {% endblock %}
+                <div class="mb-n3"></div>
+            </div>
         </div>
     </div>
 {% endblock %}
