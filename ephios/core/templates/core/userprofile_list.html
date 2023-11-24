@@ -53,6 +53,18 @@
                                 {% if userprofile.is_minor %}
                                     <span class="badge bg-warning">{% translate "minor" %}</span>
                                 {% endif %}
+                                {% if userprofile|not_seen_recently %}
+                                    {% with userprofile.last_login|timesince as timeframe %}
+                                        <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="
+                                                                                                                               {% if timeframe %}
+                                                                                                                                   {% blocktranslate trimmed %}{{ timeframe }} ago{% endblocktranslate %}
+                                                                                                                               {% else %}
+                                                                                                                                   {% translate "never" %}
+                                                                                                                               {% endif %}">
+                                            {% translate "not seen recently" %}
+                                        </span>
+                                    {% endwith %}
+                                {% endif %}
                                 {% if not userprofile.is_active %}
                                     <span class="badge bg-danger">{% translate "inactive" %}</span>
                                 {% elif userprofile.is_staff %}
