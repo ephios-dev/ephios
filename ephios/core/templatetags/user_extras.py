@@ -82,3 +82,10 @@ def intersects(a, b):
 def group_has_permission(group, permission):
     app_label, codename = permission.split(".")
     return group.permissions.filter(content_type__app_label=app_label, codename=codename).exists()
+
+
+@register.filter(name="not_seen_recently")
+def not_seen_recently(userprofile):
+    if not userprofile.last_login:
+        return True
+    return timezone.now() - userprofile.last_login > timezone.timedelta(weeks=25)
