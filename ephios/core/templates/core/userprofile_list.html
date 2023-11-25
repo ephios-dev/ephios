@@ -57,7 +57,7 @@
                                     {% with userprofile.last_login|timesince as timeframe %}
                                         <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="
                                                                                                                                {% if timeframe %}
-                                                                                                                                   {% blocktranslate trimmed %}{{ timeframe }} ago{% endblocktranslate %}
+                                                                                                                                   {% blocktranslate trimmed %}Last login: {{ timeframe }} ago{% endblocktranslate %}
                                                                                                                                {% else %}
                                                                                                                                    {% translate "never" %}
                                                                                                                                {% endif %}">
