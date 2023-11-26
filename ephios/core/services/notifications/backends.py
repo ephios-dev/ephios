@@ -3,7 +3,9 @@ import smtplib
 import traceback
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import mail_admins
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
@@ -30,27 +32,7 @@ def enabled_notification_backends():
 
 def send_all_notifications():
     for backend in installed_notification_backends():
-        for notification in Notification.objects.filter(failed=False):
-            if backend.can_send(notification) and backend.user_prefers_sending(notification):
-                with language((notification.user and notification.user.preferred_language) or None):
-                    try:
-                        backend.send(notification)
-                    except Exception as e:  # pylint: disable=broad-except
-                        if settings.DEBUG:
-                            raise e
-                        notification.failed = True
-                        notification.save()
-                        try:
-                            mail_admins(
-                                "Notification sending failed",
-                                f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
-                            )
-                        except smtplib.SMTPConnectError:
-                            pass  # if the mail backend threw this, mail admin will probably throw this as well
-                        logger.warning(
-                            f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
-                        )
-    Notification.objects.filter(failed=False).delete()
+        backend.send_multiple(Notification.objects.exclude(processed_by__contains=backend.slug))
 
 
 class AbstractNotificationBackend:
@@ -63,8 +45,20 @@ class AbstractNotificationBackend:
         return NotImplementedError
 
     @classmethod
+    def is_obsolete(cls, notification):
+        return False
+
+    @classmethod
     def can_send(cls, notification):
         return notification.user is not None
+
+    @classmethod
+    def should_send(cls, notification):
+        return (
+            cls.can_send(notification)
+            and cls.user_prefers_sending(notification)
+            and not (notification.read or cls.is_obsolete(notification))
+        )
 
     @classmethod
     def user_prefers_sending(cls, notification):
@@ -77,6 +71,35 @@ class AbstractNotificationBackend:
             if backends is not None:
                 return cls.slug in backends
         return True
+
+    @classmethod
+    def send_multiple(cls, notifications: QuerySet):
+        to_delete = []
+        for notification in notifications:
+            if cls.should_send(notification):
+                with language((notification.user and notification.user.preferred_language) or None):
+                    try:
+                        cls.send(notification)
+                    except ObjectDoesNotExist:
+                        to_delete.append(notification.pk)
+                        continue
+                    except Exception as e:  # pylint: disable=broad-except
+                        if settings.DEBUG:
+                            raise e
+                        try:
+                            mail_admins(
+                                "Notification sending failed",
+                                f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
+                            )
+                        except smtplib.SMTPConnectError:
+                            pass  # if the mail backend threw this, mail admin will probably throw this as well
+                        logger.warning(
+                            f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {cls} with {e}"
+                        )
+                        continue
+            notification.processed_by.append(cls.slug)
+            notification.save()
+        Notification.objects.filter(pk__in=to_delete).delete()
 
     @classmethod
     def send(cls, notification: Notification):

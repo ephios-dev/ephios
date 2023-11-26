@@ -490,7 +490,10 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    failed = models.BooleanField(default=False, verbose_name=_("failed"))
+    read = models.BooleanField(default=False, verbose_name=_("read"))
+    processed_by = models.JSONField(
+        blank=True, default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )

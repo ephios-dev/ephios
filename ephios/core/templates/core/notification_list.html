@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <ul>
+        {% for notification in notification_list %}
+            <li>{{ notification.subject }} {% for label, url in notification.get_actions %}<a href="{{ url }}">{{ label }}</a> {% endfor %}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
