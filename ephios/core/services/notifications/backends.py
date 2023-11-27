@@ -32,7 +32,19 @@ def enabled_notification_backends():
 
 def send_all_notifications():
     for backend in installed_notification_backends():
-        backend.send_multiple(Notification.objects.exclude(processed_by__contains=backend.slug))
+        try:
+            backend.send_multiple(Notification.objects.exclude(processed_by__contains=backend.slug))
+        except Exception as e:  # pylint: disable=broad-except
+            if settings.DEBUG:
+                raise e
+            try:
+                mail_admins(
+                    "Notification sending failed",
+                    f"Exception: {e}\n{traceback.format_exc()}",
+                )
+            except smtplib.SMTPConnectError:
+                pass  # if the mail backend threw this, mail admin will probably throw this as well
+            logger.warning(f"Notification sending failed with {e}")
 
 
 class AbstractNotificationBackend:
@@ -45,19 +57,15 @@ class AbstractNotificationBackend:
         return NotImplementedError
 
     @classmethod
-    def is_obsolete(cls, notification):
-        return False
-
-    @classmethod
-    def can_send(cls, notification):
+    def sending_possible(cls, notification):
         return notification.user is not None
 
     @classmethod
     def should_send(cls, notification):
         return (
-            cls.can_send(notification)
+            cls.sending_possible(notification)
             and cls.user_prefers_sending(notification)
-            and not (notification.read or cls.is_obsolete(notification))
+            and not (notification.read or notification.is_obsolete)
         )
 
     @classmethod
@@ -77,26 +85,14 @@ class AbstractNotificationBackend:
         to_delete = []
         for notification in notifications:
             if cls.should_send(notification):
-                with language((notification.user and notification.user.preferred_language) or None):
-                    try:
+                try:
+                    with language(
+                        (notification.user and notification.user.preferred_language) or None
+                    ):
                         cls.send(notification)
-                    except ObjectDoesNotExist:
-                        to_delete.append(notification.pk)
-                        continue
-                    except Exception as e:  # pylint: disable=broad-except
-                        if settings.DEBUG:
-                            raise e
-                        try:
-                            mail_admins(
-                                "Notification sending failed",
-                                f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
-                            )
-                        except smtplib.SMTPConnectError:
-                            pass  # if the mail backend threw this, mail admin will probably throw this as well
-                        logger.warning(
-                            f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {cls} with {e}"
-                        )
-                        continue
+                except ObjectDoesNotExist:
+                    to_delete.append(notification.pk)
+                    continue
             notification.processed_by.append(cls.slug)
             notification.save()
         Notification.objects.filter(pk__in=to_delete).delete()
@@ -111,7 +107,7 @@ class EmailNotificationBackend(AbstractNotificationBackend):
     title = _("via email")
 
     @classmethod
-    def can_send(cls, notification):
+    def sending_possible(cls, notification):
         return notification.user is not None or "email" in notification.data
 
     @classmethod

@@ -55,6 +55,10 @@ class AbstractNotificationHandler:
         raise NotImplementedError
 
     @classmethod
+    def is_obsolete(cls, notification):
+        return False
+
+    @classmethod
     def as_plaintext(cls, notification):
         return render_to_string(cls.plaintext_template_name, cls.get_render_context(notification))
 

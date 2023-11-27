@@ -515,6 +515,10 @@ class Notification(Model):
         """The body text of the notification."""
         return self.notification_type.get_body(self)
 
+    @property
+    def is_obsolete(self):
+        return self.notification_type.is_obsolete(self)
+
     def as_html(self):
         """The notification rendered as HTML."""
         return self.notification_type.as_html(self)
