@@ -202,6 +202,13 @@ class NewEventNotification(AbstractNotificationHandler):
 
 class ParticipationMixin:
     @classmethod
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return participation.state != notification.data["participation_state"]
+
+    @classmethod
     def get_actions(cls, notification):
         shift = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
@@ -220,55 +227,48 @@ class ParticipationMixin:
             user=user,
             data={
                 "participation_id": participation.id,
+                "participation_state": participation.state,
                 "email": participation.participant.email,
                 **additional_data,
             },
         )
 
 
-class ParticipationConfirmedNotification(ParticipationMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_confirmed"
-    title = _("Your participation has been confirmed")
+class ParticipationStateChangeNotification(ParticipationMixin, AbstractNotificationHandler):
+    slug = "ephios_participation_state_changed"
+    title = _("The state of your participation has changed")
 
     @classmethod
     def get_subject(cls, notification):
         event = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift.event
-        return _("Participation confirmed for {event}").format(event=event)
+        return _("Participation {state} for {event}").format(
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
+            event=event,
+        )
 
     @classmethod
     def get_body(cls, notification):
         participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        message = _("Your participation for {shift} is now confirmed.").format(
-            shift=participation.shift
-        )
+        shift = participation.shift
+        message = ""
+        match notification.data["participation_state"]:
+            case AbstractParticipation.States.REQUESTED:
+                message = _("You requested a participation for {shift}.").format(shift=shift)
+            case AbstractParticipation.States.CONFIRMED:
+                message = _("Your participation for {shift} is now confirmed.").format(shift=shift)
+            case AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                return _(
+                    "Your participation for {shift} has been rejected by a responsible user."
+                ).format(shift=shift)
         if participation.has_customized_signup():
             message += f'\n\n{_("Your time is")} {participation.get_time_display()}'
         return message
-
-
-class ParticipationRejectedNotification(ParticipationMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_rejected"
-    title = _("Your participation has been rejected")
-
-    @classmethod
-    def get_subject(cls, notification):
-        event = AbstractParticipation.objects.get(
-            id=notification.data.get("participation_id")
-        ).shift.event
-        return _("Participation rejected for {event}").format(event=event)
-
-    @classmethod
-    def get_body(cls, notification):
-        shift = AbstractParticipation.objects.get(
-            id=notification.data.get("participation_id")
-        ).shift
-        return _("Your participation for {shift} has been rejected by a responsible user.").format(
-            shift=shift
-        )
 
 
 class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotificationHandler):
@@ -326,6 +326,7 @@ class ResponsibleMixin:
                             ),
                         ),
                         "participation_id": participation.id,
+                        "participation_state": participation.state,
                         **additional_data,
                     },
                 )
@@ -348,37 +349,66 @@ class ResponsibleMixin:
 
     @classmethod
     def get_subject(cls, notification):
-        participation = AbstractParticipation.objects.get(
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return _("Participation {state} for {event}").format(
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
+            event=event,
+        )
+
+
+class ResponsibleParticipationAwaitsDispositionNotification(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_awaits_disposition"
+    title = _("A participation for your event awaits disposition")
+
+    @classmethod
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        participation_state = participation.get_state_display()
-        return _("Participation {state} for {event}").format(
-            state=participation_state, event=participation.shift.event
-        )
-
-
-class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_responsible_requested"
-    title = _("A participation has been requested for your event")
+        return participation.state != AbstractParticipation.States.REQUESTED
 
     @classmethod
     def get_body(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        if (
-            participation.shift.signup_method.uses_requested_state
-            and participation.state != AbstractParticipation.States.CONFIRMED
-        ):
-            return _(
-                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
-            ).format(
-                shift=participation.shift,
-                participant=participation.participant,
-                disposition_url=notification.data.get("disposition_url"),
-            )
-        return _("{participant} signed up for {shift}.").format(
-            participant=participation.participant, shift=participation.shift
+        return _(
+            "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
+        ).format(
+            shift=participation.shift,
+            participant=participation.participant,
+            disposition_url=notification.data.get("disposition_url"),
+        )
+
+
+class ResponsibleParticipationStateChangeNotification(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_responsible_state_changed"
+    title = _("A participation for your event has changed state")
+
+    @classmethod
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return participation.state != notification.data["participation_state"]
+
+    @classmethod
+    def get_body(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return _("The participation of {participant} for {shift} is now {state}.").format(
+            shift=participation.shift,
+            participant=participation.participant,
+            state=participation.state,
         )
 
 
@@ -566,10 +596,10 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
 CORE_NOTIFICATION_TYPES = [
     ProfileUpdateNotification,
     NewProfileNotification,
-    ParticipationRejectedNotification,
-    ParticipationConfirmedNotification,
+    ParticipationStateChangeNotification,
     ParticipationCustomizationNotification,
-    ResponsibleParticipationRequestedNotification,
+    ResponsibleParticipationAwaitsDispositionNotification,
+    ResponsibleParticipationStateChangeNotification,
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
     NewEventNotification,

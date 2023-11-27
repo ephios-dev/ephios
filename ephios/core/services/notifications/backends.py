@@ -73,6 +73,10 @@ class AbstractNotificationBackend:
         if notification.notification_type.unsubscribe_allowed and notification.user is not None:
             if not notification.user.is_active:
                 return False
+            if (
+                acting_user := notification.data.get("acting_user", None)
+            ) and acting_user == notification.user:
+                return False
             backends = notification.user.preferences["notifications__notifications"].get(
                 notification.slug
             )

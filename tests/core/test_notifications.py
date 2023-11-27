@@ -12,12 +12,11 @@ from ephios.core.services.notifications.types import (
     EventReminderNotification,
     NewEventNotification,
     NewProfileNotification,
-    ParticipationConfirmedNotification,
     ParticipationCustomizationNotification,
-    ParticipationRejectedNotification,
+    ParticipationStateChangeNotification,
     ProfileUpdateNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
-    ResponsibleParticipationRequestedNotification,
+    ResponsibleParticipationAwaitsDispositionNotification,
     enabled_notification_types,
 )
 
@@ -73,9 +72,8 @@ class TestNotifications:
             user=qualified_volunteer,
             state=AbstractParticipation.States.CONFIRMED,
         )
-        ParticipationConfirmedNotification.send(participation)
-        ParticipationRejectedNotification.send(participation)
-        ResponsibleParticipationRequestedNotification.send(participation)
+        ParticipationStateChangeNotification.send(participation)
+        ResponsibleParticipationAwaitsDispositionNotification.send(participation)
         assert Notification.objects.count() == 2 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
