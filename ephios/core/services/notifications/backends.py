@@ -33,7 +33,11 @@ def enabled_notification_backends():
 def send_all_notifications():
     for backend in installed_notification_backends():
         try:
-            backend.send_multiple(Notification.objects.exclude(processed_by__contains=backend.slug))
+            backend.send_multiple(
+                Notification.objects.exclude(processed_by__contains=backend.slug).order_by(
+                    "created_at"
+                )
+            )
         except Exception as e:  # pylint: disable=broad-except
             if settings.DEBUG:
                 raise e

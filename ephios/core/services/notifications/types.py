@@ -210,10 +210,17 @@ class ParticipationMixin:
 
     @classmethod
     def get_actions(cls, notification):
-        shift = AbstractParticipation.objects.get(
+        participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
-        ).shift
-        return [(str(_("View event")), make_absolute(shift.get_absolute_url()))]
+        )
+        return [
+            (
+                str(_("View event")),
+                make_absolute(
+                    participation.participant.reverse_event_detail(participation.shift.event)
+                ),
+            )
+        ]
 
     @classmethod
     def send(cls, participation: AbstractParticipation, **additional_data):

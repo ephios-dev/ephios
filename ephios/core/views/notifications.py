@@ -6,7 +6,7 @@ from ephios.core.models import Notification
 
 class NotificationListView(LoginRequiredMixin, ListView):
     model = Notification
-    ordering = "-created"
+    ordering = "-created_at"
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
