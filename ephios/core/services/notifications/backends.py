@@ -5,7 +5,7 @@ import traceback
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import mail_admins
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
 
@@ -31,12 +31,13 @@ def enabled_notification_backends():
 
 
 def send_all_notifications():
-    for backend in installed_notification_backends():
+    backends = installed_notification_backends()
+    for backend in backends:
         try:
             backend.send_multiple(
-                Notification.objects.exclude(processed_by__contains=backend.slug).order_by(
-                    "created_at"
-                )
+                Notification.objects.exclude(
+                    Q(processing_completed=True) | Q(processed_by__contains=backend.slug)
+                ).order_by("created_at")
             )
         except Exception as e:  # pylint: disable=broad-except
             if settings.DEBUG:
@@ -49,6 +50,9 @@ def send_all_notifications():
             except smtplib.SMTPConnectError:
                 pass  # if the mail backend threw this, mail admin will probably throw this as well
             logger.warning(f"Notification sending failed with {e}")
+    Notification.objects.filter(
+        processing_completed=False, processed_by__contains=[b.slug for b in backends]
+    ).update(processing_completed=True)
 
 
 class AbstractNotificationBackend:

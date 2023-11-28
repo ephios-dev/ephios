@@ -491,6 +491,9 @@ class Notification(Model):
         null=True,
     )
     read = models.BooleanField(default=False, verbose_name=_("read"))
+    processing_completed = models.BooleanField(
+        default=False, verbose_name=_("processing completed")
+    )
     processed_by = models.JSONField(
         blank=True, default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
