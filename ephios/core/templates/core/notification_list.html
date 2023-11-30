@@ -1,9 +1,41 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
-    <ul>
+    <h1 class="page-header">
+        {% translate "Notifications" %}
+        <small class="float-end">
+            <a class="btn btn-sm btn-primary" href="{% url "core:notification_all_read" %}">
+                <span class="fa fa-check"></span> {% translate "Mark all as read" %}
+            </a>
+        </small>
+    </h1>
+    <ul class="list-group mb-3">
         {% for notification in notification_list %}
-            <li>{{ notification.subject }} {% for label, url in notification.get_actions %}<a href="{{ url }}">{{ label }}</a> {% endfor %}</li>
+            <li class="list-group-item">
+                <div class="row mb-1 mt-1">
+                    <div class="col-2">
+                        <span class="d-none d-md-inline">{{ notification.created_at|date:"d.m.y H:i" }}</span>
+                        <span class="d-md-none">{{ notification.created_at|date:"d.m H:i" }}</span>
+                    </div>
+                    <div class="col-7">
+                        <h5 class="mb-0 {% if not notification.read and not notification.is_obsolete %}fw-bold{% endif %}">
+                            {{ notification.subject }}
+                        </h5>
+                    </div>
+                    <div class="col-3 d-flex justify-content-end">
+                        {% if not notification.read %}
+                            <a class="btn btn-primary btn-sm" href="{% url "core:notification_read" notification.pk %}">
+                                <span class="fa fa-check"></span>
+                                {% translate "Mark as read" %}
+                            </a>
+                        {% endif %}
+                        {% for label, url in notification.get_actions %}
+                            <a class="btn btn-secondary btn-sm ml-2" href="{{ url }}">{{ label }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -415,7 +415,9 @@ class ResponsibleParticipationStateChangeNotification(
         return _("The participation of {participant} for {shift} is now {state}.").format(
             shift=participation.shift,
             participant=participation.participant,
-            state=participation.state,
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
         )
 
 

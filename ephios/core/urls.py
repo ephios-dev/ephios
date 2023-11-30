@@ -51,7 +51,12 @@ from ephios.core.views.eventtype import (
 )
 from ephios.core.views.healthcheck import HealthCheckView
 from ephios.core.views.log import LogView
-from ephios.core.views.notifications import NotificationDetailView, NotificationListView
+from ephios.core.views.notifications import (
+    NotificationDetailView,
+    NotificationListView,
+    NotificationMarkAllAsReadView,
+    NotificationMarkAsReadView,
+)
 from ephios.core.views.pwa import OfflineView, PWAManifestView, ServiceWorkerView
 from ephios.core.views.settings import (
     CalendarSettingsView,
@@ -283,5 +288,13 @@ urlpatterns = [
     path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
     path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
     path("notifications/", NotificationListView.as_view(), name="notification_list"),
-    path("notifications/<int:pk>", NotificationDetailView.as_view(), name="notification_detail"),
+    path(
+        "notifications/read/", NotificationMarkAllAsReadView.as_view(), name="notification_all_read"
+    ),
+    path("notifications/<int:pk>/", NotificationDetailView.as_view(), name="notification_detail"),
+    path(
+        "notifications/<int:pk>/read/",
+        NotificationMarkAsReadView.as_view(),
+        name="notification_read",
+    ),
 ]
