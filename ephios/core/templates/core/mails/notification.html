@@ -40,7 +40,7 @@
             <tr>
                 <td class="actions">
                     {% for label, url in notification.get_actions %}
-                        <a class="btn{% if forloop.first %} btn-primary{% endif %}" href="{{ url }}">{{ label }}</a>
+                        <a class="btn{% if forloop.first %} btn-primary{% endif %}" href="{{ url }}?fromNotification={{ notification.pk }}">{{ label }}</a>
                     {% endfor %}
                 </td>
             </tr>
