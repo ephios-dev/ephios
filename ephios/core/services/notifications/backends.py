@@ -78,18 +78,21 @@ class AbstractNotificationBackend:
 
     @classmethod
     def user_prefers_sending(cls, notification):
-        if notification.notification_type.unsubscribe_allowed and notification.user is not None:
-            if not notification.user.is_active:
-                return False
-            if (
-                acting_user := notification.data.get("acting_user", None)
-            ) and acting_user == notification.user:
-                return False
-            backends = notification.user.preferences["notifications__notifications"].get(
-                notification.slug
-            )
-            if backends is not None:
-                return cls.slug in backends
+        if not notification.user:
+            return True
+        if not notification.user.is_active:
+            return False
+        if (
+            acting_user := notification.data.get("acting_user", None)
+        ) and acting_user == notification.user:
+            return False
+        if not notification.notification_type.unsubscribe_allowed:
+            return True
+        backends = notification.user.preferences["notifications__notifications"].get(
+            notification.slug
+        )
+        if backends is not None:
+            return cls.slug in backends
         return True
 
     @classmethod
