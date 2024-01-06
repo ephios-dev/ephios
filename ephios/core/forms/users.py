@@ -449,7 +449,7 @@ class UserNotificationPreferenceForm(Form):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
 
-        preferences = self.user.preferences["notifications__notifications"]
+        backends = set([backend.slug for backend in enabled_notification_backends()])
         for notification_type in enabled_notification_types():
             if notification_type.unsubscribe_allowed:
                 self.fields[notification_type.slug] = MultipleChoiceField(
@@ -457,13 +457,19 @@ class UserNotificationPreferenceForm(Form):
                     choices=[
                         (backend.slug, backend.title) for backend in enabled_notification_backends()
                     ],
-                    initial=preferences.get(notification_type.slug, {}),
+                    initial=list(
+                        backends
+                        - set(
+                            [
+                                backend
+                                for backend, notificaton_type in self.user.disabled_notifications
+                                if notificaton_type == notification_type.slug
+                            ]
+                        )
+                    ),
                     widget=CheckboxSelectMultiple,
                     required=False,
                 )
-
-    def update_preferences(self):
-        self.user.preferences["notifications__notifications"] = self.cleaned_data
 
 
 class UserOwnDataForm(ModelForm):

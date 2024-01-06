@@ -20,6 +20,7 @@ from django.db.models import (
     ExpressionWrapper,
     F,
     ForeignKey,
+    JSONField,
     Max,
     Model,
     Q,
@@ -96,6 +97,7 @@ class VisibleUserProfileManager(BaseUserManager):
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
+    email_invalid = BooleanField(default=False, verbose_name=_("Email address invalid"))
     is_active = BooleanField(default=True, verbose_name=_("Active"))
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(
@@ -111,6 +113,9 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         max_length=10,
         default=settings.LANGUAGE_CODE,
         choices=settings.LANGUAGES,
+    )
+    disabled_notifications = JSONField(
+        default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
 
     USERNAME_FIELD = "email"

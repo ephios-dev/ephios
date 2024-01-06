@@ -88,12 +88,7 @@ class AbstractNotificationBackend:
             return False
         if not notification.notification_type.unsubscribe_allowed:
             return True
-        backends = notification.user.preferences["notifications__notifications"].get(
-            notification.slug
-        )
-        if backends is not None:
-            return cls.slug in backends
-        return True
+        return [cls.slug, notification.slug] not in notification.user.disabled_notifications
 
     @classmethod
     def send_multiple(cls, notifications: QuerySet):
