@@ -149,7 +149,7 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
             "icon": "/static/ephios/img/ephios-symbol-red.svg",
         }
         if actions := notification.get_actions():
-            payload["url"] = f"{actions[0][1]}?fromNotification={notification.pk}"
+            payload["url"] = actions[0][1]
         send_user_notification(user=notification.user, payload=payload, ttl=1000)
 
 

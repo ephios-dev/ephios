@@ -1,5 +1,7 @@
 from typing import List
+from urllib.parse import urlparse
 
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -8,6 +10,7 @@ from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
+from requests import PreparedRequest
 
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
@@ -82,6 +85,22 @@ class AbstractNotificationHandler:
         The first url will be used as the primary action in push notifications.
         """
         return []
+
+    @classmethod
+    def get_actions_with_referrer(cls, notification):
+        """
+        Annotate the actions returned by any subclass with a reference to the originating notification.
+        This is used by EphiosNotificationMiddleware to mark the corresponding notification as read
+        once the user clicks on the link.
+        """
+        actions = []
+        for label, url in cls.get_actions(notification):
+            if urlparse(url).netloc in settings.GET_SITE_URL():
+                req = PreparedRequest()
+                req.prepare_url(url, {"fromNotification": notification.pk})
+                url = req.url
+            actions.append((label, url))
+        return actions
 
 
 class ProfileUpdateNotification(AbstractNotificationHandler):

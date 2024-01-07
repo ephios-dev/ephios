@@ -536,7 +536,7 @@ class Notification(Model):
         return self.notification_type.as_plaintext(self)
 
     def get_actions(self):
-        return self.notification_type.get_actions(self)
+        return self.notification_type.get_actions_with_referrer(self)
 
 
 class IdentityProvider(Model):
