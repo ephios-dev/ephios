@@ -341,6 +341,8 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
                 Q(id__in=self.cleaned_data["groups"]) | Q(id__in=(g.id for g in self.locked_groups))
             )
         )
+        if userprofile.is_active and userprofile.email_invalid:
+            userprofile.email_invalid = False
         userprofile.save()
         return userprofile
 
