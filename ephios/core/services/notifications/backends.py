@@ -1,8 +1,10 @@
 import logging
 import smtplib
 import traceback
+import uuid
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import mail_admins
 from django.db.models import Q, QuerySet
@@ -31,6 +33,10 @@ def enabled_notification_backends():
 
 
 def send_all_notifications():
+    CACHE_LOCK_KEY = "notification_sending_running"
+    if cache.get(CACHE_LOCK_KEY):
+        return
+    cache.set(CACHE_LOCK_KEY, str(uuid.uuid4()), timeout=1800)
     backends = installed_notification_backends()
     for backend in backends:
         try:
@@ -53,6 +59,7 @@ def send_all_notifications():
     Notification.objects.filter(
         processing_completed=False, processed_by__contains=[b.slug for b in backends]
     ).update(processing_completed=True)
+    cache.delete(CACHE_LOCK_KEY)
 
 
 class AbstractNotificationBackend:
