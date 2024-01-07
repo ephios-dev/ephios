@@ -104,7 +104,7 @@ class NotificationSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView
         return reverse("core:settings_notifications")
 
     def form_valid(self, form):
-        form.update_preferences()
+        form.save_preferences()
         return super().form_valid(form)
 
 
