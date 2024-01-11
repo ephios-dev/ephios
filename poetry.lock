@@ -1983,13 +1983,13 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"
 
 [[package]]
 name = "reportlab"
-version = "4.0.8"
+version = "4.0.9"
 description = "The Reportlab Toolkit"
 optional = false
 python-versions = ">=3.7,<4"
 files = [
-    {file = "reportlab-4.0.8-py3-none-any.whl", hash = "sha256:d00693de8ab8761b122e409de883ba976c24839f93867090c0d40b5d5906e847"},
-    {file = "reportlab-4.0.8.tar.gz", hash = "sha256:169945817a1a7759fb7b7dae528c2f8064fc21d16338d9b572ebdcb756740853"},
+    {file = "reportlab-4.0.9-py3-none-any.whl", hash = "sha256:c9656216321897486e323be138f7aea67851cedc116b8cc35f8ec7f8cc763538"},
+    {file = "reportlab-4.0.9.tar.gz", hash = "sha256:f32bff66a0fda234202e1e33eaf77f25008871a61cb01cd91584a521a04c0047"},
 ]
 
 [package.dependencies]
