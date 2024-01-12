@@ -7,18 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ 3.8 ]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install poetry
         run: pipx install poetry
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
           cache: 'poetry'
       - name: Install poetry-dynamic-versioning
         run: poetry self add "poetry-dynamic-versioning[plugin]"
@@ -28,7 +25,7 @@ jobs:
           poetry install
       - name: build
         run: poetry build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ephios-dev-wheel
           path: dist/ephios-*.whl
@@ -41,7 +38,7 @@ jobs:
     env:
       ANSIBLE_PIPELINING: True
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         id: download
         with:
           name: ephios-dev-wheel

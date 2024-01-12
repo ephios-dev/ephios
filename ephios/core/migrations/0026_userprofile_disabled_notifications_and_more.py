@@ -43,7 +43,7 @@ def revert_disabled_notifications(apps, schema_editor):
             for disabled_tuple in profile.disabled_notifications:
                 backend_slug, type_slug = disabled_tuple
                 try:
-                    notification_type = notification_type_from_slug(type_slug)
+                    notification_type_from_slug(type_slug)
                 except ValueError:
                     continue
                 enabled = preferences.get(type_slug, backends)
