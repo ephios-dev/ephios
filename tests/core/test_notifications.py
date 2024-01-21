@@ -53,7 +53,7 @@ class TestNotifications:
         assert Notification.objects.count() == 2
         self._enable_all_notifications(volunteer)
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_event_notification_sending(self, event, volunteer):
         self._enable_all_notifications(volunteer)
@@ -63,7 +63,7 @@ class TestNotifications:
             get_users_with_perms(event, only_with_perms_in=["view_event"])
         )
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_participation_notification_sending(self, event, qualified_volunteer):
         self._enable_all_notifications(qualified_volunteer)
@@ -78,7 +78,7 @@ class TestNotifications:
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_responsible_confirmed_participation_customized_notification(
         self, django_app, event, planner, qualified_volunteer
@@ -106,7 +106,7 @@ class TestNotifications:
         )
         assert "7:42" in plaintext
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_participant_participation_customized_notification(
         self, django_app, event, planner, qualified_volunteer
@@ -132,7 +132,7 @@ class TestNotifications:
         plaintext = ParticipationCustomizationNotification.get_body(Notification.objects.first())
         assert "7:42" in plaintext
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_inactive_user(self, volunteer):
         self._enable_all_notifications(volunteer)
@@ -149,7 +149,7 @@ class TestNotifications:
         ConsequenceDeniedNotification.send(workinghours_consequence)
         assert Notification.objects.count() == 2
         call_command("send_notifications")
-        assert Notification.objects.count() == 0
+        assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_responsibles_receive_custom_notification(
         self, django_app, qualified_volunteer, planner, event
