@@ -26,35 +26,35 @@ except URLError:
 
 def test_repo_fetch():
     preferences = global_preferences_registry.manager()
-    preferences[
-        "general__qualification_management_repos"
-    ] = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/test.json"
+    preferences["general__qualification_management_repos"] = (
+        "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/test.json"
+    )
     assert list(fetch_deserialized_qualifications_from_repo())
 
 
 def test_not_a_list_repo():
     preferences = global_preferences_registry.manager()
-    preferences[
-        "general__qualification_management_repos"
-    ] = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/not-a-list.json"
+    preferences["general__qualification_management_repos"] = (
+        "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/not-a-list.json"
+    )
     with pytest.raises(RepoError):
         list(fetch_deserialized_qualifications_from_repo())
 
 
 def test_missing_key_repo():
     preferences = global_preferences_registry.manager()
-    preferences[
-        "general__qualification_management_repos"
-    ] = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/key-missing.json"
+    preferences["general__qualification_management_repos"] = (
+        "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/key-missing.json"
+    )
     with pytest.raises(RepoError):
         list(fetch_deserialized_qualifications_from_repo())
 
 
 def test_import_view(django_app, superuser):
     preferences = global_preferences_registry.manager()
-    preferences[
-        "general__qualification_management_repos"
-    ] = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/test.json"
+    preferences["general__qualification_management_repos"] = (
+        "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/test.json"
+    )
     form = django_app.get(
         reverse("qualification_management:settings_qualification_import"),
         user=superuser,
@@ -73,9 +73,9 @@ def test_import_view(django_app, superuser):
 
 def test_import_view_with_broken_repo(django_app, superuser):
     preferences = global_preferences_registry.manager()
-    preferences[
-        "general__qualification_management_repos"
-    ] = "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/key-missing.json"
+    preferences["general__qualification_management_repos"] = (
+        "https://github.com/ephios-dev/ephios-qualification-fixtures/raw/main/test/key-missing.json"
+    )
     request = django_app.get(
         reverse("qualification_management:settings_qualification_import"),
         user=superuser,

@@ -68,9 +68,8 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
         user=volunteer,
     ).form.submit(name="signup_choice", value="sign_up")
     assert "You are already confirmed for other shifts at this time" in response
-    response.form[
-        "individual_start_time_1"
-    ] = "19:42"  # move start to after the conflicting event ended
+    # move start to after the conflicting event ended
+    response.form["individual_start_time_1"] = "19:42"
     assert (
         "successfully requested a participation"
         in response.form.submit(name="signup_choice", value="sign_up").follow()
