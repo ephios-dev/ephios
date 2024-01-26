@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from ephios.core.services.notifications.types import NOTIFICATION_READ_PARAM_NAME
+
 
 class EphiosLocaleMiddleware:
     def __init__(self, get_response):
@@ -23,9 +25,11 @@ class EphiosNotificationMiddleware:
         from ephios.core.models import Notification
 
         response = self.get_response(request)
-        if "fromNotification" in request.GET:
+        if NOTIFICATION_READ_PARAM_NAME in request.GET:
             try:
-                notification = Notification.objects.get(pk=request.GET["fromNotification"])
+                notification = Notification.objects.get(
+                    pk=request.GET[NOTIFICATION_READ_PARAM_NAME]
+                )
                 if notification.user == request.user and not notification.read:
                     notification.read = True
                     notification.save()

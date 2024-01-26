@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load rich_text %}
 {% load i18n %}
 
 {% block content %}
-    <h1 class="page-header">
+    <h1 class="page-header clearfix">
         {% translate "Notifications" %}
         <small class="float-end">
             <a class="btn btn-sm btn-primary" href="{% url "core:notification_all_read" %}">
@@ -13,25 +14,27 @@
     <ul class="list-group mb-3">
         {% for notification in notification_list %}
             <li class="list-group-item">
-                <div class="row mb-1 mt-1">
-                    <div class="col-2">
-                        <span class="d-none d-md-inline">{{ notification.created_at|date:"d.m.y H:i" }}</span>
-                        <span class="d-md-none">{{ notification.created_at|date:"d.m H:i" }}</span>
-                    </div>
-                    <div class="col-7">
-                        <h5 class="mb-0 {% if not notification.read and not notification.is_obsolete %}fw-bold{% endif %}">
+                <div class="row mb-1">
+                    <div class="col">
+                        <small class="text-body-secondary">{{ notification.created_at|date:"d.m.Y H:i" }}</small>
+                        <h6 class="fw-bold">
                             {{ notification.subject }}
-                        </h5>
+                        </h6>
                     </div>
-                    <div class="col-3 d-flex justify-content-end">
+                    <div class="col-auto pe-1">
                         {% if not notification.read %}
-                            <a class="btn btn-primary btn-sm" href="{% url "core:notification_read" notification.pk %}">
+                            <a class="btn btn-outline-secondary btn-sm"
+                               href="{% url "core:notification_read" notification.pk %}">
                                 <span class="fa fa-check"></span>
-                                {% translate "Mark as read" %}
                             </a>
                         {% endif %}
+                    </div>
+                    <div class="col-12">
+                        {{ notification.body|rich_text }}
+                    </div>
+                    <div class="col">
                         {% for label, url in notification.get_actions %}
-                            <a class="btn btn-secondary btn-sm ml-2" href="{{ url }}">{{ label }}</a>
+                            <a class="btn btn-secondary btn-sm" href="{{ url }}">{{ label }}</a>
                         {% endfor %}
                     </div>
                 </div>

@@ -497,10 +497,18 @@ class Notification(Model):
     )
     read = models.BooleanField(default=False, verbose_name=_("read"))
     processing_completed = models.BooleanField(
-        default=False, verbose_name=_("processing completed")
+        default=False,
+        verbose_name=_("processing completed"),
+        help_text=_(
+            "All enabled notification backends have processed this notification when flag is set"
+        ),
     )
     processed_by = models.JSONField(
-        blank=True, default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+        blank=True,
+        default=list,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
+        help_text=_("List of slugs of notification backends that have processed this notification"),
     )
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
@@ -528,7 +536,7 @@ class Notification(Model):
         return self.notification_type.is_obsolete(self)
 
     def __str__(self):
-        return f"{self.subject} for {self.user or 'Guest'}"
+        return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
 
     def as_html(self):
         """The notification rendered as HTML."""

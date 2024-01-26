@@ -18,6 +18,8 @@ from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import LocalUserParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
 
+NOTIFICATION_READ_PARAM_NAME = "fromNotification"
+
 
 def installed_notification_types():
     for _, handlers in register_notification_types.send_to_all_plugins(None):
@@ -97,7 +99,7 @@ class AbstractNotificationHandler:
         for label, url in cls.get_actions(notification):
             if urlparse(url).netloc in settings.GET_SITE_URL():
                 req = PreparedRequest()
-                req.prepare_url(url, {"fromNotification": notification.pk})
+                req.prepare_url(url, {NOTIFICATION_READ_PARAM_NAME: notification.pk})
                 url = req.url
             actions.append((label, url))
         return actions
