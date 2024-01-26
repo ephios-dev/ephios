@@ -141,18 +141,20 @@ class QualificationsRequiredSignupMixin(_Base):
                 widget=Select2MultipleWidget,
                 required=False,
                 initial=[],
-                help_text=_(
-                    "Participants also need to have the qualifications <b>{qualifications}</b> to participate in {eventtype}"
-                ).format(
-                    qualifications=",".join(
-                        self.event.type.preferences.get("general_required_qualifications")
-                        .all()
-                        .values_list("title", flat=True)
-                    ),
-                    eventtype=self.event.type,
-                )
-                if self.event.type.preferences.get("general_required_qualifications").exists()
-                else None,
+                help_text=(
+                    _(
+                        "Participants also need to have the qualifications <b>{qualifications}</b> to participate in {eventtype}"
+                    ).format(
+                        qualifications=",".join(
+                            self.event.type.preferences.get("general_required_qualifications")
+                            .all()
+                            .values_list("title", flat=True)
+                        ),
+                        eventtype=self.event.type,
+                    )
+                    if self.event.type.preferences.get("general_required_qualifications").exists()
+                    else None
+                ),
             )
 
             @staticmethod
