@@ -4,7 +4,6 @@ from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
-from ephios.core.services.notifications.backends import enabled_notification_backends
 from ephios.core.services.notifications.types import (
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
@@ -22,14 +21,6 @@ from ephios.core.services.notifications.types import (
 
 
 class TestNotifications:
-    def _enable_all_notifications(self, user):
-        preferences = {}
-        backends = [backend.slug for backend in enabled_notification_backends()]
-        for notification_type in enabled_notification_types():
-            if notification_type.unsubscribe_allowed:
-                preferences[notification_type.slug] = backends
-        user.preferences["notifications__notifications"] = preferences
-
     def test_notification_form_render(self, django_app, volunteer):
         form = django_app.get(reverse("core:settings_notifications"), user=volunteer).form
         types = filter(
@@ -51,12 +42,10 @@ class TestNotifications:
         NewProfileNotification.send(volunteer)
         ProfileUpdateNotification.send(volunteer)
         assert Notification.objects.count() == 2
-        self._enable_all_notifications(volunteer)
         call_command("send_notifications")
         assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_event_notification_sending(self, event, volunteer):
-        self._enable_all_notifications(volunteer)
         NewEventNotification.send(event)
         EventReminderNotification.send(event)
         assert Notification.objects.count() == 2 * len(
@@ -66,7 +55,6 @@ class TestNotifications:
         assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_participation_notification_sending(self, event, qualified_volunteer):
-        self._enable_all_notifications(qualified_volunteer)
         participation = LocalParticipation.objects.create(
             shift=event.shifts.first(),
             user=qualified_volunteer,
@@ -74,7 +62,7 @@ class TestNotifications:
         )
         ParticipationStateChangeNotification.send(participation)
         ResponsibleParticipationAwaitsDispositionNotification.send(participation)
-        assert Notification.objects.count() == 2 + len(
+        assert Notification.objects.count() == 1 + len(
             get_users_with_perms(event, only_with_perms_in=["change_event"])
         )
         call_command("send_notifications")
@@ -83,7 +71,6 @@ class TestNotifications:
     def test_responsible_confirmed_participation_customized_notification(
         self, django_app, event, planner, qualified_volunteer
     ):
-        self._enable_all_notifications(planner)
         participation = LocalParticipation.objects.create(
             shift=event.shifts.first(),
             user=qualified_volunteer,
@@ -111,7 +98,6 @@ class TestNotifications:
     def test_participant_participation_customized_notification(
         self, django_app, event, planner, qualified_volunteer
     ):
-        self._enable_all_notifications(qualified_volunteer)
         participation = LocalParticipation.objects.create(
             shift=event.shifts.first(),
             user=qualified_volunteer,
@@ -135,7 +121,6 @@ class TestNotifications:
         assert not Notification.objects.filter(processing_completed=False).exists()
 
     def test_inactive_user(self, volunteer):
-        self._enable_all_notifications(volunteer)
         volunteer.is_active = False
         volunteer.save()
         ProfileUpdateNotification.send(volunteer)
@@ -144,7 +129,6 @@ class TestNotifications:
         assert len(mail.outbox) == 0
 
     def test_consequence_notifications(self, volunteer, workinghours_consequence):
-        self._enable_all_notifications(volunteer)
         ConsequenceApprovedNotification.send(workinghours_consequence)
         ConsequenceDeniedNotification.send(workinghours_consequence)
         assert Notification.objects.count() == 2
@@ -154,7 +138,6 @@ class TestNotifications:
     def test_responsibles_receive_custom_notification(
         self, django_app, qualified_volunteer, planner, event
     ):
-        self._enable_all_notifications(qualified_volunteer)
         participation = LocalParticipation.objects.create(
             shift=event.shifts.first(),
             user=qualified_volunteer,
