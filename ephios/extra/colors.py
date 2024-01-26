@@ -9,9 +9,11 @@ from ephios.core.models import EventType
 
 def calculate_luminance(rgb: tuple):
     r, g, b = map(
-        lambda channel: channel / 255 / 12.92
-        if channel / 255 <= 0.03928
-        else ((channel / 255 + 0.055) / 1.055) ** 2.4,
+        lambda channel: (
+            channel / 255 / 12.92
+            if channel / 255 <= 0.03928
+            else ((channel / 255 + 0.055) / 1.055) ** 2.4
+        ),
         rgb,
     )
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
