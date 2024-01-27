@@ -266,3 +266,8 @@ a.badge {
 .notification-content ul {
   padding-bottom: 1rem;
 }
+
+.unread-notification {
+  border-left-color: $primary;
+  border-left-width: 0.5rem;
+}
