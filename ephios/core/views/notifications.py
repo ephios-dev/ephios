@@ -14,7 +14,7 @@ class OwnNotificationMixin(LoginRequiredMixin):
 
 
 class NotificationListView(OwnNotificationMixin, ListView):
-    pass
+    paginate_by = 20
 
 
 class NotificationDetailView(OwnNotificationMixin, DetailView):
