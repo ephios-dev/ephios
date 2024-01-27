@@ -23,12 +23,17 @@ class Migration(migrations.Migration):
                 decoder=ephios.extra.json.CustomJSONDecoder,
                 default=list,
                 encoder=ephios.extra.json.CustomJSONEncoder,
+                help_text="List of slugs of notification backends that have processed this notification",
             ),
         ),
         migrations.AddField(
             model_name="notification",
             name="processing_completed",
-            field=models.BooleanField(default=False, verbose_name="processing completed"),
+            field=models.BooleanField(
+                default=False,
+                verbose_name="processing completed",
+                help_text="All enabled notification backends have processed this notification when flag is set",
+            ),
         ),
         migrations.AddField(
             model_name="notification",
