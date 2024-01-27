@@ -586,7 +586,10 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                 str(_("View message")),
                 make_absolute(reverse("core:notification_detail", kwargs={"pk": notification.pk})),
             ),
-            (str(_("View event")), notification.data.get("event_url", event.get_absolute_url())),
+            (
+                str(_("View event")),
+                make_absolute(notification.data.get("event_url", event.get_absolute_url())),
+            ),
         ]
 
 
