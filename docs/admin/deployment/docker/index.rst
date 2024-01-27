@@ -46,7 +46,7 @@ To start the compose file and add a first superuser run:
 
     # cd deployment/compose/
     # docker compose up --build
-    # docker exec -it compose-ephios-1 python -m ephios createsuperuser
+    # docker exec -it ephios-compose-app-1 python -m ephios createsuperuser
 
 If you want to test the container without https, that's
 only possible by changing it the compose file:
