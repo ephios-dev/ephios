@@ -20,6 +20,7 @@ from django.db.models import (
     ExpressionWrapper,
     F,
     ForeignKey,
+    JSONField,
     Max,
     Model,
     Q,
@@ -96,6 +97,7 @@ class VisibleUserProfileManager(BaseUserManager):
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
+    email_invalid = BooleanField(default=False, verbose_name=_("Email address invalid"))
     is_active = BooleanField(default=True, verbose_name=_("Active"))
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
     is_staff = BooleanField(
@@ -111,6 +113,9 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         max_length=10,
         default=settings.LANGUAGE_CODE,
         choices=settings.LANGUAGES,
+    )
+    disabled_notifications = JSONField(
+        default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
 
     USERNAME_FIELD = "email"
@@ -490,7 +495,21 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    failed = models.BooleanField(default=False, verbose_name=_("failed"))
+    read = models.BooleanField(default=False, verbose_name=_("read"))
+    processing_completed = models.BooleanField(
+        default=False,
+        verbose_name=_("processing completed"),
+        help_text=_(
+            "All enabled notification backends have processed this notification when flag is set"
+        ),
+    )
+    processed_by = models.JSONField(
+        blank=True,
+        default=list,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
+        help_text=_("List of slugs of notification backends that have processed this notification"),
+    )
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
@@ -512,6 +531,13 @@ class Notification(Model):
         """The body text of the notification."""
         return self.notification_type.get_body(self)
 
+    @property
+    def is_obsolete(self):
+        return self.notification_type.is_obsolete(self)
+
+    def __str__(self):
+        return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
+
     def as_html(self):
         """The notification rendered as HTML."""
         return self.notification_type.as_html(self)
@@ -521,7 +547,7 @@ class Notification(Model):
         return self.notification_type.as_plaintext(self)
 
     def get_actions(self):
-        return self.notification_type.get_actions(self)
+        return self.notification_type.get_actions_with_referrer(self)
 
 
 class IdentityProvider(Model):

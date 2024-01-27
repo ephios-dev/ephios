@@ -341,6 +341,9 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
                 Q(id__in=self.cleaned_data["groups"]) | Q(id__in=(g.id for g in self.locked_groups))
             )
         )
+        # if the user is re-activated after the email has been deemed invalid, reset the flag
+        if userprofile.is_active and userprofile.email_invalid:
+            userprofile.email_invalid = False
         userprofile.save()
         return userprofile
 
@@ -449,7 +452,7 @@ class UserNotificationPreferenceForm(Form):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
 
-        preferences = self.user.preferences["notifications__notifications"]
+        self.all_backends = {backend.slug for backend in enabled_notification_backends()}
         for notification_type in enabled_notification_types():
             if notification_type.unsubscribe_allowed:
                 self.fields[notification_type.slug] = MultipleChoiceField(
@@ -457,13 +460,25 @@ class UserNotificationPreferenceForm(Form):
                     choices=[
                         (backend.slug, backend.title) for backend in enabled_notification_backends()
                     ],
-                    initial=preferences.get(notification_type.slug, {}),
+                    initial=list(
+                        self.all_backends
+                        - {
+                            backend
+                            for backend, notificaton_type in self.user.disabled_notifications
+                            if notificaton_type == notification_type.slug
+                        }
+                    ),
                     widget=CheckboxSelectMultiple,
                     required=False,
                 )
 
-    def update_preferences(self):
-        self.user.preferences["notifications__notifications"] = self.cleaned_data
+    def save_preferences(self):
+        disabled_notifications = []
+        for notification_type, preferred_backends in self.cleaned_data.items():
+            for backend in self.all_backends - set(preferred_backends):
+                disabled_notifications.append([backend, notification_type])
+        self.user.disabled_notifications = disabled_notifications
+        self.user.save()
 
 
 class UserOwnDataForm(ModelForm):

@@ -1,5 +1,6 @@
 {% extends "core/settings/settings_base.html" %}
 {% load crispy_forms_filters %}
+{% load utils %}
 {% load i18n %}
 {% load webpush_notifications %}
 
@@ -26,7 +27,18 @@
     <p>{% translate "You can configure whether you want to receive notifications for the following occasions:" %}</p>
     <form method="post">
         {% csrf_token %}
-        {{ form|crispy }}
+        <table class="table">
+            <tbody>
+                {% for field in form %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        {% for choice in field %}
+                            <td>{{ choice }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <button class="btn btn-primary">{% translate "Save" %}</button>
     </form>
 

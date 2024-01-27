@@ -17,9 +17,9 @@ from ephios.core.models import (
     UserProfile,
 )
 from ephios.core.services.notifications.types import (
-    ParticipationConfirmedNotification,
     ParticipationCustomizationNotification,
-    ParticipationRejectedNotification,
+    ParticipationStateChangeNotification,
+    ResponsibleParticipationStateChangeNotification,
 )
 from ephios.core.signup.forms import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
@@ -230,11 +230,12 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
                 or participation.user != self.request.user
             ):
                 if "state" in changed_fields:
-                    # send state updates
-                    if participation.state == AbstractParticipation.States.CONFIRMED:
-                        ParticipationConfirmedNotification.send(participation)
-                    elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                        ParticipationRejectedNotification.send(participation)
+                    ParticipationStateChangeNotification.send(
+                        participation, acting_user=self.request.user
+                    )
+                    ResponsibleParticipationStateChangeNotification.send(
+                        participation, acting_user=self.request.user
+                    )
                 elif participation.state == AbstractParticipation.States.CONFIRMED:
                     form: BaseParticipationForm = next(
                         filter(lambda f, p=participation: f.instance == p, formset.forms)

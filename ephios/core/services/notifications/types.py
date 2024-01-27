@@ -1,5 +1,7 @@
 from typing import List
+from urllib.parse import urlparse
 
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -8,12 +10,15 @@ from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
+from requests import PreparedRequest
 
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import LocalUserParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
+
+NOTIFICATION_READ_PARAM_NAME = "fromNotification"
 
 
 def installed_notification_types():
@@ -55,6 +60,10 @@ class AbstractNotificationHandler:
         raise NotImplementedError
 
     @classmethod
+    def is_obsolete(cls, notification):
+        return False
+
+    @classmethod
     def as_plaintext(cls, notification):
         return render_to_string(cls.plaintext_template_name, cls.get_render_context(notification))
 
@@ -79,6 +88,22 @@ class AbstractNotificationHandler:
         """
         return []
 
+    @classmethod
+    def get_actions_with_referrer(cls, notification):
+        """
+        Annotate the actions returned by any subclass with a reference to the originating notification.
+        This is used by EphiosNotificationMiddleware to mark the corresponding notification as read
+        once the user clicks on the link.
+        """
+        actions = []
+        for label, url in cls.get_actions(notification):
+            if urlparse(url).netloc in settings.GET_SITE_URL():
+                req = PreparedRequest()
+                req.prepare_url(url, {NOTIFICATION_READ_PARAM_NAME: notification.pk})
+                url = req.url
+            actions.append((label, url))
+        return actions
+
 
 class ProfileUpdateNotification(AbstractNotificationHandler):
     slug = "ephios_profile_update"
@@ -95,9 +120,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
     @classmethod
     def get_body(cls, notification):
         return _(
-            "You're receiving this email because your account at ephios has been updated.\n"
-            "You can see the changes in your profile: {url}\n"
-            "Your username is your email address: {email}"
+            "You're receiving this email because your account at ephios has been updated."
         ).format(url=cls._get_personal_data_url(notification), email=notification.user.email)
 
     @classmethod
@@ -198,11 +221,25 @@ class NewEventNotification(AbstractNotificationHandler):
 
 class ParticipationMixin:
     @classmethod
-    def get_actions(cls, notification):
-        shift = AbstractParticipation.objects.get(
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
-        ).shift
-        return [(str(_("View event")), make_absolute(shift.get_absolute_url()))]
+        )
+        return participation.state != notification.data["participation_state"]
+
+    @classmethod
+    def get_actions(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return [
+            (
+                str(_("View event")),
+                make_absolute(
+                    participation.participant.reverse_event_detail(participation.shift.event)
+                ),
+            )
+        ]
 
     @classmethod
     def send(cls, participation: AbstractParticipation, **additional_data):
@@ -216,55 +253,48 @@ class ParticipationMixin:
             user=user,
             data={
                 "participation_id": participation.id,
+                "participation_state": participation.state,
                 "email": participation.participant.email,
                 **additional_data,
             },
         )
 
 
-class ParticipationConfirmedNotification(ParticipationMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_confirmed"
-    title = _("Your participation has been confirmed")
+class ParticipationStateChangeNotification(ParticipationMixin, AbstractNotificationHandler):
+    slug = "ephios_participation_state_changed"
+    title = _("The state of your participation has changed")
 
     @classmethod
     def get_subject(cls, notification):
         event = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         ).shift.event
-        return _("Participation confirmed for {event}").format(event=event)
+        return _("Participation {state} for {event}").format(
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
+            event=event,
+        )
 
     @classmethod
     def get_body(cls, notification):
         participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        message = _("Your participation for {shift} is now confirmed.").format(
-            shift=participation.shift
-        )
+        shift = participation.shift
+        message = ""
+        match notification.data["participation_state"]:
+            case AbstractParticipation.States.REQUESTED:
+                message = _("You requested a participation for {shift}.").format(shift=shift)
+            case AbstractParticipation.States.CONFIRMED:
+                message = _("Your participation for {shift} is now confirmed.").format(shift=shift)
+            case AbstractParticipation.States.RESPONSIBLE_REJECTED:
+                return _(
+                    "Your participation for {shift} has been rejected by a responsible user."
+                ).format(shift=shift)
         if participation.has_customized_signup():
             message += f'\n\n{_("Your time is")} {participation.get_time_display()}'
         return message
-
-
-class ParticipationRejectedNotification(ParticipationMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_rejected"
-    title = _("Your participation has been rejected")
-
-    @classmethod
-    def get_subject(cls, notification):
-        event = AbstractParticipation.objects.get(
-            id=notification.data.get("participation_id")
-        ).shift.event
-        return _("Participation rejected for {event}").format(event=event)
-
-    @classmethod
-    def get_body(cls, notification):
-        shift = AbstractParticipation.objects.get(
-            id=notification.data.get("participation_id")
-        ).shift
-        return _("Your participation for {shift} has been rejected by a responsible user.").format(
-            shift=shift
-        )
 
 
 class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotificationHandler):
@@ -322,6 +352,7 @@ class ResponsibleMixin:
                             ),
                         ),
                         "participation_id": participation.id,
+                        "participation_state": participation.state,
                         **additional_data,
                     },
                 )
@@ -344,37 +375,65 @@ class ResponsibleMixin:
 
     @classmethod
     def get_subject(cls, notification):
-        participation = AbstractParticipation.objects.get(
+        event = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        ).shift.event
+        return _("Participation {state} for {event}").format(
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
+            event=event,
+        )
+
+
+class ResponsibleParticipationAwaitsDispositionNotification(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_awaits_disposition"
+    title = _("A participation for your event awaits disposition")
+
+    @classmethod
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        participation_state = participation.get_state_display()
-        return _("Participation {state} for {event}").format(
-            state=participation_state, event=participation.shift.event
-        )
-
-
-class ResponsibleParticipationRequestedNotification(ResponsibleMixin, AbstractNotificationHandler):
-    slug = "ephios_participation_responsible_requested"
-    title = _("A participation has been requested for your event")
+        return participation.state != AbstractParticipation.States.REQUESTED
 
     @classmethod
     def get_body(cls, notification):
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        if (
-            participation.shift.signup_method.uses_requested_state
-            and participation.state != AbstractParticipation.States.CONFIRMED
-        ):
-            return _(
-                "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
-            ).format(
-                shift=participation.shift,
-                participant=participation.participant,
-                disposition_url=notification.data.get("disposition_url"),
-            )
-        return _("{participant} signed up for {shift}.").format(
-            participant=participation.participant, shift=participation.shift
+        return _("{participant} has requested a participation for {shift}.").format(
+            shift=participation.shift,
+            participant=participation.participant,
+        )
+
+
+class ResponsibleParticipationStateChangeNotification(
+    ResponsibleMixin, AbstractNotificationHandler
+):
+    slug = "ephios_participation_responsible_state_changed"
+    title = _("A participation for your event has changed state")
+
+    @classmethod
+    def is_obsolete(cls, notification):
+        participation: AbstractParticipation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return participation.state != notification.data["participation_state"]
+
+    @classmethod
+    def get_body(cls, notification):
+        participation = AbstractParticipation.objects.get(
+            id=notification.data.get("participation_id")
+        )
+        return _("The participation of {participant} for {shift} is now {state}.").format(
+            shift=participation.shift,
+            participant=participation.participant,
+            state=AbstractParticipation.States.labels_dict()[
+                notification.data["participation_state"]
+            ],
         )
 
 
@@ -490,6 +549,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                         "event_id": event.id,
                         "content": content,
                         "event_title": event.title,
+                        "event_url": participant.reverse_event_detail(event),
                     },
                 )
             )
@@ -517,6 +577,17 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def get_body(cls, notification):
         return notification.data.get("content")
+
+    @classmethod
+    def get_actions(cls, notification):
+        event = Event.objects.get(pk=notification.data.get("event_id"))
+        return [
+            (
+                str(_("View message")),
+                make_absolute(reverse("core:notification_detail", kwargs={"pk": notification.pk})),
+            ),
+            (str(_("View event")), notification.data.get("event_url", event.get_absolute_url())),
+        ]
 
 
 class ConsequenceApprovedNotification(AbstractNotificationHandler):
@@ -562,10 +633,10 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
 CORE_NOTIFICATION_TYPES = [
     ProfileUpdateNotification,
     NewProfileNotification,
-    ParticipationRejectedNotification,
-    ParticipationConfirmedNotification,
+    ParticipationStateChangeNotification,
     ParticipationCustomizationNotification,
-    ResponsibleParticipationRequestedNotification,
+    ResponsibleParticipationAwaitsDispositionNotification,
+    ResponsibleParticipationStateChangeNotification,
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
     NewEventNotification,

@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from ephios.core.models import AbstractParticipation
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationDeclinedNotification,
+    ResponsibleParticipationStateChangeNotification,
 )
 from ephios.core.signals import register_signup_methods
 from ephios.core.signup.participants import AbstractParticipant
@@ -139,7 +140,7 @@ class AbstractSignupMethod(ABC):
         )
 
     def perform_signup(
-        self, participant: AbstractParticipant, participation=None, **kwargs
+        self, participant: AbstractParticipant, participation=None, acting_user=None, **kwargs
     ) -> AbstractParticipation:
         """
         Perform the signup for the given participant.
@@ -214,20 +215,27 @@ class BaseSignupMethod(AbstractSignupMethod):
         return self.signup_action_validator_class(self, participant)
 
     def perform_signup(
-        self, participant: AbstractParticipant, participation=None, **kwargs
+        self, participant: AbstractParticipant, participation=None, acting_user=None, **kwargs
     ) -> AbstractParticipation:
         """
         Creates and/or configures a participation object for a given participant and sends out notifications.
         Passes the participation and kwargs to configure_participation to do configuration specific to the signup method.
         """
         from ephios.core.services.notifications.types import (
-            ResponsibleParticipationRequestedNotification,
+            ResponsibleParticipationAwaitsDispositionNotification,
         )
 
         participation = participation or self.get_or_create_participation_for(participant)
         participation = self._configure_participation(participation, **kwargs)
         participation.save()
-        ResponsibleParticipationRequestedNotification.send(participation)
+        if participation.state == AbstractParticipation.States.REQUESTED:
+            ResponsibleParticipationAwaitsDispositionNotification.send(
+                participation, acting_user=acting_user
+            )
+        else:
+            ResponsibleParticipationStateChangeNotification.send(
+                participation, acting_user=acting_user
+            )
         return participation
 
     def perform_decline(self, participant, participation=None, **kwargs):

@@ -1,9 +1,13 @@
 import logging
 import smtplib
 import traceback
+import uuid
 from email.utils import formataddr
+from typing import Iterable
 
 from django.conf import settings
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import mail_admins
 from django.utils.translation import gettext_lazy as _
 from webpush import send_user_notification
@@ -30,28 +34,44 @@ def enabled_notification_backends():
 
 
 def send_all_notifications():
-    for backend in installed_notification_backends():
-        for notification in Notification.objects.filter(failed=False):
-            if backend.can_send(notification) and backend.user_prefers_sending(notification):
-                with language((notification.user and notification.user.preferred_language) or None):
-                    try:
-                        backend.send(notification)
-                    except Exception as e:  # pylint: disable=broad-except
-                        if settings.DEBUG:
-                            raise e
-                        notification.failed = True
-                        notification.save()
-                        try:
-                            mail_admins(
-                                "Notification sending failed",
-                                f"Notification: {notification}\nException: {e}\n{traceback.format_exc()}",
-                            )
-                        except smtplib.SMTPConnectError:
-                            pass  # if the mail backend threw this, mail admin will probably throw this as well
-                        logger.warning(
-                            f"Notification sending failed for notification object #{notification.pk} ({notification}) for backend {backend} with {e}"
-                        )
-    Notification.objects.filter(failed=False).delete()
+    CACHE_LOCK_KEY = "notification_sending_running"
+    if cache.get(CACHE_LOCK_KEY):
+        return
+    cache.set(CACHE_LOCK_KEY, str(uuid.uuid4()), timeout=1800)
+    backends = set(installed_notification_backends())
+
+    for backend in backends:
+        unprocessed_notifications = [
+            notification
+            for notification in Notification.objects.filter(processing_completed=False).order_by(
+                "created_at"
+            )
+            if backend.slug not in notification.processed_by
+        ]
+        try:
+            backend.send_multiple(unprocessed_notifications)
+        except Exception as e:  # pylint: disable=broad-except
+            if settings.DEBUG:
+                raise e
+            try:
+                mail_admins(
+                    "Notification sending failed",
+                    f"Exception: {e}\n{traceback.format_exc()}",
+                )
+            except smtplib.SMTPConnectError:
+                pass  # if the mail backend threw this, mail admin will probably throw this as well
+            logger.warning(f"Notification sending failed with {e}")
+    mark_complete_processing(backends)
+    cache.delete(CACHE_LOCK_KEY)
+
+
+def mark_complete_processing(backends):
+    backend_slugs = {b.slug for b in backends}
+    for notification in Notification.objects.filter(processing_completed=False):
+        # can't check with __contains as that is not supported by Sqlite
+        if set(notification.processed_by) == backend_slugs:
+            notification.processing_completed = True
+            notification.save()
 
 
 class AbstractNotificationBackend:
@@ -64,20 +84,47 @@ class AbstractNotificationBackend:
         return NotImplementedError
 
     @classmethod
-    def can_send(cls, notification):
+    def sending_possible(cls, notification):
         return notification.user is not None
 
     @classmethod
+    def should_send(cls, notification):
+        return (
+            cls.sending_possible(notification)
+            and cls.user_prefers_sending(notification)
+            and not (notification.read or notification.is_obsolete)
+        )
+
+    @classmethod
     def user_prefers_sending(cls, notification):
-        if notification.notification_type.unsubscribe_allowed and notification.user is not None:
-            if not notification.user.is_active:
-                return False
-            backends = notification.user.preferences["notifications__notifications"].get(
-                notification.slug
-            )
-            if backends is not None:
-                return cls.slug in backends
-        return True
+        if not notification.user:
+            return True
+        if not notification.user.is_active:
+            return False
+        if (
+            acting_user := notification.data.get("acting_user", None)
+        ) and acting_user == notification.user:
+            return False
+        if not notification.notification_type.unsubscribe_allowed:
+            return True
+        return [cls.slug, notification.slug] not in notification.user.disabled_notifications
+
+    @classmethod
+    def send_multiple(cls, notifications: Iterable[Notification]):
+        to_delete = []
+        for notification in notifications:
+            try:
+                if cls.should_send(notification):
+                    with language(
+                        (notification.user and notification.user.preferred_language) or None
+                    ):
+                        cls.send(notification)
+            except ObjectDoesNotExist:
+                to_delete.append(notification.pk)
+                continue
+            notification.processed_by.append(cls.slug)
+            notification.save()
+        Notification.objects.filter(pk__in=to_delete).delete()
 
     @classmethod
     def send(cls, notification: Notification):
@@ -89,7 +136,7 @@ class EmailNotificationBackend(AbstractNotificationBackend):
     title = _("via email")
 
     @classmethod
-    def can_send(cls, notification):
+    def sending_possible(cls, notification):
         return notification.user is not None or "email" in notification.data
 
     @classmethod
