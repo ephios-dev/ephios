@@ -120,9 +120,7 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
     @classmethod
     def get_body(cls, notification):
         return _(
-            "You're receiving this email because your account at ephios has been updated.\n"
-            "You can see the changes in your profile: {url}\n"
-            "Your username is your email address: {email}"
+            "You're receiving this email because your account at ephios has been updated."
         ).format(url=cls._get_personal_data_url(notification), email=notification.user.email)
 
     @classmethod
@@ -406,12 +404,9 @@ class ResponsibleParticipationAwaitsDispositionNotification(
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        return _(
-            "{participant} has requested a participation for {shift}. You can decide about it at {disposition_url}."
-        ).format(
+        return _("{participant} has requested a participation for {shift}.").format(
             shift=participation.shift,
             participant=participation.participant,
-            disposition_url=notification.data.get("disposition_url"),
         )
 
 
