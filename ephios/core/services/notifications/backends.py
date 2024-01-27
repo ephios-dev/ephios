@@ -113,15 +113,15 @@ class AbstractNotificationBackend:
     def send_multiple(cls, notifications: Iterable[Notification]):
         to_delete = []
         for notification in notifications:
-            if cls.should_send(notification):
-                try:
+            try:
+                if cls.should_send(notification):
                     with language(
                         (notification.user and notification.user.preferred_language) or None
                     ):
                         cls.send(notification)
-                except ObjectDoesNotExist:
-                    to_delete.append(notification.pk)
-                    continue
+            except ObjectDoesNotExist:
+                to_delete.append(notification.pk)
+                continue
             notification.processed_by.append(cls.slug)
             notification.save()
         Notification.objects.filter(pk__in=to_delete).delete()

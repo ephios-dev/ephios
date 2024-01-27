@@ -1,9 +1,11 @@
+import pytest
 from django.core import mail
 from django.core.management import call_command
 from django.urls import reverse
 from guardian.shortcuts import get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
+from ephios.core.services.notifications.backends import EmailNotificationBackend
 from ephios.core.services.notifications.types import (
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
@@ -146,3 +148,35 @@ class TestNotifications:
         CustomEventParticipantNotification.send(event, "test notification")
         assert planner.has_perm("change_event", event)
         assert Notification.objects.get(user=planner)
+
+    def test_middleware_marks_notification_as_read(
+        self, django_app, qualified_volunteer, planner, event
+    ):
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=qualified_volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        ResponsibleParticipationAwaitsDispositionNotification.send(participation)
+        notification = Notification.objects.get(
+            user=planner, slug=ResponsibleParticipationAwaitsDispositionNotification.slug
+        )
+        assert not notification.read
+        response = django_app.get(notification.get_actions()[0][1], user=planner)
+        notification.refresh_from_db()
+        assert notification.read
+
+    def test_notification_doesnotexist_gets_deleted(self, django_app, qualified_volunteer, event):
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=qualified_volunteer,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        ParticipationStateChangeNotification.send(participation)
+        notification = Notification.objects.get(
+            user=qualified_volunteer, slug=ParticipationStateChangeNotification.slug
+        )
+        participation.delete()
+        EmailNotificationBackend.send_multiple([notification])
+        with pytest.raises(Notification.DoesNotExist):
+            notification.refresh_from_db()
