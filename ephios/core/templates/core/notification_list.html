@@ -23,13 +23,13 @@
                     </div>
                     <div class="col-auto pe-1">
                         {% if not notification.read %}
-                            <a class="btn btn-outline-secondary btn-sm"
+                            <a class="btn btn-outline-primary btn-sm"
                                href="{% url "core:notification_read" notification.pk %}">
                                 <span class="fa fa-check"></span>
                             </a>
                         {% endif %}
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 notification-content">
                         {{ notification.body|rich_text }}
                     </div>
                     <div class="col">
