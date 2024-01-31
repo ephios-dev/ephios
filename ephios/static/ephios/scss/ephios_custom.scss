@@ -267,7 +267,11 @@ a.badge {
   padding-bottom: 1rem;
 }
 
-.unread-notification {
-  border-left-color: $primary;
+#notification-list li {
   border-left-width: 0.5rem;
+
+  &.unread {
+    border-left-color: $primary;
+  }
 }
+
