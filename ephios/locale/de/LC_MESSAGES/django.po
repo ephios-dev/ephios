@@ -6,18 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2024-01-27 15:25+0100\n"
-"PO-Revision-Date: 2023-11-07 09:55+0000\n"
-"Last-Translator: Gernomaly <felixlindi@gmx.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
-">\n"
+"PO-Revision-Date: 2024-02-06 14:19+0000\n"
+"Last-Translator: Julian Baumann <julian@ephios.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2-dev\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: api/access/views.py:85 api/models.py:33 core/pdf.py:76 core/pdf.py:130
 msgid "Description"
@@ -444,13 +444,16 @@ msgstr "Anzeigename der Organisation"
 
 #: core/dynamic_preferences_registry.py:56
 msgid "Hide login form"
-msgstr ""
+msgstr "Login-Fomular verstecken"
 
 #: core/dynamic_preferences_registry.py:58
 msgid ""
 "Hide the login form on the login page. This only takes effect if you "
 "configured at least one identity provider."
 msgstr ""
+"Versteckt das Login-Formular auf der Anmeldeseite. Diese Einstellung wird "
+"nur berücksichtigt, wenn Sie mindestens einen Identitätsprovider "
+"konfiguriert haben."
 
 #: core/dynamic_preferences_registry.py:68
 msgid "Enabled plugins"
@@ -767,15 +770,15 @@ msgstr ""
 
 #: core/forms/users.py:492
 msgid "OIDC Provider URL"
-msgstr ""
+msgstr "URL des OIDC Providers"
 
 #: core/forms/users.py:492
 msgid "The base URL of the OIDC provider."
-msgstr ""
+msgstr "Die Basis-URL des OIDC-Providers."
 
 #: core/forms/users.py:530
 msgid "Leave empty to keep the current secret."
-msgstr ""
+msgstr "Freilassen um das aktuelle Secret unverändert zu lassen."
 
 #: core/management/commands/devdata.py:26
 msgid "Volunteers"
@@ -933,10 +936,8 @@ msgid "email address"
 msgstr "E-Mail-Adresse"
 
 #: core/models/users.py:100
-#, fuzzy
-#| msgid "Email address"
 msgid "Email address invalid"
-msgstr "E-Mail-Adresse"
+msgstr "E-Mail-Adresse ungültig"
 
 #: core/models/users.py:101
 msgid "Active"
@@ -948,10 +949,8 @@ msgstr "Sichtbar"
 
 #: core/models/users.py:107 plugins/federation/models.py:137
 #: plugins/guests/models.py:36
-#, fuzzy
-#| msgid "last name"
 msgid "name"
-msgstr "Nachname"
+msgstr "Name"
 
 #: core/models/users.py:108 plugins/federation/models.py:138
 #: plugins/guests/models.py:37
@@ -1096,65 +1095,62 @@ msgstr "Arbeitsstunden"
 
 #: core/models/users.py:498
 msgid "read"
-msgstr ""
+msgstr "gelesen"
 
 #: core/models/users.py:501
 msgid "processing completed"
-msgstr ""
+msgstr "Verarbeitung abgeschlossen"
 
 #: core/models/users.py:503
 msgid ""
 "All enabled notification backends have processed this notification when flag "
 "is set"
 msgstr ""
+"Alle Notification-Backends haben diese Benachrichtung verarbeitet falls aktiv"
 
 #: core/models/users.py:511
 msgid ""
 "List of slugs of notification backends that have processed this notification"
 msgstr ""
+"Liste von Slugs aller Notification-Backends die diese Benachrichtigung "
+"verarbeitet haben"
 
 #: core/models/users.py:539
 #, python-brace-format
 msgid "{subject} for {user}"
-msgstr ""
+msgstr "{subject} für {user}"
 
 #: core/models/users.py:539
-#, fuzzy
-#| msgid "Guests"
 msgid "Guest"
-msgstr "Gäste"
+msgstr "Gast"
 
 #: core/models/users.py:556
 msgid "label"
-msgstr ""
+msgstr "Titel"
 
 #: core/models/users.py:557
 msgid "The label displayed to users attempting to log in with this provider."
 msgstr ""
+"Der Titel, der Benutzen angezeigt wird, die sich mit diesem Provider "
+"einloggen möchten."
 
 #: core/models/users.py:561
-#, fuzzy
-#| msgid "Client id"
 msgid "client id"
 msgstr "Client-ID"
 
 #: core/models/users.py:562
 msgid "Your client id provided by the OIDC provider."
-msgstr ""
+msgstr "Ihre Client-ID (vom OIDC-Provider zur Verfügung gestellt)."
 
 #: core/models/users.py:566
-#, fuzzy
-#| msgid "Client secret"
 msgid "client secret"
 msgstr "Client-Secret"
 
 #: core/models/users.py:567
 msgid "Your client secret provided by the OIDC provider."
-msgstr ""
+msgstr "Ihr Client-Secret (vom OIDC-Provider zur Verfügung gestellt)."
 
 #: core/models/users.py:572
-#, fuzzy
-#| msgid "Scope"
 msgid "scopes"
 msgstr "Geltungsbereich"
 
@@ -1163,66 +1159,69 @@ msgid ""
 "The OIDC scopes to request from the provider. Separate multiple scopes with "
 "spaces. Use the default value if you are unsure."
 msgstr ""
+"Die Geltungsbereiche, die beim OIDC-Provider angefragt werden sollen. "
+"Mehrere Werte mit Leerzeichen trennen. Nutzen Sie den Standardwert, wenn Sie "
+"unsicher sind."
 
 #: core/models/users.py:578
-#, fuzzy
-#| msgid "Authorization Grant Type"
 msgid "authorization endpoint"
-msgstr "Authorization-Grant-Type"
+msgstr "authorization endpoint"
 
 #: core/models/users.py:578
 msgid "The OIDC authorization endpoint."
-msgstr ""
+msgstr "Der Endpunkt zur Authentifizierung."
 
 #: core/models/users.py:581
 msgid "token endpoint"
-msgstr ""
+msgstr "token endpoint"
 
 #: core/models/users.py:581
 msgid "The OIDC token endpoint."
-msgstr ""
+msgstr "Der Token-Endpoint."
 
 #: core/models/users.py:584
-#, fuzzy
-#| msgid "user profile"
 msgid "user endpoint"
-msgstr "Benutzerprofil"
+msgstr "Benutzer-Endpoint"
 
 #: core/models/users.py:584
 msgid "The OIDC user endpoint."
-msgstr ""
+msgstr "Der Endpunkt für Benutzerprofile."
 
 #: core/models/users.py:589
 msgid "end session endpoint"
-msgstr ""
+msgstr "end session endpoint"
 
 #: core/models/users.py:590
 msgid "The OIDC end session endpoint, if supported by your provider."
 msgstr ""
+"Der Session-Beendigungs-Endpunkt (sofern von Ihrem OIDC-Provider "
+"unterstützt)."
 
 #: core/models/users.py:595
 msgid "JWKS endpoint"
-msgstr ""
+msgstr "JWKS endpoint"
 
 #: core/models/users.py:597
 msgid ""
 "The OIDC JWKS endpoint. A less secure signing method will be used if this is "
 "not provided."
 msgstr ""
+"Der Zertifikatsendpunkt. Eine weniger sicheres Signierverfahren wird "
+"verwendet, wenn kein Wert angegeben wird."
 
 #: core/models/users.py:603
-#, fuzzy
-#| msgid "Delete group"
 msgid "default groups"
-msgstr "Gruppe löschen"
+msgstr "Standard-Gruppen"
 
 #: core/models/users.py:604
 msgid "The groups that users logging in with this provider will be added to."
 msgstr ""
+"Die Gruppen, zu denen Benutzer hinzugefügt werden, die sich mit diesem "
+"Provider einloggen."
 
 #: core/models/users.py:610
 msgid "group claim"
-msgstr ""
+msgstr "OIDC-Claim für Gruppen"
 
 #: core/models/users.py:612
 msgid ""
@@ -1230,23 +1229,26 @@ msgid ""
 "provider does not support this. You can use dot notation to access nested "
 "claims."
 msgstr ""
+"Der Name des Claims der die Gruppen des Benutzers enthält. Lassen Sie dieses "
+"Feld frei, wenn Ihr Provider dies nicht unterstützt. Sie können per Punkt-"
+"Notation auf verschachtelte Claims zugreifen."
 
 #: core/models/users.py:617
-#, fuzzy
-#| msgid "Create new group"
 msgid "create missing groups"
-msgstr "Neue Gruppe erstellen"
+msgstr "Fehlende Gruppen erstellen"
 
 #: core/models/users.py:619
 msgid ""
 "If enabled, groups from the claim defined above that do not exist yet will "
 "be created automatically."
 msgstr ""
+"Legt fest, ob bisher noch nicht existierende Gruppen aus dem Gruppen-Claim "
+"automatisch erstellt werden sollen."
 
 #: core/models/users.py:624
 #, python-brace-format
 msgid "Identity provider {label}"
-msgstr ""
+msgstr "Identitätsprovider {label}"
 
 #: core/pdf.py:61 core/pdf.py:128 core/templates/core/mails/new_event.html:28
 #: core/templates/core/shift_form.html:78
@@ -1434,10 +1436,8 @@ msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
 #: core/services/notifications/types.py:265
-#, fuzzy
-#| msgid "Your participation was saved."
 msgid "The state of your participation has changed"
-msgstr "Ihre Teilnahme wurde gespeichert."
+msgstr "Der Status Ihrer Teilnahme hat sich geändert"
 
 #: core/services/notifications/types.py:272
 #: core/services/notifications/types.py:381
@@ -1446,10 +1446,9 @@ msgid "Participation {state} for {event}"
 msgstr "Teilnahme {state} für {event}"
 
 #: core/services/notifications/types.py:288
-#, fuzzy, python-brace-format
-#| msgid "You have successfully requested a participation for {shift}."
+#, python-brace-format
 msgid "You requested a participation for {shift}."
-msgstr "Sie haben erfolgreich eine Teilnahme für {shift} angefragt."
+msgstr "Sie haben eine Teilnahme für {shift} angefragt."
 
 #: core/services/notifications/types.py:290
 #, python-brace-format
@@ -1489,32 +1488,22 @@ msgid "Disposition"
 msgstr "Disposition"
 
 #: core/services/notifications/types.py:393
-#, fuzzy
-#| msgid "A participation has been requested for your event"
 msgid "A participation for your event awaits disposition"
-msgstr "Eine Teilnahme für ihre Veranstaltung wurde angefragt"
+msgstr "Eine Teilnahme an Ihrer Veranstaltung wartet auf Disposition"
 
 #: core/services/notifications/types.py:407
-#, fuzzy, python-brace-format
-#| msgid "{participant} altered their participation in {shift}."
+#, python-brace-format
 msgid "{participant} has requested a participation for {shift}."
-msgstr "{participant} hat die Teilnahme an {shift} angepasst."
+msgstr "{participant} hat eine Teilnahme an {shift} angefragt."
 
 #: core/services/notifications/types.py:417
-#, fuzzy
-#| msgid "A participation has been requested for your event"
 msgid "A participation for your event has changed state"
-msgstr "Eine Teilnahme für ihre Veranstaltung wurde angefragt"
+msgstr "Der Status einer Teilnahme an Ihrer Veranstaltung hat sich geändert"
 
 #: core/services/notifications/types.py:431
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "The participation of {participant} for {shift} was changed. The status is "
-#| "now {status}"
+#, python-brace-format
 msgid "The participation of {participant} for {shift} is now {state}."
-msgstr ""
-"Die Teilnahme von {participant} an {shift} wurde geändert. Die Teilnahme ist "
-"nun {status}."
+msgstr "Die Teilnahme von {participant} an {shift} ist nun {state}."
 
 #: core/services/notifications/types.py:444
 msgid "A participant declined after having been confirmed for your event"
@@ -1565,10 +1554,8 @@ msgid "Information for your participation at {title}"
 msgstr "Informationen für Ihre Teilnahme an {title}"
 
 #: core/services/notifications/types.py:586
-#, fuzzy
-#| msgid "View event"
 msgid "View message"
-msgstr "Veranstaltung anzeigen"
+msgstr "Nachricht anzeigen"
 
 #: core/services/notifications/types.py:595
 #: core/services/notifications/types.py:605
@@ -1682,10 +1669,8 @@ msgid "{label} was changed from {initial} to {current}."
 msgstr "{label} wurde von {initial} zu {current} geändert."
 
 #: core/signup/forms.py:86
-#, fuzzy
-#| msgid "Signup method"
 msgid "Signup choice"
-msgstr "Anmeldeverfahren"
+msgstr "Anmeldeaktion"
 
 #: core/signup/forms.py:88 core/signup/methods.py:120
 msgid "Sign up"
@@ -2025,6 +2010,10 @@ msgid ""
 "by the identity provider when a user logs in the next time using the "
 "identity provider."
 msgstr ""
+"Diese ephios-Instanz verwendet einen Identitätsanbieter, der "
+"Gruppenmitgliedschaften verwaltet. Alle hier vorgenommenen Änderungen an den "
+"Gruppenmitgliedschaften werden vom Identitätsanbieter überschrieben, wenn "
+"sich ein Benutzer das nächste Mal über den Identitätsanbieter anmeldet."
 
 #: core/templates/core/group_list.html:15
 msgid "Add group"
@@ -2079,7 +2068,7 @@ msgstr "Alles ansehen"
 
 #: core/templates/core/identityprovider_confirm_delete.html:5
 msgid "Delete identity provider"
-msgstr ""
+msgstr "Identitätsprovider löschen"
 
 #: core/templates/core/identityprovider_confirm_delete.html:8
 #, python-format
@@ -2088,14 +2077,16 @@ msgid ""
 "will no longer be able to log in with this identity provider. Please make "
 "sure that they have an alternative means of logging in."
 msgstr ""
+"Sind Sie sicher, dass Sie den Identitätsprovider\"%(label)s\" löschen "
+"möchten? Benutzer können sich dann nicht mehr mit diesem Identitätsprovider "
+"anmelden. Bitte stellen Sie sicher, dass es eine alternative Möglichkeit "
+"gibt, sich anzumelden."
 
 #: core/templates/core/identityprovider_discovery.html:6
 #: core/templates/core/identityprovider_form.html:10
 #: core/templates/core/identityprovider_list.html:12
-#, fuzzy
-#| msgid "Add event type"
 msgid "Add identity provider"
-msgstr "Veranstaltungstyp hinzufügen"
+msgstr "Identitätsprovider hinzufügen"
 
 #: core/templates/core/identityprovider_discovery.html:8
 msgid ""
@@ -2103,26 +2094,25 @@ msgid ""
 "start the discovery, please enter the base URL for the OpenID Connect "
 "protocol at your provider below."
 msgstr ""
+"Wir können versuchen, bestimmte Werte für Ihren Identitätsanbieter "
+"automatisch zu ermitteln. Um die Erkennung zu starten, geben Sie bitte unten "
+"die Basis-URL für das OpenID Connect-Protokoll bei Ihrem Anbieter ein."
 
 #: core/templates/core/identityprovider_discovery.html:15
-#, fuzzy
-#| msgid "Start time"
 msgid "Start auto-discovery"
-msgstr "Beginn"
+msgstr "Automatische Erkennung starten"
 
 #: core/templates/core/identityprovider_discovery.html:16
 msgid "Continue without auto-discovery"
-msgstr ""
+msgstr "Weiter ohne automatische Erkennung"
 
 #: core/templates/core/identityprovider_form.html:8
-#, fuzzy
-#| msgid "Edit event type"
 msgid "Edit identity provider"
-msgstr "Veranstaltungstyp bearbeiten"
+msgstr "Identitätsprovider bearbeiten"
 
 #: core/templates/core/identityprovider_list.html:5 core/views/settings.py:36
 msgid "Identity providers"
-msgstr ""
+msgstr "Identitätsprovider"
 
 #: core/templates/core/identityprovider_list.html:7
 msgid ""
@@ -2130,12 +2120,16 @@ msgid ""
 "OpenID Connect (OIDC), e.g. a Nextcloud instance. You can set up multiple "
 "identity providers and users can choose which one to use when logging in."
 msgstr ""
+"ephios kann andere Dienste (Identitätsprovider) verwenden, um Benutzer über "
+"OpenID Connect (OIDC) zu authentifizieren, z. B. eine Nextcloud-Instanz. Sie "
+"können mehrere Identitätsanbieter einrichten und Benutzer können wählen, "
+"welchen sie bei der Anmeldung verwenden möchten."
 
 #: core/templates/core/identityprovider_list.html:16
 #: plugins/complexsignup/models.py:103
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:45
 msgid "Label"
-msgstr ""
+msgstr "Titel"
 
 #: core/templates/core/logentry_list.html:11
 msgid "Log"
@@ -2185,10 +2179,8 @@ msgid "Click here to view and change your notification settings"
 msgstr "Hier klicken um Benachrichtigungseinstellungen anzusehen und zu ändern"
 
 #: core/templates/core/notification_detail.html:11
-#, fuzzy
-#| msgid "Event notifications"
 msgid "View other notifications"
-msgstr "Veranstaltungsbenachrichtigungen"
+msgstr "Andere Benachrichtigungen anzeigen"
 
 #: core/templates/core/notification_list.html:7
 #: core/templates/core/settings/settings_base.html:21
@@ -2199,7 +2191,7 @@ msgstr "Benachrichtigungen"
 
 #: core/templates/core/notification_list.html:10
 msgid "Mark all as read"
-msgstr ""
+msgstr "Alle als gelesen markieren"
 
 #: core/templates/core/pagination.html:20
 #, python-format
@@ -2314,7 +2306,7 @@ msgstr "Telefonnummer"
 
 #: core/templates/core/settings/settings_personal_data.html:26
 msgid "You are not a member of any group."
-msgstr ""
+msgstr "Sie sind in keiner Gruppe Mitglied."
 
 #: core/templates/core/settings/settings_personal_data.html:31
 #: core/templates/core/userprofile_form.html:48
@@ -2442,6 +2434,10 @@ msgid ""
 "caused by a typo or a problem with the user's mail server. Please check the "
 "email address and correct it before activating the user again."
 msgstr ""
+"Der Benutzer ist inaktiv, weil die E-Mail-Adresse ungültig ist. Dies kann "
+"durch einen Tippfehler oder ein Problem mit dem Mailserver des Benutzers "
+"verursacht werden. Bitte überprüfen Sie die E-Mail-Adresse und korrigieren "
+"Sie sie, bevor Sie den Benutzer wieder aktivieren."
 
 #: core/templates/core/userprofile_form.html:83
 msgid "Add qualification"
@@ -2476,15 +2472,15 @@ msgstr "minderjährig"
 #: core/templates/core/userprofile_list.html:60
 #, python-format
 msgid "Last login: %(timeframe)s ago"
-msgstr ""
+msgstr "Letze Anmeldung vor %(timeframe)s"
 
 #: core/templates/core/userprofile_list.html:62
 msgid "Last login: never"
-msgstr ""
+msgstr "Letze Anmeldung: nie"
 
 #: core/templates/core/userprofile_list.html:64
 msgid "not seen recently"
-msgstr ""
+msgstr "länger nicht gesehen"
 
 #: core/templates/core/userprofile_list.html:69
 msgid "inactive"
@@ -2623,7 +2619,7 @@ msgstr "Gruppe \"{group}\" wurde gelöscht."
 
 #: core/views/auth.py:48
 msgid "Authentication failed."
-msgstr ""
+msgstr "Anmeldung fehlgeschlagen."
 
 #: core/views/auth.py:86 templates/registration/logged_out.html:9
 msgid "Logged out successfully."
@@ -2631,18 +2627,22 @@ msgstr "Erfolgreich abgemeldet."
 
 #: core/views/auth.py:94 core/views/auth.py:143
 msgid "Identity provider saved."
-msgstr ""
+msgstr "Identitätsprovider gespeichert."
 
 #: core/views/auth.py:114
 msgid ""
 "Successfully fetched OIDC configuration. Please fill in the remaining fields."
 msgstr ""
+"OIDC-Konfiguration erfolgreich geladen. Bitte füllen Sie die restlichen "
+"Felder aus."
 
 #: core/views/auth.py:121
 msgid ""
 "Could not fetch OIDC configuration from the given URL. Please configure the "
 "client manually below."
 msgstr ""
+"Laden der OIDC-Konfiguration für die angegebene URL fehlgeschlagen. Eine "
+"manuelle Einrichtung kann unten vorgenommen werden."
 
 #: core/views/bulk.py:19
 msgid "No events were selected for deletion."
@@ -2833,8 +2833,6 @@ msgid "Base Signup Plugin"
 msgstr "Grundlegende Anmeldeverfahren"
 
 #: plugins/basesignup/apps.py:12
-#, fuzzy
-#| msgid "This plugins adds basic signup methods."
 msgid "This plugins adds the standard signup methods."
 msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
@@ -3061,21 +3059,24 @@ msgstr "bevorzugt"
 
 #: plugins/complexsignup/apps.py:10
 msgid "Modular Signup Requirements"
-msgstr ""
+msgstr "Modulare Anmeldevorraussetzungen"
 
 #: plugins/complexsignup/apps.py:13
 msgid ""
 "This plugins adds a signup method for which you configure reusable modules "
 "of requirements to create complex shift setups."
 msgstr ""
+"Dieses Plugin fügt eine Anmeldemethode hinzu, für die Sie wiederverwendbare "
+"Anforderungsmodule konfigurieren können, um komplexe Schichtkonfigurationen "
+"zu erstellen."
 
 #: plugins/complexsignup/models.py:11
 msgid "atomic"
-msgstr ""
+msgstr "atomar"
 
 #: plugins/complexsignup/models.py:12
 msgid "composite"
-msgstr ""
+msgstr "zusammengesetzt"
 
 #: plugins/complexsignup/models.py:23
 msgid "Type"
@@ -3083,128 +3084,113 @@ msgstr "Typ"
 
 #: plugins/complexsignup/models.py:31
 msgid "sub blocks"
-msgstr ""
+msgstr "Unterblöcke"
 
 #: plugins/complexsignup/models.py:36
-#, fuzzy
-#| msgid "Learn more"
 msgid "allow more"
-msgstr "Mehr erfahren"
+msgstr "zusätzliche Anmeldungen erlauben"
 
 #: plugins/complexsignup/models.py:37
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:189
 msgid "Allow more participants that qualify for any of the positions."
 msgstr ""
+"Zusätzliche Teilnehmende erlauben, die für eine der Positionen qualifiziert "
+"sind."
 
 #: plugins/complexsignup/models.py:45
 msgid "building block"
-msgstr ""
+msgstr "Block"
 
 #: plugins/complexsignup/models.py:46
 msgid "building blocks"
-msgstr ""
+msgstr "Blöcke"
 
 #: plugins/complexsignup/models.py:62
 msgid "block"
-msgstr ""
+msgstr "Block"
 
 #: plugins/complexsignup/models.py:65
 msgid "everyone"
-msgstr ""
+msgstr "jeder"
 
 #: plugins/complexsignup/models.py:69
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:204
-#, fuzzy
-#| msgid "at least {min}"
 msgid "at least"
-msgstr "mindestens {min}"
+msgstr "mindestens"
 
 #: plugins/complexsignup/models.py:72 plugins/complexsignup/models.py:113
-#, fuzzy
-#| msgid "Required Qualifications"
 msgid "required qualifications"
 msgstr "Erforderliche Qualifikationen"
 
 #: plugins/complexsignup/models.py:77
-#, fuzzy, python-brace-format
-#| msgid "cannot be deleted, has qualifications"
+#, python-brace-format
 msgid "everyone on {block} needs {qualifications}"
-msgstr "kann nicht gelöscht werden, hat Qualifikationen"
+msgstr "jeder in {block} benötigt {qualifications}"
 
 #: plugins/complexsignup/models.py:80
 #, python-brace-format
 msgid "at least {at_least} on {block} need {qualifications}"
-msgstr ""
+msgstr "mindestens {at_least} in {block} benötigen {qualifications}"
 
 #: plugins/complexsignup/models.py:87
-#, fuzzy
-#| msgid "Qualification Management"
 msgid "qualification requirement"
-msgstr "Qualifikationsverwaltung"
+msgstr "Erforderliche Qualifikation"
 
 #: plugins/complexsignup/models.py:88
-#, fuzzy
-#| msgid "Qualification grants"
 msgid "qualification requirements"
-msgstr "Qualifikationserteilungen"
+msgstr "Erforderliche Qualifikationen"
 
 #: plugins/complexsignup/models.py:108 plugins/complexsignup/models.py:150
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:54
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:163
-#, fuzzy
-#| msgid "location"
 msgid "optional"
-msgstr "Ort"
+msgstr "optional"
 
 #: plugins/complexsignup/models.py:118
 #, python-brace-format
 msgid "{label_or_pk} on {block_name}"
-msgstr ""
+msgstr "{label_or_pk} in {block_name}"
 
 #: plugins/complexsignup/models.py:123
-#, fuzzy
-#| msgid "Disposition"
 msgid "position"
-msgstr "Disposition"
+msgstr "Position"
 
 #: plugins/complexsignup/models.py:124
-#, fuzzy
-#| msgid "Disposition"
 msgid "positions"
-msgstr "Disposition"
+msgstr "Positionen"
 
 #: plugins/complexsignup/models.py:141
 msgid "composite block"
-msgstr ""
+msgstr "Zusammengesetzer Block"
 
 #: plugins/complexsignup/models.py:147
 msgid "sub block"
-msgstr ""
+msgstr "Unterblock"
 
 #: plugins/complexsignup/models.py:155
 #, python-brace-format
 msgid "{sub_block} on {composite_blocK}"
-msgstr ""
+msgstr "{sub_block} in {composite_blocK}"
 
 #: plugins/complexsignup/models.py:161
 msgid "block composition"
-msgstr ""
+msgstr "Blockzusammensetzung"
 
 #: plugins/complexsignup/models.py:162
 msgid "block compositions"
-msgstr ""
+msgstr "Blockzusammensetzungen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:8
 msgid "Signup Blocks Editor"
-msgstr ""
+msgstr "Editor für Anmeldeblöcke"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:25
 msgid "Block Name"
-msgstr ""
+msgstr "Blockname"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:33
 msgid "Please provide a name."
-msgstr ""
+msgstr "Bitte geben Sie einen Namen an."
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:62
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:78
@@ -3212,34 +3198,26 @@ msgstr ""
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:228
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:251
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:330
-#, fuzzy
-#| msgid "removed"
 msgid "Remove"
-msgstr "entfernt"
+msgstr "Entfernen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:69
-#, fuzzy
-#| msgid "qualified"
 msgid "qualified as"
-msgstr "qualifiziert"
+msgstr "qualifiziert als"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:81
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:231
 msgid "and"
-msgstr ""
+msgstr "und"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:86
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:236
-#, fuzzy
-#| msgid "Delete qualification"
 msgid "select qualification"
-msgstr "Qualifikation löschen"
+msgstr "Qualifikation auswählen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:100
-#, fuzzy
-#| msgid "Add section"
 msgid "Add position"
-msgstr "Abschnitt hinzufügen"
+msgstr "Position hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:116
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:141
@@ -3248,84 +3226,70 @@ msgstr "Abschnitt hinzufügen"
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:349
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:358
 msgid "unnamed"
-msgstr ""
+msgstr "unbenannt"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:179
 msgid "Add items using the buttons in the list"
-msgstr ""
+msgstr "Elemente mit den Knöpfen in der Liste hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:201
 msgctxt "block qualification requirement"
 msgid "everyone"
-msgstr ""
+msgstr "jeder"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:211
-#, fuzzy
-#| msgid "phone number"
 msgid "number"
-msgstr "Telefonnummer"
+msgstr "Nummer"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:214
-#, fuzzy
-#| msgid "unqualified"
 msgctxt "block qualification requirements plural"
 msgid "must be qualified as"
-msgstr "unqualifiziert"
+msgstr "muss qualifiziert sein als"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:217
-#, fuzzy
-#| msgid "unqualified"
 msgctxt "block qualification requirements singular"
 msgid "must be qualified as"
-msgstr "unqualifiziert"
+msgstr "muss qualifiziert sein als"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:260
-#, fuzzy
-#| msgid "Add section"
 msgid "Add condition"
-msgstr "Abschnitt hinzufügen"
+msgstr "Bedingung hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:277
 msgid "Add atomic block"
-msgstr ""
+msgstr "Atomaren Block hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:282
 msgid "Add composite block"
-msgstr ""
+msgstr "Zusammengesetzen Block hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:286
-#, fuzzy
-#| msgid "search"
 msgid "Search"
-msgstr "suchen"
+msgstr "Suchen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:298
 msgid "Add as sub-block"
-msgstr ""
+msgstr "Als Unterblock hinzufügen"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:318
-#, fuzzy
-#| msgid "Invalid code"
 msgid "Invalid"
-msgstr "Code ungültig"
+msgstr "Ungültig"
 
 #: plugins/complexsignup/templates/complexsignup/vue_editor.html:326
 msgid "Clone"
-msgstr ""
+msgstr "Duplizieren"
 
 #: plugins/complexsignup/views.py:61
 msgid "Failed to save building blocks."
-msgstr ""
+msgstr "Blöcke konnten nicht gespeichert werden."
 
 #: plugins/complexsignup/views.py:64
 msgid "Saved blocks."
-msgstr ""
+msgstr "Blöcke gespeichert."
 
 #: plugins/complexsignup/views.py:68
-#, fuzzy
-#| msgid "There was an error performing that action."
 msgid "There were errors in the form."
-msgstr "Beim Ausführen der Aktion ist ein Fehler aufgetreten."
+msgstr "Das Formular enthält Fehler."
 
 #: plugins/eventautoqualification/apps.py:10
 #: plugins/eventautoqualification/forms.py:53
@@ -3422,28 +3386,20 @@ msgid "URL"
 msgstr "URL"
 
 #: plugins/federation/models.py:36
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated guest"
-msgstr "Föderierter Benutzer"
+msgstr "Föderierter Gast"
 
 #: plugins/federation/models.py:37
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated guests"
-msgstr "Föderierter Benutzer"
+msgstr "Föderierte Gäste"
 
 #: plugins/federation/models.py:66
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated host"
-msgstr "Föderierter Benutzer"
+msgstr "Föderierter Host"
 
 #: plugins/federation/models.py:67
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated hosts"
-msgstr "Föderierter Benutzer"
+msgstr "Föderierte Hosts"
 
 #: plugins/federation/models.py:87
 #, python-brace-format
@@ -3451,16 +3407,12 @@ msgid "Federation invite code for {url}"
 msgstr "Föderations-Einladungs-Code für {url}"
 
 #: plugins/federation/models.py:101
-#, fuzzy
-#| msgid "Invite code"
 msgid "invite code"
 msgstr "Einladungscode"
 
 #: plugins/federation/models.py:102
-#, fuzzy
-#| msgid "Invite code"
 msgid "invite codes"
-msgstr "Einladungscode"
+msgstr "Einladungscodes"
 
 #: plugins/federation/models.py:122
 #, python-brace-format
@@ -3468,34 +3420,25 @@ msgid "Federated event share for {event}"
 msgstr "Föderation von {event}"
 
 #: plugins/federation/models.py:125
-#, fuzzy
-#| msgid "Federated event share for {event}"
 msgid "federated event share"
-msgstr "Föderation von {event}"
+msgstr "Veranstaltungsfreigabe für föderierte Instanzen"
 
 #: plugins/federation/models.py:126
-#, fuzzy
-#| msgid "Federated event share for {event}"
 msgid "federated event shares"
-msgstr "Föderation von {event}"
+msgstr "Veranstaltungsfreigaben für föderierte Instanzen"
 
 #: plugins/federation/models.py:145
-#, fuzzy, python-brace-format
-#| msgid "Federated user {first_name} {last_name}"
+#, python-brace-format
 msgid "Federated user {display_name}"
-msgstr "Föderierter Nutzer {first_name} {last_name}"
+msgstr "Föderierter Nutzer {display_name}"
 
 #: plugins/federation/models.py:157
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated user"
 msgstr "Föderierter Benutzer"
 
 #: plugins/federation/models.py:158
-#, fuzzy
-#| msgid "Federated user"
 msgid "federated users"
-msgstr "Föderierter Benutzer"
+msgstr "Föderierte Benutzer"
 
 #: plugins/federation/models.py:193
 msgid "Federated user"
@@ -3506,22 +3449,16 @@ msgid "federated participant"
 msgstr "Föderierter Teilnehmender"
 
 #: plugins/federation/models.py:200
-#, fuzzy
-#| msgid "federated participant"
 msgid "federated participants"
-msgstr "Föderierter Teilnehmender"
+msgstr "Föderierte Teilnehmende"
 
 #: plugins/federation/models.py:216
-#, fuzzy
-#| msgid "federated participant"
 msgid "federated participation"
-msgstr "Föderierter Teilnehmender"
+msgstr "Föderierte Teilnahme"
 
 #: plugins/federation/models.py:217
-#, fuzzy
-#| msgid "federated participant"
 msgid "federated participations"
-msgstr "Föderierter Teilnehmender"
+msgstr "Föderierte Teilnahmen"
 
 #: plugins/federation/signals.py:21
 #: plugins/federation/templates/federation/external_event_list.html:6
@@ -3670,14 +3607,13 @@ msgstr "Einladungs-Code ist abgelaufen."
 
 #: plugins/federation/views/frontend.py:212
 msgid "Invalid code data. Please try again with a new invite code."
-msgstr ""
+msgstr "Code ungültig. Bitte mit einem neuen Einladungscode erneut probieren."
 
 #: plugins/federation/views/frontend.py:217
-#, fuzzy
-#| msgid "Failed to remove this instance. Please try again later."
 msgid "Could not connect to host instance. Please try again later."
 msgstr ""
-"Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
+"Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
+"später erneut."
 
 #: plugins/federation/views/frontend.py:223
 msgid ""
