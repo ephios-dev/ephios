@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: admin@ephios.de\n"
 "POT-Creation-Date: 2024-01-27 15:25+0100\n"
-"PO-Revision-Date: 2024-02-04 12:55+0000\n"
+"PO-Revision-Date: 2024-02-06 14:19+0000\n"
 "Last-Translator: Julian Baumann <julian@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/>"
 "\n"
@@ -1437,7 +1437,7 @@ msgstr "Veranstaltung anzeigen"
 
 #: core/services/notifications/types.py:265
 msgid "The state of your participation has changed"
-msgstr "Der Zustand Ihrer Teilnahme hat sich geändert"
+msgstr "Der Status Ihrer Teilnahme hat sich geändert"
 
 #: core/services/notifications/types.py:272
 #: core/services/notifications/types.py:381
@@ -1498,7 +1498,7 @@ msgstr "{participant} hat eine Teilnahme an {shift} angefragt."
 
 #: core/services/notifications/types.py:417
 msgid "A participation for your event has changed state"
-msgstr "Eine Teilnahme für ihre Veranstaltung hat den Zustand geändert"
+msgstr "Der Status einer Teilnahme an Ihrer Veranstaltung hat sich geändert"
 
 #: core/services/notifications/types.py:431
 #, python-brace-format
