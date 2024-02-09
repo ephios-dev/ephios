@@ -283,7 +283,7 @@ class Shift(DatetimeDisplayMixin, Model):
 
     @cached_property
     def signup_flow(self) -> "AbstractSignupFlow":
-        from ephios.core.signup.methods import signup_flow_from_slug
+        from ephios.core.signup.flow import signup_flow_from_slug
 
         try:
             event = self.event
@@ -323,6 +323,17 @@ class Shift(DatetimeDisplayMixin, Model):
     def __str__(self):
         return f"{self.event.title} ({self.get_datetime_display()})"
 
+    def get_signup_info(self):
+        """
+        Return aggregated signup config information from flow and structure.
+        """
+        info = {}
+        if self.signup_flow:
+            info.update(self.signup_flow.get_signup_info())
+        if self.structure:
+            info.update(self.structure.get_signup_info())
+        return info
+
 
 class ShiftLogConfig(ModelFieldsLogConfig):
     def __init__(self):
@@ -335,16 +346,24 @@ class ShiftLogConfig(ModelFieldsLogConfig):
         # pylint: disable=undefined-variable
         yield from super().initial_log_recorders(instance)
 
-        def get_signup_method_name_mapping(shift):
+        def get_signup_config_name_mapping(shift):
             from ephios.core.signup.flow import installed_signup_flows
+            from ephios.core.signup.structure import installed_shift_structures
 
-            v = None
+            flow_name = None
+            structure_name = None
             for flow in installed_signup_flows():
                 if flow.slug == shift.signup_flow_slug:
-                    v = str(flow.verbose_name)
-            return {_("Signup flow"): v}
+                    flow_name = str(flow.verbose_name)
+            for structure in installed_shift_structures():
+                if structure.slug == shift.structure_slug:
+                    structure_name = str(structure.verbose_name)
+            return {
+                _("Signup flow"): flow_name,
+                _("Structure"): structure_name,
+            }
 
-        yield DerivedFieldsLogRecorder(get_signup_method_name_mapping)
+        yield DerivedFieldsLogRecorder(get_signup_config_name_mapping)
 
 
 register_model_for_logging(Shift, ShiftLogConfig())

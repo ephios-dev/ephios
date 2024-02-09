@@ -3,19 +3,21 @@ function isEmpty(el) {
 }
 
 $(document).ready(function () {
-    $('select[name="signup_method_slug"]').on('change', function () {
+    const flowSelect = $('select[name="signup_flow_slug"]');
+    flowSelect.on('change', function () {
         $.ajax({
             url: JSON.parse(document.getElementById('configuration_form_url').textContent).url.replace("METHOD_SLUG", this.value),
             type: 'GET',
 
             success: function (data) {
-                $('#configuration_form').html(data);
-                handleForms($('#configuration_form'));
+                const form = $('#flow_configuration_form');
+                form.html(data);
+                handleForms(form);
             }
         });
     });
 
-    if (isEmpty($('#configuration_form'))) {
-        $('select[name="signup_method_slug"]').trigger("change")
+    if (isEmpty($('#flow_configuration_form'))) {
+        flowSelect.trigger("change")
     }
 });

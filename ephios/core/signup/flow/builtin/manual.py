@@ -8,22 +8,13 @@ class ManualSignupFlow(BaseSignupFlow):
     Signup flow for manual signups.
     """
 
-    @property
-    def slug(self):
-        return "manual"
+    slug = "manual"
+    verbose_name = _("Manual")
+    description = _("Sign up by the organizer")
+    registration_button_text = _("Sign up")
+    uses_requested_state = False
 
-    @property
-    def verbose_name(self):
-        return _("Manual")
+    def _configure_participation(self, participation, **kwargs):
+        raise TypeError("Manual signup flow does not support signup.")
 
-    @property
-    def description(self):
-        return _("Sign up by the organizer")
-
-    @property
-    def registration_button_text(self):
-        return _("Sign up")
-
-    @property
-    def uses_requested_state(self):
-        return False
+    # todo add validator

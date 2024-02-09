@@ -29,7 +29,7 @@ def installed_signup_flows():
     #     yield from methods
 
 
-def enabled_signup_methods():
+def enabled_signup_flows():
     # for _, methods in register_signup_methods.send(None):
     #     yield from methods
     # TODO

@@ -1,5 +1,6 @@
 import logging
 from argparse import Namespace
+from collections import OrderedDict
 
 from django import forms
 from django.template.loader import get_template
@@ -11,6 +12,7 @@ from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.forms import SignupConfigurationForm
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.abstract import AbstractShiftStructure
+from ephios.extra.utils import format_anything
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 logger = logging.getLogger(__name__)
@@ -80,6 +82,19 @@ class BaseShiftStructure(AbstractShiftStructure):
             free=max(max_count - confirmed_count, 0) if max_count else None,
             min_count=min_count,
             max_count=max_count,
+        )
+
+    def get_signup_info(self):
+        """
+        Return key/value pairs about the configuration to show in exports etc.
+        """
+        form_class = self.configuration_form_class
+        return OrderedDict(
+            {
+                label: getattr(form_class, f"format_{name}", format_anything)(value)
+                for name, field in form_class.base_fields.items()
+                if (label := field.label) and (value := getattr(self.configuration, name))
+            }
         )
 
     def render(self, context):
