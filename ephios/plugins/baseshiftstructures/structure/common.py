@@ -1,22 +1,17 @@
 import typing
 
 from django import forms
-from django.contrib import messages
-from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup.checker import (
-    ActionDisallowedError,
-    BaseSignupActionValidator,
+from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.methods import BaseSignupMethod
-from ephios.core.signup.views import BaseSignupView
+from ephios.core.signup.structure.base import BaseShiftStructure
 
-_Base = BaseSignupMethod if typing.TYPE_CHECKING else object
+_Base = BaseShiftStructure if typing.TYPE_CHECKING else object
 
 
 class MinimumAgeConfigFormMixin(forms.Form):
@@ -30,9 +25,9 @@ class MinimumAgeMixin(_Base):
     def signup_action_validator_class(self):
         class Validator(super().signup_action_validator_class):
             @staticmethod
-            def check_participant_age(method, participant):
-                minimum_age = getattr(method.configuration, "minimum_age", None)
-                day = method.shift.start_time.date()
+            def check_participant_age(shift, participant):
+                minimum_age = getattr(shift.structure.configuration, "minimum_age", None)
+                day = shift.start_time.date()
                 age = participant.get_age(day)
                 if minimum_age is not None and age is not None and age < minimum_age:
                     raise ParticipantUnfitError(
@@ -57,19 +52,22 @@ class MinMaxParticipantsMixin(_Base):
     def signup_action_validator_class(self):
         class Validator(super().signup_action_validator_class):
             @staticmethod
-            def check_maximum_number_of_participants(method, participant):
+            def check_maximum_number_of_participants(shift, participant):
                 if (
-                    not method.uses_requested_state
-                    and method.configuration.maximum_number_of_participants is not None
+                    not shift.signup_flow.uses_requested_state
+                    and shift.structure.configuration.maximum_number_of_participants is not None
                 ):
                     current_count = len(
                         [
                             participation
-                            for participation in method.shift.participations.all()
+                            for participation in shift.participations.all()
                             if participation.state == AbstractParticipation.States.CONFIRMED
                         ]
                     )
-                    if current_count >= method.configuration.maximum_number_of_participants:
+                    if (
+                        current_count
+                        >= shift.structure.configuration.maximum_number_of_participants
+                    ):
                         raise SignupDisallowedError(
                             _("The maximum number of participants is reached.")
                         )
@@ -121,8 +119,10 @@ class QualificationsRequiredSignupMixin(_Base):
     def signup_action_validator_class(self):
         class Validator(super().signup_action_validator_class):
             @staticmethod
-            def check_qualification(method, participant):
-                if not participant.has_qualifications(method.configuration.required_qualifications):
+            def check_qualification(shift, participant):
+                if not participant.has_qualifications(
+                    shift.structure.configuration.required_qualifications
+                ):
                     raise ParticipantUnfitError(
                         _("You don't have all required qualifications for this shift.")
                     )
@@ -176,15 +176,15 @@ class QualificationsRequiredSignupMixin(_Base):
 
 
 class RenderParticipationPillsShiftStateMixin:
-    shift_state_template_name = "basesignup/fragment_participation_pills_shift_state.html"
+    shift_state_template_name = "baseshiftstructures/fragment_participation_pills_shift_state.html"
 
 
-class QualificationMinMaxBaseSignupMethod(
+class QualificationMinMaxBaseShiftStructure(
     RenderParticipationPillsShiftStateMixin,
     QualificationsRequiredSignupMixin,
     MinMaxParticipantsMixin,
     MinimumAgeMixin,
-    BaseSignupMethod,
+    BaseShiftStructure,
 ):
     @property
     def slug(self):
@@ -217,22 +217,3 @@ class QualificationMinMaxBaseSignupMethod(
                 rendered_count - len(participation_info)
             )
         return participation_info
-
-
-class NoSignupSignupView(BaseSignupView):
-    def get(self, request, *args, **kwargs):
-        messages.error(self.request, _("This action is not allowed."))
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
-
-    post = get
-
-
-class NoSignupSignupActionValidator(BaseSignupActionValidator):
-    def get_no_signup_allowed_message(self):
-        return _("Signup for this shift is disabled.")
-
-    def signup_is_disabled(self, method, participant):
-        raise ActionDisallowedError(self.get_no_signup_allowed_message())
-
-    def get_checkers(self):
-        return [self.signup_is_disabled]

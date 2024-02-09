@@ -19,6 +19,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import formats
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
@@ -33,7 +34,6 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup.methods import BaseSignupMethod
     from ephios.core.signup.participants import AbstractParticipant
     from ephios.core.signup.stats import SignupStats
 logger = logging.getLogger(__name__)
@@ -109,9 +109,9 @@ class Event(Model):
         return functools.reduce(
             operator.add,
             [
-                shift.signup_method.get_signup_stats()
+                structure.get_signup_stats()
                 for shift in self.shifts.all()
-                if shift.signup_method
+                if (structure := shift.structure)
             ]
             or [default_for_no_shifts],
         )
@@ -199,7 +199,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         related_name="participations",
     )
     state = IntegerField(_("state"), choices=States.choices, default=States.GETTING_DISPATCHED)
-    data = models.JSONField(default=dict, verbose_name=_("Signup data"))
+    structure_data = models.JSONField(
+        default=dict,
+        verbose_name=_("Data on where this participation lifes in the shift structure"),
+    )
 
     """
     Overwrites shift time. Use `start_time` and `end_time` to get the applicable time (implemented with a custom manager).
@@ -223,7 +226,7 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
             self.individual_start_time
             or self.individual_end_time
             or self.comment
-            or self.shift.signup_method.has_customized_signup(self)
+            or self.shift.structure.has_customized_signup(self)
         )
 
     @property
@@ -261,8 +264,14 @@ class Shift(DatetimeDisplayMixin, Model):
     meeting_time = DateTimeField(_("meeting time"))
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
-    signup_method_slug = SlugField(_("signup method"))
-    signup_configuration = JSONField(
+
+    signup_flow_slug = SlugField(_("signup flow"))
+    signup_flow_configuration = JSONField(
+        default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )
+
+    structure_slug = SlugField(_("structure"))
+    structure_configuration = JSONField(
         default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
 
@@ -272,23 +281,37 @@ class Shift(DatetimeDisplayMixin, Model):
         ordering = ("meeting_time", "start_time", "id")
         db_table = "shift"
 
-    @property
-    def signup_method(self) -> "BaseSignupMethod":
-        from ephios.core.signup.methods import signup_method_from_slug
+    @cached_property
+    def signup_flow(self) -> "AbstractSignupFlow":
+        from ephios.core.signup.flow import signup_flow_from_slug
 
         try:
             event = self.event
         except Event.DoesNotExist:
             event = None
         try:
-            return signup_method_from_slug(self.signup_method_slug, self, event=event)
+            return signup_flow_from_slug(self.signup_flow_slug, self, event=event)
         except ValueError:
-            logger.warning(
-                f"signup method {self.signup_method_slug} on shift #{self.pk} was not found"
-            )
-            from ephios.core.signup.fallback import FallbackSignupMethod
+            logger.warning(f"signup flow {self.signup_flow_slug} on shift #{self.pk} was not found")
+            from ephios.core.signup.fallback import FallbackSignupFlow
 
-            return FallbackSignupMethod(self, event=event)
+            return FallbackSignupFlow(self, event=event)
+
+    @cached_property
+    def structure(self) -> "AbstractShiftStructure":
+        from ephios.core.signup.structure import shift_structure_from_slug
+
+        try:
+            event = self.event
+        except Event.DoesNotExist:
+            event = None
+        try:
+            return shift_structure_from_slug(self.structure_slug, self, event=event)
+        except ValueError:
+            logger.warning(f"structure {self.structure_slug} on shift #{self.pk} was not found")
+            from ephios.core.signup.fallback import FallbackShiftStructure
+
+            return FallbackShiftStructure(self, event=event)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
@@ -299,6 +322,17 @@ class Shift(DatetimeDisplayMixin, Model):
 
     def __str__(self):
         return f"{self.event.title} ({self.get_datetime_display()})"
+
+    def get_signup_info(self):
+        """
+        Return aggregated signup config information from flow and structure.
+        """
+        info = {}
+        if self.signup_flow:
+            info.update(self.signup_flow.get_signup_info())
+        if self.structure:
+            info.update(self.structure.get_signup_info())
+        return info
 
 
 class ShiftLogConfig(ModelFieldsLogConfig):
@@ -312,16 +346,24 @@ class ShiftLogConfig(ModelFieldsLogConfig):
         # pylint: disable=undefined-variable
         yield from super().initial_log_recorders(instance)
 
-        def get_signup_method_name_mapping(shift):
-            from ephios.core.signup.methods import installed_signup_methods
+        def get_signup_config_name_mapping(shift):
+            from ephios.core.signup.flow import installed_signup_flows
+            from ephios.core.signup.structure import installed_shift_structures
 
-            v = None
-            for method in installed_signup_methods():
-                if method.slug == shift.signup_method_slug:
-                    v = str(method.verbose_name)
-            return {_("Signup method"): v}
+            flow_name = None
+            structure_name = None
+            for flow in installed_signup_flows():
+                if flow.slug == shift.signup_flow_slug:
+                    flow_name = str(flow.verbose_name)
+            for structure in installed_shift_structures():
+                if structure.slug == shift.structure_slug:
+                    structure_name = str(structure.verbose_name)
+            return {
+                _("Signup flow"): flow_name,
+                _("Structure"): structure_name,
+            }
 
-        yield DerivedFieldsLogRecorder(get_signup_method_name_mapping)
+        yield DerivedFieldsLogRecorder(get_signup_config_name_mapping)
 
 
 register_model_for_logging(Shift, ShiftLogConfig())

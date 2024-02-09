@@ -10,7 +10,7 @@
     {% include "core/fragments/shift_header.html" with shift=shift participation=participation %}
 
     <div class="card-body">
-        {% include shift.signup_method with own_participation=participation %}
+        {% include shift.structure with own_participation=participation %}
         <div class="shift-plugin-content mt-1">
             {% shift_plugin_content shift request as plugin_content %}
             {% for item in plugin_content %}

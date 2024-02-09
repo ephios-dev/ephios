@@ -7,8 +7,6 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.checker import get_conflicting_participations
-from ephios.core.signup.methods import AbstractSignupMethod
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
@@ -125,8 +123,7 @@ class BaseSignupForm(BaseParticipationForm):
         return buttons
 
     def __init__(self, *args, **kwargs):
-        self.method: AbstractSignupMethod = kwargs.pop("method")
-        self.shift: Shift = self.method.shift
+        self.shift: Shift = kwargs.pop("shift")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -135,7 +132,7 @@ class BaseSignupForm(BaseParticipationForm):
             FormActions(*self._get_buttons()),
         )
 
-        if not self.shift.signup_method.configuration.user_can_customize_signup_times:
+        if not self.shift.signup_flow.configuration.user_can_customize_signup_times:
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 
@@ -163,36 +160,13 @@ class BaseSignupForm(BaseParticipationForm):
             )
 
 
-class AbstractSignupMethodConfigurationForm(forms.Form):
+class SignupConfigurationForm(forms.Form):
     """
-    Base class for signup method configuration forms. Has no fields.
+    A form class to base signup flow and shift structure configuration forms on.
     """
 
-    template_name = "core/signup_configuration_form.html"
+    template_name = "core/forms/crispy_filter.html"
 
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event")
         super().__init__(*args, **kwargs)
-
-
-class BaseSignupMethodConfigurationForm(AbstractSignupMethodConfigurationForm):
-    """
-    Configuration form with basic fields relevant for most signup methods.
-    """
-
-    signup_until = forms.SplitDateTimeField(
-        required=False,
-        widget=CustomSplitDateTimeWidget,
-        initial=None,
-        label=_("Signup until"),
-    )
-    user_can_decline_confirmed = forms.BooleanField(
-        label=_("Confirmed users can decline by themselves"),
-        required=False,
-        help_text=_("only if the signup timeframe has not ended"),
-    )
-    user_can_customize_signup_times = forms.BooleanField(
-        label=_("Users can provide individual start and end times"),
-        required=False,
-        initial=True,
-    )

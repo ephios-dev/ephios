@@ -11,11 +11,15 @@ This signal is sent out to get all known consequence handlers. Receivers should 
 subclasses of ``ephios.core.consequences.BaseConsequenceHandler``.
 """
 
-register_signup_methods = PluginSignal()
+register_shift_structures = PluginSignal()
+# TODO: update documentation
 """
 This signal is sent out to get all known signup methods. Receivers should return a list of
 subclasses of ``ephios.core.signup.methods.BaseSignupMethod``.
 """
+
+register_signup_flows = PluginSignal()
+# TODO: add documentation
 
 participant_signup_checkers = PluginSignal()
 """
