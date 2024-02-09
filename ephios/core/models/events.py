@@ -226,7 +226,7 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
             self.individual_start_time
             or self.individual_end_time
             or self.comment
-            or self.shift.signup_method.has_customized_signup(self)
+            or self.shift.structure.has_customized_signup(self)
         )
 
     @property

@@ -58,14 +58,6 @@ class AbstractSignupFlow(ABC):
         """
         return True
 
-    def has_customized_signup(self, participation):
-        """
-        Return whether the participation was customized in a way specific to this signup method.
-        """
-        # This method should most likely check the participation's data attribute for modifications it has done.
-        # 'customized' in this context means that the dispositioning person should give special attention to this participation.
-        return False
-
     def get_or_create_participation_for(self, participant) -> AbstractParticipation:
         return participant.participation_for(self.shift) or participant.new_participation(
             self.shift

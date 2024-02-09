@@ -11,7 +11,7 @@ from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleParticipationStateChangeNotification,
 )
-from ephios.core.signals import register_signup_methods
+from ephios.core.signals import register_shift_structures
 from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
@@ -21,18 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 def installed_shift_structures():
-    return [
-        # TODO add more and use signals
-    ]
-    # for _, methods in register_signup_methods.send_to_all_plugins(None):
-    #     yield from methods
+    for _, structures in register_shift_structures.send_to_all_plugins(None):
+        yield from structures
 
 
 def enabled_shift_structures():
-    # for _, methods in register_signup_methods.send(None):
-    #     yield from methods
-    # TODO
-    yield from installed_shift_structures()
+    for _, structures in register_shift_structures.send(None):
+        yield from structures
 
 
 def shift_structure_from_slug(slug, shift=None, event=None):

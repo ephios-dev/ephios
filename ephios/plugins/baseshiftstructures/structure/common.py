@@ -1,21 +1,15 @@
 import typing
 
 from django import forms
-from django.contrib import messages
-from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.flow.participant_validation import (
-    ActionDisallowedError,
-    BaseSignupActionValidator,
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.structure.base import BaseShiftStructure
-from ephios.core.signup.views import BaseSignupView
 
 _Base = BaseShiftStructure if typing.TYPE_CHECKING else object
 
@@ -182,7 +176,7 @@ class QualificationsRequiredSignupMixin(_Base):
 
 
 class RenderParticipationPillsShiftStateMixin:
-    shift_state_template_name = "basesignup/fragment_participation_pills_shift_state.html"
+    shift_state_template_name = "baseshiftstructures/fragment_participation_pills_shift_state.html"
 
 
 class QualificationMinMaxBaseShiftStructure(
@@ -190,7 +184,7 @@ class QualificationMinMaxBaseShiftStructure(
     QualificationsRequiredSignupMixin,
     MinMaxParticipantsMixin,
     MinimumAgeMixin,
-    BaseSignupMethod,
+    BaseShiftStructure,
 ):
     @property
     def slug(self):
@@ -223,22 +217,3 @@ class QualificationMinMaxBaseShiftStructure(
                 rendered_count - len(participation_info)
             )
         return participation_info
-
-
-class NoSignupSignupView(BaseSignupView):
-    def get(self, request, *args, **kwargs):
-        messages.error(self.request, _("This action is not allowed."))
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
-
-    post = get
-
-
-class NoSignupSignupActionValidator(BaseSignupActionValidator):
-    def get_no_signup_allowed_message(self):
-        return _("Signup for this shift is disabled.")
-
-    def signup_is_disabled(self, method, participant):
-        raise ActionDisallowedError(self.get_no_signup_allowed_message())
-
-    def get_checkers(self):
-        return [self.signup_is_disabled]

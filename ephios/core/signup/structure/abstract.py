@@ -83,3 +83,11 @@ class AbstractShiftStructure(ABC):
         Return an instance of SignupStats for the shift.
         """
         raise NotImplementedError()
+
+    def has_customized_signup(self, participation):
+        """
+        Return whether the participation was customized in a way specific to this shift structure.
+        """
+        # This method should most likely check the participation's data attribute for modifications it has done.
+        # 'customized' in this context means that the dispositioning person should give special attention to this participation.
+        return False

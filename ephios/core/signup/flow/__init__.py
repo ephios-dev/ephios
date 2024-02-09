@@ -11,7 +11,7 @@ from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleParticipationStateChangeNotification,
 )
-from ephios.core.signals import register_signup_methods
+from ephios.core.signals import register_signup_flows
 from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
@@ -19,21 +19,21 @@ from ephios.extra.utils import format_anything
 
 logger = logging.getLogger(__name__)
 
+CORE_SIGNUP_FLOWS = [
+    ManualSignupFlow,
+]
+
 
 def installed_signup_flows():
-    return [
-        ManualSignupFlow,
-        # TODO add more and use signals
-    ]
-    # for _, methods in register_signup_methods.send_to_all_plugins(None):
-    #     yield from methods
+    yield from CORE_SIGNUP_FLOWS
+    for _, methods in register_signup_flows.send_to_all_plugins(None):
+        yield from methods
 
 
 def enabled_signup_flows():
-    # for _, methods in register_signup_methods.send(None):
-    #     yield from methods
-    # TODO
-    yield from installed_signup_flows()
+    yield from CORE_SIGNUP_FLOWS
+    for _, flows in register_signup_flows.send(None):
+        yield from flows
 
 
 def signup_flow_from_slug(slug, shift=None, event=None):

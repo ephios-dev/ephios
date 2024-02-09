@@ -154,7 +154,8 @@ class ShiftUpdateView(
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-        valid_config_choices = True
+        flow_configuration_form = self.get_flow_configuration_form()
+        structure_configuration_form = self.get_structure_configuration_form()
         try:
             signup_flow = signup_flow_from_slug(
                 self.request.POST["signup_flow_slug"], shift=self.object
@@ -173,7 +174,6 @@ class ShiftUpdateView(
         else:
             if all(
                 [
-                    valid_config_choices,
                     self.is_valid(form),
                     flow_configuration_form.is_valid(),
                     structure_configuration_form.is_valid(),
@@ -196,7 +196,8 @@ class ShiftUpdateView(
         return self.render_to_response(
             self.get_context_data(
                 form=form,
-                # TODO reuse forms
+                flow_configuration_form=flow_configuration_form,
+                structure_configuration_form=structure_configuration_form,
             )
         )
 

@@ -62,20 +62,20 @@ def participation_mannequin_style(participation):
 @default_on_exception(default=False)
 def can_sign_up(request, shift: Shift):
     participant = request_to_participant(request)
-    return shift.signup_method.get_validator(participant).can_sign_up()
+    return shift.signup_flow.get_validator(participant).can_sign_up()
 
 
 @register.filter(name="can_customize_signup")
 @default_on_exception(default=False)
 def can_customize_signup(request, shift: Shift):
     participant = request_to_participant(request)
-    return shift.signup_method.get_validator(participant).can_customize_signup()
+    return shift.signup_flow.get_validator(participant).can_customize_signup()
 
 
 @register.filter(name="signup_action_errors")
 @default_on_exception(default=lambda: [get_signup_config_invalid_error()])
 def signup_action_errors(request, shift: Shift):
-    validator = shift.signup_method.get_validator(request_to_participant(request))
+    validator = shift.signup_flow.get_validator(request_to_participant(request))
     return validator.get_action_errors()
 
 
@@ -83,7 +83,7 @@ def signup_action_errors(request, shift: Shift):
 @default_on_exception(default=False)
 def can_decline(request, shift: Shift):
     participant = request_to_participant(request)
-    return shift.signup_method.get_validator(participant).can_decline()
+    return shift.signup_flow.get_validator(participant).can_decline()
 
 
 @register.filter(name="confirmed_participations")
