@@ -67,7 +67,6 @@ class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
     default = [
-        ephios.plugins.basesignup.apps.PluginApp.__module__,
         ephios.plugins.pages.apps.PluginApp.__module__,
     ]
     section = general_global_section

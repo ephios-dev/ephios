@@ -13,29 +13,11 @@ from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleParticipationStateChangeNotification,
 )
-from ephios.core.signals import register_signup_methods
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.utils import format_anything
 
 logger = logging.getLogger(__name__)
-
-
-def installed_signup_methods():
-    for _, methods in register_signup_methods.send_to_all_plugins(None):
-        yield from methods
-
-
-def enabled_signup_methods():
-    for _, methods in register_signup_methods.send(None):
-        yield from methods
-
-
-def signup_method_from_slug(slug, shift=None, event=None):
-    for method in installed_signup_methods():
-        if method.slug == slug:
-            return method(shift, event=event)
-    raise ValueError(_("Signup Method '{slug}' was not found.").format(slug=slug))
 
 
 class AbstractSignupMethod(ABC):
@@ -206,7 +188,8 @@ class BaseSignupMethod(AbstractSignupMethod):
 
     @property
     def signup_action_validator_class(self):
-        from ephios.core.signup.checker import BaseSignupActionValidator
+
+        from ephios.core.signup.flow.participant_validation import BaseSignupActionValidator
 
         return BaseSignupActionValidator
 

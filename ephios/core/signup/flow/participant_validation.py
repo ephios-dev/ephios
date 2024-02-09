@@ -22,7 +22,7 @@ class SignupDisallowedError(BaseSignupMethodError):
 class ParticipantUnfitError(SignupDisallowedError):
     """
     More specific error to return if the participant cannot
-    sign up, because they do not meet the requirements.
+    sign up, because they do not meet the requirements (as per shift structure).
     """
 
 
@@ -41,17 +41,17 @@ class ImproperlyConfiguredError(ActionDisallowedError):
     """
 
 
-def check_event_is_active(method, participant):
-    if not method.shift.event.active:
+def check_event_is_active(shift, participant):
+    if not shift.event.active:
         return ActionDisallowedError(_("The event is not active."))
 
 
-def check_participation_state(method, participant):
-    participation = participant.participation_for(method.shift)
+def check_participation_state(shift, participant):
+    participation = participant.participation_for(shift)
     if participation is not None:
         if (
             participation.state == AbstractParticipation.States.CONFIRMED
-            and not method.configuration.user_can_decline_confirmed
+            and not shift.signup_flow.configuration.user_can_decline_confirmed
         ):
             raise DeclineDisallowedError(_("You cannot decline by yourself."))
         if participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
@@ -60,22 +60,22 @@ def check_participation_state(method, participant):
             raise DeclineDisallowedError(_("You have already declined participating."))
 
 
-def check_inside_signup_timeframe(method, participant):
-    last_time = method.shift.end_time
-    if method.configuration.signup_until is not None:
-        last_time = min(last_time, method.configuration.signup_until)
+def check_inside_signup_timeframe(shift, participant):
+    last_time = shift.end_time
+    if shift.signup_flow.configuration.signup_until is not None:
+        last_time = min(last_time, shift.signup_flow.configuration.signup_until)
     if timezone.now() > last_time:
         raise ActionDisallowedError(_("The signup period is over."))
 
 
-def check_general_required_qualifications(method, participant):
+def check_general_required_qualifications(shift, participant):
     if not participant.has_qualifications(
-        method.shift.event.type.preferences[GeneralRequiredQualificationPreference.name]
+        shift.event.type.preferences[GeneralRequiredQualificationPreference.name]
     ):
         raise ParticipantUnfitError(
             _(
                 "You lack the necessary qualification to participate in {eventtype} type events."
-            ).format(eventtype=method.shift.event.type)
+            ).format(eventtype=shift.event.type)
         )
 
 
@@ -108,23 +108,23 @@ def get_conflicting_participations(
     return qs
 
 
-def check_conflicting_participations(method, participant):
-    start_time, end_time = method.shift.start_time, method.shift.end_time
-    if participation := participant.participation_for(method.shift):
+def check_conflicting_participations(shift, participant):
+    start_time, end_time = shift.start_time, shift.end_time
+    if participation := participant.participation_for(shift):
         start_time, end_time = participation.start_time, participation.end_time
 
     # if users can provide individual times, only total conflicts should block signup
-    total = getattr(method.configuration, "user_can_customize_signup_times", False)
+    total = getattr(shift.signup_flow.configuration, "user_can_customize_signup_times", False)
     if conflicts := get_conflicting_participations(
         participant=participant,
-        shift=method.shift,
+        shift=shift,
         start_time=start_time,
         end_time=end_time,
         total=total,
     ):
         raise SignupDisallowedError(
             _("You are already confirmed for other shifts at this time: {shifts}.").format(
-                shifts=", ".join(str(shift) for shift in conflicts)
+                shifts=", ".join(str(conflicting_shift) for conflicting_shift in conflicts)
             )
         )
 
@@ -149,16 +149,16 @@ class BaseSignupActionValidator:
             *signal_checkers,
         ]
 
-    def __init__(self, signup_method, participant):
-        self.signup_method = signup_method
+    def __init__(self, shift, participant):
+        self.shift = shift
         self.participant = participant
-        self.participation = participant.participation_for(signup_method.shift)
+        self.participation = participant.participation_for(shift)
 
     def _get_errors(self, error_class):
         errors = []
         for checker in self.get_checkers():
             try:
-                checker(self.signup_method, self.participant)
+                checker(self.shift, self.participant)
             except error_class as e:
                 errors.append(e)
             except BaseSignupMethodError:

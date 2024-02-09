@@ -9,7 +9,6 @@ from ephios.core.models import Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
-from ephios.core.signup.checker import BaseSignupMethodError
 from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.participants import AbstractParticipant

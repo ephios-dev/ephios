@@ -12,7 +12,6 @@ from django.views.generic.detail import SingleObjectMixin
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
-from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
@@ -46,7 +45,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.object = form.instance
 
         try:
-            signup_method = signup_method_from_slug(
+            signup_method = signup_flow_from_slug(
                 self.request.POST["signup_method_slug"], event=self.event
             )
         except KeyError:
@@ -104,7 +103,7 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
             shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
         except Shift.DoesNotExist:
             shift = None
-        signup_method = signup_method_from_slug(
+        signup_method = signup_flow_from_slug(
             self.kwargs.get("slug"), event=self.get_object(), shift=shift
         )
         return HttpResponse(signup_method.get_configuration_form().render())
@@ -150,7 +149,7 @@ class ShiftUpdateView(
         form = self.get_shift_form()
 
         try:
-            signup_method = signup_method_from_slug(
+            signup_method = signup_flow_from_slug(
                 self.request.POST["signup_method_slug"], shift=self.object
             )
             configuration_form = signup_method.get_configuration_form(

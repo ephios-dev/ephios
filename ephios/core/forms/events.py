@@ -22,7 +22,6 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
-from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
@@ -169,15 +168,15 @@ class ShiftForm(forms.ModelForm):
     start_time = forms.TimeField(widget=CustomTimeInput, label=_("Start time"))
     end_time = forms.TimeField(widget=CustomTimeInput, label=_("End time"))
 
-    field_order = ["date", "meeting_time", "start_time", "end_time", "signup_method_slug"]
+    field_order = ["date", "meeting_time", "start_time", "end_time", "signup_flow_slug"]
 
     class Meta:
         model = Shift
-        fields = ["meeting_time", "start_time", "end_time", "signup_method_slug"]
+        fields = ["meeting_time", "start_time", "end_time", "signup_flow_slug"]
         help_texts = {
-            "signup_method_slug": mark_safe(
+            "signup_flow_slug": mark_safe(
                 _(
-                    "Signup method for this shift. Explanations for the signup methods can be found in the <a href='{url}'>documentation</a>."
+                    "Signup flow for this shift. Explanations for the signup flows can be found in the <a href='{url}'>documentation</a>."
                 ).format(
                     url=pgettext(
                         "localized docs link",
@@ -195,7 +194,7 @@ class ShiftForm(forms.ModelForm):
         if self.instance and (method_slug := self.instance.signup_method_slug):
             if method_slug not in map(operator.attrgetter("slug"), signup_methods):
                 try:
-                    signup_methods.append(signup_method_from_slug(method_slug, self.instance))
+                    signup_methods.append(signup_flow_from_slug(method_slug, self.instance))
                 except ValueError:  # not installed
                     pass
 

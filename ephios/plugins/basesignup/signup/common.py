@@ -7,11 +7,9 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.signup.checker import (
+from ephios.core.signup.flow.participant_validation import (
     ActionDisallowedError,
     BaseSignupActionValidator,
-    ParticipantUnfitError,
-    SignupDisallowedError,
 )
 from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.views import BaseSignupView

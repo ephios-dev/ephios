@@ -74,10 +74,13 @@ def create_objects():
         meeting_time=make_aware(datetime(2043, 6, 30, 15, 30)),
         start_time=make_aware(datetime(2043, 6, 30, 16, 0)),
         end_time=make_aware(datetime(2043, 7, 1, 1, 0)),
-        signup_method_slug="instant_confirmation",
-        signup_configuration={
-            "minimum_age": 18,
+        signup_flow_slug="instant_confirmation",
+        signup_flow_configuration={
             "signup_until": make_aware(datetime(2043, 6, 29, 8, 0)),
+        },
+        structure_slug="uniform",
+        structure_configuration={
+            "minimum_age": 18,
         },
     )
 
