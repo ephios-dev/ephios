@@ -25,8 +25,12 @@
                 {% csrf_token %}
                 {{ form|crispy }}
                 <hr class="border border-secondary border-dark opacity-75">
-                <div id="configuration_form">
-                    {{ configuration_form }}
+                <div id="flow_configuration_form">
+                    {{ flow_configuration_form }}
+                </div>
+                <hr class="border border-secondary border-dark opacity-75">
+                <div id="structure_configuration_form">
+                    {{ structure_configuration_form }}
                 </div>
                 <hr class="border border-secondary border-dark opacity-75">
                 <div class="plugin-forms">

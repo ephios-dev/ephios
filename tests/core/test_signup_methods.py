@@ -12,7 +12,6 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
-from ephios.core.signup.checker import ParticipantUnfitError, get_conflicting_participations
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
 

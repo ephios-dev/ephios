@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
 from django.views import View
@@ -12,7 +13,8 @@ from django.views.generic.detail import SingleObjectMixin
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
-from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
+from ephios.core.signup.flow import signup_flow_from_slug
+from ephios.core.signup.structure import shift_structure_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
@@ -46,7 +48,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.object = form.instance
 
         try:
-            signup_method = signup_method_from_slug(
+            signup_method = signup_flow_from_slug(
                 self.request.POST["signup_method_slug"], event=self.event
             )
         except KeyError:
@@ -104,7 +106,7 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
             shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
         except Shift.DoesNotExist:
             shift = None
-        signup_method = signup_method_from_slug(
+        signup_method = signup_flow_from_slug(
             self.kwargs.get("slug"), event=self.get_object(), shift=shift
         )
         return HttpResponse(signup_method.get_configuration_form().render())
@@ -132,14 +134,18 @@ class ShiftUpdateView(
             },
         )
 
-    def get_configuration_form(self):
-        return self.object.signup_method.get_configuration_form(data=self.request.POST or None)
+    def get_flow_configuration_form(self):
+        return self.object.signup_flow.get_configuration_form(data=self.request.POST or None)
+
+    def get_structure_configuration_form(self):
+        return self.object.structure.get_configuration_form(data=self.request.POST or None)
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
         kwargs.setdefault("event", self.object.event)
         kwargs.setdefault("form", self.get_shift_form())
-        kwargs.setdefault("configuration_form", self.get_configuration_form())
+        kwargs.setdefault("flow_configuration_form", self.get_flow_configuration_form())
+        kwargs.setdefault("structure_configuration_form", self.get_structure_configuration_form())
         return super().get_context_data(**kwargs)
 
     def get_plugin_forms(self):
@@ -148,31 +154,50 @@ class ShiftUpdateView(
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-
+        flow_configuration_form = self.get_flow_configuration_form()
+        structure_configuration_form = self.get_structure_configuration_form()
         try:
-            signup_method = signup_method_from_slug(
-                self.request.POST["signup_method_slug"], shift=self.object
+            signup_flow = signup_flow_from_slug(
+                self.request.POST["signup_flow_slug"], shift=self.object
             )
-            configuration_form = signup_method.get_configuration_form(
+            flow_configuration_form = signup_flow.get_configuration_form(
                 self.request.POST, event=self.object.event
             )
-        except ValueError as e:
-            raise ValidationError(e) from e
-        if all([self.is_valid(form), configuration_form.is_valid()]):
-            shift = form.save(commit=False)
-            shift.signup_configuration = configuration_form.cleaned_data
-            shift.save()
-            self.save_plugin_forms()
-            if "addAnother" in self.request.POST:
-                return redirect(reverse("core:event_createshift", kwargs={"pk": shift.event.pk}))
-            messages.success(
-                self.request, _("The shift {shift} has been saved.").format(shift=shift)
+            structure = shift_structure_from_slug(
+                self.request.POST["structure_slug"], shift=self.object
             )
-            return redirect(self.object.event.get_absolute_url())
+            structure_configuration_form = structure.get_configuration_form(
+                self.request.POST, event=self.object.event
+            )
+        except (ValueError, MultiValueDictKeyError) as e:
+            pass
+        else:
+            if all(
+                [
+                    self.is_valid(form),
+                    flow_configuration_form.is_valid(),
+                    structure_configuration_form.is_valid(),
+                ]
+            ):
+                shift = form.save(commit=False)
+                shift.signup_flow_configuration = flow_configuration_form.cleaned_data
+                shift.structure_configuration = structure_configuration_form.cleaned_data
+                shift.save()
+                self.save_plugin_forms()
+                if "addAnother" in self.request.POST:
+                    return redirect(
+                        reverse("core:event_createshift", kwargs={"pk": shift.event.pk})
+                    )
+                messages.success(
+                    self.request, _("The shift {shift} has been saved.").format(shift=shift)
+                )
+                return redirect(self.object.event.get_absolute_url())
+
         return self.render_to_response(
             self.get_context_data(
                 form=form,
-                configuration_form=configuration_form,
+                flow_configuration_form=flow_configuration_form,
+                structure_configuration_form=structure_configuration_form,
             )
         )
 
