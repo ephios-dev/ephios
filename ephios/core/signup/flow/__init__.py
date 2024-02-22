@@ -13,6 +13,7 @@ from ephios.core.services.notifications.types import (
 )
 from ephios.core.signals import register_signup_flows
 from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
+from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.utils import format_anything
@@ -21,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 CORE_SIGNUP_FLOWS = [
     ManualSignupFlow,
+    RequestConfirmSignupFlow,
 ]
 
 

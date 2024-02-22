@@ -71,13 +71,6 @@ class AbstractSignupMethod(ABC):
         """
         raise NotImplementedError()
 
-    @property
-    def signup_view(self):
-        """
-        This view will be used to sign up for shifts.
-        """
-        raise NotImplementedError()
-
     def get_configuration_form(self):
         """
         This form will be used to configure this signup method.
