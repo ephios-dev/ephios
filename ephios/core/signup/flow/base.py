@@ -105,7 +105,8 @@ class BaseSignupFlow(AbstractSignupFlow):
         """
         Configure the given participation object for signup according to the method's configuration.
         You need at least to set the participations state, as that is not done with the participation form.
-        `kwargs` contains the signup form's cleaned_data.
+        `kwargs` contains the signup form's cleaned_data. The participation object will be saved after this method.
+        Return the participation.
         """
         raise NotImplementedError
 

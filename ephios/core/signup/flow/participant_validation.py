@@ -136,18 +136,7 @@ class BaseSignupActionValidator:
     """
 
     def get_checkers(self):
-        signal_checkers = []
-        for _, result in participant_signup_checkers.send(None):
-            if result:
-                signal_checkers.extend(result)
-        return [
-            check_event_is_active,
-            check_participation_state,
-            check_inside_signup_timeframe,
-            check_general_required_qualifications,
-            check_conflicting_participations,
-            *signal_checkers,
-        ]
+        return []
 
     def __init__(self, shift, participant):
         self.shift = shift
@@ -210,3 +199,30 @@ class BaseSignupActionValidator:
             # If in a positive state, check that you can decline and then sign up again.
             return self.can_decline() and not self.get_signup_errors()
         return not self.get_signup_errors()
+
+
+class BasicSignupActionValidator(BaseSignupActionValidator):
+    def get_checkers(self):
+        signal_checkers = []
+        for _, result in participant_signup_checkers.send(None):
+            if result:
+                signal_checkers.extend(result)
+        return [
+            check_event_is_active,
+            check_participation_state,
+            check_inside_signup_timeframe,
+            check_general_required_qualifications,
+            check_conflicting_participations,
+            *signal_checkers,
+        ]
+
+
+class NoSignupSignupActionValidator(BaseSignupActionValidator):
+    def get_no_signup_allowed_message(self):
+        return _("Signup for this shift is disabled.")
+
+    def signup_is_disabled(self, method, participant):
+        raise ActionDisallowedError(self.get_no_signup_allowed_message())
+
+    def get_checkers(self):
+        return [self.signup_is_disabled]
