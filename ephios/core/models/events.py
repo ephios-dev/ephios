@@ -337,7 +337,15 @@ class Shift(DatetimeDisplayMixin, Model):
 
 class ShiftLogConfig(ModelFieldsLogConfig):
     def __init__(self):
-        super().__init__(unlogged_fields=["id", "signup_method_slug", "signup_configuration"])
+        super().__init__(
+            unlogged_fields=[
+                "id",
+                "signup_flow_slug",
+                "signup_flow_configuration",
+                "structure_slug",
+                "structure_configuration",
+            ]
+        )
 
     def object_to_attach_logentries_to(self, instance):
         return Event, instance.event_id
@@ -396,6 +404,9 @@ class LocalParticipation(AbstractParticipation):
         db_table = "localparticipation"
         verbose_name = _("participation")
         verbose_name_plural = _("participations")
+        constraints = [
+            # TODO models.UniqueConstraint(fields=["user", "shift"], name="unique_localparticipation")
+        ]
 
 
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)

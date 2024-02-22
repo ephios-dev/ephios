@@ -14,7 +14,7 @@ from ephios.core.signup.methods import BaseSignupMethod
 from ephios.core.signup.participants import AbstractParticipant
 
 
-class BaseSignupView(FormView):
+class SignupView(FormView):
     """
     This View reacts to the signup or decline buttons being pressed using a POST request.
     Beware that request.user might be anonymous. You should only act on participants acquired

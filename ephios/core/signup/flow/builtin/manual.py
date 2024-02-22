@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signup.flow.base import BaseSignupFlow, BaseSignupFlowConfigurationForm
-from ephios.core.signup.flow.builtin import NoSignupSignupActionValidator
+from ephios.core.signup.flow.participant_validation import NoSignupSignupActionValidator
 
 
 class ManualSignupActionValidator(NoSignupSignupActionValidator):
@@ -15,6 +15,9 @@ class ManualSignupActionValidator(NoSignupSignupActionValidator):
 class ManualSignupConfigurationForm(BaseSignupFlowConfigurationForm):
     no_selfservice_explanation = forms.CharField(
         label=_("Explanation"),
+        help_text=_(
+            "If you want to explain why self-service signup is disabled, you can do so here."
+        ),
         required=False,
         initial="",
     )
@@ -26,9 +29,9 @@ class ManualSignupFlow(BaseSignupFlow):
     """
 
     slug = "manual"
-    verbose_name = _("Manual")
-    description = _("Sign up by the organizer")
-    registration_button_text = _("Sign up")
+    verbose_name = _("Manual disposition")
+    description = _("Participants are manually added to the shift by the responsibles.")
+    registration_button_text = None
     uses_requested_state = False
     signup_action_validator_class = ManualSignupActionValidator
     configuration_form_class = ManualSignupConfigurationForm
