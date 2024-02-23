@@ -26,3 +26,17 @@ class RequestConfirmSignupFlow(BaseSignupFlow):
     def _configure_participation(self, participation, **kwargs):
         participation.state = participation.States.REQUESTED
         return participation
+
+
+class InstantConfirmSignupFlow(BaseSignupFlow):
+    slug = "instant_confirmation"
+    verbose_name = _("Plain signup")
+    description = _("Participants can directly sign up for the shift.")
+    registration_button_text = _("Register")
+    uses_requested_state = False
+    signup_action_validator_class = ParticipantSignupActionValidator
+    configuration_form_class = ParticipantSignupConfigurationForm
+
+    def _configure_participation(self, participation, **kwargs):
+        participation.state = participation.States.CONFIRMED
+        return participation

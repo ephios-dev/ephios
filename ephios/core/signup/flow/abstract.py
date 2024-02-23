@@ -82,3 +82,7 @@ class AbstractSignupFlow(ABC):
     def get_signup_info(self):
         """Return key/value pairs about the configuration to show in exports etc."""
         raise NotImplementedError()
+
+    def get_configuration_form(self, *args, **kwargs):
+        """Return a form to configure this signup method."""
+        raise NotImplementedError()
