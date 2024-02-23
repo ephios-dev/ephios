@@ -32,12 +32,12 @@
                     <input type="hidden" name="individual_end_time_1" value="{{ shift.end_time|time:"H:i" }}">
 
                     {% csrf_token %}
-                    {% if can_sign_up and shift.signup_method.configuration.signup_until %}
+                    {% if can_sign_up and shift.signup_flow.configuration.signup_until %}
                         <div class="text-success mb-1">
                             <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                  title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                                  title="{{ shift.signup_flow.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
                                 {% translate "Signup ends" %}
-                                {{ shift.signup_method.configuration.signup_until | naturaltime }}.
+                                {{ shift.signup_flow.configuration.signup_until | naturaltime }}.
                             </span>
                         </div>
                     {% endif %}
@@ -51,7 +51,7 @@
                     {% if can_sign_up and can_customize_signup %}
                         <div class="btn-group">
                             <button type="submit" name="signup_choice" value="sign_up"
-                                    class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                    class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
                             <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
                                 <i class="fas fa-cog"></i>
                                 <span class="visually-hidden">{% translate "Customize" %}</span>
@@ -59,7 +59,7 @@
                         </div>
                     {% elif can_sign_up and not can_customize_signup %}
                         <button type="submit" name="signup_choice" value="sign_up"
-                                class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
                     {% elif not can_sign_up and can_customize_signup %}
                         <a class="btn btn-secondary"
                            href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>

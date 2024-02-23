@@ -13,8 +13,8 @@ from django.views.generic.detail import SingleObjectMixin
 from ephios.core.forms.events import ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
-from ephios.core.signup.flow import signup_flow_from_slug
-from ephios.core.signup.structure import shift_structure_from_slug
+from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
+from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
@@ -48,14 +48,23 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.object = form.instance
 
         try:
-            signup_method = signup_flow_from_slug(
-                self.request.POST["signup_method_slug"], event=self.event
+            signup_flow = signup_flow_from_slug(
+                self.request.POST.get("signup_flow_slug"), event=self.event
+            )
+            structure = shift_structure_from_slug(
+                self.request.POST.get("structure_slug"),
+                event=self.event,
             )
         except KeyError:
-            if not list(enabled_signup_methods()):
+            if not list(enabled_signup_flows()):
                 form.add_error(
-                    "signup_method_slug",
-                    _("You must enable plugins providing signup methods to continue."),
+                    "signup_flow_slug",
+                    _("You must enable plugins providing signup flows to continue."),
+                )
+            if not list(enabled_shift_structures()):
+                form.add_error(
+                    "structure_slug",
+                    _("You must enable plugins providing shift structures to continue."),
                 )
             return self.render_to_response(
                 self.get_context_data(
@@ -65,20 +74,31 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         except ValueError as e:
             raise ValidationError(e) from e
         else:
-            configuration_form = signup_method.get_configuration_form(
+            flow_configuration_form = signup_flow.get_configuration_form(
                 self.request.POST, event=self.event
             )
-            if not all((self.is_valid(form), configuration_form.is_valid())):
+            structure_configuration_form = structure.get_configuration_form(
+                self.request.POST, event=self.event
+            )
+            if not all(
+                [
+                    self.is_valid(form),
+                    flow_configuration_form.is_valid(),
+                    structure_configuration_form.is_valid(),
+                ]
+            ):
                 return self.render_to_response(
                     self.get_context_data(
                         form=form,
-                        configuration_form=configuration_form,
+                        flow_configuration_form=flow_configuration_form,
+                        structure_configuration_form=structure_configuration_form,
                     )
                 )
 
             shift = form.save(commit=False)
             shift.event = self.event
-            shift.signup_configuration = configuration_form.cleaned_data
+            shift.signup_flow_configuration = flow_configuration_form.cleaned_data
+            shift.structure_configuration = structure_configuration_form.cleaned_data
             shift.save()
             self.save_plugin_forms()
             if "addAnother" in self.request.POST:
@@ -106,10 +126,10 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
             shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
         except Shift.DoesNotExist:
             shift = None
-        signup_method = signup_flow_from_slug(
+        signup_flow = signup_flow_from_slug(
             self.kwargs.get("slug"), event=self.get_object(), shift=shift
         )
-        return HttpResponse(signup_method.get_configuration_form().render())
+        return HttpResponse(signup_flow.get_configuration_form().render())
 
 
 class ShiftUpdateView(

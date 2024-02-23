@@ -97,7 +97,7 @@ class BaseSignupForm(BaseParticipationForm):
 
     def _get_buttons(self):
         if (
-            p := self.participant.participation_for(self.method.shift)
+            p := self.participant.participation_for(self.shift)
         ) is not None and p.is_in_positive_state():
             buttons = [
                 HTML(
@@ -107,15 +107,15 @@ class BaseSignupForm(BaseParticipationForm):
         else:
             buttons = [
                 HTML(
-                    f'<button class="btn btn-success mt-1 ms-1 float-end" type="submit" name="signup_choice" value="sign_up">{self.method.registration_button_text}</button>'
+                    f'<button class="btn btn-success mt-1 ms-1 float-end" type="submit" name="signup_choice" value="sign_up">{self.shift.signup_flow.registration_button_text}</button>'
                 )
             ]
         buttons.append(
             HTML(
-                f'<a class="btn btn-secondary mt-1" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
+                f'<a class="btn btn-secondary mt-1" href="{self.participant.reverse_event_detail(self.shift.event)}">{_("Cancel")}</a>'
             )
         )
-        if self.method.get_validator(self.participant).can_decline():
+        if self.shift.signup_flow.get_validator(self.participant).can_decline():
             buttons.append(
                 HTML(
                     f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
@@ -170,4 +170,5 @@ class SignupConfigurationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event")
+        self.shift = kwargs.pop("shift")
         super().__init__(*args, **kwargs)
