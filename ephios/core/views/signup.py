@@ -17,9 +17,9 @@ class BaseShiftActionView(SingleObjectMixin, View):
     model = Shift
 
     def dispatch(self, request, *args, **kwargs):
-        return SignupView(
+        return SignupView.as_view(shift=self.get_object())(
             request, *args, **{**kwargs, "participant": self.get_participant()}
-        ).dispatch(request)
+        )
 
     def get_participant(self):
         raise NotImplementedError

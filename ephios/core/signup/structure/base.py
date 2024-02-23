@@ -139,8 +139,8 @@ class BaseShiftStructure(AbstractShiftStructure):
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:
             kwargs.setdefault("initial", self.configuration.__dict__)
-        if self.event is not None:
-            kwargs.setdefault("event", self.event)
+        kwargs.setdefault("event", self.event)
+        kwargs.setdefault("shift", self.shift)
         form = self.configuration_form_class(*args, **kwargs)
         return form
 
