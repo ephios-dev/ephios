@@ -1,23 +1,25 @@
 {% load i18n %}
 
 <div>
-    {% for section in sections.values %}
+    {% for team in teams.values %}
         <span class="pe-1">
             <strong>
-                {{ section.stats.confirmed_count }}{% if section.stats.max_count %}/{{ section.stats.max_count }}{% endif %}
+                {{ team.stats.confirmed_count }}{% if team.stats.max_count %}/{{ team.stats.max_count }}{% endif %}
             </strong>
-            {{ section.title }}
-            <span class="text-body-secondary float-end">{{ section.qualifications_label }}</span>
+            {{ team.title }}
+            {% if team.qualification_label %}
+                <span class="text-body-secondary float-end">{{ team.qualification_label }}</span>
+            {% endif %}
         </span>
 
         <div class="mb-4">
-            {% for participation in section.participations %}
+            {% for participation in team.participations %}
                 {% include "baseshiftstructures/participation_card_inline.html" %}
             {% endfor %}
-            {% for index in section.placeholder %}
+            {% for index in team.placeholder %}
                 <span class="badge bg-light px-5">&nbsp;</span>
             {% endfor %}
-            {% if not section.participations and not section.placeholder %}
+            {% if not team.participations and not team.placeholder %}
                 {# show a white box as vertical whitespace  #}
                 <span class="badge bg-white px-5">&nbsp;</span>
             {% endif %}

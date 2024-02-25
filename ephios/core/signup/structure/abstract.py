@@ -49,10 +49,23 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
+    @property
+    def signup_form_class(self):
+        """
+        This form will be used for participations in signup.
+        """
+        raise NotImplementedError()
+
     def get_configuration_form(self):
         """
         This form will be used to configure this signup method.
         The cleaned data will be saved to shift.signup_configuration
+        """
+        raise NotImplementedError()
+
+    def get_checkers(self):
+        """
+        Return a list of checkers that should be run when validating signup actions.
         """
         raise NotImplementedError()
 
