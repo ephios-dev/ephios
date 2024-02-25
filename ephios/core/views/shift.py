@@ -116,7 +116,7 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
             return redirect(self.event.get_absolute_url())
 
 
-class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
+class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     queryset = Event.all_objects
     permission_required = "core.change_event"
     pk_url_kwarg = "event_id"
@@ -126,10 +126,25 @@ class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixi
             shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
         except Shift.DoesNotExist:
             shift = None
-        signup_flow = signup_flow_from_slug(
-            self.kwargs.get("slug"), event=self.get_object(), shift=shift
-        )
-        return HttpResponse(signup_flow.get_configuration_form().render())
+        form = self.get_form(self.get_object(), shift)
+        return HttpResponse(form.render())
+
+    def get_form(self, event, shift=None):
+        raise NotImplementedError
+
+
+class SignupFlowConfigurationFormView(AbstractShiftConfigurationFormView):
+    def get_form(self, event, shift=None):
+        return signup_flow_from_slug(
+            self.kwargs.get("slug"), event=event, shift=shift
+        ).get_configuration_form()
+
+
+class ShiftStructureConfigurationFormView(AbstractShiftConfigurationFormView):
+    def get_form(self, event, shift=None):
+        return shift_structure_from_slug(
+            self.kwargs.get("slug"), event=event, shift=shift
+        ).get_configuration_form()
 
 
 class ShiftUpdateView(

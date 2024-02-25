@@ -66,10 +66,11 @@ from ephios.core.views.settings import (
     PersonalDataSettingsView,
 )
 from ephios.core.views.shift import (
-    ShiftConfigurationFormView,
     ShiftCreateView,
     ShiftDeleteView,
+    ShiftStructureConfigurationFormView,
     ShiftUpdateView,
+    SignupFlowConfigurationFormView,
 )
 from ephios.core.views.signup import LocalUserShiftActionView
 from ephios.core.views.workinghour import (
@@ -152,9 +153,14 @@ urlpatterns = [
         name="shift_delete",
     ),
     path(
-        "signup_method_configuration_form/<int:event_id>/<slug:slug>/",
-        ShiftConfigurationFormView.as_view(),
-        name="signupmethod_configurationform",
+        "events/<int:event_id>/form/signup-flow-config/<slug:slug>/",
+        SignupFlowConfigurationFormView.as_view(),
+        name="signup_flow_configuration_form",
+    ),
+    path(
+        "events/<int:event_id>/form/shift-structure-config/<slug:slug>/",
+        ShiftStructureConfigurationFormView.as_view(),
+        name="shift_structure_configuration_form",
     ),
     path(
         "shifts/<int:pk>/disposition/",

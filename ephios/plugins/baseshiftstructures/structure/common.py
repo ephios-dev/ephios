@@ -14,7 +14,7 @@ from ephios.core.signup.structure.base import BaseShiftStructure
 _Base = BaseShiftStructure if typing.TYPE_CHECKING else object
 
 
-class MinimumAgeConfigFormMixin(forms.Form):
+class MinimumAgeConfigForm(forms.Form):
     minimum_age = forms.IntegerField(
         required=False, min_value=0, max_value=999, initial=None, label=_("Minimum age")
     )
@@ -41,7 +41,7 @@ class MinimumAgeMixin(_Base):
 
     @property
     def configuration_form_class(self):
-        class ConfigurationForm(MinimumAgeConfigFormMixin, super().configuration_form_class):
+        class ConfigurationForm(MinimumAgeConfigForm, super().configuration_form_class):
             pass
 
         return ConfigurationForm
