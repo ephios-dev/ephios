@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load static %}
@@ -23,14 +24,32 @@
         <div class="col-md-9">
             <form method="post" class="form">
                 {% csrf_token %}
-                {{ form|crispy }}
-                <hr class="border border-secondary border-dark opacity-75">
-                <div id="flow_configuration_form">
-                    {{ flow_configuration_form }}
+                <div class="row">
+                    {% crispy_field form.date wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.meeting_time wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.start_time wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.end_time wrapper_class="col-12 col-lg-6" %}
                 </div>
                 <hr class="border border-secondary border-dark opacity-75">
-                <div id="structure_configuration_form">
-                    {{ structure_configuration_form }}
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        {% crispy_field form.signup_flow_slug %}
+                        <div data-ajax-replace-select="id_signup_flow_slug"
+                             {% url "core:signup_flow_configuration_form" event.id "SELECT_VALUE" as flow_url %}
+                             data-ajax-replace-url="{{ flow_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                            {{ flow_configuration_form }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <hr class="border border-secondary border-dark opacity-75 d-lg-none">
+                        {% crispy_field form.structure_slug %}
+                        <div data-ajax-replace-select="id_structure_slug"
+                             {% url "core:shift_structure_configuration_form" event.id "SELECT_VALUE" as structure_url %}
+                             data-ajax-replace-url="
+                                                    {{ structure_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                            {{ structure_configuration_form }}
+                        </div>
+                    </div>
                 </div>
                 <hr class="border border-secondary border-dark opacity-75">
                 <div class="plugin-forms">
@@ -96,15 +115,4 @@
             {% endif %}
         </div>
     </div>
-    <script type="application/json" id="configuration_form_url">
-        {% if object %}
-            {"url":"{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}?shift_id={{ object.id }}"}
-        {% else %}
-            {"url":"{% url "core:signupmethod_configurationform" event.id "METHOD_SLUG" %}"}
-        {% endif %}
-    </script>
-{% endblock %}
-
-{% block javascript %}
-    <script type="text/javascript" src="{% static "ephios/js/shift_form.js" %}"></script>
 {% endblock %}

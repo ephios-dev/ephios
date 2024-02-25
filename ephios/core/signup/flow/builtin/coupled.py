@@ -75,7 +75,7 @@ class CoupledSignupFlow(BaseSignupFlow):
 @receiver(pre_save, dispatch_uid="ephios_coupled_signup_update_coupled_shifts")
 def update_coupled_shifts(sender, instance, **kwargs):
     # make sure sender is a true subclass of AbstractParticipation
-    if not issubclass(sender, AbstractParticipation) and sender != AbstractParticipation:
+    if not issubclass(sender, AbstractParticipation) or sender == AbstractParticipation:
         return
 
     if instance.state == AbstractParticipation.States.GETTING_DISPATCHED:
@@ -90,7 +90,7 @@ def update_coupled_shifts(sender, instance, **kwargs):
 
     for coupled_shift in coupled_shifts:
         # make sure a type `instance` exists also for `coupled_shift`
-        coupled_participation = coupled_shift.signup_method.get_or_create_participation_for(
+        coupled_participation = coupled_shift.signup_flow.get_or_create_participation_for(
             instance.participant
         )
         coupled_participation.state = instance.state
@@ -99,7 +99,6 @@ def update_coupled_shifts(sender, instance, **kwargs):
 
 @receiver(post_save, dispatch_uid="ephios_coupled_signup_fill_new_shift")
 def fill_new_shift(sender, instance, **kwargs):
-    # make sure sender is a true subclass of AbstractParticipation
     if not issubclass(sender, Shift) or instance.signup_flow_slug != CoupledSignupFlow.slug:
         return
 

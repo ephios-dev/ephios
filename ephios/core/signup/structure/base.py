@@ -2,10 +2,8 @@ import logging
 from argparse import Namespace
 from collections import OrderedDict
 
-from django import forms
 from django.template.loader import get_template
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
@@ -13,7 +11,6 @@ from ephios.core.signup.forms import SignupConfigurationForm
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.abstract import AbstractShiftStructure
 from ephios.extra.utils import format_anything
-from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 logger = logging.getLogger(__name__)
 
@@ -22,29 +19,6 @@ class BaseShiftStructureConfigurationForm(SignupConfigurationForm):
     """
     Base class for shift structure configuration forms. Has no fields.
     """
-
-
-class BasicShiftStructureConfigurationForm(BaseShiftStructureConfigurationForm):
-    """
-    Configuration form with basic fields relevant for most shift structures.
-    """
-
-    signup_until = forms.SplitDateTimeField(
-        required=False,
-        widget=CustomSplitDateTimeWidget,
-        initial=None,
-        label=_("Signup until"),
-    )
-    user_can_decline_confirmed = forms.BooleanField(
-        label=_("Confirmed users can decline by themselves"),
-        required=False,
-        help_text=_("only if the signup timeframe has not ended"),
-    )
-    user_can_customize_signup_times = forms.BooleanField(
-        label=_("Users can provide individual start and end times"),
-        required=False,
-        initial=True,
-    )
 
 
 class BaseShiftStructure(AbstractShiftStructure):
