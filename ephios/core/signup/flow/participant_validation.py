@@ -207,12 +207,14 @@ class BasicSignupActionValidator(BaseSignupActionValidator):
         for _, result in participant_signup_checkers.send(None):
             if result:
                 signal_checkers.extend(result)
+        structure_checkers = self.shift.structure.get_checkers()
         return [
             check_event_is_active,
             check_participation_state,
             check_inside_signup_timeframe,
             check_general_required_qualifications,
             check_conflicting_participations,
+            *structure_checkers,
             *signal_checkers,
         ]
 

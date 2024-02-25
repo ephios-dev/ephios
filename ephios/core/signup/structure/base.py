@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
-from ephios.core.signup.forms import SignupConfigurationForm
+from ephios.core.signup.forms import BaseSignupForm, SignupConfigurationForm
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.abstract import AbstractShiftStructure
 from ephios.extra.utils import format_anything
@@ -29,6 +29,10 @@ class BaseShiftStructure(AbstractShiftStructure):
     @property
     def disposition_participation_form_class(self):
         return BaseDispositionParticipationForm
+
+    @property
+    def signup_form_class(self):
+        return BaseSignupForm
 
     @property
     def configuration_form_class(self):
@@ -70,6 +74,9 @@ class BaseShiftStructure(AbstractShiftStructure):
                 if (label := field.label) and (value := getattr(self.configuration, name))
             }
         )
+
+    def get_checkers(self):
+        return []
 
     def render(self, context):
         try:
