@@ -2,7 +2,7 @@ from django.dispatch import receiver
 
 from ephios.core.signals import register_shift_structures
 from ephios.plugins.baseshiftstructures.structure.groups import (
-    NamedGroupsShiftStructure,
+    NamedTeamsShiftStructure,
     QualificationMixShiftStructure,
 )
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
@@ -16,5 +16,5 @@ def register_base_shift_structures(sender, **kwargs):
     return [
         UniformShiftStructure,
         QualificationMixShiftStructure,
-        NamedGroupsShiftStructure,
+        NamedTeamsShiftStructure,
     ]

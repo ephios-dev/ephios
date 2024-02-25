@@ -200,7 +200,7 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     state = IntegerField(_("state"), choices=States.choices, default=States.GETTING_DISPATCHED)
     structure_data = models.JSONField(
         default=dict,
-        verbose_name=_("Data on where this participation lifes in the shift structure"),
+        verbose_name=_("Data on where this participation lives in the shift structure"),
     )
 
     """
