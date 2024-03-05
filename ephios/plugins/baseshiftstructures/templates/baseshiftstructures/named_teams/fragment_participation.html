@@ -5,15 +5,15 @@
 
 {% block participation_controls %}
     <div class="mb-n3">
-        {% crispy_field form.section label_class="d-none" wrapper_class="d-inline-block me-3" %}
+        {% crispy_field form.team label_class="d-none" wrapper_class="d-inline-block me-3" %}
     </div>
 {% endblock %}
 
 {% block participation_detail %}
-    {% if form.preferred_section %}
+    {% if form.preferred_team %}
         <small class="text-body-secondary">
             <br> {% translate "prefers" %}
-            {{ form.preferred_section.title }}
+            {{ form.preferred_team.title }}
         </small>
     {% endif %}
 {% endblock %}

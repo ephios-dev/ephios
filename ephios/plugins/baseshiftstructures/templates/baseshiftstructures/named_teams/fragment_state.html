@@ -4,8 +4,7 @@
     {% for team in teams.values %}
         <span class="pe-1">
             <strong>
-                {{ team.stats.confirmed_count }}{% if team.stats.max_count %}/
-                    {{ team.stats.max_count }}{% endif %}
+                {{ team.stats.confirmed_count }}{% if team.stats.max_count %}/{{ team.stats.max_count }}{% endif %}
             </strong>
             {{ team.title }}
             {% if team.qualification_label %}

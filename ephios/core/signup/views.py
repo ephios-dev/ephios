@@ -10,7 +10,6 @@ from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
 from ephios.core.signup.flow.participant_validation import BaseSignupMethodError
-from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 
 
@@ -29,8 +28,7 @@ class SignupView(FormView):
     decline_error_message = _("Declining failed: {error}")
 
     def get_form_class(self):
-        # TODO dynamically load the form class from the signup flow and structure
-        return BaseSignupForm
+        return self.shift.structure.signup_form_class
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

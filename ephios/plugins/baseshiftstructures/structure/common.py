@@ -21,23 +21,18 @@ class MinimumAgeConfigForm(forms.Form):
 
 
 class MinimumAgeMixin(_Base):
-    @property
-    def signup_action_validator_class(self):
-        class Validator(super().signup_action_validator_class):
-            @staticmethod
-            def check_participant_age(shift, participant):
-                minimum_age = getattr(shift.structure.configuration, "minimum_age", None)
-                day = shift.start_time.date()
-                age = participant.get_age(day)
-                if minimum_age is not None and age is not None and age < minimum_age:
-                    raise ParticipantUnfitError(
-                        _("You are too young. The minimum age is {age}.").format(age=minimum_age)
-                    )
 
-            def get_checkers(self):
-                return super().get_checkers() + [self.check_participant_age]
+    def get_checkers(self):
+        def check_participant_age(shift, participant):
+            minimum_age = getattr(shift.structure.configuration, "minimum_age", None)
+            day = shift.start_time.date()
+            age = participant.get_age(day)
+            if minimum_age is not None and age is not None and age < minimum_age:
+                raise ParticipantUnfitError(
+                    _("You are too young. The minimum age is {age}.").format(age=minimum_age)
+                )
 
-        return Validator
+        return super().get_checkers() + [check_participant_age]
 
     @property
     def configuration_form_class(self):
@@ -48,34 +43,23 @@ class MinimumAgeMixin(_Base):
 
 
 class MinMaxParticipantsMixin(_Base):
-    @property
-    def signup_action_validator_class(self):
-        class Validator(super().signup_action_validator_class):
-            @staticmethod
-            def check_maximum_number_of_participants(shift, participant):
-                if (
-                    not shift.signup_flow.uses_requested_state
-                    and shift.structure.configuration.maximum_number_of_participants is not None
-                ):
-                    current_count = len(
-                        [
-                            participation
-                            for participation in shift.participations.all()
-                            if participation.state == AbstractParticipation.States.CONFIRMED
-                        ]
-                    )
-                    if (
-                        current_count
-                        >= shift.structure.configuration.maximum_number_of_participants
-                    ):
-                        raise SignupDisallowedError(
-                            _("The maximum number of participants is reached.")
-                        )
+    def get_checkers(self):
+        def check_maximum_number_of_participants(shift, participant):
+            if (
+                not shift.signup_flow.uses_requested_state
+                and shift.structure.configuration.maximum_number_of_participants is not None
+            ):
+                current_count = len(
+                    [
+                        participation
+                        for participation in shift.participations.all()
+                        if participation.state == AbstractParticipation.States.CONFIRMED
+                    ]
+                )
+                if current_count >= shift.structure.configuration.maximum_number_of_participants:
+                    raise SignupDisallowedError(_("The maximum number of participants is reached."))
 
-            def get_checkers(self):
-                return super().get_checkers() + [self.check_maximum_number_of_participants]
-
-        return Validator
+        return super().get_checkers() + [check_maximum_number_of_participants]
 
     def get_participant_count_bounds(self):
         return (
@@ -115,22 +99,14 @@ class QualificationsRequiredSignupMixin(_Base):
                 pk__in=self.configuration.required_qualification_ids
             )
 
-    @property
-    def signup_action_validator_class(self):
-        class Validator(super().signup_action_validator_class):
-            @staticmethod
-            def check_qualification(shift, participant):
-                if not participant.has_qualifications(
-                    shift.structure.configuration.required_qualifications
-                ):
-                    raise ParticipantUnfitError(
-                        _("You don't have all required qualifications for this shift.")
-                    )
+    def get_checkers(self):
+        def check_qualification(shift, participant):
+            if not participant.has_qualifications(
+                shift.structure.configuration.required_qualifications
+            ):
+                raise ParticipantUnfitError(_("You are not qualified."))
 
-            def get_checkers(self):
-                return super().get_checkers() + [self.check_qualification]
-
-        return Validator
+        return super().get_checkers() + [check_qualification]
 
     @property
     def configuration_form_class(self):

@@ -1,5 +1,6 @@
 import uuid
 from collections import Counter
+from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
 
@@ -11,6 +12,7 @@ from django_select2.forms import Select2Widget
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
+from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.structure.base import (
     BaseShiftStructure,
@@ -29,7 +31,9 @@ def teams_participant_qualifies_for(teams, participant: AbstractParticipant):
 
 
 class NamedTeamsDispositionParticipationForm(BaseDispositionParticipationForm):
-    disposition_participation_template = "basesignup/named_teams/fragment_participation.html"
+    disposition_participation_template = (
+        "baseshiftstructures/named_teams/fragment_participation.html"
+    )
 
     team = forms.ChoiceField(
         label=_("Section"),
@@ -86,6 +90,49 @@ class NamedTeamsDispositionParticipationForm(BaseDispositionParticipationForm):
     def save(self, commit=True):
         self.instance.structure_data["dispatched_team_uuid"] = self.cleaned_data["team"]
         super().save(commit)
+
+
+class NamedTeamsSignupForm(BaseSignupForm):
+    preferred_team_uuid = forms.ChoiceField(
+        label=_("Preferred Team"),
+        widget=forms.RadioSelect,
+        required=False,
+        # choices are later set as (uuid, title) of team
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["preferred_team_uuid"].initial = self.instance.structure_data.get(
+            "preferred_team_uuid"
+        )
+        self.fields["preferred_team_uuid"].required = (
+            self.data.get("signup_choice") == "sign_up"
+            and self.shift.structure.configuration.choose_preferred_team
+        )
+        self.fields["preferred_team_uuid"].choices = [
+            (team["uuid"], team["title"]) for team in self.teams_participant_qualifies_for
+        ]
+        unqualified = [
+            team
+            for team in self.shift.structure.configuration.teams
+            if team not in self.teams_participant_qualifies_for
+        ]
+        if unqualified:
+            self.fields["preferred_team_uuid"].help_text = _(
+                "You don't qualify for {teams}."
+            ).format(teams=", ".join(str(team["title"]) for team in unqualified))
+
+    def save(self, commit=True):
+        self.instance.structure_data["preferred_team_uuid"] = self.cleaned_data[
+            "preferred_team_uuid"
+        ]
+        return super().save(commit)
+
+    @cached_property
+    def teams_participant_qualifies_for(self):
+        return teams_participant_qualifies_for(
+            self.shift.structure.configuration.teams, self.participant
+        )
 
 
 class NamedTeamForm(forms.Form):
@@ -154,13 +201,7 @@ class NamedTeamsConfigurationForm(MinimumAgeConfigForm, BaseShiftStructureConfig
 
 
 class BaseGroupBasedShiftStructure(BaseShiftStructure):
-    pass
-
-
-class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
-    slug = "qualification_mix"
-    verbose_name = _("Qualification mix")
-    description = _("require varying counts of different qualifications")
+    NO_TEAM_UUID = "noteam"
 
 
 class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
@@ -169,8 +210,8 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     description = _("define named teams of participants with different requirements")
     configuration_form_class = NamedTeamsConfigurationForm
     shift_state_template_name = "baseshiftstructures/named_teams/fragment_state.html"
-
-    NO_TEAM_UUID = "noteam"
+    disposition_participation_form_class = NamedTeamsDispositionParticipationForm
+    signup_form_class = NamedTeamsSignupForm
 
     def _get_signup_stats_per_team(self, participations=None):
         from ephios.core.signup.stats import SignupStats
@@ -232,18 +273,14 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         return signup_stats
 
-    @property
-    def signup_action_validator_class(self):
-        class NamedTeamsSignupActionValidator(super().signup_action_validator_class):
-            @staticmethod
-            def check_qualification(method, participant):
-                if not teams_participant_qualifies_for(method.configuration.teams, participant):
-                    raise ParticipantUnfitError(_("You are not qualified."))
+    def get_checkers(self):
+        def check_qualifications(shift, participant):
+            if not teams_participant_qualifies_for(
+                shift.structure.configuration.teams, participant
+            ):
+                raise ParticipantUnfitError(_("You are not qualified."))
 
-            def get_checkers(self):
-                return super().get_checkers() + [self.check_qualification]
-
-        return NamedTeamsSignupActionValidator
+        return super().get_checkers() + [check_qualifications]
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
@@ -344,3 +381,10 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                     team["min_count"] - (len(users) if users else 0)
                 )
         return participation_display
+
+
+class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
+    slug = "qualification_mix"
+    verbose_name = _("Qualification mix")
+    description = _("require varying counts of different qualifications")
+    # TODO
