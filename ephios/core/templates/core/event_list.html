@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load utils %}
 {% load ephios_crispy %}
 {% load crispy_forms_filters %}
 {% load cache %}
@@ -104,6 +105,36 @@
 
     {% if mode == "calendar" %}
         {{ calendar }}
+    {% elif mode == "day" %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Time</td>
+                    {% for event in events %}
+                        <td>{{ event.title }}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for hour in hours %}
+                    <tr>
+                        <td>{{ hour }}</td>
+                        {% with shifts_by_hour|get:hour as shifts %}
+                            {% for event in events %}
+                                <td>
+                                    {% if shifts %}
+                                        {% with shifts|get:event.pk as shift %}
+                                            <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
+                                                {{ shift.start_time|date:"TIME_FORMAT" }} – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
+                                        {% endwith %}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        {% endwith %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <form id="bulk_action_form" method="post">
             {% csrf_token %}
