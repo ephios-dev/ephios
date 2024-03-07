@@ -1,5 +1,6 @@
 import json
 from calendar import _nextmonth, _prevmonth
+from collections import defaultdict
 from datetime import datetime, time, timedelta
 
 from django import forms
@@ -185,12 +186,11 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def get_calendar_month(self):
-        "Return, even if the form is invalid, a tuple of year, month for the calendar to show"
+    def get_date(self):
+        "Return, even if the form is invalid, a date object for the calendar to show"
         if self.is_valid() and (date := self.cleaned_data.get("date")):
-            return date.year, date.month
-        now = timezone.now()
-        return now.year, now.month
+            return date
+        return timezone.now()
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -253,17 +253,29 @@ class EventListView(LoginRequiredMixin, ListView):
         ctx["eventtypes"] = EventType.objects.all()
         ctx["filter_form"] = self.filter_form
 
-        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar"}:
+        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar", "day"}:
             self.request.session["event_list_view_mode"] = new_mode
         mode = self.request.session.get("event_list_view_mode", "list")
         ctx["mode"] = mode
 
         if mode == "calendar":
             ctx.update(self._get_calendar_context())
+        elif mode == "day":
+            events = (
+                get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+                .filter(shifts__start_time__date=self.filter_form.get_date())
+                .prefetch_related("shifts")
+            )
+            shifts_by_hour = defaultdict(defaultdict)
+            for event in events:
+                for shift in event.shifts.all():
+                    if shift.start_time.date() == self.filter_form.get_date():
+                        shifts_by_hour[shift.start_time.hour][event.pk] = shift
+            ctx.update({"events": events, "hours": range(25), "shifts_by_hour": shifts_by_hour})
         return ctx
 
-    def _get_calendar_context(self):
-        shifts = (
+    def _get_shifts_for_calendar(self):
+        return (
             Shift.objects.filter(
                 event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
             )
@@ -280,22 +292,28 @@ class EventListView(LoginRequiredMixin, ListView):
             .select_related("event", "event__type")
             .prefetch_related("participations")
         )
-        year, month = self.filter_form.get_calendar_month()
-        prevyear, prevmonth = _prevmonth(year, month)
-        nextyear, nextmonth = _nextmonth(year, month)
 
-        from_time = datetime.min.replace(year=year, month=month, tzinfo=get_current_timezone())
+    def _get_calendar_context(self):
+        date = self.filter_form.get_date()
+        prevyear, prevmonth = _prevmonth(date.year, date.month)
+        nextyear, nextmonth = _nextmonth(date.year, date.month)
+
+        from_time = datetime.min.replace(
+            year=date.year, month=date.month, tzinfo=get_current_timezone()
+        )
         to_time = datetime.min.replace(
             year=nextyear, month=nextmonth, tzinfo=get_current_timezone()
         )
-        shifts = shifts.filter(start_time__gte=from_time, start_time__lt=to_time)
+        shifts = self._get_shifts_for_calendar().filter(
+            start_time__gte=from_time, start_time__lt=to_time
+        )
 
         if self.filter_form.is_valid():
             shifts = self.filter_form.filter_shifts(shifts)
         calendar = ShiftCalendar(shifts)
 
         return {
-            "calendar": mark_safe(calendar.formatmonth(year, month)),
+            "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
             "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
             "next_month_first": datetime.min.replace(year=nextyear, month=nextmonth),
         }
