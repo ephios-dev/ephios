@@ -51,6 +51,13 @@ from ephios.extra.mixins import (
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput
 
+from django.template.defaulttags import register
+
+# TODO: @Julian, Felix: Where do you want stuff like this?
+@register.filter
+def get_items(dictionary, key):
+    return dictionary.get(key).items()
+
 
 class EventFilterForm(forms.Form):
     query = forms.CharField(
@@ -265,13 +272,60 @@ class EventListView(LoginRequiredMixin, ListView):
                 get_objects_for_user(self.request.user, "core.view_event", klass=Event)
                 .filter(shifts__start_time__date=self.filter_form.get_date())
                 .prefetch_related("shifts")
+                .distinct()
             )
             shifts_by_hour = defaultdict(defaultdict)
-            for event in events:
-                for shift in event.shifts.all():
+
+            shift_starts = {}
+            shift_ends = {}
+            shifts_by_event_layouted = {}
+            for event in set(events):
+                # If two shifts of the same event start within an hour of each other, layout them next to each other
+                columns = {}
+                for shift in event.shifts.all().order_by("start_time"):
+                    current_column = 0
+                    # search for first column that fits
+                    while current_column in columns and \
+                            shift.start_time < columns.get(current_column)[-1].end_time:
+                        current_column += 1
+
+                    if current_column in columns:
+                        columns[current_column] += [shift]
+                    else:
+                        columns[current_column] = [shift]
+
                     if shift.start_time.date() == self.filter_form.get_date():
                         shifts_by_hour[shift.start_time.hour][event.pk] = shift
-            ctx.update({"events": events, "hours": range(25), "shifts_by_hour": shifts_by_hour})
+                    shift_starts[shift.pk] = shift.start_time
+                    shift_ends[shift.pk] = shift.end_time
+
+                shifts_by_event_layouted[event.pk] = columns
+
+            css_shift_tops = ""
+            earliest_shift_start = min(shift_starts.values())
+            for pk, start in shift_starts.items():
+                start_offset = int(start.timestamp() - earliest_shift_start.timestamp()) / 280
+                height = int(shift_ends[pk].timestamp() - start.timestamp()) / 280
+
+                css_shift_tops += f".day-calendar-shift-{pk} {{ top: {start_offset}em; height: { height }em}}\n"
+
+            css_grid_columns = " "
+            shift_columns = {}
+            for event in events:
+                for column_idx, content in enumerate(shifts_by_event_layouted[event.pk]):
+                    column_name = f"{event.get_canonical_slug()}-{column_idx}"
+                    css_grid_columns += f"[{column_name}] 14em "
+                    shift_columns[column_name] = content
+
+            ctx.update({
+                "events": events,
+                "hours": range(25),
+                "shifts_by_hour": shifts_by_hour,
+                "css_grid_columns": css_grid_columns,
+                "css_shift_tops": css_shift_tops,
+                "shift_columns": shift_columns,
+                "columns_by_event": shifts_by_event_layouted
+            })
         return ctx
 
     def _get_shifts_for_calendar(self):

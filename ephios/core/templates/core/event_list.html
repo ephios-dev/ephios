@@ -7,6 +7,7 @@
 {% load i18n %}
 {% load event_extras %}
 {% load utils %}
+{% load humanize %}
 {% block title %}
     {% translate "Events" %}
 {% endblock %}
@@ -27,12 +28,12 @@
                 </button>
                 <div class="btn-group">
                     <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       {% if filter_form.was_submitted %}
-                           href="?{% param_replace mode="list" %}"
-                       {% else %}
+                            {% if filter_form.was_submitted %}
+                       href="?{% param_replace mode="list" %}"
+                            {% else %}
                                 {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                           href="?{% param_replace mode="list" date=None %}"
-                       {% endif %}
+                       href="?{% param_replace mode="list" date=None %}"
+                            {% endif %}
                     ><span class="fa fa-list"></span></a>
                     <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                        href="?{% param_replace mode="calendar" %}"
@@ -106,35 +107,130 @@
     {% if mode == "calendar" %}
         {{ calendar }}
     {% elif mode == "day" %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <td>Time</td>
-                    {% for event in events %}
-                        <td>{{ event.title }}</td>
+        <style nonce="rAnd0m">
+            .day-calendar-container {
+                grid-template-columns: {{ css_grid_columns }};
+                grid-template-rows: [head] 3em [content] 1fr;
+            }
+
+            .day-calendar-head {
+                grid-row: head;
+            }
+
+            .day-calendar-content {
+                grid-row: content;
+                position: relative
+            }
+
+            .day-calendar-content > .card {
+                margin: 0.1em;
+                position: absolute;
+            }
+
+            .day-calendar-content > .card:hover {
+                z-index: 2;
+            }
+
+            {% for column in shift_columns %}
+                .day-calendar-column-{{ column }} {
+                    grid-column: {{ column }};
+                }
+            {% endfor %}
+
+            {{ css_shift_tops }}
+        </style>
+        <div class="day-calendar-container">
+            {% for event in events %}
+                <div class="day-calendar-column-{{ event.get_canonical_slug }}-0 day-calendar-head">
+                    <h3><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+                </div>
+            {% endfor %}
+
+            {% for event in events %}
+                {% for column_idx, column_contents in columns_by_event|get_items:event.pk %}
+                    <div class="day-calendar-column-{{ event.get_canonical_slug }}-{{ column_idx }} day-calendar-content">
+                    {% for shift in column_contents %}
+                        <div class="card day-calendar-shift-{{ shift.pk }}">
+                            {# TODO: Color dynamically by status #}
+                            <div class="card-header bg-success-subtle">
+                                <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
+                                    {{ shift.start_time|date:"TIME_FORMAT" }}
+                                    – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    {{ shift.meeting_time|time }} {% translate "Meetup" %}
+                                </li>
+                            </ul>
+
+                            {# TODO stolen from event_box_big, dry up before merging #}
+                            <div class="card-footer">
+                                {% if event.active %}
+                                    {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
+                                        <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
+                                              action="{{ request|reverse_signup_action:shift }}">
+
+                                            {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
+                                            <input type="hidden" name="individual_start_time_0"
+                                                   value="{{ shift.start_time|date:"Y-m-d" }}">
+                                            <input type="hidden" name="individual_start_time_1"
+                                                   value="{{ shift.start_time|time:"H:i" }}">
+                                            <input type="hidden" name="individual_end_time_0"
+                                                   value="{{ shift.end_time|date:"Y-m-d" }}">
+                                            <input type="hidden" name="individual_end_time_1"
+                                                   value="{{ shift.end_time|time:"H:i" }}">
+
+                                            {% csrf_token %}
+                                            {% if can_sign_up and shift.signup_method.configuration.signup_until %}
+                                                <div class="text-success mb-1">
+                            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                  title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                                {% translate "Signup ends" %}
+                                {{ shift.signup_method.configuration.signup_until | naturaltime }}.
+                            </span>
+                                                </div>
+                                            {% endif %}
+                                            {% if not can_sign_up or not can_decline %}
+                                                <div class="text-body-secondary mb-1">
+                                                    {% for error in request|signup_action_errors:shift %}
+                                                        <span>{{ error.message }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if can_sign_up and can_customize_signup %}
+                                                <div class="btn-group">
+                                                    <button type="submit" name="signup_choice" value="sign_up"
+                                                            class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                                    <a class="btn btn-success"
+                                                       href="{{ request|reverse_signup_action:shift }}">
+                                                        <i class="fas fa-cog"></i>
+                                                        <span class="visually-hidden">{% translate "Customize" %}</span>
+                                                    </a>
+                                                </div>
+                                            {% elif can_sign_up and not can_customize_signup %}
+                                                <button type="submit" name="signup_choice" value="sign_up"
+                                                        class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                            {% elif not can_sign_up and can_customize_signup %}
+                                                <a class="btn btn-secondary"
+                                                   href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
+                                            {% endif %}
+                                            {% if can_decline %}
+                                                <span class="d-inline-block" tabindex="1">
+                            <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
+                                {% translate "Decline" %}
+                            </button>
+                        </span>
+                                            {% endif %}
+                                        </form>
+                                    {% endwith %}
+                                {% endif %}
+                            </div>
+                        </div>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for hour in hours %}
-                    <tr>
-                        <td>{{ hour }}</td>
-                        {% with shifts_by_hour|get:hour as shifts %}
-                            {% for event in events %}
-                                <td>
-                                    {% if shifts %}
-                                        {% with shifts|get:event.pk as shift %}
-                                            <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
-                                                {{ shift.start_time|date:"TIME_FORMAT" }} – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
-                                        {% endwith %}
-                                    {% endif %}
-                                </td>
-                            {% endfor %}
-                        {% endwith %}
-                    </tr>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            {% endfor %}
+        </div>
     {% else %}
         <form id="bulk_action_form" method="post">
             {% csrf_token %}
@@ -158,7 +254,7 @@
                     <div class="bulk-actions">
                         <button class="btn btn-secondary btn-sm m-1 ms-0" type="submit" name="delete"
                                 formaction="{% url "core:event_bulk_delete" %}"><span
-                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                                class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                         {% event_bulk_actions %}
                     </div>
                 </div>
@@ -178,11 +274,12 @@
                             <li class="list-group-item p-0 d-flex flex-row">
                                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                         {% if counter %}
-                                             data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                             title="{% for state in counter %}<div>
-                                                        {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
-                                         {% endif %}>
+                                            {% if counter %}
+                                         data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                         title="{% for state in counter %}<div>
+
+                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                            {% endif %}>
                                         {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                             <span class="text-success fa fa-user-check ps-2"></span>
                                         {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -214,7 +311,7 @@
                                             </span>
                                         </div>
                                         <div class="grid-batch"><span
-                                            class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                                                class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                                         </div>
                                         <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                             <div class="position-relative">
