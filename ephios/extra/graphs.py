@@ -9,7 +9,7 @@ class DirectedGraph:
     """
 
     def __init__(self, edges: Optional[dict] = None):
-        self.adjancent_nodes: dict[set] = {}
+        self.adjancent_nodes: dict = {}
         if edges is not None:
             for node, children in edges.items():
                 self.add(node, children)
