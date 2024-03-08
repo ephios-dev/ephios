@@ -7,18 +7,17 @@ from operator import itemgetter
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2Widget
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
 from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
-from ephios.core.signup.structure.base import (
-    BaseShiftStructure,
-    BaseShiftStructureConfigurationForm,
+from ephios.plugins.baseshiftstructures.structure.group_common import (
+    AbstractGroupBasedStructureConfigurationForm,
+    BaseGroupBasedShiftStructure,
+    QualificationRequirementForm,
 )
-from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeConfigForm
 
 
 def teams_participant_qualifies_for(teams, participant: AbstractParticipant):
@@ -135,16 +134,8 @@ class NamedTeamsSignupForm(BaseSignupForm):
         )
 
 
-class NamedTeamForm(forms.Form):
+class NamedTeamForm(QualificationRequirementForm):
     title = forms.CharField(label=_("Title"), required=True)
-    qualification = forms.ModelChoiceField(
-        label=_("Required Qualification"),
-        queryset=Qualification.objects.all(),
-        widget=Select2Widget,
-        required=False,
-    )
-    min_count = forms.IntegerField(label=_("min amount"), min_value=0, required=True)
-    max_count = forms.IntegerField(label=_("max amount"), min_value=1, required=False)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def clean_uuid(self):
@@ -156,7 +147,7 @@ NamedTeamsFormset = forms.formset_factory(
 )
 
 
-class NamedTeamsConfigurationForm(MinimumAgeConfigForm, BaseShiftStructureConfigurationForm):
+class NamedTeamsConfigurationForm(AbstractGroupBasedStructureConfigurationForm):
     template_name = "baseshiftstructures/named_teams/configuration_form.html"
     choose_preferred_team = forms.BooleanField(
         label=_("Participants must provide a preferred team"),
@@ -172,36 +163,12 @@ class NamedTeamsConfigurationForm(MinimumAgeConfigForm, BaseShiftStructureConfig
         widget=forms.HiddenInput,
         required=False,
     )
+    formset_data_field_name = "teams"
+    formset_class = NamedTeamsFormset
 
-    def __init__(self, data=None, **kwargs):
-        super().__init__(data, **kwargs)
-        self.teams_formset = NamedTeamsFormset(
-            data=data,
-            initial=self.initial.get("teams", []),
-            prefix="teams",
-        )
-
-    def clean_teams(self):
-        if not self.teams_formset.is_valid():
-            raise ValidationError(_("The teams aren't configured correctly."))
-
-        teams = [
-            {
-                key: cleaned_data[key]
-                for key in ("title", "qualification", "min_count", "max_count", "uuid")
-            }
-            for cleaned_data in self.teams_formset.cleaned_data
-            if cleaned_data and not cleaned_data.get("DELETE")
-        ]
-        return teams
-
-    @staticmethod
-    def format_teams(value):
-        return ", ".join(team["title"] for team in value)
-
-
-class BaseGroupBasedShiftStructure(BaseShiftStructure):
-    NO_TEAM_UUID = "noteam"
+    @classmethod
+    def format_formset_item(cls, item):
+        return item["title"]
 
 
 class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
@@ -381,10 +348,3 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                     team["min_count"] - (len(users) if users else 0)
                 )
         return participation_display
-
-
-class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
-    slug = "qualification_mix"
-    verbose_name = _("Qualification mix")
-    description = _("require varying counts of different qualifications")
-    # TODO

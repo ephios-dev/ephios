@@ -27,6 +27,7 @@ from guardian.shortcuts import assign_perm
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 
+from ephios.core.signup.stats import SignupStats
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
@@ -34,7 +35,7 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
     from ephios.core.signup.participants import AbstractParticipant
-    from ephios.core.signup.stats import SignupStats
+
 logger = logging.getLogger(__name__)
 
 
@@ -101,7 +102,6 @@ class Event(Model):
 
     def get_signup_stats(self) -> "SignupStats":
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
-        from ephios.core.signup.methods import SignupStats
 
         default_for_no_shifts = SignupStats.ZERO
 
