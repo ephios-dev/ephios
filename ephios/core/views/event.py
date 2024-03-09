@@ -51,13 +51,6 @@ from ephios.extra.mixins import (
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput
 
-from django.template.defaulttags import register
-
-# TODO: @Julian, Felix: Where do you want stuff like this?
-@register.filter
-def get_items(dictionary, key):
-    return dictionary.get(key).items()
-
 
 class EventFilterForm(forms.Form):
     query = forms.CharField(
@@ -303,11 +296,15 @@ class EventListView(LoginRequiredMixin, ListView):
 
             css_shift_tops = ""
             earliest_shift_start = min(shift_starts.values())
+            latest_shift_end = max(shift_ends.values())
+            time_scaling_factor = 400
             for pk, start in shift_starts.items():
-                start_offset = int(start.timestamp() - earliest_shift_start.timestamp()) / 280
-                height = int(shift_ends[pk].timestamp() - start.timestamp()) / 280
+                start_offset = (start.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor
+                height = (shift_ends[pk].timestamp() - start.timestamp()) / time_scaling_factor
 
                 css_shift_tops += f".day-calendar-shift-{pk} {{ top: {start_offset}em; height: { height }em}}\n"
+            total_height = ((latest_shift_end.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor) + 2
+            hour_height = 3600 / time_scaling_factor
 
             css_grid_columns = " "
             shift_columns = {}
@@ -324,7 +321,11 @@ class EventListView(LoginRequiredMixin, ListView):
                 "css_grid_columns": css_grid_columns,
                 "css_shift_tops": css_shift_tops,
                 "shift_columns": shift_columns,
-                "columns_by_event": shifts_by_event_layouted
+                "columns_by_event": shifts_by_event_layouted,
+                "total_height": str(total_height),
+                "hour_height": str(hour_height),
+                "quarter_hour_height": str(hour_height / 4),
+                "half_hour_height": str(hour_height / 2),
             })
         return ctx
 

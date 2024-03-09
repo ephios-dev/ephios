@@ -38,6 +38,11 @@ def dict_get(dictionary, key):
     return dictionary.get(key)
 
 
+@register.filter
+def get_items(dictionary, key):
+    return dictionary.get(key).items()
+
+
 @register.filter(name="sum")
 def _sum(elements):
     return sum(elements)

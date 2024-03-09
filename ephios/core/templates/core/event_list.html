@@ -110,16 +110,33 @@
         <style nonce="rAnd0m">
             .day-calendar-container {
                 grid-template-columns: {{ css_grid_columns }};
-                grid-template-rows: [head] 3em [content] 1fr;
+                grid-template-rows: [head] auto [content] 1fr;
+                height: 100%;
+                overflow-y: scroll;
+                position: relative;
             }
 
             .day-calendar-head {
                 grid-row: head;
+                position: sticky;
+                top: 0em;
+                z-index: 3;
+                background: var(--bs-body-bg);
             }
 
             .day-calendar-content {
                 grid-row: content;
-                position: relative
+                position: relative;
+                height: {{ total_height }}em;
+                background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
+                background-size: {{ half_hour_height }}em {{ half_hour_height }}em;
+                background-color: var(--bs-body-bg);
+            }
+
+            .day-calendar-content:nth-child(odd) {
+                background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
+                background-size: {{ half_hour_height }}em {{ half_hour_height }}em;
+                background-color: rgba(0, 0, 0, 0.07);
             }
 
             .day-calendar-content > .card {
@@ -136,13 +153,13 @@
                     grid-column: {{ column }};
                 }
             {% endfor %}
-
+            
             {{ css_shift_tops }}
         </style>
         <div class="day-calendar-container">
             {% for event in events %}
                 <div class="day-calendar-column-{{ event.get_canonical_slug }}-0 day-calendar-head">
-                    <h3><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+                    <h5><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h5>
                 </div>
             {% endfor %}
 
@@ -150,13 +167,21 @@
                 {% for column_idx, column_contents in columns_by_event|get_items:event.pk %}
                     <div class="day-calendar-column-{{ event.get_canonical_slug }}-{{ column_idx }} day-calendar-content">
                     {% for shift in column_contents %}
+                        {% setvar request|participation_from_request:shift as participation %}
+                        {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
                         <div class="card day-calendar-shift-{{ shift.pk }}">
-                            {# TODO: Color dynamically by status #}
-                            <div class="card-header bg-success-subtle">
-                                <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
-                                    {{ shift.start_time|date:"TIME_FORMAT" }}
-                                    – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
-                            </div>
+                            {% with stats=shift.signup_method.get_signup_stats %}
+                                <div class="card-header  {% if stats.missing is not None and stats.missing > 0 %} bg-danger-subtle {% elif stats.free %} bg-warning-subtle {% else %} bg-success-subtle {% endif %}">
+                                    <div class="mannequin mannequin-{{ mannequin }}">
+                                        <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                                             alt="{{ mannequin }} mannequin icon"/>
+                                    </div> 
+                                    <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
+                                        {{ shift.start_time|date:"TIME_FORMAT" }}
+                                        – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
+                                </div>
+                            {% endwith %}
+                        
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                     {{ shift.meeting_time|time }} {% translate "Meetup" %}
@@ -183,11 +208,11 @@
                                             {% csrf_token %}
                                             {% if can_sign_up and shift.signup_method.configuration.signup_until %}
                                                 <div class="text-success mb-1">
-                            <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                  title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
-                                {% translate "Signup ends" %}
-                                {{ shift.signup_method.configuration.signup_until | naturaltime }}.
-                            </span>
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                      title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                                                        {% translate "Signup ends" %}
+                                                        {{ shift.signup_method.configuration.signup_until | naturaltime }}.
+                                                    </span>
                                                 </div>
                                             {% endif %}
                                             {% if not can_sign_up or not can_decline %}
@@ -216,16 +241,17 @@
                                             {% endif %}
                                             {% if can_decline %}
                                                 <span class="d-inline-block" tabindex="1">
-                            <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
-                                {% translate "Decline" %}
-                            </button>
-                        </span>
+                                                    <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
+                                                        {% translate "Decline" %}
+                                                    </button>
+                                                </span>
                                             {% endif %}
                                         </form>
                                     {% endwith %}
                                 {% endif %}
                             </div>
                         </div>
+                        {% endwith %}
                     {% endfor %}
                     </div>
                 {% endfor %}
