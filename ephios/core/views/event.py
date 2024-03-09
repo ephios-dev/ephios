@@ -261,8 +261,10 @@ class EventListView(LoginRequiredMixin, ListView):
         if mode == "calendar":
             ctx.update(self._get_calendar_context())
         elif mode == "day":
+            this_date = self.filter_form.get_date()
             events = (
                 get_objects_for_user(self.request.user, "core.view_event", klass=Event)
+                # TODO: Include shifts which start on the next day before 3am
                 .filter(shifts__start_time__date=self.filter_form.get_date())
                 .prefetch_related("shifts")
                 .distinct()
@@ -271,6 +273,7 @@ class EventListView(LoginRequiredMixin, ListView):
             if not events.exists():
                 ctx.update({
                     "event_list": events,
+                    "date": this_date
                  })
                 return ctx
 
@@ -323,6 +326,7 @@ class EventListView(LoginRequiredMixin, ListView):
 
             ctx.update({
                 "event_list": events,
+                "date": this_date,
                 "hours": range(25),
                 "shifts_by_hour": shifts_by_hour,
                 "css_grid_columns": css_grid_columns,
