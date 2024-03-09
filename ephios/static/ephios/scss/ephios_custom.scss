@@ -278,3 +278,8 @@ a.badge {
 .day-calendar-container {
   display: grid;
 }
+
+.shift_box:target {
+  border-color: #9ecaed;
+  box-shadow: 0 0 10px #9ecaed;
+}
