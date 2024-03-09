@@ -35,7 +35,7 @@
                        href="?{% param_replace mode="list" date=None %}"
                             {% endif %}
                     ><span class="fa fa-list"></span></a>
-                    
+
                       <div class="btn-group" role="group">
                         <button
                                 type="button"
@@ -86,7 +86,7 @@
                 </div>
             </div>
         </form>
-        {% if mode == "calendar" %}
+        {% if mode == "calendar" or mode == "day" %}
             <div class="d-flex order-1 gap-3 mb-3">
                 <a class="btn btn-secondary"
                    href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
@@ -109,6 +109,7 @@
                         </div>
                     </div>
                 {% endif %}
+
                 <a class="btn btn-secondary ms-auto"
                    href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
                 >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
@@ -120,6 +121,9 @@
         {{ calendar }}
     {% elif not event_list  %}
         <div class="mb-3">
+            {% if mode == "day" %}
+                <h3>{{ date|date:"l, j. F Y" }}</h3>
+            {% endif %}
             <h5 class="mt-5 text-center">
                 {% translate "No results." %}
             </h5>
@@ -174,6 +178,9 @@
 
             {{ css_shift_tops }}
         </style>
+
+        <h3>{{ date|date:"l, j. F Y" }}</h3>
+
         <div class="day-calendar-container">
             {% for event in event_list %}
                 <div class="day-calendar-column-{{ event.get_canonical_slug }}-0 day-calendar-head">
