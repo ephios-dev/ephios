@@ -15,11 +15,23 @@ from ephios.api.access.views import (
     ApplicationUpdate,
 )
 from ephios.api.views.events import EventViewSet
-from ephios.api.views.users import UserProfileMeView
+from ephios.api.views.users import (
+    MailBasedUserParticipationView,
+    UserParticipationView,
+    UserProfileMeView,
+)
 from ephios.extra.permissions import staff_required
 
 router = routers.DefaultRouter()
 router.register(r"events", EventViewSet)
+router.register(
+    r"users/(?P<user>[\d]+)/participations", UserParticipationView, basename="user-participations"
+)
+router.register(
+    r"users/(?P<email>[\D]+)/participations",
+    MailBasedUserParticipationView,
+    basename="user-participations-mail",
+)
 
 app_name = "api"
 urlpatterns = [

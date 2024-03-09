@@ -1,13 +1,15 @@
 from django.db.models import Q
 from django.utils import timezone
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.fields import SerializerMethodField
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 
-from ephios.core.models import Qualification, UserProfile
+from ephios.api.views.events import ParticipationSerializer
+from ephios.core.models import LocalParticipation, Qualification, UserProfile
 from ephios.core.services.qualification import collect_all_included_qualifications
 
 
@@ -61,3 +63,17 @@ class UserProfileMeView(RetrieveAPIView):
         if self.request.user is None:
             raise PermissionDenied()
         return self.request.user
+
+
+class UserParticipationView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ParticipationSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
+    required_scopes = ["CONFIDENTIAL_READ"]
+
+    def get_queryset(self):
+        return LocalParticipation.objects.filter(user=self.kwargs["user"])
+
+
+class MailBasedUserParticipationView(UserParticipationView):
+    def get_queryset(self):
+        return LocalParticipation.objects.filter(user__email=self.kwargs["email"])

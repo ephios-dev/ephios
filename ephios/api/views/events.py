@@ -5,7 +5,7 @@ from rest_framework import filters, serializers, viewsets
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
-from ephios.core.models import Event, EventType, Shift
+from ephios.core.models import Event, EventType, LocalParticipation, Shift
 from ephios.core.templatetags.settings_extras import make_absolute
 
 
@@ -96,3 +96,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         .prefetch_related(Prefetch("shifts__participations"))
         .order_by("start_time")
     )
+
+
+class ParticipationSerializer(serializers.ModelSerializer):
+    state = serializers.CharField(source="get_state_display")
+
+    class Meta:
+        model = LocalParticipation
+        fields = ["id", "shift", "state", "comment"]
