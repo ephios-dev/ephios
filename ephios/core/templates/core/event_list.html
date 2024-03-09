@@ -89,8 +89,14 @@
         {% if mode == "calendar" or mode == "day" %}
             <div class="d-flex order-1 gap-3 mb-3">
                 <a class="btn btn-secondary"
-                   href="?{% param_replace date=prev_month_first|date:"Y-m-d" %}"
-                ><i class="fas fa-arrow-left"></i> {{ prev_month_first|date:"F Y" }}</a>
+                   href="?{% param_replace date=previous_date|date:"Y-m-d" %}"
+                ><i class="fas fa-arrow-left"></i>
+                    {% if mode == "calendar" %}
+                        {{ previous_date|date:"F Y" }}
+                    {% elif mode == "day" %}
+                        {{ previous_date|date:"d. M" }}
+                    {% endif %}
+                    </a>
                 {% if perms.core.add_event %}
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle d-none d-md-inline-block" type="button"
@@ -111,8 +117,14 @@
                 {% endif %}
 
                 <a class="btn btn-secondary ms-auto"
-                   href="?{% param_replace date=next_month_first|date:"Y-m-d" %}"
-                >{{ next_month_first|date:"F Y" }} <i class="fas fa-arrow-right"></i></a>
+                   href="?{% param_replace date=next_date|date:"Y-m-d" %}"
+                >
+                    {% if mode == "calendar" %}
+                        {{ next_date|date:"F Y" }}
+                    {% elif mode == "day" %}
+                        {{ next_date|date:"d. M" }}
+                    {% endif %}
+                     <i class="fas fa-arrow-right"></i></a>
             </div>
         {% endif %}
     </div>
