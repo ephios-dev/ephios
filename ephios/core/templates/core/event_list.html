@@ -141,7 +141,7 @@
             </h5>
         </div>
     {% elif mode == "day" %}
-        <style nonce="rAnd0m">
+        <style nonce="{{request.csp_nonce}}">
             .day-calendar-container {
                 grid-template-columns: {{ css_grid_columns }};
                 grid-template-rows: [head] auto [content] 1fr;
