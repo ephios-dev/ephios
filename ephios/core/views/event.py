@@ -267,6 +267,13 @@ class EventListView(LoginRequiredMixin, ListView):
                 .prefetch_related("shifts")
                 .distinct()
             )
+
+            if not events.exists():
+                ctx.update({
+                    "event_list": events,
+                 })
+                return ctx
+
             shifts_by_hour = defaultdict(defaultdict)
 
             shift_starts = {}
@@ -315,7 +322,7 @@ class EventListView(LoginRequiredMixin, ListView):
                     shift_columns[column_name] = content
 
             ctx.update({
-                "events": events,
+                "event_list": events,
                 "hours": range(25),
                 "shifts_by_hour": shifts_by_hour,
                 "css_grid_columns": css_grid_columns,
@@ -365,7 +372,7 @@ class EventListView(LoginRequiredMixin, ListView):
 
         if self.filter_form.is_valid():
             shifts = self.filter_form.filter_shifts(shifts)
-        calendar = ShiftCalendar(shifts)
+        calendar = ShiftCalendar(shifts=shifts, request=self.request)
 
         return {
             "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
