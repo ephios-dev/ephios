@@ -262,6 +262,8 @@ class EventListView(LoginRequiredMixin, ListView):
             ctx.update(self._get_calendar_context())
         elif mode == "day":
             this_date = self.filter_form.get_date()
+            ctx["previous_date"] = this_date - timedelta(days=1)
+            ctx["next_date"] = this_date + timedelta(days=1)
             events = (
                 get_objects_for_user(self.request.user, "core.view_event", klass=Event)
                 # TODO: Include shifts which start on the next day before 3am
@@ -380,8 +382,8 @@ class EventListView(LoginRequiredMixin, ListView):
 
         return {
             "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
-            "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
-            "next_month_first": datetime.min.replace(year=nextyear, month=nextmonth),
+            "previous_date": datetime.min.replace(year=prevyear, month=prevmonth),
+            "next_date": datetime.min.replace(year=nextyear, month=nextmonth),
         }
 
 
