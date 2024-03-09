@@ -4,7 +4,7 @@
 {% load i18n %}
 {% load humanize %}
 
-<div id="shift-{{ shift.pk }}" class="card h-100">
+<div id="shift-{{ shift.pk }}" class="card h-100 shift_box">
     <div class="card-header d-flex">
 
         {% setvar request|participation_from_request:shift as participation %}
