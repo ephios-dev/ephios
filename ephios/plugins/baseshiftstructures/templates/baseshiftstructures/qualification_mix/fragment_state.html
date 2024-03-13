@@ -1,29 +1,18 @@
 {% load i18n %}
 
-<div>
-    {% for team in teams.values %}
-        <span class="pe-1">
-            <strong>
-                {{ team.stats.confirmed_count }}{% if team.stats.max_count %}/{{ team.stats.max_count }}{% endif %}
-            </strong>
-            {{ team.title }}
-            {% if team.qualification_label %}
-                <span class="text-body-secondary float-end">{{ team.qualification_label }}</span>
-            {% endif %}
+<div class="mb-3">
+    {% for participation, position in matching.participation_pairings %}
+        {% include "baseshiftstructures/participation_card_inline.html" %}
+    {% endfor %}
+    {% for position in matching.unpaired_positions %}
+        <span class="badge bg-light text-muted px-5">
+            {% for qualification in position.required_qualifications %}
+                {{ qualification.abbreviation }}
+            {% endfor %}
         </span>
-
-        <div class="mb-4">
-            {% for participation in team.participations %}
-                {% include "baseshiftstructures/participation_card_inline.html" %}
-            {% endfor %}
-            {% for index in team.placeholder %}
-                <span class="badge bg-light px-5">&nbsp;</span>
-            {% endfor %}
-            {% if not team.participations and not team.placeholder %}
-                {# show a white box as vertical whitespace  #}
-                <span class="badge bg-white px-5">&nbsp;</span>
-            {% endif %}
-        </div>
+    {% endfor %}
+    {% for participation in matching.unpaired_participations %}
+        {% include "baseshiftstructures/participation_card_inline.html" %}
     {% endfor %}
 </div>
 

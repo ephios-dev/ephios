@@ -1,7 +1,10 @@
+import itertools
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import Qualification
+from ephios.core.models import AbstractParticipation, Qualification
+from ephios.core.services.matching import Position, match_participants_to_positions
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
     QualificationRequirementForm,
@@ -48,6 +51,40 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
     shift_state_template_name = "baseshiftstructures/qualification_mix/fragment_state.html"
     configuration_form_class = QualificationMixConfigurationForm
 
+    def _get_positions_for_matching(self, number_of_participations: int):
+        position_ids = itertools.count()
+        positions = set()
+        for requirement in self.configuration.qualification_requirements:
+            try:
+                qualifications = {Qualification.objects.get(id=requirement["qualification"])}
+            except Qualification.DoesNotExist:
+                qualifications = set()
+            count = (
+                max if (max := requirement["max_count"]) is not None else number_of_participations
+            )
+            for i in range(count):
+                positions.add(
+                    Position(
+                        next(position_ids),
+                        required_qualifications=qualifications,
+                        preferred_by=set(),
+                        required=i < requirement["min_count"],
+                    )
+                )
+        return positions
+
     def get_shift_state_context_data(self, request, **kwargs):
         context_data = super().get_shift_state_context_data(request)
+        # for displaying, match all requested and confirmed participations
+        positive_participations = [
+            participation
+            for participation in context_data["participations"]
+            if participation.state
+            in {AbstractParticipation.States.CONFIRMED, AbstractParticipation.States.REQUESTED}
+        ]
+        participants = {participation.participant for participation in positive_participations}
+        positions = self._get_positions_for_matching(len(positive_participations))
+        matching = match_participants_to_positions(participants, positions)
+        matching.attach_participations(positive_participations)
+        context_data["matching"] = matching
         return context_data
