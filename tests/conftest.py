@@ -26,7 +26,6 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.users import IdentityProvider
-from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
 
 
 @pytest.fixture(autouse=True)
