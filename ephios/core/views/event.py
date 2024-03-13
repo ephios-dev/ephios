@@ -386,6 +386,7 @@ class EventListView(LoginRequiredMixin, ListView):
 
         return {
             "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
+            "date": date,
             "previous_date": datetime.min.replace(year=prevyear, month=prevmonth),
             "next_date": datetime.min.replace(year=nextyear, month=nextmonth),
         }

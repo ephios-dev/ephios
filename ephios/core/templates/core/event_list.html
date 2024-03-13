@@ -36,19 +36,21 @@
                             {% endif %}
                     ><span class="fa fa-list"></span></a>
 
-                      <div class="btn-group" role="group">
+                    <div class="btn-group" role="group">
                         <button
                                 type="button"
                                 class="btn btn-sm dropdown-toggle {% if mode == "calendar" or mode == "day" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                          <i class="fa fa-calendar"></i>
+                            <i class="fa fa-calendar"></i>
                         </button>
                         <ul class="dropdown-menu">
-                          <li><a class="dropdown-item {% if mode == "calendar" %} disabled {% endif %}" href="?{% param_replace mode="calendar" %}">{% translate "Month" %}</a></li>
-                          <li><a class="dropdown-item {% if mode == "day" %} disabled {% endif %}" href="?{% param_replace mode="day" %}">{% translate "Day" %}</a></li>
+                            <li><a class="dropdown-item {% if mode == "calendar" %} disabled {% endif %}"
+                                   href="?{% param_replace mode="calendar" %}">{% translate "Month" %}</a></li>
+                            <li><a class="dropdown-item {% if mode == "day" %} disabled {% endif %}"
+                                   href="?{% param_replace mode="day" %}">{% translate "Day" %}</a></li>
                         </ul>
-                      </div>
+                    </div>
 
                 </div>
             </small>
@@ -87,7 +89,26 @@
             </div>
         </form>
         {% if mode == "calendar" or mode == "day" %}
-            <div class="d-flex order-1 gap-3 mb-3">
+            {% if perms.core.add_event %}
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle d-none d-md-inline-block" type="button"
+                            id="eventCreateButton"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="fa fa-plus"></span>
+                        {% translate "Add event" %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
+                        {% for eventtype in eventtypes %}
+                            <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
+                                {% blocktranslate trimmed with title=eventtype.title %}
+                                    Add {{ title }}
+                                {% endblocktranslate %}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between mt-2">
                 <a class="btn btn-secondary"
                    href="?{% param_replace date=previous_date|date:"Y-m-d" %}"
                 ><i class="fas fa-arrow-left"></i>
@@ -96,27 +117,17 @@
                     {% elif mode == "day" %}
                         {{ previous_date|date:"d. M" }}
                     {% endif %}
-                    </a>
-                {% if perms.core.add_event %}
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle d-none d-md-inline-block" type="button"
-                                id="eventCreateButton"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="fa fa-plus"></span>
-                            {% translate "Add event" %}
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
-                            {% for eventtype in eventtypes %}
-                                <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
-                                    {% blocktranslate trimmed with title=eventtype.title %}
-                                        Add {{ title }}
-                                    {% endblocktranslate %}</a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
+                </a>
 
-                <a class="btn btn-secondary ms-auto"
+                <h3>
+                    {% if mode == "calendar" %}
+                        {{ date|date:"F Y" }}
+                    {% elif mode == "day" %}
+                        {{ date|date:"l, j. F Y" }}
+                    {% endif %}
+                </h3>
+
+                <a class="btn btn-secondary"
                    href="?{% param_replace date=next_date|date:"Y-m-d" %}"
                 >
                     {% if mode == "calendar" %}
@@ -124,14 +135,16 @@
                     {% elif mode == "day" %}
                         {{ next_date|date:"d. M" }}
                     {% endif %}
-                     <i class="fas fa-arrow-right"></i></a>
+                    <i class="fas fa-arrow-right"></i></a>
             </div>
         {% endif %}
+
+
     </div>
 
     {% if mode == "calendar" %}
         {{ calendar }}
-    {% elif not event_list  %}
+    {% elif not event_list %}
         <div class="mb-3">
             {% if mode == "day" %}
                 <h3>{{ date|date:"l, j. F Y" }}</h3>
@@ -141,7 +154,7 @@
             </h5>
         </div>
     {% elif mode == "day" %}
-        <style nonce="{{request.csp_nonce}}">
+        <style nonce="{{ request.csp_nonce }}">
             .day-calendar-container {
                 grid-template-columns: {{ css_grid_columns }};
                 grid-template-rows: [head] auto [content] 1fr;
@@ -176,10 +189,22 @@
             .day-calendar-content > .card {
                 margin: 0.1em;
                 position: absolute;
+                border-bottom: none;
+                border-right: none;
+                border-top: none;
             }
 
             .day-calendar-content > .card:hover {
                 z-index: 2;
+            }
+
+            .day-calendar-container .shift-time {
+                font-size: 1.25rem !important;
+            }
+
+            .day-calendar-container .badge {
+                border-radius: 0;
+                padding: 0.3em;
             }
 
             {% for column in shift_columns %}
@@ -191,8 +216,6 @@
             {{ css_shift_tops }}
         </style>
 
-        <h3>{{ date|date:"l, j. F Y" }}</h3>
-
         <div class="day-calendar-container">
             {% for event in event_list %}
                 <div class="day-calendar-column-{{ event.get_canonical_slug }}-0 day-calendar-head">
@@ -203,93 +226,85 @@
             {% for event in event_list %}
                 {% for column_idx, column_contents in columns_by_event|get_items:event.pk %}
                     <div class="day-calendar-column-{{ event.get_canonical_slug }}-{{ column_idx }} day-calendar-content">
-                    {% for shift in column_contents %}
-                        {% setvar request|participation_from_request:shift as participation %}
-                        {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
-                        <div class="card day-calendar-shift-{{ shift.pk }}">
-                            {% with stats=shift.signup_method.get_signup_stats %}
-                                <div class="card-header  {% if stats.missing is not None and stats.missing > 0 %} bg-danger-subtle {% elif stats.free %} bg-warning-subtle {% else %} bg-success-subtle {% endif %}">
-                                    <div class="mannequin mannequin-{{ mannequin }}">
-                                        <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
-                                             alt="{{ mannequin }} mannequin icon"/>
-                                    </div>
-                                    <a href="{{ event.get_absolute_url }}#shift-{{ shift.pk }}">
-                                        {{ shift.start_time|date:"TIME_FORMAT" }}
-                                        – {{ shift.end_time|date:"TIME_FORMAT" }}</a>
-                                </div>
-                            {% endwith %}
+                        {% for shift in column_contents %}
+                            {% setvar request|participation_from_request:shift as participation %}
+                            <div
+                                    class="card day-calendar-shift-{{ shift.pk }} border-4
+                                        {% if stats.missing is not None and stats.missing > 0 %}
+                                            border-danger-subtle
+                                        {% elif stats.free %}
+                                            border-warning-subtle
+                                        {% else %} border-success-subtle
+                                    {% endif %}">
+                                {% include "core/fragments/shift_header.html" with shift=shift participation=participation hide_date=True %}
 
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    {{ shift.meeting_time|time }} {% translate "Meetup" %}
-                                </li>
-                            </ul>
+                                {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
 
-                            {# TODO stolen from event_box_big, dry up before merging #}
-                            <div class="card-footer">
-                                {% if event.active %}
-                                    {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
-                                        <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
-                                              action="{{ request|reverse_signup_action:shift }}">
+                                {# TODO stolen from event_box_big, dry up before merging #}
+                                <div class="card-footer">
+                                    {% if event.active %}
+                                        {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
+                                            <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
+                                                  action="{{ request|reverse_signup_action:shift }}">
 
-                                            {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
-                                            <input type="hidden" name="individual_start_time_0"
-                                                   value="{{ shift.start_time|date:"Y-m-d" }}">
-                                            <input type="hidden" name="individual_start_time_1"
-                                                   value="{{ shift.start_time|time:"H:i" }}">
-                                            <input type="hidden" name="individual_end_time_0"
-                                                   value="{{ shift.end_time|date:"Y-m-d" }}">
-                                            <input type="hidden" name="individual_end_time_1"
-                                                   value="{{ shift.end_time|time:"H:i" }}">
+                                                {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
+                                                <input type="hidden" name="individual_start_time_0"
+                                                       value="{{ shift.start_time|date:"Y-m-d" }}">
+                                                <input type="hidden" name="individual_start_time_1"
+                                                       value="{{ shift.start_time|time:"H:i" }}">
+                                                <input type="hidden" name="individual_end_time_0"
+                                                       value="{{ shift.end_time|date:"Y-m-d" }}">
+                                                <input type="hidden" name="individual_end_time_1"
+                                                       value="{{ shift.end_time|time:"H:i" }}">
 
-                                            {% csrf_token %}
-                                            {% if can_sign_up and shift.signup_method.configuration.signup_until %}
-                                                <div class="text-success mb-1">
+                                                {% csrf_token %}
+                                                {% if can_sign_up and shift.signup_method.configuration.signup_until %}
+                                                    <div class="text-success mb-1">
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                      title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                                                          title="{{ shift.signup_method.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
                                                         {% translate "Signup ends" %}
                                                         {{ shift.signup_method.configuration.signup_until | naturaltime }}.
                                                     </span>
-                                                </div>
-                                            {% endif %}
-                                            {% if not can_sign_up or not can_decline %}
-                                                <div class="text-body-secondary mb-1">
-                                                    {% for error in request|signup_action_errors:shift %}
-                                                        <span>{{ error.message }}</span>
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                            {% if can_sign_up and can_customize_signup %}
-                                                <div class="btn-group">
+                                                    </div>
+                                                {% endif %}
+                                                {% if not can_sign_up or not can_decline %}
+                                                    <div class="text-body-secondary mb-1">
+                                                        {% for error in request|signup_action_errors:shift %}
+                                                            <span>{{ error.message }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if can_sign_up and can_customize_signup %}
+                                                    <div class="btn-group">
+                                                        <button type="submit" name="signup_choice" value="sign_up"
+                                                                class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                                        <a class="btn btn-success"
+                                                           href="{{ request|reverse_signup_action:shift }}">
+                                                            <i class="fas fa-cog"></i>
+                                                            <span class="visually-hidden">{% translate "Customize" %}</span>
+                                                        </a>
+                                                    </div>
+                                                {% elif can_sign_up and not can_customize_signup %}
                                                     <button type="submit" name="signup_choice" value="sign_up"
                                                             class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
-                                                    <a class="btn btn-success"
-                                                       href="{{ request|reverse_signup_action:shift }}">
-                                                        <i class="fas fa-cog"></i>
-                                                        <span class="visually-hidden">{% translate "Customize" %}</span>
-                                                    </a>
-                                                </div>
-                                            {% elif can_sign_up and not can_customize_signup %}
-                                                <button type="submit" name="signup_choice" value="sign_up"
-                                                        class="btn btn-success">{{ shift.signup_method.registration_button_text }}</button>
-                                            {% elif not can_sign_up and can_customize_signup %}
-                                                <a class="btn btn-secondary"
-                                                   href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
-                                            {% endif %}
-                                            {% if can_decline %}
-                                                <span class="d-inline-block" tabindex="1">
-                                                    <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
+                                                {% elif not can_sign_up and can_customize_signup %}
+                                                    <a class="btn btn-secondary"
+                                                       href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
+                                                {% endif %}
+                                                {% if can_decline %}
+                                                    <span class="d-inline-block" tabindex="1">
+                                                    <button type="submit" name="signup_choice" value="decline"
+                                                            class="btn btn-secondary">
                                                         {% translate "Decline" %}
                                                     </button>
                                                 </span>
-                                            {% endif %}
-                                        </form>
-                                    {% endwith %}
-                                {% endif %}
+                                                {% endif %}
+                                            </form>
+                                        {% endwith %}
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                        {% endwith %}
-                    {% endfor %}
+                        {% endfor %}
                     </div>
                 {% endfor %}
             {% endfor %}
@@ -339,6 +354,10 @@
                                         {% if counter %}
                                      data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                      title="{% for state in counter %}<div>
+
+
+
+
 
                                          {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                                         {% endif %}>
