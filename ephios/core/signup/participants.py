@@ -1,10 +1,9 @@
 import dataclasses
 from datetime import date
-from typing import Optional
+from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
-from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +17,7 @@ from ephios.core.signals import participant_from_request
 @dataclasses.dataclass(frozen=True)
 class AbstractParticipant:
     display_name: str
-    qualifications: QuerySet = dataclasses.field(hash=False)
+    qualifications: Collection = dataclasses.field(hash=False, compare=False)
     date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 

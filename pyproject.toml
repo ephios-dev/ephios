@@ -49,6 +49,7 @@ css-inline = ">=0.10.3,<0.15.0"
 requests = "^2.31.0"
 requests-oauthlib = "^2.0"
 pyjwt = "^2.8.0"
+scipy = "^1.12.0"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
