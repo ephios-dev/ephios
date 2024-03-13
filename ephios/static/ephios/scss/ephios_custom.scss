@@ -280,7 +280,6 @@ a.badge {
 }
 
 $shift-box-target: lighten($primary, 20%);
-
 .shift_box:target {
   border-color: $shift-box-target;
   box-shadow: 0 0 10px $shift-box-target;

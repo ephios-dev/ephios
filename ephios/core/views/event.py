@@ -270,17 +270,15 @@ class EventListView(LoginRequiredMixin, ListView):
                 get_objects_for_user(self.request.user, "core.view_event", klass=Event)
                 # Include shifts which start on the next day before 3am
                 .filter(
-                    Q(shifts__start_time__date=this_date) |
-                    (Q(shifts__start_time__date=next_date) & Q(shifts__start_time__hour__lte=3)))
+                    Q(shifts__start_time__date=this_date)
+                    | (Q(shifts__start_time__date=next_date) & Q(shifts__start_time__hour__lte=3))
+                )
                 .prefetch_related("shifts")
                 .distinct()
             )
 
             if not events.exists():
-                ctx.update({
-                    "event_list": events,
-                    "date": this_date
-                 })
+                ctx.update({"event_list": events, "date": this_date})
                 return ctx
 
             shifts_by_hour = defaultdict(defaultdict)
@@ -288,14 +286,21 @@ class EventListView(LoginRequiredMixin, ListView):
             shift_starts = {}
             shift_ends = {}
             shifts_by_event_layouted = {}
+            shortest_shift_duration = timedelta.max
             for event in set(events):
                 # If two shifts of the same event start within an hour of each other, layout them next to each other
                 columns = {}
                 for shift in event.shifts.all().order_by("start_time"):
+                    duration = shift.end_time - shift.start_time
+                    if duration < shortest_shift_duration:
+                        shortest_shift_duration = duration
+
                     current_column = 0
                     # search for first column that fits
-                    while current_column in columns and \
-                            shift.start_time < columns.get(current_column)[-1].end_time:
+                    while (
+                        current_column in columns
+                        and shift.start_time < columns.get(current_column)[-1].end_time
+                    ):
                         current_column += 1
 
                     if current_column in columns:
@@ -313,13 +318,30 @@ class EventListView(LoginRequiredMixin, ListView):
             css_shift_tops = ""
             earliest_shift_start = min(shift_starts.values())
             latest_shift_end = max(shift_ends.values())
-            time_scaling_factor = 400
-            for pk, start in shift_starts.items():
-                start_offset = (start.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor
-                height = (shift_ends[pk].timestamp() - start.timestamp()) / time_scaling_factor
 
-                css_shift_tops += f".day-calendar-shift-{pk} {{ top: {start_offset}em; height: { height }em}}\n"
-            total_height = ((latest_shift_end.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor) + 2
+            # calculate time scale based on shortest shift
+            # to not make things too small, consider a maximum of 4 hours
+            shortest_shift_duration_in_hours = min(
+                4, shortest_shift_duration.total_seconds() / 3600
+            )
+            # seconds per em: the shortest shift should be 3600/300 = 12em high
+            time_scaling_factor = int(300 * shortest_shift_duration_in_hours)
+
+            for pk, start in shift_starts.items():
+                start_offset = (
+                    start.timestamp() - earliest_shift_start.timestamp()
+                ) / time_scaling_factor
+                height = (shift_ends[pk].timestamp() - start.timestamp()) / time_scaling_factor
+                # remove margin from height twice, once for top and once for bottom
+                height -= 2 * 0.2
+
+                css_shift_tops += (
+                    f".day-calendar-shift-{pk} {{ top: {start_offset}em; height: { height }em}}\n"
+                )
+            total_height = (
+                (latest_shift_end.timestamp() - earliest_shift_start.timestamp())
+                / time_scaling_factor
+            ) + 2
             hour_height = 3600 / time_scaling_factor
 
             css_grid_columns = " "
@@ -330,20 +352,22 @@ class EventListView(LoginRequiredMixin, ListView):
                     css_grid_columns += f"[{column_name}] 14em "
                     shift_columns[column_name] = content
 
-            ctx.update({
-                "event_list": events,
-                "date": this_date,
-                "hours": range(25),
-                "shifts_by_hour": shifts_by_hour,
-                "css_grid_columns": css_grid_columns,
-                "css_shift_tops": css_shift_tops,
-                "shift_columns": shift_columns,
-                "columns_by_event": shifts_by_event_layouted,
-                "total_height": str(total_height),
-                "hour_height": str(hour_height),
-                "quarter_hour_height": str(hour_height / 4),
-                "half_hour_height": str(hour_height / 2),
-            })
+            ctx.update(
+                {
+                    "event_list": events,
+                    "date": this_date,
+                    "hours": range(25),
+                    "shifts_by_hour": shifts_by_hour,
+                    "css_grid_columns": css_grid_columns,
+                    "css_shift_tops": css_shift_tops,
+                    "shift_columns": shift_columns,
+                    "columns_by_event": shifts_by_event_layouted,
+                    "total_height": str(total_height),
+                    "hour_height": str(hour_height),
+                    "quarter_hour_height": str(hour_height / 4),
+                    "half_hour_height": str(hour_height / 2),
+                }
+            )
         return ctx
 
     def _get_shifts_for_calendar(self):
