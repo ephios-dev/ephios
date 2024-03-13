@@ -279,7 +279,9 @@ a.badge {
   display: grid;
 }
 
+$shift-box-target: lighten($primary, 20%);
+
 .shift_box:target {
-  border-color: $hint;
-  box-shadow: 0 0 10px $hint;
+  border-color: $shift-box-target;
+  box-shadow: 0 0 10px $shift-box-target;
 }
