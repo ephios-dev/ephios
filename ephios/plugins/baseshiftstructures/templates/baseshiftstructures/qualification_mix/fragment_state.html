@@ -1,19 +1,38 @@
 {% load i18n %}
 
-<div class="mb-3">
-    {% for participation, position in matching.participation_pairings %}
-        {% include "baseshiftstructures/participation_card_inline.html" %}
-    {% endfor %}
-    {% for position in matching.unpaired_positions %}
-        <span class="badge bg-light text-muted px-5">
-            {% for qualification in position.required_qualifications %}
-                {{ qualification.abbreviation }}
-            {% endfor %}
+<div>
+    {% for requirement in requirements %}
+        <span class="pe-1">
+            <strong>
+                {{ requirement.confirmed_count }}{% if requirement.max_count %}/{{ requirement.max_count }}{% endif %}
+            </strong>
+            {{ requirement.qualification_label }}
         </span>
+
+        <div class="mb-4">
+            {% for participation in requirement.participations %}
+                {% include "baseshiftstructures/participation_card_inline.html" %}
+            {% endfor %}
+            {% for index in requirement.placeholder %}
+                <span class="badge bg-light px-5">&nbsp;</span>
+            {% endfor %}
+            {% if not requirement.participations and not requirement.placeholder %}
+                {# show a white box as vertical whitespace  #}
+                <span class="badge bg-white px-5">&nbsp;</span>
+            {% endif %}
+        </div>
     {% endfor %}
-    {% for participation in matching.unpaired_participations %}
-        {% include "baseshiftstructures/participation_card_inline.html" %}
-    {% endfor %}
+    {% if unpaired_participations %}
+        <span class="pe-1">
+            {% translate "other" context "qualification mix unassigned participations" %}
+        </span>
+        <div class="mb-4">
+            {% for participation in unpaired_participations %}
+                {% include "baseshiftstructures/participation_card_inline.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
 </div>
 
 {% with stats=shift.signup_method.get_signup_stats %}

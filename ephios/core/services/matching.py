@@ -29,19 +29,26 @@ class Position:
         return set(graph.spread_from(required_qualification_uuids))
 
     @property
-    def _required_qualifications_uuids(self):
-        return [qualification.uuid for qualification in self.required_qualifications]
-
-    @property
     def skill_level(self):
-        graph = QualificationUniverse.get_graph()
-        required_skill = self.required_skill
-        # all skill are all those qualifications up and down from the required ones
-        all_skill = required_skill | set(graph.spread_reverse(self._required_qualifications_uuids))
-        # skill_level is some float in the range [0,1] that expresses
-        # how far up in the qualification hierarchy the required qualifications are.
-        # We want to favor pairings where a hight skill level is required.
-        return len(required_skill) / len(all_skill)
+        return skill_level(self.required_skill)
+
+
+def skill_level(qualifications):
+    """
+    skill_level is some float in the range [0,1] that expresses
+    how far up in the qualification hierarchy the required qualifications are.
+    """
+    if not qualifications:
+        return 0
+    qualifications = list(qualifications)
+    # convert to uuids
+    if isinstance(qualifications[0], Qualification):
+        qualifications = [q.uuid for q in qualifications]
+    graph = QualificationUniverse.get_graph()
+    required_skill = set(graph.spread_from(qualifications))
+    # all_skill is qualifications up and down from the required ones
+    all_skill = required_skill | set(graph.spread_reverse(qualifications))
+    return len(required_skill) / len(all_skill)
 
 
 class Matching:
@@ -82,10 +89,7 @@ class Matching:
         ]
 
 
-def score_participant_to_position(
-    participant: AbstractParticipant,
-    position: Position,
-):
+def score_pairing(participant: AbstractParticipant, position: Position):
     """
     Score the pairing of participant and  position.
     Skill here means a set of Qualification.
@@ -115,7 +119,7 @@ def match_participants_to_positions(
     positions = list(positions)
     costs = csr_matrix(
         [
-            [-score_participant_to_position(participant, position) for position in positions]
+            [-score_pairing(participant, position) for position in positions]
             for participant in participants
         ]
     )

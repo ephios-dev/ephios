@@ -4,7 +4,8 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Qualification
-from ephios.core.services.matching import Position, match_participants_to_positions
+from ephios.core.services.matching import Position, match_participants_to_positions, skill_level
+from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
     QualificationRequirementForm,
@@ -51,21 +52,60 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
     shift_state_template_name = "baseshiftstructures/qualification_mix/fragment_state.html"
     configuration_form_class = QualificationMixConfigurationForm
 
-    def _get_positions_for_matching(self, number_of_participations: int):
-        position_ids = itertools.count()
-        positions = set()
-        for requirement in self.configuration.qualification_requirements:
+    def get_checkers(self):
+        def check_qualifications(shift, participant):
+            if shift.signup_flow.uses_requested_state:
+                # check if the participant fulfills any of the requirements
+                participant_skill = participant.collect_all_qualifications()
+                for requirement_id, requirement, qualifications in self._requirements():
+                    if all(required_q in participant_skill for required_q in qualifications):
+                        return
+            else:
+                # check if the participant can be matched into already confirmed participations
+                confirmed_participants = [
+                    p.participant
+                    for p in shift.participations.all()
+                    if p.state == AbstractParticipation.States.CONFIRMED
+                ]
+                if participant in confirmed_participants:
+                    return
+                positions = self._get_positions_for_matching(
+                    len(confirmed_participants) + 1
+                )  # +1 for new participant
+                matching_without = match_participants_to_positions(
+                    confirmed_participants, positions
+                )
+                matching_with = match_participants_to_positions(
+                    confirmed_participants + [participant], positions
+                )
+                if len(matching_with.pairings) > len(matching_without.pairings):
+                    return
+            raise ParticipantUnfitError(_("You are not qualified."))
+
+        return super().get_checkers() + [check_qualifications]
+
+    def _requirements(self):
+        requirements = []
+        for requirement_idx, requirement in enumerate(
+            self.configuration.qualification_requirements
+        ):
             try:
                 qualifications = {Qualification.objects.get(id=requirement["qualification"])}
             except Qualification.DoesNotExist:
                 qualifications = set()
-            count = (
-                max if (max := requirement["max_count"]) is not None else number_of_participations
-            )
+            requirements.append((str(requirement_idx), requirement, qualifications))
+        # return requirements sorted by descending skill level
+        return sorted(requirements, key=lambda r: skill_level(r[2]), reverse=True)
+
+    def _get_positions_for_matching(self, number_of_participations: int):
+        position_ids = itertools.count()
+        positions = set()
+        for requirement_id, requirement, qualifications in self._requirements():
+            count = m if (m := requirement["max_count"]) is not None else number_of_participations
             for i in range(count):
                 positions.add(
                     Position(
-                        next(position_ids),
+                        f"{requirement_id}-{next(position_ids)}",
                         required_qualifications=qualifications,
                         preferred_by=set(),
                         required=i < requirement["min_count"],
@@ -86,5 +126,33 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         positions = self._get_positions_for_matching(len(positive_participations))
         matching = match_participants_to_positions(participants, positions)
         matching.attach_participations(positive_participations)
-        context_data["matching"] = matching
+
+        requirements = []
+        for requirement_id, requirement, qualifications in self._requirements():
+            participations_for_requirement = [
+                participation
+                for participation, position in matching.participation_pairings
+                if position.id.split("-")[0] == requirement_id
+            ]
+            requirement = {
+                "qualifications": qualifications,
+                "qualification_label": ", ".join(q.title for q in qualifications),
+                "min_count": requirement["min_count"],
+                "max_count": requirement["max_count"],
+                "confirmed_count": len(
+                    [
+                        p
+                        for p in participations_for_requirement
+                        if p.state == AbstractParticipation.States.CONFIRMED
+                    ]
+                ),
+                "participations": participations_for_requirement,
+                "placeholder": list(
+                    range(max(0, requirement["min_count"] - len(participations_for_requirement)))
+                ),
+            }
+            requirements.append(requirement)
+
+        context_data["requirements"] = requirements
+        context_data["unpaired_participations"] = matching.unpaired_participations
         return context_data
