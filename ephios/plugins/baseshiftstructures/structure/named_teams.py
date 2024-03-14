@@ -247,6 +247,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             ):
                 raise ParticipantUnfitError(_("You are not qualified."))
 
+        # TODO check if teams are full if signup flow does not use requested state
         return super().get_checkers() + [check_qualifications]
 
     def _configure_participation(
