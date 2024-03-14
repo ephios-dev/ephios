@@ -103,4 +103,9 @@ class ParticipationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalParticipation
-        fields = ["id", "shift", "state", "comment"]
+        fields = ["id", "shift", "state", "comment", "start_time", "end_time"]
+
+    def build_unknown_field(self, field_name, model_class):
+        if field_name in {"start_time", "end_time"}:
+            return self.build_property_field(field_name, model_class)
+        return super().build_unknown_field(field_name, model_class)
