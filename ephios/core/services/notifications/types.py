@@ -549,7 +549,9 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                         "event_id": event.id,
                         "content": content,
                         "event_title": event.title,
-                        "event_url": participant.reverse_event_detail(event),
+                        "event_url": (
+                            participant.reverse_event_detail(event) if participant.email else None
+                        ),
                     },
                 )
             )
