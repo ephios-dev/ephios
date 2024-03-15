@@ -530,31 +530,34 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def send(cls, event: Event, content: str):
         participants = set()
+        notifications = []
         responsible_users = get_users_with_perms(
             event, with_superusers=False, only_with_perms_in=["change_event"]
         )
         for shift in event.shifts.all():
-            participants.update(shift.get_participants())
-        notifications = []
-        for participant in participants:
-            user = participant.user if isinstance(participant, LocalUserParticipant) else None
-            if user in responsible_users:
-                continue
-            notifications.append(
-                Notification(
-                    slug=cls.slug,
-                    user=user,
-                    data={
-                        "email": participant.email,
-                        "event_id": event.id,
-                        "content": content,
-                        "event_title": event.title,
-                        "event_url": (
-                            participant.reverse_event_detail(event) if participant.email else None
-                        ),
-                    },
-                )
-            )
+            for participation in shift.participations.filter(
+                state__in={AbstractParticipation.States.CONFIRMED}
+            ):
+                if participation.participant not in participants:
+                    participant = participation.participant
+                    participants.add(participant)
+                    user = (
+                        participant.user if isinstance(participant, LocalUserParticipant) else None
+                    )
+                    if user in responsible_users:
+                        continue
+                    notifications.append(
+                        Notification(
+                            slug=cls.slug,
+                            user=user,
+                            data={
+                                "email": participant.email,
+                                "participation_id": event.id,
+                                "event_id": event.id,
+                                "content": content,
+                            },
+                        )
+                    )
         for responsible in responsible_users:
             notifications.append(
                 Notification(
@@ -564,7 +567,6 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
                         "email": responsible.email,
                         "event_id": event.id,
                         "content": content,
-                        "event_title": event.title,
                     },
                 )
             )
@@ -572,9 +574,8 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("Information for your participation at {title}").format(
-            title=notification.data.get("event_title")
-        )
+        event = Event.objects.get(pk=notification.data.get("event_id"))
+        return _("Information for your participation at {title}").format(title=event.title)
 
     @classmethod
     def get_body(cls, notification):
@@ -583,6 +584,9 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def get_actions(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
+        participation = AbstractParticipation.objects.filter(
+            pk=notification.data.get("participation_id")
+        ).first()
         return [
             (
                 str(_("View message")),
@@ -590,7 +594,11 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
             ),
             (
                 str(_("View event")),
-                make_absolute(notification.data.get("event_url", event.get_absolute_url())),
+                make_absolute(
+                    participation.participant.reverse_event_detail(event)
+                    if participation
+                    else event.get_absolute_url()
+                ),
             ),
         ]
 
