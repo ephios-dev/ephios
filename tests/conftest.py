@@ -26,6 +26,8 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.users import IdentityProvider
+from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
+from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
 
 
 @pytest.fixture(autouse=True)
@@ -199,8 +201,10 @@ def event(groups, service_event_type, planner, tz):
         meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
         start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
         end_time=datetime(2099, 6, 30, 20, 30, tzinfo=tz),
-        signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration=dict(user_can_decline_confirmed=True),
+        signup_flow_slug=InstantConfirmSignupFlow.slug,
+        signup_flow_configuration=dict(user_can_decline_confirmed=True),
+        structure_slug=UniformShiftStructure.slug,
+        structure_configuration=dict(),
     )
     return event
 

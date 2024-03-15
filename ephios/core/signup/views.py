@@ -53,12 +53,14 @@ class SignupView(FormView):
     def form_valid(self, form):
         choice = form.cleaned_data["signup_choice"]
         validator = self.shift.signup_flow.get_validator(self.participant)
-        if choice == "sign_up" and validator.can_sign_up():
-            return self.signup_pressed(form)
-        if choice == "customize" and validator.can_customize_signup():
-            return self.customize_pressed(form)
-        if choice == "decline" and validator.can_decline():
-            return self.decline_pressed(form)
+        with transaction.atomic():
+            Shift.objects.select_for_update().get(pk=self.shift.pk)
+            if choice == "sign_up" and validator.can_sign_up():
+                return self.signup_pressed(form)
+            if choice == "customize" and validator.can_customize_signup():
+                return self.customize_pressed(form)
+            if choice == "decline" and validator.can_decline():
+                return self.decline_pressed(form)
         messages.error(self.request, _("This action is not allowed."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -71,11 +73,10 @@ class SignupView(FormView):
 
     def signup_pressed(self, form):
         try:
-            with transaction.atomic():
-                participation = form.save()
-                self.shift.signup_flow.perform_signup(
-                    self.participant, participation, **form.cleaned_data
-                )
+            participation = form.save()
+            self.shift.signup_flow.perform_signup(
+                self.participant, participation, **form.cleaned_data
+            )
         except BaseSignupMethodError as errors:
             for error in errors:
                 messages.error(self.request, self.signup_error_message.format(error=error))
@@ -88,11 +89,10 @@ class SignupView(FormView):
 
     def decline_pressed(self, form):
         try:
-            with transaction.atomic():
-                participation = form.save()
-                self.shift.signup_flow.perform_decline(
-                    self.participant, participation, **form.cleaned_data
-                )
+            participation = form.save()
+            self.shift.signup_flow.perform_decline(
+                self.participant, participation, **form.cleaned_data
+            )
         except BaseSignupMethodError as errors:
             for error in errors:
                 messages.error(self.request, self.decline_error_message.format(error=error))

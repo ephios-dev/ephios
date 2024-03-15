@@ -1,6 +1,7 @@
 import logging
 from argparse import Namespace
 from collections import OrderedDict
+from operator import attrgetter
 
 from django.template.loader import get_template
 from django.urls import reverse
@@ -95,7 +96,7 @@ class BaseShiftStructure(AbstractShiftStructure):
         """
         kwargs["shift"] = self.shift
         kwargs["participations"] = sorted(
-            self.shift.participations.all(), key=lambda participation: -participation.state
+            self.shift.participations.all(), key=attrgetter("state"), reverse=True
         )
         if self.disposition_participation_form_class is not None:
             kwargs["disposition_url"] = (
