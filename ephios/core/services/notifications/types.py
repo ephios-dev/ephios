@@ -538,8 +538,8 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
             for participation in shift.participations.filter(
                 state__in={AbstractParticipation.States.CONFIRMED}
             ):
-                if participation.participant not in participants:
-                    participant = participation.participant
+                participant = participation.participant
+                if participant not in participants:
                     participants.add(participant)
                     user = (
                         participant.user if isinstance(participant, LocalUserParticipant) else None
