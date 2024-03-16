@@ -534,30 +534,27 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
         responsible_users = get_users_with_perms(
             event, with_superusers=False, only_with_perms_in=["change_event"]
         )
-        for shift in event.shifts.all():
-            for participation in shift.participations.filter(
-                state__in={AbstractParticipation.States.CONFIRMED}
-            ):
-                participant = participation.participant
-                if participant not in participants:
-                    participants.add(participant)
-                    user = (
-                        participant.user if isinstance(participant, LocalUserParticipant) else None
+        for participation in AbstractParticipation.objects.filter(
+            shift__event=event, state=AbstractParticipation.States.CONFIRMED
+        ):
+            participant = participation.participant
+            if participant not in participants:
+                participants.add(participant)
+                user = participant.user if isinstance(participant, LocalUserParticipant) else None
+                if user in responsible_users:
+                    continue
+                notifications.append(
+                    Notification(
+                        slug=cls.slug,
+                        user=user,
+                        data={
+                            "email": participant.email,
+                            "participation_id": participation.id,
+                            "event_id": event.id,
+                            "content": content,
+                        },
                     )
-                    if user in responsible_users:
-                        continue
-                    notifications.append(
-                        Notification(
-                            slug=cls.slug,
-                            user=user,
-                            data={
-                                "email": participant.email,
-                                "participation_id": event.id,
-                                "event_id": event.id,
-                                "content": content,
-                            },
-                        )
-                    )
+                )
         for responsible in responsible_users:
             notifications.append(
                 Notification(
