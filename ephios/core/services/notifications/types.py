@@ -583,7 +583,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
         event = Event.objects.get(pk=notification.data.get("event_id"))
         participation = AbstractParticipation.objects.filter(
             pk=notification.data.get("participation_id")
-        ).first()
+        ).first()  # there is no participation for responsible users
         return [
             (
                 str(_("View message")),
