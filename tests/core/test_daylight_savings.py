@@ -3,7 +3,9 @@ from datetime import datetime
 import pytest
 from django.urls import reverse
 
-from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
+from ephios.plugins.basesignup.signup.simple_qualification_required import (
+    SimpleQualificationRequiredSignupMethod,
+)
 
 
 @pytest.fixture
@@ -15,7 +17,7 @@ def end_in_rollback_shift(event, tz):
         start_time=datetime(2023, 10, 28, 20, 0, tzinfo=tz),
         end_time=datetime(2023, 10, 29, 2, 30, tzinfo=tz),
         meeting_time=datetime(2023, 10, 28, 19, 0).astimezone(tz),
-        signup_method_slug=InstantConfirmationSignupMethod.slug,
+        signup_method_slug=SimpleQualificationRequiredSignupMethod.slug,
     )
 
 

@@ -26,8 +26,8 @@ class BaseSignupView(FormView):
     method: "BaseSignupMethod" = ...
     form_class = BaseSignupForm
     template_name = "core/signup.html"
-    signup_success_message = _("You have successfully signed up for {shift}.")
-    signup_error_message = _("Signing up failed: {error}")
+    signup_success_message = _("You have successfully requested a participation for {shift}.")
+    signup_error_message = _("Requesting a participation failed: {error}")
     decline_success_message = _("You have successfully declined {shift}.")
     decline_error_message = _("Declining failed: {error}")
 

@@ -7,7 +7,9 @@ from django.urls import reverse
 from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.modellogging.models import LogEntry
 from ephios.plugins.basesignup.signup.coupled_signup import CoupledSignupMethod
-from ephios.plugins.basesignup.signup.request_confirm import RequestConfirmSignupMethod
+from ephios.plugins.basesignup.signup.simple_qualification_required import (
+    SimpleQualificationRequiredSignupMethod,
+)
 
 
 @pytest.fixture
@@ -84,7 +86,7 @@ def test_editing_coupled_shift_with_missing_leader_shift(
         meeting_time=datetime(2099, 7, 1, 7, 0).astimezone(tz),
         start_time=datetime(2099, 7, 1, 8, 0).astimezone(tz),
         end_time=datetime(2099, 7, 1, 20, 0).astimezone(tz),
-        signup_method_slug=RequestConfirmSignupMethod.slug,
+        signup_method_slug=SimpleQualificationRequiredSignupMethod.slug,
     )
     response = django_app.get(
         reverse("core:shift_edit", kwargs={"pk": coupled_shift.pk}), user=planner
