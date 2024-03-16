@@ -131,4 +131,4 @@ class ParticipationSerializer(serializers.ModelSerializer):
         return super().build_unknown_field(field_name, model_class)
 
     def get_duration(self, obj):
-        return obj.end_time - obj.start_time
+        return float((obj.end_time - obj.start_time).total_seconds())
