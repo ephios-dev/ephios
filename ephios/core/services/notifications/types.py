@@ -575,7 +575,7 @@ class CustomEventParticipantNotification(AbstractNotificationHandler):
     @classmethod
     def get_subject(cls, notification):
         event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("Information for your participation at {title}").format(title=event.title)
+        return _("Information regarding {title}").format(title=event.title)
 
     @classmethod
     def get_body(cls, notification):
