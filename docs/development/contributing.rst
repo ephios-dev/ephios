@@ -85,3 +85,23 @@ a translation. To add them, do run ``makemessages`` from the ``data/public/stati
    python ../../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
 
 We tend to edit our .po files using weblate, but a local editor like poedit works as well.
+
+Using other databases
+---------------------
+
+By default, ephios uses a sqlite database for development and PostgreSQL for production.
+
+MySQL
+''''''
+
+We do not recommend using MySQL, but if you need a mysql for development, you can use the following docker command:
+
+.. code-block:: bash
+
+   sudo docker run --name mysql -e MYSQL_ROOT_PASSWORD=somesupersecret123 -p 3306:3306 -d docker.io/library/mariadb:10.6
+
+Then, you can use the following settings in your .env file:
+
+.. code-block:: bash
+
+   DATABASE_URL=mysql://root:somesupersecret123@127.0.0.1:3306/ephios
