@@ -24,6 +24,9 @@ class SignupStats:
             max_count=0,
         )
 
+    def replace(self, **kwargs):
+        return dataclasses.replace(self, **kwargs)
+
     def __add__(self, other: "SignupStats"):
         free = self.free + other.free if self.free is not None and other.free is not None else None
         missing = self.missing + other.missing

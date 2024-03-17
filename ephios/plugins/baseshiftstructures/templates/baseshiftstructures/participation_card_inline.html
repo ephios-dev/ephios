@@ -2,12 +2,12 @@
 {% load user_extras %}
 {% load i18n %}
 
-<div id="popover-title-{{ participation.id }}" class="d-none">
+<div id="participant-popover-title-{{ participation.id }}" class="d-none">
     <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
     {{ participation.participant }}
 </div>
 
-<div id="popover-content-{{ participation.id }}" class="d-none">
+<div id="participant-popover-content-{{ participation.id }}" class="d-none">
     {% if participation.individual_start_time or participation.individual_end_time %}
         <div class="mb-3">
             <i class="fas fa-user-clock"></i>
@@ -41,8 +41,8 @@
    data-bs-trigger="hover"
    data-bs-placement="bottom"
    data-html="true"
-   data-bs-title-ref="#popover-title-{{ participation.id }}"
-   data-bs-content-ref="#popover-content-{{ participation.id }}"
+   data-bs-title-ref="#participant-popover-title-{{ participation.id }}"
+   data-bs-content-ref="#participant-popover-content-{{ participation.id }}"
 >
     {% if participation.state == participation.States.CONFIRMED %}
         {% if participation.has_customized_signup %}

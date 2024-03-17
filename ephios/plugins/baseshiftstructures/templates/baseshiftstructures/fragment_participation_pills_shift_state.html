@@ -5,11 +5,11 @@
         {% include "baseshiftstructures/participation_card_inline.html" %}
     {% endfor %}
     {% for index in empty_spots %}
-        <span class="badge bg-light px-5">&nbsp;</span>
+        <span class="badge bg-light badge-placeholder">&nbsp;</span>
     {% endfor %}
 </div>
 
-{% with stats=shift.structure.get_signup_stats %}
+{% with stats=shift.get_signup_stats %}
     <span class="pe-1">
         <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
         {% translate "Total" context "participation count" %}
