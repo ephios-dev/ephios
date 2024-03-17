@@ -1,41 +1,62 @@
 {% load i18n %}
 
-<div>
-    {% for requirement in requirements %}
-        <span class="pe-1">
-            <strong>
-                {{ requirement.confirmed_count }}{% if requirement.max_count %}/{{ requirement.max_count }}{% endif %}
-            </strong>
-            {{ requirement.qualification_label }}
-        </span>
-
-        <div class="mb-4">
-            {% for participation in requirement.participations %}
-                {% include "baseshiftstructures/participation_card_inline.html" %}
-            {% endfor %}
-            {% for index in requirement.placeholder %}
-                <span class="badge bg-light px-5">&nbsp;</span>
-            {% endfor %}
-            {% if not requirement.participations and not requirement.placeholder %}
-                {# show a white box as vertical whitespace  #}
-                <span class="badge bg-white px-5">&nbsp;</span>
-            {% endif %}
-        </div>
-    {% endfor %}
-    {% if unpaired_participations %}
-        <span class="pe-1">
-            {% translate "other" context "qualification mix unassigned participations" %}
-        </span>
-        <div class="mb-4">
-            {% for participation in unpaired_participations %}
-                {% include "baseshiftstructures/participation_card_inline.html" %}
-            {% endfor %}
-        </div>
-    {% endif %}
+<div id="qualimix-popover-title-{{ shift.id }}" class="d-none">
 
 </div>
+<div id="qualimix-popover-content-{{ shift.id }}" class="d-none">
+    <i class="far fa-circle text-body-secondary"></i>
+    {% translate "participants needed" %}
+    <br>
+    <i class="far fa-check-circle text-body-secondary"></i>
+    {% translate "enough participants" %}
+    <br/>
+    <i class="fa fa-check-circle text-body-secondary"></i>
+    {% translate "full" %}
+</div>
 
-{% with stats=shift.signup_method.get_signup_stats %}
+
+<div class="row mb-3">
+    <div class="col">
+        {% for participation in matching.participations %}
+            {% include "baseshiftstructures/participation_card_inline.html" %}
+        {% endfor %}
+        {% for unpaired in matching.unpaired_positions %}
+            {% if unpaired.required %}
+                <span class="badge bg-light badge-placeholder">
+                    {% for q in  unpaired.required_qualifications %}
+                        {{ q.abbreviation }}
+                    {% endfor %}
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="col-auto text-body-secondary text-end"
+         data-bs-container="body"
+         data-bs-toggle="popover"
+         data-bs-trigger="hover"
+         data-bs-placement="right"
+         data-bs-content-ref="#qualimix-popover-content-{{ shift.id }}"
+         data-bs-title-ref="#qualimix-popover-title-{{ shift.id }}"
+    >
+        {% for requirement in requirements %}
+            <span>
+                {{ requirement.min_max_count }}
+                {{ requirement.qualification_label }}
+                {% if not requirement.has_free %}
+                    <i class="fa fa-check-circle"></i>
+                {% elif not requirement.missing %}
+                    <i class="far fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-circle "></i>
+                {% endif %}
+            </span>
+            <br/>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% with stats=shift.get_signup_stats %}
     <span class="pe-1">
         <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
         {% translate "Total" context "participation count" %}

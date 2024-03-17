@@ -95,9 +95,12 @@ class BaseShiftStructure(AbstractShiftStructure):
         Additionally to the context of the event detail view, provide context for rendering `shift_state_template_name`.
         """
         kwargs["shift"] = self.shift
-        kwargs["participations"] = sorted(
-            self.shift.participations.all(), key=attrgetter("state"), reverse=True
-        )
+        kwargs["participations"] = [
+            p
+            for p in sorted(self.shift.participations.all(), key=attrgetter("state"), reverse=True)
+            if p.state
+            in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
+        ]
         if self.disposition_participation_form_class is not None:
             kwargs["disposition_url"] = (
                 reverse("core:shift_disposition", kwargs={"pk": self.shift.pk})
