@@ -180,11 +180,11 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     disposition_participation_form_class = NamedTeamsDispositionParticipationForm
     signup_form_class = NamedTeamsSignupForm
 
-    def _get_signup_stats_per_team(self, participations=None):
+    NO_TEAM_UUID = "noteam"
+
+    def _get_signup_stats_per_group(self, participations):
         from ephios.core.signup.stats import SignupStats
 
-        if participations is None:
-            participations = list(self.shift.participations.all())
         confirmed_counter = Counter()
         requested_counter = Counter()
         for p in participations:
@@ -229,17 +229,6 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         return d
 
-    def get_signup_stats(self):
-        from ephios.core.signup.stats import SignupStats
-
-        participations = list(self.shift.participations.all())
-
-        signup_stats = SignupStats.ZERO
-        for stats in self._get_signup_stats_per_team(participations).values():
-            signup_stats += stats
-
-        return signup_stats
-
     def get_checkers(self):
         def check_qualifications(shift, participant):
             if not teams_participant_qualifies_for(
@@ -259,7 +248,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     def get_shift_state_context_data(self, request, **kwargs):
         context_data = super().get_shift_state_context_data(request)
         participations = context_data["participations"]
-        teams_stats = self._get_signup_stats_per_team(participations)
+        teams_stats = self._get_signup_stats_per_group(participations)
         teams = {}
         for team in self.configuration.teams:
             try:

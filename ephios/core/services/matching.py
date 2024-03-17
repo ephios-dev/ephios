@@ -59,19 +59,25 @@ class Matching:
         self.positions = positions
         self.unpaired_participants = set(participants)
         self.unpaired_positions = list(
-            sorted(positions, key=lambda position: -position.skill_level)
+            sorted(positions, key=lambda position: (-position.skill_level, position.id))
         )
         for participant, position in pairings:
             self.unpaired_participants.remove(participant)
             self.unpaired_positions.remove(position)
         self._participations = None
 
+    @property
+    def participations(self):
+        if self._participations is None:
+            raise ValueError("participations not attached")
+        return self._participations
+
     def attach_participations(self, participations):
         self._participations = participations
 
     @property
     def _participation_by_participant(self):
-        return {p.participant: p for p in self._participations}
+        return {p.participant: p for p in self.participations}
 
     @property
     def participation_pairings(self):
@@ -84,7 +90,7 @@ class Matching:
     def unpaired_participations(self):
         return [
             participation
-            for participation in self._participations
+            for participation in self.participations
             if participation.participant in self.unpaired_participants
         ]
 

@@ -11,8 +11,30 @@ from ephios.core.signup.structure.base import (
 from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeConfigForm
 
 
+def format_min_max_count(min_count, max_count):
+    if not max_count:
+        return f"{min_count}+"
+    elif min_count == max_count:
+        return f"{min_count}"
+    else:
+        return f"{min_count}-{max_count}"
+
+
 class BaseGroupBasedShiftStructure(BaseShiftStructure):
-    NO_TEAM_UUID = "noteam"
+
+    def get_signup_stats(self):
+        from ephios.core.signup.stats import SignupStats
+
+        participations = list(self.shift.participations.all())
+
+        signup_stats = SignupStats.ZERO
+        for stats in self._get_signup_stats_per_group(participations).values():
+            signup_stats += stats
+
+        return signup_stats
+
+    def _get_signup_stats_per_group(self, participations):
+        raise NotImplementedError
 
 
 class AbstractGroupBasedStructureConfigurationForm(

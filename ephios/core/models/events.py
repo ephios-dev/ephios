@@ -19,6 +19,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import formats
+from django.utils.functional import classproperty
 from django.utils.text import slugify
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
@@ -107,12 +108,7 @@ class Event(Model):
 
         return functools.reduce(
             operator.add,
-            [
-                structure.get_signup_stats()
-                for shift in self.shifts.all()
-                if (structure := shift.structure)
-            ]
-            or [default_for_no_shifts],
+            [shift.get_signup_stats() for shift in self.shifts.all()] or [default_for_no_shifts],
         )
 
     def __str__(self):
@@ -186,6 +182,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         USER_DECLINED = 2, _("declined by user")
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
         GETTING_DISPATCHED = 4, _("getting dispatched")
+
+        @classproperty
+        def REQUESTED_AND_CONFIRMED(cls):
+            return {0, 1}
 
         @classmethod
         def labels_dict(cls):
@@ -321,6 +321,9 @@ class Shift(DatetimeDisplayMixin, Model):
 
     def __str__(self):
         return f"{self.event.title} ({self.get_datetime_display()})"
+
+    def get_signup_stats(self) -> "SignupStats":
+        return self.structure.get_signup_stats()
 
     def get_signup_info(self):
         """
