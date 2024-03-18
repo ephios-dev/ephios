@@ -1,13 +1,22 @@
 from django.db.models import Q
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.fields import SerializerMethodField
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.relations import SlugRelatedField
+from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.serializers import ModelSerializer
+from rest_framework.viewsets import GenericViewSet
+from rest_framework_guardian.filters import ObjectPermissionsFilter
 
-from ephios.core.models import Qualification, UserProfile
+from ephios.api.views.events import ParticipationSerializer
+from ephios.core.models import LocalParticipation, Qualification, UserProfile
 from ephios.core.services.qualification import collect_all_included_qualifications
 
 
@@ -35,6 +44,7 @@ class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = UserProfile
         fields = [
+            "id",
             "display_name",
             "date_of_birth",
             "email",
@@ -56,8 +66,45 @@ class UserProfileMeView(RetrieveAPIView):
     queryset = UserProfile.objects.all()
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     required_scopes = ["ME_READ"]
+    schema = AutoSchema(operation_id_base="OwnUserProfile")
 
     def get_object(self):
         if self.request.user is None:
             raise PermissionDenied()
         return self.request.user
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+    permission_classes = [IsAuthenticatedOrTokenHasScope, DjangoObjectPermissions]
+    required_scopes = ["CONFIDENTIAL_READ"]
+    search_fields = ["display_name", "email"]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        ObjectPermissionsFilter,
+    ]
+
+
+class UserByMailView(RetrieveModelMixin, GenericViewSet):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+    permission_classes = [IsAuthenticatedOrTokenHasScope, DjangoObjectPermissions]
+    required_scopes = ["CONFIDENTIAL_READ"]
+    filter_backends = [ObjectPermissionsFilter]
+    lookup_url_kwarg = "email"
+    lookup_field = "email"
+    schema = AutoSchema(operation_id_base="UserProfileByMail")
+
+
+class UserParticipationView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ParticipationSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
+    filter_backends = [ObjectPermissionsFilter, DjangoFilterBackend]
+    filterset_fields = ["state"]
+    required_scopes = ["CONFIDENTIAL_READ"]
+
+    def get_queryset(self):
+        return LocalParticipation.objects.filter(user=self.kwargs.get("user"))

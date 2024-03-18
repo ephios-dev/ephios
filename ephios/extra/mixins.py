@@ -10,11 +10,12 @@ from ephios.core.forms.events import BasePluginFormMixin
 
 class CustomPermissionRequiredMixin(PermissionRequiredMixin):
     """
-    As of 2020-09-26, guardians permission mixin
-    doesn't support the mode of operation we want, but Django's does:
+    We modify Django's Mixin to support object permissions:
     * Logged in users without permission get 403
     * not logged in users get redirected to login
-    Therefore we patch Django's mixin to support object permissions
+
+    Set accept_object_perms to False to disable
+    object permissions (e.g. on create views).
     """
 
     accept_global_perms = True

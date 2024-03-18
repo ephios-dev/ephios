@@ -5,7 +5,8 @@ from rest_framework import filters, serializers, viewsets
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
-from ephios.core.models import Event, EventType, Shift
+from ephios.api.fields import ChoiceDisplayField
+from ephios.core.models import AbstractParticipation, Event, EventType, LocalParticipation, Shift
 from ephios.core.templatetags.settings_extras import make_absolute
 
 
@@ -69,6 +70,14 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
 
+class ShiftViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ShiftSerializer
+    permission_classes = [DjangoObjectPermissions, IsAuthenticatedOrTokenHasScope]
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
+    required_scopes = ["PUBLIC_READ"]
+    queryset = Shift.objects.all()
+
+
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
     filterset_fields = ["type"]
@@ -96,3 +105,30 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         .prefetch_related(Prefetch("shifts__participations"))
         .order_by("start_time")
     )
+
+
+class ParticipationSerializer(serializers.ModelSerializer):
+    event_title = serializers.CharField(source="shift.event.title")
+    state = ChoiceDisplayField(choices=AbstractParticipation.States.choices)
+    duration = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LocalParticipation
+        fields = [
+            "id",
+            "shift",
+            "event_title",
+            "state",
+            "comment",
+            "start_time",
+            "end_time",
+            "duration",
+        ]
+
+    def build_unknown_field(self, field_name, model_class):
+        if field_name in {"start_time", "end_time"}:
+            return self.build_property_field(field_name, model_class)
+        return super().build_unknown_field(field_name, model_class)
+
+    def get_duration(self, obj):
+        return (obj.end_time - obj.start_time).total_seconds()

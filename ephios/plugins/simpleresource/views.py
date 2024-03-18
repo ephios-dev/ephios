@@ -20,6 +20,7 @@ class ResourceListView(CustomPermissionRequiredMixin, ListView):
 
 class ResourceCreateView(CustomPermissionRequiredMixin, CreateView):
     permission_required = "simpleresource.add_resource"
+    accept_object_perms = False
     model = Resource
     fields = ["title", "category"]
     success_url = reverse_lazy("simpleresource:resource_list")
