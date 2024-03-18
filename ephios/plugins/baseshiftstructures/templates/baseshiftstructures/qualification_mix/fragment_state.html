@@ -4,13 +4,13 @@
 
 </div>
 <div id="qualimix-popover-content-{{ shift.id }}" class="d-none">
-    <i class="far fa-circle "></i>
+    <i class="far fa-circle text-body-secondary"></i>
     {% translate "participants needed" %}
     <br>
-    <i class="far fa-check-circle"></i>
+    <i class="far fa-check-circle text-body-secondary"></i>
     {% translate "enough participants" %}
     <br/>
-    <i class="fa fa-check-circle text-success"></i>
+    <i class="fa fa-check-circle text-body-secondary"></i>
     {% translate "full" %}
 </div>
 
@@ -43,7 +43,7 @@
                 {{ requirement.min_max_count }}
                 {{ requirement.qualification_label }}
                 {% if not requirement.has_free %}
-                    <i class="fa fa-check-circle text-success"></i>
+                    <i class="fa fa-check-circle"></i>
                 {% elif not requirement.missing %}
                     <i class="far fa-check-circle"></i>
                 {% else %}

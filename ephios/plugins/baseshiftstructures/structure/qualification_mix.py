@@ -2,6 +2,7 @@ import itertools
 from functools import partial
 
 from django import forms
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Qualification
@@ -54,7 +55,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         if not strict_mode:
             # check if the participant fulfills any of the requirements
             participant_skill = participant.collect_all_qualifications()
-            for requirement_id, requirement, qualifications in self._requirements():
+            for requirement_id, requirement, qualifications in self._requirements:
                 if all(required_q in participant_skill for required_q in qualifications):
                     return
         else:
@@ -85,6 +86,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             )
         ]
 
+    @cached_property
     def _requirements(self):
         requirements = []
         for requirement_idx, requirement in enumerate(
@@ -101,7 +103,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
     def _get_positions_for_matching(self, number_of_participations: int):
         position_ids = itertools.count()
         positions = set()
-        for requirement_id, requirement, qualifications in self._requirements():
+        for requirement_id, requirement, qualifications in self._requirements:
             count = requirement["max_count"]
             if count is None:
                 count = max(requirement["min_count"], number_of_participations)
@@ -140,7 +142,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
 
         stats_per_group = self._get_signup_stats_per_group(positive_participations)
         requirements = []
-        for requirement_id, requirement, qualifications in self._requirements():
+        for requirement_id, requirement, qualifications in self._requirements:
             participations_for_requirement = [
                 participation
                 for participation, position in matching.participation_pairings
@@ -191,7 +193,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         requirement_stats = {}
         # confirmed influences missing, and missing needs to be calculated per
         # each requirement, so we need to iterate over all requirements
-        for requirement_id, requirement, qualifications in self._requirements():
+        for requirement_id, requirement, qualifications in self._requirements:
             confirmed_count = len(
                 [
                     participation
