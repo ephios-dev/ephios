@@ -43,7 +43,5 @@ class ShiftCalendar(HTMLCalendar):
             return self.day_cell(cssclass, content)
         return self.day_cell("noday", "&nbsp;")
 
-        """http://localhost:8000/events/?state=&query=&direction=from&date=2024-03-08&mode=day"""
-
     def day_cell(self, cssclass, body):
         return f'<td class="calendar-row-height p-0 pe-1 p-lg-1 {cssclass}">{body}</td>'
