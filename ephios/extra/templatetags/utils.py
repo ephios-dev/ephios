@@ -39,7 +39,7 @@ def dict_get(dictionary, key):
 
 
 @register.filter
-def get_items(dictionary, key):
+def get_items_for_key(dictionary, key):
     return dictionary.get(key).items()
 
 
