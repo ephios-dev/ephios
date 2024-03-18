@@ -224,7 +224,7 @@
             {% endfor %}
 
             {% for event in event_list %}
-                {% for column_idx, column_contents in columns_by_event|get_items:event.pk %}
+                {% for column_idx, column_contents in columns_by_event|get_items_for_key:event.pk %}
                     <div class="day-calendar-column-{{ event.pk }}-{{ column_idx }} day-calendar-content">
                         {% for shift in column_contents %}
                             {% setvar request|participation_from_request:shift as participation %}
