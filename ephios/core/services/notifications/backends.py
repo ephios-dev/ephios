@@ -137,7 +137,7 @@ class EmailNotificationBackend(AbstractNotificationBackend):
 
     @classmethod
     def sending_possible(cls, notification):
-        return notification.user is not None or "email" in notification.data
+        return notification.user is not None or notification.data.get("email")
 
     @classmethod
     def _get_mailaddress(cls, notification):

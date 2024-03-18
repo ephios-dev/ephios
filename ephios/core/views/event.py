@@ -321,7 +321,7 @@ class EventListView(LoginRequiredMixin, ListView):
             # Include shifts which start on the next day before 3am
             .filter(
                 Q(shifts__start_time__date=this_date)
-                | (Q(shifts__start_time__date=next_date) & Q(shifts__start_time__hour__lte=3))
+                | (Q(shifts__start_time__date=next_date) &m Q(shifts__start_time__hour__lte=3))
             )
             .prefetch_related("shifts")
             .distinct()

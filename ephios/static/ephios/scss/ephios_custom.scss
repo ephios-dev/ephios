@@ -273,8 +273,12 @@ a.badge {
   padding-bottom: 1rem;
 }
 
-.day-calendar-container {
-  display: grid;
+#notification-list li {
+  border-left-width: 0.5rem;
+
+  &.unread {
+    border-left-color: $primary;
+  }
 }
 
 $shift-box-target: lighten($primary, 20%);
@@ -284,6 +288,9 @@ $shift-box-target: lighten($primary, 20%);
 }
 
 // day calendar view
+.day-calendar-container {
+  display: grid;
+}
 
 .day-calendar-container {
   grid-template-rows: [head] auto [content] 1fr;
@@ -339,3 +346,5 @@ $shift-box-target: lighten($primary, 20%);
   height: 36px;
   padding: 5px;
 }
+
+
