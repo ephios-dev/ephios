@@ -263,6 +263,8 @@ class EventListView(LoginRequiredMixin, ListView):
         elif mode == "day":
             ctx.update(self._set_day_context(ctx))
 
+        return ctx
+
     def _get_shifts_for_calendar(self):
         return (
             Shift.objects.filter(
