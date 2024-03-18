@@ -28,20 +28,20 @@
                 </button>
                 <div class="btn-group">
                     <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       {% if filter_form.was_submitted %}
-                           href="?{% param_replace mode="list" %}"
-                       {% else %}
+                            {% if filter_form.was_submitted %}
+                       href="?{% param_replace mode="list" %}"
+                            {% else %}
                                 {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                           href="?{% param_replace mode="list" date=None %}"
-                       {% endif %}
+                       href="?{% param_replace mode="list" date=None %}"
+                            {% endif %}
                     ><span class="fa fa-list"></span></a>
 
                     <div class="btn-group" role="group">
                         <button
-                            type="button"
-                            class="btn btn-sm dropdown-toggle {% if mode == "calendar" or mode == "day" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                                type="button"
+                                class="btn btn-sm dropdown-toggle {% if mode == "calendar" or mode == "day" %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
                             <i class="fa fa-calendar"></i>
                         </button>
                         <ul class="dropdown-menu">
@@ -157,54 +157,15 @@
         <style nonce="{{ request.csp_nonce }}">
             .day-calendar-container {
                 grid-template-columns: {{ css_grid_columns }};
-                grid-template-rows: [head] auto [content] 1fr;
-                height: 100%;
-                overflow-y: scroll;
-                position: relative;
-            }
-
-            .day-calendar-head {
-                grid-row: head;
-                position: sticky;
-                top: 0em;
-                z-index: 3;
-                background: var(--bs-body-bg);
             }
 
             .day-calendar-content {
-                grid-row: content;
-                position: relative;
                 height: {{ total_height }}em;
-                background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
                 background-size: {{ half_hour_height }}em {{ half_hour_height }}em;
-                background-color: var(--bs-body-bg);
             }
 
             .day-calendar-content:nth-child(odd) {
-                background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
                 background-size: {{ half_hour_height }}em {{ half_hour_height }}em;
-                background-color: rgba(0, 0, 0, 0.07);
-            }
-
-            .day-calendar-content > .card {
-                margin: 0.2em;
-                position: absolute;
-                border-bottom: none;
-                border-right: none;
-                border-top: none;
-            }
-            .day-calendar-content > .card > .card-body{
-                overflow: auto;
-                padding-bottom: 0;
-                padding-top: .5em;
-            }
-
-            .day-calendar-content > .card:hover {
-                z-index: 2;
-            }
-
-            .day-calendar-container .shift-time {
-                font-size: 1.25rem !important;
             }
 
             {% for column in shift_columns %}
@@ -230,7 +191,7 @@
                             {% setvar request|participation_from_request:shift as participation %}
                             {% setvar shift.signup_method.get_signup_stats as stats %}
                             <div
-                                class="card day-calendar-shift-{{ shift.pk }} border-4
+                                    class="card day-calendar-shift-{{ shift.pk }} border-4
                                        {% if stats.missing %}
                                            border-danger-subtle
                                        {% elif stats.free %}
@@ -264,7 +225,8 @@
                                                             class="btn btn-sm btn-success">{{ shift.signup_method.registration_button_text }}</button>
                                                 {% endif %}
                                                 <span class="d-inline-block" tabindex="1">
-                                                    <a class="btn btn-sm btn-secondary" href="{{ shift.get_absolute_url }}">
+                                                    <a class="btn btn-sm btn-secondary"
+                                                       href="{{ shift.get_absolute_url }}">
                                                         <i class="fas fa-eye"></i>
                                                         {% translate "more" %}
                                                     </a>
@@ -302,7 +264,7 @@
                     <div class="bulk-actions">
                         <button class="btn btn-secondary btn-sm m-1 ms-0" type="submit" name="delete"
                                 formaction="{% url "core:event_bulk_delete" %}"><span
-                            class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                                class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
                         {% event_bulk_actions %}
                     </div>
                 </div>
@@ -321,9 +283,9 @@
                         <li class="list-group-item p-0 d-flex flex-row">
                             <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                                 <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                                     {% if counter %}
-                                         data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                         title="{% for state in counter %}<div>
+                                        {% if counter %}
+                                     data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                     title="{% for state in counter %}<div>
 
 
 
@@ -331,8 +293,9 @@
 
 
 
-                                                    {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
-                                     {% endif %}>
+                                                    
+                                         {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                        {% endif %}>
                                     {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                         <span class="text-success fa fa-user-check ps-2"></span>
                                     {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
@@ -364,7 +327,7 @@
                                         </span>
                                     </div>
                                     <div class="grid-batch"><span
-                                        class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                                            class="badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                                     </div>
                                     <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
                                         <div class="position-relative">
