@@ -58,6 +58,7 @@ class QualificationCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Qualification
     form_class = QualificationForm
     permission_required = "core.add_qualification"
+    accept_object_perms = False
 
     def get_form_kwargs(self):
         return {

@@ -29,6 +29,7 @@ class PageView(DetailView):
 class PageCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Page
     permission_required = "pages.add_page"
+    accept_object_perms = False
     fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
