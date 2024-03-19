@@ -1,7 +1,7 @@
 import json
 from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, date
 
 from django import forms
 from django.conf import settings
@@ -104,7 +104,7 @@ class EventFilterForm(forms.Form):
             kwargs["data"] = MultiValueDict(
                 old_data,
             )
-            kwargs["data"]["date"] = old_data.get("date") or timezone.now().date()
+            kwargs["data"]["date"] = old_data.get("date") or None
             kwargs["data"]["direction"] = old_data.get("direction") or "from"
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = timezone.now().date()
@@ -112,7 +112,7 @@ class EventFilterForm(forms.Form):
     def filter_events(self, qs: QuerySet[Event]):
         fdata = self.cleaned_data
 
-        date = fdata["date"]
+        date = self.get_date()
         if fdata.get("direction", "from") == "from":
             qs = qs.filter(end_time__gte=make_aware(datetime.combine(date, time.min)))
             qs = qs.order_by("start_time", "end_time")
@@ -186,11 +186,11 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def get_date(self):
+    def get_date(self, default=timezone.now().date()):
         "Return, even if the form is invalid, a date object for the calendar to show"
         if self.is_valid() and (date := self.cleaned_data.get("date")):
             return date
-        return timezone.now()
+        return default
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -311,7 +311,11 @@ class EventListView(LoginRequiredMixin, ListView):
         }
 
     def _set_day_context(self, ctx):
-        this_date = self.filter_form.get_date()
+        default_date = timezone.now()
+        if self.request.session.has_key('day_calendar_last_date'):
+            default_date = datetime.strptime(self.request.session.get('day_calendar_last_date'), '%Y-%m-%d').date()
+        this_date = self.filter_form.get_date(default=default_date)
+        self.request.session['day_calendar_last_date'] = this_date.strftime("%Y-%m-%d")
         ctx["previous_date"] = this_date - timedelta(days=1)
         next_date = this_date + timedelta(days=1)
         ctx["next_date"] = next_date
