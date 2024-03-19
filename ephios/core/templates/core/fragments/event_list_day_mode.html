@@ -22,19 +22,25 @@
         }
     {% endfor %}
 
+    {{ css_grid_headers }}
     {{ css_shift_tops }}
 </style>
 
 <div class="day-calendar-container">
     {% for event in event_list %}
-        <div class="day-calendar-column-{{ event.pk }}-0 day-calendar-head">
-            <h5><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h5>
+        <div class="day-calendar-header-{{ event.pk }} day-calendar-head">
+            <div class="card bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><a class="link-light"
+                                              href="{{ event.get_absolute_url }}">{{ event.title }}</a></h5>
+                </div>
+            </div>
         </div>
     {% endfor %}
 
     {% for event in event_list %}
         {% for column_idx, column_contents in columns_by_event|get_items_for_key:event.pk %}
-            <div class="day-calendar-column-{{ event.pk }}-{{ column_idx }} day-calendar-content">
+            <div class="day-calendar-column-col-{{ event.pk }}-{{ column_idx }} day-calendar-content">
                 {% for shift in column_contents %}
                     {% setvar request|participation_from_request:shift as participation %}
                     {% setvar shift.signup_method.get_signup_stats as stats %}
