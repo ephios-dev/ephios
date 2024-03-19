@@ -395,12 +395,17 @@ class EventListView(LoginRequiredMixin, ListView):
         hour_height = 3600 / time_scaling_factor
 
         css_grid_columns = " "
+        css_grid_headers = " "
         shift_columns = {}
         for event in events:
+            max_col = 0
             for column_idx, content in enumerate(shifts_by_event_layouted[event.pk]):
-                column_name = f"{event.pk}-{column_idx}"
+                column_name = f"col-{event.pk}-{column_idx}"
                 css_grid_columns += f"[{column_name}] 14em "
                 shift_columns[column_name] = content
+                max_col = max(max_col, column_idx)
+            css_grid_headers += f".day-calendar-header-{event.pk} {{ grid-column-start: col-{event.pk}-0; grid-column-end: span {max_col + 1} }}"
+
 
         ctx.update(
             {
@@ -409,6 +414,7 @@ class EventListView(LoginRequiredMixin, ListView):
                 "hours": range(25),
                 "shifts_by_hour": shifts_by_hour,
                 "css_grid_columns": css_grid_columns,
+                "css_grid_headers": css_grid_headers,
                 "css_shift_tops": css_shift_tops,
                 "shift_columns": shift_columns,
                 "columns_by_event": shifts_by_event_layouted,
