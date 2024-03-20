@@ -136,9 +136,6 @@
         {{ calendar }}
     {% elif not event_list %}
         <div class="mb-3">
-            {% if mode == "day" %}
-                <h3>{{ date|date:"l, j. F Y" }}</h3>
-            {% endif %}
             <h5 class="mt-5 text-center">
                 {% translate "No results." %}
             </h5>
