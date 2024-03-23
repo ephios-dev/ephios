@@ -302,25 +302,8 @@ $shift-box-target: lighten($primary, 20%);
 
 .day-calendar-head {
   grid-row: head;
-  position: sticky;
-  top: 0em;
-  z-index: 3;
-  background: var(--bs-body-bg);
   padding-bottom: 0.3em;
   background-color: rgba(0, 0, 0, 0.07);
-}
-
-.day-calendar-head .card {
-  margin-left: 0.1em;
-  margin-right: 0.1em;
-}
-
-.day-calendar-head .card-body {
-  padding: 0.5em 0.2em 0.2em 0.2em;
-}
-
-.day-calendar-head h5 {
-  text-align: center;
 }
 
 .day-calendar-content {

@@ -1,3 +1,4 @@
+{% load rich_text %}
 {% load i18n %}
 {% load utils %}
 {% load event_extras %}
@@ -28,13 +29,17 @@
 
 <div class="day-calendar-container">
     {% for event in event_list %}
-        <div class="day-calendar-header-{{ event.pk }} day-calendar-head">
-            <div class="card bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title"><a class="link-light"
-                                              href="{{ event.get_absolute_url }}">{{ event.title }}</a></h5>
+        <div class="day-calendar-header-{{ event.pk }} day-calendar-head d-flex">
+            <a class="card mb-0 flex-grow-1 link-underline link-underline-opacity-0 link-underline-opacity-100-hover" href="{{ event.get_absolute_url }}">
+                <div class="card-body pb-0">
+                    <h2 class="card-title fw-bold clearfix fs-6">
+                        <span class="overflow-hidden">
+                            {{ event.title }}
+                        </span>
+                        <span class="me-1 float-end badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                    </h2>
                 </div>
-            </div>
+            </a>
         </div>
     {% endfor %}
 
@@ -45,13 +50,13 @@
                     {% setvar request|participation_from_request:shift as participation %}
                     {% setvar shift.signup_method.get_signup_stats as stats %}
                     <div
-                            class="card day-calendar-shift-{{ shift.pk }} border-4
-                                       {% if stats.missing %}
-                                           border-danger-subtle
-                                       {% elif stats.free %}
-                                           border-warning-subtle
-                                       {% else %} border-success-subtle
-                                       {% endif %}">
+                        class="card day-calendar-shift-{{ shift.pk }} border-4
+                               {% if stats.missing %}
+                                   border-danger-subtle
+                               {% elif stats.free %}
+                                   border-warning-subtle
+                               {% else %} border-success-subtle
+                               {% endif %}">
                         {% include "core/fragments/shift_header.html" with shift=shift participation=participation hide_date=True %}
                         <div class="card-body">
                             {% include shift.signup_method with own_participation=participation %}
@@ -79,12 +84,12 @@
                                                     class="btn btn-sm btn-success">{{ shift.signup_method.registration_button_text }}</button>
                                         {% endif %}
                                         <span class="d-inline-block" tabindex="1">
-                                                    <a class="btn btn-sm btn-secondary"
-                                                       href="{{ shift.get_absolute_url }}">
-                                                        <i class="fas fa-eye"></i>
-                                                        {% translate "more" %}
-                                                    </a>
-                                                </span>
+                                            <a class="btn btn-sm btn-secondary"
+                                               href="{{ shift.get_absolute_url }}">
+                                                <i class="fas fa-eye"></i>
+                                                {% translate "more" %}
+                                            </a>
+                                        </span>
                                     </form>
                                 {% endwith %}
                             {% endif %}
