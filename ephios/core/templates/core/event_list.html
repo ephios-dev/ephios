@@ -27,20 +27,20 @@
                 </button>
                 <div class="btn-group">
                     <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                            {% if filter_form.was_submitted %}
-                       href="?{% param_replace mode="list" %}"
-                            {% else %}
+                       {% if filter_form.was_submitted %}
+                           href="?{% param_replace mode="list" %}"
+                       {% else %}
                                 {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                       href="?{% param_replace mode="list" date=None %}"
-                            {% endif %}
+                           href="?{% param_replace mode="list" date=None %}"
+                       {% endif %}
                     ><span class="fa fa-list"></span></a>
 
                     <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                            href="?{% param_replace mode="calendar" %}"
+                       href="?{% param_replace mode="calendar" %}"
                     ><span class="fa fa-calendar-alt"></span></a>
 
                     <a class="btn btn-sm {% if mode == "day" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                            href="?{% param_replace mode="day" %}"
+                       href="?{% param_replace mode="day" %}"
                     ><span class="fa fa-calendar-day"></span></a>
                 </div>
             </small>
@@ -109,7 +109,7 @@
                     {% endif %}
                 </a>
 
-                <h3>
+                <h3 class="mx-3">
                     {% if mode == "calendar" %}
                         {{ date|date:"F Y" }}
                     {% elif mode == "day" %}

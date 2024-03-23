@@ -1,7 +1,7 @@
 import json
 from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
-from datetime import datetime, time, timedelta, date
+from datetime import datetime, time, timedelta
 
 from django import forms
 from django.conf import settings
@@ -186,11 +186,11 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def get_date(self, default=timezone.now().date()):
+    def get_date(self, default=None):
         "Return, even if the form is invalid, a date object for the calendar to show"
         if self.is_valid() and (date := self.cleaned_data.get("date")):
             return date
-        return default
+        return default or timezone.now().date()
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -261,7 +261,7 @@ class EventListView(LoginRequiredMixin, ListView):
         if mode == "calendar":
             ctx.update(self._get_calendar_context())
         elif mode == "day":
-            ctx.update(self._set_day_context(ctx))
+            ctx.update(self._get_day_context())
 
         return ctx
 
@@ -310,25 +310,39 @@ class EventListView(LoginRequiredMixin, ListView):
             "next_date": datetime.min.replace(year=nextyear, month=nextmonth),
         }
 
-    def _set_day_context(self, ctx):
+    def _get_day_context(self):
+        ctx = {}
         default_date = timezone.now()
-        if self.request.session.has_key('day_calendar_last_date'):
-            default_date = datetime.strptime(self.request.session.get('day_calendar_last_date'), '%Y-%m-%d').date()
+        if self.request.session.has_key("day_calendar_last_date"):
+            default_date = datetime.strptime(
+                self.request.session.get("day_calendar_last_date"), "%Y-%m-%d"
+            ).date()
         this_date = self.filter_form.get_date(default=default_date)
-        self.request.session['day_calendar_last_date'] = this_date.strftime("%Y-%m-%d")
+        self.request.session["day_calendar_last_date"] = this_date.strftime("%Y-%m-%d")
         ctx["previous_date"] = this_date - timedelta(days=1)
-        next_date = this_date + timedelta(days=1)
-        ctx["next_date"] = next_date
+        ctx["next_date"] = this_date + timedelta(days=1)
+
+        from_time = datetime.min.replace(
+            year=this_date.year,
+            month=this_date.month,
+            day=this_date.day,
+            tzinfo=get_current_timezone(),
+        )
+        to_time = from_time + timedelta(days=1)
+        shifts = self._get_shifts_for_calendar().filter(
+            start_time__gte=from_time, start_time__lt=to_time
+        )
+
+        if self.filter_form.is_valid():
+            shifts = self.filter_form.filter_shifts(shifts)
 
         events = (
-            get_objects_for_user(self.request.user, "core.view_event", klass=Event)
-            # Include shifts which start on the next day before 3am
-            .filter(
-                Q(shifts__start_time__date=this_date)
-                | (Q(shifts__start_time__date=next_date) & Q(shifts__start_time__hour__lte=3))
+            Event.objects.filter(
+                id__in=shifts.values_list("event_id", flat=True),
             )
-            .prefetch_related("shifts")
             .distinct()
+            .select_related("type")
+            .prefetch_related(Prefetch("shifts", queryset=Shift.objects.order_by("start_time")))
         )
 
         if not events.exists():
@@ -341,19 +355,21 @@ class EventListView(LoginRequiredMixin, ListView):
         shift_ends = {}
         shifts_by_event_layouted = {}
         shortest_shift_duration = timedelta.max
-        for event in set(events):
+        for event in events:
             # If two shifts of the same event start within an hour of each other, layout them next to each other
             columns = {}
-            for shift in event.shifts.all().order_by("start_time"):
+            for shift in event.shifts.all():
+                if shift not in shifts:
+                    continue
                 duration = shift.end_time - shift.start_time
                 if duration < shortest_shift_duration:
                     shortest_shift_duration = duration
 
                 current_column = 0
-                # search for first column that fits
+                # search for first column that fits the shift
                 while (
-                        current_column in columns
-                        and shift.start_time < columns.get(current_column)[-1].end_time
+                    current_column in columns
+                    and shift.start_time < columns.get(current_column)[-1].end_time
                 ):
                     current_column += 1
 
@@ -362,8 +378,7 @@ class EventListView(LoginRequiredMixin, ListView):
                 else:
                     columns[current_column] = [shift]
 
-                if shift.start_time.date() == self.filter_form.get_date():
-                    shifts_by_hour[shift.start_time.hour][event.pk] = shift
+                shifts_by_hour[shift.start_time.hour][event.pk] = shift
                 shift_starts[shift.pk] = shift.start_time
                 shift_ends[shift.pk] = shift.end_time
 
@@ -375,16 +390,14 @@ class EventListView(LoginRequiredMixin, ListView):
 
         # calculate timescale based on shortest shift
         # to not make things too small, consider a maximum of 4 hours
-        shortest_shift_duration_in_hours = min(
-            4, shortest_shift_duration.total_seconds() / 3600
-        )
+        shortest_shift_duration_in_hours = min(4, shortest_shift_duration.total_seconds() / 3600)
         # seconds per em: the shortest shift should be 3600/300 = 12em high
         time_scaling_factor = int(300 * shortest_shift_duration_in_hours)
 
         for pk, start in shift_starts.items():
             start_offset = (
-                                   start.timestamp() - earliest_shift_start.timestamp()
-                           ) / time_scaling_factor
+                start.timestamp() - earliest_shift_start.timestamp()
+            ) / time_scaling_factor
             height = (shift_ends[pk].timestamp() - start.timestamp()) / time_scaling_factor
             # remove margin from height twice, once for top and once for bottom
             height -= 2 * 0.2
@@ -393,9 +406,8 @@ class EventListView(LoginRequiredMixin, ListView):
                 f".day-calendar-shift-{pk} {{ top: {start_offset}em; height: {height}em}}\n"
             )
         total_height = (
-                               (latest_shift_end.timestamp() - earliest_shift_start.timestamp())
-                               / time_scaling_factor
-                       ) + 2
+            (latest_shift_end.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor
+        ) + 2
         hour_height = 3600 / time_scaling_factor
 
         css_grid_columns = " "
@@ -409,7 +421,6 @@ class EventListView(LoginRequiredMixin, ListView):
                 shift_columns[column_name] = content
                 max_col = max(max_col, column_idx)
             css_grid_headers += f".day-calendar-header-{event.pk} {{ grid-column-start: col-{event.pk}-0; grid-column-end: span {max_col + 1} }}"
-
 
         ctx.update(
             {
