@@ -281,10 +281,6 @@ a.badge {
   }
 }
 
-.day-calendar-container {
-  display: grid;
-}
-
 $shift-box-target: lighten($primary, 20%);
 .shift_box:target {
   border-color: $shift-box-target;
@@ -294,6 +290,7 @@ $shift-box-target: lighten($primary, 20%);
 // day calendar view
 
 .day-calendar-container {
+  display: grid;
   grid-template-rows: [head] auto [content] 1fr;
   height: 100%;
   overflow-y: scroll;
@@ -303,8 +300,6 @@ $shift-box-target: lighten($primary, 20%);
 
 .day-calendar-head {
   grid-row: head;
-  padding-bottom: 0.3em;
-  background-color: rgba(0, 0, 0, 0.07);
 }
 
 .day-calendar-content {
@@ -331,10 +326,6 @@ $shift-box-target: lighten($primary, 20%);
   overflow: auto;
   padding-bottom: 0;
   padding-top: .5em;
-}
-
-.day-calendar-content > .card:hover {
-  z-index: 2;
 }
 
 .day-calendar-container .shift-time {

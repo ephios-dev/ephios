@@ -30,9 +30,9 @@
 <div class="day-calendar-container">
     {% for event in event_list %}
         <div class="day-calendar-header-{{ event.pk }} day-calendar-head d-flex">
-            <a class="card mb-0 flex-grow-1 link-underline link-underline-opacity-0 link-underline-opacity-100-hover" href="{{ event.get_absolute_url }}">
+            <a class="card border-primary m-1 flex-grow-1 link-underline link-underline-opacity-0 link-underline-opacity-100-hover" href="{{ event.get_absolute_url }}">
                 <div class="card-body pb-0">
-                    <h2 class="card-title fw-bold clearfix fs-6">
+                    <h2 class="card-title text-primary clearfix fs-6">
                         <span class="overflow-hidden">
                             {{ event.title }}
                         </span>

@@ -37,8 +37,13 @@ class ShiftCalendar(HTMLCalendar):
                 cssclass += " filled"
             content = render_to_string(
                 "core/fragments/calendar_day.html",
-                {"day": day, "shifts": self.shifts.get(day, None), "today": today, "date": this_date.isoformat(),
-                 "request": self.request},
+                {
+                    "day": day,
+                    "shifts": self.shifts.get(day, None),
+                    "today": today,
+                    "date": this_date.isoformat(),
+                    "request": self.request,
+                },
             )
             return self.day_cell(cssclass, content)
         return self.day_cell("noday", "&nbsp;")

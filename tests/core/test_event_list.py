@@ -150,7 +150,6 @@ def test_day_mode_filter(django_app, volunteer, event, conflicting_event):
         f'{reverse("core:event_list")}?mode=day&date={event.get_start_time():%Y-%m-%d}',
         user=volunteer,
     )
-    response.showbrowser()
     filter_form = response.forms["filter-form"]
     filter_form["query"] = event.title
     response = filter_form.submit()
