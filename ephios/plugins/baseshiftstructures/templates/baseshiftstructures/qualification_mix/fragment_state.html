@@ -25,6 +25,8 @@
                 <span class="badge bg-light badge-placeholder">
                     {% for q in  unpaired.required_qualifications %}
                         {{ q.abbreviation }}
+                    {% empty %}
+                        <i class="fa fa-question-circle"></i>
                     {% endfor %}
                 </span>
             {% endif %}
