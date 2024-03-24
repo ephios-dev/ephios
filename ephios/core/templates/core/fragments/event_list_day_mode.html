@@ -54,7 +54,7 @@
             <div class="day-calendar-column-col-{{ event.pk }}-{{ column_idx }} day-calendar-content">
                 {% for shift in column_contents %}
                     {% setvar request|participation_from_request:shift as participation %}
-                    {% setvar shift.signup_method.get_signup_stats as stats %}
+                    {% setvar shift.get_signup_stats as stats %}
                     <div
                         class="card day-calendar-shift-{{ shift.pk }} border-4
                                {% if stats.missing %}
@@ -65,9 +65,8 @@
                                {% endif %}">
                         {% include "core/fragments/shift_header.html" with shift=shift participation=participation hide_date=True %}
                         <div class="card-body">
-                            {% include shift.signup_method with own_participation=participation %}
+                            {% include shift.structure with own_participation=participation %}
                         </div>
-                        {# TODO stolen from event_box_big, dry up before merging #}
                         <div class="card-footer">
                             {% if event.active %}
                                 {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
@@ -87,7 +86,7 @@
                                         {% csrf_token %}
                                         {% if can_sign_up %}
                                             <button type="submit" name="signup_choice" value="sign_up"
-                                                    class="btn btn-sm btn-success">{{ shift.signup_method.registration_button_text }}</button>
+                                                    class="btn btn-sm btn-success">{{ shift.signup_flow.registration_button_text }}</button>
                                         {% endif %}
                                         <span class="d-inline-block" tabindex="1">
                                             <a class="btn btn-sm btn-secondary"
