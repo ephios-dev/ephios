@@ -1,5 +1,6 @@
 import json
 from calendar import _nextmonth, _prevmonth
+from collections import defaultdict
 from datetime import datetime, time, timedelta
 
 from django import forms
@@ -103,7 +104,7 @@ class EventFilterForm(forms.Form):
             kwargs["data"] = MultiValueDict(
                 old_data,
             )
-            kwargs["data"]["date"] = old_data.get("date") or timezone.now().date()
+            kwargs["data"]["date"] = old_data.get("date") or None
             kwargs["data"]["direction"] = old_data.get("direction") or "from"
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = timezone.now().date()
@@ -111,7 +112,7 @@ class EventFilterForm(forms.Form):
     def filter_events(self, qs: QuerySet[Event]):
         fdata = self.cleaned_data
 
-        date = fdata["date"]
+        date = self.get_date()
         if fdata.get("direction", "from") == "from":
             qs = qs.filter(end_time__gte=make_aware(datetime.combine(date, time.min)))
             qs = qs.order_by("start_time", "end_time")
@@ -185,12 +186,11 @@ class EventFilterForm(forms.Form):
 
         return qs
 
-    def get_calendar_month(self):
-        "Return, even if the form is invalid, a tuple of year, month for the calendar to show"
+    def get_date(self, default=None):
+        "Return, even if the form is invalid, a date object for the calendar to show"
         if self.is_valid() and (date := self.cleaned_data.get("date")):
-            return date.year, date.month
-        now = timezone.now()
-        return now.year, now.month
+            return date
+        return default or timezone.now().date()
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -253,17 +253,20 @@ class EventListView(LoginRequiredMixin, ListView):
         ctx["eventtypes"] = EventType.objects.all()
         ctx["filter_form"] = self.filter_form
 
-        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar"}:
+        if (new_mode := self.request.GET.get("mode")) in {"list", "calendar", "day"}:
             self.request.session["event_list_view_mode"] = new_mode
         mode = self.request.session.get("event_list_view_mode", "list")
         ctx["mode"] = mode
 
         if mode == "calendar":
             ctx.update(self._get_calendar_context())
+        elif mode == "day":
+            ctx.update(self._get_day_context())
+
         return ctx
 
-    def _get_calendar_context(self):
-        shifts = (
+    def _get_shifts_for_calendar(self):
+        return (
             Shift.objects.filter(
                 event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
             )
@@ -280,24 +283,158 @@ class EventListView(LoginRequiredMixin, ListView):
             .select_related("event", "event__type")
             .prefetch_related("participations")
         )
-        year, month = self.filter_form.get_calendar_month()
-        prevyear, prevmonth = _prevmonth(year, month)
-        nextyear, nextmonth = _nextmonth(year, month)
 
-        from_time = datetime.min.replace(year=year, month=month, tzinfo=get_current_timezone())
+    def _get_calendar_context(self):
+        date = self.filter_form.get_date()
+        prevyear, prevmonth = _prevmonth(date.year, date.month)
+        nextyear, nextmonth = _nextmonth(date.year, date.month)
+
+        from_time = datetime.min.replace(
+            year=date.year, month=date.month, tzinfo=get_current_timezone()
+        )
         to_time = datetime.min.replace(
             year=nextyear, month=nextmonth, tzinfo=get_current_timezone()
         )
-        shifts = shifts.filter(start_time__gte=from_time, start_time__lt=to_time)
+        shifts = self._get_shifts_for_calendar().filter(
+            start_time__gte=from_time, start_time__lt=to_time
+        )
 
         if self.filter_form.is_valid():
             shifts = self.filter_form.filter_shifts(shifts)
-        calendar = ShiftCalendar(shifts)
+        calendar = ShiftCalendar(shifts=shifts, request=self.request)
 
         return {
-            "calendar": mark_safe(calendar.formatmonth(year, month)),
-            "prev_month_first": datetime.min.replace(year=prevyear, month=prevmonth),
-            "next_month_first": datetime.min.replace(year=nextyear, month=nextmonth),
+            "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
+            "date": date,
+            "previous_date": datetime.min.replace(year=prevyear, month=prevmonth),
+            "next_date": datetime.min.replace(year=nextyear, month=nextmonth),
+        }
+
+    def _get_day_context(self):
+        ctx = {}
+        default_date = timezone.now()
+        if self.request.session.has_key("day_calendar_last_date"):
+            default_date = datetime.strptime(
+                self.request.session.get("day_calendar_last_date"), "%Y-%m-%d"
+            ).date()
+        this_date = self.filter_form.get_date(default=default_date)
+        self.request.session["day_calendar_last_date"] = this_date.strftime("%Y-%m-%d")
+        ctx["previous_date"] = this_date - timedelta(days=1)
+        ctx["next_date"] = this_date + timedelta(days=1)
+
+        from_time = datetime.min.replace(
+            year=this_date.year,
+            month=this_date.month,
+            day=this_date.day,
+            tzinfo=get_current_timezone(),
+        )
+        to_time = from_time + timedelta(days=1)
+        shifts = self._get_shifts_for_calendar().filter(
+            start_time__gte=from_time, start_time__lt=to_time
+        )
+
+        if self.filter_form.is_valid():
+            shifts = self.filter_form.filter_shifts(shifts)
+
+        events = (
+            Event.objects.filter(
+                id__in=shifts.values_list("event_id", flat=True),
+            )
+            .distinct()
+            .select_related("type")
+            .prefetch_related(Prefetch("shifts", queryset=Shift.objects.order_by("start_time")))
+        )
+
+        if not events.exists():
+            ctx.update({"event_list": events, "date": this_date})
+            return ctx
+
+        css_context = self._build_day_css_context(events, shifts)
+
+        ctx.update(
+            {
+                "event_list": events,
+                "date": this_date,
+                "hours": range(25),
+                **css_context,
+            }
+        )
+
+        return ctx
+
+    def _build_day_css_context(self, events, shifts):
+        """
+        Build a css grid layout for the day view. Shifts are layouted in columns, with shifts of the same event
+        being layouted next to each other, needing as few columns as possible.
+        """
+        # pylint: disable=too-many-locals
+        shifts_by_event_layouted = {}
+        shortest_shift_duration = timedelta.max
+        for event in events:
+            # If two shifts of the same event start within an hour of each other, layout them next to each other
+            columns = defaultdict(list)
+            for shift in event.shifts.all():
+                if shift not in shifts:
+                    continue
+                duration = shift.end_time - shift.start_time
+                shortest_shift_duration = min(shortest_shift_duration, duration)
+
+                current_column = 0
+                # search for first column that fits the shift
+                while (
+                    columns[current_column]
+                    and shift.start_time < columns[current_column][-1].end_time
+                ):
+                    current_column += 1
+                columns[current_column].append(shift)
+
+            shifts_by_event_layouted[event.pk] = columns
+        css_shift_tops = ""
+        earliest_shift_start = min(shift.start_time for shift in shifts)
+        latest_shift_end = max(shift.end_time for shift in shifts)
+        # calculate timescale based on shortest shift
+        # to not make things too small, consider a maximum of 4 hours
+        shortest_shift_duration_in_hours = min(4, shortest_shift_duration.total_seconds() / 3600)
+        # seconds per em: the shortest shift should be 3600/300 = 12em high
+        time_scaling_factor = int(300 * shortest_shift_duration_in_hours)
+        for shift in shifts:
+            start_offset = (
+                shift.start_time.timestamp() - earliest_shift_start.timestamp()
+            ) / time_scaling_factor
+            height = (
+                shift.end_time.timestamp() - shift.start_time.timestamp()
+            ) / time_scaling_factor
+            # remove margin from height twice, once for top and once for bottom
+            height -= 2 * 0.2
+
+            css_shift_tops += (
+                f".day-calendar-shift-{shift.pk} {{ top: {start_offset}em; height: {height}em}}\n"
+            )
+        total_height = (
+            (latest_shift_end.timestamp() - earliest_shift_start.timestamp()) / time_scaling_factor
+        ) + 2
+        hour_height = 3600 / time_scaling_factor
+        css_grid_columns = " "
+        css_grid_headers = " "
+        shift_columns = {}
+        for event in events:
+            max_col = 0
+            for column_idx, content in enumerate(shifts_by_event_layouted[event.pk]):
+                column_name = f"col-{event.pk}-{column_idx}"
+                css_grid_columns += f"[{column_name}] 14em "
+                shift_columns[column_name] = content
+                max_col = max(max_col, column_idx)
+            css_grid_headers += f".day-calendar-header-{event.pk} {{ grid-column-start: col-{event.pk}-0; grid-column-end: span {max_col + 1} }}"
+        return {
+            "css_grid_columns": css_grid_columns,
+            "css_grid_headers": css_grid_headers,
+            "css_shift_tops": css_shift_tops,
+            "hour_height": str(hour_height),
+            "quarter_hour_height": str(hour_height / 4),
+            "half_hour_height": str(hour_height / 2),
+            "shift_columns": shift_columns,
+            "columns_by_event": shifts_by_event_layouted,
+            "total_height": str(total_height),
         }
 
 

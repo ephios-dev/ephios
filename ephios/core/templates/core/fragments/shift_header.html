@@ -1,0 +1,67 @@
+{% load event_extras %}
+{% load utils %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+<div class="card-header d-flex">
+    {% with mannequin=participation|participation_mannequin_style style=participation|participation_css_style %}
+        <div class="mannequin mannequin-{{ mannequin }}">
+            <img src="{% static 'ephios/img/mannequin_'|add:mannequin|add:'.svg' %}"
+                 alt="{{ mannequin }} mannequin icon"/>
+        </div>
+        <div class="lh-1 ms-2 flex-grow-1">
+            {% if not hide_date %}
+                <small class="fw-bold">
+                    {% if participation.start_time|date:"SHORT_DATE_FORMAT" != shift.start_time|date:"SHORT_DATE_FORMAT" and participation.is_in_positive_state %}
+                        <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="{% translate "originally" %} {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}">
+                            {{ participation.start_time|date:"l" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}
+                        </span>
+                    {% else %}
+                        {{ shift.start_time|date:"l" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}
+                    {% endif %}
+                </small>
+                <br/>
+            {% endif  %}
+            <span class="fw-bold fs-2 shift-time">
+                {% if participation.individual_start_time and participation.is_in_positive_state %}
+                    <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                          title="{% translate "originally" %} {{ shift.start_time|time }}">{{ participation.start_time|time }}</span>
+                {% else %}
+                    {{ shift.start_time|time }}
+                {% endif %}
+                -
+                {% if participation.individual_end_time and participation.is_in_positive_state %}
+                    <span class="text-{{ style }}" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                          title="{% translate "originally" %} {{ shift.end_time|time }}">{{ participation.end_time|time }}</span>
+                {% else %}
+                    {{ shift.end_time|time }}
+                {% endif %}
+            </span>
+            <small class="fw-bold text-body-secondary d-inline-block">
+                <span class="d-inline-block">
+                    {{ shift.meeting_time|time }} {% translate "Meetup" %}
+                </span>
+            </small>
+        </div>
+    {% endwith %}
+
+    {% if "change_event" in event_perms %}
+        <div class="dropstart">
+            <button class="btn" type="button" id="actionDropdownButton"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionDropdownButton">
+                <li><a class="dropdown-item" href="{% url "core:shift_edit" shift.pk %}"><span
+                    class="fas fa-edit"></span>
+                    {% translate "Edit" %}</a></li>
+                {% if shift.event.shifts.count > 1 %}
+                    <a class="dropdown-item" href="{% url "core:shift_delete" shift.pk %}"><span
+                        class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
