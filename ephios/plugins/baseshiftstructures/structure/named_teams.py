@@ -330,7 +330,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 participation_display += [[user[0], user[1], team["title"]] for user in users]
             if not users or len(users) < team["min_count"]:
                 required_qualifications = ", ".join(
-                    Qualification.objects.filter(pk__in=team["qualifications"]).values_list(
+                    Qualification.objects.filter(pk__in=[team.get("qualification")]).values_list(
                         "abbreviation", flat=True
                     )
                 )

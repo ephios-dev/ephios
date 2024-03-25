@@ -42,7 +42,7 @@ class QualificationMixConfigurationForm(AbstractGroupBasedStructureConfiguration
             except Qualification.DoesNotExist:
                 qualification_name = _("unknown")
         min_count, max_count = item.get("min_count"), item.get("max_count")
-        return f"{qualification_name} {format_min_max_count(min_count, max_count)}"
+        return f"{format_min_max_count(min_count, max_count)} {qualification_name}"
 
 
 class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
@@ -228,3 +228,33 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             requested_count=requested_count, confirmed_count=len(matching.unpaired_participations)
         )
         return requirement_stats
+
+    def get_participation_display(self):
+        positive_participations = [
+            p
+            for p in self.shift.participations.all()
+            if p.state in AbstractParticipation.States.REQUESTED_AND_CONFIRMED
+        ]
+        participants = {participation.participant for participation in positive_participations}
+        positions = self._get_positions_for_matching(len(positive_participations))
+        matching = match_participants_to_positions(participants, positions)
+        matching.attach_participations(positive_participations)
+
+        participation_display = []
+        for participation, position in matching.participation_pairings:
+            qualification_label = (
+                ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
+            )
+            participation_display.append(
+                [
+                    str(participation.participant),
+                    qualification_label,
+                ]
+            )
+        for position in matching.unpaired_positions:
+            if position.required:
+                qualification_label = (
+                    ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
+                )
+                participation_display.append(["", qualification_label])
+        return participation_display
