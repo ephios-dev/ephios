@@ -7,7 +7,10 @@ from ephios.plugins.guests.models import EventGuestShare, GuestParticipation, Gu
 
 def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     preferences = global_preferences_registry.manager()
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.guests"]
+    preferences["general__enabled_plugins"] = [
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.guests",
+    ]
 
     # permission denied before share exists
     django_app.get(
@@ -41,13 +44,13 @@ def test_guest_signup_flow(django_app, event, qualifications, volunteer):
 
     participant = GuestUser.objects.get().as_participant()
     django_app.get(participant.reverse_event_detail(event), status=200)
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup"]
+    preferences["general__enabled_plugins"] = ["ephios.plugins.baseshiftstructures"]
     django_app.get(participant.reverse_event_detail(event), status=403)
 
 
 def test_guest_settings_flow(django_app, event, planner):
     preferences = global_preferences_registry.manager()
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup"]
+    preferences["general__enabled_plugins"] = ["ephios.plugins.baseshiftstructures"]
 
     event_update_view = django_app.get(
         reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner
@@ -57,7 +60,10 @@ def test_guest_settings_flow(django_app, event, planner):
     with pytest.raises(EventGuestShare.DoesNotExist):
         event.guest_share
 
-    preferences["general__enabled_plugins"] = ["ephios.plugins.basesignup", "ephios.plugins.guests"]
+    preferences["general__enabled_plugins"] = [
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.guests",
+    ]
     event_update_view = django_app.get(
         reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner
     )
