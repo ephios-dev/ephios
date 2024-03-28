@@ -19,7 +19,7 @@ from ephios.plugins.eventautoqualification.models import EventAutoQualificationC
 def test_planners_cant_edit_autoqualification(django_app, event, planner):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
         "ephios.plugins.eventautoqualification",
     ]
 
@@ -34,7 +34,7 @@ def test_planners_cant_edit_autoqualification(django_app, event, planner):
 def test_autoqualification_settings_flow(django_app, event, manager, qualifications):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
         "ephios.plugins.eventautoqualification",
     ]
     assign_perm("change_event", manager, event)
@@ -66,7 +66,7 @@ def test_overwrite_qualification_expiration_date(
 ):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
         "ephios.plugins.eventautoqualification",
     ]
     EventAutoQualificationConfiguration.objects.create(
@@ -159,7 +159,7 @@ def test_consequence_gets_created(
 ):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
         "ephios.plugins.eventautoqualification",
     ]
     EventAutoQualificationConfiguration.objects.create(

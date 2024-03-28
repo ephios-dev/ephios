@@ -28,8 +28,12 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
 
     for p in AbstractParticipation.objects.all():
         preferred = p.structure_data.get("preferred_section_uuid")
+        dispatched = p.structure_data.get("dispatched_section_uuid")
         if preferred:
             p.structure_data["preferred_team_uuid"] = preferred
+        if dispatched:
+            p.structure_data["dispatched_team_uuid"] = dispatched
+        p.save()
 
     for shift in Shift.objects.all():
         shift.signup_flow_configuration = shift.structure_configuration
@@ -39,7 +43,7 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
             flow_slug = "unknown-after-migration"
             structure_slug = "unknown-after-migration"
         shift.signup_flow_slug = flow_slug
-        shift.signup_structure_slug = structure_slug
+        shift.structure_slug = structure_slug
 
         # special cases
         if shift.signup_method_slug == "section_based":
