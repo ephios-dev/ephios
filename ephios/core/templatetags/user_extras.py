@@ -8,7 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from ephios.core.consequences import editable_consequences, pending_consequences
 from ephios.core.models import AbstractParticipation, QualificationGrant, Shift
 from ephios.core.services.qualification import essential_set_of_qualifications
-from ephios.core.signup.checker import get_conflicting_participations
+from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 
 register = template.Library()
 

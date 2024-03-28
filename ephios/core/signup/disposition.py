@@ -103,7 +103,7 @@ def addable_users(shift):
     This also includes users that already have a participation, as that might have gotten removed in JS.
 
     This also includes users that can normally not see the event. The permission will be added accordingly.
-    If needed, this method could be moved to signup methods.
+    If needed, this method could be moved to signup flows.
     """
     return UserProfile.objects.all()
 
@@ -138,8 +138,6 @@ class DispositionBaseViewMixin(CustomPermissionRequiredMixin, SingleObjectMixin)
         self.object: Shift = self.get_object()
 
     def dispatch(self, request, *args, **kwargs):
-        if self.object.signup_method.disposition_participation_form_class is None:
-            raise Http404(_("This signup method does not support disposition."))
         return super().dispatch(request, *args, **kwargs)
 
     def get_permission_object(self):
@@ -149,7 +147,7 @@ class DispositionBaseViewMixin(CustomPermissionRequiredMixin, SingleObjectMixin)
 class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def get_template_names(self):
         return [
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template
+            self.object.structure.disposition_participation_form_class.disposition_participation_template
         ]
 
     def post(self, request, *args, **kwargs):
@@ -160,12 +158,12 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
-            instance = shift.signup_method.get_or_create_participation_for(user.as_participant())
+            instance = shift.signup_flow.get_or_create_participation_for(user.as_participant())
             instance.state = AbstractParticipation.States.GETTING_DISPATCHED
             instance.save()
 
             DispositionParticipationFormset = get_disposition_formset(
-                self.object.signup_method.disposition_participation_form_class
+                self.object.structure.disposition_participation_form_class
             )
             formset = DispositionParticipationFormset(
                 queryset=AbstractParticipation.objects.filter(pk=instance.pk),
@@ -180,7 +178,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
 class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def get_template_names(self):
         return [
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template
+            self.object.structure.disposition_participation_form_class.disposition_participation_template
         ]
 
     def post(self, request, *args, **kwargs):
@@ -193,12 +191,12 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
             email=None,
             date_of_birth=None,
         )
-        instance = shift.signup_method.get_or_create_participation_for(participant)
+        instance = shift.signup_flow.get_or_create_participation_for(participant)
         instance.state = AbstractParticipation.States.GETTING_DISPATCHED
         instance.save()
 
         DispositionParticipationFormset = get_disposition_formset(
-            self.object.signup_method.disposition_participation_form_class
+            self.object.structure.disposition_participation_form_class
         )
         formset = DispositionParticipationFormset(
             queryset=AbstractParticipation.objects.filter(pk=instance.pk),
@@ -214,7 +212,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
 
     def get_formset(self):
         DispositionParticipationFormset = get_disposition_formset(
-            self.object.signup_method.disposition_participation_form_class
+            self.object.structure.disposition_participation_form_class
         )
         formset = DispositionParticipationFormset(
             self.request.POST or None,
@@ -263,11 +261,11 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         kwargs.setdefault("states", AbstractParticipation.States)
         kwargs.setdefault(
             "participant_template",
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template,
+            self.object.structure.disposition_participation_form_class.disposition_participation_template,
         )
         kwargs.setdefault(
             "render_requested_state",
-            self.object.signup_method.uses_requested_state
+            self.object.signup_flow.uses_requested_state
             or self.object.participations.filter(
                 state=AbstractParticipation.States.REQUESTED
             ).exists(),

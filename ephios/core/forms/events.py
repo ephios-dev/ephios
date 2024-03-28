@@ -22,7 +22,8 @@ from recurrence.forms import RecurrenceField
 
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
-from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
+from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
+from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
@@ -169,15 +170,22 @@ class ShiftForm(forms.ModelForm):
     start_time = forms.TimeField(widget=CustomTimeInput, label=_("Start time"))
     end_time = forms.TimeField(widget=CustomTimeInput, label=_("End time"))
 
-    field_order = ["date", "meeting_time", "start_time", "end_time", "signup_method_slug"]
+    field_order = [
+        "date",
+        "meeting_time",
+        "start_time",
+        "end_time",
+        "signup_flow_slug",
+        "structure_slug",
+    ]
 
     class Meta:
         model = Shift
-        fields = ["meeting_time", "start_time", "end_time", "signup_method_slug"]
+        fields = ["meeting_time", "start_time", "end_time", "signup_flow_slug", "structure_slug"]
         help_texts = {
-            "signup_method_slug": mark_safe(
+            "signup_flow_slug": mark_safe(
                 _(
-                    "Signup method for this shift. Explanations for the signup methods can be found in the <a href='{url}'>documentation</a>."
+                    "Signup flow for this shift. Explanations for the signup flows can be found in the <a href='{url}'>documentation</a>."
                 ).format(
                     url=pgettext(
                         "localized docs link",
@@ -189,26 +197,35 @@ class ShiftForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        signup_methods = list(enabled_signup_methods())
-
-        # make sure that if a shift uses a disabled but installed method, it is also available in the list
-        if self.instance and (method_slug := self.instance.signup_method_slug):
-            if method_slug not in map(operator.attrgetter("slug"), signup_methods):
+        signup_flows = list(enabled_signup_flows())
+        # make sure that if a shift uses a disabled but installed flow, it is also available in the list
+        if self.instance and (flow_slug := self.instance.signup_flow_slug):
+            if flow_slug not in map(operator.attrgetter("slug"), signup_flows):
                 try:
-                    signup_methods.append(signup_method_from_slug(method_slug, self.instance))
+                    signup_flows.append(signup_flow_from_slug(flow_slug, self.instance))
                 except ValueError:  # not installed
                     pass
-
-        self.fields["signup_method_slug"].widget = forms.Select(
-            choices=((method.slug, method.verbose_name) for method in signup_methods)
+        self.fields["signup_flow_slug"].widget = forms.Select(
+            choices=((flow.slug, flow.verbose_name) for flow in signup_flows)
         )
-        # this recorder may cause db queries, so it's added on Shift init, but here in the form
+        # same for structure
+        shift_structures = list(enabled_shift_structures())
+        if self.instance and (structure_slug := self.instance.structure_slug):
+            if structure_slug not in map(operator.attrgetter("slug"), shift_structures):
+                try:
+                    shift_structures.append(
+                        shift_structure_from_slug(structure_slug, self.instance)
+                    )
+                except ValueError:  # not installed
+                    pass
+        self.fields["structure_slug"].widget = forms.Select(
+            choices=((structure.slug, structure.verbose_name) for structure in shift_structures)
+        )
+        # this recorder may cause db queries, so it's not added on Shift init, but here in the form
         # pylint: disable=undefined-variable
         add_log_recorder(
             self.instance,
-            DerivedFieldsLogRecorder(
-                lambda shift: method.get_signup_info() if (method := shift.signup_method) else {}
-            ),
+            DerivedFieldsLogRecorder(lambda shift: shift.get_signup_info()),
         )
 
     def clean_meeting_time(self):

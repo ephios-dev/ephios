@@ -51,6 +51,44 @@ function handleForms(elem) {
         // Trigger for the first time
         select.dispatchEvent(new Event('change'));
     });
+    elem.find("[data-ajax-replace-select]").each((index, div) => {
+        /*
+         * In a htmx style, use "data-ajax-replace-url" on a div to have the content be replaced
+         * by the content returned. The div's inner html will be replaced with the fetched html
+         * and handleForms will be called on the new content.
+         * The url should contain "SELECT_VALUE" which will be replaced with the value of the select input.
+         */
+        const select = document.getElementById(div.getAttribute("data-ajax-replace-select"));
+        const fetchAndReplace = () => {
+            const url = div.getAttribute("data-ajax-replace-url").replace("SELECT_VALUE", select.value);
+            fetch(url).then(response => response.text()).then(html => {
+                // store every form input value to restore it after replacing the form
+                const oldFormInputs = div.querySelectorAll("input, select, textarea");
+                const formValues = {};
+                oldFormInputs.forEach(input => {
+                    // avoid hidden inputs as that might interfere with csrf/formset management
+                    // beware of selects not having a type attribute
+                    if (input.type !== "hidden") {
+                        // TODO breaks with select2?!
+                        formValues[input.name] = input.value;
+                    }
+                }
+                );
+                div.innerHTML = html;
+                const newFormInputs = div.querySelectorAll("input, select, textarea");
+                newFormInputs.forEach(input => {
+                    if (formValues[input.name]) {
+                        input.value = formValues[input.name];
+                    }
+                });
+                handleForms($(div));
+            });
+        };
+        select.addEventListener("change", fetchAndReplace);
+        if (div.innerHTML.trim() === "") {
+            fetchAndReplace();
+        }
+    });
 }
 
 $(document).ready(function () {

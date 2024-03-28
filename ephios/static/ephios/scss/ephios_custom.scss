@@ -203,6 +203,11 @@ a.badge {
   text-decoration: none;
 }
 
+// shift participation placeholders
+.badge-placeholder {
+  min-width: 8rem;
+}
+
 // show form feedback
 .invalid-feedback {
   display: block;

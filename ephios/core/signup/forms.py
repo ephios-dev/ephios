@@ -7,8 +7,7 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.checker import get_conflicting_participations
-from ephios.core.signup.methods import AbstractSignupMethod
+from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
@@ -98,7 +97,7 @@ class BaseSignupForm(BaseParticipationForm):
 
     def _get_buttons(self):
         if (
-            p := self.participant.participation_for(self.method.shift)
+            p := self.participant.participation_for(self.shift)
         ) is not None and p.is_in_positive_state():
             buttons = [
                 HTML(
@@ -108,15 +107,15 @@ class BaseSignupForm(BaseParticipationForm):
         else:
             buttons = [
                 HTML(
-                    f'<button class="btn btn-success mt-1 ms-1 float-end" type="submit" name="signup_choice" value="sign_up">{self.method.registration_button_text}</button>'
+                    f'<button class="btn btn-success mt-1 ms-1 float-end" type="submit" name="signup_choice" value="sign_up">{self.shift.signup_flow.registration_button_text}</button>'
                 )
             ]
         buttons.append(
             HTML(
-                f'<a class="btn btn-secondary mt-1" href="{self.participant.reverse_event_detail(self.method.shift.event)}">{_("Cancel")}</a>'
+                f'<a class="btn btn-secondary mt-1" href="{self.participant.reverse_event_detail(self.shift.event)}">{_("Cancel")}</a>'
             )
         )
-        if self.method.get_validator(self.participant).can_decline():
+        if self.shift.signup_flow.get_validator(self.participant).can_decline():
             buttons.append(
                 HTML(
                     f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
@@ -125,8 +124,7 @@ class BaseSignupForm(BaseParticipationForm):
         return buttons
 
     def __init__(self, *args, **kwargs):
-        self.method: AbstractSignupMethod = kwargs.pop("method")
-        self.shift: Shift = self.method.shift
+        self.shift: Shift = kwargs.pop("shift")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -135,7 +133,7 @@ class BaseSignupForm(BaseParticipationForm):
             FormActions(*self._get_buttons()),
         )
 
-        if not self.shift.signup_method.configuration.user_can_customize_signup_times:
+        if not self.shift.signup_flow.configuration.user_can_customize_signup_times:
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 
@@ -163,36 +161,14 @@ class BaseSignupForm(BaseParticipationForm):
             )
 
 
-class AbstractSignupMethodConfigurationForm(forms.Form):
+class SignupConfigurationForm(forms.Form):
     """
-    Base class for signup method configuration forms. Has no fields.
+    A form class to base signup flow and shift structure configuration forms on.
     """
 
-    template_name = "core/signup_configuration_form.html"
+    template_name = "core/forms/crispy_filter.html"
 
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event")
+        self.shift = kwargs.pop("shift")
         super().__init__(*args, **kwargs)
-
-
-class BaseSignupMethodConfigurationForm(AbstractSignupMethodConfigurationForm):
-    """
-    Configuration form with basic fields relevant for most signup methods.
-    """
-
-    signup_until = forms.SplitDateTimeField(
-        required=False,
-        widget=CustomSplitDateTimeWidget,
-        initial=None,
-        label=_("Signup until"),
-    )
-    user_can_decline_confirmed = forms.BooleanField(
-        label=_("Confirmed users can decline by themselves"),
-        required=False,
-        help_text=_("only if the signup timeframe has not ended"),
-    )
-    user_can_customize_signup_times = forms.BooleanField(
-        label=_("Users can provide individual start and end times"),
-        required=False,
-        initial=True,
-    )
