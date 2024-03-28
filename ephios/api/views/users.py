@@ -96,6 +96,7 @@ class UserByMailView(RetrieveModelMixin, GenericViewSet):
     filter_backends = [ObjectPermissionsFilter]
     lookup_url_kwarg = "email"
     lookup_field = "email"
+    lookup_value_regex = "[^/]+"  # customize to allow dots (".") in the lookup value
     schema = AutoSchema(operation_id_base="UserProfileByMail")
 
 
