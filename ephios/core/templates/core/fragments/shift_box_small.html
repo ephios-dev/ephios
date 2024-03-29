@@ -18,7 +18,7 @@
             <b>{% translate "Meeting time" %}:</b> {{ shift.meeting_time | date:"H:i" }} <br>
             <b>{% translate "Start time" %}:</b> {{ shift.start_time | date:"H:i" }} <br>
             <b>{% translate "End time" %}:</b> {{ shift.end_time | date:"H:i" }} <br>
-            <b>{% translate "Signup method" %}:</b> {{ shift.signup_method.verbose_name }}
+            <b>{% translate "Signup flow" %}:</b> {{ shift.signup_flow.verbose_name }}
         </p>
     </div>
 </div>

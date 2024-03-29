@@ -281,6 +281,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 "title": _("unassigned"),
                 "participations": unsorted_participations,
                 "placeholder": [],
+                "stats": teams_stats[self.NO_TEAM_UUID],
             }
 
         context_data["teams"] = teams

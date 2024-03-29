@@ -35,7 +35,8 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
     def get_context_data(self, **kwargs):
         kwargs.setdefault("event", self.event)
         kwargs.setdefault("form", self.get_shift_form())
-        kwargs.setdefault("configuration_form", "")
+        kwargs.setdefault("flow_configuration_form", "")
+        kwargs.setdefault("structure_configuration_form", "")
         return super().get_context_data(**kwargs)
 
     def get_plugin_forms(self):
@@ -72,48 +73,51 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
                 )
             )
         except ValueError as e:
-            raise ValidationError(e) from e
-        else:
-            flow_configuration_form = signup_flow.get_configuration_form(
-                self.request.POST, event=self.event
-            )
-            structure_configuration_form = structure.get_configuration_form(
-                self.request.POST, event=self.event
-            )
-            if not all(
-                [
-                    self.is_valid(form),
-                    flow_configuration_form.is_valid(),
-                    structure_configuration_form.is_valid(),
-                ]
-            ):
-                return self.render_to_response(
-                    self.get_context_data(
-                        form=form,
-                        flow_configuration_form=flow_configuration_form,
-                        structure_configuration_form=structure_configuration_form,
-                    )
+            form.add_error(None, ValidationError(e))
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
                 )
+            )
 
-            shift = form.save(commit=False)
-            shift.event = self.event
-            shift.signup_flow_configuration = flow_configuration_form.cleaned_data
-            shift.structure_configuration = structure_configuration_form.cleaned_data
-            shift.save()
-            self.save_plugin_forms()
-            if "addAnother" in self.request.POST:
-                return redirect(
-                    reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})
+        flow_configuration_form = signup_flow.get_configuration_form(
+            self.request.POST, event=self.event
+        )
+        structure_configuration_form = structure.get_configuration_form(
+            self.request.POST, event=self.event
+        )
+        if not all(
+            [
+                self.is_valid(form),
+                flow_configuration_form.is_valid(),
+                structure_configuration_form.is_valid(),
+            ]
+        ):
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
+                    flow_configuration_form=flow_configuration_form,
+                    structure_configuration_form=structure_configuration_form,
                 )
-            try:
-                self.event.activate()
-                messages.success(
-                    self.request,
-                    _("The event {title} has been saved.").format(title=self.event.title),
-                )
-            except ValidationError as e:
-                messages.error(self.request, e)
-            return redirect(self.event.get_absolute_url())
+            )
+
+        shift = form.save(commit=False)
+        shift.event = self.event
+        shift.signup_flow_configuration = flow_configuration_form.cleaned_data
+        shift.structure_configuration = structure_configuration_form.cleaned_data
+        shift.save()
+        self.save_plugin_forms()
+        if "addAnother" in self.request.POST:
+            return redirect(reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")}))
+        try:
+            self.event.activate()
+            messages.success(
+                self.request,
+                _("The event {title} has been saved.").format(title=self.event.title),
+            )
+        except ValidationError as e:
+            messages.error(self.request, e)
+        return redirect(self.event.get_absolute_url())
 
 
 class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):

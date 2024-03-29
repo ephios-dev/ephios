@@ -9,11 +9,11 @@ from ephios.core.signals import participant_signup_checkers
 from ephios.core.signup.participants import AbstractParticipant
 
 
-class BaseSignupMethodError(ValidationError):
+class BaseSignupError(ValidationError):
     """Superclass of errors used in the signup mechanism."""
 
 
-class SignupDisallowedError(BaseSignupMethodError):
+class SignupDisallowedError(BaseSignupError):
     """
     Error to return if the participant cannot sign up.
     """
@@ -26,7 +26,7 @@ class ParticipantUnfitError(SignupDisallowedError):
     """
 
 
-class DeclineDisallowedError(BaseSignupMethodError):
+class DeclineDisallowedError(BaseSignupError):
     """Error to return if the participant cannot decline a shift."""
 
 
@@ -150,7 +150,7 @@ class BaseSignupActionValidator:
                 checker(self.shift, self.participant)
             except error_class as e:
                 errors.append(e)
-            except BaseSignupMethodError:
+            except BaseSignupError:
                 pass  # ignore other signup method errors
         return errors
 
@@ -170,7 +170,7 @@ class BaseSignupActionValidator:
         """
         Return a list of errors that prevent the participant from performing any action.
         """
-        return self._get_errors(BaseSignupMethodError)
+        return self._get_errors(BaseSignupError)
 
     def can_sign_up(self):
         """

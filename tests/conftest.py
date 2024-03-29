@@ -26,7 +26,7 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.users import IdentityProvider
-from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
+from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
 
 
@@ -201,10 +201,13 @@ def event(groups, service_event_type, planner, tz):
         meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
         start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
         end_time=datetime(2099, 6, 30, 20, 30, tzinfo=tz),
-        signup_flow_slug=InstantConfirmSignupFlow.slug,
+        signup_flow_slug=RequestConfirmSignupFlow.slug,
         signup_flow_configuration=dict(user_can_decline_confirmed=True),
         structure_slug=UniformShiftStructure.slug,
-        structure_configuration=dict(),
+        structure_configuration=dict(
+            minimum_number_of_participants=0,
+            maximum_number_of_participants=1,
+        ),
     )
     return event
 
@@ -228,8 +231,10 @@ def conflicting_event(event, training_event_type, volunteer, groups):
         meeting_time=event.shifts.first().meeting_time,
         start_time=event.shifts.first().start_time,
         end_time=event.shifts.first().end_time,
-        signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration={},
+        signup_flow_slug=RequestConfirmSignupFlow.slug,
+        structure_slug=UniformShiftStructure.slug,
+        signup_flow_configuration={},
+        structure_configuration={},
     )
 
     LocalParticipation.objects.create(
@@ -244,7 +249,7 @@ def conflicting_event(event, training_event_type, volunteer, groups):
 @pytest.fixture
 def event_with_required_qualification(event, qualifications):
     shift = event.shifts.first()
-    shift.signup_configuration = {"required_qualification_ids": [qualifications.nfs.pk]}
+    shift.structure_configuration = {"required_qualification_ids": [qualifications.nfs.pk]}
     shift.save()
     return event
 
@@ -268,8 +273,10 @@ def event_to_next_day(groups, service_event_type, planner, tz):
         meeting_time=datetime(2099, 6, 30, 18, 0, tzinfo=tz),
         start_time=datetime(2099, 6, 30, 19, 0, tzinfo=tz),
         end_time=datetime(2099, 7, 1, 6, 0, tzinfo=tz),
-        signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration={},
+        signup_flow_slug=RequestConfirmSignupFlow.slug,
+        signup_flow_configuration=dict(user_can_decline_confirmed=True),
+        structure_slug=UniformShiftStructure.slug,
+        structure_configuration=dict(),
     )
     return event
 
@@ -293,8 +300,10 @@ def multi_shift_event(groups, service_event_type, planner, tz):
         meeting_time=datetime(2099, 6, 30, 7, 0, tzinfo=tz),
         start_time=datetime(2099, 6, 30, 8, 0, tzinfo=tz),
         end_time=datetime(2099, 6, 30, 20, 0, tzinfo=tz),
-        signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration={},
+        signup_flow_slug=RequestConfirmSignupFlow.slug,
+        signup_flow_configuration=dict(user_can_decline_confirmed=True),
+        structure_slug=UniformShiftStructure.slug,
+        structure_configuration=dict(),
     )
 
     Shift.objects.create(
@@ -302,8 +311,10 @@ def multi_shift_event(groups, service_event_type, planner, tz):
         meeting_time=datetime(2099, 7, 1, 7, 0, tzinfo=tz),
         start_time=datetime(2099, 7, 1, 8, 0, tzinfo=tz),
         end_time=datetime(2099, 7, 1, 20, 0, tzinfo=tz),
-        signup_method_slug=RequestConfirmSignupMethod.slug,
-        signup_configuration={},
+        signup_flow_slug=RequestConfirmSignupFlow.slug,
+        signup_flow_configuration=dict(user_can_decline_confirmed=True),
+        structure_slug=UniformShiftStructure.slug,
+        structure_configuration=dict(),
     )
     return event
 

@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
-from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
+from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
 
 
 def test_getting_dispatched_state_is_overwritten_by_participant_signup(
@@ -10,7 +10,7 @@ def test_getting_dispatched_state_is_overwritten_by_participant_signup(
     shift = event.shifts.first()
 
     # create participation in getting-dispatched state
-    participation = shift.signup_method.get_or_create_participation_for(volunteer.as_participant())
+    participation = shift.signup_flow.get_or_create_participation_for(volunteer.as_participant())
     participation.state = AbstractParticipation.States.GETTING_DISPATCHED
     participation.save()
 
@@ -38,10 +38,10 @@ def test_requested_participations_are_always_rendered(django_app, volunteer, pla
     InstantConfirmationSignupMethod doesn't use the requested state, but a requested participation exists. Test that.
     """
     shift = event.shifts.first()
-    shift.signup_method_slug = InstantConfirmationSignupMethod.slug
+    shift.signup_flow_slug = InstantConfirmSignupFlow.slug
     shift.save()
 
-    participation = shift.signup_method.get_or_create_participation_for(volunteer.as_participant())
+    participation = shift.signup_flow.get_or_create_participation_for(volunteer.as_participant())
     participation.state = AbstractParticipation.States.REQUESTED
     participation.save()
 
@@ -57,13 +57,13 @@ def test_disposition_delete_participations_getting_dispatched(
     # setup a participation
     shift = event.shifts.first()
 
-    volunteer_participation = shift.signup_method.get_or_create_participation_for(
+    volunteer_participation = shift.signup_flow.get_or_create_participation_for(
         volunteer.as_participant()
     )
     volunteer_participation.state = AbstractParticipation.States.REQUESTED
     volunteer_participation.save()
 
-    planner_participation = shift.signup_method.get_or_create_participation_for(
+    planner_participation = shift.signup_flow.get_or_create_participation_for(
         planner.as_participant()
     )
     planner_participation.state = AbstractParticipation.States.GETTING_DISPATCHED

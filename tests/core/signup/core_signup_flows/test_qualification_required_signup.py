@@ -8,7 +8,7 @@ def test_unqualified_cannot_signup(django_app, volunteer, event_with_required_qu
         event_with_required_qualification, only_with_perms_in=["view_event"]
     )
     response = django_app.get(event_with_required_qualification.get_absolute_url(), user=volunteer)
-    assert "all required qualifications for this shift" in response
+    assert "You are not qualified" in response
 
 
 def test_qualified_can_signup(django_app, qualified_volunteer, event_with_required_qualification):

@@ -22,7 +22,7 @@ class SignupStatsSerializer(serializers.Serializer):
 
 
 class ShiftSerializer(serializers.ModelSerializer):
-    signup_stats = SignupStatsSerializer(source="signup_method.get_signup_stats")
+    signup_stats = SignupStatsSerializer(source="get_signup_stats")
 
     class Meta:
         model = Shift
@@ -31,8 +31,10 @@ class ShiftSerializer(serializers.ModelSerializer):
             "meeting_time",
             "start_time",
             "end_time",
-            "signup_method_slug",
-            "signup_configuration",
+            "signup_flow_slug",
+            "signup_flow_configuration",
+            "structure_slug",
+            "structure_configuration",
             "signup_stats",
         ]
 
