@@ -133,7 +133,9 @@ class BaseSignupForm(BaseParticipationForm):
             FormActions(*self._get_buttons()),
         )
 
-        if not self.shift.signup_flow.configuration.user_can_customize_signup_times:
+        if not getattr(
+            self.shift.signup_flow.configuration, "user_can_customize_signup_times", False
+        ):
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 

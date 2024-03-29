@@ -1,13 +1,13 @@
 import pytest
 from django.urls import reverse
 
-from ephios.plugins.basesignup.signup.no_selfservice import NoSelfserviceSignupMethod
+from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
 
 
 @pytest.fixture
 def no_selfservice_shift(event):
     shift = event.shifts.get()
-    shift.signup_method_slug = NoSelfserviceSignupMethod.slug
+    shift.signup_flow_slug = ManualSignupFlow.slug
     shift.save()
     return shift
 
@@ -26,5 +26,5 @@ def test_no_selfservice_renders(django_app, volunteer, event, no_selfservice_shi
 
 
 def test_no_selfservice_does_not_allow_signup(django_app, volunteer, event, no_selfservice_shift):
-    event_detail = django_app.get(event.get_absolute_url(), user=volunteer)
-    assert "This action is not allowed" in event_detail.form.submit().follow()
+    event_detail = django_app.get(event.get_absolute_url(), user=volunteer).form.submit()
+    assert not volunteer.participations.exists()

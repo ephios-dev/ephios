@@ -44,12 +44,11 @@ class AbstractSignupFlow(ABC):
         """
         raise NotImplementedError()
 
-    @property
-    def registration_button_text(self):
-        """
-        The text of the registration button.
-        """
-        return _("Sign up")
+    registration_button_text = _("Sign up")
+    signup_success_message = _("You have successfully signed up for {shift}.")
+    signup_error_message = _("Signing up failed: {error}")
+    decline_success_message = _("You have successfully declined {shift}.")
+    decline_error_message = _("Declining failed: {error}")
 
     @property
     def uses_requested_state(self):

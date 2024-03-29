@@ -12,8 +12,13 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
+from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
+from ephios.core.signup.flow.participant_validation import (
+    ParticipantUnfitError,
+    get_conflicting_participations,
+)
 from ephios.core.signup.stats import SignupStats
-from ephios.plugins.basesignup.signup.instant import InstantConfirmationSignupMethod
+from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
 
 
 def test_signup_stats_addition(django_app):
@@ -26,27 +31,25 @@ def test_signup_stats_addition(django_app):
 
 def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_volunteer):
     shift: Shift = event.shifts.first()
-    shift.signup_configuration["signup_until"] = timezone.make_aware(
+    shift.signup_flow_configuration["signup_until"] = timezone.make_aware(
         datetime.min.replace(year=2020)
     )
     shift.save()
     assert not list(
         filter(
             lambda error: isinstance(error, ParticipantUnfitError),
-            shift.signup_method.get_validator(
+            shift.signup_flow.get_validator(
                 qualified_volunteer.as_participant()
             ).get_signup_errors(),
         )
     )
-    assert shift.signup_method.get_validator(
-        qualified_volunteer.as_participant()
-    ).get_signup_errors()
+    assert shift.signup_flow.get_validator(qualified_volunteer.as_participant()).get_signup_errors()
 
 
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
     assert (
         not conflicting_event.shifts.first()
-        .signup_method.get_validator(volunteer.as_participant())
+        .signup_flow.get_validator(volunteer.as_participant())
         .can_sign_up()
     )
 
@@ -129,7 +132,11 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
     ],
 )
 def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, total, event, volunteer):
-    common = dict(signup_method_slug=InstantConfirmationSignupMethod.slug, event=event)
+    common = dict(
+        signup_flow_slug=InstantConfirmSignupFlow.slug,
+        structure_slug=UniformShiftStructure.slug,
+        event=event,
+    )
     aware = functools.partial(make_aware, timezone=tz)
     a = Shift.objects.create(
         start_time=aware(a_times[0]),
@@ -173,9 +180,9 @@ def test_get_conflicting_shift_with_individual_time(tz, volunteer, multi_shift_e
     }
 
 
-def test_event_detail_renders_with_missing_signup_method(django_app, event, volunteer):
+def test_event_detail_renders_with_missing_signup_flow(django_app, event, volunteer):
     shift: Shift = event.shifts.first()
-    shift.signup_method_slug = "some_missing_slug_that_doesnt_exist"
+    shift.signup_flow_slug = "some_missing_slug_that_doesnt_exist"
     shift.save()
     assert "invalid" in django_app.get(
         event.get_absolute_url(),
@@ -188,12 +195,8 @@ def test_general_required_qualifications(django_app, event, volunteer, qualifica
         pk=qualifications.b.pk
     )
     assert (
-        not event.shifts.first()
-        .signup_method.get_validator(volunteer.as_participant())
-        .can_sign_up()
+        not event.shifts.first().signup_flow.get_validator(volunteer.as_participant()).can_sign_up()
     )
     QualificationGrant.objects.create(qualification=qualifications.b, user=volunteer)
     volunteer.refresh_from_db()
-    assert (
-        event.shifts.first().signup_method.get_validator(volunteer.as_participant()).can_sign_up()
-    )
+    assert event.shifts.first().signup_flow.get_validator(volunteer.as_participant()).can_sign_up()

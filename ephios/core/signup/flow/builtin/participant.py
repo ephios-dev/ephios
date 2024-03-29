@@ -19,6 +19,8 @@ class RequestConfirmSignupFlow(BaseSignupFlow):
         "Participants can request participation. Responsibles can confirm or reject requests."
     )
     registration_button_text = _("Request")
+    signup_success_message = _("You have successfully requested a participation in {shift}.")
+    signup_error_message = _("Requesting a participation failed: {error}")
     uses_requested_state = True
     signup_action_validator_class = ParticipantSignupActionValidator
     configuration_form_class = ParticipantSignupConfigurationForm
@@ -32,7 +34,7 @@ class InstantConfirmSignupFlow(BaseSignupFlow):
     slug = "instant_confirmation"
     verbose_name = _("Plain signup")
     description = _("Participants can directly sign up for the shift.")
-    registration_button_text = _("Register")
+    registration_button_text = _("Sign up")
     uses_requested_state = False
     signup_action_validator_class = ParticipantSignupActionValidator
     configuration_form_class = ParticipantSignupConfigurationForm

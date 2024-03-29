@@ -9,7 +9,7 @@ from ephios.core.models import Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
-from ephios.core.signup.flow.participant_validation import BaseSignupMethodError
+from ephios.core.signup.flow.participant_validation import BaseSignupError
 from ephios.core.signup.participants import AbstractParticipant
 
 
@@ -22,10 +22,6 @@ class SignupView(FormView):
 
     shift: Shift = ...
     template_name = "core/signup.html"
-    signup_success_message = _("You have successfully signed up for {shift}.")
-    signup_error_message = _("Signing up failed: {error}")
-    decline_success_message = _("You have successfully declined {shift}.")
-    decline_error_message = _("Declining failed: {error}")
 
     def get_form_class(self):
         return self.shift.structure.signup_form_class
@@ -77,13 +73,15 @@ class SignupView(FormView):
             self.shift.signup_flow.perform_signup(
                 self.participant, participation, **form.cleaned_data
             )
-        except BaseSignupMethodError as errors:
+        except BaseSignupError as errors:
             for error in errors:
-                messages.error(self.request, self.signup_error_message.format(error=error))
+                messages.error(
+                    self.request, self.shift.signup_flow.signup_error_message.format(error=error)
+                )
         else:
             messages.success(
                 self.request,
-                self.signup_success_message.format(shift=self.shift),
+                self.shift.signup_flow.signup_success_message.format(shift=self.shift),
             )
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
@@ -93,11 +91,16 @@ class SignupView(FormView):
             self.shift.signup_flow.perform_decline(
                 self.participant, participation, **form.cleaned_data
             )
-        except BaseSignupMethodError as errors:
+        except BaseSignupError as errors:
             for error in errors:
-                messages.error(self.request, self.decline_error_message.format(error=error))
+                messages.error(
+                    self.request, self.shift.signup_flow.decline_error_message.format(error=error)
+                )
         else:
-            messages.info(self.request, self.decline_success_message.format(shift=self.shift))
+            messages.info(
+                self.request,
+                self.shift.signup_flow.decline_success_message.format(shift=self.shift),
+            )
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
 
