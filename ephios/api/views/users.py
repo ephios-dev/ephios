@@ -105,7 +105,7 @@ class UserParticipationView(viewsets.ReadOnlyModelViewSet):
     serializer_class = ParticipationSerializer
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     filter_backends = [ParticipationPermissionFilter, DjangoFilterBackend]
-    filterset_fields = ["state"]
+    filterset_fields = ["state", "shift__event__type"]
     required_scopes = ["CONFIDENTIAL_READ"]
 
     def get_queryset(self):
