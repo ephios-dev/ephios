@@ -48,7 +48,7 @@ def test_participation_list_filter(
     assert event.title in response
 
     response = django_app.get(
-        f"{reverse('api:user-participations-list', kwargs=dict(user=volunteer.pk))}?shift__event__type={training_event_type.pk}",
+        f"{reverse('api:user-participations-list', kwargs=dict(user=volunteer.pk))}?event_type={training_event_type.pk}",
         user=planner,
         status=200,
     )
