@@ -17,8 +17,12 @@ class ParticipationFilterSet(FilterSet):
     event_type = ModelChoiceFilter(
         field_name="shift__event__type", label="event type", queryset=EventType.objects.all()
     )
-    from_date = DateTimeFilter(field_name="shift__start_time", lookup_expr="gte", label="from")
-    to_date = DateTimeFilter(field_name="shift__end_time", lookup_expr="lte", label="to")
+    start_gte = DateTimeFilter(field_name="start_time", lookup_expr="gte", label="start time after")
+    start_lte = DateTimeFilter(
+        field_name="start_time", lookup_expr="lte", label="start time before"
+    )
+    end_gte = DateTimeFilter(field_name="end_time", lookup_expr="gte", label="end time after")
+    end_lte = DateTimeFilter(field_name="end_time", lookup_expr="lte", label="end time before")
 
     class Meta:
         model = LocalParticipation
