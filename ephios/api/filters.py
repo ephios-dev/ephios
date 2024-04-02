@@ -1,4 +1,3 @@
-from django.utils.translation import gettext_lazy as _
 from django_filters import DateTimeFilter, ModelChoiceFilter
 from django_filters.rest_framework import FilterSet
 from guardian.shortcuts import get_objects_for_user
@@ -14,11 +13,12 @@ class ParticipationPermissionFilter(BaseFilterBackend):
 
 
 class ParticipationFilterSet(FilterSet):
+    # we cannot use gettext_lazy as it breaks sphinxcontrib.openapi (https://github.com/sphinx-contrib/openapi/issues/153)
     event_type = ModelChoiceFilter(
-        field_name="shift__event__type", label=_("event type"), queryset=EventType.objects.all()
+        field_name="shift__event__type", label="event type", queryset=EventType.objects.all()
     )
-    from_date = DateTimeFilter(field_name="shift__start_time", lookup_expr="gte", label=_("from"))
-    to_date = DateTimeFilter(field_name="shift__end_time", lookup_expr="lte", label=_("to"))
+    from_date = DateTimeFilter(field_name="shift__start_time", lookup_expr="gte", label="from")
+    to_date = DateTimeFilter(field_name="shift__end_time", lookup_expr="lte", label="to")
 
     class Meta:
         model = LocalParticipation
