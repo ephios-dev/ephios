@@ -15,6 +15,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_guardian.filters import ObjectPermissionsFilter
 
+from ephios.api.filters import ParticipationFilterSet, ParticipationPermissionFilter
 from ephios.api.views.events import ParticipationSerializer
 from ephios.core.models import LocalParticipation, Qualification, UserProfile
 from ephios.core.services.qualification import collect_all_included_qualifications
@@ -103,8 +104,8 @@ class UserByMailView(RetrieveModelMixin, GenericViewSet):
 class UserParticipationView(viewsets.ReadOnlyModelViewSet):
     serializer_class = ParticipationSerializer
     permission_classes = [IsAuthenticatedOrTokenHasScope]
-    filter_backends = [ObjectPermissionsFilter, DjangoFilterBackend]
-    filterset_fields = ["state"]
+    filter_backends = [ParticipationPermissionFilter, DjangoFilterBackend]
+    filterset_class = ParticipationFilterSet
     required_scopes = ["CONFIDENTIAL_READ"]
 
     def get_queryset(self):
