@@ -328,9 +328,9 @@ class EventListView(LoginRequiredMixin, ListView):
             day=this_date.day,
             tzinfo=get_current_timezone(),
         )
-        to_time = from_time + timedelta(days=1)
+        to_time = from_time + timedelta(days=1, hours=3)  # show starts until 3am next day
         shifts = self._get_shifts_for_calendar().filter(
-            start_time__gte=from_time, start_time__lt=to_time
+            start_time__gte=from_time, start_time__lte=to_time
         )
 
         if self.filter_form.is_valid():
