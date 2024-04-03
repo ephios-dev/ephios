@@ -393,8 +393,10 @@ class EventListView(LoginRequiredMixin, ListView):
         earliest_shift_start = min(shift.start_time for shift in shifts)
         latest_shift_end = max(shift.end_time for shift in shifts)
         # calculate timescale based on shortest shift
-        # to not make things too small, consider a maximum of 4 hours
-        shortest_shift_duration_in_hours = min(4, shortest_shift_duration.total_seconds() / 3600)
+        # to not make things too small, consider a maximum of 4 hours and a minimum of 15 minutes
+        shortest_shift_duration_in_hours = max(
+            0.25, min(4, shortest_shift_duration.total_seconds() / 3600)
+        )
         # seconds per em: the shortest shift should be 3600/300 = 12em high
         time_scaling_factor = int(300 * shortest_shift_duration_in_hours)
         for shift in shifts:
@@ -541,6 +543,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         self.object = self.get_object()
 
     def form_valid(self, form):
+        tz = get_current_timezone()
         occurrences = form.cleaned_data["recurrence"].between(
             datetime.now() - timedelta(days=1),
             datetime.now() + timedelta(days=7305),  # allow dates up to twenty years in the future
@@ -551,7 +554,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         )
         for date in occurrences:
             event = self.get_object()
-            start_date = event.get_start_time().date()
+            start_date = event.get_start_time().astimezone(tz).date()
             shifts = list(event.shifts.all())
             event.pk = None
             event.save()
@@ -579,25 +582,25 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             for shift in shifts:
                 shift.pk = None
                 # shifts on following days should have the same offset from the new date
-                offset = shift.start_time.date() - start_date
+                offset = shift.start_time.astimezone(tz).date() - start_date
                 # shifts ending on the next day should end on the next day to the new date
-                end_offset = shift.end_time.date() - shift.start_time.date()
-                current_tz = get_current_timezone()
-                shift.end_time = make_aware(
-                    datetime.combine(
-                        date.date() + offset + end_offset,
-                        shift.end_time.astimezone(current_tz).time(),
-                    )
+                end_offset = (
+                    shift.end_time.astimezone(tz).date() - shift.start_time.astimezone(tz).date()
                 )
-                shift.meeting_time = make_aware(
-                    datetime.combine(
-                        date.date() + offset, shift.meeting_time.astimezone(current_tz).time()
-                    )
+                shift.meeting_time = datetime.combine(
+                    date.date() + offset,
+                    shift.meeting_time.astimezone(tz).time(),
+                    tzinfo=tz,
                 )
-                shift.start_time = make_aware(
-                    datetime.combine(
-                        date.date() + offset, shift.start_time.astimezone(current_tz).time()
-                    )
+                shift.start_time = datetime.combine(
+                    date.date() + offset,
+                    shift.start_time.astimezone(tz).time(),
+                    tzinfo=tz,
+                )
+                shift.end_time = datetime.combine(
+                    date.date() + offset + end_offset,
+                    shift.end_time.astimezone(tz).time(),
+                    tzinfo=tz,
                 )
                 shift.event = event
                 shifts_to_create.append(shift)

@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 import recurrence
 from django.urls import reverse
+from django.utils import timezone
 from guardian.shortcuts import assign_perm
 
 from ephios.core.models import Event, Shift
@@ -145,3 +146,33 @@ class TestEventCopy:
             assert planners in get_groups_with_perms(
                 shift.event, only_with_perms_in=["change_event"]
             )
+
+    def test_copy_overnight_event_with_times_close_to_midnight(
+        self, django_app, planner, event, tz
+    ):
+        original_shift = event.shifts.first()
+        original_shift.start_time = datetime.combine(
+            original_shift.start_time.date(), time(hour=23, minute=30), tzinfo=tz
+        )
+        original_shift.end_time = datetime.combine(
+            original_shift.start_time.date() + timedelta(days=1), time(hour=0, minute=30), tzinfo=tz
+        )
+        original_shift.save()
+        response = django_app.get(reverse("core:event_copy", kwargs={"pk": event.id}), user=planner)
+        form = response.form
+        target_starttime = timezone.now() + timedelta(days=14)
+        recurr = recurrence.Recurrence(
+            dtstart=target_starttime,
+            rdates=[],
+        )
+        form["start_date"] = target_starttime.date()
+        form["recurrence"] = str(recurr)
+        form.submit()
+        copied_shift = Shift.objects.exclude(event=event).get()
+        assert copied_shift.start_time.astimezone(tz).date() == target_starttime.date()
+        assert copied_shift.start_time.astimezone(tz).time() == original_shift.start_time.time()
+        assert (
+            copied_shift.end_time.astimezone(tz).date()
+            == (target_starttime + timedelta(days=1)).date()
+        )
+        assert copied_shift.end_time.astimezone(tz).time() == original_shift.end_time.time()
