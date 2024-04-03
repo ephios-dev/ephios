@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-16 18:16+0100\n"
-"PO-Revision-Date: 2024-03-16 18:26+0100\n"
+"POT-Creation-Date: 2024-04-03 18:20+0200\n"
+"PO-Revision-Date: 2024-04-03 18:21+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -219,8 +219,8 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/core/templates/core/event_confirm_delete.html:17
 #: ephios/core/templates/core/eventtype_confirm_delete.html:9
 #: ephios/core/templates/core/eventtype_list.html:24
-#: ephios/core/templates/core/fragments/shift_box_big.html:63
 #: ephios/core/templates/core/fragments/shift_box_small.html:12
+#: ephios/core/templates/core/fragments/shift_header.html:62
 #: ephios/core/templates/core/group_confirm_delete.html:19
 #: ephios/core/templates/core/group_list.html:67
 #: ephios/core/templates/core/identityprovider_confirm_delete.html:14
@@ -313,8 +313,8 @@ msgstr "Zurück"
 #: ephios/api/templates/oauth2_provider/application_detail.html:66
 #: ephios/api/templates/oauth2_provider/application_list.html:51
 #: ephios/core/templates/core/eventtype_list.html:21
-#: ephios/core/templates/core/fragments/shift_box_big.html:60
 #: ephios/core/templates/core/fragments/shift_box_small.html:9
+#: ephios/core/templates/core/fragments/shift_header.html:59
 #: ephios/core/templates/core/group_list.html:63
 #: ephios/core/templates/core/identityprovider_list.html:27
 #: ephios/core/templates/core/shift_form.html:72
@@ -537,7 +537,7 @@ msgstr "Verantwortliche"
 #: ephios/core/pdf.py:63 ephios/core/pdf.py:129
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/templates/core/userprofile_workinghours.html:25
-#: ephios/core/views/event.py:69 ephios/core/views/event.py:78
+#: ephios/core/views/event.py:70 ephios/core/views/event.py:79
 #: ephios/core/views/log.py:35
 msgid "Date"
 msgstr "Datum"
@@ -818,7 +818,7 @@ msgid "color"
 msgstr "Farbe"
 
 #: ephios/core/models/events.py:52 ephios/core/models/events.py:64
-#: ephios/core/views/event.py:61
+#: ephios/core/views/event.py:62
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
@@ -850,7 +850,7 @@ msgstr "Veranstaltungen"
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:186 ephios/core/views/event.py:88
+#: ephios/core/models/events.py:186 ephios/core/views/event.py:89
 msgid "confirmed"
 msgstr "bestätigt"
 
@@ -1061,7 +1061,7 @@ msgstr "fehlgeschlagen"
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:396 ephios/core/views/event.py:83
+#: ephios/core/models/users.py:396 ephios/core/views/event.py:84
 msgid "State"
 msgstr "Status"
 
@@ -1689,13 +1689,13 @@ msgstr "Anmelden"
 
 #: ephios/core/signup/forms.py:89
 #: ephios/core/templates/core/disposition/fragment_participation.html:44
-#: ephios/core/templates/core/fragments/shift_box_big.html:115
-#: ephios/core/templates/core/fragments/shift_box_big.html:123
+#: ephios/core/templates/core/fragments/shift_box_big.html:57
+#: ephios/core/templates/core/fragments/shift_box_big.html:65
 msgid "Customize"
 msgstr "Anpassen"
 
 #: ephios/core/signup/forms.py:90
-#: ephios/core/templates/core/fragments/shift_box_big.html:128
+#: ephios/core/templates/core/fragments/shift_box_big.html:70
 msgid "Decline"
 msgstr "Absagen"
 
@@ -1835,7 +1835,7 @@ msgid "View edit history"
 msgstr "Änderungsverlauf"
 
 #: ephios/core/templates/core/event_detail.html:111
-#: ephios/core/templates/core/event_list.html:211
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:116
 #: ephios/core/templates/core/mails/new_event.html:18
 #: ephios/plugins/federation/templates/federation/external_event_list.html:52
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:14
@@ -1867,49 +1867,40 @@ msgstr "Berechtigungen"
 msgid "Next"
 msgstr "Weiter"
 
-#: ephios/core/templates/core/event_list.html:10
-#: ephios/core/templates/core/event_list.html:21 ephios/core/views/pwa.py:30
+#: ephios/core/templates/core/event_list.html:11
+#: ephios/core/templates/core/event_list.html:22 ephios/core/views/pwa.py:30
 #: ephios/templates/base.html:93
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: ephios/core/templates/core/event_list.html:25
+#: ephios/core/templates/core/event_list.html:26
 #: ephios/core/templates/core/logentry_list.html:56
 #: ephios/core/templates/core/workinghours_list.html:24
 msgid "Filter"
 msgstr "Filter"
 
-#: ephios/core/templates/core/event_list.html:67
+#: ephios/core/templates/core/event_list.html:73
 #: ephios/core/templates/core/userprofile_list.html:32
 msgid "Apply"
 msgstr "Anwenden"
 
-#: ephios/core/templates/core/event_list.html:71
+#: ephios/core/templates/core/event_list.html:77
 #: ephios/core/templates/core/userprofile_list.html:34
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: ephios/core/templates/core/event_list.html:86
-#: ephios/core/templates/core/event_list.html:116
+#: ephios/core/templates/core/event_list.html:88
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:13
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: ephios/core/templates/core/event_list.html:91
-#: ephios/core/templates/core/event_list.html:121
+#: ephios/core/templates/core/event_list.html:93
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:18
 #, python-format
 msgid "Add %(title)s"
 msgstr "%(title)s hinzufügen"
 
-#: ephios/core/templates/core/event_list.html:130
-msgid "Delete selected"
-msgstr "Ausgewählte löschen"
-
-#: ephios/core/templates/core/event_list.html:217
-#: ephios/plugins/federation/templates/federation/external_event_list.html:58
-msgid "Show"
-msgstr "Anzeigen"
-
-#: ephios/core/templates/core/event_list.html:230
+#: ephios/core/templates/core/event_list.html:140
 #: ephios/plugins/federation/templates/federation/external_event_list.html:67
 msgid "No results."
 msgstr "Keine Ergebnisse."
@@ -1947,21 +1938,25 @@ msgstr "Titel"
 msgid "Confirm results"
 msgstr "Offene Anfragen"
 
+#: ephios/core/templates/core/fragments/calendar_day.html:23
+#: ephios/core/templates/core/fragments/event_list_day_mode.html:96
+msgid "more"
+msgstr "mehr"
+
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:27
+msgid "Delete selected"
+msgstr "Ausgewählte löschen"
+
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:122
+#: ephios/plugins/federation/templates/federation/external_event_list.html:58
+msgid "Show"
+msgstr "Anzeigen"
+
 #: ephios/core/templates/core/fragments/pending_consequences.html:8
 msgid "Your requests"
 msgstr "Ihre Anfragen"
 
-#: ephios/core/templates/core/fragments/shift_box_big.html:20
-#: ephios/core/templates/core/fragments/shift_box_big.html:31
-#: ephios/core/templates/core/fragments/shift_box_big.html:38
-msgid "originally"
-msgstr "ursprünglich"
-
-#: ephios/core/templates/core/fragments/shift_box_big.html:45
-msgid "Meetup"
-msgstr "Treffpunkt"
-
-#: ephios/core/templates/core/fragments/shift_box_big.html:97
+#: ephios/core/templates/core/fragments/shift_box_big.html:39
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
@@ -1969,6 +1964,16 @@ msgstr "Anmeldung endet"
 #: ephios/core/templates/core/shift_form.html:88
 msgid "Shift"
 msgstr "Schicht"
+
+#: ephios/core/templates/core/fragments/shift_header.html:18
+#: ephios/core/templates/core/fragments/shift_header.html:30
+#: ephios/core/templates/core/fragments/shift_header.html:37
+msgid "originally"
+msgstr "ursprünglich"
+
+#: ephios/core/templates/core/fragments/shift_header.html:44
+msgid "Meetup"
+msgstr "Treffpunkt"
 
 #: ephios/core/templates/core/fragments/signup_method_missing.html:4
 msgid "We're sorry! There is a problem displaying the state of the shift."
@@ -2573,7 +2578,7 @@ msgid "No entries"
 msgstr "Keine Einträge"
 
 #: ephios/core/views/accounts.py:38 ephios/core/views/accounts.py:39
-#: ephios/core/views/event.py:56 ephios/core/views/event.py:57
+#: ephios/core/views/event.py:57 ephios/core/views/event.py:58
 msgid "Search for…"
 msgstr "Suche nach…"
 
@@ -2673,42 +2678,42 @@ msgstr "Es wurden keine Veranstaltungen zum Löschen ausgewählt."
 msgid "The selected events have been deleted."
 msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 
-#: ephios/core/views/event.py:72
+#: ephios/core/views/event.py:73
 msgctxt "event date filter"
 msgid "until"
 msgstr "bis zum"
 
-#: ephios/core/views/event.py:73
+#: ephios/core/views/event.py:74
 msgctxt "event date filter"
 msgid "from"
 msgstr "ab dem"
 
-#: ephios/core/views/event.py:86
+#: ephios/core/views/event.py:87
 msgid "all"
 msgstr "alle"
 
-#: ephios/core/views/event.py:87
+#: ephios/core/views/event.py:88
 msgid "no response"
 msgstr "ohne Rückmeldung"
 
-#: ephios/core/views/event.py:89
+#: ephios/core/views/event.py:90
 msgid "requested or confirmed"
 msgstr "angefragt oder bestätigt"
 
-#: ephios/core/views/event.py:90
+#: ephios/core/views/event.py:91
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: ephios/core/views/event.py:383 ephios/core/views/shift.py:90
+#: ephios/core/views/event.py:520 ephios/core/views/shift.py:90
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:469
+#: ephios/core/views/event.py:606
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:523
+#: ephios/core/views/event.py:660
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -3803,11 +3808,11 @@ msgstr "Neue Seite anlegen"
 msgid "Add page"
 msgstr "Seite hinzufügen"
 
-#: ephios/plugins/pages/views.py:35 ephios/plugins/pages/views.py:45
+#: ephios/plugins/pages/views.py:36 ephios/plugins/pages/views.py:46
 msgid "Page saved successfully."
 msgstr "Seite gespeichert."
 
-#: ephios/plugins/pages/views.py:54
+#: ephios/plugins/pages/views.py:55
 msgid "Page deleted successfully."
 msgstr "Seite erfolgreich gelöscht."
 
@@ -4000,20 +4005,20 @@ msgstr ""
 "Beim Holen der Qualifikations-Repositories trat ein Fehler auf. Prüfen Sie "
 "die URLs, versuchen Sie es erneut oder wenden Sie sich an den support."
 
-#: ephios/plugins/qualification_management/views.py:69
-#: ephios/plugins/qualification_management/views.py:79
+#: ephios/plugins/qualification_management/views.py:70
+#: ephios/plugins/qualification_management/views.py:80
 msgid "Qualification was saved."
 msgstr "Qualifikation wurde gespeichert."
 
-#: ephios/plugins/qualification_management/views.py:90
+#: ephios/plugins/qualification_management/views.py:91
 msgid "Qualification was deleted."
 msgstr "Qualifikation wurde gelöscht."
 
-#: ephios/plugins/qualification_management/views.py:108
+#: ephios/plugins/qualification_management/views.py:109
 msgid "Qualification categories saved."
 msgstr "Qualifikationskategorien wurden gespeichert."
 
-#: ephios/plugins/qualification_management/views.py:123
+#: ephios/plugins/qualification_management/views.py:124
 #, python-brace-format
 msgid "One user had '{qualification}' assigned."
 msgid_plural "{count} users had '{qualification}' assigned."
@@ -4094,7 +4099,7 @@ msgstr "Ressourcenkategorien bearbeiten"
 msgid "cannot delete, has resources"
 msgstr "kann nicht löschen, hat Ressourcen"
 
-#: ephios/plugins/simpleresource/views.py:46
+#: ephios/plugins/simpleresource/views.py:47
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
