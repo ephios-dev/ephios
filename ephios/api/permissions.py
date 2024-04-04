@@ -2,6 +2,8 @@ from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermi
 
 
 class ViewPermissionsMixin:
+    # DjangoModelPermissions and DjangoObjectPermissions only check permissions for write/unsafe operations.
+    # This mixin adds permissions for read/safe operations.
     perms_map = {
         "GET": ["%(app_label)s.view_%(model_name)s"],
         "OPTIONS": [],
