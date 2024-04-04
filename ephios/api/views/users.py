@@ -8,14 +8,13 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.relations import SlugRelatedField
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import GenericViewSet
-from rest_framework_guardian.filters import ObjectPermissionsFilter
 
 from ephios.api.filters import ParticipationFilterSet, ParticipationPermissionFilter
+from ephios.api.permissions import ViewPermissions
 from ephios.api.views.events import ParticipationSerializer
 from ephios.core.models import LocalParticipation, Qualification, UserProfile
 from ephios.core.services.qualification import collect_all_included_qualifications
@@ -78,23 +77,21 @@ class UserProfileMeView(RetrieveAPIView):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
-    permission_classes = [IsAuthenticatedOrTokenHasScope, DjangoObjectPermissions]
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewPermissions]
     required_scopes = ["CONFIDENTIAL_READ"]
     search_fields = ["display_name", "email"]
 
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
-        ObjectPermissionsFilter,
     ]
 
 
 class UserByMailView(RetrieveModelMixin, GenericViewSet):
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
-    permission_classes = [IsAuthenticatedOrTokenHasScope, DjangoObjectPermissions]
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewPermissions]
     required_scopes = ["CONFIDENTIAL_READ"]
-    filter_backends = [ObjectPermissionsFilter]
     lookup_url_kwarg = "email"
     lookup_field = "email"
     lookup_value_regex = "[^/]+"  # customize to allow dots (".") in the lookup value
