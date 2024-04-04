@@ -19,3 +19,13 @@ def test_api_user_profile_by_email(django_app, superuser):
         user=superuser,
     )
     assert superuser.email in response
+
+
+def test_manager_can_view_users(django_app, groups, manager):
+    response = django_app.get(reverse("api:userprofile-list"), user=manager)
+    assert manager.email in response
+
+
+def test_volunter_cannot_view_users(django_app, groups, volunteer):
+    response = django_app.get(reverse("api:userprofile-list"), user=volunteer, expect_errors=True)
+    assert response.status_code == 403
