@@ -105,7 +105,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         verbose_name=_("Administrator"),
     )
     display_name = CharField(_("name"), max_length=254)
-    date_of_birth = DateField(_("date of birth"), null=True, blank=False)
+    date_of_birth = DateField(_("date of birth"), null=True, blank=True)
     phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
     preferred_language = CharField(
