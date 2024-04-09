@@ -123,6 +123,7 @@ class BaseShiftStructure(AbstractShiftStructure):
             kwargs.setdefault("initial", self.configuration.__dict__)
         kwargs.setdefault("event", self.event)
         kwargs.setdefault("shift", self.shift)
+        kwargs.setdefault("description", self.description)
         form = self.configuration_form_class(*args, **kwargs)
         return form
 

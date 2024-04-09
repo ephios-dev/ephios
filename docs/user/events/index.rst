@@ -7,7 +7,5 @@ event types, signup methods and so on.
 .. toctree::
    :maxdepth: 2
 
-   types
-   visibility
-   shifts
-   signup_methods
+   events
+   signup

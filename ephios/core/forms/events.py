@@ -11,10 +11,8 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.utils import from_current_timezone
-from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
-from django.utils.translation import pgettext
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
@@ -182,18 +180,6 @@ class ShiftForm(forms.ModelForm):
     class Meta:
         model = Shift
         fields = ["meeting_time", "start_time", "end_time", "signup_flow_slug", "structure_slug"]
-        help_texts = {
-            "signup_flow_slug": mark_safe(
-                _(
-                    "Signup flow for this shift. Explanations for the signup flows can be found in the <a href='{url}'>documentation</a>."
-                ).format(
-                    url=pgettext(
-                        "localized docs link",
-                        "https://docs.ephios.de/en/stable/user/events/signup_methods.html#availabe-signup-methods",
-                    )
-                )
-            )
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

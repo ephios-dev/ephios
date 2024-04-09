@@ -62,11 +62,10 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
                     }
                 )
 
-            teams_config = {
+            shift.structure_configuration = {
                 "choose_preferred_team": sections_config.get("choose_preferred_section", False),
                 "teams": teams,
             }
-            shift.structure_configuration = teams_config
 
         shift.save()
 

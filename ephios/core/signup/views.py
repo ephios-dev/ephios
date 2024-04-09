@@ -48,9 +48,15 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         choice = form.cleaned_data["signup_choice"]
-        validator = self.shift.signup_flow.get_validator(self.participant)
         with transaction.atomic():
-            Shift.objects.select_for_update().get(pk=self.shift.pk)
+            # select shift for update and get a fresh validator
+            validator = (
+                Shift.objects.select_for_update()
+                .prefetch_related("participations")
+                .select_related("event", "event__type")
+                .get(pk=self.shift.pk)
+                .signup_flow.get_validator(self.participant)
+            )
             if choice == "sign_up" and validator.can_sign_up():
                 return self.signup_pressed(form)
             if choice == "customize" and validator.can_customize_signup():

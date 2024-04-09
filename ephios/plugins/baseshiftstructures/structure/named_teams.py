@@ -164,7 +164,9 @@ class NamedTeamsConfigurationForm(AbstractGroupBasedStructureConfigurationForm):
         required=False,
     )
     formset_data_field_name = "teams"
-    formset_class = NamedTeamsFormset
+
+    def get_formset_class(self):
+        return NamedTeamsFormset
 
     @classmethod
     def format_formset_item(cls, item):
@@ -230,14 +232,32 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         return d
 
     def get_checkers(self):
-        def check_qualifications(shift, participant):
-            if not teams_participant_qualifies_for(
+        def check_qualifications_and_max_count(shift, participant):
+            viable_teams = teams_participant_qualifies_for(
                 shift.structure.configuration.teams, participant
-            ):
+            )
+            if not viable_teams:
                 raise ParticipantUnfitError(_("You are not qualified."))
 
-        # TODO check if teams are full if signup flow does not use requested state
-        return super().get_checkers() + [check_qualifications]
+            # check if teams are full if signup flow does not use requested state
+            if shift.signup_flow.uses_requested_state:
+                return
+            free_team = False
+            for team in viable_teams:
+                if (
+                    team["max_count"] is None
+                    or team["max_count"]
+                    > shift.participations.filter(
+                        state=AbstractParticipation.States.CONFIRMED,
+                        structure_data__dispatched_team_uuid=team["uuid"],
+                    ).count()
+                ):
+                    free_team = True
+                    break
+            if not free_team:
+                raise ParticipantUnfitError(_("All teams you qualify for are full."))
+
+        return super().get_checkers() + [check_qualifications_and_max_count]
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs

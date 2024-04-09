@@ -137,9 +137,6 @@ class DispositionBaseViewMixin(CustomPermissionRequiredMixin, SingleObjectMixin)
         super().setup(request, *args, **kwargs)
         self.object: Shift = self.get_object()
 
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
     def get_permission_object(self):
         return self.object.event
 
