@@ -32,7 +32,7 @@ class RequestConfirmSignupFlow(BaseSignupFlow):
 
 class InstantConfirmSignupFlow(BaseSignupFlow):
     slug = "instant_confirmation"
-    verbose_name = _("Plain signup")
+    verbose_name = _("Direct signup")
     description = _("Participants can directly sign up for the shift.")
     registration_button_text = _("Sign up")
     uses_requested_state = False

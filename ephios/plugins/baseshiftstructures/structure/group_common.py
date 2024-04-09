@@ -14,10 +14,9 @@ from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeConfig
 def format_min_max_count(min_count, max_count):
     if not max_count:
         return f"{min_count}+"
-    elif min_count == max_count:
+    if min_count == max_count:
         return f"{min_count}"
-    else:
-        return f"{min_count}-{max_count}"
+    return f"{min_count}-{max_count}"
 
 
 class BaseGroupBasedShiftStructure(BaseShiftStructure):
@@ -26,12 +25,7 @@ class BaseGroupBasedShiftStructure(BaseShiftStructure):
         from ephios.core.signup.stats import SignupStats
 
         participations = list(self.shift.participations.all())
-
-        signup_stats = SignupStats.ZERO
-        for stats in self._get_signup_stats_per_group(participations).values():
-            signup_stats += stats
-
-        return signup_stats
+        return SignupStats.reduce(self._get_signup_stats_per_group(participations).values())
 
     def _get_signup_stats_per_group(self, participations):
         raise NotImplementedError
@@ -40,8 +34,10 @@ class BaseGroupBasedShiftStructure(BaseShiftStructure):
 class AbstractGroupBasedStructureConfigurationForm(
     MinimumAgeConfigForm, BaseShiftStructureConfigurationForm
 ):
-    formset_class = ...
-    formset_data_field_name = ...
+    formset_data_field_name = None
+
+    def get_formset_class(self):
+        raise NotImplementedError
 
     def _clean_formset_data(self):
         if not self.formset.is_valid():
@@ -59,7 +55,7 @@ class AbstractGroupBasedStructureConfigurationForm(
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
-        self.formset = self.formset_class(
+        self.formset = self.get_formset_class()(
             data=data,
             initial=self.initial.get(self.formset_data_field_name, []),
             prefix=self.formset_data_field_name,

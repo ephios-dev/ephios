@@ -12,14 +12,17 @@ subclasses of ``ephios.core.consequences.BaseConsequenceHandler``.
 """
 
 register_shift_structures = PluginSignal()
-# TODO: update documentation
 """
-This signal is sent out to get all known signup methods. Receivers should return a list of
-subclasses of ``ephios.core.signup.methods.BaseSignupMethod``.
+This signal is sent out to get all known shift structures. Receivers should return a list of
+subclasses of ``ephios.core.signup.structure.abstract.AbstractShiftStructure``.
 """
 
 register_signup_flows = PluginSignal()
-# TODO: add documentation
+"""
+This signal is sent out to get all known signup flows. Receivers should return a list of
+subclasses of ``ephios.core.signup.flow.abstract.AbstractSignupFlow``.
+"""
+
 
 participant_signup_checkers = PluginSignal()
 """

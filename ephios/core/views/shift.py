@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
@@ -131,7 +130,13 @@ class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleOb
         except Shift.DoesNotExist:
             shift = None
         form = self.get_form(self.get_object(), shift)
-        return HttpResponse(form.render())
+        return render(
+            request,
+            "core/fragments/shift_signup_config_form.html",
+            {
+                "form": form,
+            },
+        )
 
     def get_form(self, event, shift=None):
         raise NotImplementedError
@@ -208,7 +213,7 @@ class ShiftUpdateView(
             structure_configuration_form = structure.get_configuration_form(
                 self.request.POST, event=self.object.event
             )
-        except (ValueError, MultiValueDictKeyError) as e:
+        except (ValueError, MultiValueDictKeyError):
             pass
         else:
             if all(

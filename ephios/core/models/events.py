@@ -1,6 +1,4 @@
-import functools
 import logging
-import operator
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
@@ -103,13 +101,7 @@ class Event(Model):
 
     def get_signup_stats(self) -> "SignupStats":
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
-
-        default_for_no_shifts = SignupStats.ZERO
-
-        return functools.reduce(
-            operator.add,
-            [shift.get_signup_stats() for shift in self.shifts.all()] or [default_for_no_shifts],
-        )
+        return SignupStats.reduce([shift.get_signup_stats() for shift in self.shifts.all()])
 
     def __str__(self):
         return str(self.title)
@@ -184,7 +176,7 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         GETTING_DISPATCHED = 4, _("getting dispatched")
 
         @classproperty
-        def REQUESTED_AND_CONFIRMED(cls):
+        def REQUESTED_AND_CONFIRMED(cls):  # pylint: disable=no-self-argument
             return {0, 1}
 
         @classmethod
@@ -406,9 +398,6 @@ class LocalParticipation(AbstractParticipation):
         db_table = "localparticipation"
         verbose_name = _("participation")
         verbose_name_plural = _("participations")
-        constraints = [
-            # TODO models.UniqueConstraint(fields=["user", "shift"], name="unique_localparticipation")
-        ]
 
 
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)

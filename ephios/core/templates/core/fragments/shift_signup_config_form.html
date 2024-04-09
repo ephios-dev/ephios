@@ -1,0 +1,11 @@
+{% load i18n %}
+{% if form %}
+    <p class="text-body-secondary">
+        <i class="fa fa-info-circle"></i>
+        {{ form.description }}
+        <a href="https://docs.ephios.de/{{ LANGUAGE_CODE }}/stable/user/events/signup.html" target="_blank">
+            {% translate "Documentation" %}
+        </a>
+    </p>
+{% endif %}
+{{ form }}

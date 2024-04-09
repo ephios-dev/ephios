@@ -173,4 +173,5 @@ class SignupConfigurationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event")
         self.shift = kwargs.pop("shift")
+        self.description = kwargs.pop("description", "")
         super().__init__(*args, **kwargs)

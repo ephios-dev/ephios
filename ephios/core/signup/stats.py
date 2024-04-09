@@ -24,6 +24,10 @@ class SignupStats:
             max_count=0,
         )
 
+    @classmethod
+    def reduce(cls, stats_list):
+        return sum(stats_list, cls.ZERO)
+
     def replace(self, **kwargs):
         return dataclasses.replace(self, **kwargs)
 

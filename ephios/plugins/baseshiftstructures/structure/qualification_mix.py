@@ -30,7 +30,9 @@ class QualificationMixConfigurationForm(AbstractGroupBasedStructureConfiguration
         required=False,
     )
     formset_data_field_name = "qualification_requirements"
-    formset_class = QualificationRequirementFormset
+
+    def get_formset_class(self):
+        return QualificationRequirementFormset
 
     @classmethod
     def format_formset_item(cls, item):
@@ -56,7 +58,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         if not strict_mode:
             # check if the participant fulfills any of the requirements
             participant_skill = participant.collect_all_qualifications()
-            for requirement_id, requirement, qualifications in self._requirements:
+            for __, __, qualifications in self._requirements:
                 if all(required_q in participant_skill for required_q in qualifications):
                     return
         else:
@@ -195,7 +197,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         requirement_stats = {}
         # confirmed influences missing, and missing needs to be calculated per
         # each requirement, so we need to iterate over all requirements
-        for requirement_id, requirement, qualifications in self._requirements:
+        for requirement_id, requirement, __ in self._requirements:
             confirmed_count = len(
                 [
                     participation
