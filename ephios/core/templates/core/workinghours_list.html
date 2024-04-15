@@ -14,12 +14,10 @@
         {% translate "Working hours" %}
     </h1>
     <form class="row row-cols-sm-auto g-3">
-        <div class="col-12">
-            {% crispy_field filter_form.start label_class="col mb-0" field_class="col" wrapper_class="row align-items-center" %}
-        </div>
-        <div class="col-12">
-            {% crispy_field filter_form.end label_class="col mb-0" field_class="col" wrapper_class="row align-items-center" %}
-        </div>
+        {% crispy_field filter_form.start wrapper_class="col-12 col-lg" show_labels=False %}
+        <div class="col pt-1"> <p>{% translate "to" %}</p> </div>
+        {% crispy_field filter_form.end wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.type wrapper_class="col-12 col-lg" show_labels=False %}
         <div class="col-12">
             <button type="submit" class="btn btn-primary">{% translate "Filter" %}</button>
         </div>
