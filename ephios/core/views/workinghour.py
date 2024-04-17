@@ -71,7 +71,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
         )
         workinghours = {}
         if eventtype is not None:
-            participations = participations.filter(shift__event__type=type)
+            participations = participations.filter(shift__event__type=eventtype)
         else:
             workinghours = (
                 WorkingHours.objects.filter(date__gte=start, date__lte=end)
