@@ -4,7 +4,7 @@ import re
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 
-from ephios.core.models import WorkingHours
+from ephios.core.models import LocalParticipation, WorkingHours
 
 
 class TestWorkingHours:
@@ -93,3 +93,27 @@ class TestWorkingHours:
             reverse("core:workinghours_add", kwargs={"pk": volunteer.pk}), status=302
         )
         assert "/accounts/login" in response.url
+
+    def test_workinghours_filter(
+        self,
+        django_app,
+        volunteer,
+        manager,
+        event,
+        service_event_type,
+        training_event_type,
+        workinghours,
+    ):
+        response = django_app.get(reverse("core:workinghours_list"), user=manager)
+        assert response.html.find(string=floatformat(volunteer.get_workhour_items()[0], arg=2))
+        participation = LocalParticipation.objects.create(
+            shift=event.shifts.first(), user=volunteer, state=LocalParticipation.States.CONFIRMED
+        )
+        response = django_app.get(
+            f'{reverse("core:workinghours_list")}?type={training_event_type.pk}', user=manager
+        )
+        assert response.html.find(string="No entries")
+        response = django_app.get(
+            f'{reverse("core:workinghours_list")}?type={service_event_type.pk}', user=manager
+        )
+        assert response.html.find(string=floatformat(participation.hours_value, arg=2))
