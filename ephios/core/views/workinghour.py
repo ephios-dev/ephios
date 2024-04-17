@@ -63,16 +63,14 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     template_name = "core/workinghours_list.html"
     permission_required = "core.view_userprofile"
 
-    def _get_working_hours_stats(
-        self, start: Optional[date], end: Optional[date], type: Optional[EventType]
-    ):
+    def _get_working_hours_stats(self, start: date, end: date, eventtype: Optional[EventType]):
         participations = LocalParticipation.objects.filter(
             state=LocalParticipation.States.CONFIRMED,
             start_time__date__gte=start,
             end_time__date__lte=end,
         )
         workinghours = {}
-        if type is not None:
+        if eventtype is not None:
             participations = participations.filter(shift__event__type=type)
         else:
             workinghours = (
@@ -122,7 +120,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
         kwargs["users"] = self._get_working_hours_stats(
             start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
             end=filter_form.cleaned_data.get("end") or date.max,
-            type=filter_form.cleaned_data.get("type"),
+            eventtype=filter_form.cleaned_data.get("type"),
         )
         kwargs["can_grant_for"] = set(
             get_objects_for_user(self.request.user, "decide_workinghours_for_group", klass=Group)
