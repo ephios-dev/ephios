@@ -4,6 +4,7 @@ import uuid
 from django.db import migrations, models
 
 import ephios.extra.json
+from ephios.core.services.qualification import QualificationUniverse
 from ephios.core.signup.flow.builtin.coupled import CoupledSignupFlow
 from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
 from ephios.core.signup.flow.builtin.participant import (
@@ -21,10 +22,41 @@ METHOD_TO_FLOW_AND_STRUCTURE = {
     "no_selfservice": (ManualSignupFlow.slug, UniformShiftStructure.slug),
 }
 
+MEDICAL_CATEGORY_UUID = "50380292-b9c9-4711-b70d-8e03e2784cfb"
+
+
+def pick_important_qualification(qualifications, Qualification):
+    if not qualifications:
+        return None
+    if len(qualifications) == 1:
+        return qualifications[0]
+
+    class MigrationAwareQualificationUniverse(QualificationUniverse):
+        @classmethod
+        def get_qualifications(cls):
+            return (
+                Qualification.objects.all().prefetch_related("includes").select_related("category")
+            )
+
+    qualifications = Qualification.objects.filter(id__in=qualifications)
+    graph = MigrationAwareQualificationUniverse().get_graph()
+    has_uuids = {qualification.uuid for qualification in qualifications}
+    graph.keep_only(has_uuids)
+    essential_qualifications = [q for q in qualifications if q.uuid in graph.roots()]
+
+    # as a heuristic based on what our users probably want, prefer a medical qualification
+    for q in essential_qualifications:
+        if q.category.uuid == MEDICAL_CATEGORY_UUID:
+            return q
+
+    # or just pick the first one
+    return essential_qualifications[0]
+
 
 def copy_structure_configuration_to_signup_flow_configuration(apps, schema_editor):
     Shift = apps.get_model("core", "Shift")
     AbstractParticipation = apps.get_model("core", "AbstractParticipation")
+    Qualification = apps.get_model("core", "Qualification")
 
     for p in AbstractParticipation.objects.all():
         preferred = p.structure_data.get("preferred_section_uuid")
@@ -51,13 +83,16 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
             sections_config = shift.structure_configuration
             teams = []
             for section in sections_config.get("sections", []):
-                qualification = None
-                if section_qualifications := section.get("qualifications", []):
-                    qualification = section_qualifications[0]
+                # teams can only require a single qualification, pick something sensible
+                qualification = pick_important_qualification(
+                    section.get("qualifications", []), Qualification
+                )
                 teams.append(
                     {
                         "title": section.get("title", ""),
                         "uuid": section.get("uuid", uuid.uuid4()),
+                        "min_count": section.get("min_count", 1),
+                        "max_count": section.get("max_count", None),
                         "qualification": qualification,
                     }
                 )

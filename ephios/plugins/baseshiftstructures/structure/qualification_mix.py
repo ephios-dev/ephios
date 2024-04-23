@@ -50,7 +50,7 @@ class QualificationMixConfigurationForm(AbstractGroupBasedStructureConfiguration
 class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
     slug = "qualification_mix"
     verbose_name = _("Qualification mix")
-    description = _("require varying counts of different qualifications")
+    description = _("Require varying counts of different qualifications.")
     shift_state_template_name = "baseshiftstructures/qualification_mix/fragment_state.html"
     configuration_form_class = QualificationMixConfigurationForm
 

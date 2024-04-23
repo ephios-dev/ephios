@@ -8,4 +8,4 @@ from ephios.plugins.baseshiftstructures.structure.common import (
 class UniformShiftStructure(QualificationMinMaxBaseShiftStructure):
     slug = "uniform"
     verbose_name = _("Uniform")
-    description = _("everyone in the shift has the same requirements")
+    description = _("Everyone in the shift has the same requirements.")

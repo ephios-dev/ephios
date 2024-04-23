@@ -176,7 +176,7 @@ class NamedTeamsConfigurationForm(AbstractGroupBasedStructureConfigurationForm):
 class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     slug = "named_teams"
     verbose_name = _("Named teams")
-    description = _("define named teams of participants with different requirements")
+    description = _("Define named teams of participants with different requirements.")
     configuration_form_class = NamedTeamsConfigurationForm
     shift_state_template_name = "baseshiftstructures/named_teams/fragment_state.html"
     disposition_participation_form_class = NamedTeamsDispositionParticipationForm
