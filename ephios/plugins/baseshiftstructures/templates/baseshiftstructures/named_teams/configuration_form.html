@@ -10,7 +10,7 @@
     {{ form.formset.management_form }}
     <div class="card mb-2">
         <div class="card-body">
-            <h3 class="card-title">{% translate "Groups" %}</h3>
+            <h3 class="card-title">{% translate "Teams" %}</h3>
             {{ form.formset|formset_errors }}
             <ul class="list-group list-group-flush" data-formset-body>
                 {% for team_form in form.formset %}
