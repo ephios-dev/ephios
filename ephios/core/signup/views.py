@@ -11,6 +11,7 @@ from ephios.core.services.notifications.types import (
 )
 from ephios.core.signup.flow.participant_validation import BaseSignupError
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.extra.database import OF_SELF
 
 
 class SignupView(FormView):
@@ -46,25 +47,27 @@ class SignupView(FormView):
         self.participant: AbstractParticipant = kwargs["participant"]
         prevent_getting_participant_from_request_user(request)
 
-    def form_valid(self, form):
-        choice = form.cleaned_data["signup_choice"]
+    def post(self, request, *args, **kwargs):
         with transaction.atomic():
-            # select shift for update and get a fresh validator
-            validator = (
-                Shift.objects.select_for_update()
-                .prefetch_related("participations")
-                .select_related("event", "event__type")
-                .get(pk=self.shift.pk)
-                .signup_flow.get_validator(self.participant)
-            )
-            if choice == "sign_up" and validator.can_sign_up():
-                return self.signup_pressed(form)
-            if choice == "customize" and validator.can_customize_signup():
-                return self.customize_pressed(form)
-            if choice == "decline" and validator.can_decline():
-                return self.decline_pressed(form)
-        messages.error(self.request, _("This action is not allowed."))
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
+            form = self.get_form()
+            if form.is_valid():
+                choice = form.cleaned_data["signup_choice"]
+                # select shift for update and get a fresh validator
+                validator = (
+                    Shift.objects.select_for_update(of=OF_SELF)
+                    .prefetch_related("participations")
+                    .select_related("event", "event__type")
+                    .get(pk=self.shift.pk)
+                    .signup_flow.get_validator(self.participant)
+                )
+                if choice == "sign_up" and validator.can_sign_up():
+                    return self.signup_pressed(form)
+                if choice == "customize" and validator.can_customize_signup():
+                    return self.customize_pressed(form)
+                if choice == "decline" and validator.can_decline():
+                    return self.decline_pressed(form)
+                messages.error(self.request, _("This action is not allowed."))
+        return self.form_invalid(form)
 
     def customize_pressed(self, form):
         form.save()
