@@ -95,25 +95,39 @@ class Matching:
         ]
 
 
-def score_pairing(participant: AbstractParticipant, position: Position):
+def score_pairing(
+    participant: AbstractParticipant, position: Position, number_of_participants=1_000_000
+):
     """
     Score the pairing of participant and  position.
     Skill here means a set of Qualification.
     """
+
+    # number of participants is used as a scoring value to make sure that in adverse cases
+    # a matching with a someone unqualified pairings gets a worse score than a matching with more valid pairings
+    # (similar for prefers and skill level). It can be arbitrarily big, but must be at least bigger than the sum of
+    # all the other constants used in the score.
+    padded_participant_count = 10 + 2 * number_of_participants
+    base_score = 1.0
+    preferred_value = 1.5
+    max_skill_value = 1.0
+    required_value = padded_participant_count * sum((base_score, preferred_value, max_skill_value))
+    unqualified_penalty = required_value**2
+
     graph = QualificationUniverse.get_graph()
     participant_skill = set(
         graph.spread_from([qualification.uuid for qualification in participant.qualifications])
     )
     if not position.required_skill <= participant_skill:
         # the participant does not have some required skill
-        return -1  #  avoid 0 as that causes trouble with the matching lib
+        return -unqualified_penalty  # avoid matching unqualified participants
 
-    score = 1
+    score = base_score
     if participant in position.preferred_by:
-        score += 1
+        score += preferred_value
     if position.required:
-        score += 2
-    score += position.skill_level
+        score += required_value
+    score += position.skill_level * max_skill_value
     return score
 
 
@@ -125,7 +139,10 @@ def match_participants_to_positions(
     positions = list(positions)
     costs = csr_matrix(
         [
-            [-score_pairing(participant, position) for position in positions]
+            [
+                -score_pairing(participant, position, number_of_participants=len(participants))
+                for position in positions
+            ]
             for participant in participants
         ]
     )
