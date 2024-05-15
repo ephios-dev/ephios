@@ -10,7 +10,7 @@ class PluginApp(PluginConfig):
         name = _("Modular Signup Requirements")
         author = "Ephios Team"
         description = _(
-            "This plugins adds a signup method for which you configure reusable "
+            "This plugins adds a shift structure for which you configure reusable "
             "modules of requirements to create complex shift setups."
         )
 

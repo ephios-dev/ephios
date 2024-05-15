@@ -26,21 +26,21 @@ class AbstractSignupFlow(ABC):
     @property
     def slug(self):
         """
-        A unique identifier for this signup method.
+        A unique identifier for this signup flow.
         """
         raise NotImplementedError()
 
     @property
     def verbose_name(self):
         """
-        The human-readable name of this signup method.
+        The human-readable name of this signup flow.
         """
         raise NotImplementedError()
 
     @property
     def description(self):
         """
-        A human-readable description of this signup method.
+        A human-readable description of this signup flow.
         """
         raise NotImplementedError()
 
@@ -53,7 +53,7 @@ class AbstractSignupFlow(ABC):
     @property
     def uses_requested_state(self):
         """
-        Whether this signup method uses the requested state.
+        Whether this signup flow uses the requested state.
         """
         return True
 
@@ -83,5 +83,5 @@ class AbstractSignupFlow(ABC):
         raise NotImplementedError()
 
     def get_configuration_form(self, *args, **kwargs):
-        """Return a form to configure this signup method."""
+        """Return a form to configure this signup flow."""
         raise NotImplementedError()

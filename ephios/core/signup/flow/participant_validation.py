@@ -131,7 +131,7 @@ def check_conflicting_participations(shift, participant):
 
 class BaseSignupActionValidator:
     """
-    This class is initialized with a participant and a signup method.
+    This class is initialized with a participant and a shift.
     It computes whether the participant can perform certain signup actions.
     """
 
@@ -151,7 +151,7 @@ class BaseSignupActionValidator:
             except error_class as e:
                 errors.append(e)
             except BaseSignupError:
-                pass  # ignore other signup method errors
+                pass  # ignore other signup errors
         return errors
 
     def get_signup_errors(self):

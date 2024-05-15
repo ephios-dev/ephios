@@ -72,7 +72,7 @@ class BaseSignupFlow(AbstractSignupFlow):
     ) -> AbstractParticipation:
         """
         Creates and/or configures a participation object for a given participant and sends out notifications.
-        Passes the participation and kwargs to configure_participation to do configuration specific to the signup method.
+        Passes the participation and kwargs to configure_participation to do configuration specific to the signup flow.
         """
         from ephios.core.services.notifications.types import (
             ResponsibleParticipationAwaitsDispositionNotification,

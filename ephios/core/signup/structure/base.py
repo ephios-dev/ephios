@@ -86,9 +86,9 @@ class BaseShiftStructure(AbstractShiftStructure):
         except Exception as e:  # pylint: disable=broad-except
             logger.exception(f"Shift #{self.shift.pk} state render failed")
             with context.update({"exception_message": getattr(e, "message", None)}):
-                return get_template("core/fragments/signup_method_missing.html").template.render(
-                    context
-                )
+                return get_template(
+                    "core/fragments/shift_structure_render_error.html"
+                ).template.render(context)
 
     def get_shift_state_context_data(self, request, **kwargs):
         """
