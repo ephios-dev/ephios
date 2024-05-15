@@ -21,13 +21,13 @@ specified when registering.
 Direct signup
 ^^^^^^^^^^^^^
 
-Shifts with this signup methods offer the user a button with the inscription "Participate".
+Shifts with this signup flow offer the user a button with the inscription "Participate".
 Any user who signs up is immediately confirmed and listed as a participant in the shift.
 
 Request and confirm
 ^^^^^^^^^^^^^^^^^^^
 
-Shifts with this signup method offer the user a button labeled "Request".
+Shifts with this signup flow offer the user a button labeled "Request".
 Any user requesting to attend will have their request listed in the disposition.
 The people responsible for the event will receive notification of the request.
 In the disposition they can then confirm or reject the participation.

@@ -23,21 +23,21 @@ class AbstractShiftStructure(ABC):
     @property
     def slug(self):
         """
-        A unique identifier for this signup method.
+        A unique identifier for this structure.
         """
         raise NotImplementedError()
 
     @property
     def verbose_name(self):
         """
-        The human-readable name of this signup method.
+        The human-readable name of this structure.
         """
         raise NotImplementedError()
 
     @property
     def description(self):
         """
-        A human-readable description of this signup method.
+        A human-readable description of this structure.
         """
         raise NotImplementedError()
 
@@ -58,8 +58,8 @@ class AbstractShiftStructure(ABC):
 
     def get_configuration_form(self):
         """
-        This form will be used to configure this signup method.
-        The cleaned data will be saved to shift.signup_configuration
+        This form will be used to configure this structure.
+        The cleaned data will be saved to shift.structure_configuration
         """
         raise NotImplementedError()
 
@@ -73,7 +73,7 @@ class AbstractShiftStructure(ABC):
         """
         Render the state/participations of the shift.
         Match the signature of template.render for use with the include template tag:
-        {% include shift.signup_method %}
+        {% include shift.structure %}
         By default, this loads `shift_state_template_name` and renders it using context from `get_shift_state_context_data`.
         """
         raise NotImplementedError()
