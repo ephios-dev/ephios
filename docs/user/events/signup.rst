@@ -77,7 +77,9 @@ Named teams
 ^^^^^^^^^^^
 
 Configure named teams with individual min/max counts and qualification requirement to
-sort participants into. Participants can even be asked for their preferred team.
+sort participants into. This is a simple way to structure a shift where teams might
+have varying tasks or work in different places.
+Participants can even be asked for their preferred team, their choice will then be displayed in the disposition.
 
 Disposition
 -----------
