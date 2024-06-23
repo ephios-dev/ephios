@@ -1,41 +1,48 @@
+{% extends "baseshiftstructures/fragment_groups_common_state.html" %}
 {% load i18n %}
 
-<div>
-    {% for team in teams.values %}
-        <span class="pe-1">
-            <strong>
-                {{ team.stats.confirmed_count }}{% if team.stats.max_count %}/{{ team.stats.max_count }}{% endif %}
-            </strong>
-            {{ team.title }}
-            {% if team.qualification_label %}
-                <span class="text-body-secondary float-end">{{ team.qualification_label }}</span>
-            {% endif %}
-        </span>
+{% block groups %}
+    <div>
+        {% for team in teams.values %}
+            <span class="pe-1">
+                <span class="fw-medium">
+                    {{ team.title }}
+                </span>
+                {% if team.min_max_count %}
+                    <span class="text-body-secondary float-end"
+                          data-bs-container="body"
+                          data-bs-toggle="popover"
+                          data-bs-trigger="hover"
+                          data-bs-placement="right"
+                          data-bs-content-ref="#structuregroups-popover-content-{{ shift.id }}"
+                          data-bs-title-ref="#structuregroups-popover-title-{{ shift.id }}"
+                    >
+                        {{ team.min_max_count }}
+                        {{ team.qualification_label }}
+                        {% if team.stats.free != None and team.stats.free <= 0 %}
+                            <i class="fa fa-check-circle"></i>
+                        {% elif team.stats.missing <= 0 %}
+                            <i class="far fa-check-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle "></i>
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </span>
 
-        <div class="mb-4">
-            {% for participation in team.participations %}
-                {% include "baseshiftstructures/participation_card_inline.html" %}
-            {% endfor %}
-            {% for index in team.placeholder %}
-                <span class="badge bg-light badge-placeholder">&nbsp;</span>
-            {% endfor %}
-            {% if not team.participations and not team.placeholder %}
+            <div class="mb-4">
+                {% for participation in team.participations %}
+                    {% include "baseshiftstructures/participation_card_inline.html" %}
+                {% endfor %}
+                {% for index in team.placeholder %}
+                    <span class="badge bg-light badge-placeholder">&nbsp;</span>
+                {% endfor %}
+                {% if not team.participations and not team.placeholder %}
                 {# show a white box as vertical whitespace  #}
-                <span class="badge bg-white px-5">&nbsp;</span>
-            {% endif %}
-        </div>
-    {% endfor %}
-</div>
-
-{% with stats=shift.get_signup_stats %}
-    <span class="pe-1">
-        <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
-        {% translate "Total" context "participation count" %}
-    </span>
-{% endwith %}
-
-{% if disposition_url %}
-    <div class="mt-1">
-        <a href="{{ disposition_url }}" class="btn btn-sm btn-info">{% translate "Disposition" %}</a>
+                    <span class="badge bg-white px-5">&nbsp;</span>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
-{% endif %}
+
+{% endblock %}

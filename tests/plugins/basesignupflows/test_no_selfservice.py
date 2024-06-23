@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
+from ephios.plugins.basesignupflows.flow.manual import ManualSignupFlow
 
 
 @pytest.fixture

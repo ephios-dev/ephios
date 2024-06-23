@@ -26,8 +26,8 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.users import IdentityProvider
-from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
+from ephios.plugins.basesignupflows.flow.participant import RequestConfirmSignupFlow
 
 
 @pytest.fixture(autouse=True)

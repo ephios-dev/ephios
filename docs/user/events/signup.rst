@@ -18,8 +18,8 @@ Most let you configure whether users who have already been confirmed can
 cancel on their own and whether individually deviating start and end times can be
 specified when registering.
 
-Direct signup
-^^^^^^^^^^^^^
+Instant confirmation
+^^^^^^^^^^^^^^^^^^^^
 
 Shifts with this signup flow offer the user a button with the inscription "Participate".
 Any user who signs up is immediately confirmed and listed as a participant in the shift.

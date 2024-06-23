@@ -17,6 +17,7 @@ from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
     BaseGroupBasedShiftStructure,
     QualificationRequirementForm,
+    format_min_max_count,
 )
 
 
@@ -278,7 +279,8 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             teams[team["uuid"]] = {
                 "title": team["title"],
                 "placeholder": team.get("min_count") or 0,
-                "qualification_label": qualification.abbreviation if qualification else None,
+                "qualification_label": qualification.abbreviation if qualification else "",
+                "min_max_count": format_min_max_count(team.get("min_count"), team.get("max_count")),
                 "participations": [],
                 "stats": teams_stats[team["uuid"]],
             }

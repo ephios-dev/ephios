@@ -221,7 +221,7 @@ class BasicSignupActionValidator(BaseSignupActionValidator):
 
 class NoSignupSignupActionValidator(BaseSignupActionValidator):
     def get_no_signup_allowed_message(self):
-        return _("Signup for this shift is disabled.")
+        raise NotImplementedError
 
     def signup_is_disabled(self, method, participant):
         raise ActionDisallowedError(self.get_no_signup_allowed_message())

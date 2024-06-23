@@ -12,13 +12,13 @@ from ephios.core.models import (
     QualificationGrant,
     Shift,
 )
-from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
 from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     get_conflicting_participations,
 )
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
+from ephios.plugins.basesignupflows.flow.participant import InstantConfirmSignupFlow
 
 
 def test_signup_stats_addition(django_app):

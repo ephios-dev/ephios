@@ -21,13 +21,7 @@ from ephios.extra.widgets import CustomSplitDateTimeWidget
 logger = logging.getLogger(__name__)
 
 
-class BaseSignupFlowConfigurationForm(SignupConfigurationForm):
-    """
-    Base class for signup flow configuration forms. Has no fields.
-    """
-
-
-class BasicSignupFlowConfigurationForm(BaseSignupFlowConfigurationForm):
+class BasicSignupFlowConfigurationForm(SignupConfigurationForm):
     """
     Configuration form with basic fields relevant for most signup flows.
     """

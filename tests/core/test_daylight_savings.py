@@ -3,8 +3,8 @@ from datetime import datetime
 import pytest
 from django.urls import reverse
 
-from ephios.core.signup.flow.builtin.participant import InstantConfirmSignupFlow
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
+from ephios.plugins.basesignupflows.flow.participant import InstantConfirmSignupFlow
 
 
 @pytest.fixture

@@ -5,8 +5,8 @@ import pytest
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
-from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.plugins.baseshiftstructures.structure.named_teams import NamedTeamsShiftStructure
+from ephios.plugins.basesignupflows.flow.participant import RequestConfirmSignupFlow
 
 KTW_UUID = "f92fe836-6dc5-4afd-b488-aee3fe7eda32"
 

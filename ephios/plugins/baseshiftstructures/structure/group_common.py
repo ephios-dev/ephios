@@ -4,10 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from ephios.core.models import Qualification
-from ephios.core.signup.structure.base import (
-    BaseShiftStructure,
-    BaseShiftStructureConfigurationForm,
-)
+from ephios.core.signup.forms import SignupConfigurationForm
+from ephios.core.signup.structure.base import BaseShiftStructure
 from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeConfigForm
 
 
@@ -31,9 +29,7 @@ class BaseGroupBasedShiftStructure(BaseShiftStructure):
         raise NotImplementedError
 
 
-class AbstractGroupBasedStructureConfigurationForm(
-    MinimumAgeConfigForm, BaseShiftStructureConfigurationForm
-):
+class AbstractGroupBasedStructureConfigurationForm(MinimumAgeConfigForm, SignupConfigurationForm):
     formset_data_field_name = None
 
     def get_formset_class(self):

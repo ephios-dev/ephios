@@ -1,72 +1,54 @@
+{% extends "baseshiftstructures/fragment_groups_common_state.html" %}
 {% load i18n %}
 
-<div id="qualimix-popover-title-{{ shift.id }}" class="d-none">
-
-</div>
-<div id="qualimix-popover-content-{{ shift.id }}" class="d-none">
-    <i class="far fa-circle text-body-secondary"></i>
-    {% translate "participants needed" %}
-    <br>
-    <i class="far fa-check-circle text-body-secondary"></i>
-    {% translate "enough participants" %}
-    <br/>
-    <i class="fa fa-check-circle text-body-secondary"></i>
-    {% translate "full" %}
-</div>
-
-
-<div class="row mb-3">
-    <div class="col">
-        {% for participation in matching.participations %}
-            {% include "baseshiftstructures/participation_card_inline.html" %}
-        {% endfor %}
-        {% for unpaired in matching.unpaired_positions %}
-            {% if unpaired.required %}
-                <span class="badge bg-light badge-placeholder">
-                    {% for q in  unpaired.required_qualifications %}
-                        {{ q.abbreviation }}
-                    {% empty %}
-                        <i class="fa fa-question-circle"></i>
-                    {% endfor %}
-                </span>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="col-auto text-body-secondary text-end"
-         data-bs-container="body"
-         data-bs-toggle="popover"
-         data-bs-trigger="hover"
-         data-bs-placement="right"
-         data-bs-content-ref="#qualimix-popover-content-{{ shift.id }}"
-         data-bs-title-ref="#qualimix-popover-title-{{ shift.id }}"
-    >
+{% block groups %}
+    <div class="mb-3">
         {% for requirement in requirements %}
-            <span>
-                {{ requirement.min_max_count }}
-                {{ requirement.qualification_label }}
-                {% if not requirement.has_free %}
-                    <i class="fa fa-check-circle"></i>
-                {% elif not requirement.missing %}
-                    <i class="far fa-check-circle"></i>
-                {% else %}
-                    <i class="far fa-circle "></i>
-                {% endif %}
-            </span>
-            <br/>
+            <div class="row mb-3">
+                <div class="col-12 order-sm-1 col-sm-auto text-body-secondary"
+                     data-bs-container="body"
+                     data-bs-toggle="popover"
+                     data-bs-trigger="hover"
+                     data-bs-placement="right"
+                     data-bs-content-ref="#structuregroups-popover-content-{{ shift.id }}"
+                     data-bs-title-ref="#structuregroups-popover-title-{{ shift.id }}">
+                    <span>
+                        {{ requirement.min_max_count }}
+                        {{ requirement.qualification_label }}
+                        {% if not requirement.has_free %}
+                            <i class="fa fa-check-circle"></i>
+                        {% elif not requirement.missing %}
+                            <i class="far fa-check-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle "></i>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="col-12 order-sm-0 col-sm">
+                    {% for participation in requirement.participations %}
+                        {% include "baseshiftstructures/participation_card_inline.html" %}
+                    {% endfor %}
+                    {% for idx in requirement.placeholder %}
+                        <span class="badge bg-light badge-placeholder">
+                            &nbsp;
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
         {% endfor %}
+        {% if matching.unpaired_participations %}
+            <div class="row">
+                <div class="col-12 order-sm-1 col-sm-auto text-body-secondary">
+                    {% translate "unassigned" %}
+                </div>
+                <div class="col-12 order-sm-0 col-sm">
+                    {% for participation in matching.unpaired_participations %}
+                        {% include "baseshiftstructures/participation_card_inline.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
     </div>
-</div>
 
-
-{% with stats=shift.get_signup_stats %}
-    <span class="pe-1">
-        <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
-        {% translate "Total" context "participation count" %}
-    </span>
-{% endwith %}
-
-{% if disposition_url %}
-    <div class="mt-1">
-        <a href="{{ disposition_url }}" class="btn btn-sm btn-info">{% translate "Disposition" %}</a>
-    </div>
-{% endif %}
+{% endblock %}
