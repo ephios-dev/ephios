@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 import ephios.extra.json
 from ephios.core.services.qualification import QualificationUniverse
-from ephios.core.signup.flow.builtin.coupled import CoupledSignupFlow
-from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
-from ephios.core.signup.flow.builtin.participant import (
+from ephios.plugins.baseshiftstructures.structure.named_teams import NamedTeamsShiftStructure
+from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
+from ephios.plugins.basesignupflows.flow.coupled import CoupledSignupFlow
+from ephios.plugins.basesignupflows.flow.manual import ManualSignupFlow
+from ephios.plugins.basesignupflows.flow.participant import (
     InstantConfirmSignupFlow,
     RequestConfirmSignupFlow,
 )
-from ephios.plugins.baseshiftstructures.structure.named_teams import NamedTeamsShiftStructure
-from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
 
 METHOD_TO_FLOW_AND_STRUCTURE = {
     "instant_confirmation": (InstantConfirmSignupFlow.slug, UniformShiftStructure.slug),

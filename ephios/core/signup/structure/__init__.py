@@ -12,7 +12,6 @@ from ephios.core.services.notifications.types import (
     ResponsibleParticipationStateChangeNotification,
 )
 from ephios.core.signals import register_shift_structures
-from ephios.core.signup.flow.builtin.manual import ManualSignupFlow
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.utils import format_anything

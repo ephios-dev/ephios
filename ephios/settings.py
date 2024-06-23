@@ -103,6 +103,7 @@ EPHIOS_APP_MODULES = [
 ]
 CORE_PLUGINS = [
     "ephios.plugins.baseshiftstructures.apps.PluginApp",
+    "ephios.plugins.basesignupflows.apps.PluginApp",
     "ephios.plugins.complexsignup.apps.PluginApp",
     "ephios.plugins.pages.apps.PluginApp",
     "ephios.plugins.qualification_management.apps.PluginApp",
