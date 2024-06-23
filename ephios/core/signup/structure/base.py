@@ -16,12 +16,6 @@ from ephios.extra.utils import format_anything
 logger = logging.getLogger(__name__)
 
 
-class BaseShiftStructureConfigurationForm(SignupConfigurationForm):
-    """
-    Base class for shift structure configuration forms. Has no fields.
-    """
-
-
 class BaseShiftStructure(AbstractShiftStructure):
     """
     Shift structure with some base implementations for common methods.
@@ -37,7 +31,7 @@ class BaseShiftStructure(AbstractShiftStructure):
 
     @property
     def configuration_form_class(self):
-        return BaseShiftStructureConfigurationForm
+        return SignupConfigurationForm
 
     @property
     def shift_state_template_name(self):

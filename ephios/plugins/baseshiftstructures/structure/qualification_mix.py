@@ -3,7 +3,6 @@ from functools import partial
 
 from django import forms
 from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Qualification
@@ -153,8 +152,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             ]
             requirement = {
                 "qualifications": qualifications,
-                "qualification_label": ", ".join(q.abbreviation for q in qualifications)
-                or mark_safe('<i class="fa fa-question-circle"></i>'),
+                "qualification_label": ", ".join(q.abbreviation for q in qualifications) or "",
                 "min_count": requirement["min_count"],
                 "max_count": requirement["max_count"],
                 "min_max_count": format_min_max_count(

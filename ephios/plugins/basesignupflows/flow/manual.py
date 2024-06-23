@@ -1,8 +1,9 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.signup.flow.base import BaseSignupFlow, BaseSignupFlowConfigurationForm
+from ephios.core.signup.flow.base import BaseSignupFlow
 from ephios.core.signup.flow.participant_validation import NoSignupSignupActionValidator
+from ephios.core.signup.forms import SignupConfigurationForm
 
 
 class ManualSignupActionValidator(NoSignupSignupActionValidator):
@@ -12,7 +13,7 @@ class ManualSignupActionValidator(NoSignupSignupActionValidator):
         )
 
 
-class ManualSignupConfigurationForm(BaseSignupFlowConfigurationForm):
+class ManualSignupConfigurationForm(SignupConfigurationForm):
     no_selfservice_explanation = forms.CharField(
         label=_("Explanation"),
         help_text=_(

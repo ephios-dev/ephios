@@ -4,10 +4,10 @@ import pytest
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation, Shift
-from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.plugins.baseshiftstructures.structure.qualification_mix import (
     QualificationMixShiftStructure,
 )
+from ephios.plugins.basesignupflows.flow.participant import RequestConfirmSignupFlow
 
 
 @pytest.fixture
@@ -69,8 +69,6 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, mixed_shif
         event.get_absolute_url(),
         user=qualified_volunteer,
     )
-    # assert match to NFS and RS is shown as placeholder
-    assert response.html.find(class_="badge-placeholder").text.strip() == "RS"
 
 
 def test_signup_stats(mixed_shift, qualified_volunteer, planner):

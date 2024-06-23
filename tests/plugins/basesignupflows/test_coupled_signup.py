@@ -5,10 +5,10 @@ from django.template.loader import get_template
 from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
-from ephios.core.signup.flow.builtin.coupled import CoupledSignupFlow
-from ephios.core.signup.flow.builtin.participant import RequestConfirmSignupFlow
 from ephios.modellogging.models import LogEntry
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
+from ephios.plugins.basesignupflows.flow.coupled import CoupledSignupFlow
+from ephios.plugins.basesignupflows.flow.participant import RequestConfirmSignupFlow
 
 
 @pytest.fixture

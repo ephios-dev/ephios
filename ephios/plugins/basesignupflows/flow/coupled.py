@@ -8,11 +8,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 
 from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.flow.base import BaseSignupFlow, BaseSignupFlowConfigurationForm
+from ephios.core.signup.flow.base import BaseSignupFlow
 from ephios.core.signup.flow.participant_validation import (
     ActionDisallowedError,
     NoSignupSignupActionValidator,
 )
+from ephios.core.signup.forms import SignupConfigurationForm
 
 
 class CoupledSignupActionValidator(NoSignupSignupActionValidator):
@@ -26,7 +27,7 @@ class CoupledSignupActionValidator(NoSignupSignupActionValidator):
         return ActionDisallowedError(mark_safe(f'<span class="text-danger">{text}</span>'))
 
 
-class ConfigurationForm(BaseSignupFlowConfigurationForm):
+class CoupledFlowConfigurationForm(SignupConfigurationForm):
     leader_shift_id = forms.ModelChoiceField(
         label=_("shift to mirror participation from"),
         required=True,
@@ -55,7 +56,7 @@ class CoupledSignupFlow(BaseSignupFlow):
     description = _("""This method mirrors signup from another shift.""")
     uses_requested_state = True
     signup_action_validator_class = CoupledSignupActionValidator
-    configuration_form_class = ConfigurationForm
+    configuration_form_class = CoupledFlowConfigurationForm
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
