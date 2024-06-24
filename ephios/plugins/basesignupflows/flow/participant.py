@@ -16,7 +16,7 @@ class RequestConfirmSignupFlow(BaseSignupFlow):
     slug = "request_confirm"
     verbose_name = _("Request and confirm")
     description = _(
-        "Participants can request participation. Responsibles can confirm or reject requests."
+        "Participants can request a participation. Responsibles can confirm or reject requests."
     )
     registration_button_text = _("Request")
     signup_success_message = _("You have successfully requested a participation in {shift}.")

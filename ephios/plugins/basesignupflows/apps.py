@@ -7,7 +7,7 @@ class PluginApp(PluginConfig):
     name = "ephios.plugins.basesignupflows"
 
     class EphiosPluginMeta:
-        name = _("Base Signup Flow")
+        name = _("Base Signup Flows")
         author = "Ephios Team"
         description = _("This plugins adds the standard signup flows.")
 
