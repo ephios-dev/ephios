@@ -984,13 +984,13 @@ test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-statici18n"
-version = "2.4.0"
+version = "2.5.0"
 description = "A Django app that compiles i18n JavaScript catalogs to static files."
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-statici18n-2.4.0.tar.gz", hash = "sha256:32660a0d492188751266c800cf4e44005d563bd1e4c91c349e1bd63a6855e270"},
-    {file = "django_statici18n-2.4.0-py2.py3-none-any.whl", hash = "sha256:02a96963a8c42aa7a222a2ba0c39d888306e66f375b6c6acc748a3a81035ed52"},
+    {file = "django_statici18n-2.5.0-py2.py3-none-any.whl", hash = "sha256:323ebecbfa39408ad242a5e782083bac73bf0e13d93c3e2b29fd32d3379eb3c8"},
+    {file = "django_statici18n-2.5.0.tar.gz", hash = "sha256:80ac9f21cb80c1cc5a60b558a104b47acc0914fe2bae9fef74f5a0100c8f3d36"},
 ]
 
 [package.dependencies]
