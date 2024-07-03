@@ -142,7 +142,10 @@ class GroupForm(PermissionFormMixin, ModelForm):
     )
 
     users = ModelMultipleChoiceField(
-        label=_("Users"), queryset=UserProfile.objects.all(), widget=MultiUserProfileWidget
+        label=_("Users"),
+        queryset=UserProfile.objects.all(),
+        widget=MultiUserProfileWidget,
+        required=False,
     )
 
     class Meta:
