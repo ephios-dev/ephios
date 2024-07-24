@@ -1908,8 +1908,8 @@ msgstr "%(title)s hinzufügen"
 
 #: ephios/core/templates/core/event_list.html:140
 #: ephios/plugins/federation/templates/federation/external_event_list.html:67
-msgid "No results."
-msgstr "Keine Ergebnisse."
+msgid "No results"
+msgstr "Keine Ergebnisse"
 
 #: ephios/core/templates/core/event_notification.html:7
 #: ephios/core/templates/core/event_notification.html:16

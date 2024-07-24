@@ -80,24 +80,8 @@
         </form>
         {% if mode == "calendar" or mode == "day" %}
             {% if perms.core.add_event %}
-                <div class="dropdown">
-                    <button class="btn btn-primary btn-sm dropdown-toggle d-none d-md-inline-block" type="button"
-                            id="eventCreateButton"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="fa fa-plus"></span>
-                        {% translate "Add event" %}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventCreateButton">
-                        {% for eventtype in eventtypes %}
-                            <a class="dropdown-item" href="{% url "core:event_create" eventtype.pk %}">
-                                {% blocktranslate trimmed with title=eventtype.title %}
-                                    Add {{ title }}
-                                {% endblocktranslate %}</a>
-                        {% endfor %}
-                    </div>
-                </div>
+                {% include "core/fragments/event_list_add_event_button.html" %}
             {% endif %}
-
             <div class="d-flex justify-content-between mt-2">
                 <a class="btn btn-secondary"
                    href="?{% param_replace date=previous_date|date:"Y-m-d" %}"
@@ -128,21 +112,19 @@
                     <i class="fas fa-arrow-right"></i></a>
             </div>
         {% endif %}
-
-
     </div>
 
-    {% if mode == "calendar" %}
-        {{ calendar }}
+    {% if mode == "list" %}
+        {% include "core/fragments/event_list_list_mode.html" %}
     {% elif not event_list %}
         <div class="mb-3">
             <h5 class="mt-5 text-center">
-                {% translate "No results." %}
+                {% translate "No results" %}
             </h5>
         </div>
+    {% elif mode == "calendar" %}
+        {{ calendar }}
     {% elif mode == "day" %}
         {% include "core/fragments/event_list_day_mode.html" %}
-    {% else %}
-        {% include "core/fragments/event_list_list_mode.html" %}
     {% endif %}
 {% endblock %}
