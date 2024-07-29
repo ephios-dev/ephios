@@ -345,12 +345,7 @@ class EventListView(LoginRequiredMixin, ListView):
             .prefetch_related(Prefetch("shifts", queryset=Shift.objects.order_by("start_time")))
         )
 
-        if not events.exists():
-            ctx.update({"event_list": events, "date": this_date})
-            return ctx
-
         css_context = self._build_day_css_context(events, shifts)
-
         ctx.update(
             {
                 "event_list": events,
@@ -359,7 +354,6 @@ class EventListView(LoginRequiredMixin, ListView):
                 **css_context,
             }
         )
-
         return ctx
 
     def _build_day_css_context(self, events, shifts):
@@ -390,8 +384,14 @@ class EventListView(LoginRequiredMixin, ListView):
 
             shifts_by_event_layouted[event.pk] = columns
         css_shift_tops = ""
-        earliest_shift_start = min(shift.start_time for shift in shifts)
-        latest_shift_end = max(shift.end_time for shift in shifts)
+        try:
+            earliest_shift_start = min(shift.start_time for shift in shifts)
+            latest_shift_end = max(shift.end_time for shift in shifts)
+        except ValueError:
+            # empty shifts
+            earliest_shift_start = latest_shift_end = timezone.now()
+            total_height = 2
+
         # calculate timescale based on shortest shift
         # to not make things too small, consider a maximum of 4 hours and a minimum of 15 minutes
         shortest_shift_duration_in_hours = max(

@@ -116,12 +116,6 @@
 
     {% if mode == "list" %}
         {% include "core/fragments/event_list_list_mode.html" %}
-    {% elif not event_list %}
-        <div class="mb-3">
-            <h5 class="mt-5 text-center">
-                {% translate "No results" %}
-            </h5>
-        </div>
     {% elif mode == "calendar" %}
         {{ calendar }}
     {% elif mode == "day" %}

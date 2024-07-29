@@ -47,6 +47,10 @@
                 </div>
             </a>
         </div>
+    {% empty %}
+        <h5 class="mt-5 text-center">
+            {% translate "No results" %}
+        </h5>
     {% endfor %}
 
     {% for event in event_list %}
