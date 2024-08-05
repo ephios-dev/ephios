@@ -3,8 +3,9 @@ from unittest.mock import patch
 
 from django.urls import reverse
 
-from ephios.plugins.federation.models import FederatedParticipation
+from ephios.plugins.federation.models import FederatedParticipation, FederatedUser
 from ephios.plugins.federation.serializers import SharedEventSerializer
+from ephios.plugins.federation.views.api import FederationOAuthView
 
 
 def test_federation_get_shared_events(django_app, volunteer, federation, federated_event):
@@ -48,3 +49,24 @@ def test_federation_shared_event_detail_and_signup(
     response = response.form.submit(name="signup_choice", value="sign_up").follow()
     assert response.status_code == 200
     assert FederatedParticipation.objects.count() == 1
+
+
+def test_federation_add_included_qualifications(django_app, federation, qualifications):
+    host, guest = federation
+    view = FederationOAuthView()
+    view.guest = guest
+    view._create_user(
+        {
+            "email": "test@localhost",
+            "display_name": "Test",
+            "date_of_birth": "2000-01-01",
+            "qualifications": [
+                {
+                    "uuid": "123aaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "includes": [qualifications.rs.uuid],
+                }
+            ],
+        }
+    )
+    user = FederatedUser.objects.get(email="test@localhost")
+    assert set(user.qualifications.all()) == {qualifications.rs}
