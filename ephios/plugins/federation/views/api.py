@@ -133,17 +133,17 @@ class FederationOAuthView(View):
                 federated_instance=self.guest, email=user_data.json()["email"]
             )
         except FederatedUser.DoesNotExist:
-            user = self._create_user(user_data)
+            user = self._create_user(user_data.json())
         self.request.session["federated_user"] = user.pk
 
     def _create_user(self, user_data):
         user = FederatedUser.objects.create(
             federated_instance=self.guest,
-            email=user_data.json()["email"],
-            display_name=user_data.json()["display_name"],
-            date_of_birth=user_data.json()["date_of_birth"],
+            email=user_data["email"],
+            display_name=user_data["display_name"],
+            date_of_birth=user_data["date_of_birth"],
         )
-        for qualification in user_data.json()["qualifications"]:
+        for qualification in user_data["qualifications"]:
             try:
                 # Note that we assign the qualification on the host instance without further checks.
                 # This may lead to incorrect qualifications if the inclusions for the qualification
@@ -155,7 +155,7 @@ class FederationOAuthView(View):
                 for included_qualification in qualification["includes"]:
                     try:
                         user.qualifications.add(
-                            Qualification.objects.get(uuid=included_qualification["uuid"])
+                            Qualification.objects.get(uuid=included_qualification)
                         )
                     except Qualification.DoesNotExist:
                         continue
