@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+<p>
+    <a href="{% url "complexsignup:blocks_editor" %}"
+       class="btn btn-sm btn-primary"
+       target="_blank">
+        {% translate "Edit blocks" %}
+    </a>
+</p>
+
+{{ form|crispy }}

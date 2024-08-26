@@ -66,23 +66,21 @@ class BulkUpdateListSerializer(serializers.ListSerializer):
 
         # Perform deletions.
         for object_id, obj in object_mapping.items():
-            if self.should_delete(obj, data_mapping):
+            if self.should_delete(object_id, data_mapping):
                 obj.delete()
         return ret
 
-    def should_delete(self, obj, data_mapping):
+    def should_delete(self, object_id, data_mapping):
         raise NotImplementedError()
 
 
 class DeleteFlagBulkUpdateListSerializer(BulkUpdateListSerializer):
-    def should_delete(self, obj, data_mapping):
-        object_id = getattr(obj, self.identification_field)
+    def should_delete(self, object_id, data_mapping):
         return object_id in data_mapping and data_mapping[object_id].get("deleted", False)
 
 
 class DeleteAbsentBulkUpdateListSerializer(BulkUpdateListSerializer):
-    def should_delete(self, obj, data_mapping):
-        object_id = getattr(obj, self.identification_field)
+    def should_delete(self, object_id, data_mapping):
         return object_id not in data_mapping
 
 
