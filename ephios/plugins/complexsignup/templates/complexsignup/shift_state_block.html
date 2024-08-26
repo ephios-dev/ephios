@@ -1,0 +1,16 @@
+<div class="card mb-3 text-bg-light">
+    <div class="card-body">
+        <h5 class="card-title">{{ current }}</h5>
+        {% if current.block_type == "composite" %}
+            {% for sub_block in current.sub_blocks.all %}
+                {% include "complexsignup/shift_state_block.html" with current=sub_block %}
+            {% endfor %}
+        {% else %}
+            <ul class="mb-0">
+                {% for pos in current.positions.all %}
+                    <li>{{ pos }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
