@@ -3,6 +3,7 @@ from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 
+from csp.decorators import csp_exempt
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -615,6 +616,10 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
         messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("core:event_list"))
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        return csp_exempt(super().as_view(**initkwargs))
 
 
 class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
