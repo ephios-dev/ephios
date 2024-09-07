@@ -1,12 +1,17 @@
 const {createApp, ref, computed} = Vue
 
+function formatDate(date_obj, sep="-") {
+    let month = date_obj.getMonth() + 1;
+    let day = date_obj.getDate() + 1;
+    return date_obj.getFullYear() + sep + (month < 10 ? "0" : "") + month + sep + (day < 10 ? "0" : "") + day
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     createApp({
         setup() {
-            const DTSTART = ref(new Date())
-            const rules = ref([{
-                freq: "WEEKLY", interval: 1, BYWEEKDAY: []
-            }])
+            const DTSTART = ref(formatDate(new Date()))
+            const rules = ref([])
+            const dates = ref([])
             const weekdays = [{id: "MO", short: "Mon", long: "Monday"}, {
                 id: "TU", short: "Tue", long: "Tuesday"
             }, {id: "WE", short: "Wed", long: "Wednesday"}, {id: "TH", short: "Thu", long: "Thursday"}, {
@@ -32,14 +37,60 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 rules.value.splice(rules.value.indexOf(rule), 1)
             }
 
+             async function addDate() {
+                dates.value.push({date: ""});
+            }
+
+            async function removeDate(date) {
+                dates.value.splice(dates.value.indexOf(date), 1)
+            }
+
+            function submitForm(event) {
+                event.target.submit();
+            }
+
+            const computed_dates = computed(() => {
+                return fetch("http://localhost:8000/extra/rruleoccurrence/", {
+                    method: "POST", body: JSON.stringify({
+                        recurrence_string: rrule_string.value,
+                    }), headers: {"X-CSRFToken": getCookie("csrftoken")},
+                }).then(response => response.json());
+            })
+
             const rrule_string = computed(() => {
-                return "DTSTART:" + DTSTART.value.toISOString().replace("-", "") + "\n" + rules.value.map(rule => {
-                    return "FREQ=" + rule.freq + ";INTERVAL=" + rule.interval + ";" //+ rule.BYWEEKDAY.join(",")
-                }).join(";")
+                return "DTSTART;TZID=" + Intl.DateTimeFormat().resolvedOptions().timeZone + ":" + formatDate(new Date(DTSTART.value), "") + "T000000\n" + rules.value.map(rule => {
+                    let rule_str = "FREQ=" + rule.freq + ";INTERVAL=" + rule.interval;
+                    switch (rule.freq) {
+                        case "WEEKLY":
+                            rule_str += ";BYWEEKDAY=" + (Array.isArray(rule.BYWEEKDAY) ? rule.BYWEEKDAY.join(",") : rule.BYWEEKDAY);
+                            break;
+                        case "MONTHLY":
+                            if (rule.month_mode === "BYMONTHDAY") {
+                                rule_str += ";BYMONTHDAY=" + rule.BYMONTHDAY
+                            } else {
+                                rule_str += ";BYWEEKDAY=" + rule.BYWEEKDAY + ";BYSETPOS=" + rule.BYSETPOS
+                            }
+                            break;
+                        case "YEARLY":
+                            if (rule.year_mode === "BYMONTHDAY") {
+                                rule_str += ";BYMONTHDAY=" + rule.BYMONTHDAY + ";BYMONTH=" + rule.BYMONTH
+                            } else {
+                                rule_str += ";BYWEEKDAY=" + rule.BYWEEKDAY + ";BYSETPOS=" + rule.BYSETPOS + ";BYMONTH=" + rule.BYMONTH
+                            }
+                    }
+                    if (rule.end_mode === "COUNT") {
+                        rule_str += ";COUNT=" + rule.COUNT
+                    } else if (rule.end_mode === "UNTIL") {
+                        rule_str += ";UNTIL=" + rule.UNTIL
+                    }
+                    return rule_str;
+                }).join("\n") + dates.value.map(date => {
+                    return "RDATE;TZID=" + Intl.DateTimeFormat().resolvedOptions().timeZone + ":" + formatDate(new Date(date.date), "") + "T000000"
+                }).join("\n")
             })
 
             return {
-                rules, DTSTART, addRule, removeRule, rrule_string, weekdays, months,
+                rules, DTSTART, addRule, removeRule, addDate, removeDate, submitForm, rrule_string, weekdays, months, dates, computed_dates,
             }
         }, delimiters: ['[[', ']]']
     }).mount('#recurrence');

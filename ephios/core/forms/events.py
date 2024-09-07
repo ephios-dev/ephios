@@ -1,6 +1,6 @@
 import operator
 import re
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
@@ -16,7 +16,6 @@ from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
-from recurrence.forms import RecurrenceField
 
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
@@ -245,18 +244,6 @@ class ShiftForm(forms.ModelForm):
             if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
                 raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data
-
-
-class EventDuplicationForm(forms.Form):
-    start_date = forms.DateField(
-        widget=CustomDateInput,
-        initial=date.today(),
-        help_text=_(
-            "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."
-        ),
-        label=_("Start date"),
-    )
-    recurrence = RecurrenceField(required=False)
 
 
 class EventTypeForm(forms.ModelForm):
