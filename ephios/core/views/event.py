@@ -4,6 +4,7 @@ from collections import defaultdict
 from datetime import datetime, time, timedelta
 
 from csp.decorators import csp_exempt
+from dateutil.rrule import rrulestr
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -33,10 +34,9 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
-from recurrence.forms import RecurrenceField
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
+from ephios.core.forms.events import EventForm, EventNotificationForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
@@ -540,26 +540,28 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("core:event_list")
 
 
-class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
     permission_required = "core.add_event"
     model = Event
     template_name = "core/event_copy.html"
-    form_class = EventDuplicationForm
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
-    def form_valid(self, form):
+    def post(self, *args, **kwargs):
         tz = get_current_timezone()
-        occurrences = form.cleaned_data["recurrence"].between(
-            datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=7305),  # allow dates up to twenty years in the future
-            inc=True,
-            dtstart=datetime.combine(
-                forms.DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
-            ),
+        try:
+            occurrences = rrulestr(self.request.POST["recurrence_string"]).xafter(
+                timezone.now(), count=1000
+            )
+        except (TypeError, KeyError, ValueError) as e:
+            messages.error(self.request, _("Invalid recurrence rule: {error}").format(error=e))
+            return self.get(*args, **kwargs)
+        messages.info(
+            self.request, [date_format(obj, format="SHORT_DATE_FORMAT") for obj in occurrences]
         )
+        return self.get(*args, **kwargs)
         for date in occurrences:
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()
@@ -627,23 +629,14 @@ class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
 
     def post(self, *args, **kwargs):
         try:
-            recurrence = RecurrenceField().clean(self.request.POST["recurrence_string"])
+            recurrence = rrulestr(json.loads(self.request.body)["recurrence_string"])
             return HttpResponse(
                 json.dumps(
-                    recurrence.between(
-                        datetime.now() - timedelta(days=1),
-                        datetime.now()
-                        + timedelta(days=7305),  # allow dates up to twenty years in the future
-                        inc=True,
-                        dtstart=datetime.combine(
-                            forms.DateField().to_python(self.request.POST["dtstart"]),
-                            datetime.min.time(),
-                        ),
-                    ),
+                    list(recurrence.xafter(timezone.now(), count=1000)),
                     default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT"),
                 )
             )
-        except (TypeError, KeyError, ValidationError):
+        except (TypeError, KeyError, ValueError):
             return HttpResponse()
 
 

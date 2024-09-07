@@ -95,11 +95,6 @@ $(document).ready(function () {
     // Configure all prerendered Forms
     handleForms($(document));
 
-    var recurrenceFields = document.querySelectorAll('.recurrence-widget');
-    Array.prototype.forEach.call(recurrenceFields, function (field, index) {
-        new recurrence.widget.Widget(field.id, {});
-    });
-
     $('#checkall').change(function () {
         $('.cb-element').prop('checked', this.checked);
     });
