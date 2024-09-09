@@ -1,6 +1,6 @@
 import itertools
-from functools import cached_property
-from typing import Iterator
+from collections import Counter, defaultdict
+from functools import cached_property, partial
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -8,11 +8,131 @@ from django_select2.forms import ModelSelect2Widget
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.services.matching import Matching, Position, match_participants_to_positions
-from ephios.core.signup.forms import SignupConfigurationForm
+from ephios.core.signup.disposition import BaseDispositionParticipationForm
+from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
+from ephios.core.signup.forms import BaseSignupForm, SignupConfigurationForm
+from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
 from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeMixin
 from ephios.plugins.complexsignup.models import BuildingBlock
+
+
+def atomic_block_participant_qualifies_for(structure, participant: AbstractParticipant):
+    available_qualification_ids = set(q.id for q in participant.collect_all_qualifications())
+    return [
+        block
+        for block in iter_atomic_blocks(structure)
+        if block["qualification_ids"] <= available_qualification_ids
+        and any(
+            {q.id for q in position.required_qualifications} <= available_qualification_ids
+            for position in block["positions"]
+        )
+    ]
+
+
+def _build_human_path(structure):
+    return " » ".join(
+        [
+            *[s["name"] for s in reversed(structure["parents"])],
+            f"{structure['name']} #{structure['number']}",
+        ]
+    )
+
+
+class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
+    disposition_participation_template = "complexsignup/fragment_participation.html"
+    unit_path = forms.ChoiceField(
+        label=_("Unit"),
+        required=False,
+        widget=forms.Select(
+            attrs={"data-show-for-state": str(AbstractParticipation.States.CONFIRMED)}
+        ),
+    )
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        all_positions, structure, signup_stats = self.shift.structure._match([])
+
+        qualified_blocks = atomic_block_participant_qualifies_for(
+            structure, self.instance.participant
+        )
+        unqualified_blocks = [b for b in iter_atomic_blocks(structure) if b not in qualified_blocks]
+
+        self.fields["unit_path"].choices = [("", _("auto"))]
+        if qualified_blocks:
+            self.fields["unit_path"].choices += [
+                (
+                    _("qualified"),
+                    [(b["path"], _build_human_path(b)) for b in qualified_blocks],
+                )
+            ]
+        if unqualified_blocks:
+            self.fields["unit_path"].choices += [
+                (
+                    _("unqualified"),
+                    [(b["path"], _build_human_path(b)) for b in unqualified_blocks],
+                )
+            ]
+        if preferred_unit_path := self.instance.structure_data.get("preferred_unit_path"):
+            self.fields["unit_path"].initial = preferred_unit_path
+            try:
+                preferred_block = next(
+                    filter(
+                        lambda b: b["path"] == preferred_unit_path,
+                        [b for b in iter_atomic_blocks(structure)],
+                    )
+                )
+                self.preferred_unit_name = _build_human_path(preferred_block)
+            except StopIteration:
+                pass  # preferred block not found
+        if initial := self.instance.structure_data.get("dispatched_unit_path"):
+            self.fields["unit_path"].initial = initial
+
+    def save(self, commit=True):
+        self.instance.structure_data["dispatched_unit_path"] = self.cleaned_data["unit_path"]
+        super().save(commit)
+
+
+class ComplexSignupForm(BaseSignupForm):
+    preferred_unit_path = forms.ChoiceField(
+        label=_("Preferred Unit"),
+        widget=forms.RadioSelect,
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["preferred_unit_path"].initial = self.instance.structure_data.get(
+            "preferred_unit_path"
+        )
+        self.fields["preferred_unit_path"].required = (
+            self.data.get("signup_choice") == "sign_up"
+            and self.shift.structure.configuration.choose_preferred_unit
+        )
+        all_positions, structure, signup_stats = self.shift.structure._match([])
+        self.fields["preferred_unit_path"].choices = [
+            (b["path"], _build_human_path(b))
+            for b in self.blocks_participant_qualifies_for(structure)
+        ]
+        unqualified_blocks = [
+            b
+            for b in iter_atomic_blocks(structure)
+            if b not in self.blocks_participant_qualifies_for(structure)
+        ]
+        if unqualified_blocks:
+            self.fields["preferred_unit_path"].help_text = _(
+                "You don't qualify for {blocks}."
+            ).format(blocks=", ".join(set(str(b["name"]) for b in unqualified_blocks)))
+
+    def save(self, commit=True):
+        self.instance.structure_data["preferred_unit_path"] = self.cleaned_data[
+            "preferred_unit_path"
+        ]
+        return super().save(commit)
+
+    def blocks_participant_qualifies_for(self, structure):
+        return atomic_block_participant_qualifies_for(structure, self.participant)
 
 
 class ComplexConfigurationForm(SignupConfigurationForm):
@@ -22,6 +142,13 @@ class ComplexConfigurationForm(SignupConfigurationForm):
             search_fields=["name"],
         ),
         queryset=BuildingBlock.objects.all(),
+    )
+    choose_preferred_unit = forms.BooleanField(
+        label=_("Participants must provide a preferred unit"),
+        help_text=_("Participants will be asked during signup."),
+        widget=forms.CheckboxInput,
+        required=False,
+        initial=False,
     )
 
     template_name = "complexsignup/configuration_form.html"
@@ -39,21 +166,18 @@ class ComplexShiftStructure(
     description = _("Use preconfigured elements to build a custom structure.")
     shift_state_template_name = "complexsignup/shift_state.html"
     configuration_form_class = ComplexConfigurationForm
+    disposition_participation_form_class = ComplexDispositionParticipationForm
+    signup_form_class = ComplexSignupForm
 
     def _match(self, participations):
-        confirmed_participations = [
-            participation
-            for participation in participations
-            if participation.state == AbstractParticipation.States.CONFIRMED
-        ]
-        participants = {participation.participant for participation in confirmed_participations}
-        all_positions, structure = convert_blocks_to_positions(self._base_blocks, len(participants))
+        participants = {participation.participant for participation in participations}
+        all_positions, structure = convert_blocks_to_positions(self._base_blocks, participations)
         matching = match_participants_to_positions(participants, all_positions)
-        matching.attach_participations(confirmed_participations)
+        matching.attach_participations(participations)
 
         # let's work up the blocks again, but now with matching
         all_positions, structure = convert_blocks_to_positions(
-            self._base_blocks, len(participants), matching=matching
+            self._base_blocks, participations, matching=matching
         )
         # we just have to add unpaired matches to the full stats
         signup_stats = structure["signup_stats"] + SignupStats.ZERO.replace(
@@ -95,6 +219,43 @@ class ComplexShiftStructure(
         matching, structure, stats = self._match(participations)
         return stats
 
+    def check_qualifications(self, shift, participant, strict_mode=True):
+        confirmed_participations = [
+            p
+            for p in shift.participations.all()
+            if p.state == AbstractParticipation.States.CONFIRMED
+        ]
+        all_positions, structure = convert_blocks_to_positions(
+            self._base_blocks, confirmed_participations
+        )
+
+        if not strict_mode:
+            # check if the participant fulfills any of the requirements
+            if atomic_block_participant_qualifies_for(structure, participant):
+                return
+        else:
+            # check if the participant can be matched into already confirmed participations
+            confirmed_participants = [p.participant for p in confirmed_participations]
+            if participant in [p.participant for p in confirmed_participations]:
+                return
+            matching_without = match_participants_to_positions(
+                confirmed_participants, all_positions
+            )
+            matching_with = match_participants_to_positions(
+                confirmed_participants + [participant], all_positions
+            )
+            if len(matching_with.pairings) > len(matching_without.pairings):
+                return
+        raise ParticipantUnfitError(_("You are not qualified."))
+
+    def get_checkers(self):
+        return super().get_checkers() + [
+            partial(
+                self.check_qualifications,
+                strict_mode=not self.shift.signup_flow.uses_requested_state,
+            )
+        ]
+
 
 def _search_block(
     block: BuildingBlock,
@@ -102,9 +263,10 @@ def _search_block(
     level: int,
     required_qualifications: set,
     path_optional: bool,
-    number_of_participants: int,
-    opt_counter: Iterator,
+    participations: list[AbstractParticipation],
+    opt_counter: Counter,
     matching: Matching,
+    parents: list,
 ):
     required_here = set(required_qualifications)
     for requirement in block.qualification_requirements.filter(everyone=True):
@@ -121,11 +283,19 @@ def _search_block(
         "level": level,
         "optional": path_optional,
         "name": block.name,
+        "number": next(opt_counter[block.name]),
         "qualification_label": ", ".join(q.abbreviation for q in required_here),
+        "qualification_ids": {q.id for q in required_here},
+        "parents": parents,
     }
     signup_stats = SignupStats.ZERO
     if block.is_composite():
-        for composition in block.sub_blocks.through.objects.filter(composite_block=block):
+        for composition in block.sub_blocks.through.objects.filter(
+            composite_block=block
+        ).prefetch_related(
+            "sub_block__positions__qualifications",
+            "sub_block__qualification_requirements__qualifications",
+        ):
             positions, sub_structure = _search_block(
                 block=composition.sub_block,
                 path=f"{path}{composition.id}-",
@@ -133,13 +303,24 @@ def _search_block(
                 required_qualifications=required_here,
                 path_optional=path_optional or composition.optional,
                 opt_counter=opt_counter,
-                number_of_participants=number_of_participants,
+                participations=participations,
                 matching=matching,
+                parents=[structure, *parents],
             )
             signup_stats += sub_structure["signup_stats"]
             all_positions.extend(positions)
             structure["sub_blocks"].append(sub_structure)
     else:
+        designated_for = {
+            p.participant
+            for p in participations
+            if p.structure_data.get("dispatched_unit_path") == path
+        }
+        preferred_by = {
+            p.participant
+            for p in participations
+            if p.structure_data.get("preferred_unit_path") == path
+        }
         for block_position in block.positions.all():
             match_id = f"{path}{block.uuid}-{block_position.id}"
             label = block_position.label or ", ".join(
@@ -149,7 +330,8 @@ def _search_block(
             p = Position(
                 id=match_id,
                 required_qualifications=required_here | set(block_position.qualifications.all()),
-                preferred_by=set(),
+                designated_for=designated_for,
+                preferred_by=preferred_by,
                 required=required,
                 label=label,
             )
@@ -169,42 +351,51 @@ def _search_block(
             all_positions.append(p)
             structure["positions"].append(p)
             structure["participations"].append(participation)
-            if block.allow_more:
-                for _ in range(number_of_participants):
-                    opt_match_id = f"{match_id}-{next(opt_counter)}"
-                    p = Position(
-                        id=opt_match_id,
-                        required_qualifications=required_here
-                        | set(block_position.qualifications.all()),
-                        preferred_by=set(),
-                        required=False,  # allow_more -> always optional
-                        label=label,
-                    )
-                    participation = (
-                        matching.participation_for_position(opt_match_id) if matching else None
-                    )
-                    signup_stats += SignupStats.ZERO.replace(
-                        min_count=0,
-                        max_count=None,  # allow_more -> always free
-                        missing=0,
-                        free=None,
-                        requested_count=bool(
-                            participation
-                            and participation.state == AbstractParticipation.States.REQUESTED
-                        ),
-                        confirmed_count=bool(
-                            participation
-                            and participation.state == AbstractParticipation.States.CONFIRMED
-                        ),
-                    )
-                    all_positions.append(p)
-                    structure["positions"].append(p)
-                    structure["participations"].append(participation)
+            for _ in range(
+                max(
+                    int(block.allow_more)
+                    * (len(participations) + 1),  # 1 extra in case of signup matching check
+                    # if more designated participants than we have positions we need to add placeholder anyway
+                    len(designated_for) - len(block.positions.all()),
+                )
+            ):
+                count_id = next(opt_counter[f"{block_position.id}-opt"])
+                opt_match_id = f"{match_id}-{count_id}"
+                p = Position(
+                    id=opt_match_id,
+                    required_qualifications=required_here
+                    | set(block_position.qualifications.all()),
+                    preferred_by=preferred_by,
+                    designated_for=designated_for,
+                    aux_score=0,
+                    required=False,  # allow_more -> always optional
+                    label=label,
+                )
+                participation = (
+                    matching.participation_for_position(opt_match_id) if matching else None
+                )
+                signup_stats += SignupStats.ZERO.replace(
+                    min_count=0,
+                    max_count=None,  # allow_more -> always free
+                    missing=0,
+                    free=None,
+                    requested_count=bool(
+                        participation
+                        and participation.state == AbstractParticipation.States.REQUESTED
+                    ),
+                    confirmed_count=bool(
+                        participation
+                        and participation.state == AbstractParticipation.States.CONFIRMED
+                    ),
+                )
+                all_positions.append(p)
+                structure["positions"].append(p)
+                structure["participations"].append(participation)
     structure["signup_stats"] = signup_stats
     return all_positions, structure
 
 
-def convert_blocks_to_positions(starting_blocks, number_of_participants, matching=None):
+def convert_blocks_to_positions(starting_blocks, participations, matching=None):
     """
     If a matching is provided, the signup stats will have correct participation counts
     """
@@ -221,7 +412,7 @@ def convert_blocks_to_positions(starting_blocks, number_of_participants, matchin
         "name": "ROOT",
         "qualification_label": "",
     }
-    opt_counter = itertools.count()
+    opt_counter = defaultdict(partial(itertools.count, 1))
     for block in starting_blocks:
         positions, sub_structure = _search_block(
             block,
@@ -229,9 +420,10 @@ def convert_blocks_to_positions(starting_blocks, number_of_participants, matchin
             level=1,
             path_optional=False,
             required_qualifications=set(),
-            number_of_participants=number_of_participants,
+            participations=participations,
             opt_counter=opt_counter,
             matching=matching,
+            parents=[],
         )
         all_positions.extend(positions)
         structure["sub_blocks"].append(sub_structure)
@@ -239,3 +431,11 @@ def convert_blocks_to_positions(starting_blocks, number_of_participants, matchin
         [s["signup_stats"] for s in structure["sub_blocks"]]
     )
     return all_positions, structure
+
+
+def iter_atomic_blocks(structure):
+    for sub_block in structure["sub_blocks"]:
+        if not sub_block["is_composite"]:
+            yield sub_block
+        else:
+            yield from iter_atomic_blocks(sub_block)
