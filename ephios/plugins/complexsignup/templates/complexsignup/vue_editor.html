@@ -106,52 +106,62 @@
                             <div class="row" v-for="subBlock in [getBlockById(composition.sub_block)]"
                                  :key="subBlock.uuid">
                                 <div class="col">
-                                    <h6 class="">
-                                        <span class="me-1">
-                                            <i v-if="subBlock.block_type === 'composite'"
-                                               class="fas fa-network-wired"></i>
-                                            <i v-else class="fas fa-list-ul"></i>
-                                        </span>
-                                        <span v-if="!subBlock.name">
-                                            {% translate "unnamed" %}
-                                        </span>
-                                        <span v-else>
-                                            [[ subBlock.name ]]
-                                        </span>
-                                        <span class="ms-1">
-                                            <i class="fa fa-users"></i>
-                                            <span class="ms-1"
-                                                  v-html="participantCountInfo(getBlockById(composition.sub_block))"></span>
-                                        </span>
-                                    </h6>
-                                    <small class="">
-                                        <span v-for="position in getBlockById(composition.sub_block).positions"
-                                              :key="position.clientId"
-                                              class="badge text-bg-secondary me-1">
-                                            <span v-if="position.label">
-                                                [[ position.label ]]
+                                    <div class="mb-1">
+                                        <input type="text"
+                                               v-model="composition.label" class="form-control form-control-sm"
+                                               placeholder="{% translate "Label" %}">
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="d-inline-block me-1">
+                                            <span class="me-1">
+                                                <i v-if="subBlock.block_type === 'composite'"
+                                                   class="fas fa-network-wired"></i>
+                                                <i v-else class="fas fa-list-ul"></i>
                                             </span>
-                                            <span v-else-if="position.qualifications.length > 0">
-                                                <span v-for="(qualification_id, index) in position.qualifications"
-                                                      :key="qualification_id">[[ qualifications[qualification_id].title ]]<span
-                                                    v-if="index != position.qualifications.length - 1">, </span>
+                                            <span v-if="!subBlock.name">
+                                                {% translate "unnamed" %}
+                                            </span>
+                                            <span v-else>
+                                                [[ subBlock.name ]]
+                                            </span>
+                                            <span class="ms-1">
+                                                <i class="fa fa-users"></i>
+                                                <span class="ms-1"
+                                                      v-html="participantCountInfo(getBlockById(composition.sub_block))"></span>
+                                            </span>
+                                        </h6>
+                                        <small class="">
+                                            <span v-for="position in getBlockById(composition.sub_block).positions"
+                                                  :key="position.clientId"
+                                                  class="badge text-bg-secondary me-1">
+                                                <span v-if="position.label">
+                                                    [[ position.label ]]
+                                                </span>
+                                                <span v-else-if="position.qualifications.length > 0">
+                                                    <span v-for="(qualification_id, index) in position.qualifications"
+                                                          :key="qualification_id">[[ qualifications[qualification_id].title ]]<span
+                                                        v-if="index != position.qualifications.length - 1">, </span>
+                                                    </span>
+                                                </span>
+                                                <span v-else>
+                                                    {% translate "unnamed" %}
                                                 </span>
                                             </span>
-                                            <span v-else>
-                                                {% translate "unnamed" %}
+                                            <span v-for="sub_block in getSubBlocks(getBlockById(composition.sub_block))"
+                                                  :key="sub_block.uuid"
+                                                  class="badge text-bg-secondary me-1">
+                                                <span v-if="sub_block.sub_label">
+                                                    [[ sub_block.sub_label ]]
+                                                </span>
+                                                <span v-else-if="sub_block.name">
+                                                    [[ sub_block.name ]]
+                                                </span>
+                                                <span v-else>
+                                                    {% translate "unnamed" %}
+                                                </span>
                                             </span>
-                                        </span>
-                                        <span v-for="sub_block in getSubBlocks(getBlockById(composition.sub_block))"
-                                              :key="sub_block.uuid"
-                                              class="badge text-bg-secondary me-1">
-                                            <span v-if="sub_block.name">
-                                                [[ sub_block.name ]]
-                                            </span>
-                                            <span v-else>
-                                                {% translate "unnamed" %}
-                                            </span>
-                                        </span>
-                                    </small>
+                                        </small>
+                                    </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-check">
@@ -201,9 +211,9 @@
                                             {% translate "everyone" context "block qualification requirement" %}
                                         </option>
                                         {# our matching algorithm doesnt support "at least" as of now #}
-{#                                        <option :value="false">#}
-{#                                            {% translate "at least" %}#}
-{#                                        </option>#}
+                                        {#                                        <option :value="false">#}
+                                        {#                                            {% translate "at least" %}#}
+                                        {#                                        </option>#}
                                     </select>
                                     <span class="ms-1" v-if="!requirement.everyone">
                                         <input type="number" min="1" style="width: 5rem"
@@ -352,7 +362,10 @@
                                     </span>
                                     <span v-for="sub_block in getSubBlocks(block)" :key="sub_block.uuid"
                                           class="badge text-bg-secondary me-1">
-                                        <span v-if="sub_block.name">
+                                        <span v-if="sub_block.sub_label">
+                                            [[ sub_block.sub_label ]]
+                                        </span>
+                                        <span v-else-if="sub_block.name">
                                             [[ sub_block.name ]]
                                         </span>
                                         <span v-else>
