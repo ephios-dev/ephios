@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     if (!sub_block) {
                         return;
                     }
+                    sub_block.sub_label = composition.label;  // provide the label as an additional attribute
                     subBlocks.push(sub_block);
                 });
                 return subBlocks;
@@ -200,6 +201,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 block.sub_compositions.push({
                     sub_block: sub_block.uuid,
                     optional: false,
+                    label: "",
                     id: null,
                     clientId: randomClientId(),
                 });

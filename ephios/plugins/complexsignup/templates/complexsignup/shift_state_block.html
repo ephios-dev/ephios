@@ -4,13 +4,15 @@
         {% if not flatten and current.level > 0 %}
             <div class="col-auto">
                 <span class="fw-bold">
-                    {{ current.name }}
+                    {{ current.label|default:current.name|default:"" }}
                 </span>
             </div>
         {% endif %}
-        <div class="col">
+        <div class="col mb-3 {% if current.level > 0 %}border-start{% endif %}">
             {% for sub_block in current.sub_blocks %}
-                {% include "complexsignup/shift_state_block.html" with current=sub_block %}
+                <div class="{% if not forloop.last %}mb-1{% endif %}">
+                    {% include "complexsignup/shift_state_block.html" with current=sub_block %}
+                </div>
             {% endfor %}
         </div>
     </div>
@@ -18,7 +20,7 @@
     <div>
         <span class="pe-1">
             <span class="fw-medium">
-                {{ current.name }}
+                {{ current.label|default:current.name|default:"" }}
             </span>
             <small class="fw-light text-body-secondary">#{{ current.number }}</small>
             <span class="text-body-secondary float-end"
@@ -40,7 +42,7 @@
                 {% endif %}
             </span>
         </span>
-        <div class="mb-3">
+        <div>
             {% for pos in current.positions %}
                 {% with matching|find_complex_participation:pos.id as participation %}
                     {% if participation is not None %}
@@ -53,8 +55,8 @@
                 {% endwith %}
             {% endfor %}
             {% if not current.positions or current.optional %}
-                {# show a white box as vertical whitespace  #}
-                <span class="badge bg-white px-5">&nbsp;</span>
+                {# show a transparent box as vertical whitespace  #}
+                <span class="badge">&nbsp;</span>
             {% endif %}
         </div>
     </div>

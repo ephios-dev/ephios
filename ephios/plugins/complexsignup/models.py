@@ -149,14 +149,19 @@ class BlockComposition(models.Model):
         related_name="super_compositions",
         verbose_name=_("sub block"),
     )
+    label = models.CharField(
+        verbose_name=_("Label"),
+        max_length=255,
+        blank=True,
+    )
     optional = models.BooleanField(
         verbose_name=_("optional"),
         default=False,
     )
 
     def __str__(self):
-        return _("{sub_block} on {composite_blocK}").format(
-            sub_block=f"{self.sub_block.name} #{self.id}",
+        return _("{label} on {composite_blocK}").format(
+            label=self.label or f"{self.sub_block.name} #{self.id}",
             composite_blocK=self.composite_block,
         )
 

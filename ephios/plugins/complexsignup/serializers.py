@@ -132,12 +132,14 @@ class BlockQualificationRequirementSerializer(NestedQualificationsObjectSerializ
 class BlockCompositionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True, allow_null=True, read_only=False)
     optional = serializers.BooleanField(required=True)
+    label = serializers.CharField(required=True, allow_blank=True)
     sub_block = NestedSlugRelatedField(slug_field="uuid", queryset=BuildingBlock.objects.all())
 
     class Meta:
         model = BlockComposition
         fields = [
             "id",
+            "label",
             "optional",
             "sub_block",
         ]

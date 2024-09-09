@@ -1,6 +1,7 @@
 import itertools
 from collections import Counter, defaultdict
 from functools import cached_property, partial
+from typing import Optional
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -267,6 +268,7 @@ def _search_block(
     opt_counter: Counter,
     matching: Matching,
     parents: list,
+    composed_label: Optional[str] = None,
 ):
     required_here = set(required_qualifications)
     for requirement in block.qualification_requirements.filter(everyone=True):
@@ -283,6 +285,7 @@ def _search_block(
         "level": level,
         "optional": path_optional,
         "name": block.name,
+        "label": composed_label,
         "number": next(opt_counter[block.name]),
         "qualification_label": ", ".join(q.abbreviation for q in required_here),
         "qualification_ids": {q.id for q in required_here},
@@ -306,6 +309,7 @@ def _search_block(
                 participations=participations,
                 matching=matching,
                 parents=[structure, *parents],
+                composed_label=composition.label,
             )
             signup_stats += sub_structure["signup_stats"]
             all_positions.extend(positions)
