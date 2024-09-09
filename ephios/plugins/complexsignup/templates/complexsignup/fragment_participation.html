@@ -1,0 +1,19 @@
+{% extends "core/disposition/fragment_participation.html" %}
+{% load ephios_crispy %}
+{% load user_extras %}
+{% load i18n %}
+
+{% block participation_controls %}
+    <div class="mb-n3">
+        {% crispy_field form.unit_path label_class="d-none" wrapper_class="d-inline-block me-3" %}
+    </div>
+{% endblock %}
+
+{% block participation_detail %}
+    {% if form.preferred_unit_name %}
+        <small class="text-body-secondary">
+            <br> {% translate "prefers" %}
+            {{ form.preferred_unit_name }}
+        </small>
+    {% endif %}
+{% endblock %}

@@ -14,12 +14,15 @@ class Position:
     id: str
     required: bool
     required_qualifications: Collection[Qualification]
-    preferred_by: Collection[AbstractParticipant]
+    designated_for: Collection[AbstractParticipant]  # designated by disposition
+    preferred_by: Collection[AbstractParticipant]  # preferred by participant (less important)
     label: Optional[str] = None
+    aux_score: float = 0.0  # additional score control
 
     def __post_init__(self):
         self.required_qualifications = frozenset(self.required_qualifications)
         self.preferred_by = frozenset(self.preferred_by)
+        self.designated_for = frozenset(self.designated_for)
 
     @property
     def required_skill(self):
@@ -115,25 +118,35 @@ def score_pairing(
     # all the other constants used in the score.
     padded_participant_count = 10 + 2 * number_of_participants
     base_score = 1.0
-    preferred_value = 1.5
+    preferred_value = 3.0
     max_skill_value = 1.0
-    required_value = padded_participant_count * sum((base_score, preferred_value, max_skill_value))
-    unqualified_penalty = required_value**2
+    max_aux_value = 2.0
+    required_value = padded_participant_count * sum(
+        (base_score, preferred_value, max_skill_value, max_aux_value)
+    )
+    designated_value = required_value**2
+    unqualified_penalty = designated_value**2
 
     graph = QualificationUniverse.get_graph()
     participant_skill = set(
         graph.spread_from([qualification.uuid for qualification in participant.qualifications])
     )
-    if not position.required_skill <= participant_skill:
+
+    is_designated = participant in position.designated_for
+
+    if not is_designated and not position.required_skill <= participant_skill:
         # the participant does not have some required skill
         return -unqualified_penalty  # avoid matching unqualified participants
 
     score = base_score
+    if is_designated:
+        score += designated_value
     if participant in position.preferred_by:
         score += preferred_value
     if position.required:
         score += required_value
     score += position.skill_level * max_skill_value
+    score += position.aux_score * max_aux_value
     return score
 
 
