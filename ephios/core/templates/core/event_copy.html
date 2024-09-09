@@ -23,11 +23,15 @@
                 <div class="input-group pb-4">
                     <div class="input-group-text">{% translate "starting at" %}</div>
                     <input type="date" class="form-control" v-model="DTSTART">
+                    <input type="time" class="form-control" v-if="pickHour" v-model="DTSTART_TIME">
                 </div>
                 <ul class="list-group mb-2">
                     <li class="list-group-item p-3" v-for="(rule, index) in rules">
                         <div class="btn-toolbar justify-content-between">
                             <div class="btn-group pb-4">
+                                <button type="button" class="btn btn-outline-secondary"
+                                        :class="{'active' : rule.freq==='HOURLY'}" v-if="pickHour"
+                                        @click="rule.freq='HOURLY'">{% translate "Hourly" %}</button>
                                 <button type="button" class="btn btn-outline-secondary"
                                         :class="{'active' : rule.freq==='DAILY'}"
                                         @click="rule.freq='DAILY'">{% translate "Daily" %}</button>
@@ -195,10 +199,14 @@
                                 <span class="col-2">
                                     {% translate "until" %}
                                 </span>
-                                <div class="col-9">
-                                    <input type="date" class="form-control form-control-sm flex-fill"
+                                <div :class="pickHour ? 'col-5' : 'col-9'">
+                                    <input type="date" class="form-control form-control-sm"
                                            v-model="rule.UNTIL" @focus="rule.end_mode='UNTIL'"
                                            :required="rule.end_mode=='UNTIL'">
+                                </div>
+                                <div v-if="pickHour" class="col-4">
+                                    <input type="time" class="form-control form-control-sm"
+                                           v-model="rule.UNTIL_TIME" @focus="rule.end_mode='UNTIL'">
                                 </div>
 
                             </div>
@@ -223,11 +231,14 @@
                         </div>
                     </li>
                     <li class="list-group-item p-3" v-for="date in dates">
-                        <div class="d-flex">
-                            <div class="">
+                        <div class="row align-items-center">
+                            <div class="col-5">
                                 <input type="date" v-model="date.date" class="form-control" required>
                             </div>
-                            <div class="ms-auto">
+                            <div class="col-5">
+                                <input type="time" v-if="pickHour" v-model="date.time" class="form-control" required>
+                            </div>
+                            <div class="col-1 ms-auto mr-1">
                                 <button type="button" class="btn btn-danger" @click="removeDate(date)">
                                     <i class="fas fa-trash"></i><span
                                         class="visually-hidden">{% translate "Remove" %}</span>
@@ -253,6 +264,7 @@
             </div>
         </form>
     </div>
+    <input type="hidden" autocomplete="off" id="pickHour" value="true">
     <script nonce="{{ request.csp_nonce }}" type="text/javascript"
             src="{% static "ephios/js/event_copy.js" %}"></script>
 {% endblock %}
