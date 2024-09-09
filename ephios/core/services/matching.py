@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Collection
+from typing import Collection, Optional
 
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import min_weight_full_bipartite_matching
@@ -15,6 +15,7 @@ class Position:
     required: bool
     required_qualifications: Collection[Qualification]
     preferred_by: Collection[AbstractParticipant]
+    label: Optional[str] = None
 
     def __post_init__(self):
         self.required_qualifications = frozenset(self.required_qualifications)
@@ -93,6 +94,11 @@ class Matching:
             for participation in self.participations
             if participation.participant in self.unpaired_participants
         ]
+
+    def participation_for_position(self, position_id):
+        for participation, position in self.participation_pairings:
+            if position.id == position_id:
+                return participation
 
 
 def score_pairing(
