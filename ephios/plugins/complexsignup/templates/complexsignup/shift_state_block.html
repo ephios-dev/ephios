@@ -1,16 +1,60 @@
-<div class="card mb-3 text-bg-light">
-    <div class="card-body">
-        <h5 class="card-title">{{ current }}</h5>
-        {% if current.block_type == "composite" %}
-            {% for sub_block in current.sub_blocks.all %}
+{% load complex_extra %}
+{% if current.is_composite %}
+    <div class="row">
+        {% if not flatten and current.level > 0 %}
+            <div class="col-auto">
+                <span class="fw-bold">
+                    {{ current.name }}
+                </span>
+            </div>
+        {% endif %}
+        <div class="col">
+            {% for sub_block in current.sub_blocks %}
                 {% include "complexsignup/shift_state_block.html" with current=sub_block %}
             {% endfor %}
-        {% else %}
-            <ul class="mb-0">
-                {% for pos in current.positions.all %}
-                    <li>{{ pos }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        </div>
     </div>
-</div>
+{% else %}
+    <div>
+        <span class="pe-1">
+            <span class="fw-medium">
+                {{ current.name }}
+            </span>
+            <span class="text-body-secondary float-end"
+                  data-bs-container="body"
+                  data-bs-toggle="popover"
+                  data-bs-trigger="hover"
+                  data-bs-placement="right"
+                  data-bs-content-ref="#structuregroups-popover-content-{{ shift.id }}"
+                  data-bs-title-ref="#structuregroups-popover-title-{{ shift.id }}"
+            >
+                {{ current.signup_stats|format_min_max_count }}
+                {{ current.qualification_label }}
+                {% if current.signup_stats.free != None and current.signup_stats.free <= 0 %}
+                    <i class="fa fa-check-circle"></i>
+                {% elif current.signup_stats.missing <= 0 %}
+                    <i class="far fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-circle "></i>
+                {% endif %}
+            </span>
+        </span>
+        <div class="mb-3">
+            {% for pos in current.positions %}
+                {% with matching|find_complex_participation:pos.id as participation %}
+                    {% if participation is not None %}
+                        {% include "baseshiftstructures/participation_card_inline.html" %}
+                    {% elif pos.required %}
+                        <span class="badge bg-light badge-placeholder">&nbsp;
+                            {{ pos.label }}
+                        </span>
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+            {% if not current.positions or current.optional %}
+                {# show a white box as vertical whitespace  #}
+                <span class="badge bg-white px-5">&nbsp;</span>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

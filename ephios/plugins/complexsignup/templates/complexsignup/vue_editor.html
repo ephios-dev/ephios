@@ -200,9 +200,10 @@
                                         <option :value="true">
                                             {% translate "everyone" context "block qualification requirement" %}
                                         </option>
-                                        <option :value="false">
-                                            {% translate "at least" %}
-                                        </option>
+                                        {# our matching algorithm doesnt support "at least" as of now #}
+{#                                        <option :value="false">#}
+{#                                            {% translate "at least" %}#}
+{#                                        </option>#}
                                     </select>
                                     <span class="ms-1" v-if="!requirement.everyone">
                                         <input type="number" min="1" style="width: 5rem"
