@@ -56,6 +56,7 @@ Shift structures
 
 Shift structures control who can sign up for the shift, e.g. minimum age.
 They mainly differ by how qualification requirements and personnel counts can be required.
+You need to activate plugins to see more shift structures.
 
 Uniform
 ^^^^^^^
@@ -80,6 +81,17 @@ Configure named teams with individual min/max counts and qualification requireme
 sort participants into. This is a simple way to structure a shift where teams might
 have varying tasks or work in different places.
 Participants can even be asked for their preferred team, their choice will then be displayed in the disposition.
+
+Preconfigured Structure
+^^^^^^^^^^^^^^^^^^^^^^^
+
+This is a very flexible way to structure a shift where various qualifications are required.
+Configure reusable nested templates with labels and qualification requirements using the web editor.
+
+In your shift, configure a block to use for that shift.
+Participants can be asked for their preferred unit, their choice will then be displayed in the disposition.
+
+Participants are automatically assigned a fitting unit. You can overwrite this in the disposition.
 
 Disposition
 -----------
