@@ -12,7 +12,10 @@ from django_select2.forms import ModelSelect2Widget
 from ephios.core.models import AbstractParticipation
 from ephios.core.services.matching import Matching, Position, match_participants_to_positions
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
-from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
+from ephios.core.signup.flow.participant_validation import (
+    ParticipantUnfitError,
+    SignupDisallowedError,
+)
 from ephios.core.signup.forms import BaseSignupForm, SignupConfigurationForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
@@ -271,7 +274,9 @@ class ComplexShiftStructure(
             )
             if len(matching_with.pairings) > len(matching_without.pairings):
                 return
-        raise ParticipantUnfitError(_("You are not qualified."))
+        if (free := shift.get_signup_stats().free) and free > 0:
+            raise ParticipantUnfitError(_("You are not qualified."))
+        raise SignupDisallowedError(_("The maximum number of participants is reached."))
 
     def get_checkers(self):
         return super().get_checkers() + [
@@ -404,42 +409,66 @@ def _build_atomic_block_structure(
         structure["positions"].append(p)
         structure["participations"].append(participation)
 
-        # build derivative positions for designated participants and "allow_more" participants
-        for _ in range(
-            max(
-                int(block.allow_more)
-                * (len(participations) + 1),  # 1 extra in case of signup matching check
-                # if more designated participants than we have positions we need to add placeholder anyway
-                len(designated_for) - len(block.positions.all()),
-            )
-        ):
-            count_id = next(opt_counter[f"{block_position.id}-opt"])
-            opt_match_id = f"{match_id}-{count_id}"
-            p = Position(
-                id=opt_match_id,
-                required_qualifications=required_here | set(block_position.qualifications.all()),
-                preferred_by=preferred_by,
-                designated_for=designated_for,
-                aux_score=0,
-                required=False,  # allow_more -> always optional
-                label=label,
-            )
-            participation = matching.participation_for_position(opt_match_id) if matching else None
-            structure["signup_stats"] += SignupStats.ZERO.replace(
-                min_count=0,
-                max_count=None,  # allow_more -> always free
-                missing=0,
-                free=None,
-                requested_count=bool(
-                    participation and participation.state == AbstractParticipation.States.REQUESTED
-                ),
-                confirmed_count=bool(
-                    participation and participation.state == AbstractParticipation.States.CONFIRMED
-                ),
-            )
-            all_positions.append(p)
-            structure["positions"].append(p)
-            structure["participations"].append(participation)
+    # build derivative positions for "allow_more" participants
+    allow_more_count = int(block.allow_more) * (
+        len(participations) + 1
+    )  # 1 extra in case of signup matching check
+    for _ in range(allow_more_count):
+        opt_match_id = f"{path}{block.uuid}-opt-{next(opt_counter[str(block.id)])}"
+        p = Position(
+            id=opt_match_id,
+            required_qualifications=required_here,
+            preferred_by=preferred_by,
+            designated_for=designated_for,
+            aux_score=0,
+            required=False,  # allow_more -> always optional
+            label=block.name,
+        )
+        participation = matching.participation_for_position(opt_match_id) if matching else None
+        structure["signup_stats"] += SignupStats.ZERO.replace(
+            min_count=0,
+            max_count=None,  # allow_more -> always free
+            missing=0,
+            free=None,
+            requested_count=bool(
+                participation and participation.state == AbstractParticipation.States.REQUESTED
+            ),
+            confirmed_count=bool(
+                participation and participation.state == AbstractParticipation.States.CONFIRMED
+            ),
+        )
+        all_positions.append(p)
+        structure["positions"].append(p)
+        structure["participations"].append(participation)
+
+    for _ in range(max(0, len(designated_for) - len(block.positions.all()) - allow_more_count)):
+        # if more designated participants than we have positions, we need to add placeholder anyway
+        opt_match_id = f"{path}{block.uuid}-opt-{next(opt_counter[str(block.id)])}"
+        p = Position(
+            id=opt_match_id,
+            required_qualifications=required_here,
+            preferred_by=preferred_by,
+            designated_for=designated_for,
+            aux_score=0,
+            required=False,  # designated -> always optional
+            label=block.name,
+        )
+        participation = matching.participation_for_position(opt_match_id) if matching else None
+        structure["signup_stats"] += SignupStats.ZERO.replace(
+            min_count=0,
+            max_count=0,  # designated overflow -> runs over max
+            missing=0,
+            free=0,
+            requested_count=bool(
+                participation and participation.state == AbstractParticipation.States.REQUESTED
+            ),
+            confirmed_count=bool(
+                participation and participation.state == AbstractParticipation.States.CONFIRMED
+            ),
+        )
+        all_positions.append(p)
+        structure["positions"].append(p)
+        structure["participations"].append(participation)
 
 
 def convert_blocks_to_positions(starting_blocks, participations, matching=None):

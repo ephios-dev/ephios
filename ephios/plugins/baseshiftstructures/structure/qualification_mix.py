@@ -7,7 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.services.matching import Position, match_participants_to_positions, skill_level
-from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
+from ephios.core.signup.flow.participant_validation import (
+    ParticipantUnfitError,
+    SignupDisallowedError,
+)
 from ephios.core.signup.participants import PlaceholderParticipant
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
@@ -78,7 +81,10 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             )
             if len(matching_with.pairings) > len(matching_without.pairings):
                 return
-        raise ParticipantUnfitError(_("You are not qualified."))
+
+        if (free := shift.get_signup_stats().free) and free > 0:
+            raise ParticipantUnfitError(_("You are not qualified."))
+        raise SignupDisallowedError(_("The maximum number of participants is reached."))
 
     def get_checkers(self):
         return super().get_checkers() + [
@@ -129,9 +135,9 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
                 None,
                 None,
             )
-            self.check_qualifications(self.shift, extra_participant)
+            self.check_qualifications(self.shift, extra_participant, strict_mode=True)
             return True
-        except ParticipantUnfitError:
+        except SignupDisallowedError:
             return False
 
     def get_shift_state_context_data(self, request, **kwargs):
