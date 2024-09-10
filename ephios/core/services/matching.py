@@ -18,7 +18,7 @@ class Position:
     designated_for: Collection[AbstractParticipant]  # designated by disposition
     preferred_by: Collection[AbstractParticipant]  # preferred by participant (less important)
     label: Optional[str] = None
-    aux_score: float = 0.0  # additional score control
+    aux_score: float = 0.0  # additional score control in range [0,1]
 
     def __post_init__(self):
         self.required_qualifications = frozenset(self.required_qualifications)

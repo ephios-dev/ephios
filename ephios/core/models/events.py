@@ -263,7 +263,9 @@ class Shift(DatetimeDisplayMixin, Model):
 
     structure_slug = SlugField(_("structure"))
     structure_configuration = JSONField(
-        default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+        default=dict,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
     )
 
     class Meta:
@@ -272,7 +274,7 @@ class Shift(DatetimeDisplayMixin, Model):
         ordering = ("meeting_time", "start_time", "id")
         db_table = "shift"
 
-    @property
+    @cached_property
     def signup_flow(self) -> "AbstractSignupFlow":
         from ephios.core.signup.flow import signup_flow_from_slug
 
@@ -303,6 +305,28 @@ class Shift(DatetimeDisplayMixin, Model):
             from ephios.core.signup.fallback import FallbackShiftStructure
 
             return FallbackShiftStructure(self, event=event)
+
+    def _clear_cached_signup_objects(self):
+        """
+        when changing data on the shift, cached info in the signup flow or structure might become outdated,
+        so we clear the cached versions. (most relevant to tests, as we use new instances every request)
+        """
+        try:
+            del self.structure
+        except AttributeError:
+            pass
+        try:
+            del self.signup_flow
+        except AttributeError:
+            pass
+
+    def save(self, *args, **kwargs):
+        self._clear_cached_signup_objects()
+        return super().save(*args, **kwargs)
+
+    def refresh_from_db(self, using=None, fields=None):
+        self._clear_cached_signup_objects()
+        return super().refresh_from_db(using, fields)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):

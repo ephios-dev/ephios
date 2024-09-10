@@ -462,3 +462,8 @@ if not DEBUG:
 
 if env.bool("TRUST_X_FORWARDED_PROTO", default=False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Transitional/deprecated settings
+FORMS_URLFIELD_ASSUME_HTTPS = (
+    True  # https://docs.djangoproject.com/en/5.1/ref/settings/#forms-urlfield-assume-https
+)

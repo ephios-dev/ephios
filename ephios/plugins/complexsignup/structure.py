@@ -359,6 +359,7 @@ def _search_block(
                 preferred_by=preferred_by,
                 required=required,
                 label=label,
+                aux_score=1,
             )
             participation = matching.participation_for_position(match_id) if matching else None
             signup_stats += SignupStats.ZERO.replace(

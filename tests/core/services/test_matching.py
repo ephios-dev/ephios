@@ -7,8 +7,8 @@ def test_match_participants_to_positions(qualifications):
     # create 3 participants
     ann = PlaceholderParticipant("Ann", {qualifications.nfs}, None, None)
     ben = PlaceholderParticipant("Ben", {qualifications.rs, qualifications.ce}, None, None)
-    leader = Position("Führer", True, {qualifications.nfs}, [])
-    driver = Position("Fahrer", True, {qualifications.rs, qualifications.c}, [])
+    leader = Position("Führer", True, {qualifications.nfs}, [], [])
+    driver = Position("Fahrer", True, {qualifications.rs, qualifications.c}, [], [])
 
     assert match_participants_to_positions([], []).pairings == set()
     assert match_participants_to_positions([ben], []).pairings == set()
@@ -51,10 +51,10 @@ def test_maximise_number_of_matches_in_adverse_case():
     z = PlaceholderParticipant("Z", {q_d}, None, None)
 
     positions = [
-        Position("A", False, {q_a}, []),
-        Position("B", False, {q_b}, [w]),
-        Position("C", False, {q_c}, [x]),
-        Position("D", False, {q_d}, [y]),
+        Position("A", False, {q_a}, [], []),
+        Position("B", False, {q_b}, [], [w]),
+        Position("C", False, {q_c}, [], [x]),
+        Position("D", False, {q_d}, [], [y]),
     ]
     participants = [w, x, y, z]
 
