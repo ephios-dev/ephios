@@ -2,8 +2,10 @@
 import uuid
 
 from django.db import migrations, models
+from dynamic_preferences.registries import global_preferences_registry
 
 import ephios.extra.json
+from ephios.core.dynamic_preferences_registry import EnabledPlugins
 from ephios.core.services.qualification import QualificationUniverse
 from ephios.plugins.baseshiftstructures.structure.named_teams import NamedTeamsShiftStructure
 from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStructure
@@ -105,6 +107,18 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
         shift.save()
 
 
+def enable_new_plugins(apps, schema_editor):
+    preferences = global_preferences_registry.manager()
+    preferences[EnabledPlugins().identifier()] = list(
+        set(preferences[EnabledPlugins().identifier()])
+        | {
+            "ephios.plugins.basesignupflows",
+            "ephios.plugins.baseshiftstructures",
+            "ephios.plugins.complexsignup",
+        }
+    )
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -146,6 +160,7 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             copy_structure_configuration_to_signup_flow_configuration, migrations.RunPython.noop
         ),
+        migrations.RunPython(enable_new_plugins, migrations.RunPython.noop),
         migrations.RemoveField(
             model_name="shift",
             name="signup_method_slug",

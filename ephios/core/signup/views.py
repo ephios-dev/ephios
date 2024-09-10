@@ -83,7 +83,7 @@ class SignupView(FormView):
                 self.participant, participation, **form.cleaned_data
             )
         except BaseSignupError as errors:
-            for error in errors:
+            for error in errors:  # pylint:disable=not-an-iterable
                 messages.error(
                     self.request, self.shift.signup_flow.signup_error_message.format(error=error)
                 )
@@ -101,7 +101,7 @@ class SignupView(FormView):
                 self.participant, participation, **form.cleaned_data
             )
         except BaseSignupError as errors:
-            for error in errors:
+            for error in errors:  # pylint:disable=not-an-iterable
                 messages.error(
                     self.request, self.shift.signup_flow.decline_error_message.format(error=error)
                 )

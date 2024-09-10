@@ -88,7 +88,7 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
                 preferred_block = next(
                     filter(
                         lambda b: b["path"] == preferred_unit_path,
-                        [b for b in iter_atomic_blocks(complex_structure._structure)],
+                        iter_atomic_blocks(complex_structure._structure),
                     )
                 )
                 self.preferred_unit_name = _build_human_path(preferred_block)
@@ -161,9 +161,6 @@ class ComplexConfigurationForm(SignupConfigurationForm):
     )
 
     template_name = "complexsignup/configuration_form.html"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
 
 class ComplexShiftStructure(
