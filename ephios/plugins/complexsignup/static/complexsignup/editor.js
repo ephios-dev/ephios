@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         clientId: randomClientId(),
                         qualifications: [],
                         at_least: 1,
-                        everyone: false,
+                        everyone: true,
                     }
                 );
             }
