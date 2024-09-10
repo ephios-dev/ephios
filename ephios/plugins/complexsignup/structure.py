@@ -83,7 +83,6 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
                 )
             ]
         if preferred_unit_path := self.instance.structure_data.get("preferred_unit_path"):
-            self.fields["unit_path"].initial = preferred_unit_path
             try:
                 preferred_block = next(
                     filter(
