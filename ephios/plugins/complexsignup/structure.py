@@ -1,6 +1,8 @@
 import itertools
+import logging
 from collections import Counter, defaultdict
 from functools import cached_property, partial
+from operator import attrgetter
 from typing import Optional
 
 from django import forms
@@ -17,6 +19,8 @@ from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
 from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeMixin
 from ephios.plugins.complexsignup.models import BuildingBlock
+
+logger = logging.getLogger(__name__)
 
 
 def atomic_block_participant_qualifies_for(structure, participant: AbstractParticipant):
@@ -53,12 +57,15 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        all_positions, structure, signup_stats = self.shift.structure._match([])
+        complex_structure = self.shift.structure
+        complex_structure._assume_cache()
 
         qualified_blocks = atomic_block_participant_qualifies_for(
-            structure, self.instance.participant
+            complex_structure._structure, self.instance.participant
         )
-        unqualified_blocks = [b for b in iter_atomic_blocks(structure) if b not in qualified_blocks]
+        unqualified_blocks = [
+            b for b in iter_atomic_blocks(complex_structure._structure) if b not in qualified_blocks
+        ]
 
         self.fields["unit_path"].choices = [("", _("auto"))]
         if qualified_blocks:
@@ -81,7 +88,7 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
                 preferred_block = next(
                     filter(
                         lambda b: b["path"] == preferred_unit_path,
-                        [b for b in iter_atomic_blocks(structure)],
+                        [b for b in iter_atomic_blocks(complex_structure._structure)],
                     )
                 )
                 self.preferred_unit_name = _build_human_path(preferred_block)
@@ -111,15 +118,16 @@ class ComplexSignupForm(BaseSignupForm):
             self.data.get("signup_choice") == "sign_up"
             and self.shift.structure.configuration.choose_preferred_unit
         )
-        all_positions, structure, signup_stats = self.shift.structure._match([])
+        complex_structure = self.shift.structure
+        complex_structure._assume_cache()
         self.fields["preferred_unit_path"].choices = [
             (b["path"], _build_human_path(b))
-            for b in self.blocks_participant_qualifies_for(structure)
+            for b in self.blocks_participant_qualifies_for(complex_structure._structure)
         ]
         unqualified_blocks = [
             b
-            for b in iter_atomic_blocks(structure)
-            if b not in self.blocks_participant_qualifies_for(structure)
+            for b in iter_atomic_blocks(complex_structure._structure)
+            if b not in self.blocks_participant_qualifies_for(complex_structure._structure)
         ]
         if unqualified_blocks:
             self.fields["preferred_unit_path"].help_text = _(
@@ -180,6 +188,7 @@ class ComplexShiftStructure(
         all_positions, structure = convert_blocks_to_positions(
             self._base_blocks, participations, matching=matching
         )
+
         # we just have to add unpaired matches to the full stats
         signup_stats = structure["signup_stats"] + SignupStats.ZERO.replace(
             requested_count=len(
@@ -197,28 +206,42 @@ class ComplexShiftStructure(
                 ]
             ),
         )
-        return matching, structure, signup_stats
+        return matching, all_positions, structure, signup_stats
 
     @cached_property
     def _base_blocks(self):
         # for now, we only support one base block
-        return [BuildingBlock.objects.filter(id=self.configuration.building_block).first()]
+        qs = BuildingBlock.objects.all()
+        return list(qs.filter(id=self.configuration.building_block))
+
+    def _assume_cache(self):
+        if not hasattr(self, "_cached_work"):
+            participations = [
+                p
+                for p in sorted(
+                    self.shift.participations.all(), key=attrgetter("state"), reverse=True
+                )
+                if p.state
+                in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
+            ]
+            self._matching, self._all_positions, self._structure, self._signup_stats = self._match(
+                participations
+            )
+            self._cached_work = True
 
     def get_shift_state_context_data(self, request, **kwargs):
         """
         Additionally to the context of the event detail view, provide context for rendering `shift_state_template_name`.
         """
         kwargs = super().get_shift_state_context_data(request, **kwargs)
-        participations = kwargs["participations"]
-        matching, structure, stats = self._match(participations)
-        kwargs["matching"] = matching
-        kwargs["structure"] = structure
+        self._assume_cache()
+        kwargs["matching"] = self._matching
+        kwargs["structure"] = self._structure
         return kwargs
 
     def get_signup_stats(self) -> "SignupStats":
-        participations = list(self.shift.participations.all())
-        matching, structure, stats = self._match(participations)
-        return stats
+        self._assume_cache()
+        return self._signup_stats
 
     def check_qualifications(self, shift, participant, strict_mode=True):
         confirmed_participations = [
@@ -226,24 +249,22 @@ class ComplexShiftStructure(
             for p in shift.participations.all()
             if p.state == AbstractParticipation.States.CONFIRMED
         ]
-        all_positions, structure = convert_blocks_to_positions(
-            self._base_blocks, confirmed_participations
-        )
+        self._assume_cache()
 
         if not strict_mode:
             # check if the participant fulfills any of the requirements
-            if atomic_block_participant_qualifies_for(structure, participant):
+            if atomic_block_participant_qualifies_for(self._structure, participant):
                 return
         else:
             # check if the participant can be matched into already confirmed participations
             confirmed_participants = [p.participant for p in confirmed_participations]
-            if participant in [p.participant for p in confirmed_participations]:
+            if participant in confirmed_participants:
                 return
             matching_without = match_participants_to_positions(
-                confirmed_participants, all_positions
+                confirmed_participants, self._all_positions
             )
             matching_with = match_participants_to_positions(
-                confirmed_participants + [participant], all_positions
+                confirmed_participants + [participant], self._all_positions
             )
             if len(matching_with.pairings) > len(matching_without.pairings):
                 return

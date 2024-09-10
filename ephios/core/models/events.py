@@ -17,7 +17,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import formats
-from django.utils.functional import classproperty
+from django.utils.functional import cached_property, classproperty
 from django.utils.text import slugify
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
@@ -288,7 +288,7 @@ class Shift(DatetimeDisplayMixin, Model):
 
             return FallbackSignupFlow(self, event=event)
 
-    @property
+    @cached_property
     def structure(self) -> "AbstractShiftStructure":
         from ephios.core.signup.structure import shift_structure_from_slug
 

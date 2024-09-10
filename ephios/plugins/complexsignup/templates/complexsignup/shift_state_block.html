@@ -33,7 +33,7 @@
             >
                 {{ current.signup_stats|format_min_max_count }}
                 {{ current.qualification_label }}
-                {% if current.signup_stats.free != None and current.signup_stats.free <= 0 %}
+                {% if not current|has_complex_free:shift %}
                     <i class="fa fa-check-circle"></i>
                 {% elif current.signup_stats.missing <= 0 %}
                     <i class="far fa-check-circle"></i>

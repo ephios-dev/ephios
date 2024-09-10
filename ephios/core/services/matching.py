@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Collection, Optional
 
+from django.utils.functional import cached_property
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import min_weight_full_bipartite_matching
 
@@ -24,7 +25,7 @@ class Position:
         self.preferred_by = frozenset(self.preferred_by)
         self.designated_for = frozenset(self.designated_for)
 
-    @property
+    @cached_property
     def required_skill(self):
         graph = QualificationUniverse.get_graph()
         required_qualification_uuids = [
@@ -32,7 +33,7 @@ class Position:
         ]
         return set(graph.spread_from(required_qualification_uuids))
 
-    @property
+    @cached_property
     def skill_level(self):
         return skill_level(self.required_skill)
 
@@ -79,18 +80,18 @@ class Matching:
     def attach_participations(self, participations):
         self._participations = participations
 
-    @property
+    @cached_property
     def _participation_by_participant(self):
         return {p.participant: p for p in self.participations}
 
-    @property
+    @cached_property
     def participation_pairings(self):
         return [
             (self._participation_by_participant[participant], position)
             for participant, position in self.pairings
         ]
 
-    @property
+    @cached_property
     def unpaired_participations(self):
         return [
             participation
@@ -109,9 +110,8 @@ def score_pairing(
 ):
     """
     Score the pairing of participant and  position.
-    Skill here means a set of Qualification.
+    Skill here means a set of qualification.
     """
-
     # number of participants is used as a scoring value to make sure that in adverse cases
     # a matching with a someone unqualified pairings gets a worse score than a matching with more valid pairings
     # (similar for prefers and skill level). It can be arbitrarily big, but must be at least bigger than the sum of
@@ -127,14 +127,9 @@ def score_pairing(
     designated_value = required_value**2
     unqualified_penalty = designated_value**2
 
-    graph = QualificationUniverse.get_graph()
-    participant_skill = set(
-        graph.spread_from([qualification.uuid for qualification in participant.qualifications])
-    )
-
     is_designated = participant in position.designated_for
 
-    if not is_designated and not position.required_skill <= participant_skill:
+    if not is_designated and not position.required_skill <= participant.skill:
         # the participant does not have some required skill
         return -unqualified_penalty  # avoid matching unqualified participants
 
@@ -171,5 +166,4 @@ def match_participants_to_positions(
         cost = costs[par_idx, pos_idx]
         if cost <= 0:
             pairings.add((participants[par_idx], positions[pos_idx]))
-
     return Matching(participants, positions, pairings)

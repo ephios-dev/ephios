@@ -115,6 +115,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
                         f"{requirement_id}-{next(position_ids)}",
                         required_qualifications=qualifications,
                         preferred_by=set(),
+                        designated_for=set(),
                         required=i < requirement["min_count"],
                     )
                 )

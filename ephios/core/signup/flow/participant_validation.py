@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +8,7 @@ from ephios.core.signals import participant_signup_checkers
 from ephios.core.signup.participants import AbstractParticipant
 
 
-class BaseSignupError(ValidationError):
+class BaseSignupError(Exception):
     """Superclass of errors used in the signup mechanism."""
 
 
