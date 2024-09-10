@@ -21,7 +21,6 @@ from dynamic_preferences.types import (
 )
 from dynamic_preferences.users.registries import user_preferences_registry
 
-import ephios
 from ephios.core import plugins
 from ephios.core.models import Qualification, UserProfile
 from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
@@ -67,9 +66,9 @@ class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")
     default = [
-        ephios.plugins.baseshiftstructures.apps.PluginApp.__module__,
-        ephios.plugins.basesignupflows.apps.PluginApp.__module__,
-        ephios.plugins.pages.apps.PluginApp.__module__,
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.basesignupflows",
+        "ephios.plugins.pages",
     ]
     section = general_global_section
     required = False
