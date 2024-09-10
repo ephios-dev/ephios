@@ -106,7 +106,10 @@ class Matching:
 
 
 def score_pairing(
-    participant: AbstractParticipant, position: Position, number_of_participants=1_000_000
+    participant: AbstractParticipant,
+    position: Position,
+    confirmed_participants,
+    number_of_participants=1_000_000,
 ):
     """
     Score the pairing of participant and  position.
@@ -119,10 +122,11 @@ def score_pairing(
     padded_participant_count = 10 + 2 * number_of_participants
     base_score = 1.0
     preferred_value = 3.0
-    max_skill_value = 1.0
     max_aux_value = 2.0
+    confirmed_value = 2.0
+    max_skill_value = 1.0
     required_value = padded_participant_count * sum(
-        (base_score, preferred_value, max_skill_value, max_aux_value)
+        (base_score, preferred_value, max_skill_value, confirmed_value, max_aux_value)
     )
     designated_value = required_value**2
     unqualified_penalty = designated_value**2
@@ -140,6 +144,8 @@ def score_pairing(
         score += preferred_value
     if position.required:
         score += required_value
+    if participant in confirmed_participants:
+        score += confirmed_value
     score += position.skill_level * max_skill_value
     score += position.aux_score * max_aux_value
     return score
@@ -148,13 +154,20 @@ def score_pairing(
 def match_participants_to_positions(
     participants: Collection[AbstractParticipant],
     positions: Collection[Position],
+    confirmed_participants: Collection[AbstractParticipant] = None,
 ) -> Matching:
     participants = list(participants)
     positions = list(positions)
+    confirmed_participants = list(confirmed_participants) if confirmed_participants else []
     costs = csr_matrix(
         [
             [
-                -score_pairing(participant, position, number_of_participants=len(participants))
+                -score_pairing(
+                    participant,
+                    position,
+                    number_of_participants=len(participants),
+                    confirmed_participants=confirmed_participants,
+                )
                 for position in positions
             ]
             for participant in participants

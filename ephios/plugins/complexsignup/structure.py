@@ -175,9 +175,16 @@ class ComplexShiftStructure(
     signup_form_class = ComplexSignupForm
 
     def _match(self, participations):
-        participants = {participation.participant for participation in participations}
+        participants = [participation.participant for participation in participations]
+        confirmed_participants = [
+            participation.participant
+            for participation in participations
+            if participation.state == AbstractParticipation.States.CONFIRMED
+        ]
         all_positions, structure = convert_blocks_to_positions(self._base_blocks, participations)
-        matching = match_participants_to_positions(participants, all_positions)
+        matching = match_participants_to_positions(
+            participants, all_positions, confirmed_participants=confirmed_participants
+        )
         matching.attach_participations(participations)
 
         # let's work up the blocks again, but now with matching
