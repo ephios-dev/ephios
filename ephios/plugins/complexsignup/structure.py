@@ -287,7 +287,7 @@ def _search_block(
     matching: Matching,
     parents: list,
     composed_label: Optional[str] = None,
-):
+):  # pylint: disable=too-many-locals
     required_here = set(required_qualifications)
     for requirement in block.qualification_requirements.filter(everyone=True):
         # at least one is not supported
@@ -308,8 +308,8 @@ def _search_block(
         "qualification_label": ", ".join(q.abbreviation for q in required_here),
         "qualification_ids": {q.id for q in required_here},
         "parents": parents,
+        "signup_stats": SignupStats.ZERO,
     }
-    signup_stats = SignupStats.ZERO
     if block.is_composite():
         for composition in block.sub_blocks.through.objects.filter(
             composite_block=block
@@ -329,41 +329,101 @@ def _search_block(
                 parents=[structure, *parents],
                 composed_label=composition.label,
             )
-            signup_stats += sub_structure["signup_stats"]
+            structure["signup_stats"] += sub_structure["signup_stats"]
             all_positions.extend(positions)
             structure["sub_blocks"].append(sub_structure)
     else:
-        designated_for = {
-            p.participant
-            for p in participations
-            if p.structure_data.get("dispatched_unit_path") == path
-        }
-        preferred_by = {
-            p.participant
-            for p in participations
-            if p.structure_data.get("preferred_unit_path") == path
-        }
-        for block_position in block.positions.all():
-            match_id = f"{path}{block.uuid}-{block_position.id}"
-            label = block_position.label or ", ".join(
-                q.abbreviation for q in block_position.qualifications.all()
+        _build_atomic_block_structure(
+            all_positions,
+            block,
+            matching,
+            opt_counter,
+            participations,
+            path,
+            path_optional,
+            required_here,
+            structure,
+        )
+    return all_positions, structure
+
+
+def _build_atomic_block_structure(
+    all_positions,
+    block,
+    matching,
+    opt_counter,
+    participations,
+    path,
+    path_optional,
+    required_here,
+    structure,
+):  # pylint: disable=too-many-locals
+    designated_for = {
+        p.participant
+        for p in participations
+        if p.structure_data.get("dispatched_unit_path") == path
+    }
+    preferred_by = {
+        p.participant for p in participations if p.structure_data.get("preferred_unit_path") == path
+    }
+    for block_position in block.positions.all():
+        match_id = f"{path}{block.uuid}-{block_position.id}"
+        label = block_position.label or ", ".join(
+            q.abbreviation for q in block_position.qualifications.all()
+        )
+        required = not (block_position.optional or path_optional)
+        p = Position(
+            id=match_id,
+            required_qualifications=required_here | set(block_position.qualifications.all()),
+            designated_for=designated_for,
+            preferred_by=preferred_by,
+            required=required,
+            label=label,
+            aux_score=1,
+        )
+        participation = matching.participation_for_position(match_id) if matching else None
+        structure["signup_stats"] += SignupStats.ZERO.replace(
+            min_count=int(required),
+            max_count=1,
+            missing=bool(required and not participation),
+            free=bool(participation is None),
+            requested_count=bool(
+                participation and participation.state == AbstractParticipation.States.REQUESTED
+            ),
+            confirmed_count=bool(
+                participation and participation.state == AbstractParticipation.States.CONFIRMED
+            ),
+        )
+        all_positions.append(p)
+        structure["positions"].append(p)
+        structure["participations"].append(participation)
+
+        # build derivative positions for designated participants and "allow_more" participants
+        for _ in range(
+            max(
+                int(block.allow_more)
+                * (len(participations) + 1),  # 1 extra in case of signup matching check
+                # if more designated participants than we have positions we need to add placeholder anyway
+                len(designated_for) - len(block.positions.all()),
             )
-            required = not (block_position.optional or path_optional)
+        ):
+            count_id = next(opt_counter[f"{block_position.id}-opt"])
+            opt_match_id = f"{match_id}-{count_id}"
             p = Position(
-                id=match_id,
+                id=opt_match_id,
                 required_qualifications=required_here | set(block_position.qualifications.all()),
-                designated_for=designated_for,
                 preferred_by=preferred_by,
-                required=required,
+                designated_for=designated_for,
+                aux_score=0,
+                required=False,  # allow_more -> always optional
                 label=label,
-                aux_score=1,
             )
-            participation = matching.participation_for_position(match_id) if matching else None
-            signup_stats += SignupStats.ZERO.replace(
-                min_count=int(required),
-                max_count=1,
-                missing=bool(required and not participation),
-                free=bool(participation is None),
+            participation = matching.participation_for_position(opt_match_id) if matching else None
+            structure["signup_stats"] += SignupStats.ZERO.replace(
+                min_count=0,
+                max_count=None,  # allow_more -> always free
+                missing=0,
+                free=None,
                 requested_count=bool(
                     participation and participation.state == AbstractParticipation.States.REQUESTED
                 ),
@@ -374,48 +434,6 @@ def _search_block(
             all_positions.append(p)
             structure["positions"].append(p)
             structure["participations"].append(participation)
-            for _ in range(
-                max(
-                    int(block.allow_more)
-                    * (len(participations) + 1),  # 1 extra in case of signup matching check
-                    # if more designated participants than we have positions we need to add placeholder anyway
-                    len(designated_for) - len(block.positions.all()),
-                )
-            ):
-                count_id = next(opt_counter[f"{block_position.id}-opt"])
-                opt_match_id = f"{match_id}-{count_id}"
-                p = Position(
-                    id=opt_match_id,
-                    required_qualifications=required_here
-                    | set(block_position.qualifications.all()),
-                    preferred_by=preferred_by,
-                    designated_for=designated_for,
-                    aux_score=0,
-                    required=False,  # allow_more -> always optional
-                    label=label,
-                )
-                participation = (
-                    matching.participation_for_position(opt_match_id) if matching else None
-                )
-                signup_stats += SignupStats.ZERO.replace(
-                    min_count=0,
-                    max_count=None,  # allow_more -> always free
-                    missing=0,
-                    free=None,
-                    requested_count=bool(
-                        participation
-                        and participation.state == AbstractParticipation.States.REQUESTED
-                    ),
-                    confirmed_count=bool(
-                        participation
-                        and participation.state == AbstractParticipation.States.CONFIRMED
-                    ),
-                )
-                all_positions.append(p)
-                structure["positions"].append(p)
-                structure["participations"].append(participation)
-    structure["signup_stats"] = signup_stats
-    return all_positions, structure
 
 
 def convert_blocks_to_positions(starting_blocks, participations, matching=None):
