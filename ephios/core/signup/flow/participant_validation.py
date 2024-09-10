@@ -11,6 +11,9 @@ from ephios.core.signup.participants import AbstractParticipant
 class BaseSignupError(Exception):
     """Superclass of errors used in the signup mechanism."""
 
+    def __init__(self, message):
+        self.message = message
+
 
 class SignupDisallowedError(BaseSignupError):
     """
