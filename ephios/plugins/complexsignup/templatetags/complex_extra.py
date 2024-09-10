@@ -3,7 +3,7 @@ import logging
 
 from django import template
 
-from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
+from ephios.core.signup.flow.participant_validation import SignupDisallowedError
 from ephios.core.signup.participants import PlaceholderParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.plugins.baseshiftstructures.structure.group_common import format_min_max_count
@@ -45,7 +45,7 @@ def has_complex_free(atomic_block_structure, shift):
             None,
             None,
         )
-        shift.structure.check_qualifications(shift, extra_participant)
+        shift.structure.check_qualifications(shift, extra_participant, strict_mode=True)
         return True
-    except ParticipantUnfitError:
+    except SignupDisallowedError:
         return False
