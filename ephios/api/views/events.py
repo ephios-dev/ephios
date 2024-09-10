@@ -125,6 +125,7 @@ class ParticipationSerializer(serializers.ModelSerializer):
             "start_time",
             "end_time",
             "duration",
+            "structure_data",
         ]
 
     def build_unknown_field(self, field_name, model_class):
