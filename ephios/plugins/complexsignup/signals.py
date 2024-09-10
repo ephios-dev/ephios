@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 
 from ephios.core.signals import register_shift_structures
-from ephios.plugins.complexsignup.signup import ComplexShiftStructure
+from ephios.plugins.complexsignup.structure import ComplexShiftStructure
 
 
 @receiver(

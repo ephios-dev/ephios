@@ -5,12 +5,16 @@ from typing import Collection, Optional
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.core.models.events import PlaceholderParticipation
-from ephios.core.services.qualification import collect_all_included_qualifications
+from ephios.core.services.qualification import (
+    QualificationUniverse,
+    collect_all_included_qualifications,
+)
 from ephios.core.signals import participant_from_request
 
 
@@ -49,6 +53,14 @@ class AbstractParticipant:
 
     def collect_all_qualifications(self) -> set:
         return collect_all_included_qualifications(self.qualifications)
+
+    @cached_property
+    def skill(self):
+        graph = QualificationUniverse.get_graph()
+        all_qualification_uuids = set(
+            graph.spread_from([qualification.uuid for qualification in self.qualifications])
+        )
+        return all_qualification_uuids
 
     def has_qualifications(self, qualifications):
         return set(qualifications) <= set(self.collect_all_qualifications())
