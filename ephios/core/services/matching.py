@@ -132,6 +132,8 @@ def score_pairing(
     unqualified_penalty = designated_value**2
 
     is_designated = participant in position.designated_for
+    # optimally, we should reject a pairing for a participant designated for another position,
+    # but we don't have that info here.
 
     if not is_designated and not position.required_skill <= participant.skill:
         # the participant does not have some required skill
