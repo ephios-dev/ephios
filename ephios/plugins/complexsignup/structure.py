@@ -1,6 +1,6 @@
 import itertools
 import logging
-from collections import Counter, defaultdict
+from collections import defaultdict
 from functools import cached_property, partial
 from operator import attrgetter
 from typing import Optional
@@ -42,8 +42,8 @@ def atomic_block_participant_qualifies_for(structure, participant: AbstractParti
 def _build_human_path(structure):
     return " » ".join(
         [
-            *[s["name"] for s in reversed(structure["parents"])],
-            f"{structure['name']} #{structure['number']}",
+            *[s["display"] for s in reversed(structure["parents"])],
+            f"{structure['display']} #{structure['number']}",
         ]
     )
 
@@ -286,6 +286,28 @@ class ComplexShiftStructure(
             )
         ]
 
+    def get_participation_display(self):
+        self._assume_cache()
+        participation_display = []
+        for block in iter_atomic_blocks(self._structure):
+            for position, participation in zip(
+                block["positions"],
+                block["participations"],
+            ):
+                if not position.required:
+                    continue
+                qualification_label = (
+                    ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
+                )
+                participation_display.append(
+                    [
+                        str(participation.participant) if participation else "",
+                        qualification_label,
+                        f"{block['display']} #{block['number']}",
+                    ]
+                )
+        return participation_display
+
 
 def _search_block(
     block: BuildingBlock,
@@ -294,7 +316,7 @@ def _search_block(
     required_qualifications: set,
     path_optional: bool,
     participations: list[AbstractParticipation],
-    opt_counter: Counter,
+    opt_counter,
     matching: Matching,
     parents: list,
     composed_label: Optional[str] = None,
@@ -315,6 +337,7 @@ def _search_block(
         "optional": path_optional,
         "name": block.name,
         "label": composed_label,
+        "display": composed_label or block.name,
         "number": next(opt_counter[block.name]),
         "qualification_label": ", ".join(q.abbreviation for q in required_here),
         "qualification_ids": {q.id for q in required_here},
@@ -378,7 +401,7 @@ def _build_atomic_block_structure(
         p.participant for p in participations if p.structure_data.get("preferred_unit_path") == path
     }
     for block_position in block.positions.all():
-        match_id = f"{path}{block.uuid}-{block_position.id}"
+        match_id = _build_position_id(block, block_position.id, path)
         label = block_position.label or ", ".join(
             q.abbreviation for q in block_position.qualifications.all()
         )
@@ -414,7 +437,7 @@ def _build_atomic_block_structure(
         len(participations) + 1
     )  # 1 extra in case of signup matching check
     for _ in range(allow_more_count):
-        opt_match_id = f"{path}{block.uuid}-opt-{next(opt_counter[str(block.id)])}"
+        opt_match_id = _build_position_id(block, next(opt_counter[str(block.id)]), path)
         p = Position(
             id=opt_match_id,
             required_qualifications=required_here,
@@ -443,7 +466,7 @@ def _build_atomic_block_structure(
 
     for _ in range(max(0, len(designated_for) - len(block.positions.all()) - allow_more_count)):
         # if more designated participants than we have positions, we need to add placeholder anyway
-        opt_match_id = f"{path}{block.uuid}-opt-{next(opt_counter[str(block.id)])}"
+        opt_match_id = _build_position_id(block, next(opt_counter[str(block.id)]), path)
         p = Position(
             id=opt_match_id,
             required_qualifications=required_here,
@@ -469,6 +492,14 @@ def _build_atomic_block_structure(
         all_positions.append(p)
         structure["positions"].append(p)
         structure["participations"].append(participation)
+
+
+def _build_position_id(block, path, position_id):
+    """
+    For a given block, a counter providing running numbers and a path of blocks,
+    construct an ID for the matching positions.
+    """
+    return f"{path}{block.uuid}-opt-{position_id}"
 
 
 def convert_blocks_to_positions(starting_blocks, participations, matching=None):
