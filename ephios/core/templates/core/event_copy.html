@@ -25,25 +25,26 @@
                     <input type="date" class="form-control" v-model="DTSTART">
                     <input type="time" class="form-control" v-if="pickHour" v-model="DTSTART_TIME">
                 </div>
-                <ul class="list-group mb-2">
-                    <li class="list-group-item p-3" v-for="(rule, index) in rules">
+                <ul class="list-group mb-4">
+                    <li class="list-group-item p-3" v-for="rule in rules"
+                        :class="{'border-danger': !isRuleValid(rule)}">
                         <div class="btn-toolbar justify-content-between">
                             <div class="btn-group pb-4">
                                 <button type="button" class="btn btn-outline-secondary"
-                                        :class="{'active' : rule.freq==='HOURLY'}" v-if="pickHour"
-                                        @click="rule.freq='HOURLY'">{% translate "Hourly" %}</button>
+                                        :class="{'active': rule.freq===4}" v-if="pickHour"
+                                        @click="changeFreq(rule, frequencies.HOURLY)">{% translate "Hourly" %}</button>
                                 <button type="button" class="btn btn-outline-secondary"
-                                        :class="{'active' : rule.freq==='DAILY'}"
-                                        @click="rule.freq='DAILY'">{% translate "Daily" %}</button>
+                                        :class="{'active': rule.freq===3}"
+                                        @click="changeFreq(rule, frequencies.DAILY)">{% translate "Daily" %}</button>
                                 <button type="button" class="btn btn-outline-secondary"
-                                        :class="{'active' : rule.freq==='WEEKLY'}"
-                                        @click="rule.freq='WEEKLY'">{% translate "Weekly" %}</button>
+                                        :class="{'active': rule.freq===2}"
+                                        @click="changeFreq(rule, frequencies.WEEKLY)">{% translate "Weekly" %}</button>
                                 <button type="button" class="btn btn-outline-secondary"
-                                        :class="{'active' : rule.freq==='MONTHLY'}"
-                                        @click="rule.freq='MONTHLY'">{% translate "Monthly" %}</button>
+                                        :class="{'active': rule.freq===1}"
+                                        @click="changeFreq(rule, frequencies.MONTHLY)">{% translate "Monthly" %}</button>
                                 <button type="button" class="btn btn-outline-secondary"
-                                        :class="{'active' : rule.freq==='YEARLY'}"
-                                        @click="rule.freq='YEARLY'">{% translate "Yearly" %}</button>
+                                        :class="{'active': rule.freq===0}"
+                                        @click="changeFreq(rule, frequencies.YEARLY)">{% translate "Yearly" %}</button>
                             </div>
                             <div>
                                 <button type="button" class="btn btn-danger" @click="removeRule(rule)">
@@ -59,58 +60,28 @@
                                 <input class="form-control form-control-sm" type="number" v-model="rule.interval"
                                        min="1">
                             </div>
-                            <span class="col-3">[[ rule.freq ]]</span>
+                            <span class="col-3">[[ frequency_strings[rule.freq] ]]</span>
                             <span v-if="rule.freq!='DAILY'" class="col-2">{% translate "on" %}</span>
                         </div>
 
-                        <div class="mb-4" v-if="rule.freq==='WEEKLY'">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="MO"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Mon" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="DI"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Tue" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="MI"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Wed" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="DO"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Thu" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="FR"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Fri" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="SA"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Sat" %}</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" v-model="rule.BYWEEKDAY" value="SO"
-                                       :required="!rule.BYWEEKDAY">
-                                <label class="form-check-label">{% translate "Sun" %}</label>
+                        <div class="mb-4" v-if="rule.freq===frequencies.WEEKLY">
+                            <div class="form-check form-check-inline" v-for="(day, index) in weekdays">
+                                <input class="form-check-input" type="checkbox" v-model="rule.byweekday" :value="index"
+                                       :required="!rule.byweekday">
+                                <label class="form-check-label">[[ day.slice(0,2) ]]</label>
                             </div>
                         </div>
 
-                        <div class="mb-4 p-2 card" v-if="rule.freq==='MONTHLY'">
+                        <div class="mb-4 p-2 card" v-if="rule.freq===frequencies.MONTHLY">
                             <div class="row align-items-center mb-2">
                                 <div class="col-1">
                                     <input class="form-check-input" type="radio" name="month_mode"
-                                           v-model="rule.month_mode" value="BYMONTHDAY" required>
+                                           v-model="rule.month_mode" value="bymonthday" required>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYMONTHDAY"
-                                            :required="rule.month_mode=='BYMONTHDAY'"
-                                            @focus="rule.month_mode='BYMONTHDAY'">
+                                    <select class="form-select" v-model="rule.bymonthday"
+                                            :required="rule.month_mode=='bymonthday'"
+                                            @focus="rule.month_mode='bymonthday'">
                                         <option v-for="day in 31" :value="day">[[ day ]].</option>
                                     </select>
                                 </div>
@@ -119,11 +90,11 @@
                             <div class="row align-items-center mb-2">
                                 <div class="col-1">
                                     <input class="form-check-input" type="radio" name="month_mode"
-                                           v-model="rule.month_mode" value="BYSETPOS" required>
+                                           v-model="rule.month_mode" value="bysetpos" required>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYSETPOS"
-                                            :required="rule.month_mode=='BYSETPOS'" @focus="rule.month_mode='BYSETPOS'">
+                                    <select class="form-select" v-model="rule.bysetpos"
+                                            :required="rule.month_mode=='bysetpos'" @focus="rule.month_mode='bysetpos'">
                                         <option value="1">{% translate "First" %}</option>
                                         <option value="2">{% translate "Second" %}</option>
                                         <option value="3">{% translate "Third" %}</option>
@@ -132,29 +103,29 @@
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYWEEKDAY"
-                                            :required="rule.month_mode=='BYSETPOS'" @focus="rule.month_mode='BYSETPOS'">
-                                        <option v-for="day in weekdays" :value="day.id">[[ day.long ]]</option>
+                                    <select class="form-select" v-model="rule.byweekday"
+                                            :required="rule.month_mode=='bysetpos'" @focus="rule.month_mode='bysetpos'">
+                                        <option v-for="(label, index) in weekdays" :value="index">[[ label ]]</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-4 p-2 card" v-if="rule.freq==='YEARLY'">
+                        <div class="mb-4 p-2 card" v-if="rule.freq===frequencies.YEARLY">
                             <div class="row align-items-center mb-2">
                                 <div class="col-1">
-                                    <input class="form-check-input" type="radio" name="year_mode"
-                                           v-model="rule.year_mode" value="BYMONTHDAY" required>
+                                    <input class="form-check-input" type="radio" name="month_mode"
+                                           v-model="rule.month_mode" value="bymonthday" required>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYMONTHDAY"
-                                            @focus="rule.year_mode='BYMONTHDAY'">
+                                    <select class="form-select" v-model="rule.bymonthday"
+                                            @focus="rule.month_mode='bymonthday'">
                                         <option v-for="day in 31" :value="day">[[ day ]].</option>
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYMONTH"
-                                            @focus="rule.year_mode='BYMONTHDAY'">
+                                    <select class="form-select" v-model="rule.bymonth"
+                                            @focus="rule.month_mode='bymonthday'">
                                         <option v-for="month in months" :value="month.id">[[ month.long ]]</option>
                                     </select>
                                 </div>
@@ -162,12 +133,12 @@
 
                             <div class="row align-items-center mb-2">
                                 <div class="col-1">
-                                    <input class="form-check-input" type="radio" name="year_mode"
-                                           v-model="rule.year_mode" value="BYSETPOS" required>
+                                    <input class="form-check-input" type="radio" name="month_mode"
+                                           v-model="rule.month_mode" value="bysetpos" required>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYSETPOS"
-                                            @focus="rule.year_mode='BYSETPOS'">
+                                    <select class="form-select" v-model="rule.bysetpos"
+                                            @focus="rule.month_mode='bysetpos'">
                                         <option value="1">{% translate "First" %}</option>
                                         <option value="2">{% translate "Second" %}</option>
                                         <option value="3">{% translate "Third" %}</option>
@@ -176,14 +147,14 @@
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYWEEKDAY"
-                                            @focus="rule.year_mode='BYSETPOS'">
-                                        <option v-for="day in weekdays" :value="day.id">[[ day.long ]]</option>
+                                    <select class="form-select" v-model="rule.byweekday"
+                                            @focus="rule.month_mode='bysetpos'">
+                                        <option v-for="(label, index) in weekdays" :value="index">[[ label ]]</option>
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <select class="form-select" v-model="rule.BYMONTH"
-                                            @focus="rule.year_mode='BYSETPOS'">
+                                    <select class="form-select" v-model="rule.bymonth"
+                                            @focus="rule.month_mode='bysetpos'">
                                         <option v-for="month in months" :value="month.id">[[ month.long ]]</option>
                                     </select>
                                 </div>
@@ -201,7 +172,7 @@
                                 </span>
                                 <div :class="pickHour ? 'col-5' : 'col-9'">
                                     <input type="date" class="form-control form-control-sm"
-                                           v-model="rule.UNTIL" @focus="rule.end_mode='UNTIL'"
+                                           v-model="rule.until" @focus="rule.end_mode='UNTIL'"
                                            :required="rule.end_mode=='UNTIL'">
                                 </div>
                                 <div v-if="pickHour" class="col-4">
@@ -221,7 +192,7 @@
                                 </span>
                                 <div class="col-7">
                                     <input type="text" class="form-control form-control-sm flex-fill"
-                                           v-model="rule.COUNT" @focus="rule.end_mode='COUNT'"
+                                           v-model="rule.count" @focus="rule.end_mode='COUNT'"
                                            :required="rule.end_mode=='COUNT'">
                                 </div>
                                 <span class="col-2">
@@ -230,7 +201,8 @@
                             </div>
                         </div>
                     </li>
-                    <li class="list-group-item p-3" v-for="date in dates">
+                    <li class="list-group-item p-3" v-for="date in dates"
+                        :class="{'border-danger': !(date.date && (!pickHour || date.time))}">
                         <div class="row align-items-center">
                             <div class="col-5">
                                 <input type="date" v-model="date.date" class="form-control" required>
@@ -238,7 +210,7 @@
                             <div class="col-5">
                                 <input type="time" v-if="pickHour" v-model="date.time" class="form-control" required>
                             </div>
-                            <div class="col-1 ms-auto mr-1">
+                            <div class="col-1 ms-auto me-3">
                                 <button type="button" class="btn btn-danger" @click="removeDate(date)">
                                     <i class="fas fa-trash"></i><span
                                         class="visually-hidden">{% translate "Remove" %}</span>
@@ -247,24 +219,24 @@
                         </div>
                     </li>
                 </ul>
-                <button class="btn btn-primary" id="add-rule" @click.stop.prevent="addRule()">Add rule</button>
-                <button class="btn btn-primary" id="add-date" @click.stop.prevent="addDate()">Add date</button>
+                <div class="form-group">
+                    <button class="btn btn-secondary ms-1" id="add-rule" @click.stop.prevent="addRule()"><span class="fa fa-plus"></span> Add rule</button>
+                    <button class="btn btn-secondary ms-1" id="add-date" @click.stop.prevent="addDate()"><span class="fa fa-plus"></span> Add date</button>
+                    <button type="submit" class="btn btn-primary float-end"><span class="fa fa-copy"></span> {% translate "Copy" %}</button>
+                </div>
                 <input type="hidden" autocomplete="off" :value="rrule_string" name="recurrence_string"
                        id="id_recurrence">
                 {% csrf_token %}
-                <button type="submit" class="w-100 mb-2 btn btn-sm btn-success">
-                    {% translate "Save" %}
-                </button>
             </div>
             <div class="col-6">
-                [[ rrule_string ]] <br>
                 <ul>
                     <li v-for="date in computed_dates">[[ date ]]</li>
                 </ul>
             </div>
         </form>
     </div>
-    <input type="hidden" autocomplete="off" id="pickHour" value="true">
+    <input type="hidden" autocomplete="off" id="pickHour" value="false">
+    <script type="text/javascript" src="{% static "rrule/rrule.min.js" %}"></script>
     <script nonce="{{ request.csp_nonce }}" type="text/javascript"
             src="{% static "ephios/js/event_copy.js" %}"></script>
 {% endblock %}
