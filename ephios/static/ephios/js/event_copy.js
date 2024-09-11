@@ -7,10 +7,10 @@ function formatDate(date_obj, sep = "-") {
 }
 
 function formatHourOrZero(time_string) {
-    if (time_string) {
-        return pickHour ? time_string.slice(0,2) + time_string.slice(3,5) + "00" : "000000"
+    if (time_string && pickHour) {
+        return [time_string.slice(0,2), time_string.slice(3,5), 0]
     }
-    return "000000"
+    return [0, 0, 0]
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -21,11 +21,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const DTSTART_TIME = ref("00:00")
             const rules = ref([])
             const dates = ref([])
-            const weekdays = [{id: "MO", short: "Mon", long: "Monday"}, {
-                id: "TU", short: "Tue", long: "Tuesday"
-            }, {id: "WE", short: "Wed", long: "Wednesday"}, {id: "TH", short: "Thu", long: "Thursday"}, {
-                id: "FR", short: "Fri", long: "Friday"
-            }, {id: "SA", short: "Sat", long: "Saturday"}, {id: "SU", short: "Sun", long: "Sunday"}]
+            const weekdays = [gettext("Monday"), gettext("Tuesday"), gettext("Wednesday"), gettext("Thursday"), gettext("Friday"), gettext("Saturday"), gettext("Sunday")]
+            const frequency_strings = [gettext("year"), gettext("month"), gettext("week"), gettext("day")]
+            const frequencies = rrule.Frequency
             const months = [{id: 1, short: "Jan", long: "January"}, {id: 2, short: "Feb", long: "February"}, {
                 id: 3, short: "Mar", long: "March"
             }, {id: 4, short: "Apr", long: "April"}, {id: 5, short: "May", long: "May"}, {
@@ -37,9 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }]
 
             async function addRule() {
-                rules.value.push({
-                    freq: "WEEKLY", interval: 1, BYWEEKDAY: [],
-                })
+                rules.value.push({freq: rrule.RRule.WEEKLY, interval: 1, byweekday: []})
             }
 
             async function removeRule(rule) {
@@ -54,54 +50,72 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dates.value.splice(dates.value.indexOf(date), 1)
             }
 
+            async function changeFreq(rule, freq){
+                rule.freq = freq
+                rule.byweekday = []
+                delete rule.bymonthday
+                delete rule.bymonth
+                delete rule.bysetpos
+                delete rule.month_mode
+            }
+
             function submitForm(event) {
                 event.target.submit();
             }
 
+            function isRuleValid(rule) {
+                let isValid = true
+                switch (rule.freq) {
+                    case frequencies.WEEKLY:
+                        isValid = isValid && rule.byweekday && rule.byweekday.length > 0
+                        break
+                    case frequencies.MONTHLY:
+                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday)
+                        break
+                    case frequencies.YEARLY:
+                        isValid = isValid && (rule.year_mode === "bymonthday" && rule.bymonthday && rule.bymonth || rule.year_mode === "bysetpos" && rule.bysetpos && rule.byweekday && rule.bymonth)
+                        break
+                }
+
+                // end date set
+                isValid = isValid && (rule.end_mode === "COUNT" && rule.count || rule.end_mode === "UNTIL" && rule.until)
+
+                return isValid
+            }
+
+            const rrule_set = computed(() => {
+                let set = new rrule.RRuleSet()
+                rules.value.forEach(rule => {
+                    if (!isRuleValid(rule)) {
+                        return
+                    }
+                    set.rrule(new rrule.RRule({
+                        freq: rule.freq,
+                        interval: rule.interval,
+                        dtstart: rrule.datetime(...DTSTART.value.split("-"), ...formatHourOrZero(DTSTART_TIME.value)),
+                        byweekday: rule.byweekday,
+                        bymonthday: rule.month_mode === "bymonthday" ? rule.bymonthday : undefined,
+                        bysetpos: rule.month_mode === "bysetpos" ? rule.bysetpos : undefined,
+                        bymonth: rule.bymonth,
+                        count: rule.end_mode === "COUNT" ? rule.count : undefined,
+                        until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME)) : undefined,
+                        tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    }))
+                })
+                dates.value.forEach(date => {
+                    if (date.date && (!pickHour || date.time)) {
+                        set.rdate(rrule.datetime(...date.date.split("-"), ...formatHourOrZero(date.time)))
+                    }
+                })
+                return set
+            })
+
             const computed_dates = computed(() => {
-                return fetch("http://localhost:8000/extra/rruleoccurrence/", {
-                    method: "POST", body: JSON.stringify({
-                        recurrence_string: rrule_string.value,
-                    }), headers: {"X-CSRFToken": getCookie("csrftoken")},
-                }).then(response => response.json());
+                return rrule_set ? rrule_set.value.all(): []
             })
 
             const rrule_string = computed(() => {
-                return "DTSTART;TZID=" + Intl.DateTimeFormat().resolvedOptions().timeZone + ":" +
-                formatDate(new Date(DTSTART.value), "") + "T" + formatHourOrZero(DTSTART_TIME.value) + "\n" +
-                    rules.value.map(rule => {
-                        let rule_str = "FREQ=" + rule.freq + ";INTERVAL=" + rule.interval;
-                        switch (rule.freq) {
-                            case "WEEKLY":
-                                rule_str += ";BYWEEKDAY=" + (Array.isArray(rule.BYWEEKDAY) ? rule.BYWEEKDAY.join(",") : rule.BYWEEKDAY);
-                                break;
-                            case "MONTHLY":
-                                if (rule.month_mode === "BYMONTHDAY") {
-                                    rule_str += ";BYMONTHDAY=" + rule.BYMONTHDAY
-                                } else {
-                                    rule_str += ";BYWEEKDAY=" + rule.BYWEEKDAY + ";BYSETPOS=" + rule.BYSETPOS
-                                }
-                                break;
-                            case "YEARLY":
-                                if (rule.year_mode === "BYMONTHDAY") {
-                                    rule_str += ";BYMONTHDAY=" + rule.BYMONTHDAY + ";BYMONTH=" + rule.BYMONTH
-                                } else {
-                                    rule_str += ";BYWEEKDAY=" + rule.BYWEEKDAY + ";BYSETPOS=" + rule.BYSETPOS + ";BYMONTH=" + rule.BYMONTH
-                                }
-                        }
-                        if (rule.end_mode === "COUNT") {
-                            rule_str += ";COUNT=" + rule.COUNT
-                        } else if (rule.end_mode === "UNTIL") {
-                            rule_str += ";UNTIL=" + formatDate(new Date(rule.UNTIL), "")
-                            if (pickHour) {
-                                rule_str += "T" + formatHourOrZero(rule.UNTIL_TIME)
-                            }
-                        }
-                        return rule_str;
-                    }).join("\n") + dates.value.map(date => {
-                        return "RDATE;TZID=" + Intl.DateTimeFormat().resolvedOptions().timeZone +
-                            ":" + formatDate(new Date(date.date), "") + "T" + formatHourOrZero(date.time)
-                    }).join("\n")
+                return rrule_set ? rrule_set.value.toString() : ""
             })
 
             return {
@@ -119,6 +133,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dates,
                 computed_dates,
                 pickHour,
+                frequencies,
+                frequency_strings,
+                changeFreq,
+                isRuleValid,
             }
         }, delimiters: ['[[', ']]']
     }).mount('#recurrence');
