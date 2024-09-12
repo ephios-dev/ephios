@@ -3,6 +3,7 @@ import datetime
 import os
 from datetime import timedelta
 from email.utils import getaddresses
+from importlib import metadata
 from pathlib import Path
 
 import environ
@@ -12,11 +13,6 @@ from django.utils.translation import gettext_lazy
 from py_vapid import Vapid, b64urlencode
 
 from ephios.extra.secrets import django_secret_from_file
-
-try:
-    import importlib_metadata  # importlib is broken on python3.8, using backport
-except ImportError:
-    import importlib.metadata as importlib_metadata
 
 # BASE_DIR is the directory containing the ephios package
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -60,8 +56,8 @@ else:
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 try:
-    EPHIOS_VERSION = importlib_metadata.version("ephios")
-except importlib_metadata.PackageNotFoundError:
+    EPHIOS_VERSION = metadata.version("ephios")
+except metadata.PackageNotFoundError:
     # ephios is not installed as a package (e.g. development setup)
     EPHIOS_VERSION = "dev"
 
@@ -113,7 +109,7 @@ CORE_PLUGINS = [
     "ephios.plugins.federation.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
-for ep in importlib_metadata.entry_points(group="ephios.plugins"):
+for ep in metadata.entry_points(group="ephios.plugins"):
     PLUGINS.append(ep.value)
 
 INSTALLED_APPS += PLUGINS
