@@ -6,7 +6,7 @@ function formatDate(date_obj, sep = "-") {
     return date_obj.getFullYear() + sep + (month < 10 ? "0" : "") + month + sep + (day < 10 ? "0" : "") + day
 }
 
-function formatHourOrZero(time_string) {
+function formatHourOrZero(time_string, pickHour=false) {
     if (time_string && pickHour) {
         return [time_string.slice(0,2), time_string.slice(3,5), 0]
     }
@@ -16,7 +16,7 @@ function formatHourOrZero(time_string) {
 document.addEventListener('DOMContentLoaded', (event) => {
     createApp({
         setup() {
-            const pickHour = JSON.parse(document.getElementById("pickHour").value);
+            const pickHour = JSON.parse(document.getElementById("pick_hour").value);
             const DTSTART = ref(formatDate(new Date()))
             const DTSTART_TIME = ref("00:00")
             const rules = ref([])
@@ -92,19 +92,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     set.rrule(new rrule.RRule({
                         freq: rule.freq,
                         interval: rule.interval,
-                        dtstart: rrule.datetime(...DTSTART.value.split("-"), ...formatHourOrZero(DTSTART_TIME.value)),
+                        dtstart: rrule.datetime(...DTSTART.value.split("-"), ...formatHourOrZero(DTSTART_TIME.value, pickHour)),
                         byweekday: rule.byweekday,
                         bymonthday: rule.month_mode === "bymonthday" ? rule.bymonthday : undefined,
                         bysetpos: rule.month_mode === "bysetpos" ? rule.bysetpos : undefined,
                         bymonth: rule.bymonth,
                         count: rule.end_mode === "COUNT" ? rule.count : undefined,
-                        until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME)) : undefined,
+                        until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME, pickHour)) : undefined,
                         tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     }))
                 })
                 dates.value.forEach(date => {
                     if (date.date && (!pickHour || date.time)) {
-                        set.rdate(rrule.datetime(...date.date.split("-"), ...formatHourOrZero(date.time)))
+                        set.rdate(rrule.datetime(...date.date.split("-"), ...formatHourOrZero(date.time, pickHour)))
                     }
                 })
                 return set
@@ -139,5 +139,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 isRuleValid,
             }
         }, delimiters: ['[[', ']]']
-    }).mount('#recurrence');
+    }).mount('#vue_app');
 });
