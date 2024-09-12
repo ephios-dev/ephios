@@ -2,7 +2,7 @@
 {% load static %}
 
 <input type="hidden" autocomplete="off" id="pick_hour" value="{{ widget.pick_hour|lower }}">
-<div id="vue_app" class="row mt-2">
+<div id="vue_app" class="row mt-4">
     <div id="chooser" class="col-6">
         <div class="input-group pb-4">
             <div class="input-group-text">{% translate "starting at" %}</div>
@@ -217,10 +217,13 @@
                id="id_recurrence">
         {{ csrf_token }}
     </div>
-    <div class="col-6">
-        <ul>
-            <li v-for="date in computed_dates">[[ date ]]</li>
-        </ul>
+    <div class="col-6" v-if="computed_dates.length > 0">
+        <h3>{% translate "Selected dates:" %}</h3>
+        <div class="two-columns">
+            <ul>
+                <li v-for="date in computed_dates">[[ date ]]</li>
+            </ul>
+        </div>
     </div>
 </div>
 <script type="text/javascript" src="{% static "rrule/rrule.min.js" %}"></script>

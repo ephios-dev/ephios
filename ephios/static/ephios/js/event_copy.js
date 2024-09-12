@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             })
 
             const computed_dates = computed(() => {
-                return rrule_set ? rrule_set.value.all(): []
+                return rrule_set ? rrule_set.value.all().map(date => {
+                    return formatDate(date) + " " + (date.getUTCHours() < 10 ? "0" : "") + date.getUTCHours() + ":" + (date.getUTCMinutes() < 10 ? "0" : "") + date.getUTCMinutes()
+                }): []
             })
 
             const rrule_string = computed(() => {

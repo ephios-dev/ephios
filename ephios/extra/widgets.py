@@ -61,7 +61,7 @@ class RecurrenceWidget(Textarea):
 class RecurrenceField(CharField):
     widget = RecurrenceWidget
 
-    def __init__(self, pick_hour=False, *args, **kwargs):
+    def __init__(self, *args, pick_hour=False, **kwargs):
         self.widget = RecurrenceWidget(pick_hour=pick_hour)
         super().__init__(*args, **kwargs)
 
@@ -69,4 +69,4 @@ class RecurrenceField(CharField):
         try:
             return rrulestr(value)
         except (TypeError, KeyError, ValueError) as e:
-            raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e))
+            raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e)) from e

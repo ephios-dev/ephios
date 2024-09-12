@@ -57,6 +57,9 @@
                 <li><a class="dropdown-item" href="{% url "core:shift_edit" shift.pk %}"><span
                     class="fas fa-edit"></span>
                     {% translate "Edit" %}</a></li>
+                <li><a class="dropdown-item" href="{% url "core:shift_copy" shift.pk %}"><span
+                    class="fas fa-copy"></span>
+                    {% translate "Copy" %}</a></li>
                 {% if shift.event.shifts.count > 1 %}
                     <a class="dropdown-item" href="{% url "core:shift_delete" shift.pk %}"><span
                         class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>

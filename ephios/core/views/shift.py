@@ -108,6 +108,8 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.save_plugin_forms()
         if "addAnother" in self.request.POST:
             return redirect(reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")}))
+        if "copyShift" in self.request.POST:
+            return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
         try:
             self.event.activate()
             messages.success(
@@ -245,6 +247,8 @@ class ShiftUpdateView(
                     return redirect(
                         reverse("core:event_createshift", kwargs={"pk": shift.event.pk})
                     )
+                if "copyShift" in self.request.POST:
+                    return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
                 messages.success(
                     self.request, _("The shift {shift} has been saved.").format(shift=shift)
                 )
