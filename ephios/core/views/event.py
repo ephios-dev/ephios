@@ -36,7 +36,7 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventForm, EventNotificationForm
+from ephios.core.forms.events import EventCopyForm, EventForm, EventNotificationForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
@@ -540,28 +540,29 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("core:event_list")
 
 
-class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, TemplateView):
+class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = "core.add_event"
     model = Event
     template_name = "core/event_copy.html"
+    form_class = EventCopyForm
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
-    def post(self, *args, **kwargs):
-        tz = get_current_timezone()
-        try:
-            occurrences = rrulestr(self.request.POST["recurrence_string"]).xafter(
-                timezone.now(), count=1000
-            )
-        except (TypeError, KeyError, ValueError) as e:
-            messages.error(self.request, _("Invalid recurrence rule: {error}").format(error=e))
-            return self.get(*args, **kwargs)
+    def get_success_url(self):
+        return reverse("core:event_copy", kwargs=dict(pk=self.object.pk))
+
+    def form_valid(self, form):
         messages.info(
-            self.request, [date_format(obj, format="SHORT_DATE_FORMAT") for obj in occurrences]
+            self.request,
+            [
+                date_format(obj, format="SHORT_DATE_FORMAT")
+                for obj in form.cleaned_data["recurrence"]
+            ],
         )
-        return self.get(*args, **kwargs)
+        return super().form_valid(form)
+        tz = get_current_timezone()
         for date in occurrences:
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()

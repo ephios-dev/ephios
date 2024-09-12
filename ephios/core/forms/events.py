@@ -25,7 +25,7 @@ from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
+from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput, RecurrenceField
 from ephios.modellogging.log import add_log_recorder, update_log
 from ephios.modellogging.recorders import (
     DerivedFieldsLogRecorder,
@@ -244,6 +244,10 @@ class ShiftForm(forms.ModelForm):
             if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
                 raise ValidationError(_("Meeting time must not be after start time!"))
         return cleaned_data
+
+
+class EventCopyForm(forms.Form):
+    recurrence = RecurrenceField()
 
 
 class EventTypeForm(forms.ModelForm):

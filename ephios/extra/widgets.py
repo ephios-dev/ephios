@@ -1,6 +1,9 @@
-from django.forms import DateInput, MultiWidget, TimeInput
+from dateutil.rrule import rrulestr
+from django.core.exceptions import ValidationError
+from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
 from django.forms.widgets import Input
+from django.utils.translation import gettext as _
 
 
 class CustomDateInput(DateInput):
@@ -40,3 +43,30 @@ class CustomSplitDateTimeWidget(MultiWidget):
 
 class ColorInput(Input):
     input_type = "color"
+
+
+class RecurrenceWidget(Textarea):
+    template_name = "extra/widgets/recurrence_picker.html"
+
+    def __init__(self, *args, **kwargs):
+        self.pick_hour = kwargs.pop("pick_hour", False)
+        super().__init__(*args, **kwargs)
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["widget"]["pick_hour"] = self.pick_hour
+        return context
+
+
+class RecurrenceField(CharField):
+    widget = RecurrenceWidget
+
+    def __init__(self, pick_hour=False, *args, **kwargs):
+        self.widget = RecurrenceWidget(pick_hour=pick_hour)
+        super().__init__(*args, **kwargs)
+
+    def clean(self, value):
+        try:
+            return rrulestr(value)
+        except (TypeError, KeyError, ValueError) as e:
+            raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e))
