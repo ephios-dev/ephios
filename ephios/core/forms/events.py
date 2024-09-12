@@ -241,6 +241,10 @@ class EventCopyForm(forms.Form):
     recurrence = RecurrenceField()
 
 
+class ShiftCopyForm(forms.Form):
+    recurrence = RecurrenceField(pick_hour=True)
+
+
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
