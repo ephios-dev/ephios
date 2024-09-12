@@ -1055,20 +1055,19 @@ libsass = ">=0.7.0,<1"
 
 [[package]]
 name = "django-oauth-toolkit"
-version = "2.4.0"
+version = "3.0.1"
 description = "OAuth2 Provider for Django"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_oauth_toolkit-2.4.0-py3-none-any.whl", hash = "sha256:4931d6bf64b6aee32a42f989f218769d1876f3daa53c6bf883d8ab793fb302ee"},
-    {file = "django_oauth_toolkit-2.4.0.tar.gz", hash = "sha256:8975eaf697413a8d54208ee068bc5ad6d1ed76f1df84e4882fbb25e7e6966e1b"},
+    {file = "django_oauth_toolkit-3.0.1-py3-none-any.whl", hash = "sha256:3ef00b062a284f2031b0732b32dc899e3bbf0eac221bbb1cffcb50b8932e55ed"},
+    {file = "django_oauth_toolkit-3.0.1.tar.gz", hash = "sha256:7200e4a9fb229b145a6d808cbf0423b6d69a87f68557437733eec3c0cf71db02"},
 ]
 
 [package.dependencies]
-django = ">=3.2,<4.0.0 || >4.0.0"
-jwcrypto = ">=0.8.0"
-oauthlib = ">=3.1.0"
-pytz = ">=2024.1"
+django = ">=4.2"
+jwcrypto = ">=1.5.0"
+oauthlib = ">=3.2.2"
 requests = ">=2.13.0"
 
 [[package]]
@@ -3882,4 +3881,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "924ff34bc71b07dbcf63ef09dbae91c9731d83bbec7b2e4a996073811503deee"
+content-hash = "55d8df43868a30a6d3394d174e289f27030d35d1df1a52f6c5607d75d456130f"
