@@ -9,3 +9,4 @@ event types, signup configuration and so on.
 
    events
    signup
+   blocks
