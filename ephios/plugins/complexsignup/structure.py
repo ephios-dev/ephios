@@ -150,7 +150,7 @@ class ComplexConfigurationForm(SignupConfigurationForm):
     building_block = forms.ModelChoiceField(
         widget=ModelSelect2Widget(
             model=BuildingBlock,
-            search_fields=["name"],
+            search_fields=["name__icontains"],
         ),
         queryset=BuildingBlock.objects.all(),
     )
@@ -170,7 +170,7 @@ class ComplexShiftStructure(
     BaseShiftStructure,
 ):
     slug = "complex"
-    verbose_name = _("Preconfigured Structure")
+    verbose_name = _("Preconfigured Structure (experimental)")
     description = _("Use preconfigured elements to build a custom structure.")
     shift_state_template_name = "complexsignup/shift_state.html"
     configuration_form_class = ComplexConfigurationForm
