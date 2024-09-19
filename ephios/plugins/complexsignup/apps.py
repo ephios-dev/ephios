@@ -7,11 +7,11 @@ class PluginApp(PluginConfig):
     name = "ephios.plugins.complexsignup"
 
     class EphiosPluginMeta:
-        name = _("Modular Signup Requirements")
+        name = _("Preconfigured Structures (experimental)")
         author = "Ephios Team"
         description = _(
             "This plugins adds a shift structure for which you configure reusable "
-            "modules of requirements to create complex shift setups."
+            "structures to create complex shift setups."
         )
 
     def ready(self):
