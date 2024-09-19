@@ -3,7 +3,7 @@
 
 <input type="hidden" autocomplete="off" id="pick_hour" value="{{ widget.pick_hour|lower }}">
 <div id="vue_app" class="row mt-4">
-    <div id="chooser" class="col-12 col-md-6">
+    <div id="chooser" class="col-12 col-md-6 mb-2">
         <div class="input-group pb-4">
             <div class="input-group-text">{% translate "starting at" %}</div>
             <input type="date" class="form-control" v-model="DTSTART">
@@ -39,13 +39,13 @@
                 </div>
 
                 <div class="row mb-4 align-items-center">
-                    <span class="col-3">{% translate "Repeat every" %}</span>
+                    <span class="col-4 col-md-3">{% translate "Repeat every" %}</span>
                     <div class="col-2">
                         <input class="form-control form-control-sm" type="number" v-model="rule.interval"
                                min="1">
                     </div>
                     <span class="col-3">[[ frequency_strings[rule.freq] ]]</span>
-                    <span v-if="rule.freq!='DAILY'" class="col-2">{% translate "on" %}</span>
+                    <span v-if="rule.freq < frequencies.DAILY" class="col-1">{% translate "on" %}</span>
                 </div>
 
                 <div class="mb-4" v-if="rule.freq===frequencies.WEEKLY">
@@ -174,12 +174,12 @@
                         <span class="col-2">
                             {% translate "for" %}
                         </span>
-                        <div class="col-7">
+                        <div class="col-5 col-md-7">
                             <input type="text" class="form-control form-control-sm flex-fill"
                                    v-model="rule.count" @focus="rule.end_mode='COUNT'"
                                    :required="rule.end_mode=='COUNT'">
                         </div>
-                        <span class="col-2">
+                        <span class="col-4 col-md-2">
                             {% translate "ocurrences" %}
                         </span>
                     </div>
@@ -217,7 +217,7 @@
                id="id_recurrence">
         {{ csrf_token }}
     </div>
-    <div class="col-6" v-if="computed_dates.length > 0">
+    <div class="col-12 col-md-6" v-if="computed_dates.length > 0">
         <h3>{% translate "Selected dates:" %}</h3>
         <div class="two-columns">
             <ul>
