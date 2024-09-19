@@ -2,7 +2,7 @@ const {createApp, ref, computed} = Vue
 
 function formatDate(date_obj, sep = "-") {
     let month = date_obj.getMonth() + 1;
-    let day = date_obj.getDate() + 1;
+    let day = date_obj.getDate();
     return date_obj.getFullYear() + sep + (month < 10 ? "0" : "") + month + sep + (day < 10 ? "0" : "") + day
 }
 
