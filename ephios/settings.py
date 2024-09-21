@@ -107,6 +107,7 @@ CORE_PLUGINS = [
     "ephios.plugins.eventautoqualification.apps.PluginApp",
     "ephios.plugins.simpleresource.apps.PluginApp",
     "ephios.plugins.federation.apps.PluginApp",
+    "ephios.plugins.files.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points(group="ephios.plugins"):
@@ -224,6 +225,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = env.str("STATIC_URL", default="/static/")
+MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
