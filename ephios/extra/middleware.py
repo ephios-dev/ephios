@@ -1,4 +1,7 @@
+from urllib.parse import urljoin, urlsplit
+
 from django.conf import settings
+from django.shortcuts import redirect
 
 from ephios.core.services.notifications.types import NOTIFICATION_READ_PARAM_NAME
 
@@ -35,4 +38,18 @@ class EphiosNotificationMiddleware:
                     notification.save()
             except Notification.DoesNotExist:
                 pass
+        return response
+
+
+class EphiosMediaFileMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if (
+            request.get_host() == urlsplit(settings.GET_USERCONTENT_URL()).netloc
+            and request.resolver_match.url_name != "document"
+        ):
+            return redirect(urljoin(settings.GET_SITE_URL(), request.path))
         return response

@@ -125,6 +125,7 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "ephios.extra.middleware.EphiosLocaleMiddleware",
     "ephios.extra.middleware.EphiosNotificationMiddleware",
+    "ephios.extra.middleware.EphiosMediaFileMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -316,6 +317,10 @@ def GET_SITE_URL():
     if site_url.endswith("/"):
         site_url = site_url[:-1]
     return site_url
+
+
+def GET_USERCONTENT_URL():
+    return MEDIA_URL
 
 
 # Guardian configuration
