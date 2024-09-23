@@ -1,9 +1,13 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
+
+from ephios.core.models import Event
 
 
 class Document(models.Model):
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to="documents/")
+    file = models.FileField(upload_to="documents/", validators=[FileExtensionValidator(["pdf"])])
+    attached_to = models.ManyToManyField(Event, related_name="documents")
 
     def __str__(self):
-        return self.title
+        return str(self.title)
