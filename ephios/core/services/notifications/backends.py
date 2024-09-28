@@ -10,6 +10,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import mail_admins
 from django.utils.translation import gettext_lazy as _
+from pywebpush import WebPushException
 from webpush import send_user_notification
 
 from ephios.core.models.users import Notification
@@ -162,14 +163,17 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
 
     @classmethod
     def send(cls, notification):
-        payload = {
-            "head": str(notification.subject),
-            "body": notification.body,
-            "icon": "/static/ephios/img/ephios-symbol-red.svg",
-        }
-        if actions := notification.get_actions():
-            payload["url"] = actions[0][1]
-        send_user_notification(user=notification.user, payload=payload, ttl=1000)
+        try:
+            payload = {
+                "head": str(notification.subject),
+                "body": notification.body,
+                "icon": "/static/ephios/img/ephios-symbol-red.svg",
+            }
+            if actions := notification.get_actions():
+                payload["url"] = actions[0][1]
+            send_user_notification(user=notification.user, payload=payload, ttl=1000)
+        except WebPushException:
+            notification.user.webpush_info.all().delete()
 
 
 CORE_NOTIFICATION_BACKENDS = [EmailNotificationBackend, WebPushNotificationBackend]
