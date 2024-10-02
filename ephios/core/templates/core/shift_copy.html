@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% translate "Copy event" %}
+    {% translate "Copy shift" %}
 {% endblock %}
 
 {% block css %}
@@ -13,7 +13,7 @@
 {% block content %}
     <div class="page-header">
         <h1>
-            {% translate "Copy event" %} "{{ event.title }}" <small>({{ event.get_start_time }})</small>
+            {% translate "Copy shift" %} "{{ shift.event.title }}" <small>({{ shift.get_datetime_display }})</small>
         </h1>
     </div>
     {{ form.errors }}
