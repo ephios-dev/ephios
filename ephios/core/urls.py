@@ -28,6 +28,7 @@ from ephios.core.views.auth import (
     IdentityProviderUpdateView,
     OIDCCallbackView,
     OIDCInitiateView,
+    OIDCLoginView,
     OIDCLogoutView,
 )
 from ephios.core.views.bulk import EventBulkDeleteView
@@ -294,6 +295,7 @@ urlpatterns = [
     path("oidc/initiate/<int:provider>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
     path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
     path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
+    path("accounts/login/", OIDCLoginView.as_view(), name="oidc_login"),
     path("notifications/", NotificationListView.as_view(), name="notification_list"),
     path(
         "notifications/read/", NotificationMarkAllAsReadView.as_view(), name="notification_all_read"
