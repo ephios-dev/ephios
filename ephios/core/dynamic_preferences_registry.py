@@ -62,6 +62,19 @@ class HideLoginForm(BooleanPreference):
 
 
 @global_preferences_registry.register
+class LoginRedirectToSoleIndentityProvider(BooleanPreference):
+    name = "login_redirect_to_sole_identity_provider"
+    verbose_name = _("Directly redirect to Identity Provider")
+    help_text = _(
+        "If the login form is hidden and there is a single identity provider, users trying to login"
+        "will be directly redirected to that identity provider. The provider must have a valid logout endpoint."
+    )
+    default = False
+    section = general_global_section
+    required = False
+
+
+@global_preferences_registry.register
 class EnabledPlugins(MultipleChoicePreference):
     name = "enabled_plugins"
     verbose_name = _("Enabled plugins")

@@ -3,8 +3,10 @@ from urllib.parse import urljoin
 import requests
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
+from django.template.defaultfilters import urlencode
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import (
@@ -15,10 +17,12 @@ from django.views.generic import (
     RedirectView,
     UpdateView,
 )
+from dynamic_preferences.registries import global_preferences_registry
 from oauthlib.oauth2 import WebApplicationClient
 from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
+from ephios.core.dynamic_preferences_registry import LoginRedirectToSoleIndentityProvider
 from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
 from ephios.extra.mixins import StaffRequiredMixin
@@ -85,6 +89,45 @@ class OIDCLogoutView(RedirectView):
         auth.logout(self.request)
         messages.info(self.request, _("Logged out successfully."))
         return logout_url
+
+
+class OIDCLoginView(LoginView):
+    template_name = "core/login.html"
+    redirect_authenticated_user = True
+
+    def get(self, request, *args, **kwargs):
+        if (
+            not self._show_login_form
+            and self._providers.count() == 1
+            and global_preferences_registry.manager()[
+                f"general__{LoginRedirectToSoleIndentityProvider.name}"
+            ]
+        ):
+            provider = self._providers.get()
+            redirect_url = reverse("core:oidc_initiate", args=(provider.id,))
+            if next := self.request.GET.get("next"):
+                redirect_url += f"?next={urlencode(next)}"
+            return redirect(redirect_url)
+        return super().get(request, *args, **kwargs)
+
+    @property
+    def _providers(self):
+        return IdentityProvider.objects.all()
+
+    @property
+    def _show_login_form(self):
+        return (
+            not global_preferences_registry.manager()["general__hide_login_form"]
+            or not self._providers.exists()
+            or self.request.GET.get("local")
+        )
+
+    @property
+    def extra_context(self):
+        return {
+            "providers": self._providers,
+            "show_login_form": self._show_login_form,
+        }
 
 
 class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, CreateView):
