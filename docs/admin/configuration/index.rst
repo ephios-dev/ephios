@@ -111,6 +111,21 @@ URLs and Routing
     URL where the static files can be found by browsers.
     Defaults to ``/static/``, meaning they are served by the same host.
 
+`MEDIA_URL`:
+    URL where the media files (meaning files uploaded by users) can be found by browsers.
+    Defaults to ``/usercontent/``, meaning they are served by the same host.
+    This is NOT recommended for `security reasons <https://docs.djangoproject.com/en/5.1/topics/security/#user-uploaded-content>`__.
+    ephios takes care of necessary redirects if this is set to a different domain.
+    Please not that if MEDIA_URL is reacheable from the internet, anyone can download media files.
+    To prevent this, ephios checks appropriate permissions before serving files. The recommended setup is to
+    declare this URL as internal in your reverse proxy and serve the files directly from the filesystem.
+    ephios will issue a redirect to the correct URL after checking the permissions.
+
+`FALLBACK_MEDIA_SERVING`:
+    If set to `True`, ephios will serve media files itself if the webserver does not.
+    This is not recommended for production use. Defaults to `False`.
+    Currently only nginx with the X-Accel-Redirect header is supported to serve media files.
+
 Security
 --------
 
