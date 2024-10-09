@@ -324,6 +324,15 @@ def GET_USERCONTENT_URL():
     return MEDIA_URL
 
 
+def GET_USERCONTENT_QUOTA():
+    try:
+        disk_usage = os.statvfs(MEDIA_ROOT)
+        return disk_usage.f_bavail * disk_usage.f_frsize
+    except AttributeError:
+        # not available on windows
+        return None
+
+
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
 GUARDIAN_MONKEY_PATCH = False

@@ -1,4 +1,7 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.forms import FileInput, Form, ModelForm, ModelMultipleChoiceField
+from django.template.defaultfilters import filesizeformat
 from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 
@@ -11,6 +14,14 @@ class DocumentForm(ModelForm):
         model = Document
         fields = ["title", "file"]
         widgets = {"file": FileInput(attrs={"accept": ".pdf"})}
+
+    def clean_file(self):
+        file_size = self.cleaned_data["file"].size
+        if file_size > settings.GET_USERCONTENT_QUOTA():
+            raise ValidationError(
+                _("The file is too large. There are only %(quota)s available."),
+                params={"quota": filesizeformat(settings.GET_USERCONTENT_QUOTA())},
+            )
 
 
 class EventAttachedDocumentForm(BasePluginFormMixin, Form):
