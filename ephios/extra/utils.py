@@ -1,7 +1,10 @@
 import datetime
 import itertools
+import os
 
+from django.conf import settings
 from django.db import models
+from django.http import FileResponse, HttpResponse
 from django.template.defaultfilters import yesno
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
@@ -34,3 +37,16 @@ def format_anything(value):
     if value is None:
         return _("None")
     return str(value)
+
+
+def accelerated_media_response(file):
+    if getattr(settings, "FALLBACK_MEDIA_SERVING", True):
+        # use built-in django file serving - only as a fallback as this is slow
+        response = FileResponse(file)
+    else:
+        # use nginx x-accel-redirect for faster file serving
+        # nginx needs to be set up to serve files from the media url
+        response = HttpResponse()
+        response["X-Accel-Redirect"] = file.url
+    response["Content-Disposition"] = "attachment; filename=" + os.path.split(file.name)[1]
+    return response

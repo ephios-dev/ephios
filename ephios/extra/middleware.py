@@ -42,6 +42,8 @@ class EphiosNotificationMiddleware:
 
 
 class EphiosMediaFileMiddleware:
+    """Ensure only media files are served from the media domain."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -49,7 +51,8 @@ class EphiosMediaFileMiddleware:
         response = self.get_response(request)
         if (
             request.get_host() == urlsplit(settings.GET_USERCONTENT_URL()).netloc
-            and request.resolver_match.url_name != "document"
+            and request.resolver_match
+            and not getattr(request.resolver_match.func.view_class, "is_media_view", False)
         ):
             return redirect(urljoin(settings.GET_SITE_URL(), request.path))
         return response
