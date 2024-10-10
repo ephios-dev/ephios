@@ -190,6 +190,11 @@ Configure your reverse proxy to forward requests to ephios. For nginx, you can s
             expires 1d;
             add_header Cache-Control "public";
         }
+
+        location /usercontent/ {
+            internal;
+            alias /var/ephios/data/private/media/;
+        }
     }
 
 For apache you can build on this:

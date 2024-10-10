@@ -107,6 +107,7 @@ CORE_PLUGINS = [
     "ephios.plugins.eventautoqualification.apps.PluginApp",
     "ephios.plugins.simpleresource.apps.PluginApp",
     "ephios.plugins.federation.apps.PluginApp",
+    "ephios.plugins.files.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points(group="ephios.plugins"):
@@ -124,6 +125,7 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "ephios.extra.middleware.EphiosLocaleMiddleware",
     "ephios.extra.middleware.EphiosNotificationMiddleware",
+    "ephios.extra.middleware.EphiosMediaFileMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -224,6 +226,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = env.str("STATIC_URL", default="/static/")
+MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
+FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=False)
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
@@ -314,6 +318,19 @@ def GET_SITE_URL():
     if site_url.endswith("/"):
         site_url = site_url[:-1]
     return site_url
+
+
+def GET_USERCONTENT_URL():
+    return MEDIA_URL
+
+
+def GET_USERCONTENT_QUOTA():
+    try:
+        disk_usage = os.statvfs(MEDIA_ROOT)
+        return disk_usage.f_bavail * disk_usage.f_frsize
+    except AttributeError:
+        # not available on windows
+        return None
 
 
 # Guardian configuration
