@@ -3,7 +3,13 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import event_forms, event_info, management_settings_sections
+from ephios.core.signals import (
+    event_forms,
+    event_info,
+    management_settings_sections,
+    register_group_permission_fields,
+)
+from ephios.extra.permissions import PermissionField
 from ephios.plugins.files.forms import EventAttachedDocumentForm
 
 
@@ -39,3 +45,26 @@ def display_event_files(event, request, **kwargs):
         return render_to_string(
             "files/document_attachement.html", {"documents": event.documents.all()}, request
         )
+
+
+@receiver(
+    register_group_permission_fields,
+    dispatch_uid="ephios.plugins.files.signals.register_group_permission_fields",
+)
+def group_permission_fields(sender, **kwargs):
+    return [
+        (
+            "manage_files",
+            PermissionField(
+                label=_("Manage files"),
+                help_text=_(
+                    "Enables this group to upload and manage files. Files can be attached to events by all planners."
+                ),
+                permissions=[
+                    "files.add_document",
+                    "files.change_document",
+                    "files.delete_document",
+                ],
+            ),
+        )
+    ]
