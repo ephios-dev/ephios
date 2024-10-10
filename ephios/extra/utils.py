@@ -40,7 +40,7 @@ def format_anything(value):
 
 
 def accelerated_media_response(file):
-    if getattr(settings, "FALLBACK_MEDIA_SERVING", True):
+    if settings.FALLBACK_MEDIA_SERVING:
         # use built-in django file serving - only as a fallback as this is slow
         response = FileResponse(file)
     else:
