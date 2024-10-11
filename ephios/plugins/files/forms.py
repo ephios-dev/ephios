@@ -22,6 +22,7 @@ class DocumentForm(ModelForm):
                 _("The file is too large. There are only %(quota)s available."),
                 params={"quota": filesizeformat(settings.GET_USERCONTENT_QUOTA())},
             )
+        return self.cleaned_data["file"]
 
 
 class EventAttachedDocumentForm(BasePluginFormMixin, Form):

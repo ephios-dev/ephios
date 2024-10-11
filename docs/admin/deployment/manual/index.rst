@@ -224,6 +224,8 @@ For apache you can build on this:
         ProxyPassReverse / http://localhost:8327/
     </VirtualHost>
 
+Please note that `FALLBACK_MEDIA_SERVING` needs to be set to `True` in the ephios configuration when using apache.
+
 Remember to replace all the domain names and certificate paths with your own.
 Make sure to use secure SSL settings.
 To obtain SSL certificates, you can use `certbot <https://certbot.eff.org/>`_ with Let's Encrypt.

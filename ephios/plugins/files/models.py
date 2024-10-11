@@ -2,6 +2,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 
 from ephios.core.models import Event
+from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 
 
 class Document(models.Model):
@@ -11,3 +12,14 @@ class Document(models.Model):
 
     def __str__(self):
         return str(self.title)
+
+
+register_model_for_logging(
+    Document,
+    ModelFieldsLogConfig(
+        unlogged_fields=[
+            "id",
+            "file",
+        ],
+    ),
+)
