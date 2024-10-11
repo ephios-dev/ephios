@@ -50,7 +50,7 @@ class EphiosMediaFileMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         if (
-        # if the usercontent URL does not contain a domain, the request host will be checked against `None` --> no redirect loop
+            # if the usercontent URL does not contain a domain, the request host will be checked against `None` --> no redirect loop
             request.get_host() == urlsplit(settings.GET_USERCONTENT_URL()).netloc
             and request.resolver_match
             and not getattr(request.resolver_match.func.view_class, "is_media_view", False)
