@@ -228,7 +228,7 @@ USE_TZ = True
 
 STATIC_URL = env.str("STATIC_URL", default="/static/")
 MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
-FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=False)
+FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=DEBUG)
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
