@@ -326,7 +326,10 @@ def GET_USERCONTENT_URL():
 
 
 def GET_USERCONTENT_QUOTA():
-    return shutil.disk_usage(MEDIA_ROOT).free
+    """Returns a tuple (used, free) of the user content quota in bytes"""
+    used = sum(p.stat().st_size for p in Path(MEDIA_ROOT).rglob("*"))
+    free = shutil.disk_usage(MEDIA_ROOT).free
+    return used, free
 
 
 # Guardian configuration

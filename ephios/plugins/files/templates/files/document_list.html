@@ -2,8 +2,16 @@
 {% load i18n %}
 
 {% block settings_content %}
+    <div>
+
+    </div>
     <a class="btn btn-secondary" href="{% url "files:settings_document_create" %}"><span
-        class="fa fa-plus"></span> {% translate "Add file" %}</a>
+        class="fa fa-plus"></span> {% translate "Add file" %}</a><br />
+    <small>
+        {% blocktranslate trimmed with used=quota_used|filesizeformat free=quota_free|filesizeformat %}
+            {{ free }} available
+        {% endblocktranslate %}
+    </small>
     <table class="table table-striped display mt-2">
         <thead>
             <tr>
@@ -30,4 +38,5 @@
             {% endfor %}
         </tbody>
     </table>
+    <span><b>{% translate "Total" %}:</b> {{ document_list.count }} {% translate "files" %} {% translate "with" %} {{ quota_used|filesizeformat }}</span>
 {% endblock %}

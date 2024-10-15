@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -20,6 +21,13 @@ class DocumentView(LoginRequiredMixin, MediaViewMixin, DetailView):
 class DocumentListView(CustomPermissionRequiredMixin, ListView):
     model = Document
     permission_required = "files.add_document"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        used, free = settings.GET_USERCONTENT_QUOTA()
+        context["quota_free"] = free
+        context["quota_used"] = used
+        return context
 
 
 class DocumentCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
