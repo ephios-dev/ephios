@@ -16,6 +16,8 @@
         <thead>
             <tr>
                 <th>{% translate "Title" %}</th>
+                <th>{% translate "Uploaded by" %}</th>
+                <th>{% translate "Uploaded at" %}</th>
                 <th>{% translate "Action" %}</th>
             </tr>
         </thead>
@@ -23,6 +25,8 @@
             {% for document in document_list %}
                 <tr>
                     <td class="break-word">{{ document.title }}</td>
+                    <td>{{ document.uploader }}</td>
+                    <td>{{ document.updated_at }}</td>
                     <td class="d-flex">
                         <a class="btn btn-secondary btn-sm text-nowrap me-1"
                            href="{% url "files:document" document.pk %}"><span
