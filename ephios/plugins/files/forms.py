@@ -21,7 +21,7 @@ class DocumentForm(ModelForm):
 
     def clean_file(self):
         file_size = self.cleaned_data["file"].size
-        used, free = settings.GET_USERCONTENT_QUOTA()
+        _used, free = settings.GET_USERCONTENT_QUOTA()
         if file_size > free:
             raise ValidationError(
                 _("The file is too large. There are only %(quota)s available."),
@@ -31,7 +31,11 @@ class DocumentForm(ModelForm):
 
     def save(self, commit=True):
         self.instance.uploader = self.request.user
-        return super().save(commit)
+        result = super().save(commit)
+        # deleting the old file before commiting the new one results in no file being stored
+        if "file" in self.changed_data and "file" in self.initial:
+            self.initial["file"].delete(save=False)
+        return result
 
 
 class EventAttachedDocumentForm(BasePluginFormMixin, Form):
