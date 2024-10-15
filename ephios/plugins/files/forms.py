@@ -15,14 +15,23 @@ class DocumentForm(ModelForm):
         fields = ["title", "file"]
         widgets = {"file": FileInput(attrs={"accept": ".pdf"})}
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
     def clean_file(self):
         file_size = self.cleaned_data["file"].size
-        if file_size > settings.GET_USERCONTENT_QUOTA():
+        used, free = settings.GET_USERCONTENT_QUOTA()
+        if file_size > free:
             raise ValidationError(
                 _("The file is too large. There are only %(quota)s available."),
-                params={"quota": filesizeformat(settings.GET_USERCONTENT_QUOTA())},
+                params={"quota": filesizeformat(free)},
             )
         return self.cleaned_data["file"]
+
+    def save(self, commit=True):
+        self.instance.uploader = self.request.user
+        return super().save(commit)
 
 
 class EventAttachedDocumentForm(BasePluginFormMixin, Form):
