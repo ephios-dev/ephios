@@ -190,6 +190,11 @@ Configure your reverse proxy to forward requests to ephios. For nginx, you can s
             expires 1d;
             add_header Cache-Control "public";
         }
+
+        location /usercontent/ {
+            internal;
+            alias /var/ephios/data/private/media/;
+        }
     }
 
 For apache you can build on this:
@@ -218,6 +223,8 @@ For apache you can build on this:
         ProxyPass / http://localhost:8327/
         ProxyPassReverse / http://localhost:8327/
     </VirtualHost>
+
+Please note that `FALLBACK_MEDIA_SERVING` needs to be set to `True` in the ephios configuration when using apache.
 
 Remember to replace all the domain names and certificate paths with your own.
 Make sure to use secure SSL settings.
