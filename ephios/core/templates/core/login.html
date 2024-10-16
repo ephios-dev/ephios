@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load settings_extras %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Login" %}
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 text-center my-5">
+            <h1 class="">
+                {{ global_preferences.general__organization_name }}
+            </h1>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% if providers.exists %}
+            <div class="col-12 col-lg-4 p-3">
+                {% for provider in providers %}
+                    <div class="mb-1">
+                        <a class="btn btn-lg btn-primary w-100" href="{% url 'core:oidc_initiate' provider.id %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">{{ provider.label }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if show_login_form %}
+            <div class="col-12 col-lg-4 p-3">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn {% if providers %}btn-outline-primary{% else %}btn-primary btn-lg{% endif %}"
+                            type="submit">
+                        {% translate "Login" %}
+                    </button>
+                    <a class="float-end" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
