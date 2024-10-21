@@ -84,7 +84,8 @@ class QualificationRequirementForm(forms.Form):
     def clean_max_count(self):
         if (
             self.cleaned_data["max_count"]
-            and self.cleaned_data["max_count"] < self.cleaned_data["min_count"]
+            and (min_count := self.cleaned_data.get("min_count"))
+            and self.cleaned_data["max_count"] < min_count
         ):
             raise ValidationError(_("Max count must not be smaller than min count."))
         return self.cleaned_data["max_count"]
