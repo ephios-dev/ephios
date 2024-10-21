@@ -11,6 +11,7 @@ class Command(BaseCommand):
     help = "Converts UUID columns from char type to the native UUID type used in MariaDB 10.7+ and Django 5.0+."
 
     def convert_field(self, model, field_name, null=False, unique=False):
+        # pylint: disable=protected-access
         if model._meta.get_field(field_name).model != model:
             # Field is inherited from a parent model
             return
@@ -21,14 +22,16 @@ class Command(BaseCommand):
 
         old_field = models.CharField(null=null, max_length=36, unique=unique)
         old_field.set_attributes_from_name(field_name)
+        old_field.model = model
 
         new_field = models.UUIDField(null=null, unique=unique)
         new_field.set_attributes_from_name(field_name)
+        new_field.model = model
 
         with connection.schema_editor() as schema_editor:
             schema_editor.alter_field(model, old_field, new_field)
 
-    def handle(self, **options):
+    def handle(self, *args, **options):
         from ephios.core.models import Qualification, QualificationCategory
         from ephios.plugins.complexsignup.models import BuildingBlock
 

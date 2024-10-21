@@ -86,3 +86,17 @@ You can fix this by running:
 .. code-block:: console
 
     # mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+
+"Data too long for column" Error when using MariaDB 10.7+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are upgrading your existing ephios setup to MariaDB 10.7+, you might encounter problems
+with "Data too long for column" errors. These might be caused by a change in how django handles
+UUID fields with MariaDB. Try this management command to migrate your existing database:
+
+.. code-block:: console
+
+    # sudo -u ephios -i
+    $ export ENV_PATH="/home/ephios/ephios.env"
+    $ source /home/ephios/venv/bin/activate
+    $ python -m ephios convert_mariadb_uuids

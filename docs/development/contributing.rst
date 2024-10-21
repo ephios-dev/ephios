@@ -91,6 +91,21 @@ Using other databases
 
 By default, ephios uses a sqlite database for development and PostgreSQL for production.
 
+Postgres
+''''''''
+
+If you want to use Postgres in development, here are some steps to follow:
+
+.. code-block:: console
+
+   sudo docker run --name postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=ephios -e PGDATA=/tmp -d -p 5432:5432 -v ${PWD}:/var/lib/postgresql/data postgres:latest
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
+
+.. code-block:: bash
+
+   DATABASE_URL=psql://postgres:password@localhost:5432/ephios
+
 MySQL
 ''''''
 
@@ -98,9 +113,12 @@ We do not recommend using MySQL, but if you need a mysql for development, you ca
 
 .. code-block:: bash
 
-   sudo docker run --name mysql -e MYSQL_ROOT_PASSWORD=somesupersecret123 -p 3306:3306 -d docker.io/library/mariadb:10.6
+   sudo docker run --name mysql -e MYSQL_ROOT_PASSWORD=somesupersecret123 -p 3306:3306 -d docker.io/library/mariadb:latest
+   sudo docker exec -it mysql mariadb -u root -p  # use the password above
+   CREATE DATABASE ephios;
 
-Then, you can use the following settings in your .env file:
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
 
 .. code-block:: bash
 
