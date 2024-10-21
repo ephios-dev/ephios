@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-24 09:28+0200\n"
-"PO-Revision-Date: 2024-06-24 09:39+0200\n"
+"POT-Creation-Date: 2024-10-21 19:29+0200\n"
+"PO-Revision-Date: 2024-10-21 19:32+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -68,7 +68,7 @@ msgstr "API Token hinzufügen"
 
 #: ephios/api/templates/api/access_token_form.html:16
 #: ephios/api/templates/oauth2_provider/application_form.html:27
-#: ephios/core/forms/users.py:194 ephios/core/forms/users.py:437
+#: ephios/core/forms/users.py:197 ephios/core/forms/users.py:440
 #: ephios/core/templates/core/disposition/disposition.html:125
 #: ephios/core/templates/core/event_detail.html:28
 #: ephios/core/templates/core/event_form.html:65
@@ -79,7 +79,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/settings/settings_personal_data.html:50
 #: ephios/core/templates/core/shift_form.html:71
 #: ephios/core/templates/core/userprofile_form.html:132
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:271
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:282
 #: ephios/plugins/qualification_management/forms.py:121
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:90
 msgid "Save"
@@ -190,7 +190,7 @@ msgstr ""
 
 #: ephios/api/templates/api/access_token_reveal.html:26
 #: ephios/api/templates/oauth2_provider/application_detail.html:15
-#: ephios/api/templates/oauth2_provider/application_detail.html:26
+#: ephios/api/templates/oauth2_provider/application_detail.html:34
 #: ephios/core/templates/core/event_copy.html:50
 #: ephios/core/templates/core/settings/settings_calendar.html:19
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:27
@@ -213,7 +213,7 @@ msgid "Are you sure to delete the application?"
 msgstr "Möchten Sie die Anwendung wirklich löschen?"
 
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:24
-#: ephios/api/templates/oauth2_provider/application_detail.html:68
+#: ephios/api/templates/oauth2_provider/application_detail.html:77
 #: ephios/api/templates/oauth2_provider/application_list.html:56
 #: ephios/core/templates/core/event_bulk_delete.html:24
 #: ephios/core/templates/core/event_confirm_delete.html:17
@@ -252,39 +252,48 @@ msgstr "Löschen"
 msgid "Client id"
 msgstr "Client-ID"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:20
-#: ephios/core/forms/users.py:529
+#: ephios/api/templates/oauth2_provider/application_detail.html:21
+#: ephios/api/templates/oauth2_provider/application_detail.html:28
+#: ephios/core/forms/users.py:532
 msgid "Client secret"
 msgstr "Client-Secret"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:30
+#: ephios/api/templates/oauth2_provider/application_detail.html:24
+msgid ""
+"The client secret can not be shown again. Please edit the application and "
+"set a new secret if necessary."
+msgstr ""
+"Das client-secret wird nicht noch einmal angezeigt. Wenn nötig, setzen Sie "
+"ein neues secret über die Bearbeiten-Funktion der App."
+
+#: ephios/api/templates/oauth2_provider/application_detail.html:39
 msgid "Client type"
 msgstr "Client-Typ"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:35
+#: ephios/api/templates/oauth2_provider/application_detail.html:44
 msgid "Authorization Grant Type"
 msgstr "Authorization-Grant-Type"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:41
+#: ephios/api/templates/oauth2_provider/application_detail.html:50
 msgid "Redirect URIs"
 msgstr "Weiterleitungs-URIs"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:46
+#: ephios/api/templates/oauth2_provider/application_detail.html:55
 #: ephios/api/templates/oauth2_provider/application_list.html:22
 msgid "Created"
 msgstr "Erstellt am"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:52
+#: ephios/api/templates/oauth2_provider/application_detail.html:61
 msgid "Updated"
 msgstr "Geändert am"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:58
+#: ephios/api/templates/oauth2_provider/application_detail.html:67
 #: ephios/api/templates/oauth2_provider/application_list.html:21
 #: ephios/core/models/users.py:476
 msgid "User"
 msgstr "Benutzer"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:64
+#: ephios/api/templates/oauth2_provider/application_detail.html:73
 #: ephios/api/templates/oauth2_provider/application_form.html:25
 #: ephios/core/templates/core/event_bulk_delete.html:23
 #: ephios/core/templates/core/event_confirm_delete.html:16
@@ -310,7 +319,7 @@ msgstr "Benutzer"
 msgid "Back"
 msgstr "Zurück"
 
-#: ephios/api/templates/oauth2_provider/application_detail.html:66
+#: ephios/api/templates/oauth2_provider/application_detail.html:75
 #: ephios/api/templates/oauth2_provider/application_list.html:51
 #: ephios/core/templates/core/eventtype_list.html:21
 #: ephios/core/templates/core/fragments/shift_box_small.html:9
@@ -442,15 +451,15 @@ msgstr "{user} erhält die Qualifikation '{qualification}'."
 msgid "(valid until {expires_str})"
 msgstr "(gültig bis {expires_str})"
 
-#: ephios/core/dynamic_preferences_registry.py:47
+#: ephios/core/dynamic_preferences_registry.py:46
 msgid "Organization display name"
 msgstr "Anzeigename der Organisation"
 
-#: ephios/core/dynamic_preferences_registry.py:56
+#: ephios/core/dynamic_preferences_registry.py:55
 msgid "Hide login form"
 msgstr "Login-Fomular verstecken"
 
-#: ephios/core/dynamic_preferences_registry.py:58
+#: ephios/core/dynamic_preferences_registry.py:57
 msgid ""
 "Hide the login form on the login page. This only takes effect if you "
 "configured at least one identity provider."
@@ -459,35 +468,35 @@ msgstr ""
 "nur berücksichtigt, wenn Sie mindestens einen Identitätsprovider "
 "konfiguriert haben."
 
-#: ephios/core/dynamic_preferences_registry.py:68
+#: ephios/core/dynamic_preferences_registry.py:67
 msgid "Enabled plugins"
 msgstr "Aktivierte Plugins"
 
-#: ephios/core/dynamic_preferences_registry.py:90
+#: ephios/core/dynamic_preferences_registry.py:89
 msgid "Last run_periodic call"
 msgstr "Letzter run_periodic Aufruf"
 
-#: ephios/core/dynamic_preferences_registry.py:121
+#: ephios/core/dynamic_preferences_registry.py:120
 msgid "Notification preferences"
 msgstr "Benachrichtigungseinstellungen"
 
-#: ephios/core/dynamic_preferences_registry.py:135
+#: ephios/core/dynamic_preferences_registry.py:134
 msgid "Events of this type should by default be visible for"
 msgstr "Veranstaltungen diesen Typs sind standardmäßig sichtbar für"
 
-#: ephios/core/dynamic_preferences_registry.py:144
+#: ephios/core/dynamic_preferences_registry.py:143
 msgid "Users that are responsible for this event type by default"
 msgstr "Benutzer die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:153
+#: ephios/core/dynamic_preferences_registry.py:152
 msgid "Groups that are responsible for this event type by default"
 msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:162
+#: ephios/core/dynamic_preferences_registry.py:161
 msgid "General required qualifications for this event type"
 msgstr "Allgemein erforderliche Qualifikationen für diesen Veranstaltungstyp"
 
-#: ephios/core/dynamic_preferences_registry.py:164
+#: ephios/core/dynamic_preferences_registry.py:163
 msgid ""
 "These qualifications are required for all events of this event type. Users "
 "without these qualification will not be able to sign up, so make sure to use "
@@ -665,20 +674,20 @@ msgstr ""
 msgid "Users"
 msgstr "Benutzer"
 
-#: ephios/core/forms/users.py:176
+#: ephios/core/forms/users.py:179
 #: ephios/core/templates/core/settings/settings_base.html:33
 msgid "Management"
 msgstr "Verwaltung"
 
-#: ephios/core/forms/users.py:181
+#: ephios/core/forms/users.py:184
 msgid "Planning"
 msgstr "Planung"
 
-#: ephios/core/forms/users.py:190
+#: ephios/core/forms/users.py:193
 msgid "Other"
 msgstr "Sonstige"
 
-#: ephios/core/forms/users.py:209
+#: ephios/core/forms/users.py:212
 msgid ""
 "At least one group with management permissions must exist. Please promote "
 "another group before demoting this one."
@@ -686,18 +695,18 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:243 ephios/core/templates/core/group_list.html:6
+#: ephios/core/forms/users.py:246 ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11
 #: ephios/core/templates/core/settings/settings_personal_data.html:21
 #: ephios/templates/base.html:108
 msgid "Groups"
 msgstr "Gruppen"
 
-#: ephios/core/forms/users.py:250 ephios/core/models/users.py:105
+#: ephios/core/forms/users.py:253 ephios/core/models/users.py:105
 msgid "Administrator"
 msgstr "Administrator"
 
-#: ephios/core/forms/users.py:252
+#: ephios/core/forms/users.py:255
 msgid ""
 "If checked, this user can change technical ephios settings as well as edit "
 "all user profiles, groups, qualifications, events and event types."
@@ -706,7 +715,7 @@ msgstr ""
 "Einstellungen ändern sowie alle Benutzeraccounts, Gruppen, Qualifikationen "
 "und Veranstaltungstypen bearbeiten."
 
-#: ephios/core/forms/users.py:271
+#: ephios/core/forms/users.py:274
 #, python-brace-format
 msgid ""
 "The user is also member of <b>{groups}</b>, but you are not allowed to "
@@ -715,26 +724,26 @@ msgstr ""
 "Der Benutzer ist außerdem Mitglied von <b>{groups}</b>, aber Sie haben keine "
 "Berechtigung, um Gruppenmitgliedschaften für diese Gruppen zu verwalten."
 
-#: ephios/core/forms/users.py:276
+#: ephios/core/forms/users.py:279
 msgid "Only other technical administrators can change this."
 msgstr "Nur andere technische Administratoren können das ändern."
 
-#: ephios/core/forms/users.py:293
+#: ephios/core/forms/users.py:296
 msgid "You are not allowed to change the email address of this user."
 msgstr ""
 "Sie sind nicht berechtigt die E-Mail-Adresse dieses Nutzers zu bearbeiten."
 
-#: ephios/core/forms/users.py:322
+#: ephios/core/forms/users.py:325
 msgid "Inactive users cannot log in and do not get any notifications."
 msgstr ""
 "Inaktive Benutzer können sich nicht anmelden und bekommen keine "
 "Benachrichtigungen."
 
-#: ephios/core/forms/users.py:324
+#: ephios/core/forms/users.py:327
 msgid "Active user"
 msgstr "Aktiver Benutzer"
 
-#: ephios/core/forms/users.py:332
+#: ephios/core/forms/users.py:335
 msgid ""
 "At least one user must be technical administrator. Please promote another "
 "user before demoting this one."
@@ -742,7 +751,7 @@ msgstr ""
 "Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:361
+#: ephios/core/forms/users.py:364
 msgid ""
 "At least one user must be technical administrator. Please promote another "
 "user before deleting this one."
@@ -750,7 +759,7 @@ msgstr ""
 "Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie diesen löschen."
 
-#: ephios/core/forms/users.py:383
+#: ephios/core/forms/users.py:386
 msgid ""
 "At least one group with management permissions must exist. Please promote "
 "another group before deleting this one."
@@ -758,15 +767,15 @@ msgstr ""
 "Mindestens eine Gruppe mit Managementrechten muss existieren. Setzen Sie "
 "diesen Status zunächst bei einer anderen Gruppe, bevor Sie diese löschen."
 
-#: ephios/core/forms/users.py:492
+#: ephios/core/forms/users.py:495
 msgid "OIDC Provider URL"
 msgstr "URL des OIDC Providers"
 
-#: ephios/core/forms/users.py:492
+#: ephios/core/forms/users.py:495
 msgid "The base URL of the OIDC provider."
 msgstr "Die Basis-URL des OIDC-Providers."
 
-#: ephios/core/forms/users.py:530
+#: ephios/core/forms/users.py:533
 msgid "Leave empty to keep the current secret."
 msgstr "Freilassen um das aktuelle Secret unverändert zu lassen."
 
@@ -848,7 +857,7 @@ msgstr "abgesagt durch verantwortliche Person"
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:189 ephios/core/models/events.py:270
+#: ephios/core/models/events.py:189 ephios/core/models/events.py:272
 msgid "shift"
 msgstr "Schicht"
 
@@ -896,37 +905,37 @@ msgstr "Anmeldeverfahren"
 msgid "structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:271
+#: ephios/core/models/events.py:273
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:364
+#: ephios/core/models/events.py:388
 #: ephios/core/templates/core/fragments/shift_box_small.html:21
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:365
+#: ephios/core/models/events.py:389
 #: ephios/core/templates/core/shift_form.html:45
 msgid "Structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:378
+#: ephios/core/models/events.py:402
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:399
+#: ephios/core/models/events.py:423
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:400
+#: ephios/core/models/events.py:424
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:425
+#: ephios/core/models/events.py:449
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:426
+#: ephios/core/models/events.py:450
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1348,11 +1357,11 @@ msgstr "Weniger als 1 GB Speicherplatz verfügbar. Bitte schaffen Sie Platz."
 msgid "{disk_space} of disk space available."
 msgstr "{disk_space} verfügbar."
 
-#: ephios/core/services/notifications/backends.py:136
+#: ephios/core/services/notifications/backends.py:137
 msgid "via email"
 msgstr "via E-Mail"
 
-#: ephios/core/services/notifications/backends.py:161
+#: ephios/core/services/notifications/backends.py:162
 msgid "via push notification"
 msgstr "via Push-Benachrichtigung"
 
@@ -1673,27 +1682,27 @@ msgstr "nur wenn der Anmeldezeitraum noch nicht vorrüber ist"
 msgid "Users can provide individual start and end times"
 msgstr "Teilnehmende können individuelle Start- und Endzeiten angeben"
 
-#: ephios/core/signup/flow/participant_validation.py:46
+#: ephios/core/signup/flow/participant_validation.py:48
 msgid "The event is not active."
 msgstr "Die Veranstaltung {title} ist nicht aktiviert."
 
-#: ephios/core/signup/flow/participant_validation.py:56
+#: ephios/core/signup/flow/participant_validation.py:58
 msgid "You cannot decline by yourself."
 msgstr "Sie können sich nicht selbstständig abmelden."
 
-#: ephios/core/signup/flow/participant_validation.py:58
+#: ephios/core/signup/flow/participant_validation.py:60
 msgid "You have been rejected."
 msgstr "Ihre Teilnahme wurde abgelehnt."
 
-#: ephios/core/signup/flow/participant_validation.py:60
+#: ephios/core/signup/flow/participant_validation.py:62
 msgid "You have already declined participating."
 msgstr "Sie haben bereits abgesagt."
 
-#: ephios/core/signup/flow/participant_validation.py:68
+#: ephios/core/signup/flow/participant_validation.py:70
 msgid "The signup period is over."
 msgstr "Der Anmeldezeitraum ist vorüber."
 
-#: ephios/core/signup/flow/participant_validation.py:77
+#: ephios/core/signup/flow/participant_validation.py:79
 #, python-brace-format
 msgid ""
 "You lack the necessary qualification to participate in {eventtype} type "
@@ -1702,7 +1711,7 @@ msgstr ""
 "Ihnen fehlen die nötigen Qualifikationen um an Veranstaltungen des Typs "
 "{eventtype} teilzunehmen."
 
-#: ephios/core/signup/flow/participant_validation.py:126
+#: ephios/core/signup/flow/participant_validation.py:128
 #: ephios/core/signup/forms.py:160
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
@@ -1741,7 +1750,7 @@ msgstr "Anpassen"
 msgid "Decline"
 msgstr "Absagen"
 
-#: ephios/core/signup/participants.py:112
+#: ephios/core/signup/participants.py:124
 msgid "Placeholder"
 msgstr "Platzhalter"
 
@@ -1840,7 +1849,7 @@ msgid "View edit history"
 msgstr "Änderungsverlauf"
 
 #: ephios/core/templates/core/event_detail.html:111
-#: ephios/core/templates/core/fragments/event_list_list_mode.html:116
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:94
 #: ephios/core/templates/core/mails/new_event.html:18
 #: ephios/core/templates/core/workinghours_list.html:18
 #: ephios/plugins/federation/templates/federation/external_event_list.html:52
@@ -1895,22 +1904,6 @@ msgstr "Anwenden"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: ephios/core/templates/core/event_list.html:88
-#: ephios/core/templates/core/fragments/event_list_list_mode.html:13
-msgid "Add event"
-msgstr "Veranstaltung hinzufügen"
-
-#: ephios/core/templates/core/event_list.html:93
-#: ephios/core/templates/core/fragments/event_list_list_mode.html:18
-#, python-format
-msgid "Add %(title)s"
-msgstr "%(title)s hinzufügen"
-
-#: ephios/core/templates/core/event_list.html:140
-#: ephios/plugins/federation/templates/federation/external_event_list.html:67
-msgid "No results"
-msgstr "Keine Ergebnisse"
-
 #: ephios/core/templates/core/event_notification.html:7
 #: ephios/core/templates/core/event_notification.html:16
 msgid "Event notifications"
@@ -1945,15 +1938,30 @@ msgid "Confirm results"
 msgstr "Offene Anfragen"
 
 #: ephios/core/templates/core/fragments/calendar_day.html:23
-#: ephios/core/templates/core/fragments/event_list_day_mode.html:95
+#: ephios/core/templates/core/fragments/event_list_day_mode.html:99
 msgid "more"
 msgstr "mehr"
 
-#: ephios/core/templates/core/fragments/event_list_list_mode.html:27
+#: ephios/core/templates/core/fragments/event_list_add_event_button.html:7
+msgid "Add event"
+msgstr "Veranstaltung hinzufügen"
+
+#: ephios/core/templates/core/fragments/event_list_add_event_button.html:12
+#, python-format
+msgid "Add %(title)s"
+msgstr "%(title)s hinzufügen"
+
+#: ephios/core/templates/core/fragments/event_list_day_mode.html:52
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:110
+#: ephios/plugins/federation/templates/federation/external_event_list.html:67
+msgid "No results"
+msgstr "Keine Ergebnisse"
+
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:13
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
-#: ephios/core/templates/core/fragments/event_list_list_mode.html:122
+#: ephios/core/templates/core/fragments/event_list_list_mode.html:100
 #: ephios/plugins/federation/templates/federation/external_event_list.html:58
 msgid "Show"
 msgstr "Anzeigen"
@@ -2160,8 +2168,10 @@ msgstr ""
 "welchen sie bei der Anmeldung verwenden möchten."
 
 #: ephios/core/templates/core/identityprovider_list.html:16
-#: ephios/plugins/complexsignup/models.py:103
+#: ephios/plugins/complexsignup/models.py:106
+#: ephios/plugins/complexsignup/models.py:153
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:45
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:112
 msgid "Label"
 msgstr "Titel"
 
@@ -2896,6 +2906,8 @@ msgid "You are too young. The minimum age is {age}."
 msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
 #: ephios/plugins/baseshiftstructures/structure/common.py:60
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:87
+#: ephios/plugins/complexsignup/structure.py:279
 msgid "The maximum number of participants is reached."
 msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
@@ -2909,7 +2921,8 @@ msgstr "Maximale Anzahl von Teilnehmenden"
 
 #: ephios/plugins/baseshiftstructures/structure/common.py:107
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:241
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:81
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:86
+#: ephios/plugins/complexsignup/structure.py:278
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
@@ -2952,10 +2965,12 @@ msgid "Section"
 msgstr "Abschnitt"
 
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:60
+#: ephios/plugins/complexsignup/structure.py:77
 msgid "qualified"
 msgstr "qualifiziert"
 
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:67
+#: ephios/plugins/complexsignup/structure.py:84
 msgid "unqualified"
 msgstr "unqualifiziert"
 
@@ -3002,22 +3017,23 @@ msgstr "Alle Teams, für die Sie qualifiziert sind, sind voll."
 
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:303
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/fragment_state.html:42
+#: ephios/plugins/complexsignup/templates/complexsignup/shift_state.html:10
 msgid "unassigned"
 msgstr "nicht zugeteilt"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:27
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:30
 msgid "Qualification Requirements"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:44
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:47
 msgid "unknown"
 msgstr "Unbekannt"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:51
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:54
 msgid "Qualification mix"
 msgstr "Verschiedene Qualifikationen"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:52
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:55
 msgid "Require varying counts of different qualifications."
 msgstr ""
 "Fordern Sie unterschiedliche Anzahlen verschiedener Qualifikationen an."
@@ -3049,6 +3065,7 @@ msgid "Add team"
 msgstr "Team hinzufügen"
 
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/named_teams/fragment_participation.html:15
+#: ephios/plugins/complexsignup/templates/complexsignup/fragment_participation.html:15
 msgid "prefers"
 msgstr "bevorzugt"
 
@@ -3148,13 +3165,13 @@ msgid "Participants can directly sign up for the shift."
 msgstr "Teilnehmende können sich direkt für die Schicht anmelden."
 
 #: ephios/plugins/complexsignup/apps.py:10
-msgid "Modular Signup Requirements"
-msgstr "Modulare Anmeldevorraussetzungen"
+msgid "Preconfigured Structures (experimental)"
+msgstr "Vordefinierte Struktur (experimental)"
 
 #: ephios/plugins/complexsignup/apps.py:13
 msgid ""
-"This plugins adds a shift structure for which you configure reusable modules "
-"of requirements to create complex shift setups."
+"This plugins adds a shift structure for which you configure reusable "
+"structures to create complex shift setups."
 msgstr ""
 "Dieses Plugin fügt eine Schicht-Struktur hinzu, für die Sie "
 "wiederverwendbare Anforderungsmodule konfigurieren können, um komplexe "
@@ -3181,96 +3198,134 @@ msgid "allow more"
 msgstr "zusätzliche Anmeldungen erlauben"
 
 #: ephios/plugins/complexsignup/models.py:37
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:189
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:199
 msgid "Allow more participants that qualify for any of the positions."
 msgstr ""
 "Zusätzliche Teilnehmende erlauben, die für eine der Positionen qualifiziert "
 "sind."
 
-#: ephios/plugins/complexsignup/models.py:45
+#: ephios/plugins/complexsignup/models.py:48
 msgid "building block"
 msgstr "Block"
 
-#: ephios/plugins/complexsignup/models.py:46
+#: ephios/plugins/complexsignup/models.py:49
 msgid "building blocks"
 msgstr "Blöcke"
 
-#: ephios/plugins/complexsignup/models.py:62
+#: ephios/plugins/complexsignup/models.py:65
 msgid "block"
 msgstr "Block"
 
-#: ephios/plugins/complexsignup/models.py:65
+#: ephios/plugins/complexsignup/models.py:68
 msgid "everyone"
 msgstr "jeder"
 
-#: ephios/plugins/complexsignup/models.py:69
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:204
+#: ephios/plugins/complexsignup/models.py:72
 msgid "at least"
 msgstr "mindestens"
 
-#: ephios/plugins/complexsignup/models.py:72
-#: ephios/plugins/complexsignup/models.py:113
+#: ephios/plugins/complexsignup/models.py:75
+#: ephios/plugins/complexsignup/models.py:116
 msgid "required qualifications"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/complexsignup/models.py:77
+#: ephios/plugins/complexsignup/models.py:80
 #, python-brace-format
 msgid "everyone on {block} needs {qualifications}"
 msgstr "jeder in {block} benötigt {qualifications}"
 
-#: ephios/plugins/complexsignup/models.py:80
+#: ephios/plugins/complexsignup/models.py:83
 #, python-brace-format
 msgid "at least {at_least} on {block} need {qualifications}"
 msgstr "mindestens {at_least} in {block} benötigen {qualifications}"
 
-#: ephios/plugins/complexsignup/models.py:87
+#: ephios/plugins/complexsignup/models.py:90
 msgid "qualification requirement"
 msgstr "Erforderliche Qualifikation"
 
-#: ephios/plugins/complexsignup/models.py:88
+#: ephios/plugins/complexsignup/models.py:91
 msgid "qualification requirements"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/complexsignup/models.py:108
-#: ephios/plugins/complexsignup/models.py:150
+#: ephios/plugins/complexsignup/models.py:111
+#: ephios/plugins/complexsignup/models.py:158
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:54
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:163
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:173
 msgid "optional"
 msgstr "optional"
 
-#: ephios/plugins/complexsignup/models.py:118
+#: ephios/plugins/complexsignup/models.py:121
 #, python-brace-format
 msgid "{label_or_pk} on {block_name}"
 msgstr "{label_or_pk} in {block_name}"
 
-#: ephios/plugins/complexsignup/models.py:123
+#: ephios/plugins/complexsignup/models.py:126
 msgid "position"
 msgstr "Position"
 
-#: ephios/plugins/complexsignup/models.py:124
+#: ephios/plugins/complexsignup/models.py:127
 msgid "positions"
 msgstr "Positionen"
 
-#: ephios/plugins/complexsignup/models.py:141
+#: ephios/plugins/complexsignup/models.py:144
 msgid "composite block"
 msgstr "Zusammengesetzer Block"
 
-#: ephios/plugins/complexsignup/models.py:147
+#: ephios/plugins/complexsignup/models.py:150
 msgid "sub block"
 msgstr "Unterblock"
 
-#: ephios/plugins/complexsignup/models.py:155
+#: ephios/plugins/complexsignup/models.py:163
 #, python-brace-format
-msgid "{sub_block} on {composite_blocK}"
-msgstr "{sub_block} in {composite_blocK}"
+msgid "{label} on {composite_blocK}"
+msgstr "{label} in {composite_blocK}"
 
-#: ephios/plugins/complexsignup/models.py:161
+#: ephios/plugins/complexsignup/models.py:169
 msgid "block composition"
 msgstr "Blockzusammensetzung"
 
-#: ephios/plugins/complexsignup/models.py:162
+#: ephios/plugins/complexsignup/models.py:170
 msgid "block compositions"
 msgstr "Blockzusammensetzungen"
+
+#: ephios/plugins/complexsignup/structure.py:54
+msgid "Unit"
+msgstr "Einheit"
+
+#: ephios/plugins/complexsignup/structure.py:73
+msgid "auto"
+msgstr "auto"
+
+#: ephios/plugins/complexsignup/structure.py:109
+msgid "Preferred Unit"
+msgstr "Bevorzugte Einheit"
+
+#: ephios/plugins/complexsignup/structure.py:136
+#, python-brace-format
+msgid "You don't qualify for {blocks}."
+msgstr "Sie sind nicht qualifiziert für {blocks}."
+
+#: ephios/plugins/complexsignup/structure.py:158
+msgid "Participants must provide a preferred unit"
+msgstr "Teilnehmende müssen eine bevorzugte Einheit angeben"
+
+#: ephios/plugins/complexsignup/structure.py:159
+msgid "Participants will be asked during signup."
+msgstr "Teilnehmende werden bei Anmeldung gefragt."
+
+#: ephios/plugins/complexsignup/structure.py:173
+msgid "Preconfigured Structure (experimental)"
+msgstr "Vordefinierte Struktur (experimental)"
+
+#: ephios/plugins/complexsignup/structure.py:174
+msgid "Use preconfigured elements to build a custom structure."
+msgstr ""
+"Nutzen Sie vordefinierte Strukturen um eine individuelle Struktur zu "
+"gestalten."
+
+#: ephios/plugins/complexsignup/templates/complexsignup/configuration_form.html:8
+msgid "Edit blocks"
+msgstr "Blöcke bearbeiten"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:8
 msgid "Signup Blocks Editor"
@@ -3286,10 +3341,10 @@ msgstr "Bitte geben Sie einen Namen an."
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:62
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:78
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:172
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:228
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:251
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:330
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:182
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:239
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:262
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:341
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -3298,12 +3353,12 @@ msgid "qualified as"
 msgstr "qualifiziert als"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:81
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:231
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:242
 msgid "and"
 msgstr "und"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:86
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:236
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:247
 msgid "select qualification"
 msgstr "Qualifikation auswählen"
 
@@ -3311,63 +3366,63 @@ msgstr "Qualifikation auswählen"
 msgid "Add position"
 msgstr "Position hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:116
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:141
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:151
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:311
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:349
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:358
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:122
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:147
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:160
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:322
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:360
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:372
 msgid "unnamed"
 msgstr "unbenannt"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:179
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:189
 msgid "Add items using the buttons in the list"
 msgstr "Elemente mit den Knöpfen in der Liste hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:201
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:211
 msgctxt "block qualification requirement"
 msgid "everyone"
 msgstr "jeder"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:211
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:222
 msgid "number"
 msgstr "Nummer"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:214
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:225
 msgctxt "block qualification requirements plural"
 msgid "must be qualified as"
 msgstr "muss qualifiziert sein als"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:217
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:228
 msgctxt "block qualification requirements singular"
 msgid "must be qualified as"
 msgstr "muss qualifiziert sein als"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:260
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:271
 msgid "Add condition"
 msgstr "Bedingung hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:277
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:288
 msgid "Add atomic block"
 msgstr "Atomaren Block hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:282
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:293
 msgid "Add composite block"
 msgstr "Zusammengesetzen Block hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:286
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:297
 msgid "Search"
 msgstr "Suchen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:298
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:309
 msgid "Add as sub-block"
 msgstr "Als Unterblock hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:318
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:329
 msgid "Invalid"
 msgstr "Ungültig"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:326
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:337
 msgid "Clone"
 msgstr "Duplizieren"
 
@@ -3695,21 +3750,21 @@ msgstr ""
 msgid "Accept invitation"
 msgstr "Einladung annehmen"
 
-#: ephios/plugins/federation/views/frontend.py:156
+#: ephios/plugins/federation/views/frontend.py:159
 msgid "Invite code has expired."
 msgstr "Einladungs-Code ist abgelaufen."
 
-#: ephios/plugins/federation/views/frontend.py:212
+#: ephios/plugins/federation/views/frontend.py:215
 msgid "Invalid code data. Please try again with a new invite code."
 msgstr "Code ungültig. Bitte mit einem neuen Einladungscode erneut probieren."
 
-#: ephios/plugins/federation/views/frontend.py:217
+#: ephios/plugins/federation/views/frontend.py:220
 msgid "Could not connect to host instance. Please try again later."
 msgstr ""
 "Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
 "später erneut."
 
-#: ephios/plugins/federation/views/frontend.py:223
+#: ephios/plugins/federation/views/frontend.py:226
 msgid ""
 "Invite code redeemded successfully. You are now receiving events from this "
 "instance."
@@ -3717,15 +3772,15 @@ msgstr ""
 "Einladungs-Code erfolgreich eingelöst. Sie empfangen nun Veranstaltungen "
 "dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:237
+#: ephios/plugins/federation/views/frontend.py:240
 msgid "You are no longer sharing events with this instance."
 msgstr "Sie teilen nun keine Veranstaltungen mehr mit dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:253
+#: ephios/plugins/federation/views/frontend.py:256
 msgid "You are no longer receiving events from this instance."
 msgstr "Sie erhalten nun keine Veranstaltungen mehr von dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:265
+#: ephios/plugins/federation/views/frontend.py:268
 msgid "Failed to remove this instance. Please try again later."
 msgstr ""
 "Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
@@ -4167,35 +4222,35 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:217
+#: ephios/settings.py:213
 msgid "German"
 msgstr "Deutsch"
 
-#: ephios/settings.py:218
+#: ephios/settings.py:214
 msgid "English"
 msgstr "Englisch"
 
-#: ephios/settings.py:439
+#: ephios/settings.py:435
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:440
+#: ephios/settings.py:436
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:441
+#: ephios/settings.py:437
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:442
+#: ephios/settings.py:438
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:444
+#: ephios/settings.py:440
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:447
+#: ephios/settings.py:443
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -4299,6 +4354,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Modular Signup Requirements"
+#~ msgstr "Modulare Anmeldevorraussetzungen"
 
 #, python-brace-format
 #~ msgid ""
