@@ -1,7 +1,12 @@
+import random
+import string
+from datetime import timedelta
+
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.transaction import on_commit
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import Event, UserProfile
@@ -29,6 +34,22 @@ def delete_stale_file(sender, instance, using, **kwargs):
         instance.file.delete(save=False)
 
     on_commit(run_on_commit, using)
+
+
+def _generate_token():
+    return "".join(
+        random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(32)
+    )
+
+
+def _token_expiration():
+    return timezone.now() + timedelta(hours=1)
+
+
+class DownloadTicket(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    expiration = models.DateTimeField(default=_token_expiration)
+    token = models.CharField(max_length=255, unique=True, default=_generate_token)
 
 
 register_model_for_logging(

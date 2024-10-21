@@ -6,10 +6,12 @@ from ephios.plugins.files.views import (
     DocumentListView,
     DocumentUpdateView,
     DocumentView,
+    DownloadTicketView,
 )
 
 app_name = "files"
 urlpatterns = [
+    path("document/ticket/<str:token>/", DownloadTicketView.as_view(), name="document_ticket"),
     path("document/<int:pk>/", DocumentView.as_view(), name="document"),
     path("settings/documents/", DocumentListView.as_view(), name="settings_document_list"),
     path(
