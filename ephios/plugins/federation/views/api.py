@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 
+import django_filters
 import requests
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
@@ -57,6 +58,12 @@ class SharedEventListView(ListAPIView):
     serializer_class = SharedEventSerializer
     permission_classes = [TokenHasScope]
     required_scopes = []
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = {
+        "shifts__start_time": ["gte"],
+        "shifts__end_time": ["gte"],
+        "type": ["exact"],
+    }
 
     def get_queryset(self):
         try:
