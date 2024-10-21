@@ -46,7 +46,9 @@ class BuildingBlocksForm(forms.Form):
 
 class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
     template_name = "complexsignup/vue_editor.html"
-    permission_required = "complexsignup:buildingblock_update"
+    permission_required = (
+        "core.delete_event"  # debatable... deleting blocks is a destructive action
+    )
     form_class = BuildingBlocksForm
     success_url = reverse_lazy("complexsignup:blocks_editor")
 
