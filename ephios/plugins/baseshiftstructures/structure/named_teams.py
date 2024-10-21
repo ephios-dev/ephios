@@ -7,6 +7,7 @@ from operator import itemgetter
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
@@ -109,18 +110,43 @@ class NamedTeamsSignupForm(BaseSignupForm):
             self.data.get("signup_choice") == "sign_up"
             and self.shift.structure.configuration.choose_preferred_team
         )
+
+        team_stats = self.shift.structure._get_signup_stats_per_group(
+            self.shift.participations.all()
+        )
+        enabled_teams = []
+        not_qualified_teams = []
+        full_teams = []
+        for team in self.shift.structure.configuration.teams:
+            if team["uuid"] in [
+                self.instance.structure_data.get("preferred_team_uuid"),
+                self.instance.structure_data.get("dispatched_team_uuid"),
+            ]:
+                enabled_teams.append(team)
+            elif team not in self.teams_participant_qualifies_for:
+                not_qualified_teams.append(team)
+            elif (
+                not self.shift.signup_flow.uses_requested_state
+                and not team_stats[team["uuid"]].has_free()
+            ):
+                full_teams.append(team)
+            else:
+                enabled_teams.append(team)
+
         self.fields["preferred_team_uuid"].choices = [
-            (team["uuid"], team["title"]) for team in self.teams_participant_qualifies_for
+            (team["uuid"], team["title"]) for team in enabled_teams
         ]
-        unqualified = [
-            team
-            for team in self.shift.structure.configuration.teams
-            if team not in self.teams_participant_qualifies_for
-        ]
-        if unqualified:
-            self.fields["preferred_team_uuid"].help_text = _(
-                "You don't qualify for {teams}."
-            ).format(teams=", ".join(str(team["title"]) for team in unqualified))
+        help_text = ""
+        if not_qualified_teams:
+            help_text = _("You don't qualify for {teams}.").format(
+                teams=", ".join(str(team["title"]) for team in not_qualified_teams)
+            )
+        if full_teams:
+            help_text += " " + ngettext_lazy(
+                "{teams} is full.", "{teams} are full.", len(full_teams)
+            ).format(teams=", ".join(str(team["title"]) for team in full_teams))
+        if help_text:
+            self.fields["preferred_team_uuid"].help_text = help_text
 
     def save(self, commit=True):
         self.instance.structure_data["preferred_team_uuid"] = self.cleaned_data[
@@ -185,6 +211,11 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
     NO_TEAM_UUID = "noteam"
 
+    def _choose_team_for_participation(self, participation):
+        return participation.structure_data.get(
+            "dispatched_team_uuid"
+        ) or participation.structure_data.get("preferred_team_uuid")
+
     def _get_signup_stats_per_group(self, participations):
         from ephios.core.signup.stats import SignupStats
 
@@ -197,7 +228,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 c = requested_counter
             else:
                 continue
-            team_uuid = p.structure_data.get("dispatched_team_uuid")
+            team_uuid = self._choose_team_for_participation(p)
             if not team_uuid or team_uuid not in (
                 team["uuid"] for team in self.configuration.teams
             ):
@@ -244,15 +275,9 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             if shift.signup_flow.uses_requested_state:
                 return
             free_team = False
+            team_stats = self._get_signup_stats_per_group(self.shift.participations.all())
             for team in viable_teams:
-                if (
-                    team["max_count"] is None
-                    or team["max_count"]
-                    > shift.participations.filter(
-                        state=AbstractParticipation.States.CONFIRMED,
-                        structure_data__dispatched_team_uuid=team["uuid"],
-                    ).count()
-                ):
+                if team_stats[team["uuid"]].has_free():
                     free_team = True
                     break
             if not free_team:
@@ -287,9 +312,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         unsorted_participations = []
         for participation in participations:
-            dispatched_uuid = participation.structure_data.get(
-                "dispatched_team_uuid"
-            ) or participation.structure_data.get("preferred_team_uuid")
+            dispatched_uuid = self._choose_team_for_participation(participation)
             if dispatched_uuid not in teams:
                 unsorted_participations.append(participation)
             else:
