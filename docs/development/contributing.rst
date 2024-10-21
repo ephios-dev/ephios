@@ -85,3 +85,41 @@ a translation. To add them, do run ``makemessages`` from the ``data/public/stati
    python ../../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
 
 We tend to edit our .po files using weblate, but a local editor like poedit works as well.
+
+Using other databases
+---------------------
+
+By default, ephios uses a sqlite database for development and PostgreSQL for production.
+
+Postgres
+''''''''
+
+If you want to use Postgres in development, here are some steps to follow:
+
+.. code-block:: console
+
+   sudo docker run --name postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=ephios -e PGDATA=/tmp -d -p 5432:5432 -v ${PWD}:/var/lib/postgresql/data postgres:latest
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
+
+.. code-block:: bash
+
+   DATABASE_URL=psql://postgres:password@localhost:5432/ephios
+
+MySQL
+''''''
+
+We do not recommend using MySQL, but if you need a mysql for development, you can use the following docker command:
+
+.. code-block:: bash
+
+   sudo docker run --name mysql -e MYSQL_ROOT_PASSWORD=somesupersecret123 -p 3306:3306 -d docker.io/library/mariadb:latest
+   sudo docker exec -it mysql mariadb -u root -p  # use the password above
+   CREATE DATABASE ephios;
+
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
+
+.. code-block:: bash
+
+   DATABASE_URL=mysql://root:somesupersecret123@127.0.0.1:3306/ephios
