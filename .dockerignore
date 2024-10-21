@@ -9,4 +9,6 @@ build
 .env
 .idea
 .env.example
-
+ENV
+.venv
+venv

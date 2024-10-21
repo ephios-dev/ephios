@@ -1,6 +1,7 @@
 import copy
 import datetime
 import os
+import shutil
 from datetime import timedelta
 from email.utils import getaddresses
 from importlib import metadata
@@ -107,6 +108,7 @@ CORE_PLUGINS = [
     "ephios.plugins.eventautoqualification.apps.PluginApp",
     "ephios.plugins.simpleresource.apps.PluginApp",
     "ephios.plugins.federation.apps.PluginApp",
+    "ephios.plugins.files.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points(group="ephios.plugins"):
@@ -124,6 +126,7 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "ephios.extra.middleware.EphiosLocaleMiddleware",
     "ephios.extra.middleware.EphiosNotificationMiddleware",
+    "ephios.extra.middleware.EphiosMediaFileMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -224,6 +227,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = env.str("STATIC_URL", default="/static/")
+MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
+FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=DEBUG)
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = (
@@ -314,6 +319,19 @@ def GET_SITE_URL():
     if site_url.endswith("/"):
         site_url = site_url[:-1]
     return site_url
+
+
+def GET_USERCONTENT_URL():
+    return MEDIA_URL
+
+
+def GET_USERCONTENT_QUOTA():
+    """Returns a tuple (used, free) of the user content quota in bytes"""
+    used = sum(p.stat().st_size for p in Path(MEDIA_ROOT).rglob("*"))
+    quota = env.int("MEDIA_FILES_DISK_QUOTA", default=0)
+    disk_free = shutil.disk_usage(MEDIA_ROOT).free
+    free = min(disk_free, quota * 1024 * 1024 - used) if quota else disk_free
+    return used, free
 
 
 # Guardian configuration

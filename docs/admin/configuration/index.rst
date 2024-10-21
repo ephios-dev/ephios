@@ -74,6 +74,9 @@ Data storage and Logging
     Defaults to `PRIVATE_DIR/media`.
     You should backup this folder regularly.
 
+`MEDIA_FILES_DISK_QUOTA`:
+    Quota in MB that is enforced for the media files. Defaults to 0, meaning no quota is enforced.
+
 `LOG_DIR`:
     Path to the folder where log files are put. Files inside are rotated daily.
     Defaults to `PRIVATE_DIR/logs`.
@@ -110,6 +113,19 @@ URLs and Routing
 `STATIC_URL`:
     URL where the static files can be found by browsers.
     Defaults to ``/static/``, meaning they are served by the same host.
+
+`MEDIA_URL`:
+    URL where the media files (meaning files uploaded by users) can be found by browsers.
+    Defaults to ``/usercontent/``, meaning they are served by the same host.
+    This is NOT recommended for `security reasons <https://docs.djangoproject.com/en/5.1/topics/security/#user-uploaded-content>`__.
+    ephios takes care of necessary redirects if this is set to a different domain.
+    Please not that files under MEDIA_URL should not be accessible publicly. To enable appropriate permission checks, a possible setup is to declare this URL as internal in your reverse proxy while serving the files directly from the filesystem.
+    ephios will issue a redirect to the correct URL after checking the permissions.
+
+`FALLBACK_MEDIA_SERVING`:
+    If set to `True`, ephios will serve media files itself if the webserver does not.
+    This is not recommended for production use. Defaults to `False`.
+    Currently only nginx with the X-Accel-Redirect header is supported to serve media files.
 
 Security
 --------
