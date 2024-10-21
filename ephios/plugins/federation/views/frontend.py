@@ -44,6 +44,7 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
                 r = requests.get(
                     urljoin(host.url, reverse("federation:shared_event_list_view")),
                     headers={"Authorization": f"Bearer {host.access_token}"},
+                    params={"shifts__end_time__gte": datetime.now().isoformat()},
                     timeout=5,
                 )
                 r.raise_for_status()
