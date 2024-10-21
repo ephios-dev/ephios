@@ -74,6 +74,9 @@ Data storage and Logging
     Defaults to `PRIVATE_DIR/media`.
     You should backup this folder regularly.
 
+`MEDIA_FILES_DISK_QUOTA`:
+    Quota in MB that is enforced for the media files. Defaults to 0, meaning no quota is enforced.
+
 `LOG_DIR`:
     Path to the folder where log files are put. Files inside are rotated daily.
     Defaults to `PRIVATE_DIR/logs`.

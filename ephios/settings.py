@@ -328,7 +328,9 @@ def GET_USERCONTENT_URL():
 def GET_USERCONTENT_QUOTA():
     """Returns a tuple (used, free) of the user content quota in bytes"""
     used = sum(p.stat().st_size for p in Path(MEDIA_ROOT).rglob("*"))
-    free = shutil.disk_usage(MEDIA_ROOT).free
+    quota = env.int("MEDIA_FILES_DISK_QUOTA", default=0)
+    disk_free = shutil.disk_usage(MEDIA_ROOT).free
+    free = min(disk_free, quota * 1024 * 1024 - used) if quota else disk_free
     return used, free
 
 
