@@ -11,10 +11,12 @@ urlpatterns = [
         name="external_event_list",
     ),
     path(
-        "events/shared/<int:pk>/", frontend.FederatedEventDetailView.as_view(), name="event_detail"
+        "events/shared/<int:pk>/<int:guest>/",
+        frontend.FederatedEventDetailView.as_view(),
+        name="event_detail",
     ),
     path(
-        "shifts/shared/<int:pk>/signup/",
+        "shifts/shared/<int:pk>/<int:guest>/signup/",
         frontend.FederatedUserShiftActionView.as_view(),
         name="shift_signup",
     ),

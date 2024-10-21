@@ -6,6 +6,20 @@
     {% translate "External events" %}
 {% endblock %}
 
+{% block messages %}
+    {% if "error" in request.GET %}
+        <div class="alert alert-warning" role="alert">
+            {% if request.GET.error == "oauth_error" %}
+                {% translate "An error occurred during the authentication at the other ephios instance. Please try again." %}
+            {% elif request.GET.error == "event_error" %}
+                {% translate "The desired event could not be accessed at the other ephios instance. Please try again." %}
+            {% else %}
+                {% translate "An unknown error has occured." %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <h1>{% translate "External events" %}</h1>
     <ul class="list-group mb-3">
@@ -17,7 +31,7 @@
                     </div>
                 </div>
                 <a class="w-100 text-reset py-2 event-list-item-link"
-                   href="{{ event.signup_url }}?referrer={% site_url %}">
+                   href="{{ event.signup_url }}">
                     <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
                         <div class="grid-title">
                             <div>

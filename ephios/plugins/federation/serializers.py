@@ -71,5 +71,9 @@ class SharedEventSerializer(EventSerializer):
 
     def get_signup_url(self, obj):
         return urljoin(
-            settings.GET_SITE_URL(), reverse("federation:event_detail", kwargs={"pk": obj.pk})
+            settings.GET_SITE_URL(),
+            reverse(
+                "federation:event_detail",
+                kwargs={"pk": obj.pk, "guest": self.context["federated_guest"].pk},
+            ),
         )
