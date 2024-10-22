@@ -234,11 +234,11 @@ MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
 FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=DEBUG)
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
-STATICFILES_FINDERS = (
+STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
-)
+]
 COMPRESS_ENABLED = not DEBUG
 # https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
