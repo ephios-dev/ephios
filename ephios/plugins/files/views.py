@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.cache import cache
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -12,28 +12,24 @@ from guardian.mixins import LoginRequiredMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin, MediaViewMixin
 from ephios.extra.utils import accelerated_media_response
 from ephios.plugins.files.forms import DocumentForm
-from ephios.plugins.files.models import Document, DownloadTicket
+from ephios.plugins.files.models import Document
+from ephios.plugins.files.utils import file_ticket
 
 
 class DownloadTicketView(MediaViewMixin, View):
     def get(self, request, *args, **kwargs):
-        try:
-            ticket = DownloadTicket.objects.get(
-                token=self.kwargs["token"], expiration__gte=timezone.now()
-            )
-            file = ticket.document.file
-            ticket.delete()
-            return accelerated_media_response(file)
-        except DownloadTicket.DoesNotExist:
+        file = cache.get(self.kwargs["ticket"])
+        if file is None:
             raise Http404()
+        return accelerated_media_response(file)
 
 
 class DocumentView(LoginRequiredMixin, DetailView):
     model = Document
 
     def get(self, request, *args, **kwargs):
-        ticket = DownloadTicket.objects.create(document=self.get_object())
-        return redirect(reverse("files:document_ticket", kwargs={"token": ticket.token}))
+        ticket = file_ticket(self.get_object().file)
+        return redirect(reverse("files:file_ticket", kwargs={"ticket": ticket}))
 
 
 class DocumentListView(CustomPermissionRequiredMixin, ListView):
