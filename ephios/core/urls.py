@@ -49,6 +49,7 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.files import FileTicketView
 from ephios.core.views.healthcheck import HealthCheckView
 from ephios.core.views.log import LogView
 from ephios.core.views.notifications import (
@@ -303,4 +304,5 @@ urlpatterns = [
         NotificationMarkAsReadView.as_view(),
         name="notification_read",
     ),
+    path("media/ticket/<str:ticket>/", FileTicketView.as_view(), name="file_ticket"),
 ]
