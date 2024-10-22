@@ -1,19 +1,16 @@
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from ephios.core.signals import (
     event_forms,
     event_info,
     management_settings_sections,
-    periodic_signal,
     register_group_permission_fields,
 )
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.files.forms import EventAttachedDocumentForm
-from ephios.plugins.files.models import DownloadTicket
 
 
 @receiver(
@@ -71,8 +68,3 @@ def group_permission_fields(sender, **kwargs):
             ),
         )
     ]
-
-
-@receiver(periodic_signal, dispatch_uid="ephios.files.signals.clear_expired_tickets")
-def clear_expired_tokens(sender, **kwargs):
-    DownloadTicket.objects.filter(expiration__lt=timezone.now()).delete()
