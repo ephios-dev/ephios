@@ -119,8 +119,11 @@ URLs and Routing
     Defaults to ``/usercontent/``, meaning they are served by the same host.
     This is NOT recommended for `security reasons <https://docs.djangoproject.com/en/5.1/topics/security/#user-uploaded-content>`__.
     ephios takes care of necessary redirects if this is set to a different domain.
-    Please not that files under MEDIA_URL should not be accessible publicly. To enable appropriate permission checks, a possible setup is to declare this URL as internal in your reverse proxy while serving the files directly from the filesystem.
+    Please not that files under MEDIA_URL should not be accessible publicly.
+    To enable appropriate permission checks, a possible setup is to declare this URL as internal in your
+    reverse proxy while serving the files directly from the filesystem.
     ephios will issue a redirect to the correct URL after checking the permissions.
+    Make sure to add your content domain to ``ALLOWED_HOSTS``.
 
 `FALLBACK_MEDIA_SERVING`:
     If set to `True`, ephios will serve media files itself if the webserver does not.

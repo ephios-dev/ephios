@@ -1,8 +1,6 @@
 import functools
 from typing import Collection
-from urllib.parse import urlsplit, urlunsplit
 
-from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import resolve
@@ -153,18 +151,3 @@ class PluginFormMixin:
 
     def get_plugin_forms(self) -> Collection["BasePluginFormMixin"]:
         raise NotImplementedError
-
-
-class MediaViewMixin:
-    """Verify that media content is served from the correct domain."""
-
-    is_media_view = True
-
-    def dispatch(self, request, *args, **kwargs):
-        # If media files are served from a different domain and
-        # the user requested a non-media view from the media domain, redirect to the site domain
-        if (loc := urlsplit(settings.GET_USERCONTENT_URL()).netloc) and request.get_host() != loc:
-            return redirect(
-                urlunsplit(("http" if settings.DEBUG else "https", loc, request.path, "", ""))
-            )
-        return super().dispatch(request, *args, **kwargs)

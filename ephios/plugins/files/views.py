@@ -1,13 +1,12 @@
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from guardian.mixins import LoginRequiredMixin
 
+from ephios.core.services.files import redirect_to_file_download
 from ephios.extra.mixins import CustomPermissionRequiredMixin
-from ephios.extra.utils import file_ticket
 from ephios.plugins.files.forms import DocumentForm
 from ephios.plugins.files.models import Document
 
@@ -16,8 +15,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
     model = Document
 
     def get(self, request, *args, **kwargs):
-        ticket = file_ticket(self.get_object().file)
-        return redirect(reverse("core:file_ticket", kwargs={"ticket": ticket}))
+        return redirect_to_file_download(self.get_object().file)
 
 
 class DocumentListView(CustomPermissionRequiredMixin, ListView):
