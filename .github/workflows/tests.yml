@@ -93,6 +93,9 @@ jobs:
         mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -proot -Dmysql
       if: matrix.database == 'mysql'
 
+    - name: Make sure all migrations are up to date # apps specified explicitly to avoid checking migrations in dependencies
+      run: poetry run python manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource
+
     - name: Test apps
       env:
         DATABASE_URL: ${{ matrix.database_url }}
