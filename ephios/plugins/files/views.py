@@ -1,27 +1,15 @@
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.cache import cache
-from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from guardian.mixins import LoginRequiredMixin
 
-from ephios.extra.mixins import CustomPermissionRequiredMixin, MediaViewMixin
-from ephios.extra.utils import accelerated_media_response
+from ephios.extra.mixins import CustomPermissionRequiredMixin
+from ephios.extra.utils import file_ticket
 from ephios.plugins.files.forms import DocumentForm
 from ephios.plugins.files.models import Document
-from ephios.plugins.files.utils import file_ticket
-
-
-class DownloadTicketView(MediaViewMixin, View):
-    def get(self, request, *args, **kwargs):
-        file = cache.get(self.kwargs["ticket"])
-        if file is None:
-            raise Http404()
-        return accelerated_media_response(file)
 
 
 class DocumentView(LoginRequiredMixin, DetailView):
@@ -29,7 +17,7 @@ class DocumentView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         ticket = file_ticket(self.get_object().file)
-        return redirect(reverse("files:file_ticket", kwargs={"ticket": ticket}))
+        return redirect(reverse("core:file_ticket", kwargs={"ticket": ticket}))
 
 
 class DocumentListView(CustomPermissionRequiredMixin, ListView):

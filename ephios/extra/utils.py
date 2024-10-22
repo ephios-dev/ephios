@@ -1,8 +1,11 @@
 import datetime
 import itertools
 import os
+import random
+import string
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.http import FileResponse, HttpResponse
 from django.template.defaultfilters import yesno
@@ -50,3 +53,11 @@ def accelerated_media_response(file):
         response["X-Accel-Redirect"] = file.url
     response["Content-Disposition"] = "attachment; filename=" + os.path.split(file.name)[1]
     return response
+
+
+def file_ticket(file):
+    key = "".join(
+        random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(32)
+    )
+    cache.set(key, file, 60 * 60)
+    return key
