@@ -94,10 +94,9 @@ class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         try:
-            guest = self.request.session["federation_guest_pk"]
             FederatedEventShare.objects.get(
                 event=obj,
-                shared_with__in=[FederatedGuest.objects.get(pk=guest)],
+                shared_with__in=[FederatedGuest.objects.get(pk=self.kwargs["guest"])],
             )
         except (KeyError, FederatedEventShare.DoesNotExist, FederatedGuest.DoesNotExist) as exc:
             self.request.session.flush()

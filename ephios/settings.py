@@ -80,6 +80,8 @@ INSTALLED_APPS = [
     "guardian",
     "oauth2_provider",
     "rest_framework",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     "django_select2",
     "djangoformsetjs",
     "compressor",
@@ -430,6 +432,7 @@ RUN_PERIODIC_MAX_INTERVAL = 60 * 5 + 30  # 5 minutes + 30 seconds
 # django-rest-framework
 DEFAULT_LISTVIEW_PAGINATION = 100
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoObjectPermissions"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -438,6 +441,17 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "ephios.api.access.auth.CustomOAuth2Authentication",
     ],
+}
+
+# drf-spectacular
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ephios API",
+    "DESCRIPTION": "ephios REST API",
+    "VERSION": EPHIOS_VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
 }
 
 # Like UserProfile, these models are implemented using djangos private swappable API

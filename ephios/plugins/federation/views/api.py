@@ -73,6 +73,11 @@ class SharedEventListView(ListAPIView):
             raise PermissionDenied from exc
         return Event.objects.filter(federatedeventshare__shared_with=guest)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["federated_guest"] = self.request.auth.federatedguest
+        return context
+
 
 class FederationOAuthView(View):
     """
@@ -81,20 +86,32 @@ class FederationOAuthView(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            self.guest = (
-                FederatedGuest.objects.get(pk=self.request.session["federation_guest_pk"])
-                if "federation_guest_pk" in self.request.session.keys()
-                else FederatedGuest.objects.get(url=self.request.GET["referrer"])
-            )
+            guest_pk = self.request.session.get("federation_guest_pk", kwargs.get("guest"))
+            self.guest = FederatedGuest.objects.get(pk=guest_pk)
         except (KeyError, FederatedGuest.DoesNotExist, MultipleObjectsReturned) as exc:
             raise PermissionDenied from exc
         if "error" in request.GET.keys():
-            return redirect(urljoin(self.guest.url, reverse("federation:external_event_list")))
+            return redirect(
+                urljoin(
+                    urljoin(self.guest.url, reverse("federation:external_event_list")),
+                    "?error=oauth_error",
+                )
+            )
         elif "code" in request.GET.keys():
             self._oauth_callback()
-            return redirect(
-                "federation:event_detail", pk=self.request.session.pop("federation_event")
-            )
+            try:
+                return redirect(
+                    "federation:event_detail",
+                    pk=self.request.session["federation_event"],
+                    guest=guest_pk,
+                )
+            except KeyError:
+                return redirect(
+                    urljoin(
+                        urljoin(self.guest.url, reverse("federation:external_event_list")),
+                        "?error=event_error",
+                    )
+                )
         else:
             return redirect(self._get_authorization_url())
 

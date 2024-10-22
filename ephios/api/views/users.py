@@ -9,7 +9,6 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.relations import SlugRelatedField
-from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import GenericViewSet
 
@@ -66,7 +65,6 @@ class UserProfileMeView(RetrieveAPIView):
     queryset = UserProfile.objects.all()
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     required_scopes = ["ME_READ"]
-    schema = AutoSchema(operation_id_base="OwnUserProfile")
 
     def get_object(self):
         if self.request.user is None:
@@ -95,7 +93,6 @@ class UserByMailView(RetrieveModelMixin, GenericViewSet):
     lookup_url_kwarg = "email"
     lookup_field = "email"
     lookup_value_regex = "[^/]+"  # customize to allow dots (".") in the lookup value
-    schema = AutoSchema(operation_id_base="UserProfileByMail")
 
 
 class UserParticipationView(viewsets.ReadOnlyModelViewSet):

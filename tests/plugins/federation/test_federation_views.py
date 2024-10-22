@@ -23,7 +23,7 @@ def test_federation_shared_event_list(
 ):
     host, guest = federation
     mock_requests.get.return_value.json.return_value = {
-        "results": [SharedEventSerializer(federated_event).data]
+        "results": [SharedEventSerializer(federated_event, context={"federated_guest": guest}).data]
     }
 
     response = django_app.get(reverse("federation:external_event_list"), user=volunteer)
@@ -42,7 +42,9 @@ def test_federation_shared_event_detail_and_signup(
     session.save()
     django_app.set_cookie(settings.SESSION_COOKIE_NAME, session.session_key)
 
-    response = django_app.get(reverse("federation:event_detail", kwargs={"pk": federated_event.pk}))
+    response = django_app.get(
+        reverse("federation:event_detail", kwargs={"pk": federated_event.pk, "guest": guest.pk})
+    )
     assert response.status_code == 200
     assert federated_event.title in response.text
 
