@@ -63,6 +63,7 @@
             <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
             {% block javascript %}{% endblock %}
         {% endcompress %}
+        {{ signalled_html_head|safe }}
         {% block html_head %}
         {% endblock %}
     </head>

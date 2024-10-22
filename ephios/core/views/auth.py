@@ -23,6 +23,7 @@ from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
 from ephios.core.dynamic_preferences_registry import LoginRedirectToSoleIndentityProvider
+from ephios.core.forms.auth import OIDCLoginForm
 from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
 from ephios.extra.mixins import StaffRequiredMixin
@@ -94,6 +95,7 @@ class OIDCLogoutView(RedirectView):
 class OIDCLoginView(LoginView):
     template_name = "core/login.html"
     redirect_authenticated_user = True
+    form_class = OIDCLoginForm
 
     def get(self, request, *args, **kwargs):
         if (
@@ -105,8 +107,8 @@ class OIDCLoginView(LoginView):
         ):
             provider = self._providers.get()
             redirect_url = reverse("core:oidc_initiate", args=(provider.id,))
-            if next := self.request.GET.get("next"):
-                redirect_url += f"?next={urlencode(next)}"
+            if next_param := self.request.GET.get("next"):
+                redirect_url += f"?next={urlencode(next_param)}"
             return redirect(redirect_url)
         return super().get(request, *args, **kwargs)
 
