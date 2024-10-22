@@ -191,7 +191,7 @@ class FederatedParticipant(AbstractParticipant):
     def reverse_event_detail(self, event):
         return reverse(
             "federation:event_detail",
-            kwargs={"pk": event.pk, "guest": self.federated_user.federated_instance.pk},
+            kwargs={"pk": event.pk, "guest": self.federated_user.federated_instance_id},
         )
 
     @property
