@@ -9,6 +9,11 @@ homepage = "https://ephios.de"
 repository = "https://github.com/ephios-dev/ephios"
 documentation = "https://docs.ephios.de/en/stable/"
 
+[tool.poetry.urls]
+"Changelog" = "https://docs.ephios.de/en/latest/changelog.html"
+"Coverage" = "https://coveralls.io/github/ephios-dev/ephios"
+"Report bugs" = "https://github.com/ephios-dev/ephios/issues"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = "~5.0.9"
