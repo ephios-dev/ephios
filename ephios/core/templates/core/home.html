@@ -17,7 +17,9 @@
 
 {% block content %}
     <h1 class="page-header">
-        {% translate "Welcome to ephios!" %}
+        {% blocktranslate trimmed with organization_name=global_preferences.general__organization_name %}
+            Welcome to {{ organization_name }}!
+        {% endblocktranslate%}
     </h1>
 
     <style nonce="{{ request.csp_nonce }}">

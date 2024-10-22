@@ -5,6 +5,14 @@ from ephios.core.plugins import PluginSignal
 from ephios.core.services.notifications.backends import send_all_notifications
 from ephios.core.services.participation import send_participation_finished
 
+html_head = PluginSignal()
+"""
+This signal allows you to put code inside the HTML ``<head>`` tag
+of every page. You will get the request as the keyword argument
+``request`` and are expected to return HTML.
+"""
+
+
 register_consequence_handlers = PluginSignal()
 """
 This signal is sent out to get all known consequence handlers. Receivers should return a list of
