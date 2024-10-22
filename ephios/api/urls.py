@@ -1,8 +1,7 @@
-from django.conf import settings
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerSplitView
 from oauth2_provider import views as oauth2_views
 from rest_framework import routers
-from rest_framework.schemas import get_schema_view
 
 from ephios.api.access.views import (
     AccessTokenCreateView,
@@ -91,13 +90,13 @@ urlpatterns = [
     ),
     path(
         "schema/",
-        get_schema_view(
-            title="ephios",
-            description="ephios API",
-            version=settings.EPHIOS_VERSION,
-            url=settings.GET_SITE_URL(),
-        ),
+        SpectacularAPIView.as_view(),
         name="openapi-schema",
+    ),
+    path(
+        "schema/swagger-ui/",
+        SpectacularSwaggerSplitView.as_view(url_name="openapi-schema"),
+        name="swagger-ui",
     ),
     path("", include(router.urls)),
 ]
