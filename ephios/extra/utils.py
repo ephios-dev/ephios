@@ -59,5 +59,5 @@ def file_ticket(file):
     key = "".join(
         random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(32)
     )
-    cache.set(key, file, 60 * 60)
+    cache.set(key, file, 60)
     return key
