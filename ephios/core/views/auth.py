@@ -81,10 +81,21 @@ class OIDCLogoutView(RedirectView):
                 id=self.request.session.get("oidc_provider")
             )
             if providers.exists() and (provider := providers.first()).end_session_endpoint:
+                auto_provider_redirect = global_preferences_registry.manager()[
+                    "general__login_redirect_to_sole_identity_provider"
+                ]
                 req = PreparedRequest()
                 req.prepare_url(
                     provider.end_session_endpoint,
-                    {"post_logout_redirect_uri": settings.GET_SITE_URL()},
+                    # do not send a post_logout_redirect_uri when auto-redirect is on to prevent a loop
+                    (
+                        {}
+                        if auto_provider_redirect
+                        else {
+                            "post_logout_redirect_uri": settings.GET_SITE_URL(),
+                            "client_id": provider.client_id,
+                        }
+                    ),
                 )
                 logout_url = req.url
         auth.logout(self.request)
