@@ -48,7 +48,17 @@ class ServiceWorkerView(TemplateView):
         context["offline_url"] = reverse("core:pwa_offline")
         # Cache name: we serve /static/ files with a cache first strategy, so
         # we need to use a new cache name when the static files change with a new ephios version.
-        context["cache_name"] = f"ephios-pwa-v{settings.EPHIOS_VERSION}"
+        # Also, we need to start a new cache for every user and permission change.
+        identity = self.request.user.id if self.request.user.is_authenticated else "anonymous"
+        permissions = set(self.request.user.get_all_permissions())
+        if self.request.user.is_superuser:
+            permissions.add("_pwa:superuser")
+        if self.request.user.is_staff:
+            permissions.add("_pwa:staff")
+        permission_hash = hash(tuple(sorted(permissions)))
+        context["cache_name"] = (
+            f"ephios-pwa-v{settings.EPHIOS_VERSION}/{identity}-{permission_hash}"
+        )
         context["static_url"] = settings.STATIC_URL
         context["enable_cache"] = settings.COMPRESS_ENABLED
         return context
