@@ -44,7 +44,7 @@ internal_section = Section("internal")  # for settings/stats that should not be 
 class OrganizationName(StringPreference):
     name = "organization_name"
     verbose_name = _("Organization display name")
-    default = ""
+    default = "ephios"
     section = general_global_section
     required = False
 
