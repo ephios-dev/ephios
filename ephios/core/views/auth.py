@@ -51,7 +51,7 @@ class OIDCInitiateView(RedirectView):
 class OIDCCallbackView(RedirectView):
     def failure_url(self):
         messages.error(self.request, _("Authentication failed."))
-        return settings.LOGIN_URL
+        return reverse("login")
 
     def get_redirect_url(self, *args, **kwargs):
         if "error" in self.request.GET:
