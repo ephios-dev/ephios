@@ -1,5 +1,5 @@
+import django_filters
 from django_filters import FilterSet, IsoDateTimeFilter, ModelChoiceFilter
-from django_filters.rest_framework import FilterSet
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.filters import BaseFilterBackend
 
@@ -12,40 +12,25 @@ class ParticipationPermissionFilter(BaseFilterBackend):
         return queryset.filter(shift__event__in=events)
 
 
+class ShiftPermissionFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        events = get_objects_for_user(request.user, "core.view_event")
+        return queryset.filter(event__in=events)
+
+
 class StartEndTimeFilterSet(FilterSet):
-    start_time = IsoDateTimeFilter(field_name="start_time", label="start time")
-    start_time__gt = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="gt", label="start time greater than"
-    )
-    start_time__gte = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="gte", label="start time greater than equals"
-    )
-    start_time__lt = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="lt", label="start time less than"
-    )
-    start_time__lte = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="lte", label="start time less than equals"
-    )
+    start_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label="start time")
+    end_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label="end time")
 
     start_gte = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="gte", label="start time greater than equals"
-    )  # deprecated
+        field_name="start_time",
+        lookup_expr="gte",
+        label="start time greater than equals (deprecated, use start_time_after instead)",
+    )
     start_lte = IsoDateTimeFilter(
-        field_name="start_time", lookup_expr="lte", label="start time less than equals"
-    )  # deprecated
-
-    end_time = IsoDateTimeFilter(field_name="end_time", label="end time")
-    end_time__gt = IsoDateTimeFilter(
-        field_name="end_time", lookup_expr="gt", label="end time greater than"
-    )
-    end_time__gte = IsoDateTimeFilter(
-        field_name="end_time", lookup_expr="gte", label="end time greater than equals"
-    )
-    end_time__lt = IsoDateTimeFilter(
-        field_name="end_time", lookup_expr="lt", label="end time less than"
-    )
-    end_time__lte = IsoDateTimeFilter(
-        field_name="end_time", lookup_expr="lte", label="end time less than equals"
+        field_name="start_time",
+        lookup_expr="lte",
+        label="start time less than equals (deprecated, use start_time_before instead)",
     )
 
 

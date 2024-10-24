@@ -1,7 +1,7 @@
 Preconfigured shift structures
 ==============================
 
-When configuring a shift, you can choose to use a preconfigured shift structure (see :doc:`user/events/signup`).
+When configuring a shift, you can choose to use a preconfigured shift structure (see :doc:`signup`).
 The blocks can be configured in the editor, which can be reached from the shift edit view.
 
 Adding blocks
@@ -12,7 +12,7 @@ A form for the new block will appear on the left side in the editor. There are t
 
 
 Atomic blocks
-^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 An atomic block is the smallest unit of a block structure. It has a block name and a list of positions.
 Each position can also be named and has a list of required qualifications. The position can also be marked as optional.
@@ -21,7 +21,7 @@ This can be compared to not setting a maximum number of participants for a shift
 You can also define additional conditions for the block, e.g. that everyone has a drivers license.
 
 Composite blocks
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 Composite blocks are a combination of multiple other blocks, both atomic and composite. After adding a composite block,
 it can be given a name. Then, you can add other blocks to the composite block. This is done by clicking the arrow on one

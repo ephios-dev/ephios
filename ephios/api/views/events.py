@@ -6,7 +6,7 @@ from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
 from ephios.api.fields import ChoiceDisplayField
-from ephios.api.filters import EventFilterSet
+from ephios.api.filters import EventFilterSet, ShiftPermissionFilter, StartEndTimeFilterSet
 from ephios.core.models import AbstractParticipation, Event, EventType, LocalParticipation, Shift
 from ephios.core.templatetags.settings_extras import make_absolute
 
@@ -24,11 +24,14 @@ class SignupStatsSerializer(serializers.Serializer):
 
 class ShiftSerializer(serializers.ModelSerializer):
     signup_stats = SignupStatsSerializer(source="get_signup_stats")
+    event_title = serializers.CharField(source="event.title")
 
     class Meta:
         model = Shift
         fields = [
             "id",
+            "event_id",
+            "event_title",
             "meeting_time",
             "start_time",
             "end_time",
@@ -76,7 +79,13 @@ class EventSerializer(serializers.ModelSerializer):
 class ShiftViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ShiftSerializer
     permission_classes = [DjangoObjectPermissions, IsAuthenticatedOrTokenHasScope]
-    filter_backends = [guardian_filters.ObjectPermissionsFilter]
+    filter_backends = [
+        django_filters.rest_framework.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        ShiftPermissionFilter,
+    ]
+    filterset_class = StartEndTimeFilterSet
     required_scopes = ["PUBLIC_READ"]
     queryset = Shift.objects.all()
 
