@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-22 22:13+0200\n"
-"PO-Revision-Date: 2024-10-21 19:32+0200\n"
+"POT-Creation-Date: 2024-10-24 22:00+0200\n"
+"PO-Revision-Date: 2024-10-24 22:24+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -474,10 +474,8 @@ msgstr ""
 "konfiguriert haben."
 
 #: ephios/core/dynamic_preferences_registry.py:67
-#, fuzzy
-#| msgid "Delete identity provider"
 msgid "Directly redirect to Identity Provider"
-msgstr "Identitätsprovider löschen"
+msgstr "Direkt zum Identitätsprovider weiterleiten"
 
 #: ephios/core/dynamic_preferences_registry.py:69
 msgid ""
@@ -485,6 +483,9 @@ msgid ""
 "trying to loginwill be directly redirected to that identity provider. The "
 "provider must have a valid logout endpoint."
 msgstr ""
+"Wenn das Login-Formular versteckt ist und es genau einen Identitätsprovider "
+"gibt, werden Nutzer die sich einloggen wollen direkt zum Identitätsprovider "
+"weitergeleitet. Dafür muss der Provider einen gültigen Session-Beendigungs-Endpunkt haben."
 
 #: ephios/core/dynamic_preferences_registry.py:80
 msgid "Enabled plugins"
@@ -529,12 +530,12 @@ msgid ""
 "The information you entered was wrong. Note that the fields are case-"
 "sensitive."
 msgstr ""
+"Die eingegeben Daten waren falsch. Beachten Sie, dass die Felder Groß- und "
+"Kleinschreibung berücksichtigen."
 
 #: ephios/core/forms/auth.py:12
-#, fuzzy
-#| msgid "The event is not active."
 msgid "This account is inactive."
-msgstr "Die Veranstaltung {title} ist nicht aktiviert."
+msgstr "Dieser Account ist deaktiviert."
 
 #: ephios/core/forms/events.py:41 ephios/core/forms/events.py:116
 msgid "Visible for"
@@ -2111,7 +2112,7 @@ msgstr "Startseite"
 #: ephios/core/templates/core/home.html:20
 #, python-format
 msgid "Welcome to %(organization_name)s!"
-msgstr ""
+msgstr "Willkommen bei %(organization_name)s!"
 
 #: ephios/core/templates/core/home.html:34
 msgid "Your upcoming events"
@@ -2226,10 +2227,8 @@ msgid "Login"
 msgstr "Anmelden"
 
 #: ephios/core/templates/core/login.html:42
-#, fuzzy
-#| msgid "more"
 msgid "or"
-msgstr "mehr"
+msgstr "oder"
 
 #: ephios/core/templates/core/login.html:60
 msgid "Forgot your password?"
@@ -2724,22 +2723,23 @@ msgstr "Gruppe \"{group}\" wurde gelöscht."
 msgid "Authentication failed."
 msgstr "Anmeldung fehlgeschlagen."
 
-#: ephios/core/views/auth.py:91 ephios/templates/registration/logged_out.html:9
+#: ephios/core/views/auth.py:102
+#: ephios/templates/registration/logged_out.html:9
 msgid "Logged out successfully."
 msgstr "Erfolgreich abgemeldet."
 
-#: ephios/core/views/auth.py:139 ephios/core/views/auth.py:188
+#: ephios/core/views/auth.py:150 ephios/core/views/auth.py:199
 msgid "Identity provider saved."
 msgstr "Identitätsprovider gespeichert."
 
-#: ephios/core/views/auth.py:159
+#: ephios/core/views/auth.py:170
 msgid ""
 "Successfully fetched OIDC configuration. Please fill in the remaining fields."
 msgstr ""
 "OIDC-Konfiguration erfolgreich geladen. Bitte füllen Sie die restlichen "
 "Felder aus."
 
-#: ephios/core/views/auth.py:166
+#: ephios/core/views/auth.py:177
 msgid ""
 "Could not fetch OIDC configuration from the given URL. Please configure the "
 "client manually below."
@@ -2894,7 +2894,7 @@ msgstr "Arbeitsstunden wurden gelöscht."
 msgid "close"
 msgstr "schließen"
 
-#: ephios/extra/utils.py:41
+#: ephios/extra/utils.py:35
 msgid "None"
 msgstr "Nichts"
 
@@ -3040,8 +3040,8 @@ msgstr "Sie sind nicht qualifiziert für {teams}."
 #, python-brace-format
 msgid "{teams} is full."
 msgid_plural "{teams} are full."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{teams} ist voll."
+msgstr[1] "{teams} sind voll."
 
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:180
 msgid "Participants must provide a preferred team"
@@ -3682,28 +3682,24 @@ msgid "Back to %(name)s"
 msgstr "Zurück zu %(name)s"
 
 #: ephios/plugins/federation/templates/federation/external_event_list.html:13
-#, fuzzy
-#| msgid "Could not connect to host instance. Please try again later."
 msgid ""
 "An error occurred during the authentication at the other ephios instance. "
 "Please try again."
 msgstr ""
-"Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
-"später erneut."
+"Die Authentifizierung bei der anderen ephios-Instanz ist fehlgeschlagen. "
+"Bitte versuchen Sie es später erneut."
 
 #: ephios/plugins/federation/templates/federation/external_event_list.html:15
-#, fuzzy
-#| msgid "Could not connect to host instance. Please try again later."
 msgid ""
 "The desired event could not be accessed at the other ephios instance. Please "
 "try again."
 msgstr ""
-"Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
-"später erneut."
+"Die angeforderte Veranstaltung wurde auf der anderen ephios-Instanz nicht "
+"gefunden. Bitte versuchen Sie es später erneut."
 
 #: ephios/plugins/federation/templates/federation/external_event_list.html:17
 msgid "An unknown error has occured."
-msgstr ""
+msgstr "Ein unbekannter Fehler ist aufgetreten."
 
 #: ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:6
 msgid "Stop sharing events"
@@ -3830,21 +3826,21 @@ msgstr ""
 msgid "Accept invitation"
 msgstr "Einladung annehmen"
 
-#: ephios/plugins/federation/views/frontend.py:158
+#: ephios/plugins/federation/views/frontend.py:156
 msgid "Invite code has expired."
 msgstr "Einladungs-Code ist abgelaufen."
 
-#: ephios/plugins/federation/views/frontend.py:214
+#: ephios/plugins/federation/views/frontend.py:212
 msgid "Invalid code data. Please try again with a new invite code."
 msgstr "Code ungültig. Bitte mit einem neuen Einladungscode erneut probieren."
 
-#: ephios/plugins/federation/views/frontend.py:219
+#: ephios/plugins/federation/views/frontend.py:217
 msgid "Could not connect to host instance. Please try again later."
 msgstr ""
 "Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
 "später erneut."
 
-#: ephios/plugins/federation/views/frontend.py:225
+#: ephios/plugins/federation/views/frontend.py:223
 msgid ""
 "Invite code redeemded successfully. You are now receiving events from this "
 "instance."
@@ -3852,135 +3848,119 @@ msgstr ""
 "Einladungs-Code erfolgreich eingelöst. Sie empfangen nun Veranstaltungen "
 "dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:239
+#: ephios/plugins/federation/views/frontend.py:237
 msgid "You are no longer sharing events with this instance."
 msgstr "Sie teilen nun keine Veranstaltungen mehr mit dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:255
+#: ephios/plugins/federation/views/frontend.py:253
 msgid "You are no longer receiving events from this instance."
 msgstr "Sie erhalten nun keine Veranstaltungen mehr von dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:267
+#: ephios/plugins/federation/views/frontend.py:265
 msgid "Failed to remove this instance. Please try again later."
 msgstr ""
 "Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
 
 #: ephios/plugins/files/apps.py:10 ephios/plugins/files/signals.py:24
 msgid "Files"
-msgstr ""
+msgstr "Dateien"
 
 #: ephios/plugins/files/apps.py:12
 msgid "This plugins allows you to upload files and link to them in events."
 msgstr ""
+"Dieses Plugin lässt Sie Dateien hochladen und mit Veranstaltungen verknüpfen."
 
 #: ephios/plugins/files/forms.py:27
 #, python-format
 msgid "The file is too large. There are only %(quota)s available."
-msgstr ""
+msgstr "Die Datei ist zu groß. Es sind nur %(quota)s verfügbar."
 
 #: ephios/plugins/files/forms.py:61
 msgid "Attach files"
-msgstr ""
+msgstr "Dateien verknüpfen"
 
 #: ephios/plugins/files/models.py:14
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: ephios/plugins/files/models.py:17
 msgid "Attached to"
-msgstr ""
+msgstr "Verknüpft mit"
 
 #: ephios/plugins/files/models.py:19
 msgid "Uploader"
-msgstr ""
+msgstr "Hochgeladen von"
 
 #: ephios/plugins/files/models.py:20
-#, fuzzy
-#| msgid "Last name"
 msgid "Last modified"
-msgstr "Nachname"
+msgstr "Zuletzt geändert"
 
 #: ephios/plugins/files/signals.py:59
-#, fuzzy
-#| msgid "Manage pages"
 msgid "Manage files"
-msgstr "Seiten verwalten"
+msgstr "Dateien verwalten"
 
 #: ephios/plugins/files/signals.py:61
 msgid ""
 "Enables this group to upload and manage files. Files can be attached to "
 "events by all planners."
 msgstr ""
+"Erlaubt dieser Gruppe Dateien hochzuladen und zu verwalten. Dateien können "
+"von allen Planenden mit Veranstaltungen verknüpft werden."
 
 #: ephios/plugins/files/templates/files/document_confirm_delete.html:6
 #: ephios/plugins/files/templates/files/document_confirm_delete.html:11
-#, fuzzy
-#| msgid "Delete user"
 msgid "Delete file"
-msgstr "Benutzer löschen"
+msgstr "Datei löschen"
 
 #: ephios/plugins/files/templates/files/document_confirm_delete.html:15
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete the page \"%(title)s\"?"
+#, python-format
 msgid "Are you sure you want to delete the file \"%(title)s\"?"
-msgstr "Möchten Sie die Seite \"%(title)s\" wirklich löschen?"
+msgstr "Möchten Sie die Datei \"%(title)s\" wirklich löschen?"
 
 #: ephios/plugins/files/templates/files/document_form.html:8
-#, fuzzy
-#| msgid "Edit user"
 msgid "Edit file"
-msgstr "Benutzer bearbeiten"
+msgstr "Datei bearbeiten"
 
 #: ephios/plugins/files/templates/files/document_form.html:10
 msgid "Upload new file"
-msgstr ""
+msgstr "Neue Datei hochladen"
 
 #: ephios/plugins/files/templates/files/document_list.html:9
-#, fuzzy
-#| msgid "Add %(title)s"
 msgid "Add file"
-msgstr "%(title)s hinzufügen"
+msgstr "Datei hinzufügen"
 
 #: ephios/plugins/files/templates/files/document_list.html:11
 #, python-format
 msgid "%(free)s available"
-msgstr ""
+msgstr "%(free)s verfügbar"
 
 #: ephios/plugins/files/templates/files/document_list.html:19
 msgid "Uploaded by"
-msgstr ""
+msgstr "Hochgeladen von"
 
 #: ephios/plugins/files/templates/files/document_list.html:20
 msgid "Uploaded at"
-msgstr ""
+msgstr "Hochgeladen am"
 
 #: ephios/plugins/files/templates/files/document_list.html:33
-#, fuzzy
-#| msgid "Download PDF"
 msgid "Download"
-msgstr "PDF herunterladen"
+msgstr "Herunterladen"
 
 #: ephios/plugins/files/templates/files/document_list.html:45
-#, fuzzy
-#| msgid "Profile"
 msgid "files"
-msgstr "Benutzerprofil"
+msgstr "Dateien"
 
 #: ephios/plugins/files/templates/files/document_list.html:45
 msgid "with"
-msgstr ""
+msgstr "mit"
 
-#: ephios/plugins/files/views.py:40 ephios/plugins/files/views.py:53
-#, fuzzy
-#| msgid "Page saved successfully."
+#: ephios/plugins/files/views.py:38 ephios/plugins/files/views.py:51
 msgid "File saved successfully."
-msgstr "Seite gespeichert."
+msgstr "Datei gespeichert."
 
-#: ephios/plugins/files/views.py:65
-#, fuzzy
-#| msgid "Page deleted successfully."
+#: ephios/plugins/files/views.py:63
 msgid "File deleted successfully."
-msgstr "Seite erfolgreich gelöscht."
+msgstr "Datei erfolgreich gelöscht."
 
 #: ephios/plugins/guests/apps.py:10
 msgid "Guest Participations"
