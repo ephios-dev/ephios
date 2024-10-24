@@ -3889,7 +3889,7 @@ msgstr "Verknüpft mit"
 
 #: ephios/plugins/files/models.py:19
 msgid "Uploader"
-msgstr "Uploader"
+msgstr "Hochgeladen von"
 
 #: ephios/plugins/files/models.py:20
 msgid "Last modified"
