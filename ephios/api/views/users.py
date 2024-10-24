@@ -103,4 +103,6 @@ class UserParticipationView(viewsets.ReadOnlyModelViewSet):
     required_scopes = ["CONFIDENTIAL_READ"]
 
     def get_queryset(self):
-        return LocalParticipation.objects.filter(user=self.kwargs.get("user"))
+        return LocalParticipation.objects.filter(user=self.kwargs.get("user")).select_related(
+            "shift", "shift__event", "shift__event__type"
+        )
