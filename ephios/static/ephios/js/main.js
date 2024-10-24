@@ -66,13 +66,13 @@ function handleForms(elem) {
                 const oldFormInputs = div.querySelectorAll("input, select, textarea");
                 const formValues = {};
                 oldFormInputs.forEach(input => {
-                    // avoid hidden inputs as that might interfere with csrf/formset management
-                    // beware of selects not having a type attribute
-                    if (input.type !== "hidden") {
-                        // TODO breaks with select2?!
-                        formValues[input.name] = input.value;
+                        // avoid hidden inputs as that might interfere with csrf/formset management
+                        // beware of selects not having a type attribute
+                        if (input.type !== "hidden") {
+                            // TODO breaks with select2?!
+                            formValues[input.name] = input.value;
+                        }
                     }
-                }
                 );
                 div.innerHTML = html;
                 const newFormInputs = div.querySelectorAll("input, select, textarea");
@@ -145,9 +145,18 @@ $(document).ready(function () {
         navigator.serviceWorker.register('/serviceworker.js', {
             scope: '/'
         }).then(function (registration) {
-            console.log('django-pwa: ServiceWorker registration successful with scope: ', registration.scope);
+            console.log('ephios: ServiceWorker registration successful with scope: ', registration.scope);
+            const logoutLink = document.getElementById("logout-link");
+            if (logoutLink) {
+                logoutLink.addEventListener("click", (event) => {
+                    // We use a new cache for every new user and set of permissions, but for that to be secure
+                    // when logging out, that requires loading another ephios page to install a new service worker
+                    // --> so on logout, we explicitly tell the serviceworker to clear its cache
+                    registration.active.postMessage("logout");
+                });
+            }
         }, function (err) {
-            console.log('django-pwa: ServiceWorker registration failed: ', err);
+            console.log('ephios: ServiceWorker registration failed: ', err);
         });
     }
 
