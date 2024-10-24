@@ -483,7 +483,7 @@ msgid ""
 "trying to loginwill be directly redirected to that identity provider. The "
 "provider must have a valid logout endpoint."
 msgstr ""
-"Wenn das Login-Formular versteckt ist und es genau einen Identity-Provider "
+"Wenn das Login-Formular versteckt ist und es genau einen Identitätsprovider "
 "gibt, werden Nutzer die sich einloggen wollen direkt zum Identity-Provider "
 "weitergeleitet. Dafür muss der Provider einen gültigen Login-Endpoint haben."
 
