@@ -484,7 +484,7 @@ msgid ""
 "provider must have a valid logout endpoint."
 msgstr ""
 "Wenn das Login-Formular versteckt ist und es genau einen Identitätsprovider "
-"gibt, werden Nutzer die sich einloggen wollen direkt zum Identity-Provider "
+"gibt, werden Nutzer die sich einloggen wollen direkt zum Identitätsprovider "
 "weitergeleitet. Dafür muss der Provider einen gültigen Login-Endpoint haben."
 
 #: ephios/core/dynamic_preferences_registry.py:80
