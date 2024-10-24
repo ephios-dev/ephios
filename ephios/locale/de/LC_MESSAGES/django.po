@@ -475,7 +475,7 @@ msgstr ""
 
 #: ephios/core/dynamic_preferences_registry.py:67
 msgid "Directly redirect to Identity Provider"
-msgstr "Direkt zu Identity-Provider weiterleiten"
+msgstr "Direkt zum Identitätsprovider weiterleiten"
 
 #: ephios/core/dynamic_preferences_registry.py:69
 msgid ""
