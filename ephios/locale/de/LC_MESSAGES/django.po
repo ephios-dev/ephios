@@ -530,8 +530,8 @@ msgid ""
 "The information you entered was wrong. Note that the fields are case-"
 "sensitive."
 msgstr ""
-"Die eingegeben Daten waren falsch. Beachten Sie die Groß- und "
-"Kleinschreibung der Felder."
+"Die eingegeben Daten waren falsch. Beachten Sie, dass die Felder Groß- und "
+"Kleinschreibung berücksichtigen."
 
 #: ephios/core/forms/auth.py:12
 msgid "This account is inactive."
