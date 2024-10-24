@@ -15,7 +15,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import AllowAny
 
-from ephios.api.views.events import EventFilterSet
+from ephios.api.filters import EventFilterSet
 from ephios.core.models import Event, Qualification
 from ephios.plugins.federation.models import FederatedGuest, FederatedUser
 from ephios.plugins.federation.serializers import (

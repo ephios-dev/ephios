@@ -1,13 +1,12 @@
 import django_filters
 from django.db.models import Max, Min, Prefetch
-from django_filters.filters import IsoDateTimeFilter
-from django_filters.filterset import FilterSet
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import filters, serializers, viewsets
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
 from ephios.api.fields import ChoiceDisplayField
+from ephios.api.filters import EventFilterSet
 from ephios.core.models import AbstractParticipation, Event, EventType, LocalParticipation, Shift
 from ephios.core.templatetags.settings_extras import make_absolute
 
@@ -80,17 +79,6 @@ class ShiftViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [guardian_filters.ObjectPermissionsFilter]
     required_scopes = ["PUBLIC_READ"]
     queryset = Shift.objects.all()
-
-
-class EventFilterSet(FilterSet):
-    start_time = IsoDateTimeFilter(field_name="start_time", label="start time")
-    end_time = IsoDateTimeFilter(field_name="end_time", label="end time")
-
-    class Meta:
-        model = Event
-        fields = [
-            "type",
-        ]
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
