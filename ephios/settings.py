@@ -208,7 +208,7 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = "core.UserProfile"
 LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "core:oidc_login"
+LOGIN_URL = "/accounts/login/"
 PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 
 # Internationalization
