@@ -34,7 +34,7 @@ class DocumentCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, Cre
     model = Document
     permission_required = "files.add_document"
     form_class = DocumentForm
-    success_url = reverse_lazy("files:settings_document_list")
+    success_url = reverse_lazy("files:document_list")
     success_message = _("File saved successfully.")
 
     def get_form_kwargs(self):
@@ -47,7 +47,7 @@ class DocumentUpdateView(CustomPermissionRequiredMixin, SuccessMessageMixin, Upd
     model = Document
     permission_required = "files.change_document"
     form_class = DocumentForm
-    success_url = reverse_lazy("files:settings_document_list")
+    success_url = reverse_lazy("files:document_list")
     success_message = _("File saved successfully.")
 
     def get_form_kwargs(self):
@@ -59,5 +59,5 @@ class DocumentUpdateView(CustomPermissionRequiredMixin, SuccessMessageMixin, Upd
 class DocumentDeleteView(CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Document
     permission_required = "files.delete_document"
-    success_url = reverse_lazy("files:settings_document_list")
+    success_url = reverse_lazy("files:document_list")
     success_message = _("File deleted successfully.")

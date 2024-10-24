@@ -1,30 +1,22 @@
 from django.dispatch import receiver
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import (
-    event_forms,
-    event_info,
-    management_settings_sections,
-    register_group_permission_fields,
-)
+from ephios.core.signals import event_forms, event_info, nav_link, register_group_permission_fields
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.files.forms import EventAttachedDocumentForm
 
 
-@receiver(
-    management_settings_sections,
-    dispatch_uid="ephios.plugins.pages.signals.files_settings_section",
-)
-def files_settings_section(sender, request, **kwargs):
+@receiver(nav_link, dispatch_uid="ephios.plugins.files.signals.nav_link")
+def add_nav_link(sender, request, **kwargs):
     return (
         [
             {
                 "label": _("Files"),
-                "url": reverse("files:settings_document_list"),
-                "active": request.resolver_match.url_name.startswith("settings_document"),
-            },
+                "url": reverse_lazy("files:document_list"),
+                "active": request.resolver_match and request.resolver_match.app_name == "files",
+            }
         ]
         if request.user.has_perm("files.add_document")
         else []

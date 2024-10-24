@@ -1,10 +1,10 @@
-{% extends "core/settings/settings_base.html" %}
+{% extends "base.html" %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 
-{% block settings_content %}
+{% block content %}
     <div class="page-header">
-        {% if page %}
+        {% if document %}
             <h2>{% translate "Edit file" %}</h2>
         {% else %}
             <h2>{% translate "Upload new file" %}</h2>
