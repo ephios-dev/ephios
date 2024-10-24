@@ -1,5 +1,7 @@
 import django_filters
 from django.db.models import Max, Min, Prefetch
+from django_filters.filters import IsoDateTimeFilter
+from django_filters.filterset import FilterSet
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import filters, serializers, viewsets
 from rest_framework.permissions import DjangoObjectPermissions
@@ -80,9 +82,20 @@ class ShiftViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Shift.objects.all()
 
 
+class EventFilterSet(FilterSet):
+    start_time = IsoDateTimeFilter(field_name="start_time", label="start time")
+    end_time = IsoDateTimeFilter(field_name="end_time", label="end time")
+
+    class Meta:
+        model = Event
+        fields = [
+            "type",
+        ]
+
+
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EventSerializer
-    filterset_fields = ["type"]
+    filterset_class = EventFilterSet
     search_fields = ["title", "description", "location"]
     ordering_fields = ["start_time", "end_time", "title"]
     ordering = ("start_time", "end_time")
