@@ -10,19 +10,17 @@ from ephios.plugins.files.views import (
 
 app_name = "files"
 urlpatterns = [
-    path("document/<int:pk>/", DocumentView.as_view(), name="document"),
-    path("settings/documents/", DocumentListView.as_view(), name="settings_document_list"),
+    path("documents/<int:pk>/", DocumentView.as_view(), name="document_detail"),
+    path("documents/", DocumentListView.as_view(), name="document_list"),
+    path("documents/create/", DocumentCreateView.as_view(), name="document_create"),
     path(
-        "settings/documents/create/", DocumentCreateView.as_view(), name="settings_document_create"
-    ),
-    path(
-        "settings/documents/<int:pk>/edit/",
+        "documents/<int:pk>/edit/",
         DocumentUpdateView.as_view(),
-        name="settings_document_edit",
+        name="document_edit",
     ),
     path(
-        "settings/documents/<int:pk>/delete/",
+        "documents/<int:pk>/delete/",
         DocumentDeleteView.as_view(),
-        name="settings_document_delete",
+        name="document_delete",
     ),
 ]
