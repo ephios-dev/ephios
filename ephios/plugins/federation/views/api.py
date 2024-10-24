@@ -4,6 +4,7 @@ import django_filters
 import requests
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
+from django.db.models import Max, Min
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
@@ -14,6 +15,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import AllowAny
 
+from ephios.api.views.events import EventFilterSet
 from ephios.core.models import Event, Qualification
 from ephios.plugins.federation.models import FederatedGuest, FederatedUser
 from ephios.plugins.federation.serializers import (
@@ -59,11 +61,7 @@ class SharedEventListView(ListAPIView):
     permission_classes = [TokenHasScope]
     required_scopes = []
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = {
-        "shifts__start_time": ["gte"],
-        "shifts__end_time": ["gte"],
-        "type": ["exact"],
-    }
+    filterset_class = EventFilterSet
 
     def get_queryset(self):
         try:
@@ -71,7 +69,16 @@ class SharedEventListView(ListAPIView):
             guest = self.request.auth.federatedguest
         except FederatedGuest.DoesNotExist as exc:
             raise PermissionDenied from exc
-        return Event.objects.filter(federatedeventshare__shared_with=guest)
+        return (
+            Event.objects.filter(federatedeventshare__shared_with=guest)
+            .annotate(
+                start_time=Min("shifts__start_time"),
+                end_time=Max("shifts__end_time"),
+            )
+            .select_related("type")
+            .prefetch_related("shifts")
+            .order_by("start_time")
+        )
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
