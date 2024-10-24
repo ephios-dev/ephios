@@ -33,6 +33,17 @@ self.addEventListener('activate', event => {
     );
 });
 
+self.addEventListener("message", (event) => {
+    if (event.data === "logout") {
+        event.waitUntil(
+            caches.keys().then(cacheNames => {
+                console.log("Clearing cache after logout");
+                return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            })
+        );
+    }
+});
+
 async function markResponseAsOffline(response) {
     let content = await response.body.getReader().read().then(r => r.value);
     let body = new TextDecoder().decode(content);
