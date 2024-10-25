@@ -29,7 +29,7 @@ def add_nav_link(sender, request, **kwargs):
                 "url": reverse_lazy("simpleresource:resource_list"),
                 "active": request.resolver_match
                 and request.resolver_match.app_name == "simpleresource",
-                "group": _("Plugins"),
+                "group": _("Management"),
             }
         ]
         if request.user.has_perm("simpleresource.add_resource")

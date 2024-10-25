@@ -93,23 +93,6 @@
                                             <a class="nav-link"
                                                href="{% url "core:event_list" %}">{% translate "Events" %}</a>
                                         </li>
-                                        {% if perms.core.view_userprofile %}
-                                            <li class="nav-item {% if url_name == "workinghours_list" %}active{% endif %}">
-                                                <a class="nav-link"
-                                                   href="{% url "core:workinghours_list" %}">{% translate "Working hours" %}</a>
-                                            </li>
-                                            <li class="nav-item {% if url_name == "userprofile_list" %}active{% endif %}">
-                                                <a class="nav-link"
-                                                   href="{% url "core:userprofile_list" %}">{% translate "Users" %}</a>
-                                            </li>
-                                        {% endif %}
-                                        {% if perms.auth.view_group %}
-                                            <li class="nav-item {% if url_name == "group_list" %}active{% endif %}">
-                                                <a class="nav-link"
-                                                   href="{% url "core:group_list" %}">{% translate "Groups" %}
-                                                </a>
-                                            </li>
-                                        {% endif %}
                                         {% for item in nav %}
                                             <li class="nav-item {% if item.active %}active{% endif %}">
                                                 <a class="nav-link" href="{{ item.url }}">{{ item.label }}</a>

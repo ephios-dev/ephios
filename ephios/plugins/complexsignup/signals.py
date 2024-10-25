@@ -25,7 +25,7 @@ def add_nav_link(sender, request, **kwargs):
                 "url": reverse_lazy("complexsignup:blocks_editor"),
                 "active": request.resolver_match
                 and request.resolver_match.app_name == "complexsignup",
-                "group": _("Plugins"),
+                "group": _("Management"),
             }
         ]
         if request.user.has_perm("core.delete_event")
