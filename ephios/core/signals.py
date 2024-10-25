@@ -1,5 +1,7 @@
 from django.dispatch import receiver
+from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.plugins import PluginSignal
 from ephios.core.services.notifications.backends import send_all_notifications
@@ -11,7 +13,6 @@ This signal allows you to put code inside the HTML ``<head>`` tag
 of every page. You will get the request as the keyword argument
 ``request`` and are expected to return HTML.
 """
-
 
 register_consequence_handlers = PluginSignal()
 """
@@ -30,7 +31,6 @@ register_signup_flows = PluginSignal()
 This signal is sent out to get all known signup flows. Receivers should return a list of
 subclasses of ``ephios.core.signup.flow.abstract.AbstractSignupFlow``.
 """
-
 
 participant_signup_checkers = PluginSignal()
 """
@@ -190,6 +190,42 @@ def register_core_notification_backends(sender, **kwargs):
     from ephios.core.services.notifications.backends import CORE_NOTIFICATION_BACKENDS
 
     return CORE_NOTIFICATION_BACKENDS
+
+
+@receiver(nav_link, dispatch_uid="ephios.core.signals.register_nav_links")
+def register_nav_links(sender, request, **kwargs):
+    return (
+        [
+            {
+                "label": _("Working hours"),
+                "url": reverse_lazy("core:workinghours_list"),
+                "active": request.resolver_match
+                and request.resolver_match.url_name == "workinghours_list",
+                "group": _("Management"),
+            },
+            {
+                "label": _("Users"),
+                "url": reverse_lazy("core:userprofile_list"),
+                "active": request.resolver_match
+                and request.resolver_match.url_name == "userprofile_list",
+                "group": _("Management"),
+            },
+        ]
+        if request.user.has_perm("core.view_userprofile")
+        else []
+    ) + (
+        [
+            {
+                "label": _("Groups"),
+                "url": reverse_lazy("core:group_list"),
+                "active": request.resolver_match
+                and request.resolver_match.url_name == "group_list",
+                "group": _("Management"),
+            }
+        ]
+        if request.user.has_perm("core.view_group")
+        else []
+    )
 
 
 @receiver(periodic_signal, dispatch_uid="ephios.core.signals.send_notifications")
