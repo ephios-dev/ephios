@@ -49,7 +49,8 @@ Receivers will receive a ``request`` keyword argument.
 nav_link = PluginSignal()
 """
 This signal is sent out to get links for the main navbar. Receivers should return a list of dicts
-containing key-value-pairs for 'label', 'url' and a boolean flag 'active'.
+containing key-value-pairs for 'label', 'url' and a boolean flag 'active'. An optional key 'group' can
+contain a label for a group under which the link should be displayed.
 Receivers will receive a ``request`` keyword argument.
 """
 

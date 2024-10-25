@@ -16,6 +16,7 @@ def add_nav_link(sender, request, **kwargs):
                 "label": _("Files"),
                 "url": reverse_lazy("files:document_list"),
                 "active": request.resolver_match and request.resolver_match.app_name == "files",
+                "group": _("Plugins"),
             }
         ]
         if request.user.has_perm("files.add_document")

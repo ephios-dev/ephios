@@ -112,9 +112,22 @@
                                         {% endif %}
                                         {% for item in nav %}
                                             <li class="nav-item {% if item.active %}active{% endif %}">
-                                                <a class="nav-link"
-                                                   href="{{ item.url }}">{{ item.label }}
+                                                <a class="nav-link" href="{{ item.url }}">{{ item.label }}</a>
+                                            </li>
+                                        {% endfor %}
+                                        {% for group, items in nav_groups.items %}
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-{{ group }}" role="button"
+                                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                                    {{ group }}
                                                 </a>
+                                                <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
+                                                    {% for item in items %}
+                                                        <a class="dropdown-item"
+                                                           href="{{ item.url }}">{{ item.label }}
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
                                             </li>
                                         {% endfor %}
                                     {% endwith %}
