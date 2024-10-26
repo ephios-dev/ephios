@@ -275,6 +275,9 @@
             </div>
         </div>
         <div class="col-12 mb-3 order-1 order-lg-2 or col-lg-5" id="block-list">
+            <h1 class="h3">
+                {% translate "Signup Blocks Editor" %}
+            </h1>
             {% csrf_token %}
             <input type="hidden" autocomplete="off" :value="JSON.stringify(blocks)" name="blocks" id="id_blocks"
                    value="{{ form.blocks.value }}">

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 22:00+0200\n"
-"PO-Revision-Date: 2024-10-24 22:24+0200\n"
+"POT-Creation-Date: 2024-10-26 10:36+0200\n"
+"PO-Revision-Date: 2024-10-26 10:38+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -485,7 +485,8 @@ msgid ""
 msgstr ""
 "Wenn das Login-Formular versteckt ist und es genau einen Identitätsprovider "
 "gibt, werden Nutzer die sich einloggen wollen direkt zum Identitätsprovider "
-"weitergeleitet. Dafür muss der Provider einen gültigen Session-Beendigungs-Endpunkt haben."
+"weitergeleitet. Dafür muss der Provider einen gültigen Session-Beendigungs-"
+"Endpunkt haben."
 
 #: ephios/core/dynamic_preferences_registry.py:80
 msgid "Enabled plugins"
@@ -699,14 +700,18 @@ msgstr ""
 "sowie Veranstaltungstypen und Qualifikationen definieren."
 
 #: ephios/core/forms/users.py:145 ephios/core/models/users.py:234
+#: ephios/core/signals.py:207
 #: ephios/core/templates/core/userprofile_list.html:9
 #: ephios/core/templates/core/userprofile_list.html:15
-#: ephios/templates/base.html:103
 msgid "Users"
 msgstr "Benutzer"
 
-#: ephios/core/forms/users.py:179
+#: ephios/core/forms/users.py:179 ephios/core/signals.py:204
+#: ephios/core/signals.py:211 ephios/core/signals.py:223
 #: ephios/core/templates/core/settings/settings_base.html:33
+#: ephios/plugins/complexsignup/signals.py:28
+#: ephios/plugins/files/signals.py:19
+#: ephios/plugins/simpleresource/signals.py:32
 msgid "Management"
 msgstr "Verwaltung"
 
@@ -726,10 +731,10 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:246 ephios/core/templates/core/group_list.html:6
+#: ephios/core/forms/users.py:246 ephios/core/signals.py:219
+#: ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11
 #: ephios/core/templates/core/settings/settings_personal_data.html:21
-#: ephios/templates/base.html:109
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -1126,10 +1131,11 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: ephios/core/models/users.py:483 ephios/core/models/users.py:484
+#: ephios/core/signals.py:200
 #: ephios/core/templates/core/userprofile_list.html:95
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/templates/base.html:99 ephios/templates/base.html:130
+#: ephios/templates/base.html:126
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
@@ -2235,7 +2241,7 @@ msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
 #: ephios/core/templates/core/mails/base.html:149
-#: ephios/templates/base.html:173
+#: ephios/templates/base.html:169
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2277,7 +2283,7 @@ msgstr "Andere Benachrichtigungen anzeigen"
 #: ephios/core/templates/core/notification_list.html:7
 #: ephios/core/templates/core/settings/settings_base.html:21
 #: ephios/core/templates/core/settings/settings_notifications.html:12
-#: ephios/templates/base.html:132
+#: ephios/templates/base.html:128
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2308,7 +2314,7 @@ msgstr "Absenden"
 
 #: ephios/core/templates/core/settings/settings_base.html:7
 #: ephios/core/templates/core/settings/settings_base.html:12
-#: ephios/templates/base.html:134
+#: ephios/templates/base.html:130
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -3222,7 +3228,7 @@ msgstr "Teilnehmende können sich direkt für die Schicht anmelden."
 
 #: ephios/plugins/complexsignup/apps.py:10
 msgid "Preconfigured Structures (experimental)"
-msgstr "Vordefinierte Struktur (experimental)"
+msgstr "Vordefinierte Einheiten (experimentell)"
 
 #: ephios/plugins/complexsignup/apps.py:13
 msgid ""
@@ -3230,8 +3236,8 @@ msgid ""
 "structures to create complex shift setups."
 msgstr ""
 "Dieses Plugin fügt eine Schicht-Struktur hinzu, für die Sie "
-"wiederverwendbare Anforderungsmodule konfigurieren können, um komplexe "
-"Strukturen abzubilden."
+"wiederverwendbare Einheiten konfigurieren können, um komplexe Strukturen "
+"abzubilden."
 
 #: ephios/plugins/complexsignup/models.py:11
 msgid "atomic"
@@ -3344,6 +3350,10 @@ msgstr "Blockzusammensetzung"
 msgid "block compositions"
 msgstr "Blockzusammensetzungen"
 
+#: ephios/plugins/complexsignup/signals.py:24
+msgid "Signup blocks"
+msgstr "Vordefinierte Einheiten"
+
 #: ephios/plugins/complexsignup/structure.py:54
 msgid "Unit"
 msgstr "Einheit"
@@ -3371,12 +3381,12 @@ msgstr "Teilnehmende werden bei Anmeldung gefragt."
 
 #: ephios/plugins/complexsignup/structure.py:173
 msgid "Preconfigured Structure (experimental)"
-msgstr "Vordefinierte Struktur (experimental)"
+msgstr "Vordefinierte Einheiten (experimentell)"
 
 #: ephios/plugins/complexsignup/structure.py:174
 msgid "Use preconfigured elements to build a custom structure."
 msgstr ""
-"Nutzen Sie vordefinierte Strukturen um eine individuelle Struktur zu "
+"Nutzen Sie vordefinierte Einheiten um eine individuelle Struktur zu "
 "gestalten."
 
 #: ephios/plugins/complexsignup/templates/complexsignup/configuration_form.html:8
@@ -3385,7 +3395,7 @@ msgstr "Blöcke bearbeiten"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:8
 msgid "Signup Blocks Editor"
-msgstr "Editor für Anmeldeblöcke"
+msgstr "Editor für vordefinierte Einheiten"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:25
 msgid "Block Name"
@@ -3861,7 +3871,7 @@ msgid "Failed to remove this instance. Please try again later."
 msgstr ""
 "Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
 
-#: ephios/plugins/files/apps.py:10 ephios/plugins/files/signals.py:24
+#: ephios/plugins/files/apps.py:10 ephios/plugins/files/signals.py:16
 msgid "Files"
 msgstr "Dateien"
 
@@ -3895,11 +3905,11 @@ msgstr "Hochgeladen von"
 msgid "Last modified"
 msgstr "Zuletzt geändert"
 
-#: ephios/plugins/files/signals.py:59
+#: ephios/plugins/files/signals.py:52
 msgid "Manage files"
 msgstr "Dateien verwalten"
 
-#: ephios/plugins/files/signals.py:61
+#: ephios/plugins/files/signals.py:54
 msgid ""
 "Enables this group to upload and manage files. Files can be attached to "
 "events by all planners."
@@ -4460,7 +4470,7 @@ msgstr "Seite nicht gefunden"
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: ephios/templates/base.html:136
+#: ephios/templates/base.html:132
 msgid "Logout"
 msgstr "Abmelden"
 

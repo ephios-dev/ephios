@@ -2,9 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-    <div>
-
-    </div>
+    <h1>
+        {% translate "Files" %}
+    </h1>
     <a class="btn btn-secondary" href="{% url "files:document_create" %}"><span
         class="fa fa-plus"></span> {% translate "Add file" %}</a><br />
     <small>
