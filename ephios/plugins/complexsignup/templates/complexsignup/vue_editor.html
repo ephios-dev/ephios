@@ -363,7 +363,7 @@
                                             {% translate "unnamed" %}
                                         </span>
                                     </span>
-                                    <span v-for="sub_block in getSubBlocks(block)" :key="sub_block.uuid"
+                                    <span v-for="sub_block in getSubBlocks(block)" :key="sub_block.compositionClientId"
                                           class="badge text-bg-secondary me-1">
                                         <span v-if="sub_block.sub_label">
                                             [[ sub_block.sub_label ]]

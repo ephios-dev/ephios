@@ -38,6 +38,7 @@ def display_event_files(event, request, **kwargs):
         return render_to_string(
             "files/document_attachement.html", {"documents": event.documents.all()}, request
         )
+    return ""
 
 
 @receiver(

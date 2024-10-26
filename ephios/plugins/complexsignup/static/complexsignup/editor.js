@@ -169,11 +169,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
             function getSubBlocks(block) {
                 const subBlocks = [];
                 block.sub_compositions.forEach(composition => {
-                    const sub_block = getBlockById(composition.sub_block);
+                    // clone because for rendering because we're adding information per composition
+                    const sub_block = Object.assign({}, getBlockById(composition.sub_block));
                     if (!sub_block) {
                         return;
                     }
                     sub_block.sub_label = composition.label;  // provide the label as an additional attribute
+                    sub_block.compositionClientId = composition.clientId; // provide id for vue loop
                     subBlocks.push(sub_block);
                 });
                 return subBlocks;
