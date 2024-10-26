@@ -18,6 +18,7 @@ def display_shift_resources(shift, request, **kwargs):
             )
     except ResourceAllocation.DoesNotExist:
         pass
+    return ""
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.simpleresource.signals.nav_link")
