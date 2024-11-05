@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-26 10:36+0200\n"
-"PO-Revision-Date: 2024-10-26 10:38+0200\n"
+"POT-Creation-Date: 2024-11-05 19:50+0100\n"
+"PO-Revision-Date: 2024-11-05 19:50+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -79,7 +79,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/settings/settings_personal_data.html:50
 #: ephios/core/templates/core/shift_form.html:71
 #: ephios/core/templates/core/userprofile_form.html:132
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:282
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:285
 #: ephios/plugins/qualification_management/forms.py:121
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:90
 msgid "Save"
@@ -711,7 +711,7 @@ msgstr "Benutzer"
 #: ephios/core/templates/core/settings/settings_base.html:33
 #: ephios/plugins/complexsignup/signals.py:28
 #: ephios/plugins/files/signals.py:19
-#: ephios/plugins/simpleresource/signals.py:32
+#: ephios/plugins/simpleresource/signals.py:33
 msgid "Management"
 msgstr "Verwaltung"
 
@@ -1398,39 +1398,39 @@ msgstr "via E-Mail"
 msgid "via push notification"
 msgstr "via Push-Benachrichtigung"
 
-#: ephios/core/services/notifications/types.py:38
+#: ephios/core/services/notifications/types.py:39
 #, python-brace-format
 msgid "Notification type '{slug}' was not found."
 msgstr "Benachrichtigungstyp '{slug}' wurde nicht gefunden."
 
-#: ephios/core/services/notifications/types.py:110
+#: ephios/core/services/notifications/types.py:111
 msgid "Your profile has been edited"
 msgstr "Ihr Benutzerprofil wurde bearbeitet"
 
-#: ephios/core/services/notifications/types.py:118
+#: ephios/core/services/notifications/types.py:119
 msgid "ephios account updated"
 msgstr "ephios-Benutzerkonto aktualisiert"
 
-#: ephios/core/services/notifications/types.py:123
+#: ephios/core/services/notifications/types.py:124
 msgid ""
 "You're receiving this email because your account at ephios has been updated."
 msgstr ""
 "Sie erhalten diese E-Mail, weil Ihr Benutzerkonto in ephios aktualisiert "
 "wurde."
 
-#: ephios/core/services/notifications/types.py:128
+#: ephios/core/services/notifications/types.py:129
 msgid "View profile"
 msgstr "Benutzerprofil ansehen"
 
-#: ephios/core/services/notifications/types.py:137
+#: ephios/core/services/notifications/types.py:138
 msgid "A new profile has been created"
 msgstr "Ein neues Benutzerprofil wurde erstellt"
 
-#: ephios/core/services/notifications/types.py:151
-msgid "Welcome to ephios!"
-msgstr "Willkommen bei ephios!"
+#: ephios/core/services/notifications/types.py:153
+msgid "Welcome to {}!"
+msgstr "Willkommen bei {}!"
 
-#: ephios/core/services/notifications/types.py:156
+#: ephios/core/services/notifications/types.py:158
 #, python-brace-format
 msgid ""
 "You're receiving this email because a new account has been created for you "
@@ -1443,23 +1443,23 @@ msgstr ""
 "Bitte rufen Sie folgende Seite auf und wählen Sie ein neues Passwort: {url}\n"
 "Ihr Benutzername ist Ihre E-Mail-Adresse: {email}"
 
-#: ephios/core/services/notifications/types.py:163
+#: ephios/core/services/notifications/types.py:165
 #: ephios/core/templates/core/mails/new_account_email.html:11
 #: ephios/templates/registration/password_reset_confirm.html:7
 #: ephios/templates/registration/password_reset_confirm.html:19
 msgid "Set password"
 msgstr "Passwort setzen"
 
-#: ephios/core/services/notifications/types.py:179
+#: ephios/core/services/notifications/types.py:181
 msgid "A new event has been added"
 msgstr "Eine neue Veranstaltung wurde hinzugefügt"
 
-#: ephios/core/services/notifications/types.py:194
+#: ephios/core/services/notifications/types.py:196
 #, python-brace-format
 msgid "New {type}: {title}"
 msgstr "{type} hinzugefügt: {title}"
 
-#: ephios/core/services/notifications/types.py:200
+#: ephios/core/services/notifications/types.py:202
 #, python-brace-format
 msgid ""
 "A new {type} ({title}, {location}) has been added.\n"
@@ -1468,61 +1468,61 @@ msgstr ""
 "{type} {title} ({location}) wurde hinzugefügt.\n"
 " Weitere Informationen: {description}"
 
-#: ephios/core/services/notifications/types.py:219
-#: ephios/core/services/notifications/types.py:237
-#: ephios/core/services/notifications/types.py:370
-#: ephios/core/services/notifications/types.py:522
-#: ephios/core/services/notifications/types.py:593
+#: ephios/core/services/notifications/types.py:221
+#: ephios/core/services/notifications/types.py:239
+#: ephios/core/services/notifications/types.py:372
+#: ephios/core/services/notifications/types.py:524
+#: ephios/core/services/notifications/types.py:595
 #: ephios/core/templates/core/mails/new_event.html:35
 #: ephios/core/templates/core/userprofile_workinghours.html:47
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
-#: ephios/core/services/notifications/types.py:265
+#: ephios/core/services/notifications/types.py:267
 msgid "The state of your participation has changed"
 msgstr "Der Status Ihrer Teilnahme hat sich geändert"
 
-#: ephios/core/services/notifications/types.py:272
-#: ephios/core/services/notifications/types.py:381
+#: ephios/core/services/notifications/types.py:274
+#: ephios/core/services/notifications/types.py:383
 #, python-brace-format
 msgid "Participation {state} for {event}"
 msgstr "Teilnahme {state} für {event}"
 
-#: ephios/core/services/notifications/types.py:288
+#: ephios/core/services/notifications/types.py:290
 #, python-brace-format
 msgid "You requested a participation for {shift}."
 msgstr "Sie haben eine Teilnahme für {shift} angefragt."
 
-#: ephios/core/services/notifications/types.py:290
+#: ephios/core/services/notifications/types.py:292
 #, python-brace-format
 msgid "Your participation for {shift} is now confirmed."
 msgstr "Ihre Teilnahme an {shift} ist jetzt bestätigt."
 
-#: ephios/core/services/notifications/types.py:293
+#: ephios/core/services/notifications/types.py:295
 #, python-brace-format
 msgid "Your participation for {shift} has been rejected by a responsible user."
 msgstr ""
 "Ihre Teilnahme an {shift} wurde von einem verantwortlichen Benutzer "
 "abgelehnt."
 
-#: ephios/core/services/notifications/types.py:302
+#: ephios/core/services/notifications/types.py:304
 msgid "A confirmed participation of yours has been tweaked by a responsible"
 msgstr ""
 "Eine Ihrer bestätigten Teilnahmen wurde von einer verantwortlichen Person "
 "angepasst"
 
-#: ephios/core/services/notifications/types.py:314
+#: ephios/core/services/notifications/types.py:316
 #, python-brace-format
 msgid "Participation tweaked for {shift}"
 msgstr "Teilnahme angepasst für {shift}"
 
-#: ephios/core/services/notifications/types.py:322
+#: ephios/core/services/notifications/types.py:324
 #, python-brace-format
 msgid "Your participation for {shift} has been tweaked by a responsible user."
 msgstr ""
 "Ihre Teilnahme an {shift} wurde von einer verantwortlichen Person angepasst."
 
-#: ephios/core/services/notifications/types.py:373
+#: ephios/core/services/notifications/types.py:375
 #: ephios/core/templates/core/disposition/disposition.html:8
 #: ephios/core/templates/core/home.html:109
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_groups_common_state.html:29
@@ -1530,92 +1530,92 @@ msgstr ""
 msgid "Disposition"
 msgstr "Disposition"
 
-#: ephios/core/services/notifications/types.py:393
+#: ephios/core/services/notifications/types.py:395
 msgid "A participation for your event awaits disposition"
 msgstr "Eine Teilnahme an Ihrer Veranstaltung wartet auf Disposition"
 
-#: ephios/core/services/notifications/types.py:407
+#: ephios/core/services/notifications/types.py:409
 #, python-brace-format
 msgid "{participant} has requested a participation for {shift}."
 msgstr "{participant} hat eine Teilnahme an {shift} angefragt."
 
-#: ephios/core/services/notifications/types.py:417
+#: ephios/core/services/notifications/types.py:419
 msgid "A participation for your event has changed state"
 msgstr "Der Status einer Teilnahme an Ihrer Veranstaltung hat sich geändert"
 
-#: ephios/core/services/notifications/types.py:431
+#: ephios/core/services/notifications/types.py:433
 #, python-brace-format
 msgid "The participation of {participant} for {shift} is now {state}."
 msgstr "Die Teilnahme von {participant} an {shift} ist nun {state}."
 
-#: ephios/core/services/notifications/types.py:444
+#: ephios/core/services/notifications/types.py:446
 msgid "A participant declined after having been confirmed for your event"
 msgstr ""
 "Ein Teilnehmer hat abgesagt, nachdem er für Ihre Veranstaltung bestätigt "
 "wurde"
 
-#: ephios/core/services/notifications/types.py:451
+#: ephios/core/services/notifications/types.py:453
 #, python-brace-format
 msgid "{participant} declined their participation in {shift}."
 msgstr "{participant} hat abgesagt für {shift}."
 
-#: ephios/core/services/notifications/types.py:460
+#: ephios/core/services/notifications/types.py:462
 msgid "A confirmed participant altered their participation"
 msgstr "Ein bestätigter Teilnehmer hat seine Teilnahme angepasst"
 
-#: ephios/core/services/notifications/types.py:467
+#: ephios/core/services/notifications/types.py:469
 #, python-brace-format
 msgid "Participation altered for {event}"
 msgstr "Teilnahme angepasst für {event}"
 
-#: ephios/core/services/notifications/types.py:479
+#: ephios/core/services/notifications/types.py:481
 #, python-brace-format
 msgid "{participant} altered their participation in {shift}."
 msgstr "{participant} hat die Teilnahme an {shift} angepasst."
 
-#: ephios/core/services/notifications/types.py:488
+#: ephios/core/services/notifications/types.py:490
 msgid "An event has vacant spots"
 msgstr "Für eine Veranstaltung werden noch Teilnehmende gesucht"
 
-#: ephios/core/services/notifications/types.py:508
+#: ephios/core/services/notifications/types.py:510
 #, python-brace-format
 msgid "Help needed for {title}"
 msgstr "Unterstützung benötigt für {title}"
 
-#: ephios/core/services/notifications/types.py:513
+#: ephios/core/services/notifications/types.py:515
 #, python-brace-format
 msgid "Your support is needed for {title} ({start} - {end})."
 msgstr "Ihre Unterstützung wird benötigt für {title} ({start} - {end})."
 
-#: ephios/core/services/notifications/types.py:527
+#: ephios/core/services/notifications/types.py:529
 msgid "Message to all participants"
 msgstr "Nachricht an alle Teilnehmenden"
 
-#: ephios/core/services/notifications/types.py:575
+#: ephios/core/services/notifications/types.py:577
 #, python-brace-format
 msgid "Information regarding {title}"
 msgstr "Informationen zu {title}"
 
-#: ephios/core/services/notifications/types.py:589
+#: ephios/core/services/notifications/types.py:591
 msgid "View message"
 msgstr "Nachricht anzeigen"
 
-#: ephios/core/services/notifications/types.py:605
-#: ephios/core/services/notifications/types.py:615
+#: ephios/core/services/notifications/types.py:607
+#: ephios/core/services/notifications/types.py:617
 msgid "Your request has been approved"
 msgstr "Ihre Anfrage wurde akzeptiert"
 
-#: ephios/core/services/notifications/types.py:620
+#: ephios/core/services/notifications/types.py:622
 #, python-brace-format
 msgid "\"{consequence}\" has been approved."
 msgstr "\"{consequence}\" wurde akzeptiert."
 
-#: ephios/core/services/notifications/types.py:625
-#: ephios/core/services/notifications/types.py:635
+#: ephios/core/services/notifications/types.py:627
+#: ephios/core/services/notifications/types.py:637
 msgid "Your request has been denied"
 msgstr "Ihre Anfrage wurde abgelehnt"
 
-#: ephios/core/services/notifications/types.py:640
+#: ephios/core/services/notifications/types.py:642
 #, python-brace-format
 msgid "\"{consequence}\" has been denied."
 msgstr "\"{consequence}\" wurde abgelehnt."
@@ -1673,7 +1673,7 @@ msgstr ""
 msgid "Signup Flow '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: ephios/core/signup/flow/abstract.py:47 ephios/core/signup/forms.py:87
+#: ephios/core/signup/flow/abstract.py:47 ephios/core/signup/forms.py:86
 #: ephios/plugins/basesignupflows/flow/participant.py:37
 msgid "Sign up"
 msgstr "Teilnehmen"
@@ -1744,7 +1744,7 @@ msgstr ""
 "{eventtype} teilzunehmen."
 
 #: ephios/core/signup/flow/participant_validation.py:128
-#: ephios/core/signup/forms.py:160
+#: ephios/core/signup/forms.py:159
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
 msgstr "Sie sind zu dieser Zeit bereits eingeteilt für {shifts}."
@@ -1761,23 +1761,23 @@ msgstr "Individuelles Ende"
 msgid "End time must not be before start time."
 msgstr "Ende darf nicht vor dem Beginn sein."
 
-#: ephios/core/signup/forms.py:67
+#: ephios/core/signup/forms.py:66
 #, python-brace-format
 msgid "{label} was changed from {initial} to {current}."
 msgstr "{label} wurde von {initial} zu {current} geändert."
 
-#: ephios/core/signup/forms.py:85
+#: ephios/core/signup/forms.py:84
 msgid "Signup choice"
 msgstr "Anmeldeaktion"
 
-#: ephios/core/signup/forms.py:88
+#: ephios/core/signup/forms.py:87
 #: ephios/core/templates/core/disposition/fragment_participation.html:44
 #: ephios/core/templates/core/fragments/shift_box_big.html:57
 #: ephios/core/templates/core/fragments/shift_box_big.html:65
 msgid "Customize"
 msgstr "Anpassen"
 
-#: ephios/core/signup/forms.py:89
+#: ephios/core/signup/forms.py:88
 #: ephios/core/templates/core/fragments/shift_box_big.html:70
 msgid "Decline"
 msgstr "Absagen"
@@ -2240,7 +2240,7 @@ msgstr "oder"
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: ephios/core/templates/core/mails/base.html:149
+#: ephios/core/templates/core/mails/base.html:150
 #: ephios/templates/base.html:169
 #, python-format
 msgid "powered by %(brand)s"
@@ -2248,11 +2248,10 @@ msgstr "powered by %(brand)s"
 
 #: ephios/core/templates/core/mails/new_account_email.html:7
 msgid ""
-"You're receiving this email because a new account has been created for you "
-"at ephios."
+"You're receiving this email because a new account has been created for you."
 msgstr ""
-"Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil in ephios "
-"angelegt wurde."
+"Sie erhalten diese E-Mail, weil für Sie ein neues Benutzerprofil angelegt "
+"wurde."
 
 #: ephios/core/templates/core/mails/new_account_email.html:8
 msgid "Please go to the following page and choose a new password:"
@@ -3394,6 +3393,7 @@ msgid "Edit blocks"
 msgstr "Blöcke bearbeiten"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:8
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:279
 msgid "Signup Blocks Editor"
 msgstr "Editor für vordefinierte Einheiten"
 
@@ -3410,7 +3410,7 @@ msgstr "Bitte geben Sie einen Namen an."
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:182
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:239
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:262
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:341
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:344
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -3435,9 +3435,9 @@ msgstr "Position hinzufügen"
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:122
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:147
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:160
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:322
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:360
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:372
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:325
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:363
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:375
 msgid "unnamed"
 msgstr "unbenannt"
 
@@ -3468,27 +3468,27 @@ msgstr "muss qualifiziert sein als"
 msgid "Add condition"
 msgstr "Bedingung hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:288
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:291
 msgid "Add atomic block"
 msgstr "Atomaren Block hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:293
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:296
 msgid "Add composite block"
 msgstr "Zusammengesetzen Block hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:297
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:300
 msgid "Search"
 msgstr "Suchen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:309
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:312
 msgid "Add as sub-block"
 msgstr "Als Unterblock hinzufügen"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:329
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:332
 msgid "Invalid"
 msgstr "Ungültig"
 
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:337
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:340
 msgid "Clone"
 msgstr "Duplizieren"
 
@@ -3872,6 +3872,7 @@ msgstr ""
 "Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
 
 #: ephios/plugins/files/apps.py:10 ephios/plugins/files/signals.py:16
+#: ephios/plugins/files/templates/files/document_list.html:6
 msgid "Files"
 msgstr "Dateien"
 
@@ -3905,11 +3906,11 @@ msgstr "Hochgeladen von"
 msgid "Last modified"
 msgstr "Zuletzt geändert"
 
-#: ephios/plugins/files/signals.py:52
+#: ephios/plugins/files/signals.py:53
 msgid "Manage files"
 msgstr "Dateien verwalten"
 
-#: ephios/plugins/files/signals.py:54
+#: ephios/plugins/files/signals.py:55
 msgid ""
 "Enables this group to upload and manage files. Files can be attached to "
 "events by all planners."
@@ -4358,7 +4359,7 @@ msgstr "Ressource"
 
 #: ephios/plugins/simpleresource/models.py:32
 #: ephios/plugins/simpleresource/models.py:37
-#: ephios/plugins/simpleresource/signals.py:28
+#: ephios/plugins/simpleresource/signals.py:29
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:5
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:9
 msgid "Resources"
