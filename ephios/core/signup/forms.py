@@ -63,19 +63,18 @@ class BaseParticipationForm(forms.ModelForm):
         info = []
         for time in ["start_time", "end_time"]:
             if (field_name := f"individual_{time}") in self.changed_data:
-                info.append(
-                    _("{label} was changed from {initial} to {current}.").format(
-                        label=self.fields[field_name].label,
-                        initial=date_format(
-                            localtime(self.initial[field_name].astimezone()),
-                            format="SHORT_DATETIME_FORMAT",
-                        ),
-                        current=date_format(
-                            localtime(self.cleaned_data[field_name] or getattr(self.shift, time)),
-                            format="TIME_FORMAT",
-                        ),
-                    )
+                text = _("{label} was changed from {initial} to {current}.").format(
+                    label=self.fields[field_name].label,
+                    initial=date_format(
+                        localtime(self.initial[field_name].astimezone()),
+                        format="SHORT_DATETIME_FORMAT",
+                    ),
+                    current=date_format(
+                        localtime(self.cleaned_data[field_name] or getattr(self.shift, time)),
+                        format="TIME_FORMAT",
+                    ),
                 )
+                info.append(text)
 
         return info
 
