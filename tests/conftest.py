@@ -60,7 +60,7 @@ def pytest_collection_modifyitems(items):
 def enable_plugins():
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        plugin.module for plugin in plugins.get_all_plugins()
+        plugin.module for plugin in plugins.get_all_plugins() if getattr(plugin, "visible", True)
     ]
 
 

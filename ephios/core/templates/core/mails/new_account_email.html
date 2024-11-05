@@ -4,7 +4,7 @@
 {% block content %}
     <tr>
         <td>
-            {% translate "You're receiving this email because a new account has been created for you at ephios." %}
+            {% translate "You're receiving this email because a new account has been created for you." %}
             {% translate "Please go to the following page and choose a new password:" %}
             {% block reset_link %}
                 {% url 'password_reset_confirm' uidb64=notification.data.uidb64 token=notification.data.token as reset_location %}

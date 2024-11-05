@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes
 from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
+from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
 from requests import PreparedRequest
 
@@ -148,7 +149,8 @@ class NewProfileNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("Welcome to ephios!")
+        org_name = global_preferences_registry.manager().get("general__organization_name")
+        return _("Welcome to {}!").format(org_name)
 
     @classmethod
     def get_body(cls, notification):
