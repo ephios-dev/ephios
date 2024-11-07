@@ -7,7 +7,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from rest_framework import serializers
 
 from ephios.api.models import AccessToken
-from ephios.api.views.events import EventSerializer
+from ephios.api.serializers import EventSerializer
 from ephios.core.models import Event
 from ephios.plugins.federation.models import FederatedGuest, InviteCode
 

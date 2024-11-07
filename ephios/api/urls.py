@@ -13,7 +13,7 @@ from ephios.api.access.views import (
     ApplicationDetail,
     ApplicationUpdate,
 )
-from ephios.api.views.events import EventViewSet, ShiftViewSet
+from ephios.api.views.events import EventViewSet, ParticipationViewSet, ShiftViewSet
 from ephios.api.views.users import (
     UserByMailView,
     UserParticipationView,
@@ -25,8 +25,9 @@ from ephios.extra.permissions import staff_required
 router = routers.DefaultRouter()
 router.register(r"events", EventViewSet)
 router.register(r"shifts", ShiftViewSet)
-router.register(r"users", UserViewSet)
+router.register(r"participations", ParticipationViewSet)
 router.register(r"users/by_email", UserByMailView, basename="user-by-email")
+router.register(r"users", UserViewSet)
 router.register(
     r"users/(?P<user>[\d]+)/participations", UserParticipationView, basename="user-participations"
 )
