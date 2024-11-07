@@ -1,10 +1,10 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet, IsoDateTimeFilter, ModelChoiceFilter
+from django_filters import FilterSet, IsoDateTimeFilter, ModelMultipleChoiceFilter
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.filters import BaseFilterBackend
 
-from ephios.core.models import Event, EventType, LocalParticipation
+from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 
 
 class ParticipationPermissionFilter(BaseFilterBackend):
@@ -36,13 +36,21 @@ class StartEndTimeFilterSet(FilterSet):
 
 
 class ParticipationFilterSet(StartEndTimeFilterSet):
-    event_type = ModelChoiceFilter(
+    event_type = ModelMultipleChoiceFilter(
         field_name="shift__event__type", label=_("event type"), queryset=EventType.objects.all()
+    )
+    event = ModelMultipleChoiceFilter(
+        field_name="shift__event_id", label="event id", queryset=Event.objects.all()
+    )
+    shift = ModelMultipleChoiceFilter(
+        field_name="shift_id", label="shift id", queryset=Shift.objects.all()
     )
 
     class Meta:
-        model = LocalParticipation
-        fields = ["state"]
+        model = AbstractParticipation
+        fields = [
+            "state",
+        ]
 
 
 class EventFilterSet(StartEndTimeFilterSet):
