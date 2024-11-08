@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.customization import get_brand_logo_static_path
 from ephios.core.models import AbstractParticipation
 from ephios.core.signals import footer_link, html_head, nav_link
 
@@ -31,6 +32,7 @@ def ephios_base_context(request):
     return {
         "ParticipationStates": AbstractParticipation.States,
         "nav": nav,
+        "brand_logo_static_path": get_brand_logo_static_path(request),
         "nav_groups": nav_groups,
         "signalled_html_head": _html_head,
         "footer": footer,

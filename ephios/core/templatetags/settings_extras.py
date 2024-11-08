@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.customization import get_brand_logo_static_path
 from ephios.core.models.users import IdentityProvider
 
 register = template.Library()
@@ -34,3 +35,8 @@ def organization_name():
 @register.filter
 def make_absolute(location):
     return urljoin(settings.GET_SITE_URL(), location)
+
+
+@register.simple_tag(takes_context=True)
+def brand_logo_static_path(context):
+    return get_brand_logo_static_path(context.get("request"))
