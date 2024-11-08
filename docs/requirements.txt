@@ -1,5 +1,4 @@
 sphinx-github-changelog
-sphinxcontrib-openapi
 sphinx-notfound-page>=1.0.0rc1
 sphinx-rtd-theme
 

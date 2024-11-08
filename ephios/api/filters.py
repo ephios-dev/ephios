@@ -35,7 +35,6 @@ class StartEndTimeFilterSet(FilterSet):
 
 
 class ParticipationFilterSet(StartEndTimeFilterSet):
-    # we cannot use gettext_lazy as it breaks sphinxcontrib.openapi (https://github.com/sphinx-contrib/openapi/issues/153)
     event_type = ModelChoiceFilter(
         field_name="shift__event__type", label="event type", queryset=EventType.objects.all()
     )
