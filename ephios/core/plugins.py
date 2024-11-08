@@ -36,7 +36,7 @@ def get_enabled_plugins():
     yield from (
         plugin
         for plugin in get_all_plugins()
-        if plugin.module in enabled_plugins or not getattr(plugin, "visible", True)
+        if plugin.module in enabled_plugins or getattr(plugin, "force_enabled", False)
     )
 
 
