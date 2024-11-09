@@ -7,8 +7,9 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from reportlab.lib import colors
+from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm, mm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
@@ -51,18 +52,16 @@ class EventExport(BasePDFExporter):
 
     def get_shift_structure_data_table(self, shift):
         participation_data = shift.structure.get_list_export_data()
-        col_count = 4
+        col_count = 3
         rows = [
             [
-                _("State"),
                 _("Name"),
-                _("E-Mail"),
+                _("Qualifikationen"),
                 _("Description"),
             ]
         ]
         table_style = [
-            ("ALIGN", (0, 0), (0, -1), "CENTER"),
-            ("VALIGN", (0, 1), (-1, -1), "TOP"),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ]
         for entry in participation_data:
@@ -70,15 +69,11 @@ class EventExport(BasePDFExporter):
             if p and p.state not in AbstractParticipation.States.REQUESTED_AND_CONFIRMED:
                 continue
 
-            if p and p.state == AbstractParticipation.States.CONFIRMED:
-                table_style += [
-                    ("BACKGROUND", (0, len(rows)), (0, len(rows)), "#e0ffec"),
-                ]
-            elif p and p.state == AbstractParticipation.States.REQUESTED:
-                table_style += [
-                    ("BACKGROUND", (0, len(rows)), (0, len(rows)), "#fef6cd"),
-                ]
-
+            name_style = None
+            if p and p.state == AbstractParticipation.States.REQUESTED:
+                name_style = ParagraphStyle(
+                    "CustomStyle", parent=self.style["Normal"], textColor=HexColor("#aa8409")
+                )
             description = entry["description"]
             if qualification_string := ", ".join(
                 [q.abbreviation for q in entry["required_qualifications"]]
@@ -87,17 +82,27 @@ class EventExport(BasePDFExporter):
 
             rows.append(
                 [
-                    p.get_state_display() if p else "",
-                    Paragraph(p.participant.display_name) if p else "",
-                    Paragraph(p.participant.email) if p and p.participant.email else "",
+                    Paragraph(p.participant.display_name, style=name_style) if p else "",
+                    (
+                        Paragraph(
+                            ", ".join(
+                                p.participant.qualifications.filter(
+                                    category__show_with_user=True,
+                                )
+                                .order_by("category", "title")
+                                .values_list("abbreviation", flat=True)
+                            )
+                        )
+                        if p
+                        else ""
+                    ),
                     Paragraph(description),
                 ]
             )
         table = Table(
             rows,
             hAlign="LEFT",
-            colWidths=[20 * mm]
-            + [(self.content_width - 20 * mm) / (col_count - 1)] * (col_count - 1),
+            colWidths=[self.content_width / col_count] * col_count,
         )
         table.setStyle(
             TableStyle(
@@ -144,8 +149,8 @@ class SingleShiftEventExporter(EventExport):
             ]
             + [[_("Description"), Paragraph(self.event.description)]]
         )
-        table = Table(data, colWidths=[5.7 * cm, 7 * cm])
-        table.setStyle([("VALIGN", (0, -1), (-1, -1), "TOP")])
+        table = Table(data, colWidths=[6 * cm, self.content_width - 6 * cm])
+        table.setStyle([("VALIGN", (0, 0), (-1, -1), "TOP")])
         story.append(table)
         story.append(Spacer(height=0.5 * cm, width=15 * cm))
         story.append(Paragraph(_("Participants"), self.style["Heading2"]))
@@ -178,7 +183,7 @@ class MultipleShiftEventExporter(EventExport):
             [_("Date"), event_date],
             [_("Description"), Paragraph(self.event.description)],
         ]
-        table = Table(data, colWidths=[6 * cm, 13 * cm])
+        table = Table(data, colWidths=[6 * cm, self.content_width - 6 * cm])
         table.setStyle([("VALIGN", (0, -1), (-1, -1), "TOP")])
         story.append(table)
 
@@ -191,7 +196,7 @@ class MultipleShiftEventExporter(EventExport):
                 [Paragraph(key), Paragraph(value)]
                 for key, value in shift.structure.get_signup_info().items()
             ]
-            story.append(Table(data, colWidths=[6 * cm, 13 * cm]))
+            story.append(Table(data, colWidths=[6 * cm, self.content_width - 6 * cm]))
             story.append(Paragraph(_("Participants"), self.style["Heading3"]))
             story.append(self.get_shift_structure_data_table(shift))
         return story
