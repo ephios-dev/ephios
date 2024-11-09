@@ -64,6 +64,13 @@ is reserved for the group under the users name.
 Receivers will receive a ``request`` keyword argument.
 """
 
+navbar_html = PluginSignal()
+"""
+This signal allows you to put additional arbitrary content inside 
+the navbar. You will get the request as the keyword argument
+``request`` and are expected to return HTML.
+"""
+
 settings_sections = PluginSignal()
 """
 This signal is sent out to get sections for the settings. Receivers should return a list of dicts

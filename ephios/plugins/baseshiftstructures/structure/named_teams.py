@@ -369,17 +369,16 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         return teams_with_users
 
     def get_list_export_data(self):
-        confirmed_teams_with_users = self._get_teams_with_users()
         export_data = []
         team_by_uuid = {team["uuid"]: team for team in self.configuration.teams}
-        for uuid, team in team_by_uuid.items():
+        for team_uuid, team in team_by_uuid.items():
             missing_count = team["min_count"]
             team_qualifications = (
                 Qualification.objects.filter(id=team["qualification"]) if team else []
             )
             for p in self.shift.participations.all():
-                team_uuid = self._choose_team_for_participation(p)
-                if team_uuid != uuid:
+                participants_team_uuid = self._choose_team_for_participation(p)
+                if participants_team_uuid != team_uuid:
                     continue
                 if p.state in AbstractParticipation.States.REQUESTED_AND_CONFIRMED:
                     missing_count -= 1
@@ -402,8 +401,8 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         # unassigned participations
         for p in self.shift.participations.all():
-            team_uuid = self._choose_team_for_participation(p)
-            if team_uuid not in team_by_uuid.keys():
+            participants_team_uuid = self._choose_team_for_participation(p)
+            if participants_team_uuid not in team_by_uuid.keys():
                 export_data.append(
                     {
                         "participation": p,

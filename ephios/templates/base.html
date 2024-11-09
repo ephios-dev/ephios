@@ -72,9 +72,11 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
                 <div class="container">
-                    <a class="navbar-brand" href="/"><img src="{% static brand_logo_static_path %}"
-                                                          alt="ephios"
-                                                          class="d-inline-block" width="75"></a>
+                    <a class="navbar-brand" href="/">
+                        <img src="{% static brand_logo_static_path %}"
+                             alt="ephios"
+                             class="d-inline-block" width="75">
+                    </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -119,6 +121,7 @@
                                     {% endwith %}
                                 </ul>
                                 <ul class="navbar-nav ms-auto">
+                                    {{ signalled_nav_html|safe }}
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button"
                                            data-bs-toggle="dropdown" aria-expanded="false">

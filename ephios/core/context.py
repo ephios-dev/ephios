@@ -5,7 +5,7 @@ from django.utils.translation import get_language
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signals import footer_link, html_head, nav_link
+from ephios.core.signals import footer_link, html_head, nav_link, navbar_html
 
 
 def get_brand_logo_static_path(request):
@@ -43,6 +43,9 @@ def ephios_base_context(request):
     _html_head = ""
     for _, result in html_head.send(None, request=request):
         _html_head += result
+    _navbar_additional_html = ""
+    for _, result in navbar_html.send(None, request=request):
+        _navbar_additional_html += result
 
     return {
         "ParticipationStates": AbstractParticipation.States,
@@ -51,6 +54,7 @@ def ephios_base_context(request):
         "nav_userprofile": nav_userprofile,
         "brand_logo_static_path": get_brand_logo_static_path(request),
         "signalled_html_head": _html_head,
+        "signalled_nav_html": _navbar_additional_html,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": settings.EPHIOS_VERSION,
