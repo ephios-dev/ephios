@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load settings_extras %}
 {% load i18n %}
-{% load settings_extras %}
 
 {% block title %}
     {% translate "Settings" %}
@@ -13,31 +12,17 @@
     </div>
     <div class="d-flex flex-column flex-sm-row">
         <div class="me-3 mb-2">
+            {% available_settings_sections request as settings_sections %}
             <ul class="nav nav-pills flex-column">
-                <li class="nav-item"><h5>{% translate "Personal" %}</h5></li>
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_personal_data" %}active{% endif %}"
-                                        href="{% url "core:settings_personal_data" %}">{% translate "Personal data" %}</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_notifications" %}active{% endif %}"
-                                        href="{% url "core:settings_notifications" %}">{% translate "Notifications" %}</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_calendar" %}active{% endif %}"
-                                        href="{% url "core:settings_calendar" %}">{% translate "Calendar" %}</a></li>
-                {% identity_providers as providers %}
-                {% if not global_preferences.general__hide_login_form or not providers.exists %}
-                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == "settings_password_change" %}active{% endif %}"
-                                            href="{% url "core:settings_password_change" %}">{% translate "Change password" %}</a></li>
-                {% endif %}
-                <li class="nav-item"><a class="nav-link {% if "settings-access-token" in request.resolver_match.url_name %}active{% endif %}"
-                                        href="{% url "api:settings-access-token-list" %}">{% translate "Integrations" %}</a></li>
-                {% available_management_settings_sections request as management_settings_sections %}
-                {% if management_settings_sections %}
-                    <li class="nav-item mt-2"><h5>{% translate "Management" %}</h5></li>
-                    {% for section in management_settings_sections %}
+                {% for name, items in settings_sections.items %}
+                    <li class="nav-item{% if not forloop.first %} mt-2{% endif %}"><h5>{{ name }}</h5></li>
+                    {% for item in items %}
                         <li class="nav-item">
-                            <a class="nav-link {% if section.active %}active{% endif %}"
-                               href="{{ section.url }}">{{ section.label }}</a>
+                            <a class="nav-link{% if item.active %} active{% endif %}"
+                               href="{{ item.url }}">{{ item.label }}</a>
                         </li>
                     {% endfor %}
-                {% endif %}
+                {% endfor %}
             </ul>
         </div>
         <div class="flex-fill">

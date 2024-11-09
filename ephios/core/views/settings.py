@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
@@ -9,29 +11,64 @@ from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
 
 from ephios.core.forms.users import UserNotificationPreferenceForm, UserOwnDataForm
+from ephios.core.models.users import IdentityProvider
 from ephios.core.services.health.healthchecks import run_healthchecks
-from ephios.core.signals import management_settings_sections
+from ephios.core.signals import settings_sections
+from ephios.core.views.auth import show_login_form
 from ephios.extra.mixins import StaffRequiredMixin
 
+SETTINGS_PERSONAL_SECTION_KEY = _("Personal")
+SETTINGS_MANAGEMENT_SECTION_KEY = _("Management")
 
-def get_available_management_settings_sections(request):
-    sections = []
+
+def get_available_settings_sections(request):
+    sections = defaultdict(list)
+    sections[SETTINGS_PERSONAL_SECTION_KEY] += [
+        {
+            "label": _("Personal data"),
+            "url": reverse("core:settings_personal_data"),
+            "active": request.resolver_match.url_name == "settings_personal_data",
+        },
+        {
+            "label": _("Notifications"),
+            "url": reverse("core:settings_notifications"),
+            "active": request.resolver_match.url_name == "settings_notifications",
+        },
+        {
+            "label": _("Calendar"),
+            "url": reverse("core:settings_calendar"),
+            "active": request.resolver_match.url_name == "settings_calendar",
+        },
+        {
+            "label": _("Integrations"),
+            "url": reverse("api:settings-access-token-list"),
+            "active": "settings-access-token" in request.resolver_match.url_name,
+        },
+    ]
+    if show_login_form(request, IdentityProvider.objects.all()):
+        sections[SETTINGS_PERSONAL_SECTION_KEY].append(
+            {
+                "label": _("Change password"),
+                "url": reverse("core:settings_password_change"),
+                "active": request.resolver_match.url_name == "settings_password_change",
+            }
+        )
     if request.user.is_staff:
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("ephios instance"),
                 "url": reverse("core:settings_instance"),
                 "active": request.resolver_match.url_name == "settings_instance",
             }
         )
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("App integrations"),
                 "url": reverse("api:settings-oauth-app-list"),
                 "active": "settings-oauth" in request.resolver_match.url_name,
             }
         )
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("Identity providers"),
                 "url": reverse("core:settings_idp_list"),
@@ -39,16 +76,19 @@ def get_available_management_settings_sections(request):
             }
         )
     if request.user.has_perm("core.view_eventtype"):
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("Event types"),
                 "url": reverse("core:settings_eventtype_list"),
                 "active": request.resolver_match.url_name.startswith("settings_eventtype"),
             }
         )
-    for __, result in management_settings_sections.send(None, request=request):
-        sections += result
-    return sections
+
+    for __, result in settings_sections.send(None, request=request):
+        for item in result:
+            group = item.pop("group")
+            sections[group].append(item)
+    return dict(sections)
 
 
 class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):

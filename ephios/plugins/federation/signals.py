@@ -4,11 +4,12 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signals import (
     event_forms,
-    management_settings_sections,
     nav_link,
     participant_from_request,
     periodic_signal,
+    settings_sections,
 )
+from ephios.core.views.settings import SETTINGS_MANAGEMENT_SECTION_KEY
 from ephios.plugins.federation.forms import EventAllowFederationForm
 from ephios.plugins.federation.models import FederatedHost, FederatedUser
 
@@ -50,7 +51,7 @@ def guests_event_forms(sender, event, request, **kwargs):
 
 
 @receiver(
-    management_settings_sections,
+    settings_sections,
     dispatch_uid="ephios.plugins.federation.signals.federation_settings_section",
 )
 def federation_settings_section(sender, request, **kwargs):
@@ -60,6 +61,7 @@ def federation_settings_section(sender, request, **kwargs):
                 "label": _("Federation"),
                 "url": reverse("federation:settings"),
                 "active": request.resolver_match.app_name == "federation",
+                "group": SETTINGS_MANAGEMENT_SECTION_KEY,
             },
         ]
         if request.user.is_staff

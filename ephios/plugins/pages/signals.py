@@ -2,11 +2,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import (
-    footer_link,
-    management_settings_sections,
-    register_group_permission_fields,
-)
+from ephios.core.signals import footer_link, register_group_permission_fields, settings_sections
+from ephios.core.views.settings import SETTINGS_MANAGEMENT_SECTION_KEY
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.pages.models import Page
 
@@ -20,7 +17,7 @@ def pages_footer_links(sender, request, **kwargs):
 
 
 @receiver(
-    management_settings_sections,
+    settings_sections,
     dispatch_uid="ephios.plugins.pages.signals.pages_settings_section",
 )
 def pages_settings_section(sender, request, **kwargs):
@@ -30,6 +27,7 @@ def pages_settings_section(sender, request, **kwargs):
                 "label": _("Pages"),
                 "url": reverse("pages:settings_page_list"),
                 "active": request.resolver_match.url_name.startswith("settings_page"),
+                "group": SETTINGS_MANAGEMENT_SECTION_KEY,
             },
         ]
         if request.user.has_perm("pages.add_page")
