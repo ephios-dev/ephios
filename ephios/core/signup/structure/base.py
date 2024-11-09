@@ -103,14 +103,15 @@ class BaseShiftStructure(AbstractShiftStructure):
             )
         return kwargs
 
-    def get_participation_display(self):
-        """
-        Returns a displayable representation of participation that can be rendered into a table (e.g. for pdf export).
-        Must return a list of participations or empty slots. Each element of the list has to be a list of a fixed
-        size where each entry is rendered to a separate column.
-        Ex.: [["participant1_name", "participant1_qualification"], ["participant2_name", "participant2_qualification"]]
-        """
-        return [[participant.display_name] for participant in self.shift.get_participants()]
+    def get_list_export_data(self):
+        return [
+            {
+                "participation": participation,
+                "required_qualifications": [],
+                "description": "",
+            }
+            for participation in self.shift.participations.all()
+        ]
 
     def get_configuration_form(self, *args, **kwargs):
         if self.shift is not None:

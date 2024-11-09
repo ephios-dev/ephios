@@ -82,7 +82,23 @@ class AbstractShiftStructure(ABC):
         """Return key/value pairs about the configuration to show in exports etc."""
         raise NotImplementedError()
 
-    def get_participation_display(self):
+    def get_list_export_data(self):
+        """
+        Returns a list of list of dictionaries corresponding to participations or positions in this shift.
+        This should include all participations regardless of state or type
+        as well as unfilled positions.
+        The dictionary must contain the following items:
+
+        - "participation"
+            contains a participation object
+            can be None only if you provide an unfilled position
+        - "required_qualifications"
+            contains a collection of Qualification items required for a position
+            can be empty for unmatched participations
+        - "description":
+            contains a string describing the position
+            should be empty for unmatched participations
+        """
         raise NotImplementedError()
 
     def get_participant_count_bounds(self):

@@ -166,30 +166,33 @@ class QualificationMinMaxBaseShiftStructure(
     def slug(self):
         raise NotImplementedError()
 
-    def get_participation_display(self):
-        participation_info = [
-            [
-                participant.display_name,
-                ", ".join(
-                    participant.qualifications.filter(
-                        category__show_with_user=True,
-                    )
-                    .order_by("category", "title")
-                    .values_list("title", flat=True)
-                ),
-            ]
-            for participant in self.shift.get_participants()
-        ]
+    def get_list_export_data(self):
+        export_data = []
+        for participation in self.shift.participations.all():
+            export_data.append(
+                {
+                    "participation": participation,
+                    "required_qualifications": self.configuration.required_qualifications,
+                    "description": "",
+                }
+            )
         min_count, max_count = self.get_participant_count_bounds()
         rendered_count = max(min_count or 0, max_count or 0)
-        if len(participation_info) < rendered_count:
-            required_qualifications = self.configuration.required_qualifications
-            qualifications_display = (
-                ", ".join(required_qualifications.values_list("title", flat=True))
-                if required_qualifications
-                else "-"
-            )
-            participation_info += [["", qualifications_display]] * (
-                rendered_count - len(participation_info)
-            )
-        return participation_info
+        if len(export_data) < rendered_count:
+            export_data += [
+                {
+                    "participation": None,
+                    "required_qualifications": self.configuration.required_qualifications,
+                    "description": "",
+                }
+            ] * (rendered_count - len(export_data))
+
+        return sorted(export_data, key=participation_entry_sort_key)
+
+
+def participation_entry_sort_key(entry):
+    p: AbstractParticipation = entry["participation"]
+    if p:
+        # put confirmed first
+        return [1, 0, 2, 3, 4].index(p.state)
+    return 1000
