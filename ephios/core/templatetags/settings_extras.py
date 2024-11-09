@@ -4,17 +4,16 @@ from django import template
 from django.conf import settings
 from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.customization import get_brand_logo_static_path
 from ephios.core.models.users import IdentityProvider
 
 register = template.Library()
 
 
 @register.simple_tag
-def available_management_settings_sections(request):
-    from ephios.core.views.settings import get_available_management_settings_sections
+def available_settings_sections(request):
+    from ephios.core.views.settings import get_available_settings_sections
 
-    return get_available_management_settings_sections(request)
+    return get_available_settings_sections(request)
 
 
 @register.simple_tag
@@ -39,4 +38,6 @@ def make_absolute(location):
 
 @register.simple_tag(takes_context=True)
 def brand_logo_static_path(context):
+    from ephios.core.context import get_brand_logo_static_path
+
     return get_brand_logo_static_path(context.get("request"))

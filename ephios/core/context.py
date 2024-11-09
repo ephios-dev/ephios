@@ -4,9 +4,20 @@ from django.conf import settings
 from django.utils.translation import get_language
 from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.customization import get_brand_logo_static_path
 from ephios.core.models import AbstractParticipation
 from ephios.core.signals import footer_link, html_head, nav_link
+
+
+def get_brand_logo_static_path(request):
+    from ephios.core.signals import brand_logo_static_path
+
+    for _, result in brand_logo_static_path.send(None, request=request):
+        if result:
+            return result
+    return "ephios/img/ephios-text-black.png"
+
+
+NAV_USERPROFILE_KEY = "__userprofile__"
 
 
 def ephios_base_context(request):
@@ -17,10 +28,14 @@ def ephios_base_context(request):
 
     nav = []
     nav_groups = defaultdict(list)
+    nav_userprofile = []
     for _, result in nav_link.send(None, request=request):
         for item in result:
             if group := item.get("group"):
-                nav_groups[group].append(item)
+                if group == NAV_USERPROFILE_KEY:
+                    nav_userprofile.append(item)
+                else:
+                    nav_groups[group].append(item)
             else:
                 nav.append(item)
     nav_groups.default_factory = None  # cannot loop defaultdicts in django templates
@@ -32,8 +47,9 @@ def ephios_base_context(request):
     return {
         "ParticipationStates": AbstractParticipation.States,
         "nav": nav,
-        "brand_logo_static_path": get_brand_logo_static_path(request),
         "nav_groups": nav_groups,
+        "nav_userprofile": nav_userprofile,
+        "brand_logo_static_path": get_brand_logo_static_path(request),
         "signalled_html_head": _html_head,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),

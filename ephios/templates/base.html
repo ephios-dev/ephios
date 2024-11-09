@@ -94,20 +94,23 @@
                                                href="{% url "core:event_list" %}">{% translate "Events" %}</a>
                                         </li>
                                         {% for item in nav %}
-                                            <li class="nav-item {% if item.active %}active{% endif %}">
+                                            <li class="nav-item {% if item.active %}active{% endif %}"
+                                                {% include "core/fragments/attrs.html" with item=item %}>
                                                 <a class="nav-link" href="{{ item.url }}">{{ item.label }}</a>
                                             </li>
                                         {% endfor %}
                                         {% for group, items in nav_groups.items %}
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-{{ group }}" role="button"
+                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-{{ group }}"
+                                                   role="button"
                                                    data-bs-toggle="dropdown" aria-expanded="false">
                                                     {{ group }}
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
                                                     {% for item in items %}
-                                                        <a class="dropdown-item"
-                                                           href="{{ item.url }}">{{ item.label }}
+                                                        <a class="dropdown-item" href="{{ item.url }}"
+                                                           {% include "core/fragments/attrs.html" with item=item %}>
+                                                            {{ item.label }}
                                                         </a>
                                                     {% endfor %}
                                                 </div>
@@ -121,7 +124,11 @@
                                            data-bs-toggle="dropdown" aria-expanded="false">
                                             {{ user.get_full_name }}
                                         </a>
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAccount">
+                                            {% for item in nav_userprofile %}
+                                                <a class="dropdown-item" {% include "core/fragments/attrs.html" with item=item %}
+                                                   href="{{ item.url }}">{{ item.label }}</a>
+                                            {% endfor %}
                                             <a class="dropdown-item"
                                                href="{% url "core:workinghours_own" %}">{% translate "Working hours" %}</a>
                                             <a class="dropdown-item"

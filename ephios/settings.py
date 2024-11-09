@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django.forms",  # for the inbuilt forms templates
     "django_filters",
     "guardian",
     "oauth2_provider",

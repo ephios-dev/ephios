@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse, reverse_lazy
@@ -103,6 +104,14 @@ class OIDCLogoutView(RedirectView):
         return logout_url
 
 
+def show_login_form(request, providers: QuerySet):
+    return (
+        not global_preferences_registry.manager()["general__hide_login_form"]
+        or not providers.exists()
+        or request.GET.get("local")
+    )
+
+
 class OIDCLoginView(LoginView):
     template_name = "core/login.html"
     redirect_authenticated_user = True
@@ -129,11 +138,7 @@ class OIDCLoginView(LoginView):
 
     @property
     def _show_login_form(self):
-        return (
-            not global_preferences_registry.manager()["general__hide_login_form"]
-            or not self._providers.exists()
-            or self.request.GET.get("local")
-        )
+        return show_login_form(self.request, self._providers)
 
     @property
     def extra_context(self):
