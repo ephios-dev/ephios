@@ -286,27 +286,24 @@ class ComplexShiftStructure(
             )
         ]
 
-    def get_participation_display(self):
+    def get_list_export_data(self):
         self._assume_cache()
-        participation_display = []
+        export_data = []
         for block in iter_atomic_blocks(self._structure):
             for position, participation in zip(
                 block["positions"],
                 block["participations"],
             ):
-                if not position.required:
+                if not participation and not position.required:
                     continue
-                qualification_label = (
-                    ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
+                export_data.append(
+                    {
+                        "participation": participation,
+                        "required_qualifications": position.required_qualifications,
+                        "description": f"{block['display']} #{block['number']}",
+                    }
                 )
-                participation_display.append(
-                    [
-                        str(participation.participant) if participation else "",
-                        qualification_label,
-                        f"{block['display']} #{block['number']}",
-                    ]
-                )
-        return participation_display
+        return export_data
 
 
 def _search_block(

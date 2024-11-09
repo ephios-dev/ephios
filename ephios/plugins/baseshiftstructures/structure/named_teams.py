@@ -368,19 +368,48 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         teams_with_users += [(team, None) for team in team_by_uuid.values()]
         return teams_with_users
 
-    def get_participation_display(self):
+    def get_list_export_data(self):
         confirmed_teams_with_users = self._get_teams_with_users()
-        participation_display = []
-        for team, users in confirmed_teams_with_users:
-            if users:
-                participation_display += [[user[0], user[1], team["title"]] for user in users]
-            if not users or len(users) < team["min_count"]:
-                required_qualifications = ", ".join(
-                    Qualification.objects.filter(pk__in=[team.get("qualification")]).values_list(
-                        "abbreviation", flat=True
-                    )
+        export_data = []
+        team_by_uuid = {team["uuid"]: team for team in self.configuration.teams}
+        for uuid, team in team_by_uuid.items():
+            missing_count = team["min_count"]
+            team_qualifications = (
+                Qualification.objects.filter(id=team["qualification"]) if team else []
+            )
+            for p in self.shift.participations.all():
+                team_uuid = self._choose_team_for_participation(p)
+                if team_uuid != uuid:
+                    continue
+                if p.state in AbstractParticipation.States.REQUESTED_AND_CONFIRMED:
+                    missing_count -= 1
+                export_data.append(
+                    {
+                        "participation": p,
+                        "required_qualifications": team_qualifications,
+                        "description": team["title"] if team else "",
+                    }
                 )
-                participation_display += [["", required_qualifications, team["title"]]] * (
-                    team["min_count"] - (len(users) if users else 0)
+            # fill up team with empty slots
+            for _ in range(missing_count):
+                export_data.append(
+                    {
+                        "participation": None,
+                        "required_qualifications": team_qualifications,
+                        "description": team["title"] if team else "",
+                    }
                 )
-        return participation_display
+
+        # unassigned participations
+        for p in self.shift.participations.all():
+            team_uuid = self._choose_team_for_participation(p)
+            if team_uuid not in team_by_uuid.keys():
+                export_data.append(
+                    {
+                        "participation": p,
+                        "required_qualifications": [],
+                        "description": "",
+                    }
+                )
+
+        return export_data

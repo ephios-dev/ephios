@@ -12,6 +12,7 @@ from ephios.core.signup.flow.participant_validation import (
     SignupDisallowedError,
 )
 from ephios.core.signup.participants import PlaceholderParticipant
+from ephios.plugins.baseshiftstructures.structure.common import participation_entry_sort_key
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
     QualificationRequirementForm,
@@ -82,9 +83,9 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             if len(matching_with.pairings) > len(matching_without.pairings):
                 return
 
-        if (free := shift.get_signup_stats().free) and free > 0:
-            raise ParticipantUnfitError(_("You are not qualified."))
-        raise SignupDisallowedError(_("The maximum number of participants is reached."))
+        if (free := shift.get_signup_stats().free) and free <= 0:
+            raise SignupDisallowedError(_("The maximum number of participants is reached."))
+        raise ParticipantUnfitError(_("You are not qualified."))
 
     def get_checkers(self):
         return super().get_checkers() + [
@@ -236,7 +237,7 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         )
         return requirement_stats
 
-    def get_participation_display(self):
+    def get_list_export_data(self):
         positive_participations = [
             p
             for p in self.shift.participations.all()
@@ -247,21 +248,40 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
         matching = match_participants_to_positions(participants, positions)
         matching.attach_participations(positive_participations)
 
-        participation_display = []
-        for participation, position in matching.participation_pairings:
-            qualification_label = (
-                ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
-            )
-            participation_display.append(
-                [
-                    str(participation.participant),
-                    qualification_label,
-                ]
-            )
-        for position in matching.unpaired_positions:
-            if position.required:
-                qualification_label = (
-                    ", ".join(q.abbreviation for q in position.required_qualifications) or "?"
-                )
-                participation_display.append(["", qualification_label])
-        return participation_display
+        export_data = []
+        export_data += sorted(
+            [  # matches
+                {
+                    "participation": participation,
+                    "required_qualifications": position.required_qualifications,
+                    "description": "",
+                }
+                for participation, position in matching.participation_pairings
+            ],
+            key=participation_entry_sort_key,
+        )
+        export_data += sorted(
+            [  # unfilled positions
+                {
+                    "participation": None,
+                    "required_qualifications": position.required_qualifications,
+                    "description": "",
+                }
+                for position in matching.unpaired_positions
+                if position.required
+            ],
+            key=participation_entry_sort_key,
+        )
+        export_data += sorted(
+            [  # unmatched participations
+                {
+                    "participation": p,
+                    "required_qualifications": [],
+                    "description": "",
+                }
+                for p in self.shift.participations.all()
+                if p in matching.unpaired_participations or p not in positive_participations
+            ],
+            key=participation_entry_sort_key,
+        )
+        return export_data
