@@ -1,4 +1,5 @@
 import django_filters
+from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, IsoDateTimeFilter, ModelChoiceFilter
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.filters import BaseFilterBackend
@@ -19,24 +20,24 @@ class ShiftPermissionFilter(BaseFilterBackend):
 
 
 class StartEndTimeFilterSet(FilterSet):
-    start_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label="start time")
-    end_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label="end time")
+    start_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label=_("start time"))
+    end_time = django_filters.rest_framework.IsoDateTimeFromToRangeFilter(label=_("end time"))
 
     start_gte = IsoDateTimeFilter(
         field_name="start_time",
         lookup_expr="gte",
-        label="start time greater than equals (deprecated, use start_time_after instead)",
+        label=_("start time greater than equals (deprecated, use start_time_after instead)"),
     )
     start_lte = IsoDateTimeFilter(
         field_name="start_time",
         lookup_expr="lte",
-        label="start time less than equals (deprecated, use start_time_before instead)",
+        label=_("start time less than equals (deprecated, use start_time_before instead)"),
     )
 
 
 class ParticipationFilterSet(StartEndTimeFilterSet):
     event_type = ModelChoiceFilter(
-        field_name="shift__event__type", label="event type", queryset=EventType.objects.all()
+        field_name="shift__event__type", label=_("event type"), queryset=EventType.objects.all()
     )
 
     class Meta:
