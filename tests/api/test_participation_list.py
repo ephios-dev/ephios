@@ -4,7 +4,36 @@ from guardian.shortcuts import remove_perm
 from ephios.core.models import AbstractParticipation, LocalParticipation
 
 
-def test_participation_list_permissions(django_app, event, planner, groups, volunteer, manager):
+def test_participation_permissions(django_app, volunteer, event, planner, manager, groups):
+    LocalParticipation.objects.create(
+        user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+    )
+    response = django_app.get(
+        reverse("api:participations-list"),
+        user=volunteer,
+        status=200,
+    )
+    assert event.title in response
+    django_app.get(
+        reverse("api:userinfo-participations-list"),
+        user=volunteer,
+        status=403,
+    )
+    django_app.get(
+        reverse("api:userinfo-participations-list"),
+        user=volunteer,
+        status=403,
+    )
+    django_app.get(
+        reverse("api:userinfo-participations-list"),
+        user=manager,
+        status=200,
+    )
+
+
+def test_user_participation_list_permissions(
+    django_app, event, planner, groups, volunteer, manager
+):
     LocalParticipation.objects.create(
         user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
     )
@@ -34,7 +63,7 @@ def test_participation_list_permissions(django_app, event, planner, groups, volu
     )
 
 
-def test_participation_list_filter(
+def test_user_participation_list_filter(
     django_app, event, planner, groups, volunteer, manager, training_event_type
 ):
     LocalParticipation.objects.create(
