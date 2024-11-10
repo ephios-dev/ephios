@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 19:50+0100\n"
-"PO-Revision-Date: 2024-11-05 19:50+0100\n"
+"POT-Creation-Date: 2024-11-10 22:19+0100\n"
+"PO-Revision-Date: 2024-11-10 22:19+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -19,8 +19,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 3.4.2\n"
 
-#: ephios/api/access/views.py:85 ephios/api/models.py:33 ephios/core/pdf.py:76
-#: ephios/core/pdf.py:130
+#: ephios/api/access/views.py:85 ephios/api/models.py:33 ephios/core/pdf.py:60
+#: ephios/core/pdf.py:150 ephios/core/pdf.py:184
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -49,6 +49,30 @@ msgstr "Token ist zu alt, um angezeigt werden zu können."
 #: ephios/api/access/views.py:146
 msgid "Token was revoked."
 msgstr "Token wurde entfernt."
+
+#: ephios/api/filters.py:23 ephios/core/models/events.py:256
+msgid "start time"
+msgstr "Beginn"
+
+#: ephios/api/filters.py:24 ephios/core/models/events.py:257
+msgid "end time"
+msgstr "Ende"
+
+#: ephios/api/filters.py:29
+msgid ""
+"start time greater than equals (deprecated, use start_time_after instead)"
+msgstr ""
+"Startzeit größer-gleich (deprecated, stattdessen start_time_after nutzen)"
+
+#: ephios/api/filters.py:34
+msgid "start time less than equals (deprecated, use start_time_before instead)"
+msgstr ""
+"Startzeit kleiner-gleich (deprecated, stattdessen start_time_before nutzen)"
+
+#: ephios/api/filters.py:40 ephios/core/models/events.py:51
+#: ephios/core/models/events.py:63 ephios/core/views/event.py:62
+msgid "event type"
+msgstr "Veranstaltungstyp"
 
 #: ephios/api/models.py:56
 msgid "Access Token"
@@ -96,7 +120,7 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: ephios/api/templates/api/access_token_list.html:7
-#: ephios/core/templates/core/settings/settings_base.html:30
+#: ephios/core/views/settings.py:43
 msgid "Integrations"
 msgstr "Integrationen"
 
@@ -118,7 +142,7 @@ msgid "Third party applications"
 msgstr "Drittanbieteranwendungen"
 
 #: ephios/api/templates/api/access_token_list.html:30
-#: ephios/core/views/settings.py:22
+#: ephios/core/views/settings.py:59
 msgid "ephios instance"
 msgstr "ephios-Instanz"
 
@@ -344,7 +368,7 @@ msgid "Edit application"
 msgstr "Anwendung bearbeiten"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:6
-#: ephios/core/views/settings.py:29
+#: ephios/core/views/settings.py:66
 msgid "App integrations"
 msgstr "App-Integrationen"
 
@@ -370,6 +394,7 @@ msgid "New Application"
 msgstr "Neue Anwendung"
 
 #: ephios/api/templates/oauth2_provider/application_list.html:20
+#: ephios/core/pdf.py:58
 #: ephios/core/templates/core/settings/settings_personal_data.html:10
 #: ephios/core/templates/core/workinghours_list.html:28
 #: ephios/plugins/complexsignup/models.py:18
@@ -575,7 +600,7 @@ msgid "Responsibles"
 msgstr "Verantwortliche"
 
 #: ephios/core/forms/events.py:166 ephios/core/models/users.py:479
-#: ephios/core/pdf.py:63 ephios/core/pdf.py:129
+#: ephios/core/pdf.py:137 ephios/core/pdf.py:183
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/templates/core/userprofile_workinghours.html:25
 #: ephios/core/views/event.py:70 ephios/core/views/event.py:79
@@ -583,7 +608,8 @@ msgstr "Verantwortliche"
 msgid "Date"
 msgstr "Datum"
 
-#: ephios/core/forms/events.py:167 ephios/core/pdf.py:70 ephios/core/pdf.py:140
+#: ephios/core/forms/events.py:167 ephios/core/pdf.py:144
+#: ephios/core/pdf.py:194
 #: ephios/core/templates/core/fragments/shift_box_small.html:18
 msgid "Meeting time"
 msgstr "Treffpunkt"
@@ -700,16 +726,15 @@ msgstr ""
 "sowie Veranstaltungstypen und Qualifikationen definieren."
 
 #: ephios/core/forms/users.py:145 ephios/core/models/users.py:234
-#: ephios/core/signals.py:207
+#: ephios/core/signals.py:226
 #: ephios/core/templates/core/userprofile_list.html:9
 #: ephios/core/templates/core/userprofile_list.html:15
 msgid "Users"
 msgstr "Benutzer"
 
-#: ephios/core/forms/users.py:179 ephios/core/signals.py:204
-#: ephios/core/signals.py:211 ephios/core/signals.py:223
-#: ephios/core/templates/core/settings/settings_base.html:33
-#: ephios/plugins/complexsignup/signals.py:28
+#: ephios/core/forms/users.py:179 ephios/core/signals.py:223
+#: ephios/core/signals.py:230 ephios/core/signals.py:242
+#: ephios/core/views/settings.py:21 ephios/plugins/complexsignup/signals.py:28
 #: ephios/plugins/files/signals.py:19
 #: ephios/plugins/simpleresource/signals.py:33
 msgid "Management"
@@ -731,7 +756,7 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:246 ephios/core/signals.py:219
+#: ephios/core/forms/users.py:246 ephios/core/signals.py:238
 #: ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11
 #: ephios/core/templates/core/settings/settings_personal_data.html:21
@@ -844,11 +869,6 @@ msgstr "Titel"
 msgid "color"
 msgstr "Farbe"
 
-#: ephios/core/models/events.py:51 ephios/core/models/events.py:63
-#: ephios/core/views/event.py:62
-msgid "event type"
-msgstr "Veranstaltungstyp"
-
 #: ephios/core/models/events.py:52
 msgid "event types"
 msgstr "Veranstaltungstypen"
@@ -924,14 +944,6 @@ msgstr "abgeschlossen"
 #: ephios/core/models/events.py:255
 msgid "meeting time"
 msgstr "Treffpunkt"
-
-#: ephios/core/models/events.py:256
-msgid "start time"
-msgstr "Beginn"
-
-#: ephios/core/models/events.py:257
-msgid "end time"
-msgstr "Ende"
 
 #: ephios/core/models/events.py:259
 msgid "signup flow"
@@ -1131,11 +1143,11 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: ephios/core/models/users.py:483 ephios/core/models/users.py:484
-#: ephios/core/signals.py:200
+#: ephios/core/signals.py:219
 #: ephios/core/templates/core/userprofile_list.html:95
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/templates/base.html:126
+#: ephios/templates/base.html:136
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
@@ -1296,17 +1308,25 @@ msgstr ""
 msgid "Identity provider {label}"
 msgstr "Identitätsprovider {label}"
 
-#: ephios/core/pdf.py:61 ephios/core/pdf.py:128
+#: ephios/core/pdf.py:59
+#: ephios/core/templates/core/settings/settings_personal_data.html:31
+#: ephios/core/templates/core/userprofile_form.html:48
+#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/configuration_form.html:13
+#: ephios/plugins/qualification_management/signals.py:17
+msgid "Qualifications"
+msgstr "Qualifikationen"
+
+#: ephios/core/pdf.py:135 ephios/core/pdf.py:182
 #: ephios/core/templates/core/mails/new_event.html:28
 #: ephios/core/templates/core/shift_form.html:100
 msgid "Location"
 msgstr "Ort"
 
-#: ephios/core/pdf.py:67
+#: ephios/core/pdf.py:141
 msgid "Time"
 msgstr "Zeit"
 
-#: ephios/core/pdf.py:84 ephios/core/pdf.py:148
+#: ephios/core/pdf.py:156 ephios/core/pdf.py:200
 msgid "Participants"
 msgstr "Teilnehmende"
 
@@ -1916,7 +1936,7 @@ msgstr "Weiter"
 
 #: ephios/core/templates/core/event_list.html:11
 #: ephios/core/templates/core/event_list.html:22 ephios/core/views/pwa.py:30
-#: ephios/templates/base.html:94
+#: ephios/templates/base.html:96
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -2111,7 +2131,7 @@ msgstr "Benutzer bearbeiten"
 msgid "change permissions"
 msgstr "Berechtigungen ändern"
 
-#: ephios/core/templates/core/home.html:11 ephios/templates/base.html:90
+#: ephios/core/templates/core/home.html:11 ephios/templates/base.html:92
 msgid "Home"
 msgstr "Startseite"
 
@@ -2191,7 +2211,7 @@ msgid "Edit identity provider"
 msgstr "Identitätsprovider bearbeiten"
 
 #: ephios/core/templates/core/identityprovider_list.html:5
-#: ephios/core/views/settings.py:36
+#: ephios/core/views/settings.py:73
 msgid "Identity providers"
 msgstr "Identitätsprovider"
 
@@ -2240,8 +2260,8 @@ msgstr "oder"
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: ephios/core/templates/core/mails/base.html:150
-#: ephios/templates/base.html:169
+#: ephios/core/templates/core/mails/base.html:152
+#: ephios/templates/base.html:179
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2280,9 +2300,8 @@ msgid "View other notifications"
 msgstr "Andere Benachrichtigungen anzeigen"
 
 #: ephios/core/templates/core/notification_list.html:7
-#: ephios/core/templates/core/settings/settings_base.html:21
 #: ephios/core/templates/core/settings/settings_notifications.html:12
-#: ephios/templates/base.html:128
+#: ephios/core/views/settings.py:33 ephios/templates/base.html:138
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2303,7 +2322,7 @@ msgstr[0] "%(count)s Element"
 msgstr[1] "%(count)s Elemente"
 
 #: ephios/core/templates/core/settings/password_change_form.html:6
-#: ephios/core/templates/core/settings/settings_base.html:27
+#: ephios/core/views/settings.py:51
 msgid "Change password"
 msgstr "Passwort ändern"
 
@@ -2311,23 +2330,14 @@ msgstr "Passwort ändern"
 msgid "Submit"
 msgstr "Absenden"
 
-#: ephios/core/templates/core/settings/settings_base.html:7
-#: ephios/core/templates/core/settings/settings_base.html:12
-#: ephios/templates/base.html:130
+#: ephios/core/templates/core/settings/settings_base.html:6
+#: ephios/core/templates/core/settings/settings_base.html:11
+#: ephios/templates/base.html:140
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ephios/core/templates/core/settings/settings_base.html:17
-msgid "Personal"
-msgstr "Persönlich"
-
-#: ephios/core/templates/core/settings/settings_base.html:19
-#: ephios/core/templates/core/settings/settings_personal_data.html:8
-msgid "Personal data"
-msgstr "Persönliche Daten"
-
-#: ephios/core/templates/core/settings/settings_base.html:23
 #: ephios/core/templates/core/settings/settings_calendar.html:8
+#: ephios/core/views/settings.py:38
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -2390,6 +2400,11 @@ msgstr ""
 "Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
 "möchten:"
 
+#: ephios/core/templates/core/settings/settings_personal_data.html:8
+#: ephios/core/views/settings.py:28
+msgid "Personal data"
+msgstr "Persönliche Daten"
+
 #: ephios/core/templates/core/settings/settings_personal_data.html:12
 msgid "E-Mail address"
 msgstr "E-Mail-Adresse"
@@ -2405,13 +2420,6 @@ msgstr "Telefonnummer"
 #: ephios/core/templates/core/settings/settings_personal_data.html:26
 msgid "You are not a member of any group."
 msgstr "Sie sind in keiner Gruppe Mitglied."
-
-#: ephios/core/templates/core/settings/settings_personal_data.html:31
-#: ephios/core/templates/core/userprofile_form.html:48
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/configuration_form.html:13
-#: ephios/plugins/qualification_management/signals.py:16
-msgid "Qualifications"
-msgstr "Qualifikationen"
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:37
 msgid "until"
@@ -2724,27 +2732,27 @@ msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
 
-#: ephios/core/views/auth.py:53
+#: ephios/core/views/auth.py:54
 msgid "Authentication failed."
 msgstr "Anmeldung fehlgeschlagen."
 
-#: ephios/core/views/auth.py:102
+#: ephios/core/views/auth.py:103
 #: ephios/templates/registration/logged_out.html:9
 msgid "Logged out successfully."
 msgstr "Erfolgreich abgemeldet."
 
-#: ephios/core/views/auth.py:150 ephios/core/views/auth.py:199
+#: ephios/core/views/auth.py:155 ephios/core/views/auth.py:204
 msgid "Identity provider saved."
 msgstr "Identitätsprovider gespeichert."
 
-#: ephios/core/views/auth.py:170
+#: ephios/core/views/auth.py:175
 msgid ""
 "Successfully fetched OIDC configuration. Please fill in the remaining fields."
 msgstr ""
 "OIDC-Konfiguration erfolgreich geladen. Bitte füllen Sie die restlichen "
 "Felder aus."
 
-#: ephios/core/views/auth.py:177
+#: ephios/core/views/auth.py:182
 msgid ""
 "Could not fetch OIDC configuration from the given URL. Please configure the "
 "client manually below."
@@ -2834,19 +2842,23 @@ msgstr "Inhalte"
 msgid "Show the event list"
 msgstr "Zeig die Veranstaltungsliste"
 
-#: ephios/core/views/settings.py:44
+#: ephios/core/views/settings.py:20
+msgid "Personal"
+msgstr "Persönlich"
+
+#: ephios/core/views/settings.py:81
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/views/settings.py:56
+#: ephios/core/views/settings.py:96
 msgid "Settings saved successfully."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:98
+#: ephios/core/views/settings.py:138
 msgid "Settings succesfully saved."
 msgstr "Einstellungen erfolgreich gespeichert."
 
-#: ephios/core/views/settings.py:114
+#: ephios/core/views/settings.py:154
 msgid "Password changed successfully."
 msgstr "Passwort erfolgreich geändert."
 
@@ -2975,7 +2987,7 @@ msgstr "Maximale Anzahl von Teilnehmenden"
 
 #: ephios/plugins/baseshiftstructures/structure/common.py:107
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:272
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:86
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:88
 #: ephios/plugins/complexsignup/structure.py:278
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
@@ -3082,19 +3094,19 @@ msgstr "Alle Teams, für die Sie qualifiziert sind, sind voll."
 msgid "unassigned"
 msgstr "nicht zugeteilt"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:30
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:31
 msgid "Qualification Requirements"
 msgstr "Erforderliche Qualifikationen"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:47
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:48
 msgid "unknown"
 msgstr "Unbekannt"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:54
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:55
 msgid "Qualification mix"
 msgstr "Verschiedene Qualifikationen"
 
-#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:55
+#: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:56
 msgid "Require varying counts of different qualifications."
 msgstr ""
 "Fordern Sie unterschiedliche Anzahlen verschiedener Qualifikationen an."
@@ -3496,11 +3508,11 @@ msgstr "Duplizieren"
 msgid "Failed to save building blocks."
 msgstr "Blöcke konnten nicht gespeichert werden."
 
-#: ephios/plugins/complexsignup/views.py:66
+#: ephios/plugins/complexsignup/views.py:65
 msgid "Saved blocks."
 msgstr "Blöcke gespeichert."
 
-#: ephios/plugins/complexsignup/views.py:70
+#: ephios/plugins/complexsignup/views.py:69
 msgid "There were errors in the form."
 msgstr "Das Formular enthält Fehler."
 
@@ -3557,7 +3569,7 @@ msgstr ""
 "Sie haben nicht die Berechtigung, Qualifikationen zu erteilen, sodass Sie "
 "diese Einstellungen nicht bearbeiten können."
 
-#: ephios/plugins/federation/apps.py:10 ephios/plugins/federation/signals.py:60
+#: ephios/plugins/federation/apps.py:10 ephios/plugins/federation/signals.py:61
 msgid "Federation"
 msgstr "Föderation"
 
@@ -3675,7 +3687,7 @@ msgstr "Föderierte Teilnahme"
 msgid "federated participations"
 msgstr "Föderierte Teilnahmen"
 
-#: ephios/plugins/federation/signals.py:21
+#: ephios/plugins/federation/signals.py:22
 #: ephios/plugins/federation/templates/federation/external_event_list.html:6
 #: ephios/plugins/federation/templates/federation/external_event_list.html:24
 msgid "External events"
@@ -4081,15 +4093,15 @@ msgstr "In der Fußzeile anzeigen"
 msgid "Publicly visible"
 msgstr "Öffentlich sichtbar"
 
-#: ephios/plugins/pages/signals.py:30
+#: ephios/plugins/pages/signals.py:27
 msgid "Pages"
 msgstr "Seiten"
 
-#: ephios/plugins/pages/signals.py:49
+#: ephios/plugins/pages/signals.py:47
 msgid "Manage pages"
 msgstr "Seiten verwalten"
 
-#: ephios/plugins/pages/signals.py:50
+#: ephios/plugins/pages/signals.py:48
 msgid "Allows to create, edit and delete pages."
 msgstr "Darf Seiten erstellen, bearbeiten und löschen."
 
@@ -4410,35 +4422,35 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:219
+#: ephios/settings.py:220
 msgid "German"
 msgstr "Deutsch"
 
-#: ephios/settings.py:220
+#: ephios/settings.py:221
 msgid "English"
 msgstr "Englisch"
 
-#: ephios/settings.py:468
+#: ephios/settings.py:469
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:469
+#: ephios/settings.py:470
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:470
+#: ephios/settings.py:471
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:471
+#: ephios/settings.py:472
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:473
+#: ephios/settings.py:474
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:476
+#: ephios/settings.py:477
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -4471,7 +4483,7 @@ msgstr "Seite nicht gefunden"
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: ephios/templates/base.html:132
+#: ephios/templates/base.html:142
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -4532,6 +4544,11 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#, fuzzy
+#~| msgid "Qualification"
+#~ msgid "Qualifikationen"
+#~ msgstr "Qualifikation"
 
 #~ msgid "Disk space check not available."
 #~ msgstr "Speicherplatz-Check nicht verfügbar."

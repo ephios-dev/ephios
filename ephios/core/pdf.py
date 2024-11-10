@@ -56,7 +56,7 @@ class EventExport(BasePDFExporter):
         rows = [
             [
                 _("Name"),
-                _("Qualifikationen"),
+                _("Qualifications"),
                 _("Description"),
             ]
         ]
