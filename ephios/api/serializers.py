@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import BooleanField, SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 
@@ -130,6 +130,7 @@ class ParticipantSerializer(serializers.Serializer):
     email = serializers.EmailField(allow_null=True)
     date_of_birth = serializers.DateField()
     age = serializers.IntegerField(source="get_age")
+    is_minor = BooleanField()
     type = serializers.SerializerMethodField()
     qualifications = QualificationSerializer(many=True)
 
@@ -144,7 +145,7 @@ class ParticipantSerializer(serializers.Serializer):
         raise MethodNotAllowed("create")
 
 
-class AbstractParticipationSerializer(ModelSerializer):
+class UserinfoParticipationSerializer(ModelSerializer):
     state = ChoiceDisplayField(choices=AbstractParticipation.States.choices)
     duration = serializers.SerializerMethodField()
     event_title = serializers.CharField(source="shift.event.title")
@@ -178,3 +179,16 @@ class AbstractParticipationSerializer(ModelSerializer):
             "user",
             "participant",
         ]
+
+
+class ParticipationSerializer(UserinfoParticipationSerializer):
+    """
+    redact confidential fields
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        del self.fields["comment"]
+        participant_field = self.fields["participant"]
+        for field_name in ["email", "age", "date_of_birth"]:
+            del participant_field.fields[field_name]

@@ -1,5 +1,6 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 from django_filters import FilterSet, IsoDateTimeFilter, ModelMultipleChoiceFilter
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.filters import BaseFilterBackend
@@ -9,8 +10,28 @@ from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 
 class ParticipationPermissionFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        events = get_objects_for_user(request.user, "core.view_event")
-        return queryset.filter(shift__event__in=events)
+        # to view public participation information (excl. email) you need to
+        # be able to see the event
+        viewable_events = get_objects_for_user(request.user, "core.view_event")
+        return queryset.filter(shift__event__in=viewable_events)
+
+
+class UserinfoParticipationPermissionFilter(ParticipationPermissionFilter):
+    def filter_queryset(self, request, queryset, view):
+        # to also see user info of participations (incl. email) you need to
+        # * see the event AND
+        # * ANY of
+        #   * has view_userprofile permission
+        #   * can view user object
+        #   * refers to request.user
+        qs = super().filter_queryset(request, queryset, view)
+        if not request.user.has_perm("core.view_userprofile"):
+            viewable_users = get_objects_for_user(request.user, "core.view_userprofile")
+            qs = qs.filter(
+                Q(LocalParticipation___user=request.user)
+                | Q(LocalParticipation___user__in=viewable_users)
+            )
+        return qs
 
 
 class ShiftPermissionFilter(BaseFilterBackend):

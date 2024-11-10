@@ -7,9 +7,17 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
-from ephios.api.filters import AbstractParticipationFilterSet, ParticipationPermissionFilter
-from ephios.api.permissions import ParticipationPermissions, ViewPermissions
-from ephios.api.serializers import AbstractParticipationSerializer, UserProfileSerializer
+from ephios.api.filters import (
+    ParticipationFilterSet,
+    ParticipationPermissionFilter,
+    UserinfoParticipationPermissionFilter,
+)
+from ephios.api.permissions import ViewObjectPermissions, ViewPermissions
+from ephios.api.serializers import (
+    ParticipationSerializer,
+    UserinfoParticipationSerializer,
+    UserProfileSerializer,
+)
 from ephios.core.models import LocalParticipation, UserProfile
 
 
@@ -25,10 +33,23 @@ class UserProfileMeView(RetrieveAPIView):
         return self.request.user
 
 
+class OwnParticipationsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserinfoParticipationSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
+    filter_backends = [UserinfoParticipationPermissionFilter, DjangoFilterBackend]
+    filterset_class = ParticipationFilterSet
+    required_scopes = ["ME_READ"]
+
+    def get_queryset(self):
+        return LocalParticipation.objects.filter(user=self.request.user).select_related(
+            "shift", "shift__event", "shift__event__type"
+        )
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
-    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewPermissions]
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
     required_scopes = ["CONFIDENTIAL_READ"]
     search_fields = ["display_name", "email"]
 
@@ -49,10 +70,10 @@ class UserByMailView(RetrieveModelMixin, GenericViewSet):
 
 
 class UserParticipationView(viewsets.ReadOnlyModelViewSet):
-    serializer_class = AbstractParticipationSerializer
-    permission_classes = [ParticipationPermissions, IsAuthenticatedOrTokenHasScope]
+    serializer_class = ParticipationSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
     filter_backends = [ParticipationPermissionFilter, DjangoFilterBackend]
-    filterset_class = AbstractParticipationFilterSet
+    filterset_class = ParticipationFilterSet
     required_scopes = ["CONFIDENTIAL_READ"]
 
     def get_queryset(self):
