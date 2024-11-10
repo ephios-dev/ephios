@@ -7,14 +7,20 @@ from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework_guardian import filters as guardian_filters
 
 from ephios.api.filters import (
-    AbstractParticipationFilterSet,
     EventFilterSet,
+    ParticipationFilterSet,
     ParticipationPermissionFilter,
     ShiftPermissionFilter,
     StartEndTimeFilterSet,
+    UserinfoParticipationPermissionFilter,
 )
-from ephios.api.permissions import ParticipationPermissions
-from ephios.api.serializers import AbstractParticipationSerializer, EventSerializer, ShiftSerializer
+from ephios.api.permissions import ViewUserModelObjectPermissions
+from ephios.api.serializers import (
+    EventSerializer,
+    ParticipationSerializer,
+    ShiftSerializer,
+    UserinfoParticipationSerializer,
+)
 from ephios.core.models import AbstractParticipation, Event, Shift
 
 
@@ -61,15 +67,35 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     )
 
 
-class ParticipationViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = AbstractParticipationSerializer
-    permission_classes = [ParticipationPermissions, IsAuthenticatedOrTokenHasScope]
-    filter_backends = [ParticipationPermissionFilter, DjangoFilterBackend]
-    filterset_class = AbstractParticipationFilterSet
+class UserinfoParticipationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserinfoParticipationSerializer
+    permission_classes = [ViewUserModelObjectPermissions, IsAuthenticatedOrTokenHasScope]
+    filter_backends = [UserinfoParticipationPermissionFilter, DjangoFilterBackend]
+    filterset_class = ParticipationFilterSet
     required_scopes = ["CONFIDENTIAL_READ"]
 
     queryset = (
         AbstractParticipation.objects.all()
+        .select_related("shift", "shift__event", "shift__event__type")
+        .order_by("id")
+    )
+
+
+class ParticipationViewSet(UserinfoParticipationViewSet):
+    """
+    Remove information that would not be visible in the web version,
+    i.e. no email and date of birth of participants
+    """
+
+    serializer_class = ParticipationSerializer
+    filter_backends = [ParticipationPermissionFilter, DjangoFilterBackend]
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
+    required_scopes = ["CONFIDENTIAL_READ"]
+
+    queryset = (
+        AbstractParticipation.objects.filter(
+            state__in=AbstractParticipation.States.REQUESTED_AND_CONFIRMED
+        )
         .select_related("shift", "shift__event", "shift__event__type")
         .order_by("id")
     )
