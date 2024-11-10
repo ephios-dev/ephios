@@ -1,5 +1,5 @@
 import uuid
-from collections import Counter
+from collections import Counter, defaultdict
 from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
@@ -371,15 +371,20 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     def get_list_export_data(self):
         export_data = []
         team_by_uuid = {team["uuid"]: team for team in self.configuration.teams}
+
+        participants_by_team_uuid = defaultdict(list)
+        for p in self.shift.participations.all():
+            participant_team_uuid = self._choose_team_for_participation(p)
+            participants_by_team_uuid[
+                participant_team_uuid or NamedTeamsShiftStructure.NO_TEAM_UUID
+            ].append(p)
+
         for team_uuid, team in team_by_uuid.items():
             missing_count = team["min_count"]
             team_qualifications = (
                 Qualification.objects.filter(id=team["qualification"]) if team else []
             )
-            for p in self.shift.participations.all():
-                participants_team_uuid = self._choose_team_for_participation(p)
-                if participants_team_uuid != team_uuid:
-                    continue
+            for p in participants_by_team_uuid[team_uuid]:
                 if p.state in AbstractParticipation.States.REQUESTED_AND_CONFIRMED:
                     missing_count -= 1
                 export_data.append(
@@ -400,15 +405,13 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 )
 
         # unassigned participations
-        for p in self.shift.participations.all():
-            participants_team_uuid = self._choose_team_for_participation(p)
-            if participants_team_uuid not in team_by_uuid.keys():
-                export_data.append(
-                    {
-                        "participation": p,
-                        "required_qualifications": [],
-                        "description": "",
-                    }
-                )
+        for p in participants_by_team_uuid[NamedTeamsShiftStructure.NO_TEAM_UUID]:
+            export_data.append(
+                {
+                    "participation": p,
+                    "required_qualifications": [],
+                    "description": "",
+                }
+            )
 
         return export_data

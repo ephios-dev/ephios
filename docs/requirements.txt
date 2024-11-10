@@ -1,7 +1,7 @@
 sphinx-github-changelog
 sphinx-notfound-page>=1.0.0rc1
 sphinx-rtd-theme
-
+sphinxcontrib-openapi
 # No module named 'inflection'
 # https://github.com/encode/django-rest-framework/discussions/9288
 inflection
