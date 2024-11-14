@@ -45,7 +45,7 @@ class OwnParticipationsViewSet(viewsets.ReadOnlyModelViewSet):
     required_scopes = ["ME_READ"]
 
     def get_queryset(self):
-        return LocalParticipation.objects.filter(user=self.request.user).select_related(
+        return LocalParticipation.objects.filter(user_id=self.request.user.id).select_related(
             "shift", "shift__event", "shift__event__type"
         )
 
