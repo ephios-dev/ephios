@@ -1,5 +1,4 @@
 from django.urls import reverse
-from guardian.shortcuts import remove_perm
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
 
@@ -39,27 +38,14 @@ def test_user_participation_list_permissions(
     )
     response = django_app.get(
         reverse("api:user-participations-list", kwargs=dict(user=volunteer.pk)),
-        user=planner,
+        user=manager,
         status=200,
     )
     assert event.title in response
-
-    # make event invisible to volunteers
-    _, planners, volunteers = groups
-    remove_perm("view_event", planners, event)
-    remove_perm("view_event", volunteers, event)
-    remove_perm("view_event", planner, event)
-
-    response = django_app.get(
+    django_app.get(
         reverse("api:user-participations-list", kwargs=dict(user=volunteer.pk)),
         user=planner,
-        status=200,
-    )
-    assert event.title not in response
-    assert event.title in django_app.get(
-        reverse("api:user-participations-list", kwargs=dict(user=volunteer.pk)),
-        user=manager,
-        status=200,
+        status=403,
     )
 
 
@@ -71,14 +57,14 @@ def test_user_participation_list_filter(
     )
     response = django_app.get(
         reverse("api:user-participations-list", kwargs=dict(user=volunteer.pk)),
-        user=planner,
+        user=manager,
         status=200,
     )
     assert event.title in response
 
     response = django_app.get(
         f"{reverse('api:user-participations-list', kwargs=dict(user=volunteer.pk))}?event_type={training_event_type.pk}",
-        user=planner,
+        user=manager,
         status=200,
     )
     assert event.title not in response
