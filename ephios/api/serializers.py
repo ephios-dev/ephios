@@ -1,5 +1,8 @@
+import uuid
+
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.fields import BooleanField, SerializerMethodField
@@ -21,7 +24,7 @@ from ephios.core.templatetags.settings_extras import make_absolute
 
 class QualificationSerializer(ModelSerializer):
     category = SlugRelatedField(slug_field="uuid", read_only=True)
-    includes = SerializerMethodField()
+    includes = SerializerMethodField(label="Includes")
 
     class Meta:
         model = Qualification
@@ -33,7 +36,7 @@ class QualificationSerializer(ModelSerializer):
             "includes",
         ]
 
-    def get_includes(self, obj):
+    def get_includes(self, obj) -> list[uuid.UUID]:
         return [q.uuid for q in collect_all_included_qualifications(obj.includes.all())]
 
 
@@ -81,9 +84,9 @@ class EventSerializer(serializers.ModelSerializer):
     end_time = serializers.DateTimeField(source="get_end_time")
     signup_stats = SignupStatsSerializer(source="get_signup_stats")
     shifts = ShiftSerializer(many=True)
-    frontend_url = serializers.SerializerMethodField()
+    frontend_url = serializers.SerializerMethodField(label=_("Frontend URL"))
 
-    def get_frontend_url(self, obj):
+    def get_frontend_url(self, obj) -> str:
         return make_absolute(obj.get_absolute_url())
 
     class Meta:
@@ -103,7 +106,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(ModelSerializer):
-    qualifications = SerializerMethodField()
+    qualifications = SerializerMethodField(label="Qualifications")
 
     class Meta:
         model = UserProfile
@@ -115,7 +118,7 @@ class UserProfileSerializer(ModelSerializer):
             "qualifications",
         ]
 
-    def get_qualifications(self, obj):
+    def get_qualifications(self, obj) -> list:
         return QualificationSerializer(
             Qualification.objects.filter(
                 Q(grants__user=obj)
@@ -125,16 +128,13 @@ class UserProfileSerializer(ModelSerializer):
         ).data
 
 
-class ParticipantSerializer(serializers.Serializer):
+class PublicParticipantSerializer(serializers.Serializer):
     display_name = serializers.CharField()
-    email = serializers.EmailField(allow_null=True)
-    date_of_birth = serializers.DateField()
-    age = serializers.IntegerField(source="get_age")
     is_minor = BooleanField()
-    type = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField(label=_("Participation type"))
     qualifications = QualificationSerializer(many=True)
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
         """return class name of dataclass"""
         return obj.__class__.__name__
 
@@ -145,21 +145,29 @@ class ParticipantSerializer(serializers.Serializer):
         raise MethodNotAllowed("create")
 
 
+class ConfidentialParticipantSerializer(PublicParticipantSerializer):
+    email = serializers.EmailField(allow_null=True)
+    date_of_birth = serializers.DateField()
+    age = serializers.IntegerField(source="get_age")
+
+
 class UserinfoParticipationSerializer(ModelSerializer):
     state = ChoiceDisplayField(choices=AbstractParticipation.States.choices)
-    duration = serializers.SerializerMethodField()
+    duration = serializers.SerializerMethodField(label=_("Duration in seconds"))
+    start_time = serializers.DateTimeField(label=_("Start time"))
+    end_time = serializers.DateTimeField(label=_("End time"))
     event_title = serializers.CharField(source="shift.event.title")
     event_type = EventTypeSerializer(source="shift.event.type")
     event = serializers.PrimaryKeyRelatedField(source="shift.event", read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True, allow_null=True)
-    participant = ParticipantSerializer(read_only=True)
+    participant = ConfidentialParticipantSerializer(read_only=True)
 
     def build_unknown_field(self, field_name, model_class):
         if field_name in {"start_time", "end_time"}:
             return self.build_property_field(field_name, model_class)
         return super().build_unknown_field(field_name, model_class)
 
-    def get_duration(self, obj):
+    def get_duration(self, obj) -> float:
         return (obj.end_time - obj.start_time).total_seconds()
 
     class Meta:
@@ -186,9 +194,8 @@ class ParticipationSerializer(UserinfoParticipationSerializer):
     redact confidential fields
     """
 
+    participant = PublicParticipantSerializer(read_only=True)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         del self.fields["comment"]
-        participant_field = self.fields["participant"]
-        for field_name in ["email", "age", "date_of_birth"]:
-            del participant_field.fields[field_name]

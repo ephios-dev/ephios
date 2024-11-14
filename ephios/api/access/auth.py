@@ -1,7 +1,22 @@
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from drf_spectacular.plumbing import build_bearer_security_scheme_object
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 
 from ephios.api.models import AccessToken
 from ephios.core.models import UserProfile
+
+
+class TokenScheme(OpenApiAuthenticationExtension):
+    target_class = "ephios.api.access.auth.CustomOAuth2Authentication"
+    name = "tokenAuth"
+    match_subclasses = True
+    priority = 1
+
+    def get_security_definition(self, auto_schema):
+        return build_bearer_security_scheme_object(
+            header_name="Authorization",
+            token_prefix="Bearer",
+        )
 
 
 class CustomOAuth2Authentication(OAuth2Authentication):
