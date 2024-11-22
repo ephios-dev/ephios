@@ -55,7 +55,7 @@ pyjwt = "^2.8.0"
 scipy = "^1.12.0"
 black = "^24.10.0"
 drf-spectacular = {extras = ["sidecar"], version = "^0.27.2"}
-python-dateutil = "^2.9.0.post0"
+python-dateutil = {git = "https://github.com/jeriox/dateutil", rev = "rdate-params"}
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
