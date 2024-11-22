@@ -249,9 +249,19 @@ class ShiftForm(forms.ModelForm):
 class EventCopyForm(forms.Form):
     recurrence = RecurrenceField()
 
+    def __init__(self, *args, **kwargs):
+        original_start = kwargs.pop("original_start", None)
+        super().__init__(*args, **kwargs)
+        self.fields["recurrence"].widget.original_start = original_start
+
 
 class ShiftCopyForm(forms.Form):
     recurrence = RecurrenceField(pick_hour=True)
+
+    def __init__(self, *args, **kwargs):
+        original_start = kwargs.pop("original_start", None)
+        super().__init__(*args, **kwargs)
+        self.fields["recurrence"].widget.original_start = original_start
 
 
 class EventTypeForm(forms.ModelForm):

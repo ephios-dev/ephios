@@ -2,6 +2,7 @@
 {% load static %}
 
 <input type="hidden" autocomplete="off" id="pick_hour" value="{{ widget.pick_hour|lower }}">
+<input type="hidden" autocomplete="off" id="original_start" value="{{ widget.original_start }}">
 <div id="vue_app" class="row mt-4">
     <div id="chooser" class="col-12 col-md-6 mb-2">
         <div class="input-group pb-4">
@@ -79,11 +80,11 @@
                         <div class="col-3">
                             <select class="form-select" v-model="rule.bysetpos"
                                     :required="rule.month_mode=='bysetpos'" @focus="rule.month_mode='bysetpos'">
-                                <option value="1">{% translate "First" %}</option>
-                                <option value="2">{% translate "Second" %}</option>
-                                <option value="3">{% translate "Third" %}</option>
-                                <option value="4">{% translate "Fourth" %}</option>
-                                <option value="-1">{% translate "Last" %}</option>
+                                <option :value="1">{% translate "First" %}</option>
+                                <option :value="2">{% translate "Second" %}</option>
+                                <option :value="3">{% translate "Third" %}</option>
+                                <option :value="4">{% translate "Fourth" %}</option>
+                                <option :value="-1">{% translate "Last" %}</option>
                             </select>
                         </div>
                         <div class="col-3">
@@ -174,13 +175,13 @@
                         <span class="col-2">
                             {% translate "for" %}
                         </span>
-                        <div class="col-5 col-md-7">
-                            <input type="text" class="form-control form-control-sm flex-fill"
+                        <div class="col-4 col-md-6">
+                            <input type="number" min="1" class="form-control form-control-sm flex-fill"
                                    v-model="rule.count" @focus="rule.end_mode='COUNT'"
                                    :required="rule.end_mode=='COUNT'">
                         </div>
-                        <span class="col-4 col-md-2">
-                            {% translate "ocurrences" %}
+                        <span class="col-5 col-md-3">
+                            {% translate "occurrences" %}
                         </span>
                     </div>
                 </div>
@@ -217,12 +218,15 @@
                id="id_recurrence">
         {{ csrf_token }}
     </div>
-    <div class="col-12 col-md-6" v-if="computed_dates.length > 0">
-        <h3>{% translate "Selected dates:" %}</h3>
-        <div class="two-columns">
+    <div class="col-12 col-md-6">
+        <h3>{% translate "Selected dates" %}:</h3>
+        <div class="two-columns" v-if="computed_dates.length > 0">
             <ul>
                 <li v-for="date in computed_dates">[[ date ]]</li>
             </ul>
+        </div>
+        <div v-else>
+            <p>{% translate "No dates selected yet. Add dates and rules using the controls on the left." %}</p>
         </div>
     </div>
 </div>

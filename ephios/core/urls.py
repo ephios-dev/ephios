@@ -43,7 +43,6 @@ from ephios.core.views.event import (
     EventNotificationView,
     EventUpdateView,
     HomeView,
-    ShiftCopyView,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -68,6 +67,7 @@ from ephios.core.views.settings import (
     PersonalDataSettingsView,
 )
 from ephios.core.views.shift import (
+    ShiftCopyView,
     ShiftCreateView,
     ShiftDeleteView,
     ShiftStructureConfigurationFormView,
