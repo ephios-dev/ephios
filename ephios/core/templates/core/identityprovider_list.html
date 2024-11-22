@@ -20,7 +20,7 @@
         <tbody>
             {% for provider in identityprovider_list %}
                 <tr>
-                    <td class="break-word">{{ provider.label }}</td>
+                    <td class="break-word">{{ provider.internal_name }} ({{ provider.label }})</td>
                     <td class="d-flex">
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "core:settings_idp_edit" provider.pk %}"><span

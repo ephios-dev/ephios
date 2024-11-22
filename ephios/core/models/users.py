@@ -551,6 +551,12 @@ class Notification(Model):
 
 
 class IdentityProvider(Model):
+    internal_name = models.CharField(
+        max_length=255,
+        verbose_name=_("internal name"),
+        help_text=_("Internal name for this provider."),
+        unique=True,
+    )
     label = models.CharField(
         max_length=255,
         verbose_name=_("label"),
@@ -601,15 +607,18 @@ class IdentityProvider(Model):
         Group,
         blank=True,
         verbose_name=_("default groups"),
-        help_text=_("The groups that users logging in with this provider will be added to."),
+        help_text=_(
+            "The groups that users logging in with this provider will be added to. "
+            "Only takes effect if you don't use a group claim."
+        ),
     )
     group_claim = models.CharField(
         max_length=254,
         blank=True,
-        null=True,
         verbose_name=_("group claim"),
         help_text=_(
-            "The name of the claim that contains the user's groups. Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+            "The name of the claim that contains the user's groups. "
+            "Leave empty if your provider does not support this. You can use dot notation to access nested claims."
         ),
     )
     create_missing_groups = models.BooleanField(
@@ -618,6 +627,23 @@ class IdentityProvider(Model):
         help_text=_(
             "If enabled, groups from the claim defined above that do not exist yet will be created automatically."
         ),
+    )
+    qualification_claim = models.CharField(
+        max_length=254,
+        blank=True,
+        verbose_name=_("qualification claim"),
+        help_text=_(
+            "The name of the claim that contains the user's qualifications. "
+            "Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+        ),
+    )
+    qualification_codename_to_uuid = models.JSONField(
+        verbose_name=_("qualification codename to uuid"),
+        help_text=_(
+            "A json encoded dictionary containing mappings of qualification names as they appear in the"
+            "qualification claim to the qualification uuid. If a key is not found, use the key directly."
+        ),
+        default=dict,
     )
 
     def __str__(self):
