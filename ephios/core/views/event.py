@@ -1,6 +1,5 @@
 from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
-from copy import copy
 from datetime import datetime, time, timedelta
 
 from csp.decorators import csp_exempt
@@ -33,7 +32,7 @@ from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventCopyForm, EventForm, EventNotificationForm, ShiftCopyForm
+from ephios.core.forms.events import EventCopyForm, EventForm, EventNotificationForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
@@ -608,40 +607,6 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
         messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("core:event_list"))
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        return csp_exempt(super().as_view(**initkwargs))
-
-
-class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
-    permission_required = "core.change_event"
-    model = Shift
-    template_name = "core/shift_copy.html"
-    form_class = ShiftCopyForm
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.object = self.get_object()
-
-    def get_success_url(self):
-        return reverse("core:event_detail", kwargs={"pk": self.object.event.pk, "slug": "event"})
-
-    def form_valid(self, form):
-        shift = self.object
-        duration = shift.end_time - shift.start_time
-        meeting_offset = shift.start_time - shift.meeting_time
-        shifts_to_create = []
-        for dt in form.cleaned_data["recurrence"].xafter(timezone.now(), 1000, inc=True):
-            shift = copy(shift)
-            shift.pk = None
-            shift.meeting_time = dt - meeting_offset
-            shift.start_time = dt
-            shift.end_time = dt + duration
-            shifts_to_create.append(shift)
-        Shift.objects.bulk_create(shifts_to_create)
-        messages.success(self.request, _("Shift copied successfully."))
-        return super().form_valid(form)
 
     @classmethod
     def as_view(cls, **initkwargs):

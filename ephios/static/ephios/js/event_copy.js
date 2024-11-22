@@ -6,6 +6,12 @@ function formatDate(date_obj, sep = "-") {
     return date_obj.getFullYear() + sep + (month < 10 ? "0" : "") + month + sep + (day < 10 ? "0" : "") + day
 }
 
+function formatHour(date_obj, sep = ":") {
+    let hours = date_obj.getUTCHours();
+    let minutes = date_obj.getUTCMinutes();
+    return (hours < 10 ? "0" : "") + hours + sep + (minutes < 10 ? "0" : "") + minutes
+}
+
 function formatHourOrZero(time_string, pickHour=false) {
     if (time_string && pickHour) {
         return [time_string.slice(0,2), time_string.slice(3,5), 0]
@@ -17,22 +23,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
     createApp({
         setup() {
             const pickHour = JSON.parse(document.getElementById("pick_hour").value);
-            const DTSTART = ref(formatDate(new Date()))
-            const DTSTART_TIME = ref("00:00")
+            const original_start = new Date(JSON.parse(document.getElementById("original_start").value) * 1000);
+            const DTSTART = ref(formatDate(original_start))
+            const DTSTART_TIME = ref(formatHour(original_start))
             const rules = ref([])
             const dates = ref([])
             const weekdays = [gettext("Monday"), gettext("Tuesday"), gettext("Wednesday"), gettext("Thursday"), gettext("Friday"), gettext("Saturday"), gettext("Sunday")]
-            const frequency_strings = [gettext("year"), gettext("month"), gettext("week"), gettext("day")]
+            const frequency_strings = [gettext("year"), gettext("month"), gettext("week"), gettext("day"), gettext("hour")]
             const frequencies = rrule.Frequency
-            const months = [{id: 1, short: "Jan", long: "January"}, {id: 2, short: "Feb", long: "February"}, {
-                id: 3, short: "Mar", long: "March"
-            }, {id: 4, short: "Apr", long: "April"}, {id: 5, short: "May", long: "May"}, {
-                id: 6, short: "Jun", long: "June"
-            }, {id: 7, short: "Jul", long: "July"}, {id: 8, short: "Aug", long: "August"}, {
-                id: 9, short: "Sep", long: "September"
-            }, {id: 10, short: "Oct", long: "October"}, {id: 11, short: "Nov", long: "November"}, {
-                id: 12, short: "Dec", long: "December"
-            }]
+            const months = [
+                {id: 1, short: gettext("Jan"), long: gettext("January")},
+                {id: 2, short: gettext("Feb"), long: gettext("February")},
+                {id: 3, short: gettext("Mar"), long: gettext("March")},
+                {id: 4, short: gettext("Apr"), long: gettext("April")},
+                {id: 5, short: gettext("May"), long: gettext("May")},
+                {id: 6, short: gettext("Jun"), long: gettext("June")},
+                {id: 7, short: gettext("Jul"), long: gettext("July")},
+                {id: 8, short: gettext("Aug"), long: gettext("August")},
+                {id: 9, short: gettext("Sep"), long: gettext("September")},
+                {id: 10, short: gettext("Oct"), long: gettext("October")},
+                {id: 11, short: gettext("Nov"), long: gettext("November")},
+                {id: 12, short: gettext("Dec"), long: gettext("December")}
+            ]
 
             async function addRule() {
                 rules.value.push({freq: rrule.RRule.WEEKLY, interval: 1, byweekday: []})
@@ -43,7 +55,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
 
             async function addDate() {
-                dates.value.push({date: "", time: ""});
+                dates.value.push({date: formatDate(original_start), time: formatHour(original_start)});
             }
 
             async function removeDate(date) {
@@ -73,12 +85,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday)
                         break
                     case frequencies.YEARLY:
-                        isValid = isValid && (rule.year_mode === "bymonthday" && rule.bymonthday && rule.bymonth || rule.year_mode === "bysetpos" && rule.bysetpos && rule.byweekday && rule.bymonth)
+                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday && rule.bymonth || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday && rule.bymonth)
                         break
                 }
 
                 // end date set
-                isValid = isValid && (rule.end_mode === "COUNT" && rule.count || rule.end_mode === "UNTIL" && rule.until)
+                isValid = isValid && (rule.end_mode === "COUNT" && rule.count && rule.count > 0 || rule.end_mode === "UNTIL" && rule.until)
 
                 return isValid
             }

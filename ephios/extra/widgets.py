@@ -50,19 +50,21 @@ class RecurrenceWidget(Textarea):
 
     def __init__(self, *args, **kwargs):
         self.pick_hour = kwargs.pop("pick_hour", False)
+        self.original_start = kwargs.pop("original_start", None)
         super().__init__(*args, **kwargs)
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context["widget"]["pick_hour"] = self.pick_hour
+        context["widget"]["original_start"] = self.original_start
         return context
 
 
 class RecurrenceField(CharField):
     widget = RecurrenceWidget
 
-    def __init__(self, *args, pick_hour=False, **kwargs):
-        self.widget = RecurrenceWidget(pick_hour=pick_hour)
+    def __init__(self, *args, pick_hour=False, original_start=None, **kwargs):
+        self.widget = RecurrenceWidget(pick_hour=pick_hour, original_start=original_start)
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
