@@ -178,6 +178,12 @@ Receivers should return a list of tuples of the form ``(field_name, field)``. fi
 ``ephios.extra.permissions.PermissionField``.
 """
 
+oidc_update_user = PluginSignal()
+"""
+This signal is sent out to update a user when they login with oidc. Receivers receive ``user`` and ``claims``
+keyword arguments with a user object and the claims from the oidc provider.
+"""
+
 
 @receiver(
     register_consequence_handlers,

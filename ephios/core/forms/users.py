@@ -506,6 +506,7 @@ class IdentityProviderForm(ModelForm):
     class Meta:
         model = IdentityProvider
         fields = [
+            "internal_name",
             "label",
             "client_id",
             "client_secret",
@@ -513,6 +514,8 @@ class IdentityProviderForm(ModelForm):
             "default_groups",
             "group_claim",
             "create_missing_groups",
+            "qualification_claim",
+            "qualification_codename_to_uuid",
             "authorization_endpoint",
             "token_endpoint",
             "userinfo_endpoint",
@@ -521,6 +524,7 @@ class IdentityProviderForm(ModelForm):
         ]
         widgets = {
             "default_groups": Select2MultipleWidget,
+            "qualification_codename_to_uuid": forms.Textarea(attrs={"rows": 1}),
         }
 
     def __init__(self, *args, **kwargs):

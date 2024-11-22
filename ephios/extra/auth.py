@@ -1,5 +1,4 @@
 from datetime import date
-from functools import reduce
 from typing import Any, Dict
 from urllib.parse import urljoin
 
@@ -15,7 +14,10 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 from urllib3.exceptions import RequestError
 
-from ephios.core.models.users import IdentityProvider
+from ephios.core.models import Qualification
+from ephios.core.models.users import IdentityProvider, QualificationGrant
+from ephios.core.signals import oidc_update_user
+from ephios.extra.utils import dotted_get
 
 
 class EphiosOIDCAB(ModelBackend):
@@ -44,16 +46,10 @@ class EphiosOIDCAB(ModelBackend):
             except ValueError:
                 pass
         user.save()
+
         if self.provider.group_claim:
             groups = set(self.provider.default_groups.all())
-            groups_in_claims = (
-                reduce(
-                    lambda d, key: d.get(key, None) if isinstance(d, dict) else None,
-                    self.provider.group_claim.split("."),
-                    claims,
-                )
-                or []
-            )
+            groups_in_claims = dotted_get(claims, self.provider.group_claim, [])
             for group_name in groups_in_claims:
                 try:
                     groups.add(Group.objects.get(name__iexact=group_name))
@@ -61,8 +57,23 @@ class EphiosOIDCAB(ModelBackend):
                     if self.provider.create_missing_groups:
                         groups.add(Group.objects.create(name=group_name))
             user.groups.set(groups)
-        elif self.provider.default_groups.exists():
+        else:
             user.groups.add(*self.provider.default_groups.all())
+
+        if self.provider.qualification_claim:
+            for codename in dotted_get(claims, self.provider.qualification_claim, []):
+                uuid = str(self.provider.qualification_codename_to_uuid.get(codename, codename))
+                try:
+                    qualification = Qualification.objects.get(uuid=uuid)
+                except Qualification.DoesNotExist:
+                    continue
+                QualificationGrant.objects.get_or_create(
+                    defaults={"expires": None},
+                    user=user,
+                    qualification=qualification,
+                )
+
+        oidc_update_user.send(self, user=user, claims=claims, provider=self.provider)
         return user
 
     def authenticate(self, request, username=None, password=None, **kwargs):
