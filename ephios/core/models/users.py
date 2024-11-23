@@ -346,6 +346,11 @@ class QualificationGrant(Model):
         verbose_name=_("user profile"),
     )
     expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
+    externally_managed = models.BooleanField(
+        verbose_name=_("externally managed"),
+        default=False,
+        help_text=_("The qualification was granted by an external system."),
+    )
 
     objects = CustomQualificationGrantQuerySet.as_manager()
 
@@ -607,10 +612,7 @@ class IdentityProvider(Model):
         Group,
         blank=True,
         verbose_name=_("default groups"),
-        help_text=_(
-            "The groups that users logging in with this provider will be added to. "
-            "Only takes effect if you don't use a group claim."
-        ),
+        help_text=_("The groups that users logging in with this provider will be added to. "),
     )
     group_claim = models.CharField(
         max_length=254,
@@ -634,7 +636,8 @@ class IdentityProvider(Model):
         verbose_name=_("qualification claim"),
         help_text=_(
             "The name of the claim that contains the user's qualifications. "
-            "Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+            "Leave empty if your provider does not support this. You can use dot notation to access nested claims. "
+            "Granted qualifications not found in the claim will be removed from the user on login."
         ),
     )
     qualification_codename_to_uuid = models.JSONField(
