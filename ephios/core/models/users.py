@@ -612,7 +612,7 @@ class IdentityProvider(Model):
         Group,
         blank=True,
         verbose_name=_("default groups"),
-        help_text=_("The groups that users logging in with this provider will be added to. "),
+        help_text=_("The groups that users logging in with this provider will be added to."),
     )
     group_claim = models.CharField(
         max_length=254,
