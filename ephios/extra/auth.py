@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
+from django.db.transaction import atomic
 from django.urls import reverse
 from jwt import InvalidTokenError
 from oauthlib.oauth2 import WebApplicationClient
@@ -33,6 +34,7 @@ class EphiosOIDCAB(ModelBackend):
         user.set_unusable_password()
         return self.update_user(user, claims)
 
+    @atomic
     def update_user(self, user, claims):
         if "name" in claims:
             user.display_name = claims["name"]
@@ -61,14 +63,19 @@ class EphiosOIDCAB(ModelBackend):
             user.groups.add(*self.provider.default_groups.all())
 
         if self.provider.qualification_claim:
-            for codename in dotted_get(claims, self.provider.qualification_claim, []):
-                uuid = str(self.provider.qualification_codename_to_uuid.get(codename, codename))
-                try:
-                    qualification = Qualification.objects.get(uuid=uuid)
-                except Qualification.DoesNotExist:
-                    continue
+            target_qualifications = Qualification.objects.filter(
+                uuid_in=[
+                    str(self.provider.qualification_codename_to_uuid.get(codename, codename))
+                    for codename in dotted_get(claims, self.provider.qualification_claim, [])
+                ],
+            )
+            QualificationGrant.objects.filter(
+                user=user,
+                externally_managed=True,
+            ).exclude(qualification__in=target_qualifications).delete()
+            for qualification in target_qualifications:
                 QualificationGrant.objects.get_or_create(
-                    defaults={"expires": None},
+                    defaults={"expires": None, "externally_managed": True},
                     user=user,
                     qualification=qualification,
                 )

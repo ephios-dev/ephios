@@ -26,14 +26,18 @@
     {% if oidc_group_claims %}
         <div class="alert alert-warning" role="alert">
             {% blocktranslate trimmed %}
-                This ephios instance uses an identity provider that manages group memberships. Any changes to the group memberships here will be overwritten by the identity provider when a user logs in the next time using the identity provider.
+                This ephios instance uses an identity provider that manages group memberships. Any changes to the group
+                memberships here will be overwritten by the identity provider when a user logs in the next time using
+                the identity provider.
             {% endblocktranslate %}
         </div>
     {% endif %}
     {% if userprofile.email_invalid %}
         <div class="alert alert-warning" role="alert">
             {% blocktranslate trimmed %}
-                The user is inactive because their email address is invalid. This can be caused by a typo or a problem with the user's mail server. Please check the email address and correct it before activating the user again.
+                The user is inactive because their email address is invalid. This can be caused by a typo or a problem
+                with the user's mail server. Please check the email address and correct it before activating the user
+                again.
             {% endblocktranslate %}
         </div>
     {% endif %}
@@ -58,7 +62,16 @@
                                             <div class="col-md-8">
                                                 {{ form.qualification }}
                                                 {% if form.fields.qualification.disabled %}
-                                                    <span class="form-control-plaintext">{{ form.fields.qualification.title }}</span>
+                                                    <span class="form-control-plaintext">
+                                                        {{ form.fields.qualification.title }}
+                                                        {% if form.instance.externally_managed %}
+                                                            <span class="badge text-bg-danger" data-bs-toggle="tooltip"
+                                                                  data-bs-placement="bottom" data-bs-html="true"
+                                                                  title="{% translate "The qualification was granted by an external system." %}">
+                                                                {% translate "externally managed" %}
+                                                            </span>
+                                                        {% endif %}
+                                                    </span>
                                                 {% endif %}
                                             </div>
                                         </div>
