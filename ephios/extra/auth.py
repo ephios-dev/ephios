@@ -49,50 +49,50 @@ class EphiosOIDCAB(ModelBackend):
             except ValueError:
                 pass
         user.save()
-
-        if self.provider.group_claim:
-            groups = set(self.provider.default_groups.all())
-            groups_in_claims = dotted_get(claims, self.provider.group_claim, [])
-            for group_name in groups_in_claims:
-                try:
-                    groups.add(Group.objects.get(name__iexact=group_name))
-                except Group.DoesNotExist:
-                    if self.provider.create_missing_groups:
-                        groups.add(Group.objects.create(name=group_name))
-            user.groups.set(groups)
-        else:
-            user.groups.add(*self.provider.default_groups.all())
-
-        if self.provider.qualification_claim:
-            target_qualification_uuids = []
-            for codename in dotted_get(claims, self.provider.qualification_claim, []):
-                try:
-                    target_qualification_uuids.append(
-                        uuid.UUID(
-                            str(
-                                self.provider.qualification_codename_to_uuid.get(codename, codename)
-                            )
-                        )
-                    )
-                except ValueError:
-                    pass
-
-            target_qualifications = Qualification.objects.filter(
-                uuid__in=target_qualification_uuids
-            )
-            QualificationGrant.objects.filter(
-                user=user,
-                externally_managed=True,
-            ).exclude(qualification__in=target_qualifications).delete()
-            for qualification in target_qualifications:
-                QualificationGrant.objects.get_or_create(
-                    defaults={"expires": None, "externally_managed": True},
-                    user=user,
-                    qualification=qualification,
-                )
-
+        self._update_user_groups(user, claims)
+        self._update_user_qualifications(user, claims)
         oidc_update_user.send(self, user=user, claims=claims, provider=self.provider)
         return user
+
+    def _update_user_qualifications(self, user, claims):
+        if not self.provider.qualification_claim:
+            return
+        target_qualification_uuids = []
+        for codename in dotted_get(claims, self.provider.qualification_claim, []):
+            try:
+                target_qualification_uuids.append(
+                    uuid.UUID(
+                        str(self.provider.qualification_codename_to_uuid.get(codename, codename))
+                    )
+                )
+            except ValueError:
+                pass
+
+        target_qualifications = Qualification.objects.filter(uuid__in=target_qualification_uuids)
+        QualificationGrant.objects.filter(
+            user=user,
+            externally_managed=True,
+        ).exclude(qualification__in=target_qualifications).delete()
+        for qualification in target_qualifications:
+            QualificationGrant.objects.get_or_create(
+                defaults={"expires": None, "externally_managed": True},
+                user=user,
+                qualification=qualification,
+            )
+
+    def _update_user_groups(self, user, claims):
+        if not self.provider.group_claim:
+            user.groups.add(*self.provider.default_groups.all())
+            return
+        groups = set(self.provider.default_groups.all())
+        groups_in_claims = dotted_get(claims, self.provider.group_claim, [])
+        for group_name in groups_in_claims:
+            try:
+                groups.add(Group.objects.get(name__iexact=group_name))
+            except Group.DoesNotExist:
+                if self.provider.create_missing_groups:
+                    groups.add(Group.objects.create(name=group_name))
+        user.groups.set(groups)
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:

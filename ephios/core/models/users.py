@@ -647,6 +647,7 @@ class IdentityProvider(Model):
             "qualification claim to the qualification uuid. If a key is not found, use the key directly."
         ),
         default=dict,
+        blank=True,
     )
 
     def __str__(self):
