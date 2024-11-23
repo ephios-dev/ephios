@@ -24,6 +24,9 @@ client secret                  *displayed after OIDC client registration*
 Configuration
 -------------
 
+Endpoints
+^^^^^^^^^
+
 To configure your ephios instance, head to Settings -> Identity Providers and add a new OIDC provider.
 You are then asked to provide the base url of your identity provider. This is the url that is used to access the OIDC endpoints and depends on your provider.
 For example, if you are using Keycloak, this would be ``https://your-keycloak-instance.com/realms/your-realm``.
@@ -48,7 +51,10 @@ scopes                         Scopes to request from the IDP (for additional da
 end_session_endpoint           redirect the user to the logout page of the IDP      None (no redirect)
 ============================== ==================================================== ========================
 
-Apart from the values above, you can also configure the handling of groups for each identity provider.
+Groups and Qualifications
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apart from the values above, you can also configure the handling of groups and qualifications for each identity provider.
 If your identity providers supports exposing groups in the identity token, ephios can use this information to automatically assign users to groups.
 You may be required to configure your identity provider to expose the groups in the identity token, please refer to the documentation of your identity provider for more information.
 It may also be neccessary to request an additional scope from the identity provider, e.g. ``groups``. Append this scope to the ``scopes`` setting if required.
@@ -63,11 +69,16 @@ By default, any groups from the claim that do not exist in ephios will be ignore
 If your identity provider does not expose the groups in the identity token, you can still assign users to groups by using the ``default groups`` setting.
 All users that log in using this identity provider will be added to the groups listed there. Existing group memberships will not be altered.
 
+Similarly, qualifications can be assigned from a list of qualification UUIDS in a claim. If your provider cannot expose the UUIDs used in ephios, you can provide a JSON dictionary to translate the values your provider uses to the UUIDs in ephios. Only qualifications that have been added to a user by this method will be removed if they are not found in the claim at later logins.
+
+Login form
+^^^^^^^^^^
+
 If users are logged in exclusively using identity providers, you can also hide the local login form with the appropriate settings under "ephios instance".
 
 .. warning::
     ephios uses the email adress provided by the IDP to identify a user account. If the IDP allows the user to change their email adress,
-    users could enter the email adress of another user and log in as that user. To prevent this, you should configure your IDP to not allow users to change their email adress.
+    users could enter the email adress of another user and log in as that user. To prevent this, you should configure your IDP to not allow users to change their email address.
 
 Usage
 -----

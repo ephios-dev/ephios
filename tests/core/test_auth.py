@@ -6,6 +6,8 @@ from django.contrib.auth.models import Group
 from django.http import HttpRequest
 from django.urls import reverse
 
+from ephios.core.models import QualificationGrant
+
 
 @patch("ephios.extra.auth.OAuth2Session")
 @patch("ephios.extra.auth.EphiosOIDCAB.decode_jwt_token")
@@ -132,3 +134,32 @@ def test_assign_oidc_and_default_groups(oidc_client, groups, volunteer):
     backend.provider = oidc_client
     volunteer = backend.update_user(volunteer, claims)
     assert set(volunteer.groups.all()) == {managers, planners}
+
+
+def test_update_qualification_grants_from_oidc(oidc_client, volunteer, groups, qualifications):
+    from ephios.extra.auth import EphiosOIDCAB
+
+    QualificationGrant.objects.create(
+        user=volunteer,
+        qualification=qualifications.rs,
+        externally_managed=True,
+    )
+    QualificationGrant.objects.create(
+        user=volunteer,
+        qualification=qualifications.b,
+    )
+    managers, planners, volunteers = groups
+    claims = {"email": volunteer.email, "roles": [managers.name, qualifications.nfs.title]}
+    oidc_client.group_claim = "roles"
+    oidc_client.qualification_claim = "roles"
+    oidc_client.qualification_codename_to_uuid = {
+        qualifications.nfs.title: str(qualifications.nfs.uuid)
+    }
+    assert not volunteer.groups.filter(pk=managers.pk).exists()
+    backend = EphiosOIDCAB()
+    backend.provider = oidc_client
+    volunteer = backend.update_user(volunteer, claims)
+    assert set(volunteer.groups.all()) == {managers}
+    volunteer_grants = QualificationGrant.objects.filter(user=volunteer)
+    assert volunteer_grants.count() == 2
+    assert volunteer_grants.filter(qualification=qualifications.nfs).first().externally_managed

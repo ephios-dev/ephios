@@ -1,3 +1,4 @@
+import uuid
 from datetime import date
 from typing import Any, Dict
 from urllib.parse import urljoin
@@ -63,11 +64,21 @@ class EphiosOIDCAB(ModelBackend):
             user.groups.add(*self.provider.default_groups.all())
 
         if self.provider.qualification_claim:
+            target_qualification_uuids = []
+            for codename in dotted_get(claims, self.provider.qualification_claim, []):
+                try:
+                    target_qualification_uuids.append(
+                        uuid.UUID(
+                            str(
+                                self.provider.qualification_codename_to_uuid.get(codename, codename)
+                            )
+                        )
+                    )
+                except ValueError:
+                    pass
+
             target_qualifications = Qualification.objects.filter(
-                uuid_in=[
-                    str(self.provider.qualification_codename_to_uuid.get(codename, codename))
-                    for codename in dotted_get(claims, self.provider.qualification_claim, [])
-                ],
+                uuid__in=target_qualification_uuids
             )
             QualificationGrant.objects.filter(
                 user=user,
