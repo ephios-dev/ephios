@@ -52,9 +52,9 @@ class OrganizationName(StringPreference):
 @global_preferences_registry.register
 class HideLoginForm(BooleanPreference):
     name = "hide_login_form"
-    verbose_name = _("Hide login form")
+    verbose_name = _("Hide local login")
     help_text = _(
-        "Hide the login form on the login page and the add user button in the user list. "
+        "Hide the login form on the login page and the controls to manage user accounts locally. "
         "This only takes effect if you configured at least one identity provider."
     )
     default = False

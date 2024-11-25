@@ -101,7 +101,7 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["filter_form"] = self.filter_form
-        ctx["show_add_userprofile_button"] = show_login_form(
+        ctx["show_local_user_management"] = show_login_form(
             self.request, IdentityProvider.objects.all()
         )
         return ctx

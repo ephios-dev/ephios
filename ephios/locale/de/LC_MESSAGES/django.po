@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-25 16:15+0100\n"
-"PO-Revision-Date: 2024-11-25 16:16+0100\n"
+"POT-Creation-Date: 2024-11-25 18:13+0100\n"
+"PO-Revision-Date: 2024-11-25 18:14+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -276,7 +276,7 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/core/templates/core/userprofile_confirm_delete.html:21
 #: ephios/core/templates/core/userprofile_form.html:87
 #: ephios/core/templates/core/userprofile_form.html:116
-#: ephios/core/templates/core/userprofile_list.html:104
+#: ephios/core/templates/core/userprofile_list.html:105
 #: ephios/core/templates/core/userprofile_workinghours.html:50
 #: ephios/core/templates/core/workinghours_confirm_delete.html:17
 #: ephios/plugins/files/templates/files/document_confirm_delete.html:19
@@ -376,7 +376,7 @@ msgstr "Zurück"
 #: ephios/core/templates/core/group_list.html:63
 #: ephios/core/templates/core/identityprovider_list.html:27
 #: ephios/core/templates/core/shift_form.html:94
-#: ephios/core/templates/core/userprofile_list.html:99
+#: ephios/core/templates/core/userprofile_list.html:100
 #: ephios/core/templates/core/userprofile_workinghours.html:49
 #: ephios/plugins/files/templates/files/document_list.html:36
 #: ephios/plugins/pages/templates/pages/page_list.html:24
@@ -508,23 +508,25 @@ msgid "Organization display name"
 msgstr "Anzeigename der Organisation"
 
 #: ephios/core/dynamic_preferences_registry.py:55
-msgid "Hide login form"
-msgstr "Login-Fomular verstecken"
+msgid "Hide local login"
+msgstr "Lokalen Login verstecken"
 
 #: ephios/core/dynamic_preferences_registry.py:57
 msgid ""
-"Hide the login form on the login page. This only takes effect if you "
-"configured at least one identity provider."
+"Hide the login form on the login page and the controls to manage user "
+"accounts locally. This only takes effect if you configured at least one "
+"identity provider."
 msgstr ""
-"Versteckt das Login-Formular auf der Anmeldeseite. Diese Einstellung wird "
-"nur berücksichtigt, wenn Sie mindestens einen Identitätsprovider "
-"konfiguriert haben."
+"Versteckt das Login-Formular auf der Anmeldeseite und manche "
+"Verwaltungsfunktionen für lokale Accounts. Diese Einstellung wird nur "
+"berücksichtigt, wenn Sie mindestens einen Identitätsprovider konfiguriert "
+"haben."
 
-#: ephios/core/dynamic_preferences_registry.py:67
+#: ephios/core/dynamic_preferences_registry.py:68
 msgid "Directly redirect to Identity Provider"
 msgstr "Direkt zum Identitätsprovider weiterleiten"
 
-#: ephios/core/dynamic_preferences_registry.py:69
+#: ephios/core/dynamic_preferences_registry.py:70
 msgid ""
 "If the login form is hidden and there is a single identity provider, users "
 "trying to loginwill be directly redirected to that identity provider. The "
@@ -535,35 +537,35 @@ msgstr ""
 "weitergeleitet. Dafür muss der Provider einen gültigen Session-Beendigungs-"
 "Endpunkt haben."
 
-#: ephios/core/dynamic_preferences_registry.py:80
+#: ephios/core/dynamic_preferences_registry.py:81
 msgid "Enabled plugins"
 msgstr "Aktivierte Plugins"
 
-#: ephios/core/dynamic_preferences_registry.py:102
+#: ephios/core/dynamic_preferences_registry.py:103
 msgid "Last run_periodic call"
 msgstr "Letzter run_periodic Aufruf"
 
-#: ephios/core/dynamic_preferences_registry.py:133
+#: ephios/core/dynamic_preferences_registry.py:134
 msgid "Notification preferences"
 msgstr "Benachrichtigungseinstellungen"
 
-#: ephios/core/dynamic_preferences_registry.py:147
+#: ephios/core/dynamic_preferences_registry.py:148
 msgid "Events of this type should by default be visible for"
 msgstr "Veranstaltungen diesen Typs sind standardmäßig sichtbar für"
 
-#: ephios/core/dynamic_preferences_registry.py:156
+#: ephios/core/dynamic_preferences_registry.py:157
 msgid "Users that are responsible for this event type by default"
 msgstr "Benutzer die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:165
+#: ephios/core/dynamic_preferences_registry.py:166
 msgid "Groups that are responsible for this event type by default"
 msgstr "Gruppen die standardmäßig für diesen Eventtyp verantwortlich sind"
 
-#: ephios/core/dynamic_preferences_registry.py:174
+#: ephios/core/dynamic_preferences_registry.py:175
 msgid "General required qualifications for this event type"
 msgstr "Allgemein erforderliche Qualifikationen für diesen Veranstaltungstyp"
 
-#: ephios/core/dynamic_preferences_registry.py:176
+#: ephios/core/dynamic_preferences_registry.py:177
 msgid ""
 "These qualifications are required for all events of this event type. Users "
 "without these qualification will not be able to sign up, so make sure to use "
@@ -1166,7 +1168,7 @@ msgstr "Anlass"
 
 #: ephios/core/models/users.py:488 ephios/core/models/users.py:489
 #: ephios/core/signals.py:225
-#: ephios/core/templates/core/userprofile_list.html:95
+#: ephios/core/templates/core/userprofile_list.html:96
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
 #: ephios/templates/base.html:133
@@ -2642,28 +2644,28 @@ msgstr "Benutzer hinzufügen"
 msgid "minor"
 msgstr "minderjährig"
 
-#: ephios/core/templates/core/userprofile_list.html:60
+#: ephios/core/templates/core/userprofile_list.html:61
 #, python-format
 msgid "Last login: %(timeframe)s ago"
 msgstr "Letze Anmeldung vor %(timeframe)s"
 
-#: ephios/core/templates/core/userprofile_list.html:62
+#: ephios/core/templates/core/userprofile_list.html:63
 msgid "Last login: never"
 msgstr "Letze Anmeldung: nie"
 
-#: ephios/core/templates/core/userprofile_list.html:64
+#: ephios/core/templates/core/userprofile_list.html:65
 msgid "not seen recently"
 msgstr "länger nicht gesehen"
 
-#: ephios/core/templates/core/userprofile_list.html:69
+#: ephios/core/templates/core/userprofile_list.html:70
 msgid "inactive"
 msgstr "inaktiv"
 
-#: ephios/core/templates/core/userprofile_list.html:71
+#: ephios/core/templates/core/userprofile_list.html:72
 msgid "admin"
 msgstr "Admin"
 
-#: ephios/core/templates/core/userprofile_list.html:82
+#: ephios/core/templates/core/userprofile_list.html:83
 msgid "no groups"
 msgstr "keine Gruppen"
 
@@ -2725,68 +2727,68 @@ msgstr "Hinzufügen"
 msgid "No entries"
 msgstr "Keine Einträge"
 
-#: ephios/core/views/accounts.py:38 ephios/core/views/accounts.py:39
+#: ephios/core/views/accounts.py:39 ephios/core/views/accounts.py:40
 #: ephios/core/views/event.py:57 ephios/core/views/event.py:58
 msgid "Search for…"
 msgstr "Suche nach…"
 
-#: ephios/core/views/accounts.py:43
+#: ephios/core/views/accounts.py:44
 msgid "Group"
 msgstr "Gruppe"
 
-#: ephios/core/views/accounts.py:48
+#: ephios/core/views/accounts.py:49
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: ephios/core/views/accounts.py:54 ephios/core/views/accounts.py:60
+#: ephios/core/views/accounts.py:55 ephios/core/views/accounts.py:61
 #: ephios/plugins/eventautoqualification/models.py:15
 msgid "Qualification"
 msgstr "Qualifikation"
 
-#: ephios/core/views/accounts.py:143
+#: ephios/core/views/accounts.py:147
 #, python-brace-format
 msgid "User {name} ({email}) added successfully."
 msgstr "Benutzer {name} ({email}) erfolgreich hinzugefügt."
 
-#: ephios/core/views/accounts.py:193
+#: ephios/core/views/accounts.py:197
 #, python-brace-format
 msgid "User {name} ({email}) updated successfully."
 msgstr "Benutzer {name} ({email}) wurde geändert."
 
-#: ephios/core/views/accounts.py:222
+#: ephios/core/views/accounts.py:226
 #, python-brace-format
 msgid "The user {name} ({email}) was deleted."
 msgstr "Benutzer {name} ({email}) wurde gelöscht."
 
-#: ephios/core/views/accounts.py:249
+#: ephios/core/views/accounts.py:253
 #, python-brace-format
 msgid "The user's password has been reset. An email was sent to {email}."
 msgstr ""
 "Das Account-Passwort wurde zurückgesetzt. Eine Nachricht wurde an {email} "
 "geschickt."
 
-#: ephios/core/views/accounts.py:256
+#: ephios/core/views/accounts.py:260
 #, python-brace-format
 msgid "No valid email address ({email}). The password has not been reset."
 msgstr ""
 "Keine valide E-Mail-Adresse ({email}). Das Passwort wurde nicht "
 "zurückgesetzt."
 
-#: ephios/core/views/accounts.py:279
+#: ephios/core/views/accounts.py:283
 msgid "The user's password and API tokens have been revoked."
 msgstr "Das Passwort und die Zugrifftoken des Benutzers wurden widerrufen."
 
-#: ephios/core/views/accounts.py:325
+#: ephios/core/views/accounts.py:329
 #, python-brace-format
 msgid "Group \"{group}\" created successfully."
 msgstr "Gruppe \"{group}\" erfolgreich erstellt."
 
-#: ephios/core/views/accounts.py:344
+#: ephios/core/views/accounts.py:348
 #, python-brace-format
 msgid "Group \"{group}\" updated successfully."
 msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 
-#: ephios/core/views/accounts.py:361
+#: ephios/core/views/accounts.py:365
 #, python-brace-format
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
