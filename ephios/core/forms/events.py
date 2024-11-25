@@ -173,13 +173,21 @@ class ShiftForm(forms.ModelForm):
         "meeting_time",
         "start_time",
         "end_time",
+        "label",
         "signup_flow_slug",
         "structure_slug",
     ]
 
     class Meta:
         model = Shift
-        fields = ["meeting_time", "start_time", "end_time", "signup_flow_slug", "structure_slug"]
+        fields = [
+            "meeting_time",
+            "start_time",
+            "end_time",
+            "label",
+            "signup_flow_slug",
+            "structure_slug",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

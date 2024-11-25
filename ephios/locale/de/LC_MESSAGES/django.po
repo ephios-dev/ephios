@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-25 18:13+0100\n"
-"PO-Revision-Date: 2024-11-25 18:14+0100\n"
+"POT-Creation-Date: 2024-11-25 21:25+0100\n"
+"PO-Revision-Date: 2024-11-25 21:26+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -82,25 +82,25 @@ msgstr "Zugriffstoken"
 msgid "Personal Token"
 msgstr "Persönliches Zugriffstoken"
 
-#: ephios/api/serializers.py:87
+#: ephios/api/serializers.py:88
 msgid "Frontend URL"
 msgstr "Frontend-URL"
 
-#: ephios/api/serializers.py:134
+#: ephios/api/serializers.py:135
 msgid "Participation type"
 msgstr "Teilnahme-Typ"
 
-#: ephios/api/serializers.py:156
+#: ephios/api/serializers.py:157
 msgid "Duration in seconds"
 msgstr "Dauer in Sekunden"
 
-#: ephios/api/serializers.py:157 ephios/core/forms/events.py:168
-#: ephios/core/templates/core/fragments/shift_box_small.html:19
+#: ephios/api/serializers.py:158 ephios/core/forms/events.py:168
+#: ephios/core/templates/core/fragments/shift_box_small.html:24
 msgid "Start time"
 msgstr "Beginn"
 
-#: ephios/api/serializers.py:158 ephios/core/forms/events.py:169
-#: ephios/core/templates/core/fragments/shift_box_small.html:20
+#: ephios/api/serializers.py:159 ephios/core/forms/events.py:169
+#: ephios/core/templates/core/fragments/shift_box_small.html:25
 msgid "End time"
 msgstr "Ende"
 
@@ -123,7 +123,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/settings/settings_instance.html:10
 #: ephios/core/templates/core/settings/settings_notifications.html:42
 #: ephios/core/templates/core/settings/settings_personal_data.html:50
-#: ephios/core/templates/core/shift_form.html:71
+#: ephios/core/templates/core/shift_form.html:72
 #: ephios/core/templates/core/userprofile_form.html:145
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:285
 #: ephios/plugins/qualification_management/forms.py:121
@@ -265,14 +265,14 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/core/templates/core/event_confirm_delete.html:17
 #: ephios/core/templates/core/eventtype_confirm_delete.html:9
 #: ephios/core/templates/core/eventtype_list.html:24
-#: ephios/core/templates/core/fragments/shift_box_small.html:12
+#: ephios/core/templates/core/fragments/shift_box_small.html:17
 #: ephios/core/templates/core/fragments/shift_header.html:62
 #: ephios/core/templates/core/group_confirm_delete.html:19
 #: ephios/core/templates/core/group_list.html:67
 #: ephios/core/templates/core/identityprovider_confirm_delete.html:14
 #: ephios/core/templates/core/identityprovider_list.html:30
 #: ephios/core/templates/core/shift_confirm_delete.html:17
-#: ephios/core/templates/core/shift_form.html:68
+#: ephios/core/templates/core/shift_form.html:69
 #: ephios/core/templates/core/userprofile_confirm_delete.html:21
 #: ephios/core/templates/core/userprofile_form.html:87
 #: ephios/core/templates/core/userprofile_form.html:116
@@ -371,11 +371,11 @@ msgstr "Zurück"
 #: ephios/api/templates/oauth2_provider/application_detail.html:75
 #: ephios/api/templates/oauth2_provider/application_list.html:51
 #: ephios/core/templates/core/eventtype_list.html:21
-#: ephios/core/templates/core/fragments/shift_box_small.html:9
+#: ephios/core/templates/core/fragments/shift_box_small.html:14
 #: ephios/core/templates/core/fragments/shift_header.html:59
 #: ephios/core/templates/core/group_list.html:63
 #: ephios/core/templates/core/identityprovider_list.html:27
-#: ephios/core/templates/core/shift_form.html:94
+#: ephios/core/templates/core/shift_form.html:95
 #: ephios/core/templates/core/userprofile_list.html:100
 #: ephios/core/templates/core/userprofile_workinghours.html:49
 #: ephios/plugins/files/templates/files/document_list.html:36
@@ -625,7 +625,7 @@ msgstr "Verantwortliche"
 
 #: ephios/core/forms/events.py:166 ephios/core/models/users.py:484
 #: ephios/core/pdf.py:137 ephios/core/pdf.py:183
-#: ephios/core/templates/core/fragments/shift_box_small.html:17
+#: ephios/core/templates/core/fragments/shift_box_small.html:22
 #: ephios/core/templates/core/userprofile_workinghours.html:25
 #: ephios/core/views/event.py:70 ephios/core/views/event.py:79
 #: ephios/core/views/log.py:35
@@ -634,15 +634,15 @@ msgstr "Datum"
 
 #: ephios/core/forms/events.py:167 ephios/core/pdf.py:144
 #: ephios/core/pdf.py:194
-#: ephios/core/templates/core/fragments/shift_box_small.html:18
+#: ephios/core/templates/core/fragments/shift_box_small.html:23
 msgid "Meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/forms/events.py:237
+#: ephios/core/forms/events.py:245
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
-#: ephios/core/forms/events.py:246
+#: ephios/core/forms/events.py:254
 msgid ""
 "This date will be used as the start date for recurring events that you "
 "create below, e.g. daily events will be created from this date onwards."
@@ -651,35 +651,35 @@ msgstr ""
 "verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
 "Veranstaltungen ab diesem Datum erstellt."
 
-#: ephios/core/forms/events.py:248
+#: ephios/core/forms/events.py:256
 msgid "Start date"
 msgstr "Beginn"
 
-#: ephios/core/forms/events.py:262
+#: ephios/core/forms/events.py:270
 msgid "You need to enter a valid color"
 msgstr "Sie müssen eine gültige Farbe eingeben"
 
-#: ephios/core/forms/events.py:295
+#: ephios/core/forms/events.py:303
 msgid "Send notification about new event to everyone"
 msgstr "Alle Benutzer über die neue Veranstaltung benachrichtigen"
 
-#: ephios/core/forms/events.py:296
+#: ephios/core/forms/events.py:304
 msgid "Send reminder to everyone that is not participating"
 msgstr "Alle nicht teilnehmenden Benutzer an die Veranstaltung erinnern"
 
-#: ephios/core/forms/events.py:297
+#: ephios/core/forms/events.py:305
 msgid "Send a message to all participants"
 msgstr "Nachricht an alle Teilnehmenden senden"
 
-#: ephios/core/forms/events.py:302
+#: ephios/core/forms/events.py:310
 msgid "Mail content"
 msgstr "Nachricht"
 
-#: ephios/core/forms/events.py:312
+#: ephios/core/forms/events.py:320
 msgid "Send"
 msgstr "Senden"
 
-#: ephios/core/forms/events.py:322
+#: ephios/core/forms/events.py:330
 msgid "You cannot send an empty mail."
 msgstr "Sie können keine leere Nachricht versenden."
 
@@ -927,7 +927,7 @@ msgstr "abgesagt durch verantwortliche Person"
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:189 ephios/core/models/events.py:272
+#: ephios/core/models/events.py:189 ephios/core/models/events.py:277
 msgid "shift"
 msgstr "Schicht"
 
@@ -960,44 +960,54 @@ msgid "meeting time"
 msgstr "Treffpunkt"
 
 #: ephios/core/models/events.py:259
+msgctxt "shift label"
+msgid "label"
+msgstr "Label"
+
+#: ephios/core/models/events.py:262
+msgid "Optional label to help differentiate multiple shifts in an event."
+msgstr ""
+"Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung"
+
+#: ephios/core/models/events.py:264
 msgid "signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:264
+#: ephios/core/models/events.py:269
 msgid "structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:273
+#: ephios/core/models/events.py:278
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:388
-#: ephios/core/templates/core/fragments/shift_box_small.html:21
+#: ephios/core/models/events.py:395
+#: ephios/core/templates/core/fragments/shift_box_small.html:26
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:389
-#: ephios/core/templates/core/shift_form.html:45
+#: ephios/core/models/events.py:396
+#: ephios/core/templates/core/shift_form.html:46
 msgid "Structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:402
+#: ephios/core/models/events.py:409
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:423
+#: ephios/core/models/events.py:430
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:424
+#: ephios/core/models/events.py:431
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:449
+#: ephios/core/models/events.py:456
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:450
+#: ephios/core/models/events.py:457
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1379,7 +1389,7 @@ msgstr "Qualifikationen"
 
 #: ephios/core/pdf.py:135 ephios/core/pdf.py:182
 #: ephios/core/templates/core/mails/new_event.html:28
-#: ephios/core/templates/core/shift_form.html:100
+#: ephios/core/templates/core/shift_form.html:101
 msgid "Location"
 msgstr "Ort"
 
@@ -1853,13 +1863,13 @@ msgstr "Anmeldeaktion"
 
 #: ephios/core/signup/forms.py:87
 #: ephios/core/templates/core/disposition/fragment_participation.html:44
-#: ephios/core/templates/core/fragments/shift_box_big.html:57
-#: ephios/core/templates/core/fragments/shift_box_big.html:65
+#: ephios/core/templates/core/fragments/shift_box_big.html:63
+#: ephios/core/templates/core/fragments/shift_box_big.html:71
 msgid "Customize"
 msgstr "Anpassen"
 
 #: ephios/core/signup/forms.py:88
-#: ephios/core/templates/core/fragments/shift_box_big.html:70
+#: ephios/core/templates/core/fragments/shift_box_big.html:76
 msgid "Decline"
 msgstr "Absagen"
 
@@ -1945,7 +1955,7 @@ msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
 #: ephios/core/templates/core/event_detail.html:57
-#: ephios/core/templates/core/shift_form.html:81
+#: ephios/core/templates/core/shift_form.html:82
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
@@ -2085,12 +2095,12 @@ msgstr "Anzeigen"
 msgid "Your requests"
 msgstr "Ihre Anfragen"
 
-#: ephios/core/templates/core/fragments/shift_box_big.html:39
+#: ephios/core/templates/core/fragments/shift_box_big.html:45
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
-#: ephios/core/templates/core/fragments/shift_box_small.html:6
-#: ephios/core/templates/core/shift_form.html:110
+#: ephios/core/templates/core/fragments/shift_box_small.html:9
+#: ephios/core/templates/core/shift_form.html:111
 msgid "Shift"
 msgstr "Schicht"
 
@@ -2514,28 +2524,28 @@ msgstr "Schicht bearbeiten"
 msgid "Create new shift for event"
 msgstr "Schicht hinzufügen"
 
-#: ephios/core/templates/core/shift_form.html:35
+#: ephios/core/templates/core/shift_form.html:36
 msgid "Signup mode"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/templates/core/shift_form.html:63
+#: ephios/core/templates/core/shift_form.html:64
 msgid "Back to event"
 msgstr "Zurück zur Veranstaltung"
 
-#: ephios/core/templates/core/shift_form.html:75
+#: ephios/core/templates/core/shift_form.html:76
 msgid "Discard event"
 msgstr "Veranstaltung verwerfen"
 
-#: ephios/core/templates/core/shift_form.html:77
+#: ephios/core/templates/core/shift_form.html:78
 msgid "Save event"
 msgstr "Veranstaltung speichern"
 
-#: ephios/core/templates/core/shift_form.html:99
+#: ephios/core/templates/core/shift_form.html:100
 #: ephios/core/views/workinghour.py:50 ephios/core/views/workinghour.py:55
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: ephios/core/templates/core/shift_form.html:111
+#: ephios/core/templates/core/shift_form.html:112
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 

@@ -59,6 +59,7 @@ class ShiftSerializer(serializers.ModelSerializer):
         model = Shift
         fields = [
             "id",
+            "label",
             "event_id",
             "event_title",
             "meeting_time",
