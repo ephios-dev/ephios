@@ -401,7 +401,7 @@ PWA_APP_ICONS = [
         "purpose": "maskable",
     },
     {
-        "src": "/static/ephios/img/ephios-symbol-red.svg",
+        "src": f"/static/ephios/img/ephios-symbol-{'yellow' if DEBUG else 'red'}.svg",
         "sizes": "any",
         "type": "image/svg+xml",
         "purpose": "any",
