@@ -59,5 +59,6 @@ def ephios_base_context(request):
         "LANGUAGE_CODE": get_language(),
         "ephios_version": settings.EPHIOS_VERSION,
         "PWA_APP_ICONS": settings.PWA_APP_ICONS,
+        "DEBUG": settings.DEBUG,
         "organization_name": global_preferences_registry.manager()["general__organization_name"],
     }
