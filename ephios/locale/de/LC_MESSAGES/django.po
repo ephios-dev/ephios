@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-23 14:26+0100\n"
-"PO-Revision-Date: 2024-11-23 14:26+0100\n"
+"POT-Creation-Date: 2024-11-25 16:15+0100\n"
+"PO-Revision-Date: 2024-11-25 16:16+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -1169,7 +1169,7 @@ msgstr "Anlass"
 #: ephios/core/templates/core/userprofile_list.html:95
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/templates/base.html:136
+#: ephios/templates/base.html:133
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
@@ -1362,7 +1362,7 @@ msgstr ""
 "Claim auftauchen, zu Qualifikations-UUIDs übersetzt. Wenn ein Key nicht "
 "gefunden wird, wird versucht den Key selbst als UUID zu nutzen."
 
-#: ephios/core/models/users.py:653
+#: ephios/core/models/users.py:654
 #, python-brace-format
 msgid "Identity provider {label}"
 msgstr "Identitätsprovider {label}"
@@ -1995,7 +1995,7 @@ msgstr "Weiter"
 
 #: ephios/core/templates/core/event_list.html:11
 #: ephios/core/templates/core/event_list.html:22 ephios/core/views/pwa.py:30
-#: ephios/templates/base.html:96
+#: ephios/templates/base.html:93
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -2190,7 +2190,7 @@ msgstr "Benutzer bearbeiten"
 msgid "change permissions"
 msgstr "Berechtigungen ändern"
 
-#: ephios/core/templates/core/home.html:11 ephios/templates/base.html:92
+#: ephios/core/templates/core/home.html:11 ephios/templates/base.html:89
 msgid "Home"
 msgstr "Startseite"
 
@@ -2319,8 +2319,8 @@ msgstr "oder"
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: ephios/core/templates/core/mails/base.html:152
-#: ephios/templates/base.html:179
+#: ephios/core/templates/core/mails/base.html:152 ephios/templates/500.html:53
+#: ephios/templates/base.html:176
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2360,7 +2360,7 @@ msgstr "Andere Benachrichtigungen anzeigen"
 
 #: ephios/core/templates/core/notification_list.html:7
 #: ephios/core/templates/core/settings/settings_notifications.html:12
-#: ephios/core/views/settings.py:33 ephios/templates/base.html:138
+#: ephios/core/views/settings.py:33 ephios/templates/base.html:135
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2391,7 +2391,7 @@ msgstr "Absenden"
 
 #: ephios/core/templates/core/settings/settings_base.html:6
 #: ephios/core/templates/core/settings/settings_base.html:11
-#: ephios/templates/base.html:140
+#: ephios/templates/base.html:137
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -4542,7 +4542,24 @@ msgstr "Seite nicht gefunden"
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: ephios/templates/base.html:142
+#: ephios/templates/500.html:35
+msgid "An error occurred"
+msgstr "Ein Fehler ist aufgetreten"
+
+#: ephios/templates/500.html:38
+msgid ""
+"The server encountered an internal error and was unable to retrieve your "
+"request. Please try again later. The administrators have been notified."
+msgstr ""
+"Es ist ein technisches Problem aufgetreten und ihre Anfrage konnte nicht "
+"beantwortet werden. Bitte versuchen Sie es später erneut. Die "
+"Administratoren wurden informiert."
+
+#: ephios/templates/500.html:45
+msgid "Return home"
+msgstr "Zurück zur Startseite"
+
+#: ephios/templates/base.html:139
 msgid "Logout"
 msgstr "Abmelden"
 
