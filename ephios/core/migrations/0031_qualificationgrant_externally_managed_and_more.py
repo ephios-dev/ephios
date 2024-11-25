@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
                 max_length=255,
                 unique=True,
                 verbose_name="internal name",
+                null=False,
             ),
         ),
         migrations.AlterField(
