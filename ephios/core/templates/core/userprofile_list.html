@@ -17,7 +17,7 @@
     </div>
 
     <form method="GET" id="filter-form" class="row align-items-center">
-        {% if perms.core.add_userprofile %}
+        {% if perms.core.add_userprofile and show_add_userprofile_button %}
             <div class="col-12 col-lg-auto">
                 <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
                     class="fa fa-plus"></span> {% translate "Add user" %}</a>
@@ -55,12 +55,13 @@
                                 {% endif %}
                                 {% if userprofile|not_seen_recently %}
                                     {% with userprofile.last_login|timesince as timeframe %}
-                                        <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="
-                                                                                                                               {% if timeframe %}
-                                                                                                                                   {% blocktranslate trimmed %}Last login: {{ timeframe }} ago{% endblocktranslate %}
-                                                                                                                               {% else %}
-                                                                                                                                   {% translate "Last login: never" %}
-                                                                                                                               {% endif %}">
+                                        <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="
+                                                     {% if timeframe %}
+                                                         {% blocktranslate trimmed %}Last login: {{ timeframe }} ago{% endblocktranslate %}
+                                                     {% else %}
+                                                         {% translate "Last login: never" %}
+                                                     {% endif %}">
                                             {% translate "not seen recently" %}
                                         </span>
                                     {% endwith %}

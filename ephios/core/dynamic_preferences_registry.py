@@ -54,7 +54,8 @@ class HideLoginForm(BooleanPreference):
     name = "hide_login_form"
     verbose_name = _("Hide login form")
     help_text = _(
-        "Hide the login form on the login page. This only takes effect if you configured at least one identity provider."
+        "Hide the login form on the login page and the add user button in the user list. "
+        "This only takes effect if you configured at least one identity provider."
     )
     default = False
     section = general_global_section
