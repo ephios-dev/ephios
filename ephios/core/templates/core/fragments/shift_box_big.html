@@ -5,10 +5,16 @@
 {% load humanize %}
 
 <div id="shift-{{ shift.pk }}" class="card h-100 shift_box">
-
     {% setvar request|participation_from_request:shift as participation %}
     {% include "core/fragments/shift_header.html" with shift=shift participation=participation %}
 
+    {% if shift.label %}
+        <div class="card-header">
+            <span class="fw-bold card-title text-body-secondary mb-0">
+                <i class="fas fa-tag"></i> {{ shift.label }}
+            </span>
+        </div>
+    {% endif %}
     <div class="card-body">
         {% include shift.structure with own_participation=participation %}
         <div class="shift-plugin-content mt-1">

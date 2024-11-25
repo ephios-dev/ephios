@@ -21,6 +21,7 @@ from django.utils.functional import cached_property, classproperty
 from django.utils.text import slugify
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
 from polymorphic.managers import PolymorphicManager
@@ -255,7 +256,12 @@ class Shift(DatetimeDisplayMixin, Model):
     meeting_time = DateTimeField(_("meeting time"))
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
-
+    label = CharField(
+        pgettext("shift label", "label"),
+        max_length=255,
+        blank=True,
+        help_text=_("Optional label to help differentiate multiple shifts in an event."),
+    )
     signup_flow_slug = SlugField(_("signup flow"))
     signup_flow_configuration = JSONField(
         default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
@@ -336,6 +342,8 @@ class Shift(DatetimeDisplayMixin, Model):
         return f"{self.event.get_absolute_url()}#shift-{self.pk}"
 
     def __str__(self):
+        if self.label:
+            return f"{self.label} ({self.event.title}, {self.get_datetime_display()})"
         return f"{self.event.title} ({self.get_datetime_display()})"
 
     def get_signup_stats(self) -> "SignupStats":
