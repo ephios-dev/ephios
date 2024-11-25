@@ -17,7 +17,7 @@
     </div>
 
     <form method="GET" id="filter-form" class="row align-items-center">
-        {% if perms.core.add_userprofile and show_add_userprofile_button %}
+        {% if perms.core.add_userprofile and show_local_user_management %}
             <div class="col-12 col-lg-auto">
                 <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
                     class="fa fa-plus"></span> {% translate "Add user" %}</a>
