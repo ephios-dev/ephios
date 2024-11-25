@@ -30,6 +30,7 @@ from ephios.core.services.notifications.types import (
     ProfileUpdateNotification,
 )
 from ephios.core.services.qualification import uuids_of_qualifications_fulfilling_any_of
+from ephios.core.views.auth import show_login_form
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -100,6 +101,9 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["filter_form"] = self.filter_form
+        ctx["show_add_userprofile_button"] = show_login_form(
+            self.request, IdentityProvider.objects.all()
+        )
         return ctx
 
     def get_queryset(self):
