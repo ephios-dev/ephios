@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="card-footer">
+    <div class="card-footer no-print">
         {% if event.active %}
             {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
                 <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
