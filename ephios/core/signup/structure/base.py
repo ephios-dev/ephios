@@ -4,7 +4,6 @@ from collections import OrderedDict
 from operator import attrgetter
 
 from django.template.loader import get_template
-from django.urls import reverse
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
@@ -95,12 +94,6 @@ class BaseShiftStructure(AbstractShiftStructure):
             if p.state
             in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
         ]
-        if self.disposition_participation_form_class is not None:
-            kwargs["disposition_url"] = (
-                reverse("core:shift_disposition", kwargs={"pk": self.shift.pk})
-                if request.user.has_perm("core.change_event", obj=self.shift.event)
-                else None
-            )
         return kwargs
 
     def get_list_export_data(self):
