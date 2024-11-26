@@ -172,3 +172,11 @@ def event_plugin_actions(event_detail_view):
             ]
         )
     return mark_safe(html)
+
+
+@register.filter
+def can_do_disposition_for(user: UserProfile, shift):
+    return (
+        user.has_perm("core:change_event", shift.event)
+        and shift.structure.disposition_participation_form_class is not None
+    )
