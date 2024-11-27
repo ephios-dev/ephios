@@ -377,14 +377,27 @@ class ResponsibleMixin:
 
     @classmethod
     def get_subject(cls, notification):
-        event = AbstractParticipation.objects.get(
+        participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
-        ).shift.event
-        return _("Participation {state} for {event}").format(
-            state=AbstractParticipation.States.labels_dict()[
-                notification.data["participation_state"]
-            ],
-            event=event,
+        )
+        text = {
+            AbstractParticipation.States.CONFIRMED: _("{participant} signed up for {shift}"),
+            AbstractParticipation.States.REQUESTED: _(
+                "{participant} requested participating in {shift}"
+            ),
+            AbstractParticipation.States.USER_DECLINED: _(
+                "{participant} declined participating in {shift}"
+            ),
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: _(
+                "{participant} was rejected from participating in {shift}"
+            ),
+            AbstractParticipation.States.GETTING_DISPATCHED: _(
+                "{participant} is being dispatched for {shift}"
+            ),
+        }[notification.data["participation_state"]]
+        return text.format(
+            participant=str(participation.participant),
+            shift=str(participation.shift),
         )
 
 
@@ -406,7 +419,7 @@ class ResponsibleParticipationAwaitsDispositionNotification(
         participation = AbstractParticipation.objects.get(
             id=notification.data.get("participation_id")
         )
-        return _("{participant} has requested a participation for {shift}.").format(
+        return _("{participant} requested participating in {shift}.").format(
             shift=participation.shift,
             participant=participation.participant,
         )
