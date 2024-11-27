@@ -21,3 +21,20 @@ def test_event_slug_with_empty_name(django_app, volunteer, event):
     assert response.location  # is a redirect
     response = response.follow()
     assert event.description in response
+
+
+def test_show_disposition_button(django_app, volunteer, planner, event):
+    assert (
+        "Disposition"
+        not in django_app.get(
+            reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
+            user=volunteer,
+        ).follow()
+    )
+    assert (
+        "Disposition"
+        in django_app.get(
+            reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
+            user=planner,
+        ).follow()
+    )
