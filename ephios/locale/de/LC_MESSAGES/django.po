@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-25 21:25+0100\n"
-"PO-Revision-Date: 2024-11-25 21:26+0100\n"
+"POT-Creation-Date: 2024-11-27 17:27+0100\n"
+"PO-Revision-Date: 2024-11-27 17:29+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -50,11 +50,11 @@ msgstr "Token ist zu alt, um angezeigt werden zu können."
 msgid "Token was revoked."
 msgstr "Token wurde entfernt."
 
-#: ephios/api/filters.py:44 ephios/core/models/events.py:256
+#: ephios/api/filters.py:44 ephios/core/models/events.py:257
 msgid "start time"
 msgstr "Beginn"
 
-#: ephios/api/filters.py:45 ephios/core/models/events.py:257
+#: ephios/api/filters.py:45 ephios/core/models/events.py:258
 msgid "end time"
 msgstr "Ende"
 
@@ -69,8 +69,8 @@ msgid "start time less than equals (deprecated, use start_time_before instead)"
 msgstr ""
 "Startzeit kleiner-gleich (deprecated, stattdessen start_time_before nutzen)"
 
-#: ephios/api/filters.py:61 ephios/core/models/events.py:51
-#: ephios/core/models/events.py:63 ephios/core/views/event.py:62
+#: ephios/api/filters.py:61 ephios/core/models/events.py:52
+#: ephios/core/models/events.py:64 ephios/core/views/event.py:62
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
@@ -874,140 +874,140 @@ msgstr "Dienst"
 msgid "Training"
 msgstr "Ausbildung"
 
-#: ephios/core/models/events.py:47 ephios/core/models/events.py:60
+#: ephios/core/models/events.py:48 ephios/core/models/events.py:61
 #: ephios/core/models/users.py:247 ephios/core/models/users.py:274
 msgid "title"
 msgstr "Titel"
 
-#: ephios/core/models/events.py:48
+#: ephios/core/models/events.py:49
 msgid "color"
 msgstr "Farbe"
 
-#: ephios/core/models/events.py:52
+#: ephios/core/models/events.py:53
 msgid "event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/models/events.py:61
+#: ephios/core/models/events.py:62
 msgid "description"
 msgstr "Beschreibung"
 
-#: ephios/core/models/events.py:62
+#: ephios/core/models/events.py:63
 msgid "location"
 msgstr "Ort"
 
-#: ephios/core/models/events.py:64
+#: ephios/core/models/events.py:65
 msgid "active"
 msgstr "aktiv"
 
-#: ephios/core/models/events.py:70 ephios/core/models/events.py:253
+#: ephios/core/models/events.py:71 ephios/core/models/events.py:254
 msgid "event"
 msgstr "Veranstaltung"
 
-#: ephios/core/models/events.py:71
+#: ephios/core/models/events.py:72
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: ephios/core/models/events.py:172
+#: ephios/core/models/events.py:173
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:173 ephios/core/views/event.py:89
+#: ephios/core/models/events.py:174 ephios/core/views/event.py:89
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: ephios/core/models/events.py:174
+#: ephios/core/models/events.py:175
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: ephios/core/models/events.py:175
+#: ephios/core/models/events.py:176
 msgid "rejected by responsible"
 msgstr "abgesagt durch verantwortliche Person"
 
-#: ephios/core/models/events.py:176
+#: ephios/core/models/events.py:177
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:189 ephios/core/models/events.py:277
+#: ephios/core/models/events.py:190 ephios/core/models/events.py:278
 msgid "shift"
 msgstr "Schicht"
 
-#: ephios/core/models/events.py:192
+#: ephios/core/models/events.py:193
 msgid "state"
 msgstr "Status"
 
-#: ephios/core/models/events.py:195
+#: ephios/core/models/events.py:196
 msgid "Data on where this participation lives in the shift structure"
 msgstr "Daten zur Positionierung der Teilnahme in der Schicht-Struktur"
 
-#: ephios/core/models/events.py:201
+#: ephios/core/models/events.py:202
 msgid "individual start time"
 msgstr "Individueller Beginn"
 
-#: ephios/core/models/events.py:202
+#: ephios/core/models/events.py:203
 msgid "individual end time"
 msgstr "Individuelles Ende"
 
-#: ephios/core/models/events.py:205
+#: ephios/core/models/events.py:206
 msgid "Comment"
 msgstr "Kommentar"
 
-#: ephios/core/models/events.py:211
+#: ephios/core/models/events.py:212
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: ephios/core/models/events.py:255
+#: ephios/core/models/events.py:256
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/models/events.py:259
+#: ephios/core/models/events.py:260
 msgctxt "shift label"
 msgid "label"
 msgstr "Label"
 
-#: ephios/core/models/events.py:262
+#: ephios/core/models/events.py:263
 msgid "Optional label to help differentiate multiple shifts in an event."
 msgstr ""
-"Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung"
+"Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung."
 
-#: ephios/core/models/events.py:264
+#: ephios/core/models/events.py:265
 msgid "signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:269
+#: ephios/core/models/events.py:270
 msgid "structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:278
+#: ephios/core/models/events.py:279
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:395
+#: ephios/core/models/events.py:396
 #: ephios/core/templates/core/fragments/shift_box_small.html:26
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:396
+#: ephios/core/models/events.py:397
 #: ephios/core/templates/core/shift_form.html:46
 msgid "Structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:409
+#: ephios/core/models/events.py:410
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:430
+#: ephios/core/models/events.py:431
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:431
+#: ephios/core/models/events.py:432
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:456
+#: ephios/core/models/events.py:457
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:457
+#: ephios/core/models/events.py:458
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1562,8 +1562,8 @@ msgstr ""
 #: ephios/core/services/notifications/types.py:221
 #: ephios/core/services/notifications/types.py:239
 #: ephios/core/services/notifications/types.py:372
-#: ephios/core/services/notifications/types.py:524
-#: ephios/core/services/notifications/types.py:595
+#: ephios/core/services/notifications/types.py:535
+#: ephios/core/services/notifications/types.py:606
 #: ephios/core/templates/core/mails/new_event.html:35
 #: ephios/core/templates/core/userprofile_workinghours.html:47
 msgid "View event"
@@ -1574,7 +1574,6 @@ msgid "The state of your participation has changed"
 msgstr "Der Status Ihrer Teilnahme hat sich geändert"
 
 #: ephios/core/services/notifications/types.py:274
-#: ephios/core/services/notifications/types.py:383
 #, python-brace-format
 msgid "Participation {state} for {event}"
 msgstr "Teilnahme {state} für {event}"
@@ -1615,98 +1614,122 @@ msgstr ""
 
 #: ephios/core/services/notifications/types.py:375
 #: ephios/core/templates/core/disposition/disposition.html:8
+#: ephios/core/templates/core/fragments/shift_box_big.html:86
 #: ephios/core/templates/core/home.html:109
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_groups_common_state.html:29
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_participation_pills_shift_state.html:21
 msgid "Disposition"
 msgstr "Disposition"
 
-#: ephios/core/services/notifications/types.py:395
+#: ephios/core/services/notifications/types.py:384
+#, python-brace-format
+msgid "{participant} signed up for {shift}"
+msgstr "{participant} hat sich angemeldet für {shift}"
+
+#: ephios/core/services/notifications/types.py:385
+#, python-brace-format
+msgid "{participant} requested participating in {shift}"
+msgstr "{participant} fragt eine Teilnahme an {shift} an"
+
+#: ephios/core/services/notifications/types.py:387
+#, python-brace-format
+msgid "{participant} declined participating in {shift}"
+msgstr "{participant} hat abgesagt für {shift}"
+
+#: ephios/core/services/notifications/types.py:390
+#, python-brace-format
+msgid "{participant} was rejected from participating in {shift}"
+msgstr "{participant} wurde abgesagt für {shift}"
+
+#: ephios/core/services/notifications/types.py:393
+#, python-brace-format
+msgid "{participant} is being dispatched for {shift}"
+msgstr "{participant} wird disponiert in {shift}"
+
+#: ephios/core/services/notifications/types.py:406
 msgid "A participation for your event awaits disposition"
 msgstr "Eine Teilnahme an Ihrer Veranstaltung wartet auf Disposition"
 
-#: ephios/core/services/notifications/types.py:409
+#: ephios/core/services/notifications/types.py:420
 #, python-brace-format
-msgid "{participant} has requested a participation for {shift}."
+msgid "{participant} requested participating in {shift}."
 msgstr "{participant} hat eine Teilnahme an {shift} angefragt."
 
-#: ephios/core/services/notifications/types.py:419
+#: ephios/core/services/notifications/types.py:430
 msgid "A participation for your event has changed state"
 msgstr "Der Status einer Teilnahme an Ihrer Veranstaltung hat sich geändert"
 
-#: ephios/core/services/notifications/types.py:433
+#: ephios/core/services/notifications/types.py:444
 #, python-brace-format
 msgid "The participation of {participant} for {shift} is now {state}."
 msgstr "Die Teilnahme von {participant} an {shift} ist nun {state}."
 
-#: ephios/core/services/notifications/types.py:446
+#: ephios/core/services/notifications/types.py:457
 msgid "A participant declined after having been confirmed for your event"
 msgstr ""
 "Ein Teilnehmer hat abgesagt, nachdem er für Ihre Veranstaltung bestätigt "
 "wurde"
 
-#: ephios/core/services/notifications/types.py:453
+#: ephios/core/services/notifications/types.py:464
 #, python-brace-format
 msgid "{participant} declined their participation in {shift}."
 msgstr "{participant} hat abgesagt für {shift}."
 
-#: ephios/core/services/notifications/types.py:462
+#: ephios/core/services/notifications/types.py:473
 msgid "A confirmed participant altered their participation"
 msgstr "Ein bestätigter Teilnehmer hat seine Teilnahme angepasst"
 
-#: ephios/core/services/notifications/types.py:469
+#: ephios/core/services/notifications/types.py:480
 #, python-brace-format
 msgid "Participation altered for {event}"
 msgstr "Teilnahme angepasst für {event}"
 
-#: ephios/core/services/notifications/types.py:481
+#: ephios/core/services/notifications/types.py:492
 #, python-brace-format
 msgid "{participant} altered their participation in {shift}."
 msgstr "{participant} hat die Teilnahme an {shift} angepasst."
 
-#: ephios/core/services/notifications/types.py:490
+#: ephios/core/services/notifications/types.py:501
 msgid "An event has vacant spots"
 msgstr "Für eine Veranstaltung werden noch Teilnehmende gesucht"
 
-#: ephios/core/services/notifications/types.py:510
+#: ephios/core/services/notifications/types.py:521
 #, python-brace-format
 msgid "Help needed for {title}"
 msgstr "Unterstützung benötigt für {title}"
 
-#: ephios/core/services/notifications/types.py:515
+#: ephios/core/services/notifications/types.py:526
 #, python-brace-format
 msgid "Your support is needed for {title} ({start} - {end})."
 msgstr "Ihre Unterstützung wird benötigt für {title} ({start} - {end})."
 
-#: ephios/core/services/notifications/types.py:529
+#: ephios/core/services/notifications/types.py:540
 msgid "Message to all participants"
 msgstr "Nachricht an alle Teilnehmenden"
 
-#: ephios/core/services/notifications/types.py:577
+#: ephios/core/services/notifications/types.py:588
 #, python-brace-format
 msgid "Information regarding {title}"
 msgstr "Informationen zu {title}"
 
-#: ephios/core/services/notifications/types.py:591
+#: ephios/core/services/notifications/types.py:602
 msgid "View message"
 msgstr "Nachricht anzeigen"
 
-#: ephios/core/services/notifications/types.py:607
-#: ephios/core/services/notifications/types.py:617
+#: ephios/core/services/notifications/types.py:618
+#: ephios/core/services/notifications/types.py:628
 msgid "Your request has been approved"
 msgstr "Ihre Anfrage wurde akzeptiert"
 
-#: ephios/core/services/notifications/types.py:622
+#: ephios/core/services/notifications/types.py:633
 #, python-brace-format
 msgid "\"{consequence}\" has been approved."
 msgstr "\"{consequence}\" wurde akzeptiert."
 
-#: ephios/core/services/notifications/types.py:627
-#: ephios/core/services/notifications/types.py:637
+#: ephios/core/services/notifications/types.py:638
+#: ephios/core/services/notifications/types.py:648
 msgid "Your request has been denied"
 msgstr "Ihre Anfrage wurde abgelehnt"
 
-#: ephios/core/services/notifications/types.py:642
+#: ephios/core/services/notifications/types.py:653
 #, python-brace-format
 msgid "\"{consequence}\" has been denied."
 msgstr "\"{consequence}\" wurde abgelehnt."
@@ -1863,13 +1886,13 @@ msgstr "Anmeldeaktion"
 
 #: ephios/core/signup/forms.py:87
 #: ephios/core/templates/core/disposition/fragment_participation.html:44
-#: ephios/core/templates/core/fragments/shift_box_big.html:63
-#: ephios/core/templates/core/fragments/shift_box_big.html:71
+#: ephios/core/templates/core/fragments/shift_box_big.html:60
+#: ephios/core/templates/core/fragments/shift_box_big.html:68
 msgid "Customize"
 msgstr "Anpassen"
 
 #: ephios/core/signup/forms.py:88
-#: ephios/core/templates/core/fragments/shift_box_big.html:76
+#: ephios/core/templates/core/fragments/shift_box_big.html:74
 msgid "Decline"
 msgstr "Absagen"
 
@@ -2063,7 +2086,7 @@ msgid "Confirm results"
 msgstr "Offene Anfragen"
 
 #: ephios/core/templates/core/fragments/calendar_day.html:23
-#: ephios/core/templates/core/fragments/event_list_day_mode.html:99
+#: ephios/core/templates/core/fragments/event_list_day_mode.html:104
 msgid "more"
 msgstr "mehr"
 
@@ -2095,7 +2118,7 @@ msgstr "Anzeigen"
 msgid "Your requests"
 msgstr "Ihre Anfragen"
 
-#: ephios/core/templates/core/fragments/shift_box_big.html:45
+#: ephios/core/templates/core/fragments/shift_box_big.html:95
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
@@ -3160,8 +3183,8 @@ msgid "All teams you qualify for are full."
 msgstr "Alle Teams, für die Sie qualifiziert sind, sind voll."
 
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:326
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/fragment_state.html:42
-#: ephios/plugins/complexsignup/templates/complexsignup/shift_state.html:10
+#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/fragment_state.html:41
+#: ephios/plugins/complexsignup/templates/complexsignup/shift_state.html:9
 msgid "unassigned"
 msgstr "nicht zugeteilt"
 
@@ -3197,12 +3220,6 @@ msgstr "benötigt Teilnehmende"
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_groups_common_state.html:11
 msgid "enough participants"
 msgstr "ausreichend Teilnehmende"
-
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_groups_common_state.html:23
-#: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/fragment_participation_pills_shift_state.html:15
-msgctxt "participation count"
-msgid "Total"
-msgstr "Gesamt"
 
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/named_teams/configuration_form.html:46
 msgid "Add team"
@@ -4632,6 +4649,10 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgctxt "participation count"
+#~ msgid "Total"
+#~ msgstr "Gesamt"
 
 #, fuzzy
 #~| msgid "Qualification"
