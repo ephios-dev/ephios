@@ -8,12 +8,14 @@
                 </span>
             </div>
         {% endif %}
-        <div class="col mb-3 {% if current.level > 0 %}border-start{% endif %}">
-            {% for sub_block in current.sub_blocks %}
-                <div class="{% if not forloop.last %}mb-1{% endif %}">
-                    {% include "complexsignup/shift_state_block.html" with current=sub_block %}
-                </div>
-            {% endfor %}
+        <div class="col">
+            <div class="{% if current.level > 0 %}ms-1 ps-2 border-start{% endif %}">
+                {% for sub_block in current.sub_blocks %}
+                    <div class="{% if not forloop.last %}mb-2{% endif %}">
+                        {% include "complexsignup/shift_state_block.html" with current=sub_block %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% else %}

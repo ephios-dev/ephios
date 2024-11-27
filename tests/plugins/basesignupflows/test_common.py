@@ -87,13 +87,12 @@ def test_disposition_delete_participations_getting_dispatched(
 def test_comment_is_only_visible_to_responsibles(
     django_app, planner, volunteer, qualified_volunteer, event
 ):
-    # comment is also not visible for
-    COMMENT_TEXT = "n.f.D. super secret comment text"
+    comment_text = "n.f.D. super secret comment text"
     response = django_app.get(event.get_absolute_url(), user=volunteer)
     form = response.form.submit(name="signup_choice", value="customize").form
-    form["comment"] = COMMENT_TEXT
+    form["comment"] = comment_text
     response = form.submit(name="signup_choice", value="sign_up").follow()
 
-    assert COMMENT_TEXT in response
-    assert COMMENT_TEXT in django_app.get(event.get_absolute_url(), user=planner)
-    assert COMMENT_TEXT not in django_app.get(event.get_absolute_url(), user=qualified_volunteer)
+    assert comment_text in response
+    assert comment_text in django_app.get(event.get_absolute_url(), user=planner)
+    assert comment_text not in django_app.get(event.get_absolute_url(), user=qualified_volunteer)

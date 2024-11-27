@@ -203,9 +203,14 @@ a.badge {
   text-decoration: none;
 }
 
-// shift participation placeholders
+// shift participation badges
 .badge-placeholder {
   min-width: 8rem;
+}
+
+.badge-participant {
+  max-width: 100%;
+  overflow: clip;
 }
 
 // show form feedback
@@ -325,6 +330,7 @@ $shift-box-target: lighten($primary, 20%);
   border-bottom: none;
   border-right: none;
   border-top: none;
+  max-width: 100%;
 }
 
 .day-calendar-content > .card > .card-body {

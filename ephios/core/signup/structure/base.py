@@ -94,6 +94,7 @@ class BaseShiftStructure(AbstractShiftStructure):
             if p.state
             in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
         ]
+        kwargs["show_comments"] = request.user.has_perm("core.change_event", obj=self.shift.event)
         return kwargs
 
     def get_list_export_data(self):

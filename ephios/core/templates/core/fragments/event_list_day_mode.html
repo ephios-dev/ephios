@@ -69,6 +69,11 @@
                                {% endif %}">
                         {% include "core/fragments/shift_header.html" with shift=shift participation=participation hide_date=True %}
                         <div class="card-body">
+                            {% if shift.label %}
+                                <span class="fw-bold card-title text-body-secondary mb-0">
+                                    <i class="fas fa-tag"></i> {{ shift.label }}
+                                </span>
+                            {% endif %}
                             {% include shift.structure with own_participation=participation %}
                         </div>
                         <div class="card-footer">

@@ -36,65 +36,74 @@
     </div>
 
     <div class="card-footer no-print">
-        {% if event.active %}
-            {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
-                <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
-                      action="{{ request|reverse_signup_action:shift }}">
+        {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
+            <div class="row gy-1">
+                {% if can_sign_up or can_decline or can_customize_signup %}
+                    <div class="col-auto order-1">
+                        <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
+                              action="{{ request|reverse_signup_action:shift }}">
+                            {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
+                            <input type="hidden" name="individual_start_time_0"
+                                   value="{{ shift.start_time|date:"Y-m-d" }}">
+                            <input type="hidden" name="individual_start_time_1"
+                                   value="{{ shift.start_time|time:"H:i" }}">
+                            <input type="hidden" name="individual_end_time_0" value="{{ shift.end_time|date:"Y-m-d" }}">
+                            <input type="hidden" name="individual_end_time_1" value="{{ shift.end_time|time:"H:i" }}">
+                            {% csrf_token %}
 
-                    {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
-                    <input type="hidden" name="individual_start_time_0" value="{{ shift.start_time|date:"Y-m-d" }}">
-                    <input type="hidden" name="individual_start_time_1" value="{{ shift.start_time|time:"H:i" }}">
-                    <input type="hidden" name="individual_end_time_0" value="{{ shift.end_time|date:"Y-m-d" }}">
-                    <input type="hidden" name="individual_end_time_1" value="{{ shift.end_time|time:"H:i" }}">
+                            {% if can_sign_up and can_customize_signup %}
+                                <div class="btn-group">
+                                    <button type="submit" name="signup_choice" value="sign_up"
+                                            class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
+                                    <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
+                                        <i class="fas fa-cog"></i>
+                                        <span class="visually-hidden">{% translate "Customize" %}</span>
+                                    </a>
+                                </div>
+                            {% elif can_sign_up and not can_customize_signup %}
+                                <button type="submit" name="signup_choice" value="sign_up"
+                                        class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
+                            {% elif not can_sign_up and can_customize_signup %}
+                                <a class="btn btn-secondary"
+                                   href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
+                            {% endif %}
+                            {% if can_decline %}
+                                <span class="d-inline-block" tabindex="1">
+                                    <button type="submit" name="signup_choice" value="decline"
+                                            class="btn btn-secondary">
+                                        {% translate "Decline" %}
+                                    </button>
+                                </span>
+                            {% endif %}
+                        </form>
+                    </div>
+                {% endif %}
 
-                    {% csrf_token %}
-                    {% if can_sign_up and shift.signup_flow.configuration.signup_until %}
-                        <div class="text-success mb-1">
-                            <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                  title="{{ shift.signup_flow.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
-                                {% translate "Signup ends" %}
-                                {{ shift.signup_flow.configuration.signup_until | naturaltime }}.
-                            </span>
-                        </div>
-                    {% endif %}
-                    {% if not can_sign_up or not can_decline %}
-                        <div class="text-body-secondary mb-1">
-                            {% for error in request|signup_action_errors:shift %}
-                                <span>{{ error.message }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    {% if can_sign_up and can_customize_signup %}
-                        <div class="btn-group">
-                            <button type="submit" name="signup_choice" value="sign_up"
-                                    class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
-                            <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
-                                <i class="fas fa-cog"></i>
-                                <span class="visually-hidden">{% translate "Customize" %}</span>
-                            </a>
-                        </div>
-                    {% elif can_sign_up and not can_customize_signup %}
-                        <button type="submit" name="signup_choice" value="sign_up"
-                                class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
-                    {% elif not can_sign_up and can_customize_signup %}
-                        <a class="btn btn-secondary"
-                           href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
-                    {% endif %}
-                    {% if can_decline %}
-                        <span class="d-inline-block" tabindex="1">
-                            <button type="submit" name="signup_choice" value="decline" class="btn btn-secondary">
-                                {% translate "Decline" %}
-                            </button>
-                        </span>
-                    {% endif %}
-                    {% if disposition_url %}
+                {% if disposition_url %}
+                    <div class="col-auto ms-auto order-3">
                         <span class="float-end">
                             <a href="{{ disposition_url }}"
                                class="btn btn-info">{% translate "Disposition" %}</a>
                         </span>
+                    </div>
+                {% endif %}
+
+                <div class="col-12 order-4{% if not can_sign_up and not can_decline and not can_customize_signup or not disposition_url %} col-md order-md-2{% endif %}">
+                    {% if can_sign_up and shift.signup_flow.configuration.signup_until %}
+                        <span class="text-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="{{ shift.signup_flow.configuration.signup_until|date:'SHORT_DATETIME_FORMAT' }}">
+                            {% translate "Signup ends" %}
+                            {{ shift.signup_flow.configuration.signup_until | naturaltime }}.
+                        </span>
                     {% endif %}
-                </form>
-            {% endwith %}
-        {% endif %}
+                    {% if not can_sign_up or not can_decline %}
+                        <span class="text-body-secondary">
+                            {% for error in request|signup_action_errors:shift %}
+                                <span>{{ error.message }}</span>
+                            {% endfor %}
+                        </span>
+                    {% endif %}</div>
+            </div>
+        {% endwith %}
     </div>
 </div>

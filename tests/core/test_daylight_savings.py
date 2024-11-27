@@ -13,9 +13,9 @@ def end_in_rollback_shift(event, tz):
     # because we don't allow ambiguous datetimes in the form
     assert "Berlin" in tz.key
     return event.shifts.create(
-        start_time=datetime(2023, 10, 28, 20, 0, tzinfo=tz),
-        end_time=datetime(2023, 10, 29, 2, 30, tzinfo=tz),
-        meeting_time=datetime(2023, 10, 28, 19, 0).astimezone(tz),
+        start_time=datetime(2026, 10, 24, 20, 0, tzinfo=tz),
+        end_time=datetime(2026, 10, 25, 2, 30, tzinfo=tz),
+        meeting_time=datetime(2026, 10, 24, 19, 0).astimezone(tz),
         signup_flow_slug=InstantConfirmSignupFlow.slug,
         structure_slug=UniformShiftStructure.slug,
     )

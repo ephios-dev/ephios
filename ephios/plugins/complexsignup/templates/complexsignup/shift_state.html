@@ -2,19 +2,17 @@
 {% load i18n %}
 
 {% block groups %}
-    <div class="mb-3">
-        {% include "complexsignup/shift_state_block.html" with current=structure flatten=False %}
-        {% if matching.unpaired_participations %}
-            <div class="row">
-                <div class="col-12 order-sm-1 col-sm-auto text-body-secondary">
-                    {% translate "unassigned" %}
-                </div>
-                <div class="col-12 order-sm-0 col-sm">
-                    {% for participation in matching.unpaired_participations %}
-                        {% include "baseshiftstructures/participation_card_inline.html" %}
-                    {% endfor %}
-                </div>
+    {% include "complexsignup/shift_state_block.html" with current=structure flatten=False %}
+    {% if matching.unpaired_participations %}
+        <div class="row">
+            <div class="col-12 order-sm-1 col-sm-auto text-body-secondary">
+                {% translate "unassigned" %}
             </div>
-        {% endif %}
-    </div>
+            <div class="col-12 order-sm-0 col-sm">
+                {% for participation in matching.unpaired_participations %}
+                    {% include "baseshiftstructures/participation_card_inline.html" %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
