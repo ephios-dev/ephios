@@ -528,7 +528,10 @@ class EventActivateView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
 
 class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     queryset = Event.all_objects.all()
-    permission_required = "core.delete_event"
+    permission_required = (
+        "core.delete_event",
+        "core.change_event",
+    )
     success_url = reverse_lazy("core:event_list")
 
 
