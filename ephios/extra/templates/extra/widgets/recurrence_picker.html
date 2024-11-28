@@ -137,6 +137,9 @@
                                 <option v-for="(label, index) in weekdays" :value="index">[[ label ]]</option>
                             </select>
                         </div>
+                        <div class="col-1">
+                            <span>{% translate "in" context "month" %}</span>
+                        </div>
                         <div class="col-3">
                             <select class="form-select" v-model="rule.bymonth"
                                     @focus="rule.month_mode='bysetpos'">

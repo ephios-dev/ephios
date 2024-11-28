@@ -64,11 +64,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             async function changeFreq(rule, freq){
                 rule.freq = freq
-                rule.byweekday = []
-                delete rule.bymonthday
-                delete rule.bymonth
-                delete rule.bysetpos
-                delete rule.month_mode
+                rule.byweekday = rule.freq >= rrule.Frequency.WEEKLY ? [] : 0;
+                rule.bysetpos = 1;
+                rule.bymonthday = 1;
+                rule.bymonth = 1;
+                delete rule.month_mode;
             }
 
             function submitForm(event) {
@@ -82,10 +82,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         isValid = isValid && rule.byweekday && rule.byweekday.length > 0
                         break
                     case frequencies.MONTHLY:
-                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday)
+                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday !== "")
                         break
                     case frequencies.YEARLY:
-                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday && rule.bymonth || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday && rule.bymonth)
+                        isValid = isValid && (rule.month_mode === "bymonthday" && rule.bymonthday && rule.bymonth || rule.month_mode === "bysetpos" && rule.bysetpos && rule.byweekday !== "" && rule.bymonth)
                         break
                 }
 
@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         freq: rule.freq,
                         interval: rule.interval,
                         dtstart: rrule.datetime(...DTSTART.value.split("-"), ...formatHourOrZero(DTSTART_TIME.value, pickHour)),
-                        byweekday: rule.byweekday,
+                        byweekday: rule.month_mode === "bysetpos" || rule.freq === rrule.Frequency.WEEKLY ? rule.byweekday : undefined,
                         bymonthday: rule.month_mode === "bymonthday" ? rule.bymonthday : undefined,
                         bysetpos: rule.month_mode === "bysetpos" ? rule.bysetpos : undefined,
-                        bymonth: rule.bymonth,
+                        bymonth: rule.freq === rrule.Frequency.YEARLY ? rule.bymonth : undefined,
                         count: rule.end_mode === "COUNT" ? rule.count : undefined,
                         until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME, pickHour)) : undefined,
                         tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,

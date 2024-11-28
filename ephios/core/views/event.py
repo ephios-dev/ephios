@@ -550,7 +550,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         return reverse("core:event_copy", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
-        tz = get_current_timezone()
+        tz = form.cleaned_data["recurrence"]._dtstart.tzinfo
         for date in form.cleaned_data["recurrence"].xafter(timezone.now(), 1000, inc=True):
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()

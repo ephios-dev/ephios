@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
@@ -312,7 +311,8 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         duration = shift.end_time - shift.start_time
         meeting_offset = shift.start_time - shift.meeting_time
         shifts_to_create = []
-        for dt in form.cleaned_data["recurrence"].xafter(timezone.now(), 1000, inc=True):
+        recurr = form.cleaned_data["recurrence"]
+        for dt in recurr.xafter(recurr._dtstart, 1000, inc=True):
             shift = copy(shift)
             shift.pk = None
             shift.meeting_time = dt - meeting_offset
