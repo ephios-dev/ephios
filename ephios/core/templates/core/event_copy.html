@@ -7,7 +7,12 @@
     {% translate "Copy event" %}
 {% endblock %}
 
-{% block css %}
+{% block messages %}
+    {% for _, errors in form.errors.items %}
+        {% for error in errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+    {% endfor %}
 {% endblock %}
 
 {% block content %}
@@ -16,7 +21,6 @@
             {% translate "Copy event" %} "{{ event.title }}" <small>({{ event.get_start_time }})</small>
         </h1>
     </div>
-    {{ form.errors }}
     <form method="post">
         {% csrf_token %}
         {{ form.recurrence }}
