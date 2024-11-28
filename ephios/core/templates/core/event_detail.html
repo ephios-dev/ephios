@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load user_extras %}
 {% load cache %}
 {% load event_extras %}
 {% load bootstrap %}
@@ -56,17 +57,22 @@
                                 <span class="fas fa-plus"></span>
                                 {% translate "Add another shift" %}
                             </a></li>
-                            <li><a class="dropdown-item"
-                                   href="{% url "core:event_delete" event.pk %}">
-                                <span class="fas fa-trash-alt"></span>
-                                {% translate "Delete event" %}
-                            </a></li>
-                            {% if event.active %}
+                            {% if request.user|user_has_permission:"core.delete_event" %}
                                 <li><a class="dropdown-item"
-                                       href="{% url "core:event_copy" event.pk %}">
-                                    <span class="fas fa-copy"></span>
-                                    {% translate "Copy event" %}
+                                       href="{% url "core:event_delete" event.pk %}">
+                                    <span class="fas fa-trash-alt"></span>
+                                    {% translate "Delete event" %}
                                 </a></li>
+                            {% endif %}
+                            {% if event.active %}
+                                {% if request.user|user_has_permission:"core.add_event" %}
+
+                                    <li><a class="dropdown-item"
+                                           href="{% url "core:event_copy" event.pk %}">
+                                        <span class="fas fa-copy"></span>
+                                        {% translate "Copy event" %}
+                                    </a></li>
+                                {% endif %}
                                 <li><a class="dropdown-item"
                                        href="{% url "core:event_detail_pdf" event.pk %}">
                                     <span class="fas fa-file-pdf"></span>
