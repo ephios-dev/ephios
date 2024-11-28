@@ -1,3 +1,7 @@
+body {
+  hyphens: auto;
+}
+
 header {
   position: sticky;
   top: 0;
@@ -119,7 +123,7 @@ footer {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto;
     grid-template-areas:
-      "title batch"
+      "title badge"
       "title signup"
       "time signup";
   }
@@ -132,9 +136,10 @@ footer {
     grid-area: time;
   }
 
-  .grid-batch {
-    grid-area: batch;
+  .grid-badge {
+    grid-area: badge;
     justify-self: end;
+    max-width: 33vw;
   }
 
   .grid-signup {
@@ -153,7 +158,7 @@ footer {
       grid-template-columns: 6fr auto 8rem 6rem auto;
       grid-template-rows: auto;
       grid-template-areas:
-        "title batch time signup action"
+        "title badge time signup action"
     }
     .grid-signup {
       justify-self: center;
@@ -211,6 +216,15 @@ a.badge {
 .badge-participant {
   max-width: 100%;
   overflow: clip;
+  text-overflow: ellipsis;
+}
+
+// eventtype badge
+
+.badge-eventtype {
+  overflow: clip;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 // show form feedback

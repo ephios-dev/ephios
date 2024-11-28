@@ -19,7 +19,7 @@
     <h1 class="page-header">
         {% blocktranslate trimmed with organization_name=global_preferences.general__organization_name %}
             Welcome to {{ organization_name }}!
-        {% endblocktranslate%}
+        {% endblocktranslate %}
     </h1>
 
     <style nonce="{{ request.csp_nonce }}">
@@ -44,9 +44,7 @@
                                 <div class="row">
                                     <span class="col col-lg-6 text-break">
                                         {{ participation.shift.event.title }}
-                                    </span>
-                                    <span class="col-auto col-lg-2">
-                                        <span class="badge eventtype-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
+                                        <span class="float-end badge badge-eventtype eventtype-{{ participation.shift.event.type.pk }}-color">{{ participation.shift.event.type }}</span>
                                     </span>
                                     <span class="col-lg-4">
                                         {{ participation.start_time|date:"D" }}, {{ participation.start_time|date:"SHORT_DATE_FORMAT" }}, {{ participation.get_time_display }}
@@ -64,7 +62,8 @@
                 {% empty %}
                     <li class="list-group-item d-flex flex-column align-items-center justify-content-center">
                         <span class="pb-1 text-body-secondary">{% translate "None yet" context "empty list of upcoming shifts" %}</span>
-                        <a class="btn btn-sm btn-primary" href="{% url "core:event_list" %}">{% translate "View events" %}</a>
+                        <a class="btn btn-sm btn-primary"
+                           href="{% url "core:event_list" %}">{% translate "View events" %}</a>
                     </li>
 
                 {% endfor %}
@@ -87,11 +86,9 @@
                                 </div>
                                 <div class="col">
                                     <div class="row">
-                                        <span class="col col-lg-6 text-break">
+                                        <span class="col col-lg-8 text-break">
                                             {{ shift.event.title }}
-                                        </span>
-                                        <span class="col-auto col-lg-2">
-                                            <span class="badge eventtype-{{ shift.event.type.pk }}-color">{{ shift.event.type }}</span>
+                                            <span class="float-end badge badge-eventtype eventtype-{{ shift.event.type.pk }}-color">{{ shift.event.type }}</span>
                                         </span>
                                         <span class="col-lg-4">
                                             {{ shift.start_time|date:"D" }}, {{ shift.start_time|date:"SHORT_DATE_FORMAT" }}, {{ shift.get_time_display }}
