@@ -172,5 +172,13 @@ class SignupConfigurationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event")
         self.shift = kwargs.pop("shift")
+        self.request = kwargs.pop("request")
         self.description = kwargs.pop("description", "")
         super().__init__(*args, **kwargs)
+
+    def get_context(self):
+        return super().get_context() | {
+            "request": self.request,
+            "event": self.event,
+            "shift": self.shift,
+        }
