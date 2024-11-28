@@ -84,10 +84,11 @@ class EventForm(forms.ModelForm):
                 **kwargs.get("initial", {}),
             }
         else:
+            # new event
             self.eventtype = kwargs.pop("eventtype")
             kwargs["initial"] = {
                 "responsible_users": self.eventtype.preferences.get("responsible_users")
-                or get_user_model().objects.filter(pk=user.pk),
+                | get_user_model().objects.filter(pk=user.pk),
                 "responsible_groups": self.eventtype.preferences.get("responsible_groups"),
                 "visible_for": self.eventtype.preferences.get("visible_for")
                 or get_objects_for_user(user, "publish_event_for_group", klass=Group),
