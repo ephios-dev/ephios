@@ -18,6 +18,8 @@ class EventFeed(ICalFeed):
         return Shift.objects.all().filter(event__active=True).order_by("meeting_time")
 
     def item_title(self, item):
+        if item.label:
+            return f"{item.label} ({item.event.title})"
         return item.event.title
 
     def item_description(self, item):
@@ -30,7 +32,7 @@ class EventFeed(ICalFeed):
         return item.end_time
 
     def item_link(self, item):
-        return item.event.get_absolute_url()
+        return item.get_absolute_url()
 
     def item_location(self, item):
         return item.event.location
