@@ -4490,7 +4490,7 @@ msgid ""
 "all planners."
 msgstr ""
 "Erlaubt dieser Gruppe Ressourcen hinzuzufügen und zu verwalten. Ressourcen "
-"können durch Veranstaltungsverantwortliche Schichten zugeordnet werden."
+"können durch Planer zu Schichten zugeordnet werden."
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:6
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:11
