@@ -38,7 +38,7 @@
                             {{ event.title }}
                         </span>
                         <br/>
-                        <span class="me-1  badge eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                        <span class="me-1 badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                         <span class="text-body-secondary me-1 d-inline-block">
                             <i class="fas fa-map-marker-alt"></i>
                             {{ event.location }}
@@ -70,9 +70,9 @@
                         {% include "core/fragments/shift_header.html" with shift=shift participation=participation hide_date=True %}
                         <div class="card-body">
                             {% if shift.label %}
-                                <span class="fw-bold card-title text-body-secondary mb-0">
+                                <p class="fw-bold text-body-secondary mb-0">
                                     <i class="fas fa-tag"></i> {{ shift.label }}
-                                </span>
+                                </p>
                             {% endif %}
                             {% include shift.structure with own_participation=participation %}
                         </div>
