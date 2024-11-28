@@ -383,13 +383,13 @@ class ResponsibleMixin:
         text = {
             AbstractParticipation.States.CONFIRMED: _("{participant} signed up for {shift}"),
             AbstractParticipation.States.REQUESTED: _(
-                "{participant} requested participating in {shift}"
+                "{participant} has requested to participate in {shift}"
             ),
             AbstractParticipation.States.USER_DECLINED: _(
-                "{participant} declined participating in {shift}"
+                "{participant} declined to participate in {shift}"
             ),
             AbstractParticipation.States.RESPONSIBLE_REJECTED: _(
-                "{participant} was rejected from participating in {shift}"
+                "{participant} was rejected for {shift}"
             ),
             AbstractParticipation.States.GETTING_DISPATCHED: _(
                 "{participant} is being dispatched for {shift}"
