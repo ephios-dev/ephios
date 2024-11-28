@@ -78,10 +78,9 @@ def intersects(a, b):
     return bool(set(a) & set(b))
 
 
-@register.filter(name="has_permission")
-def group_has_permission(group, permission):
-    app_label, codename = permission.split(".")
-    return group.permissions.filter(content_type__app_label=app_label, codename=codename).exists()
+@register.filter(name="user_has_permission")
+def user_has_permission(user, permission):
+    return user.has_perm(permission)
 
 
 @register.filter(name="not_seen_recently")

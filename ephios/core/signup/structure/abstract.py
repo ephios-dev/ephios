@@ -56,7 +56,7 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
-    def get_configuration_form(self):
+    def get_configuration_form(self, *args, **kwargs):
         """
         This form will be used to configure this structure.
         The cleaned data will be saved to shift.structure_configuration

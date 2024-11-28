@@ -80,10 +80,10 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
             )
 
         flow_configuration_form = signup_flow.get_configuration_form(
-            self.request.POST, event=self.event
+            self.request.POST, event=self.event, request=self.request
         )
         structure_configuration_form = structure.get_configuration_form(
-            self.request.POST, event=self.event
+            self.request.POST, event=self.event, request=self.request
         )
         if not all(
             [
@@ -129,7 +129,7 @@ class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleOb
             shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
         except Shift.DoesNotExist:
             shift = None
-        form = self.get_form(self.get_object(), shift)
+        form = self.get_form(self.request, self.get_object(), shift=shift)
         return render(
             request,
             "core/fragments/shift_signup_config_form.html",
@@ -138,22 +138,27 @@ class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleOb
             },
         )
 
-    def get_form(self, event, shift=None):
+    def get_form(self, request, event, shift=None):
         raise NotImplementedError
 
 
 class SignupFlowConfigurationFormView(AbstractShiftConfigurationFormView):
-    def get_form(self, event, shift=None):
+    def get_form(
+        self,
+        request,
+        event,
+        shift=None,
+    ):
         return signup_flow_from_slug(
             self.kwargs.get("slug"), event=event, shift=shift
-        ).get_configuration_form()
+        ).get_configuration_form(request=request)
 
 
 class ShiftStructureConfigurationFormView(AbstractShiftConfigurationFormView):
-    def get_form(self, event, shift=None):
+    def get_form(self, request, event, shift=None):
         return shift_structure_from_slug(
             self.kwargs.get("slug"), event=event, shift=shift
-        ).get_configuration_form()
+        ).get_configuration_form(request=request)
 
 
 class ShiftUpdateView(
@@ -179,10 +184,14 @@ class ShiftUpdateView(
         )
 
     def get_flow_configuration_form(self):
-        return self.object.signup_flow.get_configuration_form(data=self.request.POST or None)
+        return self.object.signup_flow.get_configuration_form(
+            request=self.request, data=self.request.POST or None
+        )
 
     def get_structure_configuration_form(self):
-        return self.object.structure.get_configuration_form(data=self.request.POST or None)
+        return self.object.structure.get_configuration_form(
+            request=self.request, data=self.request.POST or None
+        )
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
@@ -205,13 +214,17 @@ class ShiftUpdateView(
                 self.request.POST["signup_flow_slug"], shift=self.object
             )
             flow_configuration_form = signup_flow.get_configuration_form(
-                self.request.POST, event=self.object.event
+                self.request.POST,
+                event=self.object.event,
+                request=self.request,
             )
             structure = shift_structure_from_slug(
                 self.request.POST["structure_slug"], shift=self.object
             )
             structure_configuration_form = structure.get_configuration_form(
-                self.request.POST, event=self.object.event
+                self.request.POST,
+                event=self.object.event,
+                request=self.request,
             )
         except (ValueError, MultiValueDictKeyError):
             pass
