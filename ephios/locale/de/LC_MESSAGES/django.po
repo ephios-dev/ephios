@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 11:10+0100\n"
-"PO-Revision-Date: 2024-11-28 11:11+0100\n"
+"POT-Creation-Date: 2024-11-28 12:19+0100\n"
+"PO-Revision-Date: 2024-11-28 12:21+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -748,9 +748,9 @@ msgstr "Benutzer"
 
 #: ephios/core/forms/users.py:179 ephios/core/signals.py:229
 #: ephios/core/signals.py:236 ephios/core/signals.py:248
-#: ephios/core/views/settings.py:21 ephios/plugins/complexsignup/signals.py:28
+#: ephios/core/views/settings.py:21 ephios/plugins/complexsignup/signals.py:34
 #: ephios/plugins/files/signals.py:19
-#: ephios/plugins/simpleresource/signals.py:33
+#: ephios/plugins/simpleresource/signals.py:34
 msgid "Management"
 msgstr "Verwaltung"
 
@@ -3448,9 +3448,21 @@ msgstr "Blockzusammensetzung"
 msgid "block compositions"
 msgstr "Blockzusammensetzungen"
 
-#: ephios/plugins/complexsignup/signals.py:24
+#: ephios/plugins/complexsignup/signals.py:30
 msgid "Signup blocks"
 msgstr "Vordefinierte Einheiten"
+
+#: ephios/plugins/complexsignup/signals.py:51
+msgid "Manage Signup Blocks"
+msgstr "Vordefinierte Einheiten verwalten"
+
+#: ephios/plugins/complexsignup/signals.py:53
+msgid ""
+"Allows this group to manage signup blocks that can be used in reusable "
+"structures and complex shift setups."
+msgstr ""
+"Erlaubt diese Gruppe vordefinierte Einheiten zu verwalten. Diese können in "
+"wiederverwendbaren Schicht-Strukturen genutzt werden."
 
 #: ephios/plugins/complexsignup/structure.py:54
 msgid "Unit"
@@ -3591,15 +3603,15 @@ msgstr "Ungültig"
 msgid "Clone"
 msgstr "Duplizieren"
 
-#: ephios/plugins/complexsignup/views.py:63
+#: ephios/plugins/complexsignup/views.py:61
 msgid "Failed to save building blocks."
 msgstr "Blöcke konnten nicht gespeichert werden."
 
-#: ephios/plugins/complexsignup/views.py:65
+#: ephios/plugins/complexsignup/views.py:63
 msgid "Saved blocks."
 msgstr "Blöcke gespeichert."
 
-#: ephios/plugins/complexsignup/views.py:69
+#: ephios/plugins/complexsignup/views.py:67
 msgid "There were errors in the form."
 msgstr "Das Formular enthält Fehler."
 
@@ -4458,7 +4470,7 @@ msgstr "Ressource"
 
 #: ephios/plugins/simpleresource/models.py:32
 #: ephios/plugins/simpleresource/models.py:37
-#: ephios/plugins/simpleresource/signals.py:29
+#: ephios/plugins/simpleresource/signals.py:30
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:5
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:9
 msgid "Resources"
@@ -4467,6 +4479,18 @@ msgstr "Ressourcen"
 #: ephios/plugins/simpleresource/models.py:44
 msgid "Resource allocations"
 msgstr "Ressourcenzuweisungen"
+
+#: ephios/plugins/simpleresource/signals.py:56
+msgid "Manage Resources"
+msgstr "Ressourcen bearbeiten"
+
+#: ephios/plugins/simpleresource/signals.py:58
+msgid ""
+"Enables this group to add resources. Resources can be attached to shifts by "
+"all planners."
+msgstr ""
+"Erlaubt dieser Gruppe Ressourcen hinzuzufügen und zu verwalten. Ressourcen "
+"können durch Veranstaltungsverantwortliche Schichten zugeordnet werden."
 
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:6
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:11
