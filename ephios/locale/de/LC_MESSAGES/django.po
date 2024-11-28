@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-27 17:27+0100\n"
-"PO-Revision-Date: 2024-11-27 17:29+0100\n"
+"POT-Creation-Date: 2024-11-28 11:10+0100\n"
+"PO-Revision-Date: 2024-11-28 11:11+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -921,7 +921,7 @@ msgstr "abgesagt durch helfende Person"
 
 #: ephios/core/models/events.py:176
 msgid "rejected by responsible"
-msgstr "abgesagt durch verantwortliche Person"
+msgstr "abgelehnt durch verantwortliche Person"
 
 #: ephios/core/models/events.py:177
 msgid "getting dispatched"
@@ -1562,8 +1562,8 @@ msgstr ""
 #: ephios/core/services/notifications/types.py:221
 #: ephios/core/services/notifications/types.py:239
 #: ephios/core/services/notifications/types.py:372
-#: ephios/core/services/notifications/types.py:535
-#: ephios/core/services/notifications/types.py:606
+#: ephios/core/services/notifications/types.py:537
+#: ephios/core/services/notifications/types.py:608
 #: ephios/core/templates/core/mails/new_event.html:35
 #: ephios/core/templates/core/userprofile_workinghours.html:47
 msgid "View event"
@@ -1592,8 +1592,7 @@ msgstr "Ihre Teilnahme an {shift} ist jetzt bestätigt."
 #, python-brace-format
 msgid "Your participation for {shift} has been rejected by a responsible user."
 msgstr ""
-"Ihre Teilnahme an {shift} wurde von einem verantwortlichen Benutzer "
-"abgelehnt."
+"Ihre Teilnahme an {shift} wurde von einer verantwortlichen Person abgelehnt."
 
 #: ephios/core/services/notifications/types.py:304
 msgid "A confirmed participation of yours has been tweaked by a responsible"
@@ -1622,114 +1621,114 @@ msgstr "Disposition"
 #: ephios/core/services/notifications/types.py:384
 #, python-brace-format
 msgid "{participant} signed up for {shift}"
-msgstr "{participant} hat sich angemeldet für {shift}"
+msgstr "{participant} nimmt teil an {shift}"
 
-#: ephios/core/services/notifications/types.py:385
+#: ephios/core/services/notifications/types.py:386
 #, python-brace-format
-msgid "{participant} requested participating in {shift}"
-msgstr "{participant} fragt eine Teilnahme an {shift} an"
+msgid "{participant} has requested to participate in {shift}"
+msgstr "Teilnahme angefragt von {participant} für {shift}"
 
-#: ephios/core/services/notifications/types.py:387
+#: ephios/core/services/notifications/types.py:389
 #, python-brace-format
-msgid "{participant} declined participating in {shift}"
+msgid "{participant} declined to participate in {shift}"
 msgstr "{participant} hat abgesagt für {shift}"
 
-#: ephios/core/services/notifications/types.py:390
+#: ephios/core/services/notifications/types.py:392
 #, python-brace-format
-msgid "{participant} was rejected from participating in {shift}"
-msgstr "{participant} wurde abgesagt für {shift}"
+msgid "{participant} was rejected for {shift}"
+msgstr "{participant} wurde abgelehnt für {shift}"
 
-#: ephios/core/services/notifications/types.py:393
+#: ephios/core/services/notifications/types.py:395
 #, python-brace-format
 msgid "{participant} is being dispatched for {shift}"
 msgstr "{participant} wird disponiert in {shift}"
 
-#: ephios/core/services/notifications/types.py:406
+#: ephios/core/services/notifications/types.py:408
 msgid "A participation for your event awaits disposition"
 msgstr "Eine Teilnahme an Ihrer Veranstaltung wartet auf Disposition"
 
-#: ephios/core/services/notifications/types.py:420
+#: ephios/core/services/notifications/types.py:422
 #, python-brace-format
 msgid "{participant} requested participating in {shift}."
 msgstr "{participant} hat eine Teilnahme an {shift} angefragt."
 
-#: ephios/core/services/notifications/types.py:430
+#: ephios/core/services/notifications/types.py:432
 msgid "A participation for your event has changed state"
 msgstr "Der Status einer Teilnahme an Ihrer Veranstaltung hat sich geändert"
 
-#: ephios/core/services/notifications/types.py:444
+#: ephios/core/services/notifications/types.py:446
 #, python-brace-format
 msgid "The participation of {participant} for {shift} is now {state}."
 msgstr "Die Teilnahme von {participant} an {shift} ist nun {state}."
 
-#: ephios/core/services/notifications/types.py:457
+#: ephios/core/services/notifications/types.py:459
 msgid "A participant declined after having been confirmed for your event"
 msgstr ""
 "Ein Teilnehmer hat abgesagt, nachdem er für Ihre Veranstaltung bestätigt "
 "wurde"
 
-#: ephios/core/services/notifications/types.py:464
+#: ephios/core/services/notifications/types.py:466
 #, python-brace-format
 msgid "{participant} declined their participation in {shift}."
 msgstr "{participant} hat abgesagt für {shift}."
 
-#: ephios/core/services/notifications/types.py:473
+#: ephios/core/services/notifications/types.py:475
 msgid "A confirmed participant altered their participation"
 msgstr "Ein bestätigter Teilnehmer hat seine Teilnahme angepasst"
 
-#: ephios/core/services/notifications/types.py:480
+#: ephios/core/services/notifications/types.py:482
 #, python-brace-format
 msgid "Participation altered for {event}"
 msgstr "Teilnahme angepasst für {event}"
 
-#: ephios/core/services/notifications/types.py:492
+#: ephios/core/services/notifications/types.py:494
 #, python-brace-format
 msgid "{participant} altered their participation in {shift}."
 msgstr "{participant} hat die Teilnahme an {shift} angepasst."
 
-#: ephios/core/services/notifications/types.py:501
+#: ephios/core/services/notifications/types.py:503
 msgid "An event has vacant spots"
 msgstr "Für eine Veranstaltung werden noch Teilnehmende gesucht"
 
-#: ephios/core/services/notifications/types.py:521
+#: ephios/core/services/notifications/types.py:523
 #, python-brace-format
 msgid "Help needed for {title}"
 msgstr "Unterstützung benötigt für {title}"
 
-#: ephios/core/services/notifications/types.py:526
+#: ephios/core/services/notifications/types.py:528
 #, python-brace-format
 msgid "Your support is needed for {title} ({start} - {end})."
 msgstr "Ihre Unterstützung wird benötigt für {title} ({start} - {end})."
 
-#: ephios/core/services/notifications/types.py:540
+#: ephios/core/services/notifications/types.py:542
 msgid "Message to all participants"
 msgstr "Nachricht an alle Teilnehmenden"
 
-#: ephios/core/services/notifications/types.py:588
+#: ephios/core/services/notifications/types.py:590
 #, python-brace-format
 msgid "Information regarding {title}"
 msgstr "Informationen zu {title}"
 
-#: ephios/core/services/notifications/types.py:602
+#: ephios/core/services/notifications/types.py:604
 msgid "View message"
 msgstr "Nachricht anzeigen"
 
-#: ephios/core/services/notifications/types.py:618
-#: ephios/core/services/notifications/types.py:628
+#: ephios/core/services/notifications/types.py:620
+#: ephios/core/services/notifications/types.py:630
 msgid "Your request has been approved"
 msgstr "Ihre Anfrage wurde akzeptiert"
 
-#: ephios/core/services/notifications/types.py:633
+#: ephios/core/services/notifications/types.py:635
 #, python-brace-format
 msgid "\"{consequence}\" has been approved."
 msgstr "\"{consequence}\" wurde akzeptiert."
 
-#: ephios/core/services/notifications/types.py:638
-#: ephios/core/services/notifications/types.py:648
+#: ephios/core/services/notifications/types.py:640
+#: ephios/core/services/notifications/types.py:650
 msgid "Your request has been denied"
 msgstr "Ihre Anfrage wurde abgelehnt"
 
-#: ephios/core/services/notifications/types.py:653
+#: ephios/core/services/notifications/types.py:655
 #, python-brace-format
 msgid "\"{consequence}\" has been denied."
 msgstr "\"{consequence}\" wurde abgelehnt."
