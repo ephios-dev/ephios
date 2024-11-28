@@ -248,7 +248,7 @@ def register_nav_links(sender, request, **kwargs):
                 "group": _("Management"),
             }
         ]
-        if request.user.has_perm("core.view_group")
+        if request.user.has_perm("auth.view_group")
         else []
     )
 
