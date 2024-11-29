@@ -1,5 +1,5 @@
-{% load i18n %}
 {% load event_extras %}
+{% load i18n %}
 {% load utils %}
 
 <form id="bulk_action_form" method="post">
@@ -32,6 +32,11 @@
                              {% if counter %}
                                  data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                  title="{% for state in counter %}<div>
+
+
+
+
+
                                             {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
                              {% endif %}>
                             {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
@@ -53,21 +58,21 @@
                             </div>
                         {% endif %}
                     </div>
-                    <a class="w-100 py-2 text-reset event-list-item-link"
-                       href="{{ event.get_absolute_url }}">
+                    <div class="w-100 py-2 event-list-item">
                         <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
-                            <div class="grid-title">
+                            <a class="grid-title event-list-item-link" href="{{ event.get_absolute_url }}">
                                 <h5 class="mb-0 text-break">
                                     {{ event.title }}
                                 </h5>
                                 <span class="w-100 text-body-secondary text-break">
                                     {{ event.location }}
                                 </span>
-                            </div>
-                            <div class="grid-badge"><span
-                                class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
-                            </div>
-                            <div class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center">
+                            </a>
+                            <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
+                                <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                            </a>
+                            <a class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center event-list-item-link"
+                               href="{{ event.get_absolute_url }}">
                                 <div class="position-relative">
                                     <span class="fas fa-users"></span>
                                     {% if event.pending_disposition_count %}
@@ -78,8 +83,8 @@
                                 <div>
                                     {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
                                 </div>
-                            </div>
-                            <div class="grid-time">
+                            </a>
+                            <a class="grid-time event-list-item-link" href="{{ event.get_absolute_url }}">
                                 {{ event.start_time|date:"D" }},
                                 {% if event.start_time.date == event.end_time.date %}
                                     {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
@@ -93,14 +98,11 @@
                                     {% translate "to" %}
                                     {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
                                 {% endif %}
-                            </div>
+                            </a>
                             <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
-                                <div class="btn btn-outline-primary text-nowrap event-list-item-button">
-                                    <span class="fa fa-eye"></span> {% translate "Show" %}
-                                </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </li>
             {% endwith %}
         {% empty %}

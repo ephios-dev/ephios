@@ -99,27 +99,19 @@ footer {
   border-color: #0000;
 }
 
-/* Make the event list item unclickable on large devices, as we want users to use the button there (hence it's excluded) */
-@media (min-width: 992px) {
-  .event-list-item-link {
-    pointer-events: none;
-  }
-
-  .event-list-item-button {
-    pointer-events: auto;
-  }
-}
-
 .event-list-item-link {
+  // remove link style (.text-reset)
   text-decoration: none;
+  --bs-text-opacity: 1;
+  color: inherit !important;
 }
 
 /* event list layout */
 
-.event-list-item-link {
+.event-list-item {
   .grid-wrapper {
     display: grid;
-    grid-column-gap: 0.5rem;
+    grid-column-gap: 0;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto;
     grid-template-areas:
@@ -134,18 +126,24 @@ footer {
 
   .grid-time {
     grid-area: time;
+    width: 100%;
+    @media (min-width: 992px) {
+      padding-left: 0.5rem;
+    }
   }
 
   .grid-badge {
     grid-area: badge;
     justify-self: end;
     max-width: 33vw;
+    padding-left: 0.5rem;
   }
 
   .grid-signup {
     grid-area: signup;
     justify-self: end;
     align-self: end;
+    width: 100%;
   }
 
   .grid-action {
