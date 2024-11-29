@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 12:19+0100\n"
+"POT-Creation-Date: 2024-11-29 09:24+0100\n"
 "PO-Revision-Date: 2024-11-28 12:21+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -70,7 +70,7 @@ msgstr ""
 "Startzeit kleiner-gleich (deprecated, stattdessen start_time_before nutzen)"
 
 #: ephios/api/filters.py:61 ephios/core/models/events.py:52
-#: ephios/core/models/events.py:64 ephios/core/views/event.py:62
+#: ephios/core/models/events.py:64 ephios/core/views/event.py:59
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
@@ -116,7 +116,7 @@ msgstr "API Token hinzufügen"
 #: ephios/api/templates/oauth2_provider/application_form.html:27
 #: ephios/core/forms/users.py:197 ephios/core/forms/users.py:440
 #: ephios/core/templates/core/disposition/disposition.html:125
-#: ephios/core/templates/core/event_detail.html:28
+#: ephios/core/templates/core/event_detail.html:29
 #: ephios/core/templates/core/event_form.html:65
 #: ephios/core/templates/core/eventtype_form.html:20
 #: ephios/core/templates/core/identityprovider_form.html:16
@@ -237,8 +237,9 @@ msgstr ""
 #: ephios/api/templates/api/access_token_reveal.html:26
 #: ephios/api/templates/oauth2_provider/application_detail.html:15
 #: ephios/api/templates/oauth2_provider/application_detail.html:34
-#: ephios/core/templates/core/event_copy.html:50
+#: ephios/core/templates/core/fragments/shift_header.html:62
 #: ephios/core/templates/core/settings/settings_calendar.html:19
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:218
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:27
 #: ephios/plugins/federation/templates/federation/invitecode_reveal.html:38
 msgid "Copy"
@@ -266,7 +267,7 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/core/templates/core/eventtype_confirm_delete.html:9
 #: ephios/core/templates/core/eventtype_list.html:24
 #: ephios/core/templates/core/fragments/shift_box_small.html:17
-#: ephios/core/templates/core/fragments/shift_header.html:62
+#: ephios/core/templates/core/fragments/shift_header.html:65
 #: ephios/core/templates/core/group_confirm_delete.html:19
 #: ephios/core/templates/core/group_list.html:67
 #: ephios/core/templates/core/identityprovider_confirm_delete.html:14
@@ -345,7 +346,6 @@ msgstr "Benutzer"
 #: ephios/api/templates/oauth2_provider/application_form.html:25
 #: ephios/core/templates/core/event_bulk_delete.html:23
 #: ephios/core/templates/core/event_confirm_delete.html:16
-#: ephios/core/templates/core/event_copy.html:49
 #: ephios/core/templates/core/event_form.html:64
 #: ephios/core/templates/core/eventtype_confirm_delete.html:8
 #: ephios/core/templates/core/group_confirm_delete.html:18
@@ -375,7 +375,7 @@ msgstr "Zurück"
 #: ephios/core/templates/core/fragments/shift_header.html:59
 #: ephios/core/templates/core/group_list.html:63
 #: ephios/core/templates/core/identityprovider_list.html:27
-#: ephios/core/templates/core/shift_form.html:95
+#: ephios/core/templates/core/shift_form.html:98
 #: ephios/core/templates/core/userprofile_list.html:100
 #: ephios/core/templates/core/userprofile_workinghours.html:49
 #: ephios/plugins/files/templates/files/document_list.html:36
@@ -587,11 +587,11 @@ msgstr ""
 msgid "This account is inactive."
 msgstr "Dieser Account ist deaktiviert."
 
-#: ephios/core/forms/events.py:41 ephios/core/forms/events.py:116
+#: ephios/core/forms/events.py:40 ephios/core/forms/events.py:116
 msgid "Visible for"
 msgstr "Sichtbar für"
 
-#: ephios/core/forms/events.py:43
+#: ephios/core/forms/events.py:42
 msgid ""
 "Select groups which the event shall be visible for. Regardless, the event "
 "will be visible for users that already signed up."
@@ -600,11 +600,11 @@ msgstr ""
 "davon ist die Veranstaltung für alle Benutzer sichtbar, die sich bereits "
 "angemeldet haben."
 
-#: ephios/core/forms/events.py:51
+#: ephios/core/forms/events.py:50
 msgid "Responsible persons"
 msgstr "Verantwortliche Personen"
 
-#: ephios/core/forms/events.py:57
+#: ephios/core/forms/events.py:56
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
@@ -627,7 +627,7 @@ msgstr "Verantwortliche"
 #: ephios/core/pdf.py:137 ephios/core/pdf.py:183
 #: ephios/core/templates/core/fragments/shift_box_small.html:22
 #: ephios/core/templates/core/userprofile_workinghours.html:25
-#: ephios/core/views/event.py:70 ephios/core/views/event.py:79
+#: ephios/core/views/event.py:67 ephios/core/views/event.py:76
 #: ephios/core/views/log.py:35
 msgid "Date"
 msgstr "Datum"
@@ -642,44 +642,31 @@ msgstr "Treffpunkt"
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
-#: ephios/core/forms/events.py:254
-msgid ""
-"This date will be used as the start date for recurring events that you "
-"create below, e.g. daily events will be created from this date onwards."
-msgstr ""
-"Dieses Datum wird als Startdatum für wiederkehrende Veranstaltungen "
-"verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
-"Veranstaltungen ab diesem Datum erstellt."
-
-#: ephios/core/forms/events.py:256
-msgid "Start date"
-msgstr "Beginn"
-
-#: ephios/core/forms/events.py:270
+#: ephios/core/forms/events.py:276
 msgid "You need to enter a valid color"
 msgstr "Sie müssen eine gültige Farbe eingeben"
 
-#: ephios/core/forms/events.py:303
+#: ephios/core/forms/events.py:309
 msgid "Send notification about new event to everyone"
 msgstr "Alle Benutzer über die neue Veranstaltung benachrichtigen"
 
-#: ephios/core/forms/events.py:304
+#: ephios/core/forms/events.py:310
 msgid "Send reminder to everyone that is not participating"
 msgstr "Alle nicht teilnehmenden Benutzer an die Veranstaltung erinnern"
 
-#: ephios/core/forms/events.py:305
+#: ephios/core/forms/events.py:311
 msgid "Send a message to all participants"
 msgstr "Nachricht an alle Teilnehmenden senden"
 
-#: ephios/core/forms/events.py:310
+#: ephios/core/forms/events.py:316
 msgid "Mail content"
 msgstr "Nachricht"
 
-#: ephios/core/forms/events.py:320
+#: ephios/core/forms/events.py:326
 msgid "Send"
 msgstr "Senden"
 
-#: ephios/core/forms/events.py:330
+#: ephios/core/forms/events.py:336
 msgid "You cannot send an empty mail."
 msgstr "Sie können keine leere Nachricht versenden."
 
@@ -911,7 +898,7 @@ msgstr "Veranstaltungen"
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:174 ephios/core/views/event.py:89
+#: ephios/core/models/events.py:174 ephios/core/views/event.py:86
 msgid "confirmed"
 msgstr "bestätigt"
 
@@ -1143,7 +1130,7 @@ msgstr "fehlgeschlagen"
 msgid "denied"
 msgstr "abgelehnt"
 
-#: ephios/core/models/users.py:401 ephios/core/views/event.py:84
+#: ephios/core/models/users.py:401 ephios/core/views/event.py:81
 msgid "State"
 msgstr "Status"
 
@@ -1389,7 +1376,7 @@ msgstr "Qualifikationen"
 
 #: ephios/core/pdf.py:135 ephios/core/pdf.py:182
 #: ephios/core/templates/core/mails/new_event.html:28
-#: ephios/core/templates/core/shift_form.html:101
+#: ephios/core/templates/core/shift_form.html:104
 msgid "Location"
 msgstr "Ort"
 
@@ -1937,7 +1924,7 @@ msgstr "Möchten Sie die folgenden Veranstaltungen wirklich löschen?"
 
 #: ephios/core/templates/core/event_confirm_delete.html:6
 #: ephios/core/templates/core/event_confirm_delete.html:11
-#: ephios/core/templates/core/event_detail.html:62
+#: ephios/core/templates/core/event_detail.html:64
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -1947,16 +1934,12 @@ msgid "Are you sure you want to delete the event \"%(object)s\"?"
 msgstr "Möchten Sie die Veranstaltung \"%(object)s\" wirklich löschen?"
 
 #: ephios/core/templates/core/event_copy.html:7
-#: ephios/core/templates/core/event_copy.html:28
-#: ephios/core/templates/core/event_detail.html:68
+#: ephios/core/templates/core/event_copy.html:21
+#: ephios/core/templates/core/event_detail.html:73
 msgid "Copy event"
 msgstr "Veranstaltung kopieren"
 
-#: ephios/core/templates/core/event_copy.html:52
-msgid "Preview"
-msgstr "Vorschau"
-
-#: ephios/core/templates/core/event_detail.html:27
+#: ephios/core/templates/core/event_detail.html:28
 msgid ""
 "This event has not been saved! If you are done editing the event, you can "
 "save it."
@@ -1964,36 +1947,36 @@ msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Wenn Sie mit dem "
 "Bearbeiten der Veranstaltung fertig sind, können Sie sie speichern."
 
-#: ephios/core/templates/core/event_detail.html:34
+#: ephios/core/templates/core/event_detail.html:35
 msgid "This event has not been saved! Please add a shift to save this event."
 msgstr ""
 "Diese Veranstaltung wurde noch nicht gespeichert! Bitte fügen Sie eine "
 "Schicht hinzu, um sie zu speichern."
 
-#: ephios/core/templates/core/event_detail.html:52
+#: ephios/core/templates/core/event_detail.html:53
 #: ephios/core/templates/core/event_form.html:10
 #: ephios/core/templates/core/event_form.html:26
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: ephios/core/templates/core/event_detail.html:57
+#: ephios/core/templates/core/event_detail.html:58
 #: ephios/core/templates/core/shift_form.html:82
 msgid "Add another shift"
 msgstr "Weitere Schicht hinzufügen"
 
-#: ephios/core/templates/core/event_detail.html:73
+#: ephios/core/templates/core/event_detail.html:79
 msgid "Download PDF"
 msgstr "PDF herunterladen"
 
-#: ephios/core/templates/core/event_detail.html:78
+#: ephios/core/templates/core/event_detail.html:84
 msgid "Send notifications"
 msgstr "Benachrichtigungen senden"
 
-#: ephios/core/templates/core/event_detail.html:85
+#: ephios/core/templates/core/event_detail.html:91
 msgid "View edit history"
 msgstr "Änderungsverlauf"
 
-#: ephios/core/templates/core/event_detail.html:111
+#: ephios/core/templates/core/event_detail.html:117
 #: ephios/core/templates/core/fragments/event_list_list_mode.html:93
 #: ephios/core/templates/core/mails/new_event.html:18
 #: ephios/core/templates/core/workinghours_list.html:18
@@ -2002,7 +1985,7 @@ msgstr "Änderungsverlauf"
 msgid "to"
 msgstr "bis"
 
-#: ephios/core/templates/core/event_detail.html:136
+#: ephios/core/templates/core/event_detail.html:142
 msgid "No shifts"
 msgstr "Keine Schichten"
 
@@ -2122,7 +2105,7 @@ msgid "Signup ends"
 msgstr "Anmeldung endet"
 
 #: ephios/core/templates/core/fragments/shift_box_small.html:9
-#: ephios/core/templates/core/shift_form.html:111
+#: ephios/core/templates/core/shift_form.html:114
 msgid "Shift"
 msgstr "Schicht"
 
@@ -2515,6 +2498,7 @@ msgid "You are not a member of any group."
 msgstr "Sie sind in keiner Gruppe Mitglied."
 
 #: ephios/core/templates/core/settings/settings_personal_data.html:37
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:159
 msgid "until"
 msgstr "bis"
 
@@ -2535,6 +2519,12 @@ msgstr "Schicht löschen"
 #, python-format
 msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
 msgstr "Möchten Sie die Schicht \"%(shift)s\" wirklich löschen?"
+
+#: ephios/core/templates/core/shift_copy.html:7
+#: ephios/core/templates/core/shift_copy.html:24
+#: ephios/core/templates/core/shift_form.html:85
+msgid "Copy shift"
+msgstr "Schicht kopieren"
 
 #: ephios/core/templates/core/shift_form.html:9
 #: ephios/core/templates/core/shift_form.html:18
@@ -2562,12 +2552,12 @@ msgstr "Veranstaltung verwerfen"
 msgid "Save event"
 msgstr "Veranstaltung speichern"
 
-#: ephios/core/templates/core/shift_form.html:100
+#: ephios/core/templates/core/shift_form.html:103
 #: ephios/core/views/workinghour.py:50 ephios/core/views/workinghour.py:55
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: ephios/core/templates/core/shift_form.html:112
+#: ephios/core/templates/core/shift_form.html:115
 msgid "You are currently adding this shift"
 msgstr "Sie erstellen gerade diese Schicht"
 
@@ -2760,7 +2750,7 @@ msgid "No entries"
 msgstr "Keine Einträge"
 
 #: ephios/core/views/accounts.py:39 ephios/core/views/accounts.py:40
-#: ephios/core/views/event.py:57 ephios/core/views/event.py:58
+#: ephios/core/views/event.py:54 ephios/core/views/event.py:55
 msgid "Search for…"
 msgstr "Suche nach…"
 
@@ -2861,42 +2851,42 @@ msgstr "Es wurden keine Veranstaltungen zum Löschen ausgewählt."
 msgid "The selected events have been deleted."
 msgstr "Die ausgewählten Veranstaltungen wurden gelöscht."
 
-#: ephios/core/views/event.py:73
+#: ephios/core/views/event.py:70
 msgctxt "event date filter"
 msgid "until"
 msgstr "bis zum"
 
-#: ephios/core/views/event.py:74
+#: ephios/core/views/event.py:71
 msgctxt "event date filter"
 msgid "from"
 msgstr "ab dem"
 
-#: ephios/core/views/event.py:87
+#: ephios/core/views/event.py:84
 msgid "all"
 msgstr "alle"
 
-#: ephios/core/views/event.py:88
+#: ephios/core/views/event.py:85
 msgid "no response"
 msgstr "ohne Rückmeldung"
 
-#: ephios/core/views/event.py:90
+#: ephios/core/views/event.py:87
 msgid "requested or confirmed"
 msgstr "angefragt oder bestätigt"
 
-#: ephios/core/views/event.py:91
+#: ephios/core/views/event.py:88
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: ephios/core/views/event.py:522 ephios/core/views/shift.py:115
+#: ephios/core/views/event.py:519 ephios/core/views/shift.py:120
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:609
+#: ephios/core/views/event.py:610
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:663
+#: ephios/core/views/event.py:643
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -2955,30 +2945,34 @@ msgstr "Einstellungen erfolgreich gespeichert."
 msgid "Password changed successfully."
 msgstr "Passwort erfolgreich geändert."
 
-#: ephios/core/views/shift.py:62
+#: ephios/core/views/shift.py:65
 msgid "You must enable plugins providing signup flows to continue."
 msgstr ""
 "Um fortzufahren, müssen Sie Plugins aktivieren, die Anmeldeverfahren "
 "bereitstellen."
 
-#: ephios/core/views/shift.py:67
+#: ephios/core/views/shift.py:70
 msgid "You must enable plugins providing shift structures to continue."
 msgstr ""
 "Um fortzufahren, müssen Sie Plugins aktivieren, die Schicht-Strukturen "
 "bereitstellen."
 
-#: ephios/core/views/shift.py:236
+#: ephios/core/views/shift.py:256
 #, python-brace-format
 msgid "The shift {shift} has been saved."
 msgstr "Die Schicht {shift} wurde gespeichert."
 
-#: ephios/core/views/shift.py:259
+#: ephios/core/views/shift.py:279
 msgid "You cannot delete the last shift!"
 msgstr "Sie können die letzte Schicht nicht löschen!"
 
-#: ephios/core/views/shift.py:264
+#: ephios/core/views/shift.py:284
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
+
+#: ephios/core/views/shift.py:323
+msgid "Shift copied successfully."
+msgstr "Schicht erfolgreich kopiert."
 
 #: ephios/core/views/workinghour.py:47
 msgid "From"
@@ -3004,9 +2998,112 @@ msgstr "Arbeitsstunden wurden gelöscht."
 msgid "close"
 msgstr "schließen"
 
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:9
+msgid "starting at"
+msgstr "beginnend am"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:20
+msgid "Hourly"
+msgstr "stündlich"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:23
+msgid "Daily"
+msgstr "täglich"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:26
+msgid "Weekly"
+msgstr "wöchentlich"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:29
+msgid "Monthly"
+msgstr "monatlich"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:32
+msgid "Yearly"
+msgstr "jährlich"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:37
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:204
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:62
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:78
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:182
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:239
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:262
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:344
+msgid "Remove"
+msgstr "Entfernen"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:43
+msgid "Repeat every"
+msgstr "Wiederholen alle"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:49
+msgid "on"
+msgstr "am"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:83
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:127
+msgid "First"
+msgstr "ersten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:84
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:128
+msgid "Second"
+msgstr "zweiten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:85
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:129
+msgid "Third"
+msgstr "dritten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:86
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:130
+msgid "Fourth"
+msgstr "vierten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:87
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:131
+msgid "Last"
+msgstr "letzten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:141
+msgctxt "month"
+msgid "in"
+msgstr "im"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:179
+msgid "for"
+msgstr "für"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:187
+msgid "occurrences"
+msgstr "Male"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:212
+msgid "Add rule"
+msgstr "Regel hinzufügen"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:215
+msgid "Add date"
+msgstr "Datum hinzufügen"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:225
+msgid "Selected dates"
+msgstr "Ausgewählte Daten"
+
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:232
+msgid ""
+"No dates selected yet. Add dates and rules using the controls on the left."
+msgstr "Keine Daten ausgewählt. Fügen Sie Daten und Regeln mit den Knöpfen auf der linken Seite hinzu."
+
 #: ephios/extra/utils.py:36
 msgid "None"
 msgstr "Nichts"
+
+#: ephios/extra/widgets.py:74
+#, python-brace-format
+msgid "Invalid recurrence rule: {error}"
+msgstr "Ungültige Regel: {error}"
 
 #: ephios/modellogging/models.py:47
 msgid "Log entry"
@@ -3499,7 +3596,7 @@ msgstr ""
 "Nutzen Sie vordefinierte Einheiten um eine individuelle Struktur zu "
 "gestalten."
 
-#: ephios/plugins/complexsignup/templates/complexsignup/configuration_form.html:8
+#: ephios/plugins/complexsignup/templates/complexsignup/configuration_form.html:10
 msgid "Edit blocks"
 msgstr "Blöcke bearbeiten"
 
@@ -3515,15 +3612,6 @@ msgstr "Blockname"
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:33
 msgid "Please provide a name."
 msgstr "Bitte geben Sie einen Namen an."
-
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:62
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:78
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:182
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:239
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:262
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:344
-msgid "Remove"
-msgstr "Entfernen"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:69
 msgid "qualified as"
@@ -4673,6 +4761,20 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
+#~ msgid ""
+#~ "This date will be used as the start date for recurring events that you "
+#~ "create below, e.g. daily events will be created from this date onwards."
+#~ msgstr ""
+#~ "Dieses Datum wird als Startdatum für wiederkehrende Veranstaltungen "
+#~ "verwendet, die Sie unten erstellen. So werden beispielsweise tägliche "
+#~ "Veranstaltungen ab diesem Datum erstellt."
+
+#~ msgid "Start date"
+#~ msgstr "Beginn"
+
+#~ msgid "Preview"
+#~ msgstr "Vorschau"
+
 #~ msgctxt "participation count"
 #~ msgid "Total"
 #~ msgstr "Gesamt"
@@ -4688,7 +4790,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #~ msgid "Modular Signup Requirements"
 #~ msgstr "Modulare Anmeldevorraussetzungen"
 
-#, python-brace-format
 #~ msgid ""
 #~ "Signup method for this shift. Explanations for the signup methods can be "
 #~ "found in the <a href='{url}'>documentation</a>."
@@ -4780,9 +4881,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 #~ msgid "Form submission is missing the mode of signup."
 #~ msgstr "Formulardaten enthalten nicht den Anmeldemodus."
 
-#~ msgid "First name"
-#~ msgstr "Vorname"
-
 #~ msgid ""
 #~ "Relevant qualification categories (for user list and disposition view)"
 #~ msgstr ""
@@ -4871,9 +4969,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "Next month"
 #~ msgstr "Nächster Monat"
-
-#~ msgid "in"
-#~ msgstr "in"
 
 #~ msgid "Your data"
 #~ msgstr "Persönliche Daten"
