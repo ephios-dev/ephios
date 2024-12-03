@@ -24,16 +24,15 @@
     <h1>{% translate "External events" %}</h1>
     <ul class="list-group mb-3">
         {% for event in events %}
-            <li class="list-group-item list-group-item-action p-0 d-flex flex-row">
+            <li class="list-group-item p-0 d-flex flex-row">
                 <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
                     <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon">
-                        <span class="text-muted far fa-user ps-2"></span>
+                        <span class="text-body-secondary far fa-user ps-2"></span>
                     </div>
                 </div>
-                <a class="w-100 text-reset py-2 event-list-item-link"
-                   href="{{ event.signup_url }}">
+                <div class="w-100 py-2 event-list-item">
                     <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
-                        <div class="grid-title">
+                        <a class="grid-title event-list-item-link" href="{{ event.signup_url }}">
                             <div>
                                 <h5 class="mb-0 text-break d-inline-block">
                                     {{ event.title }}
@@ -43,16 +42,17 @@
                                     <span class="">{{ event.host }}</span>
                                 </small>
                             </div>
-                            <span class="w-100 text-muted text-break">
+                            <span class="w-100 text-body-secondary text-break">
                                 {{ event.location }}
                             </span>
-                        </div>
-                        <div class="grid-badge"><span
-                            class="badge bg-primary">{{ event.type }}</span>
-                        </div>
-                        <div class="grid-signup">
-                        </div>
-                        <div class="grid-time">
+                        </a>
+                        <a class="grid-badge event-list-item-link" href="{{ event.signup_url }}">
+                            <span class="badge badge-eventtype bg-primary">{{ event.type }}</span>
+                        </a>
+                        <a class="grid-signup d-flex flex-column align-items-end justify-content-center event-list-item-link"
+                           href="{{ event.signup_url }}">
+                        </a>
+                        <a class="grid-time event-list-item-link" href="{{ event.signup_url }}">
                             {{ event.start_time|date:"D" }},
                             {% if event.start_time.date == event.end_time.date %}
                                 {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
@@ -66,14 +66,11 @@
                                 {% translate "to" %}
                                 {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
                             {% endif %}
-                        </div>
+                        </a>
                         <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
-                            <div class="btn btn-outline-primary text-nowrap event-list-item-button">
-                                <span class="fa fa-eye"></span> {% translate "Show" %}
-                            </div>
                         </div>
                     </div>
-                </a>
+                </div>
             </li>
         {% empty %}
             <div class="mb-3">

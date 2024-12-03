@@ -32,12 +32,9 @@
                              {% if counter %}
                                  data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                  title="{% for state in counter %}<div>
-
-
-
-
-
-                                            {% if event.shifts.all|length > 1 %}{{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}</div>{% endfor %}"
+                                            {% if event.shifts.all|length > 1 %}
+                                                {{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
+                                            </div>{% endfor %}"
                              {% endif %}>
                             {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
                                 <span class="text-success fa fa-user-check ps-2"></span>
@@ -71,7 +68,7 @@
                             <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
                                 <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                             </a>
-                            <a class="grid-signup d-flex flex-column align-items-end align-items-lg-center justify-content-center event-list-item-link"
+                            <a class="grid-signup d-flex flex-column align-items-end justify-content-center event-list-item-link"
                                href="{{ event.get_absolute_url }}">
                                 <div class="position-relative">
                                     <span class="fas fa-users"></span>
