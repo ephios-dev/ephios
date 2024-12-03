@@ -43,7 +43,6 @@ from ephios.core.views.event import (
     EventNotificationView,
     EventUpdateView,
     HomeView,
-    RRuleOccurrenceView,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -68,6 +67,7 @@ from ephios.core.views.settings import (
     PersonalDataSettingsView,
 )
 from ephios.core.views.shift import (
+    ShiftCopyView,
     ShiftCreateView,
     ShiftDeleteView,
     ShiftStructureConfigurationFormView,
@@ -179,12 +179,8 @@ urlpatterns = [
         AddPlaceholderParticipantView.as_view(),
         name="shift_disposition_add_placeholder",
     ),
+    path("shifts/<int:pk>/copy/", ShiftCopyView.as_view(), name="shift_copy"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
-    path(
-        "extra/rruleoccurrence/",
-        RRuleOccurrenceView.as_view(),
-        name="rrule_occurrences",
-    ),
     path("settings/data/", PersonalDataSettingsView.as_view(), name="settings_personal_data"),
     path("settings/calendar/", CalendarSettingsView.as_view(), name="settings_calendar"),
     path(

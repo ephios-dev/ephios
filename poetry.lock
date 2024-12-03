@@ -2942,17 +2942,21 @@ testing = ["Django", "django-configurations (>=2.0)"]
 
 [[package]]
 name = "python-dateutil"
-version = "2.9.0.post0"
+version = "0.1.dev1598+g1567c88"
 description = "Extensions to the standard Python datetime module"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-files = [
-    {file = "python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"},
-    {file = "python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 six = ">=1.5"
+
+[package.source]
+type = "git"
+url = "https://github.com/jeriox/dateutil"
+reference = "rdate-params"
+resolved_reference = "1567c884c9eef5a843ebf9d9ee20c9b961ad5b27"
 
 [[package]]
 name = "pytz"
@@ -4188,4 +4192,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c1b594254a05ca098254288cd5a8ca7859b8caf3d47077d35593ea00ef3375b8"
+content-hash = "11b218e4049094e32315045645aefd17c3c4ebf778c66c86f18213224a374ac9"

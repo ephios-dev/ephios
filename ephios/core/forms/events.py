@@ -1,6 +1,6 @@
 import operator
 import re
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
@@ -16,7 +16,6 @@ from django.utils.translation import gettext as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.forms import PreferenceForm
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms, remove_perm
-from recurrence.forms import RecurrenceField
 
 from ephios.core.dynamic_preferences_registry import event_type_preference_registry
 from ephios.core.models import Event, EventType, LocalParticipation, Shift, UserProfile
@@ -26,7 +25,7 @@ from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput
+from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput, RecurrenceField
 from ephios.modellogging.log import add_log_recorder, update_log
 from ephios.modellogging.recorders import (
     DerivedFieldsLogRecorder,
@@ -247,16 +246,22 @@ class ShiftForm(forms.ModelForm):
         return cleaned_data
 
 
-class EventDuplicationForm(forms.Form):
-    start_date = forms.DateField(
-        widget=CustomDateInput,
-        initial=date.today(),
-        help_text=_(
-            "This date will be used as the start date for recurring events that you create below, e.g. daily events will be created from this date onwards."
-        ),
-        label=_("Start date"),
-    )
-    recurrence = RecurrenceField(required=False)
+class EventCopyForm(forms.Form):
+    recurrence = RecurrenceField()
+
+    def __init__(self, *args, **kwargs):
+        original_start = kwargs.pop("original_start", None)
+        super().__init__(*args, **kwargs)
+        self.fields["recurrence"].widget.original_start = original_start
+
+
+class ShiftCopyForm(forms.Form):
+    recurrence = RecurrenceField(pick_hour=True)
+
+    def __init__(self, *args, **kwargs):
+        original_start = kwargs.pop("original_start", None)
+        super().__init__(*args, **kwargs)
+        self.fields["recurrence"].widget.original_start = original_start
 
 
 class EventTypeForm(forms.ModelForm):
