@@ -548,16 +548,17 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["original_start"] = int(self.object.shifts.first().start_time.timestamp())
+        kwargs["original_start"] = timezone.localtime(
+            self.object.shifts.first().start_time
+        ).isoformat()
         return kwargs
 
     def get_success_url(self):
         return reverse("core:event_copy", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
-        dtstart = form.cleaned_data["recurrence"]._dtstart
-        tz = dtstart.tzinfo
-        for date in form.cleaned_data["recurrence"].xafter(dtstart, 1000, inc=True):
+        tz = timezone.get_current_timezone()
+        for date in form.cleaned_data["recurrence"].xafter(datetime.now(), 1000, inc=True):
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()
             shifts = list(event.shifts.all())

@@ -69,6 +69,6 @@ class RecurrenceField(CharField):
 
     def clean(self, value):
         try:
-            return rrulestr(value)
+            return rrulestr(value, ignoretz=True)
         except (TypeError, KeyError, ValueError) as e:
             raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e)) from e

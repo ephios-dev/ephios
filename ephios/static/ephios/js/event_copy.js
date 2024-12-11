@@ -23,9 +23,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     createApp({
         setup() {
             const pickHour = JSON.parse(document.getElementById("pick_hour").value);
-            const original_start = new Date(JSON.parse(document.getElementById("original_start").value) * 1000);
-            const DTSTART = ref(formatDate(original_start))
-            const DTSTART_TIME = ref(formatHour(original_start))
+            const original_start = document.getElementById("original_start").value
+            const original_date = original_start.slice(0, 10)
+            const original_time = original_start.slice(11, 19)
+            const DTSTART = ref(original_date)
+            const DTSTART_TIME = ref(pickHour ? original_time : "")
             const rules = ref([])
             const dates = ref([])
             const weekdays = [gettext("Monday"), gettext("Tuesday"), gettext("Wednesday"), gettext("Thursday"), gettext("Friday"), gettext("Saturday"), gettext("Sunday")]
@@ -55,7 +57,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
 
             async function addDate() {
-                dates.value.push({date: formatDate(original_start), time: formatHour(original_start)});
+                dates.value.push({date: original_date, time: original_time});
             }
 
             async function removeDate(date) {
@@ -111,7 +113,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         bymonth: rule.freq === rrule.Frequency.YEARLY ? rule.bymonth : undefined,
                         count: rule.end_mode === "COUNT" ? rule.count : undefined,
                         until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME, pickHour)) : undefined,
-                        tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     }))
                 })
                 dates.value.forEach(date => {
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             const computed_dates = computed(() => {
                 return rrule_set ? rrule_set.value.all().map(date => {
-                    return formatDate(date) + " " + formatHour(date)
+                    return formatDate(date) + " " + (pickHour ? formatHour(date) : "")
                 }): []
             })
 

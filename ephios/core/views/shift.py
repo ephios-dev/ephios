@@ -1,10 +1,12 @@
 from copy import copy
+from datetime import datetime
 
 from csp.decorators import csp_exempt
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
@@ -300,7 +302,7 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["original_start"] = int(self.object.start_time.timestamp())
+        kwargs["original_start"] = timezone.localtime(self.object.start_time).isoformat()
         return kwargs
 
     def get_success_url(self):
@@ -312,7 +314,9 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         meeting_offset = shift.start_time - shift.meeting_time
         shifts_to_create = []
         recurr = form.cleaned_data["recurrence"]
-        for dt in recurr.xafter(recurr._dtstart, 1000, inc=True):
+        tz = timezone.get_current_timezone()
+        for dt in recurr.xafter(datetime.now(), 1000, inc=True):
+            dt = timezone.make_aware(dt, tz)
             shift = copy(shift)
             shift.pk = None
             shift.meeting_time = dt - meeting_offset
