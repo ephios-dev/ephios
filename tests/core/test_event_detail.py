@@ -38,3 +38,20 @@ def test_show_disposition_button(django_app, volunteer, planner, event):
             user=planner,
         ).follow()
     )
+
+
+def test_edit_permissions(django_app, volunteer, manager, groups, event):
+    assert (
+        "Add another shift"
+        not in django_app.get(
+            reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
+            user=volunteer,
+        ).follow()
+    )
+    assert (
+        "Add another shift"
+        in django_app.get(
+            reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
+            user=manager,
+        ).follow()
+    )
