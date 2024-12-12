@@ -18,9 +18,19 @@ from ephios.core.signup.forms import SignupConfigurationForm
 
 class CoupledSignupActionValidator(NoSignupSignupActionValidator):
     def get_no_signup_allowed_message(self):
-        if self.shift.signup_flow.leader_shift:
+        leader_shift = self.shift.signup_flow.leader_shift
+        if leader_shift:
+            shift_name = leader_shift.get_datetime_display()
+            if leader_shift.label:
+                shift_name = f"{leader_shift.label} ({shift_name})"
             return ActionDisallowedError(
-                _("Participation is coupled to {}.").format(self.shift.signup_flow.leader_shift)
+                mark_safe(
+                    _("Participation is coupled to {}.").format(
+                        f'<a class="link-primary link-underline-opacity-25" '
+                        f'href="#shift-{leader_shift.pk}">'
+                        f"{shift_name}</a>"
+                    )
+                )
             )
         # This is red as it requires responsibles to update the shift configuration.
         text = _("Participation is coupled to another shift, but the leading shift is missing.")
