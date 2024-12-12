@@ -20,9 +20,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if request.user.is_authenticated %}
-        {% get_obj_perms request.user for event as "event_perms" %}
-    {% endif %}
     {% if not event.active %}
         {% if event.shifts.exists %}
             {% translate "This event has not been saved! If you are done editing the event, you can save it." as not_active_error %}
@@ -40,7 +37,7 @@
     <div class="card mb-3">
         <div class="card-body pb-0">
             <h1 class="card-title fw-bold fs-1">
-                {% if "change_event" in event_perms %}
+                {% if can_change_event %}
                     <div class="dropstart float-end">
                         <button class="btn" type="button" id="actionDropdownButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
