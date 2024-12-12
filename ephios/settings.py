@@ -202,7 +202,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
+    "ephios.extra.permissions.ObjectSupportingModelBackend",
     "guardian.backends.ObjectPermissionBackend",
     "ephios.extra.auth.EphiosOIDCAB",
 ]

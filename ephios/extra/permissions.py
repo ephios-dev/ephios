@@ -2,6 +2,7 @@ from functools import wraps
 from typing import Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -99,6 +100,25 @@ def get_permissions_from_qualified_names(qualified_names):
         app_label, codename = qualified_name.split(".")
         perms_filter = perms_filter | Q(content_type__app_label=app_label, codename=codename)
     return Permission.objects.filter(perms_filter)
+
+
+class ObjectSupportingModelBackend(ModelBackend):
+    """
+    The default model backend denies permissions when an obj is supplied.
+    We still want it to consider global permissions.
+    The guardian backend doesn't consider global permissions at all.
+    """
+
+    def _get_permissions(self, user_obj, obj, from_name):
+        return super()._get_permissions(user_obj=user_obj, obj=None, from_name=from_name)
+
+    def get_all_permissions(self, user_obj, obj=None):
+        return super().get_all_permissions(user_obj=user_obj, obj=None)
+
+    def with_perm(self, perm, is_active=True, include_superusers=True, obj=None):
+        return super().with_perm(
+            perm, is_active=is_active, include_superusers=include_superusers, obj=None
+        )
 
 
 class PermissionField(BooleanField):
