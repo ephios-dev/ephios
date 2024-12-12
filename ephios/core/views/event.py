@@ -450,6 +450,12 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
             base = Event.all_objects.all()
         return base.prefetch_related("shifts", "shifts__participations")
 
+    def get_context_data(self, **kwargs):
+        kwargs["can_change_event"] = self.object in get_objects_for_user(
+            self.request.user, "core.change_event"
+        )
+        return super().get_context_data(**kwargs)
+
 
 class EventUpdateView(CustomPermissionRequiredMixin, PluginFormMixin, UpdateView):
     model = Event
