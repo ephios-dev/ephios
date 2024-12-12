@@ -10,8 +10,8 @@
     <div class="page-header mb-3">
         <h1>{% translate "Settings" %} {% block settings_title %}{% endblock %}</h1>
     </div>
-    <div class="d-flex flex-column flex-sm-row">
-        <div class="me-3 mb-2">
+    <div class="row">
+        <div class="col-12 col-lg-3 col-xxl-2">
             {% available_settings_sections request as settings_sections %}
             <ul class="nav nav-pills flex-column">
                 {% for name, items in settings_sections.items %}
@@ -25,7 +25,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <div class="flex-fill">
+        <div class="col">
             {% block settings_content %}
 
             {% endblock %}
