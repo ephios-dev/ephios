@@ -1,17 +1,5 @@
 const {createApp, ref, computed} = Vue
 
-function formatDate(date_obj, sep = "-") {
-    let month = date_obj.getMonth() + 1;
-    let day = date_obj.getDate();
-    return date_obj.getFullYear() + sep + (month < 10 ? "0" : "") + month + sep + (day < 10 ? "0" : "") + day
-}
-
-function formatHour(date_obj, sep = ":") {
-    let hours = date_obj.getUTCHours();
-    let minutes = date_obj.getUTCMinutes();
-    return (hours < 10 ? "0" : "") + hours + sep + (minutes < 10 ? "0" : "") + minutes
-}
-
 function formatHourOrZero(time_string, pickHour=false) {
     if (time_string && pickHour) {
         return [time_string.slice(0,2), time_string.slice(3,5), 0]
@@ -125,7 +113,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             const computed_dates = computed(() => {
                 return rrule_set ? rrule_set.value.all().map(date => {
-                    return formatDate(date) + " " + (pickHour ? formatHour(date) : "")
+                    return new Intl.DateTimeFormat('de-DE', {
+                        dateStyle: 'full',
+                        timeStyle: pickHour ? 'short' : undefined,
+                      }).format(date)
                 }): []
             })
 
