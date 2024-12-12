@@ -558,7 +558,9 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
     def form_valid(self, form):
         tz = timezone.get_current_timezone()
-        for date in form.cleaned_data["recurrence"].xafter(datetime.now(), 1000, inc=True):
+        for date in form.cleaned_data["recurrence"].xafter(
+            datetime.now() - timedelta(days=365 * 100), 1000, inc=True
+        ):
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()
             shifts = list(event.shifts.all())

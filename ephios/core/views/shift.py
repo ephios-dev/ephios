@@ -1,5 +1,5 @@
 from copy import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from csp.decorators import csp_exempt
 from django.contrib import messages
@@ -315,7 +315,7 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         shifts_to_create = []
         recurr = form.cleaned_data["recurrence"]
         tz = timezone.get_current_timezone()
-        for dt in recurr.xafter(datetime.now(), 1000, inc=True):
+        for dt in recurr.xafter(datetime.now() - timedelta(days=365 * 100), 1000, inc=True):
             dt = timezone.make_aware(dt, tz)
             shift = copy(shift)
             shift.pk = None

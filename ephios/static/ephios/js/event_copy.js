@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         break
                 }
 
+                // DTSTART set
+                isValid = isValid && DTSTART.value
+
                 // end date set
                 isValid = isValid && (rule.end_mode === "COUNT" && rule.count && rule.count > 0 || rule.end_mode === "UNTIL" && rule.until)
 
@@ -100,7 +103,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         bysetpos: rule.month_mode === "bysetpos" ? rule.bysetpos : undefined,
                         bymonth: rule.freq === rrule.Frequency.YEARLY ? rule.bymonth : undefined,
                         count: rule.end_mode === "COUNT" ? rule.count : undefined,
-                        until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), formatHourOrZero(rule.UNTIL_TIME, pickHour)) : undefined,
+                        until: rule.end_mode === "UNTIL" && rule.until ? rrule.datetime(...rule.until.split("-"), ...formatHourOrZero(rule.UNTIL_TIME, pickHour)) : undefined,
                     }))
                 })
                 dates.value.forEach(date => {
