@@ -451,9 +451,7 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         return base.prefetch_related("shifts", "shifts__participations")
 
     def get_context_data(self, **kwargs):
-        kwargs["can_change_event"] = self.object in get_objects_for_user(
-            self.request.user, "core.change_event"
-        )
+        kwargs["can_change_event"] = self.request.user.has_perm("core.change_event", self.object)
         return super().get_context_data(**kwargs)
 
 

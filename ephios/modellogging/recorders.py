@@ -10,8 +10,6 @@ from django.template.defaultfilters import yesno
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_users_with_perms
 
-from ephios.extra.permissions import get_groups_with_perms
-
 # pylint: disable=protected-access
 
 
@@ -304,6 +302,8 @@ class PermissionLogRecorder(BaseLogRecorder):
         self.label = label
 
     def attached(self, instance):
+        from ephios.extra.permissions import get_groups_with_perms
+
         self.old_users = set(
             get_users_with_perms(
                 instance, with_group_users=False, only_with_perms_in=[self.codename]
@@ -312,6 +312,8 @@ class PermissionLogRecorder(BaseLogRecorder):
         self.old_groups = set(get_groups_with_perms(instance, only_with_perms_in=[self.codename]))
 
     def record(self, action: InstanceActionType, instance):
+        from ephios.extra.permissions import get_groups_with_perms
+
         self.new_users = set(
             get_users_with_perms(
                 instance, with_group_users=False, only_with_perms_in=[self.codename]
