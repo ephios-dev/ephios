@@ -13,7 +13,7 @@
         <ul class="list-group mb-4">
             <li class="list-group-item p-3" v-for="(rule, index) in rules"
                 :class="{'border-danger': !isRuleValid(rule)}">
-                <div class="btn-toolbar justify-content-between">
+                <div class="btn-toolbar justify-content-between overflow-auto">
                     <div class="btn-group pb-4">
                         <button type="button" class="btn btn-outline-secondary"
                                 :class="{'active': rule.freq===4}" v-if="pickHour"
@@ -39,14 +39,11 @@
                     </div>
                 </div>
 
-                <div class="row mb-4 align-items-center">
-                    <span class="col-4 col-md-3">{% translate "Repeat every" %}</span>
-                    <div class="col-2">
-                        <input class="form-control form-control-sm" type="number" v-model="rule.interval"
-                               min="1">
-                    </div>
-                    <span class="col-3">[[ frequency_strings[rule.freq] ]]</span>
-                    <span v-if="rule.freq < frequencies.DAILY" class="col-1">{% translate "on" %}</span>
+                <div class="form-inline mb-4">
+                    <span class="d-inline">{% translate "Repeat every" %}</span>
+                    <input class="form-control form-control-sm d-inline-block w-25 me-2 ms-2" type="number" v-model="rule.interval" min="1">
+                    <span class="">[[ frequency_strings[rule.freq] ]]</span>
+                    <span v-if="rule.freq < frequencies.DAILY" class="ms-1">{% translate "on" %}</span>
                 </div>
 
                 <div class="mb-4" v-if="rule.freq===frequencies.WEEKLY">
@@ -150,42 +147,28 @@
                 </div>
 
                 <div class="card p-2">
-                    <div class="row align-items-center mb-2">
-                        <div class="col-1">
-                            <input class="form-check-input" type="radio" name="end_mode" v-model="rule.end_mode"
-                                   value="UNTIL" required>
-                        </div>
-                        <span class="col-2">
+                    <div class="form-check mb-2">
+                        <input :id="'until' + index" class="form-check-input mt-2" type="radio" name="end_mode" v-model="rule.end_mode"
+                               value="UNTIL" required>
+                        <label class="form-check-label" :for="'until' + index">
                             {% translate "until" %}
-                        </span>
-                        <div :class="pickHour ? 'col-5' : 'col-9'">
-                            <input type="date" class="form-control form-control-sm"
-                                   v-model="rule.until" @focus="rule.end_mode='UNTIL'"
-                                   :required="rule.end_mode=='UNTIL'">
-                        </div>
-                        <div v-if="pickHour" class="col-4">
-                            <input type="time" class="form-control form-control-sm"
-                                   v-model="rule.UNTIL_TIME" @focus="rule.end_mode='UNTIL'">
-                        </div>
+                        </label>
+                        <input type="date" class="form-control w-25 d-inline-block ms-2 me-2 form-control-sm"
+                               v-model="rule.until" @focus="rule.end_mode='UNTIL'"
+                               :required="rule.end_mode=='UNTIL'">
+                        <input v-if="pickHour" type="time" class="form-control form-control-sm d-inline-block w-25"
+                               v-model="rule.UNTIL_TIME" @focus="rule.end_mode='UNTIL'">
 
                     </div>
 
-                    <div class="row">
-                        <div class="col-1">
-                            <input class="form-check-input" type="radio" name="end_mode" v-model="rule.end_mode"
-                                   value="COUNT" required>
-                        </div>
-                        <span class="col-2">
-                            {% translate "for" %}
-                        </span>
-                        <div class="col-4 col-md-6">
-                            <input type="number" min="1" class="form-control form-control-sm flex-fill"
-                                   v-model="rule.count" @focus="rule.end_mode='COUNT'"
-                                   :required="rule.end_mode=='COUNT'">
-                        </div>
-                        <span class="col-5 col-md-3">
-                            {% translate "occurrences" %}
-                        </span>
+                    <div class="form-check">
+                        <input :id="'until' + index" class="form-check-input mt-2" type="radio" name="end_mode" v-model="rule.end_mode"
+                               value="COUNT" required>
+                        <label class="form-check-label" :for="'count' + index">{% translate "for" %}</label>
+                        <input type="number" min="1" class="form-control form-control-sm ms-2 me-2 w-25 d-inline-block"
+                               v-model="rule.count" @focus="rule.end_mode='COUNT'"
+                               :required="rule.end_mode=='COUNT'">
+                        <span>{% translate "occurrences" %}</span>
                     </div>
                 </div>
             </li>

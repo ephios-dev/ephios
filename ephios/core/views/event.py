@@ -553,9 +553,6 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         ).isoformat()
         return kwargs
 
-    def get_success_url(self):
-        return reverse("core:event_copy", kwargs={"pk": self.object.pk})
-
     def form_valid(self, form):
         tz = timezone.get_current_timezone()
         for date in form.cleaned_data["recurrence"].xafter(
