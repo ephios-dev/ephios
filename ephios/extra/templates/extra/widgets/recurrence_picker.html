@@ -11,7 +11,7 @@
             <input type="time" class="form-control" v-if="pickHour" v-model="DTSTART_TIME">
         </div>
         <ul class="list-group mb-4">
-            <li class="list-group-item p-3" v-for="rule in rules"
+            <li class="list-group-item p-3" v-for="(rule, index) in rules"
                 :class="{'border-danger': !isRuleValid(rule)}">
                 <div class="btn-toolbar justify-content-between">
                     <div class="btn-group pb-4">
@@ -50,10 +50,10 @@
                 </div>
 
                 <div class="mb-4" v-if="rule.freq===frequencies.WEEKLY">
-                    <div class="form-check form-check-inline" v-for="(day, index) in weekdays">
-                        <input :id="'weekday' + index" class="form-check-input" type="checkbox" v-model="rule.byweekday" :value="index"
+                    <div class="form-check form-check-inline" v-for="(day, day_index) in weekdays">
+                        <input :id="'weekday' + index + day_index" class="form-check-input" type="checkbox" v-model="rule.byweekday" :value="day_index"
                                :required="!rule.byweekday">
-                        <label :for="'weekday' + index" class="form-check-label">[[ day.slice(0,2) ]]</label>
+                        <label :for="'weekday' + index + day_index" class="form-check-label">[[ day.slice(0,2) ]]</label>
                     </div>
                 </div>
 
@@ -90,7 +90,7 @@
                         <div class="col-3">
                             <select class="form-select" v-model="rule.byweekday"
                                     :required="rule.month_mode=='bysetpos'" @focus="rule.month_mode='bysetpos'">
-                                <option v-for="(label, index) in weekdays" :value="index">[[ label ]]</option>
+                                <option v-for="(label, weekday_index) in weekdays" :value="weekday_index">[[ label ]]</option>
                             </select>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                         <div class="col-3">
                             <select class="form-select" v-model="rule.byweekday"
                                     @focus="rule.month_mode='bysetpos'">
-                                <option v-for="(label, index) in weekdays" :value="index">[[ label ]]</option>
+                                <option v-for="(label, pos_index) in weekdays" :value="pos_index">[[ label ]]</option>
                             </select>
                         </div>
                         <div class="col-1">
