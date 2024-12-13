@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input :id="'until' + index" class="form-check-input mt-2" type="radio" name="end_mode" v-model="rule.end_mode"
+                        <input :id="'count' + index" class="form-check-input mt-2" type="radio" name="end_mode" v-model="rule.end_mode"
                                value="COUNT" required>
                         <label class="form-check-label" :for="'count' + index">{% translate "for" %}</label>
                         <input type="number" min="1" class="form-control form-control-sm ms-2 me-2 w-25 d-inline-block"
