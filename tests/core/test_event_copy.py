@@ -171,3 +171,21 @@ class TestEventCopy:
             == (target_starttime + timedelta(days=1)).date()
         )
         assert copied_shift.end_time.astimezone(tz).time() == original_shift.end_time.time()
+
+    def test_shift_copy(self, django_app, planner, groups, event, tz):
+        original_shift = event.shifts.first()
+        response = django_app.get(
+            reverse("core:shift_copy", kwargs={"pk": original_shift.id}), user=planner
+        )
+        shift_count = event.shifts.count()
+        form = response.form
+        target_date = datetime(2024, 12, 12, 12, 12)
+        recurr = recurrence.Recurrence(
+            dtstart=datetime.now(),
+            rdates=[target_date],
+            include_dtstart=False,
+        )
+        form["recurrence"] = str(recurr)
+        form.submit()
+        assert event.shifts.get(start_time__date=target_date)
+        assert event.shifts.count() == shift_count + 1
