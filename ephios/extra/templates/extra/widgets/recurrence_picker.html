@@ -13,7 +13,7 @@
         <ul class="list-group mb-4">
             <li class="list-group-item p-3" v-for="(rule, index) in rules"
                 :class="{'border-danger': !isRuleValid(rule)}">
-                <div class="btn-toolbar justify-content-between overflow-auto">
+                <div class="btn-toolbar justify-content-between">
                     <div class="btn-group pb-4" role="group">
                         <input type="radio" class="btn-check" name="freq" v-if="pickHour" :id="'hourly' + index"
                                v-model="rule.freq" :value="frequencies.HOURLY" @change="freqChanged(rule)">
