@@ -24,5 +24,11 @@
     <form method="post">
         {% csrf_token %}
         {{ form.recurrence }}
+        <div class="float-end">
+            <a class="btn btn-secondary me-1" href="{% url "core:event_detail" event.pk event.get_canonical_slug %}"><span
+                class="fa fa-times"></span> {% translate "Back" %}</a>
+            <button type="submit" class="btn btn-primary"><span
+                class="fa fa-copy"></span> {% translate "Copy" %}</button>
+        </div>
     </form>
 {% endblock %}

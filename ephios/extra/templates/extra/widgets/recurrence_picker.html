@@ -197,8 +197,6 @@
             <button class="btn btn-secondary ms-1" id="add-date" @click.stop.prevent="addDate()"><span
                 class="fa fa-plus"></span> {% translate "Add date" %}
             </button>
-            <button type="submit" class="btn btn-primary float-end"><span
-                class="fa fa-copy"></span> {% translate "Copy" %}</button>
         </div>
         <input type="hidden" autocomplete="off" :value="rrule_string" name="recurrence"
                id="id_recurrence">
