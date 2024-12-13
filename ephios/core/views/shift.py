@@ -300,6 +300,9 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
+    def get_permission_object(self):
+        return self.object.event
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["original_start"] = timezone.localtime(self.object.start_time).isoformat()
