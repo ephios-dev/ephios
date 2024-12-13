@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const rules = ref([])
             const dates = ref([])
             const weekdays = [gettext("Monday"), gettext("Tuesday"), gettext("Wednesday"), gettext("Thursday"), gettext("Friday"), gettext("Saturday"), gettext("Sunday")]
-            const frequency_strings = [gettext("year"), gettext("month"), gettext("week"), gettext("day"), gettext("hour")]
+            const frequency_strings = [gettext("years"), gettext("months"), gettext("weeks"), gettext("days"), gettext("hours")]
             const frequencies = rrule.Frequency
             const months = [
                 {id: 1, short: gettext("Jan"), long: gettext("January")},

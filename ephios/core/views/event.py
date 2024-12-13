@@ -558,7 +558,8 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         can_publish_for_groups = get_objects_for_user(
             self.request.user, "publish_event_for_group", klass=Group
         )
-        return can_publish_for_groups.intersection(self.object.visible_for.all()).exists()
+        visible_for = get_groups_with_perms(self.object, only_with_perms_in=["view_event"])
+        return can_publish_for_groups.intersection(visible_for.all()).exists()
 
     def form_valid(self, form):
         tz = timezone.get_current_timezone()
