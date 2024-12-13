@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     return new Intl.DateTimeFormat('de-DE', {
                         dateStyle: 'full',
                         timeStyle: pickHour ? 'short' : undefined,
+                        timeZone: "UTC",
                       }).format(date)
                 }): []
             })
