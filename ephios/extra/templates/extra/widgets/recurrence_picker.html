@@ -14,22 +14,22 @@
             <li class="list-group-item p-3" v-for="(rule, index) in rules"
                 :class="{'border-danger': !isRuleValid(rule)}">
                 <div class="btn-toolbar justify-content-between overflow-auto">
-                    <div class="btn-group pb-4">
-                        <button type="button" class="btn btn-outline-secondary"
-                                :class="{'active': rule.freq===4}" v-if="pickHour"
-                                @click="changeFreq(rule, frequencies.HOURLY)">{% translate "Hourly" %}</button>
-                        <button type="button" class="btn btn-outline-secondary"
-                                :class="{'active': rule.freq===3}"
-                                @click="changeFreq(rule, frequencies.DAILY)">{% translate "Daily" %}</button>
-                        <button type="button" class="btn btn-outline-secondary"
-                                :class="{'active': rule.freq===2}"
-                                @click="changeFreq(rule, frequencies.WEEKLY)">{% translate "Weekly" %}</button>
-                        <button type="button" class="btn btn-outline-secondary"
-                                :class="{'active': rule.freq===1}"
-                                @click="changeFreq(rule, frequencies.MONTHLY)">{% translate "Monthly" %}</button>
-                        <button type="button" class="btn btn-outline-secondary"
-                                :class="{'active': rule.freq===0}"
-                                @click="changeFreq(rule, frequencies.YEARLY)">{% translate "Yearly" %}</button>
+                    <div class="btn-group pb-4" role="group">
+                        <input type="radio" class="btn-check" name="freq" v-if="pickHour" :id="'hourly' + index"
+                               v-model="rule.freq" :value="frequencies.HOURLY" @change="freqChanged(rule)">
+                        <label v-if="pickHour" class="btn btn-outline-secondary" :for="'hourly' + index">{% translate "Hourly" %}</label>
+                        <input type="radio" class="btn-check" name="freq" :id="'daily' + index"
+                               v-model="rule.freq" :value="frequencies.DAILY" @change="freqChanged(rule)">
+                        <label class="btn btn-outline-secondary" :for="'daily' + index">{% translate "Daily" %}</label>
+                        <input type="radio" class="btn-check" name="freq" :id="'weekly' + index"
+                               v-model="rule.freq" :value="frequencies.WEEKLY" @change="freqChanged(rule)">
+                        <label class="btn btn-outline-secondary" :for="'weekly' + index">{% translate "Weekly" %}</label>
+                        <input type="radio" class="btn-check" name="freq" :id="'monthly' + index"
+                               v-model="rule.freq" :value="frequencies.MONTHLY" @change="freqChanged(rule)">
+                        <label class="btn btn-outline-secondary" :for="'monthly' + index">{% translate "Monthly" %}</label>
+                        <input type="radio" class="btn-check" name="freq" :id="'yearly' + index"
+                               v-model="rule.freq" :value="frequencies.YEARLY" @change="freqChanged(rule)">
+                        <label class="btn btn-outline-secondary" :for="'yearly' + index">{% translate "Yearly" %}</label>
                     </div>
                     <div>
                         <button type="button" class="btn btn-danger" @click="removeRule(rule)">
@@ -158,7 +158,6 @@
                                :required="rule.end_mode=='UNTIL'">
                         <input v-if="pickHour" type="time" class="form-control form-control-sm d-inline-block w-25"
                                v-model="rule.UNTIL_TIME" @focus="rule.end_mode='UNTIL'">
-
                     </div>
 
                     <div class="form-check">
@@ -174,19 +173,13 @@
             </li>
             <li class="list-group-item p-3" v-for="date in dates"
                 :class="{'border-danger': !(date.date && (!pickHour || date.time))}">
-                <div class="row align-items-center">
-                    <div class="col-5">
-                        <input type="date" v-model="date.date" class="form-control" required>
-                    </div>
-                    <div class="col-5">
-                        <input type="time" v-if="pickHour" v-model="date.time" class="form-control" required>
-                    </div>
-                    <div class="col-1 ms-auto me-3">
-                        <button type="button" class="btn btn-danger" @click="removeDate(date)">
-                            <i class="fas fa-trash"></i><span
-                                class="visually-hidden">{% translate "Remove" %}</span>
-                        </button>
-                    </div>
+                <div class="form-inline">
+                    <input type="date" v-model="date.date" class="form-control d-inline-block w-25 me-2" required>
+                    <input type="time" v-if="pickHour" v-model="date.time" class="form-control d-inline-block w-25" required>
+                    <button type="button" class="btn btn-danger float-end" @click="removeDate(date)">
+                        <i class="fas fa-trash"></i><span
+                            class="visually-hidden">{% translate "Remove" %}</span>
+                    </button>
                 </div>
             </li>
         </ul>

@@ -52,17 +52,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dates.value.splice(dates.value.indexOf(date), 1)
             }
 
-            async function changeFreq(rule, freq){
-                rule.freq = freq
+            async function freqChanged(rule){
                 rule.byweekday = rule.freq >= rrule.Frequency.WEEKLY ? [] : 0;
                 rule.bysetpos = 1;
                 rule.bymonthday = 1;
                 rule.bymonth = 1;
                 delete rule.month_mode;
-            }
-
-            function submitForm(event) {
-                event.target.submit();
             }
 
             function isRuleValid(rule) {
@@ -136,7 +131,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 removeRule,
                 addDate,
                 removeDate,
-                submitForm,
                 rrule_string,
                 weekdays,
                 months,
@@ -145,7 +139,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 pickHour,
                 frequencies,
                 frequency_strings,
-                changeFreq,
+                freqChanged,
                 isRuleValid,
             }
         }, delimiters: ['[[', ']]']

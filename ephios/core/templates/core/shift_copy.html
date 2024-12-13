@@ -29,7 +29,7 @@
         {{ form.recurrence }}
         <div class="float-end">
             <a class="btn btn-secondary me-1" href="{% url "core:event_detail" shift.event.pk shift.event.get_canonical_slug %}"><span
-                class="fa fa-times"></span> {% translate "Back" %}</a>
+                class="fa fa-arrow-left"></span> {% translate "Back" %}</a>
             <button type="submit" class="btn btn-primary"><span
                 class="fa fa-copy"></span> {% translate "Copy" %}</button>
         </div>

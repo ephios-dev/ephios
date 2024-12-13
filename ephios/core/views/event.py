@@ -548,9 +548,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["original_start"] = timezone.localtime(
-            self.object.shifts.first().start_time
-        ).isoformat()
+        kwargs["original_start"] = timezone.localtime(self.object.get_start_time()).isoformat()
         return kwargs
 
     def form_valid(self, form):
