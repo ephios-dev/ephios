@@ -7,6 +7,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import BooleanField, Case, Count, Max, Min, Prefetch, Q, QuerySet, When
 from django.shortcuts import get_object_or_404, redirect
@@ -537,7 +538,7 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
 
 
 class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
-    permission_required = "core.add_event"
+    permission_required = ["core.add_event", "core.view_event"]
     model = Event
     template_name = "core/event_copy.html"
     form_class = EventCopyForm
@@ -550,6 +551,14 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["original_start"] = timezone.localtime(self.object.get_start_time()).isoformat()
         return kwargs
+
+    def has_permission(self):
+        if not super().has_permission():
+            return False
+        can_publish_for_groups = get_objects_for_user(
+            self.request.user, "publish_event_for_group", klass=Group
+        )
+        return can_publish_for_groups.intersection(self.object.visible_for.all()).exists()
 
     def form_valid(self, form):
         tz = timezone.get_current_timezone()
@@ -580,6 +589,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 ),
                 event,
             )
+            assign_perm("change_event", self.request.user, event)
 
             shifts_to_create = []
             for shift in shifts:
