@@ -35,7 +35,6 @@ class TestEventCopy:
                 recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
             ],
         )
-        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
@@ -57,16 +56,16 @@ class TestEventCopy:
         recurr = recurrence.Recurrence(
             dtstart=datetime.now(),
             rdates=[target_date],
+            include_dtstart=False,
         )
-        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
             datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
         )
         new_event = Event.objects.get(title=event.title, shifts__start_time__date=target_date)
-        assert Event.objects.all().count() == event_count + 2
-        assert Shift.objects.filter(start_time__date__in=occurrences).count() == 2
+        assert Event.objects.all().count() == event_count + 1
+        assert Shift.objects.filter(start_time__date__in=occurrences).count() == 1
         self.assert_dates(event, occurrences, volunteers, planners)
         assert planner.has_perm("change_event", new_event)
         assert set(get_groups_with_perms(new_event, only_with_perms_in=["change_event"])) == set(
@@ -87,7 +86,6 @@ class TestEventCopy:
                 recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
             ],
         )
-        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
@@ -123,17 +121,15 @@ class TestEventCopy:
         form = response.form
         target_date = datetime.now() + timedelta(days=14)
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(),
-            rdates=[target_date],
+            dtstart=datetime.now(), rdates=[target_date], include_dtstart=False
         )
-        form["start_date"] = datetime.now().date()
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
             datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
         )
-        assert Event.objects.all().count() == event_count + 2
-        assert Shift.objects.filter(start_time__date__in=occurrences).count() == 2
+        assert Event.objects.all().count() == event_count + 1
+        assert Shift.objects.filter(start_time__date__in=occurrences).count() == 1
         for shift_date in occurrences:
             shift = Shift.objects.get(start_time__date=shift_date)
             assert shift.event.title == event_to_next_day.title
@@ -163,9 +159,8 @@ class TestEventCopy:
         target_starttime = timezone.now() + timedelta(days=14)
         recurr = recurrence.Recurrence(
             dtstart=target_starttime,
-            rdates=[],
+            rdates=[target_starttime],
         )
-        form["start_date"] = target_starttime.date()
         form["recurrence"] = str(recurr)
         form.submit()
         copied_shift = Shift.objects.exclude(event=event).get()
