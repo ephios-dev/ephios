@@ -47,7 +47,7 @@
         </div>
     {% endwith %}
 
-    {% if "change_event" in event_perms %}
+    {% if can_change_event %}
         <div class="dropstart">
             <button class="btn" type="button" id="actionDropdownButton"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
