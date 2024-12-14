@@ -587,6 +587,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 ),
                 event,
             )
+            assign_perm("view_event", self.request.user, event)
             assign_perm("change_event", self.request.user, event)
 
             shifts_to_create = []

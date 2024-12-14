@@ -17,7 +17,7 @@ class TestEventCopy:
             assert shift.event.get_start_time() == shift.start_time
             assert shift.meeting_time.date() == shift.start_time.date()
             assert shift.end_time.date() == shift.start_time.date()
-            assert (volunteers and planners) in get_groups_with_perms(
+            assert volunteers in get_groups_with_perms(
                 shift.event, only_with_perms_in=["view_event"]
             )
             assert planners in get_groups_with_perms(
@@ -102,7 +102,7 @@ class TestEventCopy:
                 shift.start_time.date(),
                 shift.start_time.date() + timedelta(days=1),
             ]
-            assert (volunteers and planners) in get_groups_with_perms(
+            assert volunteers in get_groups_with_perms(
                 shift.event, only_with_perms_in=["view_event"]
             )
             assert planners in get_groups_with_perms(
@@ -136,7 +136,7 @@ class TestEventCopy:
             assert shift.event.get_start_time() == shift.start_time
             assert shift.meeting_time.date() == shift.start_time.date()
             assert shift.end_time.date() == shift.start_time.date() + timedelta(days=1)
-            assert (volunteers and planners) in get_groups_with_perms(
+            assert volunteers in get_groups_with_perms(
                 shift.event, only_with_perms_in=["view_event"]
             )
             assert planners in get_groups_with_perms(
