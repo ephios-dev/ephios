@@ -552,17 +552,14 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         kwargs["original_start"] = timezone.localtime(self.object.get_start_time()).isoformat()
         return kwargs
 
-    def has_permission(self):
-        if not super().has_permission():
-            return False
+    def form_valid(self, form):
+        tz = timezone.get_current_timezone()
         can_publish_for_groups = get_objects_for_user(
             self.request.user, "publish_event_for_group", klass=Group
         )
-        visible_for = get_groups_with_perms(self.object, only_with_perms_in=["view_event"])
-        return can_publish_for_groups.intersection(visible_for.all()).exists()
-
-    def form_valid(self, form):
-        tz = timezone.get_current_timezone()
+        visible_for = get_groups_with_perms(
+            self.object, only_with_perms_in=["view_event"]
+        ).intersection(can_publish_for_groups)
         for date in form.cleaned_data["recurrence"].xafter(
             datetime.now() - timedelta(days=365 * 100), 1000, inc=True
         ):
@@ -573,7 +570,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             event.save()
             assign_perm(
                 "view_event",
-                get_groups_with_perms(self.get_object(), only_with_perms_in=["view_event"]),
+                visible_for,
                 event,
             )
             assign_perm(

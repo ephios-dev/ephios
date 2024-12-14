@@ -3077,7 +3077,7 @@ msgstr "für"
 
 #: ephios/extra/templates/extra/widgets/recurrence_picker.html:187
 msgid "occurrences"
-msgstr "Male"
+msgstr "Mal"
 
 #: ephios/extra/templates/extra/widgets/recurrence_picker.html:212
 msgid "Add rule"
