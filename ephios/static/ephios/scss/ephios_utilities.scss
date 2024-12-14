@@ -1,6 +1,6 @@
 
-@include media-breakpoint-up(lg) {
-  .two-columns {
+@include media-breakpoint-up(xxl) {
+  .two-columns-xxl {
     -webkit-column-gap: 20px;
     -moz-column-gap: 20px;
     column-gap: 20px;
