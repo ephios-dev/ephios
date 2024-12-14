@@ -1,15 +1,20 @@
+from copy import copy
+from datetime import datetime, timedelta
+
+from csp.decorators import csp_exempt
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
 from django.views import View
-from django.views.generic import DeleteView, TemplateView
+from django.views.generic import DeleteView, FormView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
-from ephios.core.forms.events import ShiftForm
+from ephios.core.forms.events import ShiftCopyForm, ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
 from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
@@ -108,6 +113,8 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.save_plugin_forms()
         if "addAnother" in self.request.POST:
             return redirect(reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")}))
+        if "copyShift" in self.request.POST:
+            return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
         try:
             self.event.activate()
             messages.success(
@@ -245,6 +252,8 @@ class ShiftUpdateView(
                     return redirect(
                         reverse("core:event_createshift", kwargs={"pk": shift.event.pk})
                     )
+                if "copyShift" in self.request.POST:
+                    return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
                 messages.success(
                     self.request, _("The shift {shift} has been saved.").format(shift=shift)
                 )
@@ -279,3 +288,48 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
 
     def get_permission_object(self):
         return self.object.event
+
+
+class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    permission_required = "core.change_event"
+    model = Shift
+    template_name = "core/shift_copy.html"
+    form_class = ShiftCopyForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def get_permission_object(self):
+        return self.object.event
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["original_start"] = timezone.localtime(self.object.start_time).isoformat()
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("core:event_detail", kwargs={"pk": self.object.event.pk, "slug": "event"})
+
+    def form_valid(self, form):
+        shift = self.object
+        duration = shift.end_time - shift.start_time
+        meeting_offset = shift.start_time - shift.meeting_time
+        shifts_to_create = []
+        recurr = form.cleaned_data["recurrence"]
+        tz = timezone.get_current_timezone()
+        for dt in recurr.xafter(datetime.now() - timedelta(days=365 * 100), 1000, inc=True):
+            dt = timezone.make_aware(dt, tz)
+            shift = copy(shift)
+            shift.pk = None
+            shift.meeting_time = dt - meeting_offset
+            shift.start_time = dt
+            shift.end_time = dt + duration
+            shifts_to_create.append(shift)
+        Shift.objects.bulk_create(shifts_to_create)
+        messages.success(self.request, _("Shift copied successfully."))
+        return super().form_valid(form)
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        return csp_exempt(super().as_view(**initkwargs))

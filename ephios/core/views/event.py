@@ -1,20 +1,19 @@
-import json
 from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 
+from csp.decorators import csp_exempt
 from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import BooleanField, Case, Count, Max, Min, Prefetch, Q, QuerySet, When
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDict
-from django.utils.formats import date_format
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
@@ -32,10 +31,9 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
-from recurrence.forms import RecurrenceField
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventDuplicationForm, EventForm, EventNotificationForm
+from ephios.core.forms.events import EventCopyForm, EventForm, EventNotificationForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 from ephios.core.services.notifications.types import (
     CustomEventParticipantNotification,
@@ -540,26 +538,31 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
 
 
 class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
-    permission_required = "core.add_event"
+    permission_required = ["core.add_event", "core.view_event"]
     model = Event
     template_name = "core/event_copy.html"
-    form_class = EventDuplicationForm
+    form_class = EventCopyForm
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.object = self.get_object()
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["original_start"] = timezone.localtime(self.object.get_start_time()).isoformat()
+        return kwargs
+
     def form_valid(self, form):
-        tz = get_current_timezone()
-        occurrences = form.cleaned_data["recurrence"].between(
-            datetime.now() - timedelta(days=1),
-            datetime.now() + timedelta(days=7305),  # allow dates up to twenty years in the future
-            inc=True,
-            dtstart=datetime.combine(
-                forms.DateField().to_python(self.request.POST["start_date"]), datetime.min.time()
-            ),
+        tz = timezone.get_current_timezone()
+        can_publish_for_groups = get_objects_for_user(
+            self.request.user, "publish_event_for_group", klass=Group
         )
-        for date in occurrences:
+        visible_for = get_groups_with_perms(
+            self.object, only_with_perms_in=["view_event"]
+        ).intersection(can_publish_for_groups)
+        for date in form.cleaned_data["recurrence"].xafter(
+            datetime.now() - timedelta(days=365 * 100), 1000, inc=True
+        ):
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()
             shifts = list(event.shifts.all())
@@ -567,7 +570,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             event.save()
             assign_perm(
                 "view_event",
-                get_groups_with_perms(self.get_object(), only_with_perms_in=["view_event"]),
+                visible_for,
                 event,
             )
             assign_perm(
@@ -584,6 +587,8 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
                 ),
                 event,
             )
+            assign_perm("view_event", self.request.user, event)
+            assign_perm("change_event", self.request.user, event)
 
             shifts_to_create = []
             for shift in shifts:
@@ -616,30 +621,9 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("core:event_list"))
 
-
-class RRuleOccurrenceView(CustomPermissionRequiredMixin, View):
-    permission_required = "core.add_event"
-
-    def post(self, *args, **kwargs):
-        try:
-            recurrence = RecurrenceField().clean(self.request.POST["recurrence_string"])
-            return HttpResponse(
-                json.dumps(
-                    recurrence.between(
-                        datetime.now() - timedelta(days=1),
-                        datetime.now()
-                        + timedelta(days=7305),  # allow dates up to twenty years in the future
-                        inc=True,
-                        dtstart=datetime.combine(
-                            forms.DateField().to_python(self.request.POST["dtstart"]),
-                            datetime.min.time(),
-                        ),
-                    ),
-                    default=lambda obj: date_format(obj, format="SHORT_DATE_FORMAT"),
-                )
-            )
-        except (TypeError, KeyError, ValidationError):
-            return HttpResponse()
+    @classmethod
+    def as_view(cls, **initkwargs):
+        return csp_exempt(super().as_view(**initkwargs))
 
 
 class HomeView(LoginRequiredMixin, TemplateView):

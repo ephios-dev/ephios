@@ -4,7 +4,10 @@
 {% load i18n %}
 
 {% block title %}
-    {% translate "Copy event" %}
+    {% translate "Copy shift" %}
+{% endblock %}
+
+{% block css %}
 {% endblock %}
 
 {% block messages %}
@@ -18,14 +21,14 @@
 {% block content %}
     <div class="page-header">
         <h1>
-            {% translate "Copy event" %} "{{ event.title }}" <small>({{ event.get_start_time }})</small>
+            {% translate "Copy shift" %} "{{ shift.event.title }}" <small>({{ shift.get_datetime_display }})</small>
         </h1>
     </div>
     <form method="post">
         {% csrf_token %}
         {{ form.recurrence }}
         <div class="float-end">
-            <a class="btn btn-secondary me-1" href="{% url "core:event_detail" event.pk event.get_canonical_slug %}"><span
+            <a class="btn btn-secondary me-1" href="{% url "core:event_detail" shift.event.pk shift.event.get_canonical_slug %}"><span
                 class="fa fa-arrow-left"></span> {% translate "Back" %}</a>
             <button type="submit" class="btn btn-primary"><span
                 class="fa fa-copy"></span> {% translate "Copy" %}</button>
