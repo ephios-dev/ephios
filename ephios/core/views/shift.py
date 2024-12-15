@@ -183,7 +183,7 @@ class ShiftUpdateView(
             self.request.POST or None,
             instance=self.object,
             initial={
-                "date": self.object.meeting_time.date(),
+                "date": self.object.meeting_time.astimezone(get_default_timezone()).date(),
                 "meeting_time": self.object.meeting_time.astimezone(get_default_timezone()).time(),
                 "start_time": self.object.start_time.astimezone(get_default_timezone()).time(),
                 "end_time": self.object.end_time.astimezone(get_default_timezone()).time(),
