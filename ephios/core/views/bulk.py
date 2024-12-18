@@ -14,7 +14,7 @@ class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, 
     template_name = "core/event_bulk_delete.html"
 
     def get(self, request, *args, **kwargs):
-        events = get_objects_for_user(request.user, "core.view_event").filter(
+        events = get_objects_for_user(request.user, "core.change_event").filter(
             pk__in=request.GET.getlist("bulk_action")
         )
         if not events:
@@ -23,7 +23,7 @@ class EventBulkDeleteView(CustomPermissionRequiredMixin, TemplateResponseMixin, 
         return self.render_to_response({"events": events})
 
     def post(self, request, *args, **kwargs):
-        events = get_objects_for_user(request.user, "core.view_event").filter(
+        events = get_objects_for_user(request.user, "core.change_event").filter(
             pk__in=request.POST.getlist("bulk_action")
         )
         if not events:
