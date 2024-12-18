@@ -66,6 +66,12 @@
                                 </span>
                             </a>
                             <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
+                                {% if event.can_change %}
+                                    <small class="pe-1" data-bs-toggle="tooltip" data-bs-placement="left"
+                                           title="{% translate "Responsible" %}">
+                                        <i class="fas fa-crown text-body-secondary"></i>
+                                    </small>
+                                {% endif %}
                                 <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                             </a>
                             <a class="grid-signup d-flex flex-column align-items-end justify-content-center event-list-item-link"
