@@ -1,50 +1,97 @@
-import typing
+from collections import defaultdict
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
+from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
 
-from ephios.core.forms.users import UserNotificationPreferenceForm
-from ephios.core.signals import management_settings_sections
+from ephios.core.forms.users import UserNotificationPreferenceForm, UserOwnDataForm
+from ephios.core.models.users import IdentityProvider
+from ephios.core.services.health.healthchecks import run_healthchecks
+from ephios.core.signals import settings_sections
+from ephios.core.views.auth import show_login_form
 from ephios.extra.mixins import StaffRequiredMixin
 
+SETTINGS_PERSONAL_SECTION_KEY = _("Personal")
+SETTINGS_MANAGEMENT_SECTION_KEY = _("Management")
 
-def get_available_management_settings_sections(request):
-    sections = []
+
+def get_available_settings_sections(request):
+    sections = defaultdict(list)
+    sections[SETTINGS_PERSONAL_SECTION_KEY] += [
+        {
+            "label": _("Personal data"),
+            "url": reverse("core:settings_personal_data"),
+            "active": request.resolver_match.url_name == "settings_personal_data",
+        },
+        {
+            "label": _("Notifications"),
+            "url": reverse("core:settings_notifications"),
+            "active": request.resolver_match.url_name == "settings_notifications",
+        },
+        {
+            "label": _("Calendar"),
+            "url": reverse("core:settings_calendar"),
+            "active": request.resolver_match.url_name == "settings_calendar",
+        },
+        {
+            "label": _("Integrations"),
+            "url": reverse("api:settings-access-token-list"),
+            "active": "settings-access-token" in request.resolver_match.url_name,
+        },
+    ]
+    if show_login_form(request, IdentityProvider.objects.all()):
+        sections[SETTINGS_PERSONAL_SECTION_KEY].append(
+            {
+                "label": _("Change password"),
+                "url": reverse("core:settings_password_change"),
+                "active": request.resolver_match.url_name == "settings_password_change",
+            }
+        )
     if request.user.is_staff:
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("ephios instance"),
                 "url": reverse("core:settings_instance"),
                 "active": request.resolver_match.url_name == "settings_instance",
             }
         )
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
+            {
+                "label": _("App integrations"),
+                "url": reverse("api:settings-oauth-app-list"),
+                "active": "settings-oauth" in request.resolver_match.url_name,
+            }
+        )
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
+            {
+                "label": _("Identity providers"),
+                "url": reverse("core:settings_idp_list"),
+                "active": "settings_idp" in request.resolver_match.url_name,
+            }
+        )
     if request.user.has_perm("core.view_eventtype"):
-        sections.append(
+        sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
                 "label": _("Event types"),
                 "url": reverse("core:settings_eventtype_list"),
                 "active": request.resolver_match.url_name.startswith("settings_eventtype"),
             }
         )
-    for __, result in management_settings_sections.send(None, request=request):
-        sections += result
-    return sections
+
+    for __, result in settings_sections.send(None, request=request):
+        for item in result:
+            group = item.pop("group")
+            sections[group].append(item)
+    return dict(sections)
 
 
-class SettingsViewMixin(FormView if typing.TYPE_CHECKING else object):
-    def get_context_data(self, **kwargs):
-        kwargs["management_settings_sections"] = get_available_management_settings_sections(
-            self.request
-        )
-        return super().get_context_data(**kwargs)
-
-
-class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView):
+class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/settings/settings_instance.html"
     success_message = _("Settings saved successfully.")
 
@@ -58,10 +105,35 @@ class InstanceSettingsView(StaffRequiredMixin, SuccessMessageMixin, SettingsView
     def get_success_url(self):
         return reverse("core:settings_instance")
 
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            kwargs["healthchecks"] = list(run_healthchecks())
+        return super().get_context_data(**kwargs)
 
-class NotificationSettingsView(
-    LoginRequiredMixin, SuccessMessageMixin, SettingsViewMixin, FormView
-):
+
+class PersonalDataSettingsView(LoginRequiredMixin, UpdateView):
+    template_name = "core/settings/settings_personal_data.html"
+    form_class = UserOwnDataForm
+    success_url = reverse_lazy("core:settings_personal_data")
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, form.cleaned_data["preferred_language"])
+        return response
+
+
+class CalendarSettingsView(LoginRequiredMixin, TemplateView):
+    template_name = "core/settings/settings_calendar.html"
+
+    def get_context_data(self, **kwargs):
+        kwargs["userprofile"] = self.request.user
+        return super().get_context_data(**kwargs)
+
+
+class NotificationSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/settings/settings_notifications.html"
     success_message = _("Settings succesfully saved.")
 
@@ -72,11 +144,11 @@ class NotificationSettingsView(
         return reverse("core:settings_notifications")
 
     def form_valid(self, form):
-        form.update_preferences()
+        form.save_preferences()
         return super().form_valid(form)
 
 
-class PasswordChangeSettingsView(SuccessMessageMixin, SettingsViewMixin, PasswordChangeView):
+class PasswordChangeSettingsView(SuccessMessageMixin, PasswordChangeView):
     template_name = "core/settings/password_change_form.html"
     success_url = reverse_lazy("core:home")
     success_message = _("Password changed successfully.")

@@ -1,0 +1,65 @@
+{% extends "core/mails/base.html" %}
+{% load settings_extras %}
+{% load rich_text %}
+{% load i18n %}
+
+{% block emailcss %}
+    td.actions {
+    padding-top: 22px;
+    text-align: center;
+    margin: 0 auto;
+    }
+    .organization-name {
+    margin-bottom: 14px;
+    }
+    .organization-name a {
+    font-weight: bold;
+    color: #76858f;
+    text-decoration: none;
+    }
+{% endblock %}
+
+{% block header %}
+    <div class="organization-name">
+        <a href="{% site_url %}">
+            {% organization_name %}
+        </a>
+    </div>
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <tr>
+        <td>
+            {{ body|rich_text }}
+        </td>
+    </tr>
+
+    {% with notification.get_actions as actions %}
+        {% if actions %}
+            <tr>
+                <td class="actions">
+                    {% for label, url in notification.get_actions %}
+                        <a class="btn{% if forloop.first %} btn-primary{% endif %}" href="{{ url }}">{{ label }}</a>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block footer %}
+    <small>
+        {% organization_name as organization_name %}
+        {% blocktranslate trimmed %}
+            You are receiving this email as a member of {{ organization_name }}.
+        {% endblocktranslate %}
+        {% if notification.notification_type.title %}
+            <br/>
+            {{ notification.notification_type.title }}.
+        {% endif %}
+        <br/>
+        <a href="{{ notification_settings_url }}">{% translate "Notification settings" %}</a> ·
+    </small>
+    {{ block.super }}
+{% endblock %}

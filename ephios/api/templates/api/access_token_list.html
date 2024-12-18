@@ -1,0 +1,132 @@
+{% extends "core/settings/settings_base.html" %}
+{% load rich_text %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h1>{% translate "Integrations" %}</h1>
+        <p>
+            {% blocktranslate trimmed %}
+                Other applications can integrate with ephios by asking you for access to your data.
+                You can also create personal API tokens to access ephios from other applications.
+                If you are unsure about the origins of a token or the security of the third party application
+                please revoke access.
+            {% endblocktranslate %}
+        </p>
+        <h2>
+            {% translate "Third party applications" %}
+        </h2>
+        {% for token in oauth_access_tokens %}
+            <div class="card w-100 mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <h5 class="card-title">
+                                {{ token.application.name }}
+                            </h5>
+                            <p class="text-body-secondary">
+                                {# this belongs to the federation plugin, but we display the information here for better understanding #}
+                                {% if token.application.federatedhost %}
+                                    {% translate "ephios instance" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-12 col-lg">
+                            <h6>{% translate "Scope" %}</h6>
+                            <ul>
+                                {% for scope_name, scope_description in token.scopes.items %}
+                                    <li><code>{{ scope_name }}</code>: {{ scope_description }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-12 col-lg-auto">
+                            {% if token.revoked %}
+                                <span class="badge bg-danger text-white">{% translate "Revoked" %}</span>
+                            {% else %}
+                                <form method="POST" action="{% url "api:settings-access-token-revoke" %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pk" value="{{ token.id }}">
+                                    <button type="submit"
+                                            class="btn btn-outline-danger">{% translate "Revoke" %}</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>{% translate "No applications have been authorized." %}</p>
+        {% endfor %}
+    </div>
+
+    <h2>
+        {% translate "Personal API tokens" %}
+    </h2>
+
+    <a href="{% url "api:settings-access-token-create" %}"
+       class="btn btn-secondary mb-3">{% translate "Create new API token" %}</a>
+
+    {% for token in personal_access_tokens %}
+        <div class="card w-100 mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <h5 class="card-title">
+                            {{ token.description|rich_text }}
+                        </h5>
+                        <p class="text-body-secondary">
+                            {% blocktranslate trimmed with created=token.created %}
+                                created on {{ created }}
+                            {% endblocktranslate %}
+                            <br/>
+                            {% if token.revoked %}
+                                {% blocktranslate trimmed with revoked=token.expires %}
+                                    revoked on {{ revoked }}
+                                {% endblocktranslate %}
+                            {% elif token.is_expired %}
+                                {% blocktranslate trimmed with expires=token.expires %}
+                                    expired on {{ expires }}
+                                {% endblocktranslate %}
+                            {% elif token.expires %}
+                                {% blocktranslate trimmed with expires=token.expires %}
+                                    expires on {{ expires }}
+                                {% endblocktranslate %}
+                            {% else %}
+                                {% translate "does not expire" %}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-12 col-md">
+                        <h6>{% translate "Scope" %}</h6>
+                        <ul>
+                            {% for scope_name, scope_description in token.scopes.items %}
+                                <li><code>{{ scope_name }}</code>: {{ scope_description }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        {% if token.revoked %}
+                            <span class="badge bg-danger text-white">{% translate "Revoked" %}</span>
+                        {% elif token.is_expired %}
+                            <span class="badge bg-warning text-white">{% translate "Expired" %}</span>
+                        {% elif token.is_valid %}
+                            <form method="POST" action="{% url "api:settings-access-token-revoke" %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="pk" value="{{ token.id }}">
+                                <button type="submit"
+                                        class="btn btn-outline-danger">{% translate "Revoke" %}</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>{% translate "There are no tokens." %}</p>
+    {% endfor %}
+    </div>
+
+{% endblock %}

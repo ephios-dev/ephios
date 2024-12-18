@@ -1,0 +1,69 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h3 class="block-center-heading">{% translate "App integrations" %}</h3>
+        <p>
+            {% blocktranslate trimmed %}
+                On this page you can configure other apps and programs to work with ephios as an authentication provider
+                using the OAuth2-standard. Other ways to integrate with ephios include the plugin system and the API.
+                More detailed information can be found in the documentation.
+            {% endblocktranslate %}
+        </p>
+        <h4>{% translate "OAuth2 applications" %}</h4>
+        <a class="btn btn-primary" href="{% url "api:settings-oauth-app-register" %}">{% translate "New Application" %}</a>
+        {% if applications %}
+            <table id="userprofile_table" class="table table-striped display">
+                <thead>
+                    <tr>
+                        <th>{% translate "Name" %}</th>
+                        <th>{% translate "User" %}</th>
+                        <th>{% translate "Created" %}</th>
+                        <th>{% translate "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td>{{ application.name }}</td>
+                            <td>
+                                {{ application.user|default_if_none:"-" }}
+                            </td>
+                            <td>{{ application.created }}</td>
+                            <td class="d-flex">
+                                <div>
+                                    {% if application.federatedhost %}
+                                        <a class="btn btn-secondary"
+                                           href="{% url "federation:settings" %}">
+                                            <span class="fa fa-cog"></span>
+                                            <span class="d-none d-lg-inline">{% translate "Manage federation" %}</span>
+                                        </a>
+                                    {% else %}
+                                        <a class="btn btn-secondary"
+                                           href="{{ application.get_absolute_url }}">
+                                            <span class="fa fa-eye"></span>
+                                            <span class="d-none d-lg-inline">{% translate "View" %}</span>
+                                        </a>
+                                        <a class="btn btn-secondary ms-1"
+                                           href="{% url "api:settings-oauth-app-update" application.id %}">
+                                            <span class="fa fa-edit"></span>
+                                            <span class="d-none d-lg-inline">{% translate "Edit" %}</span>
+                                        </a>
+                                        <a class="btn btn-secondary ms-1"
+                                           href="{% url "api:settings-oauth-app-delete" application.id %}">
+                                            <span class="fa fa-trash-alt"></span>
+                                            <span class="d-none d-lg-inline">{% translate "Delete" %}</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% translate "No applications defined" %}.</p>
+        {% endif %}
+    </div>
+{% endblock %}

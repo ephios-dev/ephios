@@ -2,6 +2,7 @@ from django.urls import path
 
 from ephios.core import pdf
 from ephios.core.ical import user_event_feed_view
+from ephios.core.services.files import FileTicketView
 from ephios.core.signup.disposition import (
     AddPlaceholderParticipantView,
     AddUserView,
@@ -12,29 +13,36 @@ from ephios.core.views.accounts import (
     GroupDeleteView,
     GroupListView,
     GroupUpdateView,
-    ProfileView,
     UserProfileCreateView,
     UserProfileDeleteView,
-    UserProfileDetailView,
     UserProfileListView,
     UserProfilePasswordResetView,
+    UserProfilePasswordTokenRevokationView,
     UserProfileUpdateView,
 )
+from ephios.core.views.auth import (
+    IdentityProviderCreateView,
+    IdentityProviderDeleteView,
+    IdentityProviderDiscoveryView,
+    IdentityProviderListView,
+    IdentityProviderUpdateView,
+    OIDCCallbackView,
+    OIDCInitiateView,
+    OIDCLoginView,
+    OIDCLogoutView,
+)
 from ephios.core.views.bulk import EventBulkDeleteView
-from ephios.core.views.consequences import ConsequenceUpdateView, WorkingHourRequestView
+from ephios.core.views.consequences import ConsequenceUpdateView
 from ephios.core.views.event import (
     EventActivateView,
-    EventArchiveView,
     EventCopyView,
     EventCreateView,
     EventDeleteView,
     EventDetailView,
-    EventListTypeSettingView,
+    EventListView,
     EventNotificationView,
     EventUpdateView,
     HomeView,
-    RRuleOccurrenceView,
-    current_event_list_view,
 )
 from ephios.core.views.eventtype import (
     EventTypeCreateView,
@@ -42,25 +50,49 @@ from ephios.core.views.eventtype import (
     EventTypeListView,
     EventTypeUpdateView,
 )
+from ephios.core.views.healthcheck import HealthCheckView
 from ephios.core.views.log import LogView
-from ephios.core.views.pwa import manifest, offline, serviceworker
+from ephios.core.views.notifications import (
+    NotificationDetailView,
+    NotificationListView,
+    NotificationMarkAllAsReadView,
+    NotificationMarkAsReadView,
+)
+from ephios.core.views.pwa import OfflineView, PWAManifestView, ServiceWorkerView
 from ephios.core.views.settings import (
+    CalendarSettingsView,
     InstanceSettingsView,
     NotificationSettingsView,
     PasswordChangeSettingsView,
+    PersonalDataSettingsView,
 )
 from ephios.core.views.shift import (
-    ShiftConfigurationFormView,
+    ShiftCopyView,
     ShiftCreateView,
     ShiftDeleteView,
+    ShiftStructureConfigurationFormView,
     ShiftUpdateView,
+    SignupFlowConfigurationFormView,
 )
 from ephios.core.views.signup import LocalUserShiftActionView
+from ephios.core.views.workinghour import (
+    OwnWorkingHourView,
+    UserProfileWorkingHourView,
+    WorkingHourCreateView,
+    WorkingHourDeleteView,
+    WorkingHourOverview,
+    WorkingHourRequestView,
+    WorkingHourUpdateView,
+)
 
 app_name = "core"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("events/", current_event_list_view, name="event_list"),
+    path("manifest.json", PWAManifestView.as_view(), name="pwa_manifest"),
+    path("serviceworker.js", ServiceWorkerView.as_view(), name="pwa_serviceworker"),
+    path("offline/", OfflineView.as_view(), name="pwa_offline"),
+    path("healthcheck/", HealthCheckView.as_view(), name="healthcheck"),
+    path("events/", EventListView.as_view(), name="event_list"),
     path(
         "events/<int:pk>/edit/",
         EventUpdateView.as_view(),
@@ -103,11 +135,6 @@ urlpatterns = [
         name="event_create",
     ),
     path(
-        "events/past/",
-        EventArchiveView.as_view(),
-        name="event_list_past",
-    ),
-    path(
         "events/delete/",
         EventBulkDeleteView.as_view(),
         name="event_bulk_delete",
@@ -128,9 +155,14 @@ urlpatterns = [
         name="shift_delete",
     ),
     path(
-        "signup_method_configuration_form/<int:event_id>/<slug:slug>/",
-        ShiftConfigurationFormView.as_view(),
-        name="signupmethod_configurationform",
+        "events/<int:event_id>/form/signup-flow-config/<slug:slug>/",
+        SignupFlowConfigurationFormView.as_view(),
+        name="signup_flow_configuration_form",
+    ),
+    path(
+        "events/<int:event_id>/form/shift-structure-config/<slug:slug>/",
+        ShiftStructureConfigurationFormView.as_view(),
+        name="shift_structure_configuration_form",
     ),
     path(
         "shifts/<int:pk>/disposition/",
@@ -147,12 +179,10 @@ urlpatterns = [
         AddPlaceholderParticipantView.as_view(),
         name="shift_disposition_add_placeholder",
     ),
+    path("shifts/<int:pk>/copy/", ShiftCopyView.as_view(), name="shift_copy"),
     path("calendar/<str:calendar_token>/", user_event_feed_view, name="user_event_feed"),
-    path(
-        "extra/rruleoccurrence/",
-        RRuleOccurrenceView.as_view(),
-        name="rrule_occurrences",
-    ),
+    path("settings/data/", PersonalDataSettingsView.as_view(), name="settings_personal_data"),
+    path("settings/calendar/", CalendarSettingsView.as_view(), name="settings_calendar"),
     path(
         "settings/notifications/",
         NotificationSettingsView.as_view(),
@@ -180,7 +210,23 @@ urlpatterns = [
         EventTypeDeleteView.as_view(),
         name="settings_eventtype_delete",
     ),
-    path("profile/", ProfileView.as_view(), name="profile"),
+    path("settings/idp/", IdentityProviderListView.as_view(), name="settings_idp_list"),
+    path("settings/idp/create/", IdentityProviderCreateView.as_view(), name="settings_idp_create"),
+    path(
+        "settings/idp/discovery/",
+        IdentityProviderDiscoveryView.as_view(),
+        name="settings_idp_discovery",
+    ),
+    path(
+        "settings/idp/<int:pk>/edit/",
+        IdentityProviderUpdateView.as_view(),
+        name="settings_idp_edit",
+    ),
+    path(
+        "settings/idp/<int:pk>/delete/",
+        IdentityProviderDeleteView.as_view(),
+        name="settings_idp_delete",
+    ),
     path("groups/", GroupListView.as_view(), name="group_list"),
     path("groups/<int:pk>/edit/", GroupUpdateView.as_view(), name="group_edit"),
     path("groups/<int:pk>/delete/", GroupDeleteView.as_view(), name="group_delete"),
@@ -206,32 +252,55 @@ urlpatterns = [
         name="userprofile_password_reset",
     ),
     path(
+        "users/<int:pk>/password_revoke/",
+        UserProfilePasswordTokenRevokationView.as_view(),
+        name="userprofile_password_token_revoke",
+    ),
+    path(
         "users/create/",
         UserProfileCreateView.as_view(),
         name="userprofile_create",
-    ),
-    path(
-        "users/<int:pk>/",
-        UserProfileDetailView.as_view(),
-        name="userprofile_detail",
     ),
     path(
         "consequences/<int:pk>/edit/",
         ConsequenceUpdateView.as_view(),
         name="consequence_edit",
     ),
-    path(
-        "profile/requestworkinghour/",
-        WorkingHourRequestView.as_view(),
-        name="request_workinghour",
-    ),
     path("log/", LogView.as_view(), name="log"),
-    path("manifest.json", manifest, name="pwa_manifest"),
-    path("serviceworker.js", serviceworker, name="pwa_serviceworker"),
-    path("offline/", offline, name="pwa_offline"),
+    path("workinghours/own/", OwnWorkingHourView.as_view(), name="workinghours_own"),
     path(
-        "events/list_type_setting/",
-        EventListTypeSettingView.as_view(),
-        name="event_list_type_setting",
+        "workinghours/own/request/",
+        WorkingHourRequestView.as_view(),
+        name="workinghours_request",
     ),
+    path("workinghours/", WorkingHourOverview.as_view(), name="workinghours_list"),
+    path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghours_edit"),
+    path(
+        "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghours_delete"
+    ),
+    path(
+        "workinghours/user/<int:pk>/",
+        UserProfileWorkingHourView.as_view(),
+        name="workinghours_detail",
+    ),
+    path(
+        "workinghours/user/<int:pk>/add/",
+        WorkingHourCreateView.as_view(),
+        name="workinghours_add",
+    ),
+    path("oidc/initiate/<int:provider>/", OIDCInitiateView.as_view(), name="oidc_initiate"),
+    path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_callback"),
+    path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
+    path("accounts/login/", OIDCLoginView.as_view(), name="oidc_login"),
+    path("notifications/", NotificationListView.as_view(), name="notification_list"),
+    path(
+        "notifications/read/", NotificationMarkAllAsReadView.as_view(), name="notification_all_read"
+    ),
+    path("notifications/<int:pk>/", NotificationDetailView.as_view(), name="notification_detail"),
+    path(
+        "notifications/<int:pk>/read/",
+        NotificationMarkAsReadView.as_view(),
+        name="notification_read",
+    ),
+    path("media/ticket/<str:ticket>/", FileTicketView.as_view(), name="file_ticket"),
 ]

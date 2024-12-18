@@ -1,0 +1,38 @@
+{% extends "core/settings/settings_base.html" %}
+{% load static %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block settings_content %}
+    <h3>
+
+        {% translate "API Token" %}
+    </h3>
+
+    <div class="alert alert-primary" role="alert">
+        {% blocktranslate trimmed %}
+            We created your API token. Please copy it and store it in a safe place. You will not be able to see it
+            again.
+        {% endblocktranslate %}
+    </div>
+    <div class="mb-3">
+        <label for="token" class="form-label">{{ token }}</label>
+        <div class="input-group">
+            <input id="token" class="form-control" type="text" aria-label="token"
+                   value="{{ token.token }}"
+                   readonly>
+            <button id="token-copy-btn" class="btn btn-outline-primary clipboard-button" type="button"
+                    data-clipboard-target="#token" data-trigger="manual"
+                    title="Copied!">{% translate "Copy" %}</button>
+        </div>
+    </div>
+
+    <a role="button" class="btn btn-secondary mt-1"
+       href="{% url 'api:settings-access-token-list' %}">{% translate "Done" %}</a>
+{% endblock %}
+
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "clipboardjs/js/clipboard.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/clipboard.js" %}"></script>
+{% endblock %}

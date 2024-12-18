@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div id="structuregroups-popover-title-{{ shift.id }}" class="d-none">
+
+</div>
+<div id="structuregroups-popover-content-{{ shift.id }}" class="d-none">
+    <i class="far fa-circle text-body-secondary"></i>
+    {% translate "participants needed" %}
+    <br>
+    <i class="far fa-check-circle text-body-secondary"></i>
+    {% translate "enough participants" %}
+    <br/>
+    <i class="fa fa-check-circle text-body-secondary"></i>
+    {% translate "full" %}
+</div>
+
+{% block groups %}
+{% endblock %}
+

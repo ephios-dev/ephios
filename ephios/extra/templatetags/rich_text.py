@@ -1,11 +1,16 @@
+from urllib.parse import urlparse
+
 import bleach
 import markdown
+from bleach.linkifier import DEFAULT_CALLBACKS
 from django import template
+from django.conf import settings
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-ALLOWED_TAGS = [
+ALLOWED_TAGS = {
     "a",
     "abbr",
     "acronym",
@@ -36,8 +41,7 @@ ALLOWED_TAGS = [
     "thead",
     "tr",
     "ul",
-]
-
+}
 
 ALLOWED_ATTRIBUTES = {
     "a": ["href", "title", "class"],
@@ -50,17 +54,12 @@ ALLOWED_ATTRIBUTES = {
     "span": ["class", "title"],
 }
 
-ALLOWED_PROTOCOLS = ["http", "https", "mailto", "tel"]
+ALLOWED_PROTOCOLS = {"http", "https", "mailto", "tel"}
 
 
 def markdown_compile(source, excluded_tags=""):
     extensions = ["markdown.extensions.sane_lists", "markdown.extensions.nl2br"]
-    tags = ALLOWED_TAGS.copy()
-    for tag in excluded_tags.split(","):
-        try:
-            tags.remove(tag)
-        except ValueError:
-            pass
+    tags = ALLOWED_TAGS - set(excluded_tags.split(","))
     return bleach.clean(
         markdown.markdown(source, extensions=extensions),
         tags=tags,
@@ -69,12 +68,35 @@ def markdown_compile(source, excluded_tags=""):
     )
 
 
+def safelink_callback(attrs, new=False):
+    """
+    Links to a different domain should open with target=_blank
+    """
+    url = attrs.get((None, "href"), None)
+    if url is None:
+        return attrs
+    if url.startswith("mailto:") or url.startswith("tel:"):
+        return attrs
+    if not url_has_allowed_host_and_scheme(
+        url,
+        allowed_hosts=[
+            urlparse(settings.GET_SITE_URL()).netloc,
+        ],
+    ):
+        attrs[None, "target"] = "_blank"
+        attrs[None, "rel"] = "noopener"
+    return attrs
+
+
 @register.filter
 def rich_text(text: str, excluded_tags=""):
     """
     Processes markdown and cleans HTML in a text input.
     """
     text = str(text)
-    linker = bleach.Linker(parse_email=True)
+    linker = bleach.Linker(
+        parse_email=True,
+        callbacks=DEFAULT_CALLBACKS + [safelink_callback],
+    )
     body_md = linker.linkify(markdown_compile(text, excluded_tags=excluded_tags))
     return mark_safe(body_md)

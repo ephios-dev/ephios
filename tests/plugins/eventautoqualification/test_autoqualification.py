@@ -1,9 +1,17 @@
+from datetime import datetime
+
 import pytest
 from django.urls import reverse
+from django.utils.timezone import make_aware
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
-from ephios.core.models import AbstractParticipation, Consequence, LocalParticipation
+from ephios.core.models import (
+    AbstractParticipation,
+    Consequence,
+    LocalParticipation,
+    QualificationGrant,
+)
 from ephios.core.signals import periodic_signal
 from ephios.plugins.eventautoqualification.models import EventAutoQualificationConfiguration
 
@@ -11,7 +19,8 @@ from ephios.plugins.eventautoqualification.models import EventAutoQualificationC
 def test_planners_cant_edit_autoqualification(django_app, event, planner):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.basesignupflows",
         "ephios.plugins.eventautoqualification",
     ]
 
@@ -26,7 +35,8 @@ def test_planners_cant_edit_autoqualification(django_app, event, planner):
 def test_autoqualification_settings_flow(django_app, event, manager, qualifications):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.basesignupflows",
         "ephios.plugins.eventautoqualification",
     ]
     assign_perm("change_event", manager, event)
@@ -51,6 +61,39 @@ def test_autoqualification_settings_flow(django_app, event, manager, qualificati
     event_update_view.form.submit()
 
     assert not EventAutoQualificationConfiguration.objects.exists()
+
+
+def test_overwrite_qualification_expiration_date(
+    multi_shift_event, event, manager, qualifications, volunteer
+):
+    preferences = global_preferences_registry.manager()
+    preferences["general__enabled_plugins"] = [
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.basesignupflows",
+        "ephios.plugins.eventautoqualification",
+    ]
+    EventAutoQualificationConfiguration.objects.create(
+        event=multi_shift_event,
+        qualification=qualifications.na,
+        mode=EventAutoQualificationConfiguration.Modes.ANY_SHIFT,
+        expiration_date=None,
+        needs_confirmation=False,
+    )
+
+    QualificationGrant.objects.create(
+        user=volunteer, qualification=qualifications.na, expires=make_aware(datetime(2097, 6, 1))
+    )
+    for shift in multi_shift_event.shifts.all():
+        shift.start_time = shift.start_time.replace(year=2020)
+        shift.end_time = shift.end_time.replace(year=2020)
+        shift.save()
+        LocalParticipation.objects.create(
+            user=volunteer, shift=shift, state=AbstractParticipation.States.CONFIRMED
+        )
+
+    periodic_signal.send(None)
+    volunteer.refresh_from_db()
+    assert volunteer.qualification_grants.get().expires is None
 
 
 @pytest.mark.parametrize(
@@ -119,7 +162,8 @@ def test_consequence_gets_created(
 ):
     preferences = global_preferences_registry.manager()
     preferences["general__enabled_plugins"] = [
-        "ephios.plugins.basesignup",
+        "ephios.plugins.baseshiftstructures",
+        "ephios.plugins.basesignupflows",
         "ephios.plugins.eventautoqualification",
     ]
     EventAutoQualificationConfiguration.objects.create(
@@ -140,7 +184,6 @@ def test_consequence_gets_created(
     else:
         assert Consequence.objects.count() == 1
         periodic_signal.send(None)
-        assert Consequence.objects.count() == 1
         consequence = Consequence.objects.get()
         assert consequence.data["qualification_id"] == qualifications.na.id
         assert consequence.user == volunteer

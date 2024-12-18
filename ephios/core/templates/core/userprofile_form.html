@@ -9,20 +9,38 @@
 
 {% block title %}
     {% if userprofile %}
-        {% trans "Edit user" %}
+        {% translate "Edit user" %}
     {% else %}
-        {% trans "Add new user" %}
+        {% translate "Add new user" %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
         {% if userprofile %}
-            <h1>{% trans "Edit user" %}</h1>
+            <h1>{% translate "Edit user" %}</h1>
         {% else %}
-            <h1>{% trans "Add new user" %}</h1>
+            <h1>{% translate "Add new user" %}</h1>
         {% endif %}
     </div>
+    {% if oidc_group_claims %}
+        <div class="alert alert-warning" role="alert">
+            {% blocktranslate trimmed %}
+                This ephios instance uses an identity provider that manages group memberships. Any changes to the group
+                memberships here will be overwritten by the identity provider when a user logs in the next time using
+                the identity provider.
+            {% endblocktranslate %}
+        </div>
+    {% endif %}
+    {% if userprofile.email_invalid %}
+        <div class="alert alert-warning" role="alert">
+            {% blocktranslate trimmed %}
+                The user is inactive because their email address is invalid. This can be caused by a typo or a problem
+                with the user's mail server. Please check the email address and correct it before activating the user
+                again.
+            {% endblocktranslate %}
+        </div>
+    {% endif %}
     <form method="post" class="form">
         {% csrf_token %}
         {{ userprofile_form|crispy }}
@@ -34,7 +52,7 @@
                     <h4 class="card-title">{% translate "Qualifications" %}</h4>
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for form in qualification_formset %}
-                            <div class="list-group-item" data-formset-form>
+                            <li class="list-group-item" data-formset-form>
                                 {{ form.id }}
                                 <div class="row align-items-center">
                                     <div class="col-md-5">
@@ -44,7 +62,16 @@
                                             <div class="col-md-8">
                                                 {{ form.qualification }}
                                                 {% if form.fields.qualification.disabled %}
-                                                    <span class="form-control-plaintext">{{ form.fields.qualification.title }}</span>
+                                                    <span class="form-control-plaintext">
+                                                        {{ form.fields.qualification.title }}
+                                                        {% if form.instance.externally_managed %}
+                                                            <span class="badge text-bg-info" data-bs-toggle="tooltip"
+                                                                  data-bs-placement="bottom" data-bs-html="true"
+                                                                  title="{% translate "The qualification was granted by an external system." %}">
+                                                                {% translate "externally managed" %}
+                                                            </span>
+                                                        {% endif %}
+                                                    </span>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -57,11 +84,11 @@
                                     <div class="col-md-1">
                                         <button class="btn btn-link" type="button"
                                                 data-formset-delete-button><span
-                                                class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
+                                            class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
-                            </div>
+                            </li>
                         {% endfor %}
                     </ul>
 
@@ -73,24 +100,24 @@
 
             <script type="form-template" data-formset-empty-form>
                 {% escapescript %}
-                    <div class="list-group-item" data-formset-form>
-                        <div class="row align-items-center">
-                            <div class="col-md-5">
-                                {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
-                            </div>
-                            <div class="col-md-1"></div>
-                            <div class="col-md-4">
-                                {% crispy_field qualification_formset.empty_form.expires label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
-                            </div>
-                            <div class="col-md-1"></div>
-                            <div class="col-md-1">
-                                <button class="btn btn-link" type="button"
-                                        data-formset-delete-button><span
-                                        class="fas fa-trash-alt"></span> {% trans "Delete" %}</button>
-                            </div>
-                        </div>
-                        <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
+                    <li class="list-group-item" data-formset-form>
+                    <div class="row align-items-center">
+                    <div class="col-md-5">
+                    {% crispy_field qualification_formset.empty_form.qualification label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
                     </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                    {% crispy_field qualification_formset.empty_form.expires label_class="col-md-4" field_class="col-md-8" wrapper_class="row" %}
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                    <button class="btn btn-link" type="button"
+                    data-formset-delete-button><span
+                    class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+                    </div>
+                    </div>
+                    <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>
+                    </li>
                 {% endescapescript %}
             </script>
 
@@ -98,16 +125,25 @@
                 <div class="card mb-2">
                     <div class="card-body">
                         <h4 class="card-title">{% translate "Password" %}</h4>
+                        <p>
+                            {% blocktranslate trimmed %}
+                                If the user forgot their password, you can send them a password reset email.
+                                If there are doubts about the secrecy of the password, you should revoke it as well.
+                            {% endblocktranslate %}
+                        </p>
                         <a class="btn btn-secondary text-nowrap mt-1"
                            href="{% url "core:userprofile_password_reset" userprofile.pk %}">
-                            {% trans "Reset password" %}</a>
+                            {% translate "Send password reset email" %}</a>
+                        <a class="btn btn-secondary text-nowrap ms-1 mt-1"
+                           href="{% url "core:userprofile_password_token_revoke" userprofile.pk %}">
+                            {% translate "Revoke password and API Tokens" %}</a>
 
                     </div>
                 </div>
             {% endif %}
         </div>
-        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary float-end mt-1">
+        <input type="submit" value="{% translate "Save" %}" class="btn btn-primary float-end mt-1">
         <a role="button" class="btn btn-secondary mt-1"
-           href="{% url "core:userprofile_list" %}">{% trans "Cancel" %}</a>
+           href="{% url "core:userprofile_list" %}">{% translate "Cancel" %}</a>
     </form>
 {% endblock %}

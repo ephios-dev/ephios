@@ -7,20 +7,13 @@
     {% translate "Copy event" %}
 {% endblock %}
 
-{% block css %}
-    <link rel="stylesheet" media="screen" href="{% static "recurrence/css/recurrence.css" %}">
+{% block messages %}
+    {% for _, errors in form.errors.items %}
+        {% for error in errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+    {% endfor %}
 {% endblock %}
-
-{% block javascript %}
-    <script type="text/javascript" src="{% static "recurrence/js/recurrence.js" %}"></script>
-    <script type="text/javascript" src="{% static "recurrence/js/recurrence-widget.js" %}"></script>
-    <script type="text/javascript" src="{% static "ephios/js/event_copy.js" %}"></script>
-{% endblock %}
-
-{% block html_head %}
-    <script type="application/json" id="rrule_url">{"url": "{% url "core:rrule_occurrences" %}"}</script>
-{% endblock %}
-
 
 {% block content %}
     <div class="page-header">
@@ -28,31 +21,14 @@
             {% translate "Copy event" %} "{{ event.title }}" <small>({{ event.get_start_time }})</small>
         </h1>
     </div>
-
-    <div class="mt-2">
-        <form method="post" novalidate>
-            {% csrf_token %}
-
-            <div class="clearfix mb-2 row">
-                <div class="col-md-6">
-                    {{ form.start_date|as_crispy_field }}
-                    {{ form.recurrence }}
-                </div>
-                <div class="col-md-6">
-                    <h2 id="rrule_occurrences_heading"></h2>
-                    <div id="rrule_occurrences" class="twoColumns"></div>
-                </div>
-            </div>
-
-            <div>
-                <a role="button" class="btn btn-secondary"
-                   href="{{ event.get_absolute_url }}">{% trans "Back" %}</a>
-                <button type="submit" class="btn btn-primary float-end">{% trans "Copy" %}</button>
-                <button type="button" role="button" class="btn btn-outline-success float-end me-1"
-                        id="btn_check">{% translate "Preview" %}</button>
-            </div>
-
-        </form>
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.recurrence }}
+        <div class="float-end">
+            <a class="btn btn-secondary me-1" href="{% url "core:event_detail" event.pk event.get_canonical_slug %}"><span
+                class="fa fa-arrow-left"></span> {% translate "Back" %}</a>
+            <button type="submit" class="btn btn-primary"><span
+                class="fa fa-copy"></span> {% translate "Copy" %}</button>
+        </div>
+    </form>
 {% endblock %}
-

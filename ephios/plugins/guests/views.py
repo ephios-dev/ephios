@@ -33,7 +33,7 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
     model = GuestUser
     form_class = forms.modelform_factory(
         GuestUser,
-        fields=["email", "first_name", "last_name", "date_of_birth", "phone", "qualifications"],
+        fields=["email", "display_name", "date_of_birth", "phone", "qualifications"],
         widgets={
             "qualifications": Select2MultipleWidget,
             "date_of_birth": CustomDateInput,

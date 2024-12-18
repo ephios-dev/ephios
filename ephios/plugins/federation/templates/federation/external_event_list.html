@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load settings_extras %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "External events" %}
+{% endblock %}
+
+{% block messages %}
+    {% if "error" in request.GET %}
+        <div class="alert alert-warning" role="alert">
+            {% if request.GET.error == "oauth_error" %}
+                {% translate "An error occurred during the authentication at the other ephios instance. Please try again." %}
+            {% elif request.GET.error == "event_error" %}
+                {% translate "The desired event could not be accessed at the other ephios instance. Please try again." %}
+            {% else %}
+                {% translate "An unknown error has occured." %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% translate "External events" %}</h1>
+    <ul class="list-group mb-3">
+        {% for event in events %}
+            <li class="list-group-item p-0 d-flex flex-row">
+                <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
+                    <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon">
+                        <span class="text-body-secondary far fa-user ps-2"></span>
+                    </div>
+                </div>
+                <div class="w-100 py-2 event-list-item">
+                    <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
+                        <a class="grid-title event-list-item-link" href="{{ event.signup_url }}">
+                            <div>
+                                <h5 class="mb-0 text-break d-inline-block">
+                                    {{ event.title }}
+                                </h5>
+                                <small class="text-muted ms-1">
+                                    <span class="fas fa-share"></span>
+                                    <span class="">{{ event.host }}</span>
+                                </small>
+                            </div>
+                            <span class="w-100 text-body-secondary text-break">
+                                {{ event.location }}
+                            </span>
+                        </a>
+                        <a class="grid-badge event-list-item-link" href="{{ event.signup_url }}">
+                            <span class="badge badge-eventtype bg-primary">{{ event.type }}</span>
+                        </a>
+                        <a class="grid-signup d-flex flex-column align-items-end justify-content-center event-list-item-link"
+                           href="{{ event.signup_url }}">
+                        </a>
+                        <a class="grid-time event-list-item-link" href="{{ event.signup_url }}">
+                            {{ event.start_time|date:"D" }},
+                            {% if event.start_time.date == event.end_time.date %}
+                                {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                <span class="d-lg-none">,</span>
+                                <span class="d-none d-lg-inline"><br></span>
+                                {{ event.start_time|date:"TIME_FORMAT" }} –
+                                {{ event.end_time|date:"TIME_FORMAT" }}
+                            {% else %}
+                                {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                <span class="d-none d-lg-inline"><br></span>
+                                {% translate "to" %}
+                                {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                            {% endif %}
+                        </a>
+                        <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
+                        </div>
+                    </div>
+                </div>
+            </li>
+        {% empty %}
+            <div class="mb-3">
+                <h5 class="mt-5 text-center">
+                    {% translate "No results" %}
+                </h5>
+            </div>
+        {% endfor %}
+    </ul>
+{% endblock %}

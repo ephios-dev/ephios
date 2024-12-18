@@ -1,47 +1,39 @@
 import re
 from collections import OrderedDict
 from datetime import date, datetime
+from unittest import mock
 
 import pytest
-from django.template.defaultfilters import floatformat
+from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.timezone import make_aware
+from guardian.shortcuts import assign_perm, remove_perm
 
-from ephios.core.models import Notification, UserProfile
+from ephios.core.forms.users import HR_PERMISSIONS, MANAGEMENT_PERMISSIONS
+from ephios.core.models import Notification, Qualification, UserProfile
 from ephios.core.services.notifications.types import NewProfileNotification
+from ephios.core.views.accounts import UserProfileFilterForm
 
 
 class TestUserProfileView:
-    def test_no_permission_required(self, django_app, volunteer):
-        response = django_app.get(reverse("core:profile"), user=volunteer)
-        assert response.status_code == 200
-
     def test_correct_user_data_displayed(
         self, django_app, superuser, manager, planner, volunteer, responsible_user
     ):
         users = [superuser, manager, planner, volunteer, responsible_user]
         for user in users:
-            response = django_app.get(reverse("core:profile"), user=user)
-            assert response.html.find("dd", text=user.first_name)
-            assert response.html.find("dd", text=user.last_name)
-            assert response.html.find("dd", text=user.email)
+            response = django_app.get(reverse("core:settings_personal_data"), user=user)
+            assert response.html.find("dd", string=user.display_name)
+            assert response.html.find("dd", string=user.email)
             assert response.html.find(
-                "dd", text=date_format(user.date_of_birth, format="DATE_FORMAT")
+                "dd", string=date_format(user.date_of_birth, format="DATE_FORMAT")
             )
-            assert response.html.find("dd", text=user.phone)
-
-    def test_view_other_profile(self, django_app, superuser, volunteer, workinghours):
-        response = django_app.get(
-            reverse("core:userprofile_detail", kwargs={"pk": volunteer.id}), user=superuser
-        )
-        assert response.html.find("dd", text=volunteer.email)
-        assert response.html.find("span", text=floatformat(volunteer.get_workhour_items()[0]))
+            assert response.html.find("dd", string=user.phone)
 
     def test_correct_qualifications(self, django_app, qualified_volunteer):
-        response = django_app.get(reverse("core:profile"), user=qualified_volunteer)
+        response = django_app.get(reverse("core:settings_personal_data"), user=qualified_volunteer)
         for q in qualified_volunteer.qualifications:
-            assert q.expires is None or response.html.findAll("li", text=re.compile(f"{q.title}"))
+            assert q.expires is None or response.html.findAll("li", string=re.compile(f"{q.title}"))
 
     def test_userprofile_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_list"), user=volunteer, status=403)
@@ -50,12 +42,97 @@ class TestUserProfileView:
     def test_userprofile_list(self, django_app, superuser):
         response = django_app.get(reverse("core:userprofile_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(text=UserProfile.objects.all().values_list("email", flat=True))
+        assert all(
+            email in response.text
+            for email in UserProfile.objects.all().values_list("email", flat=True)
+        )
         edit_links = [
             reverse("core:userprofile_edit", kwargs={"pk": userprofile_id})
             for userprofile_id in UserProfile.objects.all().values_list("id", flat=True)
         ]
         assert response.html.findAll("a", href=edit_links)
+
+    @pytest.fixture()
+    def userprofile_list_filter_form(self, django_app, superuser, groups):
+        # patch UserProfileFilterForm qualification widget to be a plain django select widget
+        # so that we can easily check the rendered options
+
+        class MockedUserProfileFilterForm(UserProfileFilterForm):
+            qualification = forms.ModelChoiceField(
+                queryset=Qualification.objects.all(),
+                required=False,
+            )
+
+        with mock.patch(
+            "ephios.core.views.accounts.UserProfileFilterForm", MockedUserProfileFilterForm
+        ):
+            yield django_app.get(reverse("core:userprofile_list"), user=superuser, status=200).form
+
+    @pytest.mark.parametrize(
+        "filter_group,filter_qualification,query,expected",
+        [
+            (
+                None,
+                None,
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            (
+                "Managers",
+                None,
+                "rica",
+                ["rica@localhost"],
+            ),
+            (
+                "Planners",
+                "Notfallsanitäter",
+                "",
+                [],
+            ),
+            (
+                "Volunteers",
+                "Notfallsanitäter",
+                "",
+                ["marianne@localhost"],
+            ),
+            (
+                None,
+                None,
+                "",
+                [
+                    "rica@localhost",
+                    "marie@localhost",
+                    "luisa@localhost",
+                    "heinrich@localhost",
+                    "marianne@localhost",
+                ],
+            ),
+            (None, "Rettungssanitäter", "", ["marianne@localhost"]),
+            (None, "Notarzt", "", []),
+        ],
+    )
+    def test_userprofile_list_filter_select(
+        self, userprofile_list_filter_form, filter_group, filter_qualification, query, expected
+    ):
+        if filter_group:
+            userprofile_list_filter_form["group"].select(text=filter_group)
+        if filter_qualification:
+            userprofile_list_filter_form["qualification"].select(text=filter_qualification)
+        userprofile_list_filter_form["query"] = query
+        response = userprofile_list_filter_form.submit()
+        assert all(email in response.text for email in expected)
+        assert not any(
+            email in response.text
+            for email in UserProfile.objects.exclude(email__in=expected).values_list(
+                "email", flat=True
+            )
+        )
 
     def test_userprofile_create_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_create"), user=volunteer, status=403)
@@ -70,8 +147,7 @@ class TestUserProfileView:
         POST_DATA = OrderedDict(
             {
                 "email": userprofile_email,
-                "first_name": "testfirst",
-                "last_name": "testlast",
+                "display_name": "testname",
                 "date_of_birth": "1999-01-01",
                 "phone": "",
                 "groups": volunteers.id,
@@ -99,10 +175,9 @@ class TestUserProfileView:
         assert Notification.objects.count() == 1
         assert Notification.objects.first().slug == NewProfileNotification.slug
 
-        assert userprofile.first_name == "testfirst"
-        assert userprofile.last_name == "testlast"
+        assert userprofile.display_name == "testname"
         assert userprofile.date_of_birth == date(1999, 1, 1)
-        assert userprofile.phone == ""
+        assert not userprofile.phone
         assert userprofile.is_active
         assert set(userprofile.groups.all()) == {volunteers}
         assert set(userprofile.qualifications) == {qualifications.rs, qualifications.na}
@@ -110,6 +185,19 @@ class TestUserProfileView:
         assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
             datetime.max.replace(2030, 1, 1)
         )
+
+    def test_hr_user_can_create_user(self, django_app, groups, manager, qualifications):
+        managers, planners, volunteers = groups
+
+        # demote managers to HR
+        for permission in set(MANAGEMENT_PERMISSIONS) - set(HR_PERMISSIONS):
+            remove_perm(permission, managers)
+
+        form = django_app.get(reverse("core:userprofile_create"), user=manager).form
+        form["email"] = "testuser@localhost"
+        form["display_name"] = "testname"
+        form["date_of_birth"] = "1999-01-01"
+        assert form.submit().follow()
 
     def test_userprofile_edit(self, django_app, groups, manager, volunteer):
         userprofile = volunteer
@@ -151,7 +239,9 @@ class TestUserProfileView:
         response.form.submit()
         assert response.status_code == 200
 
-    def test_userprofile_edit_by_hr_allowed(self, django_app, volunteer, hr_group, groups):
+    def test_userprofile_group_membership_edit_by_hr_allowed(
+        self, django_app, volunteer, hr_group, groups
+    ):
         managers, planners, volunteers = groups
         form = django_app.get(
             reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=volunteer
@@ -161,7 +251,9 @@ class TestUserProfileView:
         assert response.status_code == 302
         assert set(volunteer.groups.all()) == {volunteers}
 
-    def test_userprofile_edit_by_hr_forbidden(self, django_app, volunteer, hr_group, groups):
+    def test_userprofile_group_membership_edit_by_hr_forbidden(
+        self, django_app, volunteer, hr_group, groups
+    ):
         managers, planners, volunteers = groups
         assert set(volunteer.groups.all()) == {hr_group, volunteers}
         form = django_app.get(
@@ -171,3 +263,56 @@ class TestUserProfileView:
         response = form.submit()
         assert response.status_code == 200
         assert set(volunteer.groups.all()) == {hr_group, volunteers}
+
+    def test_is_staff_flag_cannot_be_changed_by_non_staff_user(
+        self, django_app, volunteer, manager, groups
+    ):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=manager
+        ).form
+        form["is_staff"] = True
+        response = form.submit()
+        assert not manager.is_staff
+        assert not UserProfile.objects.get(id=volunteer.id).is_staff
+
+    def test_staffuser_can_change_is_staff_flag(self, django_app, volunteer, superuser, groups):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=superuser
+        ).form
+        form["is_staff"] = True
+        form.submit()
+        assert UserProfile.objects.get(id=volunteer.id).is_staff
+
+    def test_staff_flag_cannot_be_removed_from_last_staff_user(self, django_app, superuser):
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": superuser.id}), user=superuser
+        ).form
+        form["is_staff"] = False
+        response = form.submit()
+        assert response.status_code == 200
+        assert "least one user must be technical administrator" in response.text
+        assert UserProfile.objects.get(id=superuser.id).is_staff
+
+    def test_last_staff_user_cannot_be_deleted(self, django_app, groups, manager, superuser):
+        response = django_app.get(
+            reverse("core:userprofile_delete", kwargs={"pk": superuser.id}),
+            user=manager,
+        )
+        response = response.form.submit()
+        assert response.status_code == 200
+        assert "least one user must be technical administrator" in response.text
+        assert UserProfile.objects.get(id=superuser.id).is_staff
+
+    def test_email_cannot_be_changed_if_user_is_in_more_groups(
+        self, django_app, groups, planner, manager
+    ):
+        managers, planners, volunteers = groups
+        # promote planners to user management
+        assign_perm("core.change_userprofile", planners)
+
+        form = django_app.get(
+            reverse("core:userprofile_edit", kwargs={"pk": manager.id}),
+            user=planner,
+        ).form
+
+        assert "disabled" in form.fields["email"][0].attrs

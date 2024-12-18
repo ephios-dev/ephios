@@ -1,15 +1,25 @@
+// this file is based on the guide at https://getbootstrap.com/docs/5.3/customize/sass/#importing
+
 // 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "../../bootstrap/scss/functions";
 
 // 2. Include any default variable overrides here
 @import "ephios_bootstrap_variables";
 
-// 3. Include bootstrap
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "../../bootstrap/scss/variables";
+@import "../../bootstrap/scss/variables-dark";
+
+
+// 4. Include any default map overrides here
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+
+// 5. Include remainder of required parts
+@import "../../bootstrap/scss/maps";
 @import "../../bootstrap/scss/mixins";
 @import "../../bootstrap/scss/utilities";
 
-// Layout & components
+// 6. Optionally include any other parts as needed
 @import "../../bootstrap/scss/root";
 @import "../../bootstrap/scss/reboot";
 @import "../../bootstrap/scss/type";
@@ -40,10 +50,19 @@
 @import "../../bootstrap/scss/carousel";
 @import "../../bootstrap/scss/spinners";
 @import "../../bootstrap/scss/offcanvas";
-
-// Helpers and utilities
+@import "../../bootstrap/scss/placeholders";
 @import "../../bootstrap/scss/helpers";
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
 @import "../../bootstrap/scss/utilities/api";
 
-// 4. Add additional custom code here
+// 8. Add additional custom code here
+
+// fix for integrating the select2-bootstrap-5-theme with bootstrap 5.3
+// https://github.com/apalfrey/select2-bootstrap-5-theme/pull/82#issuecomment-1573261275
+$s2bs5-border-color: $border-color;
+
+@import "../../select2-bootstrap-5-theme/select2-bootstrap-5-theme.scss";
+@import "ephios_utilities";
 @import "ephios_custom";
+@import "ephios_printing";

@@ -1,0 +1,5 @@
+<div id="attached-documents" class="mb-3">
+    {% for document in documents %}
+        <a href="{% url "files:document_detail" document.pk %}"><span class="badge bg-light text-dark"><i class="fas fa-file"></i> {{ document.title }}</span></a>
+    {% endfor %}
+</div>

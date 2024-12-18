@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load rich_text %}
+{% load i18n %}
+
+{% block content %}
+    <h1 class="page-header">{{ notification.subject }}</h1>
+    <p>{{ notification.body|rich_text }}</p>
+    {% for label, url in notification.get_actions %}
+        <a class="btn btn-secondary" href="{{ url }}">{{ label }}</a>
+    {% endfor %}
+    <a class="btn btn-secondary" href="{% url 'core:notification_list' %}">{% translate "View other notifications" %}</a>
+{% endblock %}

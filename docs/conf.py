@@ -22,7 +22,7 @@ from pathlib import Path
 import environ
 
 project = "ephios"
-copyright = "2021, ephios-dev"
+copyright = "2024, ephios-dev"
 author = "ephios-dev"
 
 
@@ -36,6 +36,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx_github_changelog",
     "sphinxcontrib.openapi",
+    "notfound.extension",
 ]
 gettext_compact = "docs"
 
@@ -60,6 +61,14 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+# Set canonical URL from the Read the Docs Domain
+html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "")
+
+# Tell Jinja2 templates the build is running on Read the Docs
+html_context = {}
+if os.environ.get("READTHEDOCS", "") == "True":
+    html_context["READTHEDOCS"] = True
+
 # -- Setup django stuff -----------------------------------------------------
 os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
 os.environ["DEBUG"] = "False"
@@ -71,4 +80,6 @@ django.setup()
 
 from django.core import management
 
-management.call_command("generateschema", ["--file", "api/ephios-open-api-schema.yml"])
+management.call_command(
+    "spectacular", ["--color", "--file", "api/ephios-open-api-schema.yml", "--api-version", "api"]
+)

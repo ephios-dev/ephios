@@ -1,6 +1,4 @@
-import functools
 import logging
-import operator
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
@@ -19,22 +17,25 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import formats
+from django.utils.functional import cached_property, classproperty
 from django.utils.text import slugify
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 from dynamic_preferences.models import PerInstancePreferenceModel
 from guardian.shortcuts import assign_perm
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 
+from ephios.core.signup.stats import SignupStats
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup.methods import BaseSignupMethod, SignupStats
     from ephios.core.signup.participants import AbstractParticipant
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,10 +52,6 @@ class EventType(Model):
         verbose_name = _("event type")
         verbose_name_plural = _("event types")
         db_table = "eventtype"
-
-    @property
-    def color_hex(self):
-        return "#FF0"
 
     def __str__(self):
         return str(self.title)
@@ -73,7 +70,7 @@ class Event(Model):
     class Meta:
         verbose_name = _("event")
         verbose_name_plural = _("events")
-        permissions = [("view_past_event", _("Can view past events"))]
+        permissions = []
         db_table = "event"
         base_manager_name = "all_objects"
         default_manager_name = "objects"
@@ -105,30 +102,20 @@ class Event(Model):
 
     def get_signup_stats(self) -> "SignupStats":
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
-        from ephios.core.signup.methods import SignupStats
-
-        default_for_no_shifts = SignupStats.ZERO
-
-        return functools.reduce(
-            operator.add,
-            [
-                shift.signup_method.get_signup_stats()
-                for shift in self.shifts.all()
-                if shift.signup_method
-            ]
-            or [default_for_no_shifts],
-        )
+        return SignupStats.reduce([shift.get_signup_stats() for shift in self.shifts.all()])
 
     def __str__(self):
         return str(self.title)
 
     def get_canonical_slug(self):
-        return slugify(self.title)
+        return slugify(self.title) or str(self.id)
 
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("core:event_detail", kwargs=dict(pk=self.id, slug=self.get_canonical_slug()))
+        return reverse(
+            "core:event_detail", kwargs={"pk": self.id, "slug": self.get_canonical_slug()}
+        )
 
     def activate(self):
         if not self.active:
@@ -189,6 +176,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         RESPONSIBLE_REJECTED = 3, _("rejected by responsible")
         GETTING_DISPATCHED = 4, _("getting dispatched")
 
+        @classproperty
+        def REQUESTED_AND_CONFIRMED(cls):  # pylint: disable=no-self-argument
+            return {0, 1}
+
         @classmethod
         def labels_dict(cls):
             return dict(zip(cls.values, cls.labels))
@@ -200,7 +191,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         related_name="participations",
     )
     state = IntegerField(_("state"), choices=States.choices, default=States.GETTING_DISPATCHED)
-    data = models.JSONField(default=dict, verbose_name=_("Signup data"))
+    structure_data = models.JSONField(
+        default=dict,
+        verbose_name=_("Data on where this participation lives in the shift structure"),
+    )
 
     """
     Overwrites shift time. Use `start_time` and `end_time` to get the applicable time (implemented with a custom manager).
@@ -224,7 +218,7 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
             self.individual_start_time
             or self.individual_end_time
             or self.comment
-            or self.shift.signup_method.has_customized_signup(self)
+            or self.shift.structure.has_customized_signup(self)
         )
 
     @property
@@ -262,9 +256,22 @@ class Shift(DatetimeDisplayMixin, Model):
     meeting_time = DateTimeField(_("meeting time"))
     start_time = DateTimeField(_("start time"))
     end_time = DateTimeField(_("end time"))
-    signup_method_slug = SlugField(_("signup method"))
-    signup_configuration = JSONField(
+    label = CharField(
+        pgettext("shift label", "label"),
+        max_length=255,
+        blank=True,
+        help_text=_("Optional label to help differentiate multiple shifts in an event."),
+    )
+    signup_flow_slug = SlugField(_("signup flow"))
+    signup_flow_configuration = JSONField(
         default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )
+
+    structure_slug = SlugField(_("structure"))
+    structure_configuration = JSONField(
+        default=dict,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
     )
 
     class Meta:
@@ -273,21 +280,59 @@ class Shift(DatetimeDisplayMixin, Model):
         ordering = ("meeting_time", "start_time", "id")
         db_table = "shift"
 
-    @property
-    def signup_method(self) -> "BaseSignupMethod":
-        from ephios.core.signup.methods import signup_method_from_slug
+    @cached_property
+    def signup_flow(self) -> "AbstractSignupFlow":
+        from ephios.core.signup.flow import signup_flow_from_slug
 
         try:
             event = self.event
         except Event.DoesNotExist:
             event = None
         try:
-            return signup_method_from_slug(self.signup_method_slug, self, event=event)
+            return signup_flow_from_slug(self.signup_flow_slug, self, event=event)
         except ValueError:
-            logger.warning(f"signup method {self.signup_method_slug} was not found")
-            from ephios.core.signup.fallback import FallbackSignupMethod
+            logger.warning(f"signup flow {self.signup_flow_slug} on shift #{self.pk} was not found")
+            from ephios.core.signup.fallback import FallbackSignupFlow
 
-            return FallbackSignupMethod(self, event=event)
+            return FallbackSignupFlow(self, event=event)
+
+    @cached_property
+    def structure(self) -> "AbstractShiftStructure":
+        from ephios.core.signup.structure import shift_structure_from_slug
+
+        try:
+            event = self.event
+        except Event.DoesNotExist:
+            event = None
+        try:
+            return shift_structure_from_slug(self.structure_slug, self, event=event)
+        except ValueError:
+            logger.warning(f"structure {self.structure_slug} on shift #{self.pk} was not found")
+            from ephios.core.signup.fallback import FallbackShiftStructure
+
+            return FallbackShiftStructure(self, event=event)
+
+    def _clear_cached_signup_objects(self):
+        """
+        when changing data on the shift, cached info in the signup flow or structure might become outdated,
+        so we clear the cached versions. (most relevant to tests, as we use new instances every request)
+        """
+        try:
+            del self.structure
+        except AttributeError:
+            pass
+        try:
+            del self.signup_flow
+        except AttributeError:
+            pass
+
+    def save(self, *args, **kwargs):
+        self._clear_cached_signup_objects()
+        return super().save(*args, **kwargs)
+
+    def refresh_from_db(self, using=None, fields=None):
+        self._clear_cached_signup_objects()
+        return super().refresh_from_db(using, fields)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
@@ -297,12 +342,36 @@ class Shift(DatetimeDisplayMixin, Model):
         return f"{self.event.get_absolute_url()}#shift-{self.pk}"
 
     def __str__(self):
+        if self.label:
+            return f"{self.label} ({self.event.title}, {self.get_datetime_display()})"
         return f"{self.event.title} ({self.get_datetime_display()})"
+
+    def get_signup_stats(self) -> "SignupStats":
+        return self.structure.get_signup_stats()
+
+    def get_signup_info(self):
+        """
+        Return aggregated signup config information from flow and structure.
+        """
+        info = {}
+        if self.signup_flow:
+            info.update(self.signup_flow.get_signup_info())
+        if self.structure:
+            info.update(self.structure.get_signup_info())
+        return info
 
 
 class ShiftLogConfig(ModelFieldsLogConfig):
     def __init__(self):
-        super().__init__(unlogged_fields=["id", "signup_method_slug", "signup_configuration"])
+        super().__init__(
+            unlogged_fields=[
+                "id",
+                "signup_flow_slug",
+                "signup_flow_configuration",
+                "structure_slug",
+                "structure_configuration",
+            ]
+        )
 
     def object_to_attach_logentries_to(self, instance):
         return Event, instance.event_id
@@ -311,16 +380,24 @@ class ShiftLogConfig(ModelFieldsLogConfig):
         # pylint: disable=undefined-variable
         yield from super().initial_log_recorders(instance)
 
-        def get_signup_method_name_mapping(shift):
-            from ephios.core.signup.methods import installed_signup_methods
+        def get_signup_config_name_mapping(shift):
+            from ephios.core.signup.flow import installed_signup_flows
+            from ephios.core.signup.structure import installed_shift_structures
 
-            v = None
-            for method in installed_signup_methods():
-                if method.slug == shift.signup_method_slug:
-                    v = str(method.verbose_name)
-            return {_("Signup method"): v}
+            flow_name = None
+            structure_name = None
+            for flow in installed_signup_flows():
+                if flow.slug == shift.signup_flow_slug:
+                    flow_name = str(flow.verbose_name)
+            for structure in installed_shift_structures():
+                if structure.slug == shift.structure_slug:
+                    structure_name = str(structure.verbose_name)
+            return {
+                _("Signup flow"): flow_name,
+                _("Structure"): structure_name,
+            }
 
-        yield DerivedFieldsLogRecorder(get_signup_method_name_mapping)
+        yield DerivedFieldsLogRecorder(get_signup_config_name_mapping)
 
 
 register_model_for_logging(Shift, ShiftLogConfig())
@@ -351,14 +428,15 @@ class LocalParticipation(AbstractParticipation):
 
     class Meta:
         db_table = "localparticipation"
+        verbose_name = _("participation")
+        verbose_name_plural = _("participations")
 
 
 register_model_for_logging(LocalParticipation, PARTICIPATION_LOG_CONFIG)
 
 
 class PlaceholderParticipation(AbstractParticipation):
-    first_name = CharField(max_length=254)
-    last_name = CharField(max_length=254)
+    display_name = CharField(max_length=254)
 
     @property
     def participant(self) -> "AbstractParticipant":
@@ -366,15 +444,18 @@ class PlaceholderParticipation(AbstractParticipation):
         from ephios.core.signup.participants import PlaceholderParticipant
 
         return PlaceholderParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=Qualification.objects.none(),
             email=None,
             date_of_birth=None,
         )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} @ {self.shift}"
+        return f"{self.display_name} @ {self.shift}"
+
+    class Meta:
+        verbose_name = _("placeholder participation")
+        verbose_name_plural = _("placeholder participations")
 
 
 register_model_for_logging(PlaceholderParticipation, PARTICIPATION_LOG_CONFIG)

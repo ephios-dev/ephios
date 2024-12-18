@@ -1,0 +1,85 @@
+{% extends "core/settings/settings_base.html" %}
+{% load static %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h3 class="block-center-heading">{{ application.name }}</h3>
+        <div class="mb-3">
+            <label for="client_id" class="form-label">{% translate "Client id" %}</label>
+            <div class="input-group">
+                <input id="client_id" class="form-control" type="text" value="{{ application.client_id }}"
+                       readonly>
+                <button id="client_id-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"
+                        data-clipboard-target="#client_id" data-trigger="manual"
+                        title="Copied!">{% translate "Copy" %}</button>
+
+            </div>
+        </div>
+        {% if application.hash_client_secret %}
+            <div class="mb-3">
+                <label for="client_secret" class="form-label">{% translate "Client secret" %}</label>
+                <input id="client_secret" class="form-control" type="text" value="********"
+                       readonly>
+                <div class="form-text">{% translate "The client secret can not be shown again. Please edit the application and set a new secret if necessary." %}</div>
+            </div>
+        {% else %}
+            <div class="mb-3">
+                <label for="client_secret" class="form-label">{% translate "Client secret" %}</label>
+                <div class="input-group">
+                    <input id="client_secret" class="form-control" type="text" value="{{ application.client_secret }}"
+                           readonly>
+                    <button id="client_secret-copy-btn" class="btn btn-outline-secondary clipboard-button" type="button"
+                            data-clipboard-target="#client_secret" data-trigger="manual"
+                            title="Copied!">{% translate "Copy" %}</button>
+                </div>
+            </div>
+        {% endif %}
+        <div class="mb-3">
+            <label for="client_type" class="form-label">{% translate "Client type" %}</label>
+            <input id="client_type" class="form-control" type="text" value="{{ application.client_type }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="authorization_grant_type" class="form-label">{% translate "Authorization Grant Type" %}</label>
+            <input id="authorization_grant_type" class="form-control" type="text"
+                   value="{{ application.authorization_grant_type }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="redirect_uris" class="form-label">{% translate "Redirect URIs" %}</label>
+            <textarea id="redirect_uris" class="form-control" type="text"
+                      readonly>{{ application.redirect_uris }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="created" class="form-label">{% translate "Created" %}</label>
+            <input id="created" class="form-control" type="text"
+                   value="{{ application.created }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="updated" class="form-label">{% translate "Updated" %}</label>
+            <input id="updated" class="form-control" type="text"
+                   value="{{ application.updated }}"
+                   readonly>
+        </div>
+        <div class="mb-3">
+            <label for="user" class="form-label">{% translate "User" %}</label>
+            <input id="user" class="form-control" type="text"
+                   value="{{ application.user }}"
+                   readonly>
+        </div>
+        <div class="btn-toolbar">
+            <a class="btn btn-secondary me-1" href="{% url "api:settings-oauth-app-list" %}">{% translate "Back" %}</a>
+            <a class="btn btn-primary me-1"
+               href="{% url "api:settings-oauth-app-update" application.id %}">{% translate "Edit" %}</a>
+            <a class="btn btn-danger me-1"
+               href="{% url "api:settings-oauth-app-delete" application.id %}">{% translate "Delete" %}</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "clipboardjs/js/clipboard.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "ephios/js/clipboard.js" %}"></script>
+{% endblock %}

@@ -1,5 +1,5 @@
 /**
- * Django formset helper, adapted from django-formset-js-improved
+ * Django formset helper, adapted from django-formset-js-improved for use in ephios
  */
 (function ($) {
     "use strict";
@@ -77,7 +77,14 @@
             .replace(new RegExp('<\\\\/script>', 'g'), '</script>');
 
         var $newFormFragment = $($.parseHTML(newFormHtml, this.$body.document, true));
+
+        if (this.opts.animateForms) {
+            // Hide the new form before adding it to the DOM to avoid flickering
+            $newFormFragment.hide();
+        }
+
         this.$body.append($newFormFragment);
+        $newFormFragment.trigger("prepareNewFormFragment")
 
         var $newForm = $newFormFragment.filter(this.opts.form);
         this.bindForm($newForm, newIndex);

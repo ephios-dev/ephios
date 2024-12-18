@@ -7,30 +7,37 @@
 
 {% block title %}
     {% if event %}
-        {% trans "Edit event" %}
+        {% translate "Edit event" %}
     {% else %}
-        {% trans "Create new event" %}
+        {% translate "Create new event" %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     {% if inactive_events %}
         {% for event in inactive_events %}
-            {% trans "You have an unsaved event" as unsaved_message %}
-            {% trans "View" as view_message %}
+            {% translate "You have an unsaved event" as unsaved_message %}
+            {% translate "View" as view_message %}
             {% render_alert unsaved_message|add:" ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event.get_absolute_url|add:"'>"|add:view_message|add:"</a>"|safe %}
         {% endfor %}
     {% endif %}
     <div class="page-header">
         {% if event %}
-            <h1>{% trans "Edit event" %}</h1>
+            <h1>{% translate "Edit event" %}</h1>
         {% else %}
-            <h1>{% blocktranslate with title=eventtype.title %}Create new {{ title }}{% endblocktranslate %}</h1>
+            <h1>
+                {% blocktranslate trimmed with title=eventtype.title %}
+                    Create new {{ title }}
+                {% endblocktranslate %}
+            </h1>
         {% endif %}
     </div>
     <form method="post" class="form">
         {% csrf_token %}
         {{ form.title|as_crispy_field }}
+        {% if form.type %}
+            {{ form.type|as_crispy_field }}
+        {% endif %}
         {{ form.description|as_crispy_field }}
         {{ form.location|as_crispy_field }}
 
@@ -48,18 +55,18 @@
         </div>
 
         {% for plugin_form in plugin_forms %}
-            {{ plugin_form.render }}
+            {{ plugin_form }}
         {% endfor %}
 
         <div class="form-group">
             {% if event %}
                 <a role="button" class="btn btn-secondary"
-                   href="{{ event.get_absolute_url }}">{% trans "Back" %}</a>
-                <button type="submit" class="btn btn-primary float-end">{% trans "Save" %}</button>
+                   href="{{ event.get_absolute_url }}">{% translate "Back" %}</a>
+                <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
             {% else %}
                 <a role="button" class="btn btn-secondary"
-                   href="{% url "core:event_list" %}">{% trans "Cancel" %}</a>
-                <button type="submit" class="btn btn-primary float-end">{% trans "Next" %}</button>
+                   href="{% url "core:event_list" %}">{% translate "Cancel" %}</a>
+                <button type="submit" class="btn btn-primary float-end">{% translate "Next" %}</button>
             {% endif %}
         </div>
     </form>

@@ -4,13 +4,13 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from ephios.core.views.settings import SettingsViewMixin
-from ephios.extra.mixins import StaffRequiredMixin
+from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.pages.models import Page
 
 
-class PageListView(StaffRequiredMixin, SettingsViewMixin, ListView):
+class PageListView(CustomPermissionRequiredMixin, ListView):
     model = Page
+    permission_required = "pages.add_page"
 
 
 class PageView(DetailView):
@@ -26,26 +26,30 @@ class PageView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class PageCreateView(StaffRequiredMixin, SettingsViewMixin, CreateView):
+class PageCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Page
-    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+    permission_required = "pages.add_page"
+    accept_object_perms = False
+    fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
         messages.success(self.request, _("Page saved successfully."))
         return reverse("pages:settings_page_list")
 
 
-class PageUpdateView(StaffRequiredMixin, SettingsViewMixin, UpdateView):
+class PageUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Page
-    fields = ["title", "content", "slug", "show_in_footer", "publicly_visible"]
+    permission_required = "pages.change_page"
+    fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
     def get_success_url(self):
         messages.success(self.request, _("Page saved successfully."))
         return reverse("pages:settings_page_list")
 
 
-class PageDeleteView(StaffRequiredMixin, SettingsViewMixin, DeleteView):
+class PageDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = Page
+    permission_required = "pages.delete_page"
 
     def get_success_url(self):
         messages.info(self.request, _("Page deleted successfully."))

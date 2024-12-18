@@ -59,6 +59,8 @@ class LogJSONDecoder(json.JSONDecoder):
     def custom_hook(self, d):
         if d.get("__model__") == "__queryset__":
             Model = ContentType.objects.get_for_id(d["contenttype_id"]).model_class()
+            if Model is None:
+                return d["strs"]
             objects = {obj.pk: obj for obj in Model._base_manager.filter(pk__in=d["pks"])}
             return [objects.get(pk, s) for pk, s in zip(d["pks"], d["strs"])]
         if d.get("__model__") == "__instance__":
@@ -66,7 +68,7 @@ class LogJSONDecoder(json.JSONDecoder):
                 return ContentType.objects.get_for_id(d["contenttype_id"]).get_object_for_this_type(
                     pk=d["pk"]
                 )
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, AttributeError):
                 return d["str"]
         for k, v in d.items():
             if isinstance(v, str):

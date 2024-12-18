@@ -8,6 +8,7 @@ from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
 from django.template.defaultfilters import floatformat
 from django.utils.formats import date_format
+from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
 
@@ -95,7 +96,7 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         return Consequence.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(hours=hours, date=when, reason=reason),
+            data={"hours": hours, "date": when, "reason": reason},
         )
 
     @classmethod
@@ -142,25 +143,25 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         return Consequence.objects.create(
             slug=cls.slug,
             user=user,
-            data=dict(
-                qualification_id=qualification.id,
-                event_id=None if shift is None else shift.event_id,
-                expires=expires,
-            ),
+            data={
+                "qualification_id": qualification.id,
+                "event_id": None if shift is None else shift.event_id,
+                "expires": expires,
+            },
         )
 
     @classmethod
     def execute(cls, consequence):
         qg, created = QualificationGrant.objects.get_or_create(
-            defaults=dict(
-                expires=consequence.data["expires"],
-            ),
+            defaults={"expires": consequence.data["expires"]},
             user=consequence.user,
             qualification_id=consequence.data["qualification_id"],
         )
         if not created:
             qg.expires = max(
-                qg.expires, consequence.data["expires"], key=lambda dt: dt or datetime.max
+                qg.expires,
+                consequence.data["expires"],
+                key=lambda dt: dt or make_aware(datetime.max),
             )
             qg.save()
 

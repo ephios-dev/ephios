@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2023
+# This file is distributed under the same license as the ephios package.
+# Felix Rindt <felix@ephios.de>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-16 20:58+0200\n"
+"PO-Revision-Date: 2023-07-16 20:58+0200\n"
+"Last-Translator: Felix Rindt <felix@ephios.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
+">\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
+
+#: ephios/js/event_copy.js:10
+msgid "Currently selected dates"
+msgstr "Derzeit ausgewählte Termine"
+
+#: ephios/js/event_copy.js:18
+msgid "No dates selected"
+msgstr "Keine Termine ausgewählt"
+
+#: ephios/js/main.js:81
+msgid "You are currently offline and seeing the content as it was on {time}."
+msgstr "Sie sind offline und sehen die Inhalte, wie sie am {time} waren."
+
+#: ephios/js/main.js:82
+msgid "experimental"
+msgstr "experimentell"
+
+#: plugins/basesignup/js/disposition.js:13
+msgid "Create \"{userName}\" as placeholder"
+msgstr "\"{userName}\" als Platzhalter anlegen"
+
+#: webpush/webpush.js:31
+msgid "Service workers are not supported in your browser."
+msgstr "Serviceworker werden von Ihrem Browser nicht unterstützt."
+
+#: webpush/webpush.js:40
+msgid "Showing notifications are not supported in your browser."
+msgstr ""
+"Das Anzeigen von Benachrichtigungen wird von Ihrem Browser nicht unterstützt."
+
+#: webpush/webpush.js:49 webpush/webpush.js:173
+msgid "Subscribe to Push Messaging"
+msgstr "Push-Benachrichtigungen abonnieren"
+
+#: webpush/webpush.js:51
+msgid "Push notifications are blocked by your browser."
+msgstr "Push-Benachrichtigungen wurden von Ihrem Browser blockiert."
+
+#: webpush/webpush.js:60
+msgid "Push notifications are not available in your browser."
+msgstr "Push-Benachrichtigungen sind in Ihrem Browser nicht verfügbar."
+
+#: webpush/webpush.js:73 webpush/webpush.js:120 webpush/webpush.js:181
+msgid "Unsubscribe from Push Messaging"
+msgstr "Abo für Push-Benachrichtigungen beenden"
+
+#: webpush/webpush.js:76 webpush/webpush.js:123
+msgid "Successfully subscribed to push notifications."
+msgstr "Push-Benachrichtigungen erfolgreich abonniert."
+
+#: webpush/webpush.js:129
+msgid "Error while subscribing to push notifications."
+msgstr "Fehler beim abonnieren von Push-Benachrichtigungen."
+
+#: webpush/webpush.js:161
+msgid "Subscription is not available."
+msgstr "Abonnieren ist nicht verfügbar."
+
+#: webpush/webpush.js:174
+msgid "Successfully unsubscribed from push notifications."
+msgstr "Abo für Push-Benachrichtigungen erfolgreich beendet."
+
+#: webpush/webpush.js:182
+msgid "Error while unsubscribing from push notifications."
+msgstr "Fehler beim abonnieren von Push-Benachrichtigungen."

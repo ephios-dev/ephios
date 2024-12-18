@@ -1,5 +1,3 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
@@ -10,6 +8,8 @@ from ephios.plugins.eventautoqualification.models import EventAutoQualificationC
 
 
 class EventAutoQualificationForm(BasePluginFormMixin, forms.ModelForm):
+    template_name = "eventautoqualification/auto_qualification_setup_form.html"
+
     class Meta:
         model = EventAutoQualificationConfiguration
         fields = ["qualification", "expiration_date", "mode", "extend_only", "needs_confirmation"]
@@ -23,30 +23,23 @@ class EventAutoQualificationForm(BasePluginFormMixin, forms.ModelForm):
         self.event = event
         try:
             kwargs.setdefault(
-                "instance", EventAutoQualificationConfiguration.objects.get(event=self.event)
+                "instance", EventAutoQualificationConfiguration.objects.get(event_id=self.event.id)
             )
-        except EventAutoQualificationConfiguration.DoesNotExist:
+        except (AttributeError, EventAutoQualificationConfiguration.DoesNotExist):
             pass
 
         super().__init__(*args, **kwargs)
 
         self.fields["qualification"].required = False
-        self.helper = FormHelper(self)
+        self.edit_permission = edit_permission
         if not edit_permission:
-            self.helper.layout.insert(
-                0,
-                HTML(
-                    "<p>"
-                    + str(
-                        _(
-                            "You don't have permission to grant qualifications, so you can't edit these settings."
-                        )
-                    )
-                    + "</p>"
-                ),
-            )
             for field in self.fields.values():
                 field.disabled = True
+
+    def get_context(self):
+        context = super().get_context()
+        context["edit_permission"] = self.edit_permission
+        return context
 
     def save(self, commit=True):
         if self.cleaned_data.get("qualification"):

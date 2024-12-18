@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load ephios_crispy %}
+{% load utils %}
+{% load user_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Working hours" %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {% translate "Working hours" %}
+    </h1>
+    <form class="row row-cols-sm-auto g-3">
+        {% crispy_field filter_form.start wrapper_class="col-12 col-lg" show_labels=False %}
+        <div class="col pt-1"> <p>{% translate "to" %}</p> </div>
+        {% crispy_field filter_form.end wrapper_class="col-12 col-lg" show_labels=False %}
+        {% crispy_field filter_form.type wrapper_class="col-12 col-lg" show_labels=False %}
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">{% translate "Filter" %}</button>
+        </div>
+    </form>
+    <table id="userprofile_table" class="table table-striped display">
+        <thead>
+            <tr>
+                <th>{% translate "Name" %}</th>
+                <th>{% translate "Hours" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.display_name }}</td>
+                    <td>{{ user.hours|floatformat:2 }}</td>
+                    <td class="d-flex">
+                        <a class="btn btn-secondary btn-sm text-nowrap"
+                           href="{% url "core:workinghours_detail" user.pk %}"><span
+                            class="fa fa-eye"></span> <span
+                                class="d-none d-md-inline">{% translate "View" %}</span></a>
+                        {% with groups_by_user|get:user.pk as user_groups %}
+                            {% if can_grant_for|intersects:user_groups %}
+                                <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                                   href="{% url "core:workinghours_add" user.pk %}"><span
+                                    class="fa fa-plus"></span> <span
+                                        class="d-none d-md-inline">{% translate "Add" %}</span></a>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td><em>{% translate "No entries" %}</em></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

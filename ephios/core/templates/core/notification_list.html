@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load rich_text %}
+{% load i18n %}
+
+{% block content %}
+    <h1 class="page-header clearfix">
+        {% translate "Notifications" %}
+        <small class="float-end">
+            <a class="btn btn-sm btn-primary" href="{% url "core:notification_all_read" %}">
+                <span class="fa fa-check"></span> {% translate "Mark all as read" %}
+            </a>
+        </small>
+    </h1>
+    <ul class="list-group mb-3" id="notification-list">
+        {% for notification in notification_list %}
+            <li class="list-group-item {% if not notification.read and not notification.is_obsolete %}unread{% else %}text-body-secondary{% endif %}">
+                <div class="row mb-1">
+                    <div class="col">
+                        <small class="text-body-secondary">{{ notification.created_at|date:"d.m.Y H:i" }}</small>
+                        <h6 class="fw-bold">
+                            {{ notification.subject }}
+                        </h6>
+                    </div>
+                    <div class="col-auto pe-1">
+                        {% if not notification.read %}
+                            <a class="btn btn-outline-primary btn-sm"
+                               href="{% url "core:notification_read" notification.pk %}">
+                                <span class="fa fa-check"></span>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 notification-content">
+                        {{ notification.body|rich_text }}
+                    </div>
+                    <div class="col">
+                        {% for label, url in notification.get_actions %}
+                            <a class="btn btn-sm {% if not notification.read and not notification.is_obsolete %}btn-secondary{% else %}btn-outline-secondary{% endif %}" href="{{ url }}">{{ label }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    {% include 'core/pagination.html' %}
+{% endblock %}

@@ -1,0 +1,54 @@
+name: ephios-compose
+services:
+  app:
+    # to build locally use `build: "../../"` instead of `image: ...`
+    image: ghcr.io/ephios-dev/ephios:latest
+    restart: unless-stopped
+    environment:
+      DEBUG: "False"
+      TRUST_X_FORWARDED_PROTO: "True"
+      DATA_DIR: "/var/ephios/data/"
+      DATABASE_URL: "postgres://ephios:ephios@database/ephios"
+      CACHE_URL: "redis://cache/0"
+      ALLOWED_HOSTS: "*"
+      # change the following to your needs
+      EMAIL_URL: "consolemail://"
+      SITE_URL: "https://ephios.example.org"
+      DEFAULT_FROM_EMAIL: "webmaster@localhost"
+      SERVER_EMAIL: "root@localhost"
+      ADMINS: "Root User <root@localhost.dev>"
+    volumes:
+      - ephios_django_data:/var/ephios/data/
+    depends_on:
+      - database
+      - cache
+
+  cache:
+    image: redis:7-alpine
+    command: redis-server
+    restart: unless-stopped
+
+  database:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ephios
+      POSTGRES_USER: ephios
+      POSTGRES_PASSWORD: ephios
+    volumes:
+      - ephios_postgres_data:/var/lib/postgresql/data
+
+  proxy:
+    image: nginx:1.19
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ephios_django_data:/var/ephios/data/
+    depends_on:
+      - app
+
+volumes:
+  ephios_django_data: { }
+  ephios_postgres_data: { }

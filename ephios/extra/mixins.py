@@ -1,4 +1,5 @@
 import functools
+from typing import Collection
 
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
@@ -7,11 +8,12 @@ from django.urls import resolve
 
 class CustomPermissionRequiredMixin(PermissionRequiredMixin):
     """
-    As of 2020-09-26, guardians permission mixin
-    doesn't support the mode of operation we want, but Django's does:
+    We modify Django's Mixin to support object permissions:
     * Logged in users without permission get 403
     * not logged in users get redirected to login
-    Therefore we patch Django's mixin to support object permissions
+
+    Set accept_object_perms to False to disable
+    object permissions (e.g. on create views).
     """
 
     accept_global_perms = True
@@ -147,5 +149,5 @@ class PluginFormMixin:
         for plugin_form in self.plugin_forms:
             plugin_form.save()
 
-    def get_plugin_forms(self):
+    def get_plugin_forms(self) -> Collection["BasePluginFormMixin"]:
         raise NotImplementedError

@@ -4,8 +4,10 @@ import secrets
 import uuid
 from datetime import date
 from itertools import chain
+from typing import Optional
 
 import guardian.mixins
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Group, PermissionsMixin
@@ -18,12 +20,15 @@ from django.db.models import (
     ExpressionWrapper,
     F,
     ForeignKey,
+    JSONField,
     Max,
     Model,
     Q,
     Sum,
+    UniqueConstraint,
+    Value,
 )
-from django.db.models.functions import TruncDate
+from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -38,20 +43,23 @@ from ephios.modellogging.log import (
 from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
 
 
+class UserProfileQuerySet(models.QuerySet):
+    def visible(self):
+        return self.filter(is_visible=True)
+
+
 class UserProfileManager(BaseUserManager):
     def create_user(
         self,
         email,
-        first_name,
-        last_name,
+        display_name,
         date_of_birth,
         password=None,
     ):
         # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
         user = self.model(
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            display_name=display_name,
             date_of_birth=date_of_birth,
         )
         user.set_password(password)
@@ -61,49 +69,63 @@ class UserProfileManager(BaseUserManager):
     def create_superuser(
         self,
         email,
-        first_name,
-        last_name,
+        display_name,
         date_of_birth,
         password=None,
     ):
-        user = self.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            date_of_birth=date_of_birth,
-        )
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
-        return user
+        with transaction.atomic():
+            user = self.create_user(
+                email=email,
+                password=password,
+                display_name=display_name,
+                date_of_birth=date_of_birth,
+            )
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            return user
+
+    def get_by_natural_key(self, username):
+        # postgres uses case-sensitive collations, so we need to use iexact here
+        return self.get(**{f"{self.model.USERNAME_FIELD}__iexact": username})
 
 
 class VisibleUserProfileManager(BaseUserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_visible=True)
+        return super().get_queryset().visible()
 
 
 class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractBaseUser):
     email = EmailField(_("email address"), unique=True)
+    email_invalid = BooleanField(default=False, verbose_name=_("Email address invalid"))
     is_active = BooleanField(default=True, verbose_name=_("Active"))
     is_visible = BooleanField(default=True, verbose_name=_("Visible"))
-    is_staff = BooleanField(default=False, verbose_name=_("Staff user"))
-    first_name = CharField(_("first name"), max_length=254)
-    last_name = CharField(_("last name"), max_length=254)
-    date_of_birth = DateField(_("date of birth"))
-    phone = CharField(_("phone number"), max_length=254, blank=True)
+    is_staff = BooleanField(
+        default=False,
+        verbose_name=_("Administrator"),
+    )
+    display_name = CharField(_("name"), max_length=254)
+    date_of_birth = DateField(_("date of birth"), null=True, blank=True)
+    phone = CharField(_("phone number"), max_length=254, blank=True, null=True)
     calendar_token = CharField(_("calendar token"), max_length=254, default=secrets.token_urlsafe)
+    preferred_language = CharField(
+        _("preferred language"),
+        max_length=10,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES,
+    )
+    disabled_notifications = JSONField(
+        default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
-        "first_name",
-        "last_name",
+        "display_name",
         "date_of_birth",
     ]
 
-    objects = VisibleUserProfileManager()
-    all_objects = UserProfileManager()
+    objects = VisibleUserProfileManager.from_queryset(UserProfileQuerySet)()
+    all_objects = UserProfileManager.from_queryset(UserProfileQuerySet)()
 
     class Meta:
         verbose_name = _("user profile")
@@ -112,30 +134,37 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         base_manager_name = "all_objects"
         default_manager_name = "all_objects"
 
+        constraints = [
+            UniqueConstraint(
+                Lower("email"),
+                name="user_email_ci_uniqueness",
+                violation_error_message=_("User profile with this email address already exists."),
+                # we want to allow case insensitive signin, so we need to ensure that the email is unique in all cases
+            ),
+        ]
+
     def get_full_name(self):
-        return self.first_name + " " + self.last_name
+        return self.display_name
 
     def __str__(self):
-        return self.get_full_name()
-
-    def get_short_name(self):
-        return self.first_name
+        return str(self.get_full_name())
 
     @property
-    def age(self):
+    def age(self) -> Optional[int]:
+        if self.date_of_birth is None:
+            return None
         today, born = date.today(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     @property
     def is_minor(self):
-        return self.age < 18
+        return self.date_of_birth is not None and self.age < 18
 
     def as_participant(self):
         from ephios.core.signup.participants import LocalUserParticipant
 
         return LocalUserParticipant(
-            first_name=self.first_name,
-            last_name=self.last_name,
+            display_name=self.display_name,
             qualifications=self.qualifications,
             date_of_birth=self.date_of_birth,
             email=self.email if self.is_active else None,
@@ -144,10 +173,20 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
 
     @property
     def qualifications(self):
-        return Qualification.objects.filter(
-            pk__in=self.qualification_grants.unexpired().values_list("qualification_id", flat=True)
-        ).annotate(
-            expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+        """
+        Returns a queryset with all qualifications that are granted to this user and not expired.
+        Be careful to not use this in a loop, as it will perform a query for each iteration.
+        """
+        return (
+            Qualification.objects.filter(
+                pk__in=self.qualification_grants.unexpired().values_list(
+                    "qualification_id", flat=True
+                )
+            )
+            .annotate(
+                expires=Max(F("grants__expires"), filter=Q(grants__user=self)),
+            )
+            .select_related("category")
         )
 
     def get_workhour_items(self):
@@ -162,24 +201,28 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 ),
                 date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
+                type=Value("event"),
+                origin_id=F("shift__event__pk"),
             )
-            .values("duration", "date", "reason")
+            .values("duration", "date", "reason", "type", "origin_id")
         )
-        workinghours = self.workinghours_set.annotate(duration=F("hours")).values(
-            "duration", "date", "reason"
-        )
+        workinghours = self.workinghours_set.annotate(
+            duration=F("hours"), type=Value("request"), origin_id=F("pk")
+        ).values("duration", "date", "reason", "type", "origin_id")
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
         ) + datetime.timedelta(
             hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
         )
-        return hour_sum, list(sorted(chain(participations, workinghours), key=lambda k: k["date"]))
+        return hour_sum, list(
+            sorted(chain(participations, workinghours), key=lambda k: k["date"], reverse=True)
+        )
 
 
 register_model_for_logging(
     UserProfile,
     ModelFieldsLogConfig(
-        unlogged_fields={"id", "password", "calendar_token", "last_login"},
+        unlogged_fields={"id", "password", "calendar_token", "last_login", "user_permissions"},
     ),
 )
 
@@ -202,12 +245,16 @@ class QualificationCategoryManager(models.Manager):
 class QualificationCategory(Model):
     uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
+    show_with_user = BooleanField(
+        default=True,
+        verbose_name=_("Show qualifications of this category everywhere a user is presented"),
+    )
 
     objects = QualificationCategoryManager()
 
     class Meta:
-        verbose_name = _("qualification track")
-        verbose_name_plural = _("qualification tracks")
+        verbose_name = _("qualification category")
+        verbose_name_plural = _("qualification categories")
         db_table = "qualificationcategory"
 
     def __str__(self):
@@ -225,7 +272,7 @@ class QualificationManager(models.Manager):
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
-    abbreviation = CharField(max_length=254)
+    abbreviation = CharField(max_length=254, verbose_name=_("Abbreviation"))
     category = ForeignKey(
         QualificationCategory,
         on_delete=models.CASCADE,
@@ -233,7 +280,12 @@ class Qualification(Model):
         verbose_name=_("category"),
     )
     includes = models.ManyToManyField(
-        "self", related_name="included_by", symmetrical=False, blank=True
+        "self",
+        related_name="included_by",
+        verbose_name=_("Included"),
+        help_text=_("other qualifications that this qualification includes"),
+        symmetrical=False,
+        blank=True,
     )
     is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
@@ -257,21 +309,6 @@ class Qualification(Model):
         return (self.uuid, self.title)
 
     natural_key.dependencies = ["core.QualificationCategory"]
-
-    @classmethod
-    def collect_all_included_qualifications(cls, given_qualifications) -> set:
-        """We collect using breadth first search with one query for every layer of inclusion."""
-        all_qualifications = set(given_qualifications)
-        current = set(given_qualifications)
-        while current:
-            new = (
-                Qualification.objects.filter(included_by__in=current)
-                .exclude(id__in=(q.id for q in all_qualifications))
-                .distinct()
-            )
-            all_qualifications |= set(new)
-            current = new
-        return all_qualifications
 
 
 class CustomQualificationGrantQuerySet(models.QuerySet):
@@ -309,8 +346,19 @@ class QualificationGrant(Model):
         verbose_name=_("user profile"),
     )
     expires = ExpirationDateField(_("expiration date"), blank=True, null=True)
+    externally_managed = models.BooleanField(
+        verbose_name=_("externally managed"),
+        default=False,
+        help_text=_("The qualification was granted by an external system."),
+    )
 
     objects = CustomQualificationGrantQuerySet.as_manager()
+
+    def is_expired(self):
+        return self.expires and self.expires < timezone.now()
+
+    def is_valid(self):
+        return not self.is_expired()
 
     def __str__(self):
         return f"{self.qualification!s} {_('for')} {self.user!s}"
@@ -319,6 +367,7 @@ class QualificationGrant(Model):
         unique_together = [["qualification", "user"]]  # issue #218
         db_table = "qualificationgrant"
         verbose_name = _("Qualification grant")
+        verbose_name_plural = _("Qualification grants")
 
 
 register_model_for_logging(
@@ -355,6 +404,7 @@ class Consequence(Model):
     class Meta:
         db_table = "consequence"
         verbose_name = _("Consequence")
+        verbose_name_plural = _("Consequences")
 
     @property
     def handler(self):
@@ -428,13 +478,18 @@ register_model_for_logging(
 
 
 class WorkingHours(Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    hours = models.DecimalField(decimal_places=2, max_digits=7)
-    reason = models.CharField(max_length=1024, default="")
-    date = models.DateField()
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("User"))
+    hours = models.DecimalField(decimal_places=2, max_digits=7, verbose_name=_("Hours of work"))
+    reason = models.CharField(max_length=1024, default="", verbose_name=_("Occasion"))
+    date = models.DateField(verbose_name=_("Date"))
 
     class Meta:
         db_table = "workinghours"
+        verbose_name = _("Working hours")
+        verbose_name_plural = _("Working hours")
+
+    def __str__(self):
+        return f"{self.hours} hours for {self.user} because of {self.reason} on {self.date}"
 
 
 class Notification(Model):
@@ -445,7 +500,21 @@ class Notification(Model):
         verbose_name=_("affected user"),
         null=True,
     )
-    failed = models.BooleanField(default=False)
+    read = models.BooleanField(default=False, verbose_name=_("read"))
+    processing_completed = models.BooleanField(
+        default=False,
+        verbose_name=_("processing completed"),
+        help_text=_(
+            "All enabled notification backends have processed this notification when flag is set"
+        ),
+    )
+    processed_by = models.JSONField(
+        blank=True,
+        default=list,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
+        help_text=_("List of slugs of notification backends that have processed this notification"),
+    )
     data = models.JSONField(
         blank=True, default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
@@ -459,13 +528,127 @@ class Notification(Model):
 
     @property
     def subject(self):
+        """The subject of the notification."""
         return self.notification_type.get_subject(self)
 
-    def as_plaintext(self):
-        return self.notification_type.as_plaintext(self)
+    @property
+    def body(self):
+        """The body text of the notification."""
+        return self.notification_type.get_body(self)
+
+    @property
+    def is_obsolete(self):
+        return self.notification_type.is_obsolete(self)
+
+    def __str__(self):
+        return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
 
     def as_html(self):
+        """The notification rendered as HTML."""
         return self.notification_type.as_html(self)
 
-    def get_url(self):
-        return self.notification_type.get_url(self)
+    def as_plaintext(self):
+        """The notification rendered as plaintext."""
+        return self.notification_type.as_plaintext(self)
+
+    def get_actions(self):
+        return self.notification_type.get_actions_with_referrer(self)
+
+
+class IdentityProvider(Model):
+    internal_name = models.CharField(
+        max_length=255,
+        verbose_name=_("internal name"),
+        help_text=_("Internal name for this provider."),
+        unique=True,
+    )
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_("label"),
+        help_text=_("The label displayed to users attempting to log in with this provider."),
+    )
+    client_id = models.CharField(
+        max_length=255,
+        verbose_name=_("client id"),
+        help_text=_("Your client id provided by the OIDC provider."),
+    )
+    client_secret = models.CharField(
+        max_length=255,
+        verbose_name=_("client secret"),
+        help_text=_("Your client secret provided by the OIDC provider."),
+    )
+    scopes = models.CharField(
+        max_length=255,
+        default="openid profile email",
+        verbose_name=_("scopes"),
+        help_text=_(
+            "The OIDC scopes to request from the provider. Separate multiple scopes with spaces. Use the default value if you are unsure."
+        ),
+    )
+    authorization_endpoint = models.URLField(
+        verbose_name=_("authorization endpoint"), help_text=_("The OIDC authorization endpoint.")
+    )
+    token_endpoint = models.URLField(
+        verbose_name=_("token endpoint"), help_text=_("The OIDC token endpoint.")
+    )
+    userinfo_endpoint = models.URLField(
+        verbose_name=_("user endpoint"), help_text=_("The OIDC user endpoint.")
+    )
+    end_session_endpoint = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("end session endpoint"),
+        help_text=_("The OIDC end session endpoint, if supported by your provider."),
+    )
+    jwks_uri = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("JWKS endpoint"),
+        help_text=_(
+            "The OIDC JWKS endpoint. A less secure signing method will be used if this is not provided."
+        ),
+    )
+    default_groups = models.ManyToManyField(
+        Group,
+        blank=True,
+        verbose_name=_("default groups"),
+        help_text=_("The groups that users logging in with this provider will be added to."),
+    )
+    group_claim = models.CharField(
+        max_length=254,
+        blank=True,
+        verbose_name=_("group claim"),
+        help_text=_(
+            "The name of the claim that contains the user's groups. "
+            "Leave empty if your provider does not support this. You can use dot notation to access nested claims."
+        ),
+    )
+    create_missing_groups = models.BooleanField(
+        default=False,
+        verbose_name=_("create missing groups"),
+        help_text=_(
+            "If enabled, groups from the claim defined above that do not exist yet will be created automatically."
+        ),
+    )
+    qualification_claim = models.CharField(
+        max_length=254,
+        blank=True,
+        verbose_name=_("qualification claim"),
+        help_text=_(
+            "The name of the claim that contains the user's qualifications. "
+            "Leave empty if your provider does not support this. You can use dot notation to access nested claims. "
+            "Granted qualifications not found in the claim will be removed from the user on login."
+        ),
+    )
+    qualification_codename_to_uuid = models.JSONField(
+        verbose_name=_("qualification codename to uuid"),
+        help_text=_(
+            "A json encoded dictionary containing mappings of qualification names as they appear in the"
+            "qualification claim to the qualification uuid. If a key is not found, use the key directly."
+        ),
+        default=dict,
+        blank=True,
+    )
+
+    def __str__(self):
+        return _("Identity provider {label}").format(label=self.label)

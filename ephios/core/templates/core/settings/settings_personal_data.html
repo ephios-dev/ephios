@@ -1,0 +1,52 @@
+{% extends "core/settings/settings_base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block settings_content %}
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mt-3">{% translate "Personal data" %}</h3>
+            <dl class="row">
+                <dt class="col-lg-3">{% translate "Name" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.display_name }}</dd>
+                <dt class="col-lg-3">{% translate "E-Mail address" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.email }}</dd>
+                <dt class="col-lg-3">{% translate "Date of birth" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.date_of_birth|default_if_none:"" }}</dd>
+                <dt class="col-lg-3">{% translate "Phone number" %}</dt>
+                <dd class="col-lg-9">{{ userprofile.phone|default_if_none:"" }}</dd>
+            </dl>
+        </div>
+        <div class="col-12 col-lg-6">
+            <h3>{% translate "Groups" %}</h3>
+            <ul>
+                {% for group in userprofile.groups.all %}
+                    <li>{{ group }}</li>
+                {% empty %}
+                    <i>{% translate "You are not a member of any group." %}</i>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-12 col-lg-6">
+            <h3>{% translate "Qualifications" %}</h3>
+            <ul>
+                {% for qualification in userprofile.qualifications %}
+                    <li>
+                        {{ qualification }}
+                        {% if qualification.expires is not None %}
+                            ({% translate "until" %} {{ qualification.expires|date }})
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <i>{% translate "You have not been assigned any qualificiations." %}</i>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <h3>{% translate "Language" %}</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+    </form>
+{% endblock %}

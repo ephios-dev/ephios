@@ -1,9 +1,62 @@
-<html>
+{% load i18n %}
+{% load static %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
-        <title>ephios - Internal Server Error</title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="created" content="{% now "c" %}">
+        <title>ephios - {% block title %} ephios {% endblock %}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="{% static "ephios/img/ephios-symbol-red.svg" %}">
+        {% compress css %}
+            <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
+            <link type="text/x-scss" href="{% static 'ephios/scss/main.scss' %}" rel="stylesheet" media="screen">
+            {% block css %}{% endblock %}
+        {% endcompress %}
     </head>
-    <body>
-        <h1>Internal server error</h1>
-        <p>An error occurred while processing your request. The administrators have been informed about the error.</p>
+
+    <body data-pwa-network="online">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <img src="{% static brand_logo_static_path|default:"ephios/img/ephios-text-black.png" %}"
+                             alt="ephios"
+                             class="d-inline-block" width="75">
+                    </a>
+                </div>
+            </nav>
+        </header>
+        <div class="container container-main pt-3">
+            <main class="row blur-on-unload">
+                <div class="col-md-12">
+                    <h1>
+                        {% translate "An error occurred" %}
+                    </h1>
+                    <p>
+                        {% blocktrans trimmed %}
+                            The server encountered an internal error and was unable to
+                            retrieve your request. Please try again later.
+                            The administrators have been notified.
+                        {% endblocktrans %}
+                    </p>
+                    <a href="/" class="btn btn-primary">
+                        {% translate "Return home" %}
+                    </a>
+                </div>
+            </main>
+            <footer class="row blur-on-unload mt-2">
+                <div class="col-md-12 text-center">
+                    <small>
+                        <span class="text-body-secondary">
+                            {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
+                                powered by {{ brand }}
+                            {% endblocktranslate %}
+                        </span>
+                    </small>
+                </div>
+            </footer>
+        </div>
     </body>
 </html>

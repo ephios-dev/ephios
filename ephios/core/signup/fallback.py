@@ -5,13 +5,17 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation
-from ephios.core.signup.methods import BaseSignupMethod, ImproperlyConfiguredError
-from ephios.plugins.basesignup.signup.common import RenderParticipationPillsShiftStateMixin
+from ephios.core.signup.flow.base import BaseSignupFlow
+from ephios.core.signup.flow.participant_validation import (
+    BaseSignupActionValidator,
+    ImproperlyConfiguredError,
+)
+from ephios.core.signup.structure.base import BaseShiftStructure
 
 logger = logging.getLogger(__name__)
 
 
-def catch_signup_method_fails(default=None):
+def default_on_exception(default=None):
     def decorator(f):
         @functools.wraps(f)
         def decorated(*args, **kwargs):
@@ -26,39 +30,35 @@ def catch_signup_method_fails(default=None):
     return decorator
 
 
-def get_signup_method_failed_error_list():
-    return [
-        ImproperlyConfiguredError(
-            mark_safe(f'<span class="text-danger">{_("Signup configuration is invalid!")}</span>')
-        )
-    ]
+def get_signup_config_invalid_error():
+    message = _("Signup configuration is invalid!")
+    return ImproperlyConfiguredError(mark_safe(f'<span class="text-danger">{message}</span>'))
 
 
-class FallbackSignupMethod(RenderParticipationPillsShiftStateMixin, BaseSignupMethod):
+class FallbackSignupActionValidator(BaseSignupActionValidator):
+    def signup_is_disabled(self, method, participant):
+        raise get_signup_config_invalid_error()
+
+    def get_checkers(self):
+        return [self.signup_is_disabled]
+
+
+class FallbackSignupFlow(BaseSignupFlow):
     slug = None
-    verbose_name = _("Fallback for missing signup methods")
-    description = _(
-        """This method is used when the original signup method is not installed anymore."""
-    )
+    verbose_name = _("Fallback for missing signup flows")
+    description = _("""This flow is used when the original signup flow is not installed anymore.""")
     uses_requested_state = False
+    signup_action_validator_class = FallbackSignupActionValidator
 
     def _configure_participation(
         self, participation: AbstractParticipation, **kwargs
     ) -> AbstractParticipation:
         raise TypeError(f"{self.__class__} does not support signup")
 
-    @staticmethod
-    def signup_is_disabled(method, participant):
-        return get_signup_method_failed_error_list()
 
-    @property
-    def _signup_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
-
-    @property
-    def _decline_checkers(self):
-        return [
-            self.signup_is_disabled,
-        ]
+class FallbackShiftStructure(BaseShiftStructure):
+    slug = None
+    verbose_name = _("Fallback for missing shift structures")
+    description = _(
+        """This structure is used when the original shift structure is not installed anymore."""
+    )

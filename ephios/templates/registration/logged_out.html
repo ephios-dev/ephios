@@ -2,10 +2,10 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Logged out" %}
+    {% translate "Logged out" %}
 {% endblock %}
 
 {% block content %}
-    <p>{% trans "Logged out successfully." %}</p>
-    <a class="btn btn-primary" href="{% url "login" %}">{% trans "Back to login" %}</a>
+    <p>{% translate "Logged out successfully." %}</p>
+    <a class="btn btn-primary" href="{% url "login" %}">{% translate "Back to login" %}</a>
 {% endblock %}

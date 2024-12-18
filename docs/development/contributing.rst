@@ -17,16 +17,28 @@ Development setup
 
 To set up a development version on your local machine, you need to execute the following steps:
 
+#. Install external packages required for developing ephios
+
+   * ``git`` (to check out the repository)
+   * ``python`` version 3.8 or higher including dev and virtualenv tooling
+   * ``gettext`` (to compile translations, might also be named ``msgfmt``)
+
 #. Check out the `repository <https://github.com/ephios-dev/ephios>`_ and cd to it
-#. Set up a virtualenv for the project with Python >=3.8 and activate it
+#. Set up a virtualenv for the project activate it
 #. Install poetry (if not already installed): `Installation guide <https://python-poetry.org/docs/#installation>`_
 #. Install dependencies with ``poetry install``
 #. Create env file with ``cp .env.example .env``
 #. Migrate the database with ``python manage.py migrate``
-#. Compile translations with ``python manage.py compilemessages`` and ``python manage.py compilejsi18n``
+#. Prepare files for the installation with ``python manage.py build``
 #. Load data for testing with ``python manage.py devdata``
 #. Start the development server with ``python manage.py runserver``
 #. Open your web browser, visit ``http://localhost:8000`` and log in with the default credentials (user ``admin@localhost`` and password ``admin``)
+
+If those steps did not work for you, please contact us or open an issue in the GitHub repository.
+
+.. warning::
+    The default development server is not suitable for production use. It is not secure and not performant.
+    If you want to run ephios in production, please follow the :doc:`deployment guide </admin/deployment/index>`
 
 Tests
 -----
@@ -49,3 +61,65 @@ how this works. In short it executes the following steps before every commit:
 If you want to do that manually, run ``pre-commit run --all-files``.
 Next to that, we also run ``pylint ephios`` to check for semantic issues in the code.
 
+Translations
+------------
+
+We are using the django translation system for translations in python, html and javascript.
+After adding new strings to translate, run this to generate
+the `locale/**/.po` files for translation:
+
+.. code-block:: bash
+
+   python manage.py makemessages --all -d django
+   python manage.py makemessages --all -d djangojs --ignore data --ignore docs
+
+Calling ``makemessages`` in the ``djangojs`` domain will find gettext calls in javascript files in the
+current working directory. Therefore, we need to ignore the ``data`` which contains static files from
+3rd-party-packages already translated and the ``docs`` directory. Some 3rd-party-javascript comes without
+a translation. To add them, do run ``makemessages`` from the ``data/public/static/`` directory after running
+``collectstatic``, but ignore all directories of 3rd-party-packages that are already translated, e.g.:
+
+.. code-block:: bash
+
+   cd data/public/static/
+   python ../../../manage.py makemessages --all -d djangojs --ignore jsi18n --ignore admin --ignore CACHE --ignore recurrence --ignore select2
+
+We tend to edit our .po files using weblate, but a local editor like poedit works as well.
+
+Using other databases
+---------------------
+
+By default, ephios uses a sqlite database for development and PostgreSQL for production.
+
+Postgres
+''''''''
+
+If you want to use Postgres in development, here are some steps to follow:
+
+.. code-block:: console
+
+   sudo docker run --name postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=ephios -e PGDATA=/tmp -d -p 5432:5432 -v ${PWD}:/var/lib/postgresql/data postgres:latest
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
+
+.. code-block:: bash
+
+   DATABASE_URL=psql://postgres:password@localhost:5432/ephios
+
+MySQL
+''''''
+
+We do not recommend using MySQL, but if you need a mysql for development, you can use the following docker command:
+
+.. code-block:: bash
+
+   sudo docker run --name mysql -e MYSQL_ROOT_PASSWORD=somesupersecret123 -p 3306:3306 -d docker.io/library/mariadb:latest
+   sudo docker exec -it mysql mariadb -u root -p  # use the password above
+   CREATE DATABASE ephios;
+
+
+Then, you can use the following settings in your .env file. Remember to migrate etc.
+
+.. code-block:: bash
+
+   DATABASE_URL=mysql://root:somesupersecret123@127.0.0.1:3306/ephios

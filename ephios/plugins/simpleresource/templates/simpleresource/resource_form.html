@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% if resource %}
+        {% translate "Edit resource" %}
+    {% else %}
+        {% translate "Create new resource" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if resource %}
+            <h2>{% translate "Edit resource" %}</h2>
+        {% else %}
+            <h2>{% translate "Create new resource" %}</h2>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Save">
+    </form>
+{% endblock %}

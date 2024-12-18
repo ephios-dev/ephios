@@ -1,6 +1,5 @@
 import itertools
 import urllib
-from collections import defaultdict
 from typing import Dict
 from urllib.error import URLError
 
@@ -11,6 +10,7 @@ from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.parsers import JSONParser
 
 from ephios.core.models import Qualification, QualificationCategory
+from ephios.core.services.qualification import DirectedGraph
 from ephios.plugins.qualification_management.serializers import QualificationFixtureSerializer
 
 
@@ -54,31 +54,6 @@ def fetch_deserialized_qualifications_from_repo():
         raise RepoError from e
 
 
-class QualificationGraph:
-    """Class used to compute the inclusions used in the qualification graph."""
-
-    def __init__(self):
-        # inclusions is a dict where keys are nodes and values are lists of nodes the key node has an edge of inclusion to
-        self.inclusions = defaultdict(set)
-
-    def add_qualification(self, uuid, inclusions):
-        """Add a new qualification to the graph."""
-        self.inclusions[uuid] |= inclusions
-
-    def parents(self, child):
-        for parent, children in self.inclusions.items():
-            if child in children:
-                yield parent
-
-    def remove_qualification(self, uuid):
-        """Remove a qualification, keeping the inclusions intact."""
-        children = self.inclusions[uuid]
-        for parent in self.parents(uuid):
-            self.inclusions[parent] |= children
-            self.inclusions[parent].remove(uuid)
-        del self.inclusions[uuid]
-
-
 class QualificationChangeManager:
     def __init__(self):
         self.deserialized_qualifications_to_add = set()
@@ -109,7 +84,7 @@ class QualificationChangeManager:
             ]
 
     def _build_inclusion_graph(self):
-        graph = QualificationGraph()
+        graph = DirectedGraph()
         # add qualifications from the repo
         for deserialized_qualification in itertools.chain(
             self.deserialized_qualifications_to_add,
@@ -117,12 +92,12 @@ class QualificationChangeManager:
         ):
             this_uuid = str(deserialized_qualification.object.uuid)
             inclusions = set(deserialized_qualification.m2m_data["includes"])
-            graph.add_qualification(uuid=this_uuid, inclusions=inclusions)
+            graph.add(node=this_uuid, children=inclusions)
             for included_by in deserialized_qualification.m2m_data["included_by"]:
-                graph.add_qualification(uuid=str(included_by), inclusions={str(this_uuid)})
+                graph.add(node=str(included_by), children={str(this_uuid)})
 
         # add existing qualifications and their inclusions
-        repository_qualification_uuids = set(graph.inclusions.keys())
+        repository_qualification_uuids = set(graph.adjancent_nodes.keys())
         for qualification in self.existing_qualifications_by_uuid.values():
             this_uuid = str(qualification.uuid)
             inclusions = {str(included.uuid) for included in qualification.includes.all()}
@@ -130,13 +105,13 @@ class QualificationChangeManager:
                 # This existing qualification is also part of the repo.
                 # Inclusions to other repo qualifications, that are originally not part of the repo should not be reproduced, so we don't add them.
                 inclusions -= repository_qualification_uuids
-            graph.add_qualification(uuid=this_uuid, inclusions=inclusions)
+            graph.add(node=this_uuid, children=inclusions)
 
         # now remove supporting-only repo qualifications and explicitly removed ones, maintaining graph connectivity
         for deserialized_qualification in self.inclusion_supporting_deserialized_qualifications:
-            graph.remove_qualification(str(deserialized_qualification.object.uuid))
+            graph.remove_node(str(deserialized_qualification.object.uuid))
         for qualification in self.qualifications_to_delete_fixing_inclusion:
-            graph.remove_qualification(str(qualification.uuid))
+            graph.remove_node(str(qualification.uuid))
 
         self.graph = graph
 
@@ -154,7 +129,7 @@ class QualificationChangeManager:
                 self.existing_qualifications_by_uuid[uuid] = deserialized_qualification.object
 
         # Finally, set m2m inclusions
-        for uuid, inclusions in self.graph.inclusions.items():
+        for uuid, inclusions in self.graph.adjancent_nodes.items():
             qualification = self.existing_qualifications_by_uuid[uuid]
             qualification.includes.set(
                 [self.existing_qualifications_by_uuid[inclusion] for inclusion in inclusions]
@@ -173,9 +148,7 @@ class QualificationChangeManager:
             if str(category.uuid) in uuids_of_used_categories:
                 QualificationCategory.objects.get_or_create(
                     uuid=category.uuid,
-                    defaults=dict(
-                        title=category.title,
-                    ),
+                    defaults={"title": category.title},
                 )
 
     def _delete_unneeded_qualification_categories(self):

@@ -5,7 +5,7 @@
 {% load i18n %}
 
 {% block participation_body %}
-    <div class="row align-items-start no-gutters mb-0">
+    <div class="row align-items-start mb-0">
         <div class="col pe-3 pt-2 pb-1">
             <h6 class="d-inline">
                 {{ form.instance.participant.icon }}
@@ -16,16 +16,16 @@
                     <span class="fa fa-exclamation-triangle text-danger"
                           data-bs-toggle="tooltip"
                           title="{% blocktranslate trimmed with participant=form.instance.participant conflicts=conflicts|join:", " %}
-                                  {{ participant }} already participates in {{ conflicts }} at the same time.
-                              {% endblocktranslate %}"></span>
+                                     {{ participant }} already participates in {{ conflicts }} at the same time.
+                                 {% endblocktranslate %}"></span>
                 {% endif %}
             {% endwith %}
 
             {% if form.instance.participant.is_minor %}
-                <span class="badge bg-warning">{% trans "Minor" %}</span>
+                <span class="badge bg-warning">{% translate "Minor" %}</span>
             {% endif %}
-            {% for qualification in form.instance.participant.qualifications|get_relevant_qualifications %}
-                <span class="badge bg-secondary text-dark">{{ qualification }}</span>
+            {% for abbreviation in form.instance.participant.qualifications|qualifications_to_essential_abbreviations %}
+                <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
             {% endfor %}
 
             {% block participation_detail %}
@@ -37,10 +37,10 @@
             <button class="btn" type="button" data-bs-toggle="collapse"
                     data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
                     aria-controls="collapseExample">
-                    <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
-                        <i class="fas fa-cog"></i>
-                        <i class="fas fa-exclamation{% if not form.instance.has_customized_signup %} invisible{% endif %}"></i>
-                    </span>
+                <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
+                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-exclamation{% if not form.instance.has_customized_signup %} invisible{% endif %}"></i>
+                </span>
                 <span class="visually-hidden">{% translate "Customize" %}</span>
             </button>
             {% if form.can_delete %}
@@ -50,17 +50,20 @@
             {% endif %}
         </div>
     </div>
-    <div class="collapse mt-3 do-not-drag card bg-light" data-bs-parent="#participations-form"
+    <div class="collapse {% if form.errors %}show{% endif %} do-not-drag"
+         data-bs-parent="#participations-form"
          id="participation-collapse-{{ form.instance.id }}">
-        <div class="card-body">
-            {{ form.individual_start_time|as_crispy_field }}
-            {{ form.individual_end_time|as_crispy_field }}
-            {% if form.comment.initial %}
-                {{ form.comment|as_crispy_field }}
-            {% endif %}
-            {% block participation_form %}
-            {% endblock %}
-            <div class="mb-n3"></div>
+        <div class="card bg-light mt-3">
+            <div class="card-body">
+                {{ form.individual_start_time|as_crispy_field }}
+                {{ form.individual_end_time|as_crispy_field }}
+                {% if form.comment.initial %}
+                    {{ form.comment|as_crispy_field }}
+                {% endif %}
+                {% block participation_form %}
+                {% endblock %}
+                <div class="mb-n3"></div>
+            </div>
         </div>
     </div>
 {% endblock %}

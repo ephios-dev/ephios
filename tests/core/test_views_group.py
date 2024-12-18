@@ -1,7 +1,10 @@
 import pytest
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from guardian.shortcuts import get_group_perms, get_objects_for_group
+from guardian.shortcuts import get_group_perms
+
+from ephios.core.forms.users import MANAGEMENT_PERMISSIONS
+from ephios.extra.permissions import get_groups_with_perms
 
 
 class TestGroupView:
@@ -12,7 +15,8 @@ class TestGroupView:
     def test_group_list(self, django_app, superuser, groups):
         response = django_app.get(reverse("core:group_list"), user=superuser)
         assert response.status_code == 200
-        assert response.html.findAll(text=Group.objects.all().values_list("name", flat=True))
+        for group_name in Group.objects.all().values_list("name", flat=True):
+            assert group_name in response.text
         edit_links = [
             reverse("core:group_edit", kwargs={"pk": group_id})
             for group_id in Group.objects.all().values_list("id", flat=True)
@@ -33,7 +37,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert list(group.user_set.all()) == [manager]
-        assert not group.permissions.filter(codename="view_past_event").exists()
         assert not group.permissions.filter(codename="add_event").exists()
         assert not group.permissions.filter(
             codename__in=[
@@ -58,7 +61,6 @@ class TestGroupView:
         group_name = "Testgroup"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = True
         form["is_planning_group"] = True
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         form["is_hr_group"] = True
@@ -67,7 +69,6 @@ class TestGroupView:
         assert response.status_code == 302
         group = Group.objects.get(name=group_name)
         assert set(group.user_set.all()) == {manager}
-        assert group.permissions.filter(codename="view_past_event").exists()
         assert group.permissions.filter(codename="add_event").exists()
         assert "publish_event_for_group" in get_group_perms(
             group, Group.objects.get(name="Volunteers")
@@ -82,45 +83,32 @@ class TestGroupView:
         assert group.permissions.filter(codename="view_group").exists()
 
     def test_group_edit(self, django_app, groups, manager):
-        group = manager.groups.first()
+        managers, planners, volunteers = groups
+        # promote planning group to management group, so we can delete the management group
         form = django_app.get(
-            reverse("core:group_edit", kwargs={"pk": group.id}), user=manager
+            reverse("core:group_edit", kwargs={"pk": planners.id}), user=manager
+        ).form
+        form["is_management_group"] = True
+        form.submit()
+
+        form = django_app.get(
+            reverse("core:group_edit", kwargs={"pk": managers.id}), user=manager
         ).form
         group_name = "New name"
         form["name"] = group_name
         form["users"].force_value([manager.id])
-        form["can_view_past_event"] = False
         form["is_planning_group"] = False
         form["is_management_group"] = False
         form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
         response = form.submit()
         assert response.status_code == 302
-        group.refresh_from_db()
-        assert group.name == group_name
-        assert set(group.user_set.all()) == {manager}
-        assert not group.permissions.filter(codename="view_past_event").exists()
-        assert not group.permissions.filter(codename="add_event").exists()
-        assert "publish_event_for_group" not in get_group_perms(
-            group, Group.objects.get(name="Volunteers")
-        )
-
-    def test_publish_for_groups_gets_saved_for_non_planner_groups(
-        self, django_app, groups, manager
-    ):
-        managers, planners, volunteers = groups
-        form = django_app.get(
-            reverse("core:group_edit", kwargs={"pk": managers.id}), user=manager
-        ).form
-        form["users"].force_value([manager.id])
-        form["is_planning_group"] = False
-        form["is_management_group"] = True
-        form["is_hr_group"] = False
-        form["publish_event_for_group"].select_multiple(texts=["Volunteers"])
-        form.submit().follow()
         managers.refresh_from_db()
-        assert set(get_objects_for_group(managers, ["publish_event_for_group"], klass=Group)) == {
-            volunteers
-        }
+        assert managers.name == group_name
+        assert set(managers.user_set.all()) == {manager}
+        assert not managers.permissions.filter(codename="add_event").exists()
+        assert "publish_event_for_group" not in get_group_perms(
+            managers, Group.objects.get(name="Volunteers")
+        )
 
     def test_group_delete(self, django_app, groups, manager):
         group = Group(name="Testgroup")
@@ -133,3 +121,32 @@ class TestGroupView:
         assert response.status_code == 302
         with pytest.raises(Group.DoesNotExist):
             Group.objects.get(name=group.name).exists()
+
+    def test_cannot_delete_last_management_group(self, django_app, groups, manager):
+        group = Group.objects.get(name="Managers")
+        response = django_app.get(
+            reverse("core:group_delete", kwargs={"pk": group.id}),
+            user=manager,
+            status=200,
+        )
+        response = response.form.submit()
+        assert response.status_code == 200
+        assert "least one group with management permissions" in response.text
+        assert Group.objects.filter(name="Managers").exists()
+
+    def test_management_perms_cannot_be_removed_from_last_management_group(
+        self, django_app, superuser, groups
+    ):
+        group = Group.objects.get(name="Managers")
+        form = django_app.get(
+            reverse("core:group_edit", kwargs={"pk": group.id}),
+            user=superuser,
+            status=200,
+        ).form
+        form["is_management_group"] = False
+        response = form.submit()
+        assert response.status_code == 200
+        assert "least one group with management permissions must exist" in response.text
+        assert Group.objects.get(name="Managers") in get_groups_with_perms(
+            only_with_perms_in=MANAGEMENT_PERMISSIONS, must_have_all_perms=True
+        )

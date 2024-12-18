@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>
+        {% translate "Files" %}
+    </h1>
+    <a class="btn btn-secondary" href="{% url "files:document_create" %}"><span
+        class="fa fa-plus"></span> {% translate "Add file" %}</a><br />
+    <small>
+        {% blocktranslate trimmed with used=quota_used|filesizeformat free=quota_free|filesizeformat %}
+            {{ free }} available
+        {% endblocktranslate %}
+    </small>
+    <table class="table table-striped display mt-2">
+        <thead>
+            <tr>
+                <th>{% translate "Title" %}</th>
+                <th>{% translate "Uploaded by" %}</th>
+                <th>{% translate "Uploaded at" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for document in document_list %}
+                <tr>
+                    <td class="break-word">{{ document.title }}</td>
+                    <td>{{ document.uploader }}</td>
+                    <td>{{ document.updated_at }}</td>
+                    <td class="d-flex">
+                        <a class="btn btn-secondary btn-sm text-nowrap me-1"
+                           href="{% url "files:document_detail" document.pk %}"><span
+                            class="fa fa-download"></span> <span class="d-none d-md-inline">{% translate "Download" %}</span></a>
+                        <a class="btn btn-secondary btn-sm text-nowrap me-1"
+                           href="{% url "files:document_edit" document.pk %}"><span
+                            class="fa fa-edit"></span> <span class="d-none d-md-inline">{% translate "Edit" %}</span></a>
+                        <a class="btn btn-secondary btn-sm text-nowrap me-1"
+                           href="{% url "files:document_delete" document.pk %}"><span
+                            class="fa fa-trash"></span> <span class="d-none d-md-inline">{% translate "Delete" %}</span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <span><b>{% translate "Total" %}:</b> {{ document_list.count }} {% translate "files" %} {% translate "with" %} {{ quota_used|filesizeformat }}</span>
+{% endblock %}

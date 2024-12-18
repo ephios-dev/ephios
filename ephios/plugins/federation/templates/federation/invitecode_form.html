@@ -1,0 +1,21 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% block settings_content %}
+    <h3>{% translate "Share events with another instance" %}</h3>
+    <div class="alert alert-warning" role="alert">
+        {% translate "This feature is experimental!" %}
+    </div>
+    <div class="alert alert-primary" role="alert">
+        {% blocktranslate trimmed %}
+            You can share events with another ephios instance. When sharing is enabled for an event, it will show up for users on the other instance as well. Their users can then sign up for your event.
+            To set up sharing, enter the URL of the instance that you want to share events with below.
+        {% endblocktranslate %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="{% translate "Invite" %}">
+    </form>
+{% endblock %}

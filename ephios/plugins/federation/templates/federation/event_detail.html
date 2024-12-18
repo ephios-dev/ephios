@@ -1,0 +1,10 @@
+{% extends "core/event_detail.html" %}
+{% load settings_extras %}
+{% load i18n %}
+
+{% block messages %}
+    <div class="alert alert-info" role="alert">
+        {% blocktranslate trimmed %}You are currently viewing an event at {{ organization_name }}.{% endblocktranslate %}
+        <a href="{{ federation_guest.url }}">{% blocktranslate with name=federation_guest.name trimmed %}Back to {{ name }}{% endblocktranslate %}</a>
+    </div>
+{% endblock %}

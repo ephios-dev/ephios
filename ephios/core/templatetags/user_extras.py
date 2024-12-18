@@ -1,12 +1,14 @@
+from typing import Iterable
+
 from django import template
 from django.db.models import Count, Q
 from django.utils import timezone
-from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.consequences import editable_consequences, pending_consequences
-from ephios.core.models import AbstractParticipation, Shift
-from ephios.core.signup.methods import get_conflicting_participations
+from ephios.core.models import AbstractParticipation, QualificationGrant, Shift
+from ephios.core.services.qualification import essential_set_of_qualifications
+from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 
 register = template.Library()
 
@@ -25,25 +27,6 @@ register.filter(name="pending_consequences", filter_func=pending_consequences)
 @register.filter(name="workhour_items")
 def workhour_items(user):
     return user.get_workhour_items()
-
-
-@register.filter(name="qualifications_for_category")
-def render_qualifications_for_category(userprofile, category_id):
-    return ", ".join(
-        map(
-            lambda grant: grant.qualification.abbreviation,
-            getattr(userprofile, f"qualifications_for_category_{category_id}"),
-        )
-    )
-
-
-@register.filter(name="get_relevant_qualifications")
-def get_relevant_qualifications(qualification_queryset):
-    global_preferences = global_preferences_registry.manager()
-    qs = qualification_queryset.filter(
-        category__in=global_preferences["general__relevant_qualification_categories"]
-    ).order_by("category", "abbreviation")
-    return qs.values_list("abbreviation", flat=True)
 
 
 @register.filter(name="conflicting_participations")
@@ -74,3 +57,34 @@ def shifts_needing_disposition(user):
         )
         .filter(request_count__gt=0)
     )
+
+
+@register.filter(name="grants_to_essential_abbreviations")
+def grants_to_essential_abbreviations(grants: Iterable[QualificationGrant]):
+    return qualifications_to_essential_abbreviations(
+        grant.qualification for grant in grants if grant.is_valid()
+    )
+
+
+@register.filter(name="qualifications_to_essential_abbreviations")
+def qualifications_to_essential_abbreviations(qualifications):
+    essentials = list(essential_set_of_qualifications(qualifications))
+    essentials.sort(key=lambda q: (q.category_id, q.abbreviation))
+    return list(qualification.abbreviation for qualification in essentials)
+
+
+@register.filter(name="intersects")
+def intersects(a, b):
+    return bool(set(a) & set(b))
+
+
+@register.filter(name="user_has_permission")
+def user_has_permission(user, permission):
+    return user.has_perm(permission)
+
+
+@register.filter(name="not_seen_recently")
+def not_seen_recently(userprofile):
+    if not userprofile.last_login:
+        return True
+    return timezone.now() - userprofile.last_login > timezone.timedelta(weeks=25)

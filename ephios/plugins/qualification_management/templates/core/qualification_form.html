@@ -5,15 +5,15 @@
 {% block settings_content %}
     <div class="page-header">
         {% if qualification %}
-            <h2>{% trans "Edit qualification" %}</h2>
+            <h2>{% translate "Edit qualification" %}</h2>
         {% else %}
-            <h2>{% trans "Create new qualification" %}</h2>
+            <h2>{% translate "Create new qualification" %}</h2>
         {% endif %}
     </div>
 
     {% if qualification.is_imported %}
         <div class="alert alert-warning" role="alert">
-            {% blocktranslate %}
+            {% blocktranslate trimmed %}
                 This qualification was imported. We advise to not change the UUID and meaning of this qualification.
             {% endblocktranslate %}
         </div>

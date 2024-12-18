@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% translate "Delete resource" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Delete resource" %}</h1>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <p>{% blocktranslate trimmed %}
+            Are you sure you want to delete the resource {{ resource }}?
+        {% endblocktranslate %}</p>
+        <a role="button" class="btn btn-secondary" href="{% url "simpleresource:resource_list" %}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
+    </form>
+
+{% endblock %}

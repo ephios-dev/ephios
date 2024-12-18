@@ -1,0 +1,15 @@
+{% load user_extras %}
+{% load i18n %}
+{% load crispy_forms_filters %}
+
+{% if request.user|user_has_permission:"complexsignup.change_buildingblock" %}
+    <p>
+        <a href="{% url "complexsignup:blocks_editor" %}"
+           class="btn btn-sm btn-primary"
+           target="_blank">
+            {% translate "Edit blocks" %}
+        </a>
+    </p>
+{% endif %}
+
+{{ form|crispy }}

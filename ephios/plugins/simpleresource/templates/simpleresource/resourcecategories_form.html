@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load ephios_crispy %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load formset_tags %}
+
+{% block title %}
+    {% translate "Edit resource categories" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Edit resource categories" %}</h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.non_form_errors }}
+
+        <div class="formset" data-formset data-formset-prefix="{{ form.prefix }}">
+            {{ form.management_form }}
+            <div class="card mb-2">
+                <div class="card-body pt-2">
+                    <ul class="list-group list-group-flush" data-formset-body>
+                        {% for category_form in form %}
+                            <li class="list-group-item" data-formset-form>
+                                {{ category_form.id }}
+                                <div class="row align-items-start">
+                                    <div class="col-lg-6 pt-3">
+                                        {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                    </div>
+                                    <div class="col-lg-4 pt-3">
+                                        {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                                    </div>
+                                    <div class="col-lg-2 pt-2">
+                                        {% if not category_form.fields.DELETE.disabled %}
+                                            <button class="btn btn-link" type="button"
+                                                    data-formset-delete-button><span
+                                                class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+                                        {% else %}
+                                            <p class="text-body-secondary">
+                                                {% translate "cannot delete, has resources" %}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="d-none">
+                                    {{ category_form.DELETE }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <input class="btn btn-secondary mt-2" type="button"
+                           value="{% translate "Add category" %}"
+                           data-formset-add>
+                </div>
+            </div>
+
+            {% with category_form=form.empty_form %}
+                <script type="form-template" data-formset-empty-form>
+                    {% escapescript %}
+                        <li class="list-group-item" data-formset-form>
+                        {{ category_form.id }}
+                        <div class="row align-items-start">
+                        <div class="col-lg-6 pt-3">
+                        {% crispy_field category_form.name label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        </div>
+                        <div class="col-lg-4 pt-3">
+                        {% crispy_field category_form.icon label_class="col-lg-3" field_class="col-lg-9" wrapper_class="row" %}
+                        </div>
+                        <div class="col-lg-1 pt-2">
+                        <button class="btn btn-link" type="button"
+                        data-formset-delete-button><span
+                        class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+                        </div>
+                        </div>
+                        <div class="d-none">
+                        {{ category_form.DELETE }}
+                        </div>
+                        </li>
+                    {% endescapescript %}
+                </script>
+            {% endwith %}
+
+
+            <a role="button" class="btn btn-secondary"
+               href="{% url "simpleresource:resource_list" %}">{% translate "Back" %}</a>
+            <input type="submit" class="btn btn-primary" value="{% translate "Save" %}">
+        </div>
+    </form>
+{% endblock %}

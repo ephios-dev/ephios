@@ -5,7 +5,9 @@
     </div>
     <div id="plugin-form-{{ form.prefix }}" class="collapse{% if form.is_function_active %} show{% endif %}">
         <div class="card-body">
-            {% crispy form %}
+            {% block card-body %}
+                {{ form|crispy }}
+            {% endblock %}
         </div>
     </div>
 </div>

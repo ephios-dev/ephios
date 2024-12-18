@@ -17,11 +17,11 @@ from ephios.core.models import (
     UserProfile,
 )
 from ephios.core.services.notifications.types import (
-    ParticipationConfirmedNotification,
     ParticipationCustomizationNotification,
-    ParticipationRejectedNotification,
+    ParticipationStateChangeNotification,
+    ResponsibleParticipationStateChangeNotification,
 )
-from ephios.core.signup.methods import BaseParticipationForm
+from ephios.core.signup.forms import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -44,7 +44,7 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
 
     class Meta(BaseParticipationForm.Meta):
         fields = ["state", "individual_start_time", "individual_end_time", "comment"]
-        widgets = dict(state=forms.HiddenInput(attrs={"class": "state-input"}))
+        widgets = {"state": forms.HiddenInput(attrs={"class": "state-input"})}
 
 
 class DispositionBaseModelFormset(forms.BaseModelFormSet):
@@ -78,7 +78,7 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
     def add_prefix(self, index):
         return f"{self.prefix}-{self._start_index + index}"
 
-    def save_existing(self, form, instance, commit=True):
+    def save_existing(self, form, obj, commit=True):
         """Existing participation state overwrites the getting dispatched state."""
         if form.instance.state == AbstractParticipation.States.GETTING_DISPATCHED:
             form.instance.state = AbstractParticipation.objects.get(id=form.instance.id).state
@@ -91,6 +91,7 @@ def get_disposition_formset(form):
         formset=DispositionBaseModelFormset,
         form=form,
         extra=0,
+        edit_only=True,
         can_order=False,
         can_delete=True,
     )
@@ -102,7 +103,7 @@ def addable_users(shift):
     This also includes users that already have a participation, as that might have gotten removed in JS.
 
     This also includes users that can normally not see the event. The permission will be added accordingly.
-    If needed, this method could be moved to signup methods.
+    If needed, this method could be moved to signup flows.
     """
     return UserProfile.objects.all()
 
@@ -111,7 +112,7 @@ class AddUserForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=ModelSelect2Widget(
             model=UserProfile,
-            search_fields=["first_name__icontains", "last_name__icontains"],
+            search_fields=["display_name__icontains"],
             attrs={
                 "form": "add-user-form",
                 "data-placeholder": _("search"),
@@ -136,11 +137,6 @@ class DispositionBaseViewMixin(CustomPermissionRequiredMixin, SingleObjectMixin)
         super().setup(request, *args, **kwargs)
         self.object: Shift = self.get_object()
 
-    def dispatch(self, request, *args, **kwargs):
-        if self.object.signup_method.disposition_participation_form_class is None:
-            raise Http404(_("This signup method does not support disposition."))
-        return super().dispatch(request, *args, **kwargs)
-
     def get_permission_object(self):
         return self.object.event
 
@@ -148,7 +144,7 @@ class DispositionBaseViewMixin(CustomPermissionRequiredMixin, SingleObjectMixin)
 class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def get_template_names(self):
         return [
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template
+            self.object.structure.disposition_participation_form_class.disposition_participation_template
         ]
 
     def post(self, request, *args, **kwargs):
@@ -159,12 +155,12 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
-            instance = shift.signup_method.get_participation_for(user.as_participant())
+            instance = shift.signup_flow.get_or_create_participation_for(user.as_participant())
             instance.state = AbstractParticipation.States.GETTING_DISPATCHED
             instance.save()
 
             DispositionParticipationFormset = get_disposition_formset(
-                self.object.signup_method.disposition_participation_form_class
+                self.object.structure.disposition_participation_form_class
             )
             formset = DispositionParticipationFormset(
                 queryset=AbstractParticipation.objects.filter(pk=instance.pk),
@@ -179,7 +175,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
 class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMixin, View):
     def get_template_names(self):
         return [
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template
+            self.object.structure.disposition_participation_form_class.disposition_participation_template
         ]
 
     def post(self, request, *args, **kwargs):
@@ -187,18 +183,17 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
         from ephios.core.signup.participants import PlaceholderParticipant
 
         participant = PlaceholderParticipant(
-            first_name=request.POST["first_name"],
-            last_name=request.POST["last_name"],
+            display_name=request.POST["display_name"],
             qualifications=Qualification.objects.none(),
             email=None,
             date_of_birth=None,
         )
-        instance = shift.signup_method.get_participation_for(participant)
+        instance = shift.signup_flow.get_or_create_participation_for(participant)
         instance.state = AbstractParticipation.States.GETTING_DISPATCHED
         instance.save()
 
         DispositionParticipationFormset = get_disposition_formset(
-            self.object.signup_method.disposition_participation_form_class
+            self.object.structure.disposition_participation_form_class
         )
         formset = DispositionParticipationFormset(
             queryset=AbstractParticipation.objects.filter(pk=instance.pk),
@@ -214,7 +209,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
 
     def get_formset(self):
         DispositionParticipationFormset = get_disposition_formset(
-            self.object.signup_method.disposition_participation_form_class
+            self.object.structure.disposition_participation_form_class
         )
         formset = DispositionParticipationFormset(
             self.request.POST or None,
@@ -230,11 +225,12 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
                 or participation.user != self.request.user
             ):
                 if "state" in changed_fields:
-                    # send state updates
-                    if participation.state == AbstractParticipation.States.CONFIRMED:
-                        ParticipationConfirmedNotification.send(participation)
-                    elif participation.state == AbstractParticipation.States.RESPONSIBLE_REJECTED:
-                        ParticipationRejectedNotification.send(participation)
+                    ParticipationStateChangeNotification.send(
+                        participation, acting_user=self.request.user
+                    )
+                    ResponsibleParticipationStateChangeNotification.send(
+                        participation, acting_user=self.request.user
+                    )
                 elif participation.state == AbstractParticipation.States.CONFIRMED:
                     form: BaseParticipationForm = next(
                         filter(lambda f, p=participation: f.instance == p, formset.forms)
@@ -262,11 +258,11 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         kwargs.setdefault("states", AbstractParticipation.States)
         kwargs.setdefault(
             "participant_template",
-            self.object.signup_method.disposition_participation_form_class.disposition_participation_template,
+            self.object.structure.disposition_participation_form_class.disposition_participation_template,
         )
         kwargs.setdefault(
             "render_requested_state",
-            self.object.signup_method.uses_requested_state
+            self.object.signup_flow.uses_requested_state
             or self.object.participations.filter(
                 state=AbstractParticipation.States.REQUESTED
             ).exists(),

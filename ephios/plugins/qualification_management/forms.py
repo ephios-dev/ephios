@@ -169,7 +169,7 @@ class BaseQualificationCategoryFormset(forms.BaseModelFormSet):
             form.fields[DELETION_FIELD_NAME] = forms.BooleanField(
                 label=_("Delete"),
                 required=False,
-                disabled=category.qualifications.exists(),
+                disabled=category.pk and category.qualifications.exists(),
             )
 
 
@@ -178,7 +178,7 @@ QualificationCategoryFormset = forms.modelformset_factory(
     formset=BaseQualificationCategoryFormset,
     can_delete=True,
     extra=0,
-    fields=["title", "uuid"],
+    fields=["title", "show_with_user", "uuid"],
 )
 
 
@@ -237,7 +237,7 @@ class QualificationReassignmentForm(forms.Form):
             _, created = QualificationGrant.objects.get_or_create(
                 user=user,
                 qualification=self.cleaned_data["new_qualification"],
-                defaults=dict(expires=self.cleaned_data["expires"]),
+                defaults={"expires": self.cleaned_data["expires"]},
             )
             created_count += int(created)
         return created_count, len(users)

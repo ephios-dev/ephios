@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load utils %}
+
+<div class="text-center p-1">
+    <span {% if today %}class="badge bg-primary rounded-circle fs-6"{% endif %}>
+        <a href="?{% param_replace mode="day" date=date %}" class="text-decoration-none {% if today	%} link-light text {% endif %}">
+            {{ day }}
+        </a>
+    </span>
+</div>
+<div>
+    {% for shift in shifts|slice:":5" %}
+        <a href="{{ shift.event.get_absolute_url }}" class="text-decoration-none p-0"
+           title="{{ shift.event.type }}: {{ shift.event.title }}">
+            <div class="w-100 d-inline-block calendar-truncate calendar-shift eventtype-{{ shift.event.type.pk }}-color rounded">
+                <span class="eventtype-indicator eventtype-{{ shift.event.type.pk }}-color"></span>
+                <small class="d-none d-lg-inline-block">{{ shift.start_time|time }}</small> <span
+                    class="ps-1 ps-lg-0">{{ shift.event.title }}</span>
+            </div>
+        </a>
+    {% endfor %}
+    {% if shifts|length > 5 %}
+        <a href="?{% param_replace mode="day" date=date %}">{{ shifts|length|add:"-5" }} {% translate 'more' %}</a>
+    {% endif %}
+</div>

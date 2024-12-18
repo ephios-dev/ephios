@@ -1,5 +1,5 @@
+import contextvars
 import itertools
-import threading
 from typing import Dict
 
 from django.contrib.contenttypes.models import ContentType
@@ -42,6 +42,13 @@ class BaseLogConfig:
         """
         return type(instance), instance.pk
 
+    def save_logentry(self, logentry: LogEntry):
+        """
+        Save the logentry. Overwrite this method to process the logentry
+        bevore saving.
+        """
+        logentry.save()
+
 
 class ModelFieldsLogConfig(BaseLogConfig):
     def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
@@ -83,7 +90,8 @@ class ModelFieldsLogConfig(BaseLogConfig):
             yield from self.initial_recorders_func(instance)
 
 
-log_request_store = threading.local()
+log_request = contextvars.ContextVar("Current request")
+log_request_id = contextvars.ContextVar("Current request id")
 
 LOGGED_MODELS: Dict[models.Model, BaseLogConfig] = {}
 
@@ -129,18 +137,18 @@ def update_log(instance, action_type: InstanceActionType):
     if not log_data:
         return
 
+    config = LOGGED_MODELS[type(instance)]
     if logentry:
         logentry.data.update(log_data)
     else:
         try:
-            user = log_request_store.request.user
+            user = log_request.get(None).user
             if not user.is_authenticated:
                 user = None
-            request_id = log_request_store.request_id
+            request_id = log_request_id.get(None)
         except AttributeError:
             user = None
             request_id = None
-        config = LOGGED_MODELS[type(instance)]
         attach_to_model, attached_to_object_id = config.object_to_attach_logentries_to(instance)
         attached_to_object_type = ContentType.objects.get_for_model(attach_to_model)
         logentry = LogEntry(
@@ -152,7 +160,8 @@ def update_log(instance, action_type: InstanceActionType):
             action_type=action_type,
             data=log_data,
         )
-    logentry.save()
+
+    config.save_logentry(logentry)
     instance._current_logentry = logentry
 
 

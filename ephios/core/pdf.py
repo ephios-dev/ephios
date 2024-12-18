@@ -7,12 +7,13 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4, A5
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.colors import HexColor
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm, mm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from ephios.core.models import Event
+from ephios.core.models import AbstractParticipation, Event
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -21,6 +22,11 @@ class BasePDFExporter:
         self.title = title
         self.style = style
         self.pagesize = pagesize
+        self.margin = 15 * mm
+
+    @property
+    def content_width(self):
+        return self.pagesize[0] - 2 * self.margin
 
     def get_pdf(self):
         buffer = io.BytesIO()
@@ -29,10 +35,10 @@ class BasePDFExporter:
             buffer,
             pagesize=self.pagesize,
             title=self.title,
-            leftMargin=1 * cm,
-            rightMargin=1 * cm,
-            topMargin=1 * cm,
-            bottomMargin=1 * cm,
+            leftMargin=self.margin,
+            rightMargin=self.margin,
+            topMargin=self.margin,
+            bottomMargin=self.margin,
         )
         p.build(story)
         buffer.seek(0)
@@ -42,10 +48,78 @@ class BasePDFExporter:
         return NotImplemented
 
 
-class SingleShiftEventExporter(BasePDFExporter):
+class EventExport(BasePDFExporter):
+
+    def get_shift_structure_data_table(self, shift):
+        participation_data = shift.structure.get_list_export_data()
+        col_count = 3
+        rows = [
+            [
+                _("Name"),
+                _("Qualifications"),
+                _("Description"),
+            ]
+        ]
+        table_style = [
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ]
+        for entry in participation_data:
+            p: AbstractParticipation = entry["participation"]
+            if p and p.state not in AbstractParticipation.States.REQUESTED_AND_CONFIRMED:
+                continue
+
+            name_style = None
+            if p and p.state == AbstractParticipation.States.REQUESTED:
+                name_style = ParagraphStyle(
+                    "CustomStyle", parent=self.style["Normal"], textColor=HexColor("#aa8409")
+                )
+            description = entry["description"]
+            if qualification_string := ", ".join(
+                [q.abbreviation for q in entry["required_qualifications"]]
+            ):
+                description += f" ({qualification_string})" if description else qualification_string
+
+            rows.append(
+                [
+                    Paragraph(p.participant.display_name, style=name_style) if p else "",
+                    (
+                        Paragraph(
+                            ", ".join(
+                                p.participant.qualifications.filter(
+                                    category__show_with_user=True,
+                                )
+                                .order_by("category", "title")
+                                .values_list("abbreviation", flat=True)
+                            )
+                        )
+                        if p
+                        else ""
+                    ),
+                    Paragraph(description),
+                ]
+            )
+        table = Table(
+            rows,
+            hAlign="LEFT",
+            colWidths=[self.content_width / col_count] * col_count,
+        )
+        table.setStyle(
+            TableStyle(
+                [
+                    ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.black),
+                    ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
+                ]
+                + table_style
+            )
+        )
+        return table
+
+
+class SingleShiftEventExporter(EventExport):
     def __init__(self, event, **kwargs):
         self.event = event
-        super().__init__(title=event.title, pagesize=A5)
+        super().__init__(title=event.title)
 
     def get_story(self):
         story = [
@@ -71,40 +145,20 @@ class SingleShiftEventExporter(BasePDFExporter):
             ]
             + [
                 [Paragraph(key), Paragraph(value)]
-                for key, value in shift.signup_method.get_signup_info().items()
+                for key, value in shift.structure.get_signup_info().items()
             ]
             + [[_("Description"), Paragraph(self.event.description)]]
         )
-        table = Table(data, colWidths=[5.7 * cm, 7 * cm])
-        table.setStyle([("VALIGN", (0, -1), (-1, -1), "TOP")])
+        table = Table(data, colWidths=[6 * cm, self.content_width - 6 * cm])
+        table.setStyle([("VALIGN", (0, 0), (-1, -1), "TOP")])
         story.append(table)
         story.append(Spacer(height=0.5 * cm, width=15 * cm))
-
-        if participation_info := shift.signup_method.get_participation_display():
-            story.append(Paragraph(_("Participants"), self.style["Heading2"]))
-            col_count = len(participation_info[0])
-            table = Table(
-                [
-                    [[Paragraph(entry)] for entry in participation]
-                    for participation in participation_info
-                ],
-                hAlign="LEFT",
-                colWidths=[125 * mm / col_count] * col_count,
-            )
-            table.setStyle(
-                TableStyle(
-                    [
-                        ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.black),
-                        ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
-                    ]
-                )
-            )
-            story.append(table)
-
+        story.append(Paragraph(_("Participants"), self.style["Heading2"]))
+        story.append(self.get_shift_structure_data_table(shift))
         return story
 
 
-class MultipleShiftEventExporter(BasePDFExporter):
+class MultipleShiftEventExporter(EventExport):
     def __init__(self, event):
         self.event = event
         super().__init__(title=event.title)
@@ -129,7 +183,7 @@ class MultipleShiftEventExporter(BasePDFExporter):
             [_("Date"), event_date],
             [_("Description"), Paragraph(self.event.description)],
         ]
-        table = Table(data, colWidths=[6 * cm, 13 * cm])
+        table = Table(data, colWidths=[6 * cm, self.content_width - 6 * cm])
         table.setStyle([("VALIGN", (0, -1), (-1, -1), "TOP")])
         story.append(table)
 
@@ -140,31 +194,11 @@ class MultipleShiftEventExporter(BasePDFExporter):
                 [_("Meeting time"), formats.time_format(shift.meeting_time.astimezone(tz))],
             ] + [
                 [Paragraph(key), Paragraph(value)]
-                for key, value in shift.signup_method.get_signup_info().items()
+                for key, value in shift.structure.get_signup_info().items()
             ]
-            story.append(Table(data, colWidths=[6 * cm, 13 * cm]))
-
-            if participation_info := shift.signup_method.get_participation_display():
-                story.append(Paragraph(_("Participants"), self.style["Heading3"]))
-                col_count = len(participation_info[0])
-                table = Table(
-                    [
-                        [[Paragraph(entry)] for entry in participation]
-                        for participation in participation_info
-                    ],
-                    hAlign="LEFT",
-                    colWidths=[185 * mm / col_count] * col_count,
-                )
-                table.setStyle(
-                    TableStyle(
-                        [
-                            ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.black),
-                            ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
-                        ]
-                    )
-                )
-                story.append(table)
-
+            story.append(Table(data, colWidths=[6 * cm, self.content_width - 6 * cm]))
+            story.append(Paragraph(_("Participants"), self.style["Heading3"]))
+            story.append(self.get_shift_structure_data_table(shift))
         return story
 
 

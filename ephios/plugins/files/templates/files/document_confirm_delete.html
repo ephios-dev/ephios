@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% translate "Delete file" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h2>{% translate "Delete file" %}</h2>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <p>{% blocktranslate trimmed with title=document.title %}
+            Are you sure you want to delete the file "{{ title }}"?
+        {% endblocktranslate %}</p>
+        <a role="button" class="btn btn-secondary" href="{% url "files:document_list" %}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+
+{% block settings_content %}
+    <div class="alert alert-warning" role="alert">
+        {% translate "This feature is experimental!" %}
+    </div>
+    <h3>{% translate "ephios instances that you share events with" %}</h3>
+    <a class="btn btn-primary" role="button" href="{% url "federation:create_invite_code" %}">
+        {% translate "Share events with another instance" %}
+    </a>
+    <table class="table table-striped display mt-2">
+        <thead>
+            <tr>
+                <th>{% translate "Name" %}</th>
+                <th>{% translate "URL" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guest in federation_guests %}
+                <tr>
+                    <td>{{ guest.name }}</td>
+                    <td>{{ guest.url }}</td>
+                    <td><a class="btn btn-secondary" href="{% url "federation:delete_guest" guest.pk %}">{% translate "Stop sharing" %}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if federation_invites %}
+        <h4>{% translate "Pending invites" %}</h4>
+        <table class="table table-striped display mt-2">
+            <thead>
+                <tr>
+                    <th>{% translate "URL" %}</th>
+                    <th>{% translate "Action" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invite in federation_invites %}
+                    <tr>
+                        <td>{{ invite.url }}</td>
+                        <td><a class="btn btn-secondary" href="{% url "federation:reveal_invite_code" invite.pk %}">{% translate "Show invite code" %}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h3>{% translate "ephios instances that share events with you" %}</h3>
+    <a class="btn btn-secondary" role="button" href="{% url "federation:frontend_redeem_invite_code" %}">{% translate "Enter invite code" %}</a>
+    <table class="table table-striped display mt-2">
+        <thead>
+            <tr>
+                <th>{% translate "Name" %}</th>
+                <th>{% translate "URL" %}</th>
+                <th>{% translate "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for host in federation_hosts %}
+                <tr>
+                    <td>{{ host.name }}</td>
+                    <td>{{ host.url }}</td>
+                    <td><a class="btn btn-secondary" href="{% url "federation:delete_host" host.pk %}">{% translate "Stop receiving" %}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

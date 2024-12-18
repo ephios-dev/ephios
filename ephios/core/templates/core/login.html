@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load settings_extras %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Login" %}
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 text-center mt-3 mb-5">
+            <h1 class="display-5">
+                {{ global_preferences.general__organization_name }}
+            </h1>
+        </div>
+    </div>
+    {% if providers.exists %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                {% for provider in providers %}
+                    <div class="mb-1">
+                        {% url 'core:oidc_initiate' provider.id as provider_url %}
+                        <a class="btn btn-lg btn-primary w-100"
+                           href="{{ provider_url }}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
+                            {{ provider.label }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if show_login_form %}
+        {% if providers.exists %}
+            <div class="row justify-content-center py-3">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col">
+                            <hr class="border border-secondary border-2 opacity-50">
+                        </div>
+                        <div class="col-auto text-body-secondary">
+                            {% translate "or" %}
+                        </div>
+                        <div class="col">
+                            <hr class="border border-secondary border-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" class="">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn {% if providers %}btn-outline-primary{% else %}btn-primary btn-lg{% endif %}"
+                            type="submit">
+                        {% translate "Login" %}
+                    </button>
+                    <a class="float-end btn btn-link" href="{% url "password_reset" %}">{% translate "Forgot your password?" %}</a>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,6 +1,7 @@
 import datetime
 
 from django import forms
+from django.forms.utils import from_current_timezone
 
 
 class EndOfDayDateTimeField(forms.DateTimeField):
@@ -13,8 +14,10 @@ class EndOfDayDateTimeField(forms.DateTimeField):
         result = super().to_python(value)
         if result is None:
             return result
-        return datetime.datetime.max.replace(
-            year=result.year,
-            month=result.month,
-            day=result.day,
+        return from_current_timezone(
+            datetime.datetime.max.replace(
+                year=result.year,
+                month=result.month,
+                day=result.day,
+            )
         )

@@ -1,0 +1,74 @@
+{% load bootstrap %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load formset_tags %}
+
+{{ form|crispy }}
+
+
+<div class="formset" data-formset data-formset-prefix="{{ form.formset.prefix }}">
+    {{ form.formset.management_form }}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h3 class="card-title">{% translate "Qualifications" %}</h3>
+            {{ form.formset|formset_errors }}
+            <ul class="list-group list-group-flush" data-formset-body>
+                {% for requirement_form in form.formset %}
+                    <li class="list-group-item" data-formset-form>
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                {{ requirement_form.qualification|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ requirement_form.min_count|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ requirement_form.max_count|as_crispy_field }}
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-link" type="button"
+                                        data-formset-delete-button><span
+                                    class="fas fa-trash-alt"></span></button>
+                            </div>
+                        </div>
+                        <div class="d-none">
+                            {{ requirement_form.DELETE }}
+                            {{ requirement_form.uuid }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <input class="btn btn-secondary mt-2" type="button"
+                   value="{% translate "Add qualification" %}"
+                   data-formset-add>
+        </div>
+    </div>
+
+    <script type="form-template" data-formset-empty-form>
+        {% escapescript %}
+            <li class="list-group-item" data-formset-form>
+            <div class="row align-items-center">
+            <div class="col-md-5">
+            {{ form.formset.empty_form.qualification|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+            {{ form.formset.empty_form.min_count|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+            {{ form.formset.empty_form.max_count|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+            <button class="btn btn-link" type="button"
+            data-formset-delete-button><span
+            class="fas fa-trash-alt"></span></button>
+            </div>
+            </div>
+            <div class="d-none">
+            {{ form.formset.empty_form.DELETE }}
+            {{ form.formset.empty_form.uuid }}
+            </div>
+            </li>
+        {% endescapescript %}
+    </script>
+</div>

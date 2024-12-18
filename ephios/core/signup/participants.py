@@ -1,23 +1,27 @@
 import dataclasses
-import functools
 from datetime import date
-from typing import Optional
+from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation, LocalParticipation, Qualification
+from ephios.core.models import AbstractParticipation, LocalParticipation
 from ephios.core.models.events import PlaceholderParticipation
+from ephios.core.services.qualification import (
+    QualificationUniverse,
+    collect_all_included_qualifications,
+)
+from ephios.core.signals import participant_from_request
 
 
 @dataclasses.dataclass(frozen=True)
 class AbstractParticipant:
-    first_name: str
-    last_name: str
-    qualifications: QuerySet = dataclasses.field(hash=False)
+    display_name: str
+    qualifications: Collection = dataclasses.field(hash=False, compare=False)
     date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 
@@ -34,7 +38,7 @@ class AbstractParticipant:
         return False
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.display_name
 
     def new_participation(self, shift):
         raise NotImplementedError
@@ -47,12 +51,19 @@ class AbstractParticipant:
         """Return all participations for this participant"""
         raise NotImplementedError
 
-    @functools.lru_cache(maxsize=64)
     def collect_all_qualifications(self) -> set:
-        return Qualification.collect_all_included_qualifications(self.qualifications)
+        return collect_all_included_qualifications(self.qualifications)
+
+    @cached_property
+    def skill(self):
+        graph = QualificationUniverse.get_graph()
+        all_qualification_uuids = set(
+            graph.spread_from([qualification.uuid for qualification in self.qualifications])
+        )
+        return all_qualification_uuids
 
     def has_qualifications(self, qualifications):
-        return set(qualifications) <= self.collect_all_qualifications()
+        return set(qualifications) <= set(self.collect_all_qualifications())
 
     def reverse_signup_action(self, shift):
         raise NotImplementedError
@@ -82,7 +93,7 @@ class LocalUserParticipant(AbstractParticipant):
         return LocalParticipation.objects.filter(user=self.user)
 
     def reverse_signup_action(self, shift):
-        return reverse("core:signup_action", kwargs=dict(pk=shift.pk))
+        return reverse("core:signup_action", kwargs={"pk": shift.pk})
 
     def reverse_event_detail(self, event):
         return event.get_absolute_url()
@@ -91,15 +102,11 @@ class LocalUserParticipant(AbstractParticipant):
 @dataclasses.dataclass(frozen=True)
 class PlaceholderParticipant(AbstractParticipant):
     def new_participation(self, shift):
-        return PlaceholderParticipation(
-            shift=shift, first_name=self.first_name, last_name=self.last_name
-        )
+        return PlaceholderParticipation(shift=shift, display_name=self.display_name)
 
     def participation_for(self, shift):
         try:
-            return PlaceholderParticipation.objects.get(
-                shift=shift, first_name=self.first_name, last_name=self.last_name
-            )
+            return PlaceholderParticipation.objects.get(shift=shift, display_name=self.display_name)
         except PlaceholderParticipation.DoesNotExist:
             return None
 
@@ -114,6 +121,14 @@ class PlaceholderParticipant(AbstractParticipant):
 
     @property
     def icon(self):
+        title = _("Placeholder")
         return mark_safe(
-            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{_("Placeholder")}"></span>'
+            f'<span class="fa fa-user-tag" data-toggle="tooltip" data-placement="left" title="{title}"></span>'
         )
+
+
+def get_nonlocal_participant_from_request(request):
+    for _, participant in participant_from_request.send(sender=None, request=request):
+        if participant is not None:
+            return participant
+    raise PermissionDenied

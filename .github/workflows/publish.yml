@@ -1,14 +1,23 @@
-name: Publish to pypi
+name: Publish to PyPI
 on:
   push:
     tags:
       - 'v*.*.*'
 jobs:
-  build:
+  pypi:
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ephios
+    permissions:
+      id-token: write
     steps:
-    - uses: actions/checkout@v2
-    - name: Build and publish to pypi
-      uses: JRubics/poetry-publish@v1
-      with:
-        pypi_token: ${{ secrets.PYPI_TOKEN }}
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: |
+        pipx install poetry
+        pipx inject poetry "poetry-dynamic-versioning[plugin]"
+    - name: Build wheel
+      run: poetry build
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1

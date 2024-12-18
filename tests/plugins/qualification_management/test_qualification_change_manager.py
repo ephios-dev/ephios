@@ -1,6 +1,7 @@
 import uuid
 
 from ephios.core.models import Qualification, QualificationCategory
+from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.plugins.qualification_management.importing import QualificationChangeManager
 
 
@@ -16,8 +17,10 @@ def test_plain_import(deserialized_qualifications):
 
     # assert inclusion
     assert Qualification.includes.through.objects.count() == 2
-    assert Qualification.collect_all_included_qualifications(
-        [Qualification.objects.get(uuid=deserialized_qualifications[2].object.uuid)]
+    assert set(
+        collect_all_included_qualifications(
+            [Qualification.objects.get(uuid=deserialized_qualifications[2].object.uuid)]
+        )
     ) == set(Qualification.objects.all())
 
 
@@ -29,8 +32,8 @@ def test_importing_cycle_does_not_raise(deserialized_qualifications):
     ).commit()
     assert Qualification.includes.through.objects.count() == 3
     for q in deserialized_qualifications:
-        assert Qualification.collect_all_included_qualifications(
-            [Qualification.objects.get(uuid=q.object.uuid)]
+        assert set(
+            collect_all_included_qualifications([Qualification.objects.get(uuid=q.object.uuid)])
         ) == set(Qualification.objects.all())
 
 
@@ -88,8 +91,8 @@ def test_reimporting_clears_existing_wrong_inclusions(saved_deserialized_qualifi
     ).commit()
 
     assert Qualification.includes.through.objects.count() == 2
-    assert Qualification.collect_all_included_qualifications(
-        [Qualification.objects.get(uuid=g.object.uuid)]
+    assert set(
+        collect_all_included_qualifications([Qualification.objects.get(uuid=g.object.uuid)])
     ) == set(Qualification.objects.all())
 
 

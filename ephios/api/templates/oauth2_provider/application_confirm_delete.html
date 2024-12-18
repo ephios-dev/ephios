@@ -1,0 +1,29 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load i18n %}
+{% block settings_content %}
+    <div class="block-center">
+        <h3 class="block-center-heading">
+            {% if application.name %}
+                {% blocktranslate trimmed with app_name=application.name %}
+                    Are you sure to delete the application {{ app_name }}?
+                {% endblocktranslate %}
+            {% else %}
+                {% blocktranslate trimmed with app_name=application.name %}
+                    Are you sure to delete the application?
+                {% endblocktranslate %}
+            {% endif %}
+        </h3>
+        <form method="post" action="{% url 'api:settings-oauth-app-delete' application.pk %}">
+            {% csrf_token %}
+
+            <div class="control-group">
+                <div class="controls">
+                    <a class="btn btn-secondary btn-large"
+                       href="{% url "api:settings-oauth-app-list" %}">{% translate "Cancel" %}</a>
+                    <input type="submit" class="btn btn-large btn-danger" name="allow" value="{% translate 'Delete' %}"/>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

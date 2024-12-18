@@ -30,32 +30,28 @@ $success: shade-color($green, 40%);
 $danger: shade-color($red, 40%);
 $secondary: $gray-300;
 $info: $blue;
-$warning:       $yellow;
-$light:         $gray-250;
-$dark:          $gray-900;
+$warning: $yellow;
+$light: $gray-250;
+$dark: $gray-900;
 
-$theme-colors: (
-        "primary": $primary,
-        "secondary": $secondary,
-        "success": $success,
-        "info": $info,
-        "warning": $warning,
-        "danger": $danger,
-        "light": $light,
-        "dark": $dark,
+$custom-theme-colors: (
         "brand": $brand-color,
 );
 
 // Looks
 //$link-decoration: none;
+
+// TOOD this needs to be adapted for dark-theme
 $body-bg: $gray-200;
+$input-bg: $gray-100;
+$dropdown-bg: $gray-100;
 $card-bg: $gray-100;
 $card-cap-bg: $gray-100;
+$list-group-bg: $gray-100;
 
-$text-muted: $gray-550;
+$body-secondary-color: $gray-550;
 
 $enable-negative-margins: true;
-
 // Shadow (navbar)
 $box-shadow: 0 4px 4px rgba(#000, .10);
 

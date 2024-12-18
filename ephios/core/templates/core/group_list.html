@@ -3,36 +3,71 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Groups" %}
+    {% translate "Groups" %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>{% trans "Groups" %}</h1>
+        <h1>{% translate "Groups" %}</h1>
     </div>
     {% if perms.auth.add_group %}
         <a class="btn btn-secondary mb-3" href="{% url "core:group_add" %}"><span
-                class="fa fa-plus"></span> {% trans "Add group" %}</a>
+            class="fa fa-plus"></span> {% translate "Add group" %}</a>
     {% endif %}
-    <table id="event_table" class="table table-striped display">
-        <thead>
-        <tr>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "Action" %}</th>
-        </tr>
-        </thead>
-        <tbody>
+    <ul class="list-group mb-3">
         {% for group in group_list %}
-            <tr>
-                <td>{{ group.name }}</td>
-                <td class="d-flex">
-                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:group_edit" group.pk %}"><span
-                            class="fa fa-edit"></span> <span class="d-none d-md-inline">{% trans "Edit" %}</span></a>
-                    <a class="btn btn-secondary btn-sm text-nowrap ms-1" href="{% url "core:group_delete" group.pk %}"><span
-                            class="fa fa-trash-alt"></span> <span class="d-none d-md-inline">{% trans "Delete" %}</span></a>
-                </td>
-            </tr>
+            <li class="list-group-item">
+                <div class="row mb-0">
+                    <div class="col-12 col-lg-4">
+                        <h5 class="d-inline">
+                            {{ group.name }}
+                        </h5>
+                        <div id="popover-title-{{ group.id }}" class="d-none"></div>
+                        <div id="popover-content-{{ group.id }}" class="d-none">
+                            {% for user in group.user_set.all|slice:":20" %}{% if not forloop.first %}<br/>{% endif %}
+                                {{ user.get_full_name }}{% endfor %}
+                            {% if group.user_set.all|length > 20 %}
+                                <br/>
+                                {% blocktranslate trimmed context "group user list" with more_count=group.user_set.all|length|add:"-20" %}
+                                    and {{ more_count }} more
+                                {% endblocktranslate %}
+                            {% endif %}
+                        </div>
+                        <span class="float-end pe-1"
+                              tabindex="0"
+                              data-bs-toggle="popover"
+                              data-bs-trigger="hover"
+                              data-bs-placement="right"
+                              data-bs-title-ref="#popover-title-{{ group.id }}"
+                              data-bs-content-ref="#popover-content-{{ group.id }}"
+                        >
+                            <span class="fas fa-users"></span>
+                            {{ group.user_count }}
+                        </span>
+                    </div>
+                    <div class="col">
+                        {% if group.is_planning_group %}
+                            <span class="badge text-bg-light">{% translate "add events" %}</span>
+                        {% endif %}
+                        {% if group.is_hr_group %}
+                            <span class="badge text-bg-secondary">{% translate "edit users" %}</span>
+                        {% endif %}
+                        {% if group.is_management_group %}
+                            <span class="badge text-bg-dark">{% translate "change permissions" %}</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-auto d-flex align-items-center justify-content-end">
+                        <a class="btn btn-secondary btn-sm text-nowrap"
+                           href="{% url "core:group_edit" group.pk %}"><span
+                            class="fa fa-edit"></span> <span
+                                class="d-none d-md-inline">{% translate "Edit" %}</span></a>
+                        <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                           href="{% url "core:group_delete" group.pk %}"><span
+                            class="fa fa-trash-alt"></span> <span
+                                class="d-none d-md-inline">{% translate "Delete" %}</span></a>
+                    </div>
+                </div>
+            </li>
         {% endfor %}
-        </tbody>
-    </table>
+    </ul>
 {% endblock %}

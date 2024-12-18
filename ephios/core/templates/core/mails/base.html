@@ -1,0 +1,166 @@
+{% load settings_extras %}
+{% load email_extras %}
+{% load settings_extras %}
+{% load rich_text %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=false">
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-text-size-adjust: none;
+                -ms-text-size-adjust: none;
+                background-color: #f3f5f6;
+            }
+
+            table.outer {
+                background-color: #f3f5f6;
+                font-family: "Open Sans", "OpenSans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                color: #0c1012;
+                width: 100%;
+                padding: 20px;
+                margin: 0;
+            }
+
+            td.header {
+                padding: 10px;
+                text-align: center;
+                font-size: 20px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            td.top-logo {
+                padding: 10px;
+                text-align: center;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            table.footer {
+                padding: 10px;
+                text-align: center;
+                font-size: 14px;
+                max-width: 600px;
+                margin: 0 auto;
+                color: #76858f;
+            }
+
+            table.container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #fcfdfd;
+                border-radius: 6px;
+                border: 1px solid #0000002C;
+                padding: 24px;
+                font-size: 16px;
+            }
+
+            h1 {
+                font-size: 32px;
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+
+            h2 {
+                font-size: 24px;
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+
+            p {
+                margin: 0 0 10px;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                word-break: break-word;
+                -ms-word-break: break-all;
+                -ms-hyphens: auto;
+                -moz-hyphens: auto;
+                -webkit-hyphens: auto;
+                hyphens: auto;
+            }
+
+            a {
+            /* important to override webmail client styles */
+                color: #014065;
+            }
+
+            .btn {
+            /* stripped down bootstrap button */
+                cursor: pointer;
+                text-align: center;
+                border: 1px solid #CAD0D3;
+                color: #000;
+                background-color: #CAD0D3;
+                text-decoration: none;
+                user-select: none;
+                line-height: 1.5;
+                font-weight: 600;
+                padding: 0.4rem 0.8rem;
+                border-radius: 0.375rem;
+                display: inline-block;
+                margin-top: 6px;
+            }
+
+            .btn-primary {
+                color: #fff;
+                background-color: #014065;
+                border-color: #014065;
+            }
+
+            {% block emailcss %}{% endblock %}
+        </style>
+    </head>
+    <body>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" class="outer">
+            <tr>
+                <td align="center" valign="top">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="container">
+                        <tr>
+                            <td class="top-logo">
+                                <a href="{% site_url %}">
+                                    {% brand_logo_static_path as logo_path %}
+                                    <img alt="Logo" height="48"
+                                         src="data:image/png;base64,{% base64_static_file logo_path %}"/>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="header">
+                                {% block header %}
+                                    <h1>{{ subject|default_if_none:"" }}</h1>
+                                {% endblock %}
+                            </td>
+                        </tr>
+                        {% block content %}
+                            <tr>
+                                <td>
+                                    {{ body|default_if_none:""|rich_text }}
+                                </td>
+                            </tr>
+                        {% endblock %}
+                    </table>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="footer">
+                        <tr>
+                            <td>
+                                {% block footer %}
+                                    <small>
+                                        {% blocktranslate trimmed with brand='<a href="https://ephios.de/" rel="noreferrer" target="_blank">ephios</a>' %}
+                                            powered by {{ brand }}
+                                        {% endblocktranslate %}
+                                    </small>
+                                {% endblock %}
+
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+    </body>
+</html>

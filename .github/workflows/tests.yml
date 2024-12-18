@@ -8,22 +8,22 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10" ]
+        python-version: [ "3.11" ]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: Gr1N/setup-poetry@v7
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ephios-${{ runner.os }}-poetry-v1-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        cache: 'poetry'
     - name: Install dependencies
-      run: poetry install
+      run: |
+        poetry run pip install -U pip
+        poetry install --with=dev
     - name: check format with black
       run: |
         poetry run black --version
@@ -36,13 +36,22 @@ jobs:
       run: |
         poetry run pylint --version
         poetry run pylint ephios
+    - name: Run djhtml
+      run: poetry run djhtml -c ephios/
+    - name: Make sure we always use trimmed translation strings
+      run: "! git grep ' blocktranslate ' | grep -v trimmed"
+    - name: No use of the trans tag
+      run: "! git grep '{% trans ' | grep -v 'run: git grep'"
+    - name: There shouldn't be a showbrowser call in the code
+      run: "! git grep '.showbrowser()' | grep -v 'run: git grep'"
+
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10" ]
+        python-version: [ "3.10", "3.11", "3.12" ]
         database: [ sqlite, mysql, postgres ]
         include:
           - database: sqlite
@@ -50,38 +59,32 @@ jobs:
           - database: mysql
             database_url: "mysql://root:root@127.0.0.1:3306/ephios"
           - database: postgres
-            database_url: "psql://user:pass@127.0.0.1:5432/ephios"
+            database_url: "psql://pytest:pass@127.0.0.1:5432"
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: Gr1N/setup-poetry@v7
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ephios-${{ runner.os }}-poetry-v1-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        cache: 'poetry'
     - name: Install dependencies
-      # always install all -E extras to use a single cache
       run: |
         sudo apt-get install gettext
-        poetry install -E mysql -E pgsql
+        poetry run pip install -U pip
+        poetry install --all-extras --with=dev
         poetry run pip install git+https://github.com/ephios-dev/ephios-testplugin
     - name: Prepare files for test run
       run: |
         cp .env.example .env
-        poetry run python manage.py compilemessages
-        poetry run python manage.py collectstatic
-        poetry run python manage.py compilejsi18n
+        poetry run python manage.py build
 
-    - name: Setup postgres
-      uses: harmon758/postgresql-action@v1
-      with:
-        postgresql version: '13'  # See https://hub.docker.com/_/postgres for available versions
-        postgresql db: ephios
-        postgresql user: user
-        postgresql password: pass
+    - name: Setup postgres # postgres 14 on ubuntu 22.04
+      run: |
+        sudo systemctl start postgresql.service
+        pg_isready
+        sudo -u postgres psql --command="CREATE USER pytest WITH CREATEDB PASSWORD 'pass'"
       if: matrix.database == 'postgres'
 
     - name: Setup mysql
@@ -89,6 +92,9 @@ jobs:
         sudo systemctl start mysql.service
         mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -proot -Dmysql
       if: matrix.database == 'mysql'
+
+    - name: Make sure all migrations are up to date # apps specified explicitly to avoid checking migrations in dependencies
+      run: poetry run python manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource
 
     - name: Test apps
       env:
@@ -98,4 +104,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: poetry run coveralls --service=github
-      if: matrix.python-version == '3.9' && matrix.database == 'sqlite'
+      if: matrix.python-version == '3.11' && matrix.database == 'sqlite'

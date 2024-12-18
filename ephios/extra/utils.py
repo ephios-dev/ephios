@@ -1,5 +1,6 @@
 import datetime
 import itertools
+from functools import reduce
 
 from django.db import models
 from django.template.defaultfilters import yesno
@@ -34,3 +35,17 @@ def format_anything(value):
     if value is None:
         return _("None")
     return str(value)
+
+
+def dotted_get(dictionary, path, default=None):
+    """
+    Get a value from a nested dict by dotted path notation.
+    """
+    return (
+        reduce(
+            lambda d, key: d.get(key, None) if isinstance(d, dict) else None,
+            path.split("."),
+            dictionary,
+        )
+        or default
+    )

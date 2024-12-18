@@ -1,18 +1,24 @@
+from copy import copy
+from datetime import datetime, timedelta
+
+from csp.decorators import csp_exempt
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.timezone import get_default_timezone
 from django.utils.translation import gettext as _
 from django.views import View
-from django.views.generic import DeleteView, TemplateView
+from django.views.generic import DeleteView, FormView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
-from ephios.core.forms.events import ShiftForm
+from ephios.core.forms.events import ShiftCopyForm, ShiftForm
 from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
-from ephios.core.signup.methods import enabled_signup_methods, signup_method_from_slug
+from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
+from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
 from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
@@ -33,7 +39,8 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
     def get_context_data(self, **kwargs):
         kwargs.setdefault("event", self.event)
         kwargs.setdefault("form", self.get_shift_form())
-        kwargs.setdefault("configuration_form", "")
+        kwargs.setdefault("flow_configuration_form", "")
+        kwargs.setdefault("structure_configuration_form", "")
         return super().get_context_data(**kwargs)
 
     def get_plugin_forms(self):
@@ -46,14 +53,23 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
         self.object = form.instance
 
         try:
-            signup_method = signup_method_from_slug(
-                self.request.POST["signup_method_slug"], event=self.event
+            signup_flow = signup_flow_from_slug(
+                self.request.POST.get("signup_flow_slug"), event=self.event
+            )
+            structure = shift_structure_from_slug(
+                self.request.POST.get("structure_slug"),
+                event=self.event,
             )
         except KeyError:
-            if not list(enabled_signup_methods()):
+            if not list(enabled_signup_flows()):
                 form.add_error(
-                    "signup_method_slug",
-                    _("You must enable plugins providing signup methods to continue."),
+                    "signup_flow_slug",
+                    _("You must enable plugins providing signup flows to continue."),
+                )
+            if not list(enabled_shift_structures()):
+                form.add_error(
+                    "structure_slug",
+                    _("You must enable plugins providing shift structures to continue."),
                 )
             return self.render_to_response(
                 self.get_context_data(
@@ -61,47 +77,95 @@ class ShiftCreateView(CustomPermissionRequiredMixin, PluginFormMixin, TemplateVi
                 )
             )
         except ValueError as e:
-            raise ValidationError(e) from e
-        else:
-            configuration_form = signup_method.get_configuration_form(self.request.POST)
-            if not all((self.is_valid(form), configuration_form.is_valid())):
-                return self.render_to_response(
-                    self.get_context_data(
-                        form=form,
-                        configuration_form=signup_method.render_configuration_form(
-                            form=configuration_form
-                        ),
-                    )
+            form.add_error(None, ValidationError(e))
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
                 )
+            )
 
-            shift = form.save(commit=False)
-            shift.event = self.event
-            shift.signup_configuration = configuration_form.cleaned_data
-            shift.save()
-            self.save_plugin_forms()
-            if "addAnother" in self.request.POST:
-                return redirect(
-                    reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")})
+        flow_configuration_form = signup_flow.get_configuration_form(
+            self.request.POST, event=self.event, request=self.request
+        )
+        structure_configuration_form = structure.get_configuration_form(
+            self.request.POST, event=self.event, request=self.request
+        )
+        if not all(
+            [
+                self.is_valid(form),
+                flow_configuration_form.is_valid(),
+                structure_configuration_form.is_valid(),
+            ]
+        ):
+            return self.render_to_response(
+                self.get_context_data(
+                    form=form,
+                    flow_configuration_form=flow_configuration_form,
+                    structure_configuration_form=structure_configuration_form,
                 )
-            try:
-                self.event.activate()
-                messages.success(
-                    self.request,
-                    _("The event {title} has been saved.").format(title=self.event.title),
-                )
-            except ValidationError as e:
-                messages.error(self.request, e)
-            return redirect(self.event.get_absolute_url())
+            )
+
+        shift = form.save(commit=False)
+        shift.event = self.event
+        shift.signup_flow_configuration = flow_configuration_form.cleaned_data
+        shift.structure_configuration = structure_configuration_form.cleaned_data
+        shift.save()
+        self.save_plugin_forms()
+        if "addAnother" in self.request.POST:
+            return redirect(reverse("core:event_createshift", kwargs={"pk": self.kwargs.get("pk")}))
+        if "copyShift" in self.request.POST:
+            return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
+        try:
+            self.event.activate()
+            messages.success(
+                self.request,
+                _("The event {title} has been saved.").format(title=self.event.title),
+            )
+        except ValidationError as e:
+            messages.error(self.request, e)
+        return redirect(self.event.get_absolute_url())
 
 
-class ShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
+class AbstractShiftConfigurationFormView(CustomPermissionRequiredMixin, SingleObjectMixin, View):
     queryset = Event.all_objects
     permission_required = "core.change_event"
     pk_url_kwarg = "event_id"
 
     def get(self, request, *args, **kwargs):
-        signup_method = signup_method_from_slug(self.kwargs.get("slug"), event=self.get_object())
-        return HttpResponse(signup_method.render_configuration_form())
+        try:
+            shift = self.get_object().shifts.get(pk=request.GET.get("shift_id") or None)
+        except Shift.DoesNotExist:
+            shift = None
+        form = self.get_form(self.request, self.get_object(), shift=shift)
+        return render(
+            request,
+            "core/fragments/shift_signup_config_form.html",
+            {
+                "form": form,
+            },
+        )
+
+    def get_form(self, request, event, shift=None):
+        raise NotImplementedError
+
+
+class SignupFlowConfigurationFormView(AbstractShiftConfigurationFormView):
+    def get_form(
+        self,
+        request,
+        event,
+        shift=None,
+    ):
+        return signup_flow_from_slug(
+            self.kwargs.get("slug"), event=event, shift=shift
+        ).get_configuration_form(request=request)
+
+
+class ShiftStructureConfigurationFormView(AbstractShiftConfigurationFormView):
+    def get_form(self, request, event, shift=None):
+        return shift_structure_from_slug(
+            self.kwargs.get("slug"), event=event, shift=shift
+        ).get_configuration_form(request=request)
 
 
 class ShiftUpdateView(
@@ -119,21 +183,29 @@ class ShiftUpdateView(
             self.request.POST or None,
             instance=self.object,
             initial={
-                "date": self.object.meeting_time.date(),
+                "date": self.object.meeting_time.astimezone(get_default_timezone()).date(),
                 "meeting_time": self.object.meeting_time.astimezone(get_default_timezone()).time(),
                 "start_time": self.object.start_time.astimezone(get_default_timezone()).time(),
                 "end_time": self.object.end_time.astimezone(get_default_timezone()).time(),
             },
         )
 
-    def get_configuration_form(self):
-        return self.object.signup_method.render_configuration_form(data=self.request.POST or None)
+    def get_flow_configuration_form(self):
+        return self.object.signup_flow.get_configuration_form(
+            request=self.request, data=self.request.POST or None
+        )
+
+    def get_structure_configuration_form(self):
+        return self.object.structure.get_configuration_form(
+            request=self.request, data=self.request.POST or None
+        )
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
         kwargs.setdefault("event", self.object.event)
         kwargs.setdefault("form", self.get_shift_form())
-        kwargs.setdefault("configuration_form", self.get_configuration_form())
+        kwargs.setdefault("flow_configuration_form", self.get_flow_configuration_form())
+        kwargs.setdefault("structure_configuration_form", self.get_structure_configuration_form())
         return super().get_context_data(**kwargs)
 
     def get_plugin_forms(self):
@@ -142,29 +214,56 @@ class ShiftUpdateView(
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_shift_form()
-
+        flow_configuration_form = self.get_flow_configuration_form()
+        structure_configuration_form = self.get_structure_configuration_form()
         try:
-            signup_method = signup_method_from_slug(
-                self.request.POST["signup_method_slug"], shift=self.object
+            signup_flow = signup_flow_from_slug(
+                self.request.POST["signup_flow_slug"], shift=self.object
             )
-            configuration_form = signup_method.get_configuration_form(self.request.POST)
-        except ValueError as e:
-            raise ValidationError(e) from e
-        if all([self.is_valid(form), configuration_form.is_valid()]):
-            shift = form.save(commit=False)
-            shift.signup_configuration = configuration_form.cleaned_data
-            shift.save()
-            self.save_plugin_forms()
-            if "addAnother" in self.request.POST:
-                return redirect(reverse("core:event_createshift", kwargs={"pk": shift.event.pk}))
-            messages.success(
-                self.request, _("The shift {shift} has been saved.").format(shift=shift)
+            flow_configuration_form = signup_flow.get_configuration_form(
+                self.request.POST,
+                event=self.object.event,
+                request=self.request,
             )
-            return redirect(self.object.event.get_absolute_url())
+            structure = shift_structure_from_slug(
+                self.request.POST["structure_slug"], shift=self.object
+            )
+            structure_configuration_form = structure.get_configuration_form(
+                self.request.POST,
+                event=self.object.event,
+                request=self.request,
+            )
+        except (ValueError, MultiValueDictKeyError):
+            pass
+        else:
+            if all(
+                [
+                    self.is_valid(form),
+                    flow_configuration_form.is_valid(),
+                    structure_configuration_form.is_valid(),
+                ]
+            ):
+                shift = form.save(commit=False)
+                shift.signup_flow_configuration = flow_configuration_form.cleaned_data
+                shift.structure_configuration = structure_configuration_form.cleaned_data
+                shift.save()
+                self.save_plugin_forms()
+                if "addAnother" in self.request.POST:
+                    return redirect(
+                        reverse("core:event_createshift", kwargs={"pk": shift.event.pk})
+                    )
+                if "copyShift" in self.request.POST:
+                    return redirect(reverse("core:shift_copy", kwargs={"pk": shift.pk}))
+                messages.success(
+                    self.request, _("The shift {shift} has been saved.").format(shift=shift)
+                )
+                return redirect(self.object.event.get_absolute_url())
+
         return self.render_to_response(
             self.get_context_data(
                 form=form,
-                configuration_form=signup_method.render_configuration_form(form=configuration_form),
+                flow_configuration_form=flow_configuration_form,
+                structure_configuration_form=structure_configuration_form,
             )
         )
 
@@ -189,3 +288,48 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
 
     def get_permission_object(self):
         return self.object.event
+
+
+class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
+    permission_required = "core.change_event"
+    model = Shift
+    template_name = "core/shift_copy.html"
+    form_class = ShiftCopyForm
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.object = self.get_object()
+
+    def get_permission_object(self):
+        return self.object.event
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["original_start"] = timezone.localtime(self.object.start_time).isoformat()
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("core:event_detail", kwargs={"pk": self.object.event.pk, "slug": "event"})
+
+    def form_valid(self, form):
+        shift = self.object
+        duration = shift.end_time - shift.start_time
+        meeting_offset = shift.start_time - shift.meeting_time
+        shifts_to_create = []
+        recurr = form.cleaned_data["recurrence"]
+        tz = timezone.get_current_timezone()
+        for dt in recurr.xafter(datetime.now() - timedelta(days=365 * 100), 1000, inc=True):
+            dt = timezone.make_aware(dt, tz)
+            shift = copy(shift)
+            shift.pk = None
+            shift.meeting_time = dt - meeting_offset
+            shift.start_time = dt
+            shift.end_time = dt + duration
+            shifts_to_create.append(shift)
+        Shift.objects.bulk_create(shifts_to_create)
+        messages.success(self.request, _("Shift copied successfully."))
+        return super().form_valid(form)
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        return csp_exempt(super().as_view(**initkwargs))

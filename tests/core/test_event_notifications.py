@@ -45,7 +45,9 @@ class TestEventNotifications:
         form["mail_content"] = "hey there"
         response = form.submit()
         assert response.status_code == 302
-        assert Notification.objects.count() == 1
+        assert Notification.objects.count() == 1 + len(
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
+        )
 
     def test_mail_participants_content_required(
         self, django_app, event, volunteer, planner, groups
@@ -57,3 +59,22 @@ class TestEventNotifications:
         response = form.submit()
         assert response.status_code == 200
         assert Notification.objects.count() == 0
+
+    def test_participants_mail_is_not_duplicated_for_participating_responsible(
+        self, django_app, event, planner, groups
+    ):
+        LocalParticipation.objects.create(
+            shift=event.shifts.first(),
+            user=planner,
+            state=AbstractParticipation.States.CONFIRMED,
+        )
+        form = django_app.get(
+            reverse("core:event_notifications", kwargs=dict(pk=event.id)), user=planner
+        ).form
+        form["action"] = EventNotificationForm.PARTICIPANTS
+        form["mail_content"] = "hey Franz was here"
+        form.submit()
+        number_of_responsible_users = len(
+            get_users_with_perms(event, only_with_perms_in=["change_event"])
+        )
+        assert Notification.objects.count() == number_of_responsible_users

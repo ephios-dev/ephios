@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block content %}
+    <div class="page-header">
+        {% if document %}
+            <h2>{% translate "Edit file" %}</h2>
+        {% else %}
+            <h2>{% translate "Upload new file" %}</h2>
+        {% endif %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Save">
+    </form>
+{% endblock %}

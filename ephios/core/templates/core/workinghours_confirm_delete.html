@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% translate "Delete working hours" %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% translate "Delete working hours" %}</h1>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <p>{% blocktrans %}Are you sure you want to delete the working hours "{{ workinghours }}"?{% endblocktrans %}</p>
+        <a role="button" class="btn btn-secondary" href="{% url "core:workinghours_detail" workinghours.user.pk %}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
+    </form>
+
+{% endblock %}
