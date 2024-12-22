@@ -12,6 +12,7 @@ from django.db.models import (
     JSONField,
     Manager,
     Model,
+    Q,
     SlugField,
     TextField,
 )
@@ -23,9 +24,10 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 from dynamic_preferences.models import PerInstancePreferenceModel
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
+from polymorphic.query import PolymorphicQuerySet
 
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
@@ -138,15 +140,35 @@ class Event(Model):
 register_model_for_logging(Event, ModelFieldsLogConfig())
 
 
+class ParticipationQuerySet(PolymorphicQuerySet):
+
+    def viewable_by(self, user):
+        viewable_events = get_objects_for_user(user, "core.view_event")
+        editable_events = get_objects_for_user(user, "core.change_event")
+        participating_events = Event.objects.filter(
+            shifts__participations__in=user.participations.filter(
+                state=AbstractParticipation.States.CONFIRMED
+            )
+        )
+        qs = self.filter(shift__event__in=viewable_events).filter(
+            Q(
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.EVERYONE
+            )
+            | Q(
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.CONFIRMED,
+                shift__event__in=participating_events,
+            )
+            | Q(shift__event__in=editable_events)
+            | Q(localparticipation__user=user)
+        )
+        return qs.distinct()
+
+
 class ParticipationManager(PolymorphicManager):
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .annotate(
-                start_time=Coalesce("individual_start_time", "shift__start_time"),
-                end_time=Coalesce("individual_end_time", "shift__end_time"),
-            )
+        return ParticipationQuerySet(self.model, using=self._db).annotate(
+            start_time=Coalesce("individual_start_time", "shift__start_time"),
+            end_time=Coalesce("individual_end_time", "shift__end_time"),
         )
 
 
