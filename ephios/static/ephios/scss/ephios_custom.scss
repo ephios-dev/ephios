@@ -148,7 +148,6 @@ footer {
     grid-area: signup;
     justify-self: end;
     align-self: end;
-    width: 100%;
   }
 
   .grid-action {
@@ -158,7 +157,7 @@ footer {
 
   @media (min-width: 992px) {
     .grid-wrapper {
-      grid-template-columns: 6fr auto 8rem 5rem auto;
+      grid-template-columns: 6fr auto 8rem 7rem 0px;
       grid-template-rows: auto;
       grid-template-areas:
         "title badge time signup action"

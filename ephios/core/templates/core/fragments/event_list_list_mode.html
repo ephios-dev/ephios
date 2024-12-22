@@ -66,41 +66,47 @@
                                 </span>
                             </a>
                             <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
-                                {% if event.can_change %}
-                                    <small class="pe-1" data-bs-toggle="tooltip" data-bs-placement="left"
-                                           title="{% translate "Responsible" %}">
-                                        <i class="fas fa-crown text-body-secondary"></i>
-                                    </small>
-                                {% endif %}
                                 <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                             </a>
-                            <a class="grid-signup d-flex flex-column align-items-end justify-content-center event-list-item-link"
+                            <a class="grid-signup d-flex flex-row justify-content-between event-list-item-link"
                                href="{{ event.get_absolute_url }}">
-                                <div class="position-relative">
-                                    <span class="fas fa-users"></span>
-                                    {% if event.pending_disposition_count %}
-                                        <span class="pending-indicator"></span>
+                                <div class="px-1">
+                                    {% if event.can_change %}
+                                        <small class="pe-1" data-bs-toggle="tooltip" data-bs-placement="left"
+                                               title="{% translate "Responsible" %}">
+                                            <i class="fas fa-crown text-body-secondary"></i>
+                                        </small>
                                     {% endif %}
-                                    {{ stats.confirmed_count }}
                                 </div>
-                                <div>
-                                    {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
+                                <div class="d-flex flex-column align-items-end justify-content-center ">
+                                    <div class="position-relative">
+                                        <span class="fas fa-users"></span>
+                                        {% if event.pending_disposition_count %}
+                                            <span class="pending-indicator"></span>
+                                        {% endif %}
+                                        {{ stats.confirmed_count }}
+                                    </div>
+                                    <div>
+                                        {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
+                                    </div>
                                 </div>
                             </a>
                             <a class="grid-time event-list-item-link" href="{{ event.get_absolute_url }}">
-                                {{ event.start_time|date:"D" }},
-                                {% if event.start_time.date == event.end_time.date %}
-                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
-                                    <span class="d-lg-none">,</span>
-                                    <span class="d-none d-lg-inline"><br></span>
-                                    {{ event.start_time|date:"TIME_FORMAT" }} –
-                                    {{ event.end_time|date:"TIME_FORMAT" }}
-                                {% else %}
-                                    {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
-                                    <span class="d-none d-lg-inline"><br></span>
-                                    {% translate "to" %}
-                                    {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
-                                {% endif %}
+                                <div>
+                                    {{ event.start_time|date:"D" }},
+                                    {% if event.start_time.date == event.end_time.date %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                        <span class="d-lg-none">,</span>
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {{ event.start_time|date:"TIME_FORMAT" }} –
+                                        {{ event.end_time|date:"TIME_FORMAT" }}
+                                    {% else %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {% translate "to" %}
+                                        {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                                    {% endif %}
+                                </div>
                             </a>
                             <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
                             </div>
