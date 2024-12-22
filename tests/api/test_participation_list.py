@@ -1,6 +1,88 @@
 from django.urls import reverse
 
-from ephios.core.models import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation, EventType, LocalParticipation
+
+
+def test_show_participation_data_filter(django_app, volunteer, event, planner):
+    LocalParticipation.objects.create(
+        user=planner, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=volunteer,
+        ).json["count"]
+        == 1
+    )
+
+    event.type.show_participant_data = EventType.ShowParticipantDataChoices.CONFIRMED
+    event.type.save()
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=volunteer,
+        ).json["count"]
+        == 0
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=planner,
+        ).json["count"]
+        == 1
+    )
+
+    event.type.show_participant_data = EventType.ShowParticipantDataChoices.RESPONSIBLES
+    event.type.save()
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=volunteer,
+        ).json["count"]
+        == 0
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=planner,
+        ).json["count"]
+        == 1
+    )
+
+    LocalParticipation.objects.create(
+        user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=volunteer,
+        ).json["count"]
+        == 1
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=planner,
+        ).json["count"]
+        == 2
+    )
+
+    event.type.show_participant_data = EventType.ShowParticipantDataChoices.CONFIRMED
+    event.type.save()
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=volunteer,
+        ).json["count"]
+        == 2
+    )
+    assert (
+        django_app.get(
+            reverse("api:participations-list"),
+            user=planner,
+        ).json["count"]
+        == 2
+    )
 
 
 def test_participation_permissions(django_app, volunteer, event, planner, manager, groups):

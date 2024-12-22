@@ -267,7 +267,7 @@ class ShiftCopyForm(forms.Form):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ["title", "color"]
+        fields = ["title", "color", "show_participant_data"]
         widgets = {"color": ColorInput()}
 
     def clean_color(self):

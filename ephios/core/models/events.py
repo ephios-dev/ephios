@@ -45,8 +45,18 @@ class ActiveManager(Manager):
 
 
 class EventType(Model):
+    class ShowParticipantDataChoices(models.IntegerChoices):
+        EVERYONE = 0, _("to everyone")
+        CONFIRMED = 1, _("to confirmed participants")
+        RESPONSIBLES = 2, _("only to responsible users")
+
     title = CharField(_("title"), max_length=254)
     color = CharField(_("color"), max_length=7, default="#343a40")
+    show_participant_data = models.SmallIntegerField(
+        verbose_name=_("show participant data"),
+        choices=ShowParticipantDataChoices.choices,
+        default=ShowParticipantDataChoices.EVERYONE,
+    )
 
     class Meta:
         verbose_name = _("event type")
