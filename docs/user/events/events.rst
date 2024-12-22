@@ -7,8 +7,8 @@ Shifts can be continuous and overlapping.
 
 While permissions are managed on event level, signup settings are configured on shift level.
 
-Responsibles and visibility
----------------------------
+Responsibles and event visibility
+---------------------------------
 
 Single users and groups can be made responsible for an event. That allows them to edit event details,
 shift settings and do the disposition for the event's shifts.
@@ -22,7 +22,16 @@ Event types
 -----------
 
 Event types are used for organizing events into different categories. They can be used in filters
-and come with defaults for visibility and responsibility settings.
+and come with defaults for event visibility and responsibility settings.
+
+Showing participant data
+------------------------
+
+For every event type you can configure who can view the names of
+participants in events of that type.
+By default, participant data is visible to everyone.
+You can restrict it to people who have a confirmed participation in any of the event's shift.
+The most strict option is to only show participant data to the event's responsibles.
 
 Settings
 --------
