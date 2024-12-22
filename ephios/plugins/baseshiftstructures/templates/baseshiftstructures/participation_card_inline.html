@@ -2,9 +2,14 @@
 {% load user_extras %}
 {% load i18n %}
 
+
 <div id="participant-popover-title-{{ participation.id }}" class="d-none">
     <span class="text-dark pe-1">{{ participation.participant.icon }}</span>
-    {{ participation.participant }}
+    {% if  participation.show_participant_data %}
+        {{ participation.participant }}
+    {% else %}
+        {% translate "Anonymous" %}
+    {% endif %}
 </div>
 
 <div id="participant-popover-content-{{ participation.id }}" class="d-none">
@@ -23,12 +28,14 @@
         {% endif %}
     {% endif %}
     <div>
-        {% if participation.participant.is_minor %}
-            <span class="badge bg-warning">{% translate "Minor" %}</span>
+        {% if  participation.show_participant_data %}
+            {% if participation.participant.is_minor %}
+                <span class="badge bg-warning">{% translate "Minor" %}</span>
+            {% endif %}
+            {% for abbreviation in participation.participant.qualifications|qualifications_to_essential_abbreviations %}
+                <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
+            {% endfor %}
         {% endif %}
-        {% for abbreviation in participation.participant.qualifications|qualifications_to_essential_abbreviations %}
-            <span class='badge bg-secondary text-dark'>{{ abbreviation }}</span>
-        {% endfor %}
     </div>
 </div>
 
@@ -53,5 +60,9 @@
     {% else %}
         <i class="far fa-clock"></i>
     {% endif %}
-    {{ participation.participant }}
+    {% if  participation.show_participant_data %}
+        {{ participation.participant }}
+    {% else %}
+        <i class="fas fa-user-secret px-1"></i>
+    {% endif %}
 </a>
