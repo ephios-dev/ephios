@@ -11,9 +11,27 @@ from ephios.core.models import AbstractParticipation, Event, EventType, Shift
 class ParticipationPermissionFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         # to view public participation information (excl. email) you need to
-        # be able to see the event
+        # * be able to see the event AND
+        # * the event types' show_participation_data mode must fit
         viewable_events = get_objects_for_user(request.user, "core.view_event")
-        return queryset.filter(shift__event__in=viewable_events)
+        editable_events = get_objects_for_user(request.user, "core.change_event")
+        participating_events = Event.objects.filter(
+            shifts__participations__in=request.user.participations.filter(
+                state=AbstractParticipation.States.CONFIRMED
+            )
+        )
+        qs = queryset.filter(shift__event__in=viewable_events).filter(
+            Q(
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.EVERYONE
+            )
+            | Q(
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.CONFIRMED,
+                shift__event__in=participating_events,
+            )
+            | Q(shift__event__in=editable_events)
+            | Q(localparticipation__user=request.user)
+        )
+        return qs.distinct()
 
 
 class UserinfoParticipationPermissionFilter(ParticipationPermissionFilter):
