@@ -144,6 +144,7 @@ class ParticipationQuerySet(PolymorphicQuerySet):
 
     def viewable_by(self, user):
         viewable_events = get_objects_for_user(user, "core.view_event")
+        viewable_userprofiles = get_objects_for_user(user, "core.view_userprofile")
         editable_events = get_objects_for_user(user, "core.change_event")
         participating_events = Event.objects.filter(
             shifts__participations__in=user.participations.filter(
@@ -160,6 +161,7 @@ class ParticipationQuerySet(PolymorphicQuerySet):
             )
             | Q(shift__event__in=editable_events)
             | Q(localparticipation__user=user)
+            | Q(localparticipation__user__in=viewable_userprofiles)
         )
         return qs.distinct()
 
