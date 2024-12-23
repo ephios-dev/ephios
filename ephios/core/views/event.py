@@ -30,6 +30,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from guardian.models import GroupObjectPermission
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 
 from ephios.core.calendar import ShiftCalendar
@@ -210,7 +211,7 @@ class EventListView(LoginRequiredMixin, ListView):
                     ),
                     default=False,
                     output_field=BooleanField(),
-                )
+                ),
             )
             .annotate(
                 pending_disposition_count=Count(
@@ -232,14 +233,25 @@ class EventListView(LoginRequiredMixin, ListView):
                 },
             )
             .select_related("type")
-            .prefetch_related("shifts")
-            .prefetch_related(Prefetch("shifts__participations"))
         )
         if self.filter_form.is_valid():
             qs = self.filter_form.filter_events(qs)
         else:
             # safeguard for not loading too many events
             qs = qs.filter(end_time__gte=timezone.now()).order_by("start_time", "end_time")
+        qs = qs.prefetch_related("shifts__participations")
+
+        # annotate groups that can view the event by prefetching the object permission model
+        qs = qs.prefetch_related(
+            Prefetch(
+                "group_object_permission_set",
+                queryset=GroupObjectPermission.objects.filter(permission__codename="view_event"),
+                to_attr="view_permissions",
+            ),
+            Prefetch(
+                "view_permissions__group",
+            ),
+        )
         return qs
 
     @cached_property
