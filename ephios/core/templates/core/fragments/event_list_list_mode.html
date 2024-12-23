@@ -28,25 +28,37 @@
             {% with counter=event|event_list_signup_state_counts stats=event.get_signup_stats %}
                 <li class="list-group-item p-0 d-flex flex-row">
                     <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
-                        <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center event-list-status-icon"
-                             {% if counter %}
-                                 data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                                 title="{% for state in counter %}<div>
-                                            {% if event.shifts.all|length > 1 %}
-                                                {{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
-                                            </div>{% endfor %}"
-                             {% endif %}>
-                            {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
-                                <span class="text-success fa fa-user-check ps-2"></span>
-                            {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
-                                <span class="text-warning fa fa-user-clock ps-2"></span>
-                            {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
-                                <span class="text-danger fa fa-user-times ps-2"></span>
-                            {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
-                                <span class="text-danger fa fa-user-minus ps-2"></span>
-                            {% else %}
-                                <span class="text-body-secondary far fa-user ps-2"></span>
+                        <div class="ps-lg-2 d-flex flex-column justify-content-center">
+                            {% if event.can_change %}
+                                <small class="text-body-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                                       title="{% for perm in event.view_permissions %}
+                                                  {{ perm.group.name }}{% if not forloop.last %}, {% endif %}
+                                              {% empty %}
+                                                  {% translate "Invisible" %}
+                                              {% endfor %}">
+                                    <i class="ps-2 fas fa-eye{% if not event.view_permissions %}-slash{% endif %}"></i>
+                                </small>
                             {% endif %}
+                            <span class=""
+                                  {% if counter %}
+                                      data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                      title="{% for state in counter %}<div>
+                                                 {% if event.shifts.all|length > 1 %}
+                                                     {{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
+                                                 </div>{% endfor %}"
+                                  {% endif %}>
+                                {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
+                                    <i class="text-success fa fa-user-check ps-2"></i>
+                                {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
+                                    <i class="text-warning fa fa-user-clock ps-2"></i>
+                                {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
+                                    <i class="text-danger fa fa-user-times ps-2"></i>
+                                {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
+                                    <i class="text-danger fa fa-user-minus ps-2"></i>
+                                {% else %}
+                                    <i class="text-body-secondary far fa-user ps-2"></i>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if perms.core.add_event %}
                             <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
@@ -68,17 +80,9 @@
                             <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
                                 <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
                             </a>
-                            <a class="grid-signup d-flex flex-row justify-content-between event-list-item-link"
+                            <a class="grid-signup d-flex flex-row justify-content-end event-list-item-link w-100"
                                href="{{ event.get_absolute_url }}">
-                                <div class="px-1">
-                                    {% if event.can_change %}
-                                        <small class="pe-1" data-bs-toggle="tooltip" data-bs-placement="left"
-                                               title="{% translate "Responsible" %}">
-                                            <i class="fas fa-crown text-body-secondary"></i>
-                                        </small>
-                                    {% endif %}
-                                </div>
-                                <div class="d-flex flex-column align-items-end justify-content-center ">
+                                <div class="d-flex flex-column align-items-end justify-content-center">
                                     <div class="position-relative">
                                         <span class="fas fa-users"></span>
                                         {% if event.pending_disposition_count %}

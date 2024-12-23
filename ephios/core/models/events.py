@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -24,7 +25,7 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 from dynamic_preferences.models import PerInstancePreferenceModel
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user, GroupObjectPermission
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 from polymorphic.query import PolymorphicQuerySet
@@ -78,6 +79,9 @@ class Event(Model):
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
     active = BooleanField(default=False, verbose_name=_("active"))
+    group_object_permission_set = GenericRelation(
+        GroupObjectPermission, object_id_field="object_pk"
+    )
 
     objects = ActiveManager()
     all_objects = Manager()
