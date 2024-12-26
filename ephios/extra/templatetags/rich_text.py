@@ -4,9 +4,10 @@ import bleach
 import markdown
 from bleach.linkifier import DEFAULT_CALLBACKS
 from django import template
-from django.conf import settings
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
+
+from ephios.core.dynamic import dynamic_settings
 
 register = template.Library()
 
@@ -80,7 +81,7 @@ def safelink_callback(attrs, new=False):
     if not url_has_allowed_host_and_scheme(
         url,
         allowed_hosts=[
-            urlparse(settings.GET_SITE_URL()).netloc,
+            urlparse(dynamic_settings.SITE_URL).netloc,
         ],
     ):
         attrs[None, "target"] = "_blank"

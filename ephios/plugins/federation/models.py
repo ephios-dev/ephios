@@ -4,7 +4,6 @@ import datetime
 import json
 from secrets import token_hex
 
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -12,6 +11,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.api.models import AccessToken, Application
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup.participants import AbstractParticipant
@@ -93,7 +93,7 @@ class InviteCode(models.Model):
     def get_share_string(self):
         return base64.b64encode(
             json.dumps(
-                {"guest_url": self.url, "code": self.code, "host_url": settings.GET_SITE_URL()}
+                {"guest_url": self.url, "code": self.code, "host_url": dynamic_settings.SITE_URL}
             ).encode()
         ).decode()
 
