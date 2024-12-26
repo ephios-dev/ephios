@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
@@ -6,6 +5,7 @@ from django_ical.views import ICalFeed
 from guardian.shortcuts import get_users_with_perms
 from icalendar import vCalAddress
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Shift
 
 
@@ -38,7 +38,7 @@ class EventFeed(ICalFeed):
         return item.event.location
 
     def item_guid(self, item):
-        return f"{item.pk}@{settings.GET_SITE_URL()}"
+        return f"{item.pk}@{dynamic_settings.SITE_URL}"
 
     def item_organizer(self, item):
         user = get_users_with_perms(item.event, only_with_perms_in=["change_event"]).first()

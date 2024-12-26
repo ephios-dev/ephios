@@ -234,6 +234,9 @@ STATIC_URL = env.str("STATIC_URL", default="/static/")
 MEDIA_URL = env.str("MEDIA_URL", default="/usercontent/")
 FALLBACK_MEDIA_SERVING = env.bool("FALLBACK_MEDIA_SERVING", default=DEBUG)
 
+DEFAULT_SITE_URL = env.str("SITE_URL").rstrip("/")
+DEFAULT_USERCONTENT_URL = MEDIA_URL
+
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -316,17 +319,6 @@ LOGGING = {
         "level": "INFO",
     },
 }
-
-
-def GET_SITE_URL():
-    site_url = env.str("SITE_URL")
-    if site_url.endswith("/"):
-        site_url = site_url[:-1]
-    return site_url
-
-
-def GET_USERCONTENT_URL():
-    return MEDIA_URL
 
 
 def GET_USERCONTENT_QUOTA():

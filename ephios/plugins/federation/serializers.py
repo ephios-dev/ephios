@@ -1,13 +1,13 @@
 import secrets
 from urllib.parse import urljoin
 
-from django.conf import settings
 from django.urls import reverse
 from dynamic_preferences.registries import global_preferences_registry
 from rest_framework import serializers
 
 from ephios.api.models import AccessToken
 from ephios.api.serializers import EventSerializer
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import Event
 from ephios.plugins.federation.models import FederatedGuest, InviteCode
 
@@ -71,7 +71,7 @@ class SharedEventSerializer(EventSerializer):
 
     def get_signup_url(self, obj):
         return urljoin(
-            settings.GET_SITE_URL(),
+            dynamic_settings.SITE_URL,
             reverse(
                 "federation:event_detail",
                 kwargs={"pk": obj.pk, "guest": self.context["federated_guest"].pk},

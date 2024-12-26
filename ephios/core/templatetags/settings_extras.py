@@ -1,9 +1,9 @@
 from urllib.parse import urljoin
 
 from django import template
-from django.conf import settings
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models.users import IdentityProvider
 
 register = template.Library()
@@ -23,7 +23,7 @@ def identity_providers():
 
 @register.simple_tag
 def site_url():
-    return settings.GET_SITE_URL()
+    return dynamic_settings.SITE_URL
 
 
 @register.simple_tag
@@ -33,7 +33,7 @@ def organization_name():
 
 @register.filter
 def make_absolute(location):
-    return urljoin(settings.GET_SITE_URL(), location)
+    return urljoin(dynamic_settings.SITE_URL, location)
 
 
 @register.simple_tag(takes_context=True)

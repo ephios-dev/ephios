@@ -1,7 +1,6 @@
 from urllib.parse import urljoin
 
 import requests
-from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -23,6 +22,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests import PreparedRequest, RequestException
 from requests_oauthlib import OAuth2Session
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.dynamic_preferences_registry import LoginRedirectToSoleIndentityProvider
 from ephios.core.forms.auth import OIDCLoginForm
 from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
@@ -38,7 +38,7 @@ class OIDCInitiateView(RedirectView):
         oauth_client = WebApplicationClient(client_id=provider.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
-            redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
+            redirect_uri=urljoin(dynamic_settings.SITE_URL, reverse("core:oidc_callback")),
             scope=provider.scopes,
         )
 
@@ -93,7 +93,7 @@ class OIDCLogoutView(RedirectView):
                         {}
                         if auto_provider_redirect
                         else {
-                            "post_logout_redirect_uri": settings.GET_SITE_URL(),
+                            "post_logout_redirect_uri": dynamic_settings.SITE_URL,
                             "client_id": provider.client_id,
                         }
                     ),

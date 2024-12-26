@@ -4,7 +4,6 @@ from typing import Any, Dict
 from urllib.parse import urljoin
 
 import jwt
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Group
@@ -16,6 +15,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
 from urllib3.exceptions import RequestError
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import Qualification
 from ephios.core.models.users import IdentityProvider, QualificationGrant
 from ephios.core.signals import oidc_update_user
@@ -99,7 +99,7 @@ class EphiosOIDCAB(ModelBackend):
             self.provider = IdentityProvider.objects.get(id=request.session["oidc_provider"])
             oauth = OAuth2Session(
                 client=WebApplicationClient(client_id=self.provider.client_id),
-                redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("core:oidc_callback")),
+                redirect_uri=urljoin(dynamic_settings.SITE_URL, reverse("core:oidc_callback")),
             )
             token = oauth.fetch_token(
                 self.provider.token_endpoint,
