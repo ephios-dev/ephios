@@ -185,6 +185,14 @@ keyword arguments with a user object and the claims from the oidc provider.
 """
 
 
+provide_dynamic_settings = PluginSignal()
+"""
+Use this signal to overwrite the defaults of django settings accessed 
+using ``ephios.core.signals.DynamicSettingsProxy``.
+Receivers receive a ``name`` keyword argument naming the setting.
+"""
+
+
 @receiver(
     register_consequence_handlers,
     dispatch_uid="ephios.core.signals.register_base_consequence_handlers",

@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 def migrate_oidc_provider(apps, schema_editor):
-    from ephios import settings
+    from django.conf import settings
 
     try:
         if settings.env.bool("ENABLE_OIDC_CLIENT"):

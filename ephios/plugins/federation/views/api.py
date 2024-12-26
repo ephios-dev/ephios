@@ -2,7 +2,6 @@ from urllib.parse import urljoin
 
 import django_filters
 import requests
-from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Max, Min
 from django.shortcuts import redirect
@@ -126,7 +125,7 @@ class FederationOAuthView(View):
         oauth_client = WebApplicationClient(client_id=self.guest.client_id)
         oauth = OAuth2Session(
             client=oauth_client,
-            redirect_uri=urljoin(settings.GET_SITE_URL(), reverse("federation:oauth_callback")),
+            redirect_uri=urljoin(dynamic_settings.SITE_URL, reverse("federation:oauth_callback")),
             scope=["ME_READ"],
         )
         verifier = oauth_client.create_code_verifier(64)
@@ -148,7 +147,7 @@ class FederationOAuthView(View):
         oauth = OAuth2Session(client=oauth_client)
         token = oauth.fetch_token(
             urljoin(self.guest.url, "api/oauth/token/"),
-            authorization_response=urljoin(settings.GET_SITE_URL(), self.request.get_full_path()),
+            authorization_response=urljoin(dynamic_settings.SITE_URL, self.request.get_full_path()),
             client_secret=self.guest.client_secret,
             code_verifier=self.request.session["code_verifier"],
         )

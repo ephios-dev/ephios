@@ -5,11 +5,11 @@ from json import JSONDecodeError
 from urllib.parse import urlparse
 
 from django import forms
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext as _
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.forms.events import BasePluginFormMixin
 from ephios.plugins.federation.models import FederatedEventShare, FederatedGuest, InviteCode
 
@@ -66,7 +66,7 @@ class RedeemInviteCodeForm(forms.Form):
     def clean_code(self):
         try:
             data = json.loads(base64.b64decode(self.cleaned_data["code"].encode()).decode())
-            if settings.GET_SITE_URL() != data["guest_url"]:
+            if dynamic_settings.SITE_URL != data["guest_url"]:
                 raise ValidationError(_("This invite code is not issued for this instance."))
         except (binascii.Error, JSONDecodeError, KeyError) as exc:
             raise ValidationError(_("Invalid code")) from exc
