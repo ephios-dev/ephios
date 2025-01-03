@@ -56,6 +56,9 @@ class EventType(Model):
     color = CharField(_("color"), max_length=7, default="#343a40")
     show_participant_data = models.SmallIntegerField(
         verbose_name=_("show participant data"),
+        help_text=_(
+            "If you restrict who can see participant data, others will only be able to see that there is a participation, but not from whom."
+        ),
         choices=ShowParticipantDataChoices.choices,
         default=ShowParticipantDataChoices.EVERYONE,
     )

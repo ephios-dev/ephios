@@ -61,7 +61,12 @@ footer {
 }
 
 
-/* mannequins */
+/* event detail and mannequin */
+
+.participant-anon {
+  filter: blur(3px);
+  padding-left: 0.1rem;
+}
 
 .mannequin {
   border-radius: $card-border-radius;
