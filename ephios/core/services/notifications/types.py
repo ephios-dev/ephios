@@ -1,7 +1,6 @@
 from typing import List
 from urllib.parse import urlparse
 
-from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,6 +12,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
 from requests import PreparedRequest
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
@@ -98,7 +98,7 @@ class AbstractNotificationHandler:
         """
         actions = []
         for label, url in cls.get_actions(notification):
-            if urlparse(url).netloc in settings.GET_SITE_URL():
+            if urlparse(url).netloc in dynamic_settings.SITE_URL:
                 req = PreparedRequest()
                 req.prepare_url(url, {NOTIFICATION_READ_PARAM_NAME: notification.pk})
                 url = req.url

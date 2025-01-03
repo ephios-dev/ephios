@@ -11,6 +11,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
 
+from ephios.core.dynamic import dynamic_settings
+
 
 class UserContentView(View):
     """
@@ -22,7 +24,7 @@ class UserContentView(View):
     def dispatch(self, request, *args, **kwargs):
         # If media files are served from a different domain and
         # the user requests media files from the app domain via this view --> 404
-        if (loc := urlsplit(settings.GET_USERCONTENT_URL()).netloc) and request.get_host() != loc:
+        if (loc := urlsplit(dynamic_settings.USERCONTENT_URL).netloc) and request.get_host() != loc:
             raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
 
@@ -64,7 +66,7 @@ def redirect_to_file_download(field_file):
     """
     Shortcut for redirecting to the ticketed media file download view.
     """
-    if loc := urlsplit(settings.GET_USERCONTENT_URL()).netloc:
+    if loc := urlsplit(dynamic_settings.USERCONTENT_URL).netloc:
         ticket = file_ticket(field_file)
         path = reverse("core:file_ticket", kwargs={"ticket": ticket})
         return redirect(urlunsplit(("http" if settings.DEBUG else "https", loc, path, "", "")))
@@ -81,9 +83,9 @@ class EphiosMediaFileMiddleware:
         response = self.get_response(request)
         if (
             # if the usercontent URL does not contain a domain, the request host will be checked against `None` --> no redirect loop
-            request.get_host() == urlsplit(settings.GET_USERCONTENT_URL()).netloc
+            request.get_host() == urlsplit(dynamic_settings.USERCONTENT_URL).netloc
             and request.resolver_match
             and not getattr(request.resolver_match.func.view_class, "is_usercontent_view", False)
         ):
-            return redirect(urljoin(settings.GET_SITE_URL(), request.path))
+            return redirect(urljoin(dynamic_settings.SITE_URL, request.path))
         return response
