@@ -127,7 +127,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
         )
         kwargs["groups_by_user"] = {
             profile.pk: set(profile.groups.all())
-            for profile in UserProfile.objects.all().prefetch_related("groups")
+            for profile in UserProfile.all_objects.all().prefetch_related("groups")
         }
         return super().get_context_data(**kwargs)
 
