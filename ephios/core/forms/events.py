@@ -251,7 +251,7 @@ class ShiftForm(forms.ModelForm):
         cleaned_data = super().clean()
         if {"meeting_time", "start_time"} <= set(cleaned_data.keys()):
             if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
-                raise ValidationError(_("Meeting time must not be after start time!"))
+                self.add_error("meeting_time", _("Meeting time must not be after start time!"))
         return cleaned_data
 
 
