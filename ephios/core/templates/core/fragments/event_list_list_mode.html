@@ -37,15 +37,15 @@
                                                  </div>{% endfor %}"
                                   {% endif %}>
                                 {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
-                                    <i class="text-{% if event.can_change %}info{% else %}success{% endif %} fa fa-user-check ps-2"></i>
+                                    <i class="text-{% if event.is_responsible %}info{% else %}success{% endif %} fa fa-user-check ps-2"></i>
                                 {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
-                                    <i class="text-{% if event.can_change %}info{% else %}warning{% endif %} fa fa-user-clock ps-2"></i>
+                                    <i class="text-{% if event.is_responsible %}info{% else %}warning{% endif %} fa fa-user-clock ps-2"></i>
                                 {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
-                                    <i class="text-{% if event.can_change %}info{% else %}danger{% endif %} fa fa-user-times ps-2"></i>
+                                    <i class="text-{% if event.is_responsible %}info{% else %}danger{% endif %} fa fa-user-times ps-2"></i>
                                 {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
-                                    <i class="text-{% if event.can_change %}info{% else %}danger{% endif %} fa fa-user-minus ps-2"></i>
+                                    <i class="text-{% if event.is_responsible %}info{% else %}danger{% endif %} fa fa-user-minus ps-2"></i>
                                 {% else %}
-                                    <i class="text-{% if event.can_change %}info{% else %}body-secondary{% endif %} far fa-user ps-2"></i>
+                                    <i class="text-{% if event.is_responsible %}info{% else %}body-secondary{% endif %} far fa-user ps-2"></i>
                                 {% endif %}
                             </span>
                         </div>
