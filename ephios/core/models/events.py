@@ -25,7 +25,7 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext
 from dynamic_preferences.models import PerInstancePreferenceModel
-from guardian.shortcuts import assign_perm, get_objects_for_user, GroupObjectPermission
+from guardian.shortcuts import GroupObjectPermission, assign_perm, get_objects_for_user
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 from polymorphic.query import PolymorphicQuerySet

@@ -180,3 +180,14 @@ def can_do_disposition_for(user: UserProfile, shift):
         user.has_perm("change_event", shift.event)
         and shift.structure.disposition_participation_form_class is not None
     )
+
+
+@register.filter
+def viewable_by(event):
+    """
+    For an event from the EventDetailView queryset, return a string of comma-seperated group names
+     of groups that are considered to be able to view the event like displayed in the event form.
+    """
+    names_can_view = {perm.group.name for perm in event.view_permissions}
+    names_can_change = {perm.group.name for perm in event.change_permissions}
+    return ", ".join(names_can_view - names_can_change)

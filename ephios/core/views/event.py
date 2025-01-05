@@ -250,6 +250,13 @@ class EventListView(LoginRequiredMixin, ListView):
                 ).select_related("group"),
                 to_attr="view_permissions",
             ),
+            Prefetch(
+                "group_object_permission_set",
+                queryset=GroupObjectPermission.objects.filter(
+                    permission__codename="change_event"
+                ).select_related("group"),
+                to_attr="change_permissions",
+            ),
         )
         return qs
 

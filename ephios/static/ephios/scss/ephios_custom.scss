@@ -157,7 +157,7 @@ footer {
 
   @media (min-width: 992px) {
     .grid-wrapper {
-      grid-template-columns: 6fr auto 8rem 5rem 0;
+      grid-template-columns: 6fr auto 8rem 6rem 0;
       grid-template-rows: auto;
       grid-template-areas:
         "title badge time signup action"
@@ -174,20 +174,6 @@ This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220
 */
 .select2 {
   width: 100% !important;
-}
-
-//Pending indicator
-.pending-indicator {
-  position: absolute;
-  top: 15px;
-  left: -5px;
-  display: block;
-  width: 10px;
-  height: 10px;
-  color: #ffffff;
-  background-image: linear-gradient($yellow-400, $yellow-500);
-  background-clip: padding-box;
-  border-radius: 50%;
 }
 
 // Indicate participations of minors with a warning right border, though explanation must be available

@@ -28,19 +28,8 @@
             {% with counter=event|event_list_signup_state_counts stats=event.get_signup_stats %}
                 <li class="list-group-item p-0 d-flex flex-row">
                     <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
-                        <div class="ps-lg-2 d-flex flex-column justify-content-center">
-                            {% if event.can_change %}
-                                <small class="text-body-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
-                                       title="{% for perm in event.view_permissions %}
-                                                  {{ perm.group.name }}{% if not forloop.last %}, {% endif %}
-                                              {% empty %}
-                                                  {% translate "Invisible" %}
-                                              {% endfor %}">
-                                    <i class="ps-2 fas fa-eye{% if not event.view_permissions %}-slash{% endif %}"></i>
-                                </small>
-                            {% endif %}
-                            <span class=""
-                                  {% if counter %}
+                        <div class="ps-lg-2 d-flex flex-column justify-content-center event-list-status-icon">
+                            <span {% if counter %}
                                       data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                       title="{% for state in counter %}<div>
                                                  {% if event.shifts.all|length > 1 %}
@@ -48,15 +37,15 @@
                                                  </div>{% endfor %}"
                                   {% endif %}>
                                 {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
-                                    <i class="text-success fa fa-user-check ps-2"></i>
+                                    <i class="text-{% if event.can_change %}info{% else %}success{% endif %} fa fa-user-check ps-2"></i>
                                 {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
-                                    <i class="text-warning fa fa-user-clock ps-2"></i>
+                                    <i class="text-{% if event.can_change %}info{% else %}warning{% endif %} fa fa-user-clock ps-2"></i>
                                 {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
-                                    <i class="text-danger fa fa-user-times ps-2"></i>
+                                    <i class="text-{% if event.can_change %}info{% else %}danger{% endif %} fa fa-user-times ps-2"></i>
                                 {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
-                                    <i class="text-danger fa fa-user-minus ps-2"></i>
+                                    <i class="text-{% if event.can_change %}info{% else %}danger{% endif %} fa fa-user-minus ps-2"></i>
                                 {% else %}
-                                    <i class="text-body-secondary far fa-user ps-2"></i>
+                                    <i class="text-{% if event.can_change %}info{% else %}body-secondary{% endif %} far fa-user ps-2"></i>
                                 {% endif %}
                             </span>
                         </div>
@@ -83,12 +72,34 @@
                             <a class="grid-signup d-flex flex-row justify-content-end event-list-item-link w-100"
                                href="{{ event.get_absolute_url }}">
                                 <div class="d-flex flex-column align-items-end justify-content-center">
-                                    <div class="position-relative">
-                                        <span class="fas fa-users"></span>
-                                        {% if event.pending_disposition_count %}
-                                            <span class="pending-indicator"></span>
-                                        {% endif %}
-                                        {{ stats.confirmed_count }}
+                                    <div>
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="{% if event|viewable_by %}
+                                                         {% translate "Viewable by" %} {{ event|viewable_by }}.
+                                                     {% else %}
+                                                         {% translate "Event has not been made visible to any groups." %}
+                                                     {% endif %}
+                                                     {% if event.pending_disposition_count %}
+                                                         {% blocktranslate trimmed count waiting=event.pending_disposition_count %}
+                                                             {{ waiting }} participation is awaiting disposition.
+                                                         {% plural %}
+                                                             {{ waiting }} participations are awaiting disposition.
+                                                         {% endblocktranslate %}
+                                                     {% endif %}
+                                                     {% blocktranslate trimmed count confirmed=stats.confirmed_count %}
+                                                         {{ confirmed }} confirmed participation.
+                                                     {% plural %}
+                                                         {{ confirmed }} confirmed participations.
+                                                     {% endblocktranslate %}">
+                                            {% if not event|viewable_by %}
+                                                <i class="fas fa-eye-slash pe-1 text-warning"></i>
+                                            {% endif %}
+                                            {% if event.pending_disposition_count %}
+                                                <i class="fas fa-hourglass-half pe-1 text-warning"></i>
+                                            {% endif %}
+                                            <i class="fas fa-users"></i>
+                                            {{ stats.confirmed_count }}
+                                        </span>
                                     </div>
                                     <div>
                                         {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
