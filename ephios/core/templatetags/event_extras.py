@@ -18,7 +18,6 @@ from ephios.core.signals import (
 from ephios.core.signup.fallback import default_on_exception, get_signup_config_invalid_error
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
-from ephios.extra.permissions import get_groups_with_perms
 
 register = template.Library()
 
@@ -189,20 +188,6 @@ def viewable_by(event, allow_db=False):
     For an event from the EventDetailView queryset, return a string of comma-seperated group names
      of groups that are considered to be able to view the event like displayed in the event form.
     """
-    try:
-        names_can_view = {perm.group.name for perm in event.view_permissions}
-        names_can_change = {perm.group.name for perm in event.change_permissions}
-    except AttributeError as exc:
-        if not allow_db:
-            raise ValueError(
-                "Event has no permission attribute. Prefetch them or allow db access in this filter."
-            ) from exc
-        responsible_groups = get_groups_with_perms(
-            event, only_with_perms_in=["change_event"], accept_global_perms=False
-        )
-        names_can_change = {group.name for group in responsible_groups}
-        visible_for = get_groups_with_perms(
-            event, only_with_perms_in=["view_event"], accept_global_perms=False
-        ).exclude(id__in=responsible_groups)
-        names_can_view = {group.name for group in visible_for}
+    names_can_view = {perm.group.name for perm in event.view_permissions}
+    names_can_change = {perm.group.name for perm in event.change_permissions}
     return ", ".join(names_can_view - names_can_change)

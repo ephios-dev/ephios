@@ -484,6 +484,13 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
 
     def get_context_data(self, **kwargs):
         kwargs["can_change_event"] = self.request.user.has_perm("core.change_event", self.object)
+        responsible_groups = get_groups_with_perms(
+            self.object, only_with_perms_in=["change_event"], accept_global_perms=False
+        )
+        visible_for = get_groups_with_perms(
+            self.object, only_with_perms_in=["view_event"], accept_global_perms=False
+        ).exclude(id__in=responsible_groups)
+        kwargs["visible_for"] = ", ".join(group.name for group in visible_for)
         return super().get_context_data(**kwargs)
 
 
