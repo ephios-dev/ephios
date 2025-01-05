@@ -120,6 +120,17 @@
             <div class="card-text text-body-secondary">
                 {{ event.description|rich_text:"h1,h2" }}
             </div>
+            {% if can_change_event %}
+                <div class="card-text text-body-secondary mb-2">
+                    {% if not event|viewable_by:True %}
+                        <i class="fas fa-eye-slash text-warning"></i>
+                        {% translate "Event has not been made visible to any groups." %}
+                    {% else %}
+                        <i class="fas fa-eye"></i>
+                        {% translate "Viewable by" %} {{ event|viewable_by:True }}.
+                    {% endif %}
+                </div>
+            {% endif %}
             <div class="event-plugin-content">
                 {% event_plugin_content event request as plugin_content %}
                 {% for item in plugin_content %}
