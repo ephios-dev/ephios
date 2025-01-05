@@ -273,9 +273,6 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     individual_start_time = DateTimeField(_("individual start time"), null=True)
     individual_end_time = DateTimeField(_("individual end time"), null=True)
 
-    # human readable comment
-    comment = models.CharField(_("Comment"), max_length=255, blank=True)
-
     """
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
@@ -318,6 +315,29 @@ PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
     unlogged_fields=["id", "data", "abstractparticipation_ptr"],
     attach_to_func=lambda instance: (Event, instance.shift.event_id),
 )
+
+
+class ParticipationComment(Model):
+    class Visibility(models.IntegerChoices):
+        RESPONSIBLES_ONLY = 0, _("responsibles only")
+        PARTICIPANT = 1, _("responsibles and corresponding participant")
+        PUBLIC = 2, _("everyone")
+
+    participation = models.ForeignKey(
+        AbstractParticipation, on_delete=models.CASCADE, related_name="comments"
+    )
+    authored_by_responsible = models.ForeignKey(
+        "UserProfile", on_delete=models.SET_NULL, blank=True, null=True
+    )
+    visibile_for = IntegerField(
+        _("visible for"), choices=Visibility.choices, default=Visibility.RESPONSIBLES_ONLY
+    )
+    text = models.CharField(_("Comment"), max_length=255)
+
+    def __str__(self):
+        return _("Participation comment for {participation}").format(
+            participation=self.participation
+        )
 
 
 class Shift(DatetimeDisplayMixin, Model):
