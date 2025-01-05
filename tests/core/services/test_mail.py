@@ -9,5 +9,5 @@ RE_EPHIOS_LOGO_BASE64 = (
 
 
 def test_base64_static_file_encode():
-    encoded = base64_static_file("ephios/img/ephios-text-black.png")
+    encoded = base64_static_file("ephios/img/brand/nav_logo.png")
     assert re.compile(RE_EPHIOS_LOGO_BASE64).match(encoded)

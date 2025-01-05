@@ -15,6 +15,7 @@ from webpush import send_user_notification
 
 from ephios.core.models.users import Notification
 from ephios.core.services.mail.send import send_mail
+from ephios.core.templatetags.settings_extras import as_brand_static_path
 from ephios.extra.i18n import language
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ def send_all_notifications():
     CACHE_LOCK_KEY = "notification_sending_running"
     if cache.get(CACHE_LOCK_KEY):
         return
-    cache.set(CACHE_LOCK_KEY, str(uuid.uuid4()), timeout=1800)
+    cache.set(CACHE_LOCK_KEY, str(uuid.uuid4()), timeout=1800)  # will be cleared if no errors occur
     backends = set(installed_notification_backends())
 
     for backend in backends:
@@ -167,7 +168,7 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
             payload = {
                 "head": str(notification.subject),
                 "body": notification.body,
-                "icon": "/static/ephios/img/ephios-symbol-red.svg",
+                "icon": as_brand_static_path("appicon-prod.svg"),
             }
             if actions := notification.get_actions():
                 payload["url"] = actions[0][1]

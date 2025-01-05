@@ -166,7 +166,7 @@ class NewProfileNotification(AbstractNotificationHandler):
         ).format(
             url=cls._get_reset_url(notification),
             email=notification.user.email,
-            platform_name=dynamic_settings.PLATFORM_NAME,
+            platform=dynamic_settings.PLATFORM_NAME,
             org_name=org_name,
         )
 

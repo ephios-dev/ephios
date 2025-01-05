@@ -1,3 +1,4 @@
+{% load settings_extras %}
 {% load statici18n %}
 {% load i18n %}
 {% load static %}
@@ -9,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="created" content="{% now "c" %}">
         <title>{% block title %}{% endblock %} - {{ platform_name }}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="{% static "ephios/img/ephios-symbol-red.svg" %}">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static "appicon-svg-prod.svg"|as_brand_static_path %}">
         <link rel="manifest" href="/manifest.json">
 
     <!-- Add to homescreen for Chrome on Android -->
@@ -70,8 +71,8 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
                 <div class="container">
                     <a class="navbar-brand" href="/">
-                        <img src="{% static brand_logo_static_path %}"
-                             alt="ephios"
+                        <img src="{% static "nav_logo.png"|as_brand_static_path %}"
+                             alt="{{ platform_name }}"
                              class="d-inline-block" width="75">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

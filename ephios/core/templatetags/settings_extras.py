@@ -36,8 +36,6 @@ def make_absolute(location):
     return urljoin(dynamic_settings.SITE_URL, location)
 
 
-@register.simple_tag(takes_context=True)
-def brand_logo_static_path(context):
-    from ephios.core.context import get_brand_logo_static_path
-
-    return get_brand_logo_static_path(context.get("request"))
+@register.filter
+def as_brand_static_path(path):
+    return f"{dynamic_settings.BRAND_STATIC_PATH}{path}"

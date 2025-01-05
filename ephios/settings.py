@@ -238,6 +238,7 @@ DEFAULT_SITE_URL = env.str("SITE_URL").rstrip("/")
 DEFAULT_USERCONTENT_URL = MEDIA_URL
 DEFAULT_PLATFORM_NAME = "ephios"
 DEFAULT_BRAND_COLOR = "#ff033f"
+DEFAULT_BRAND_STATIC_PATH = "ephios/img/brand/"
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "ephios/static"),)
 STATICFILES_FINDERS = [
@@ -373,34 +374,6 @@ MESSAGE_TAGS = {
     constants.WARNING: "alert-warning",
     constants.ERROR: "alert-danger",
 }
-
-# PWA
-PWA_APP_ICONS = [
-    {
-        "src": "/static/ephios/img/ephios-192x.png",
-        "sizes": "192x192",
-        "type": "image/png",
-        "purpose": "maskable",
-    },
-    {
-        "src": "/static/ephios/img/ephios-512x.png",
-        "sizes": "512x512",
-        "type": "image/png",
-        "purpose": "maskable",
-    },
-    {
-        "src": "/static/ephios/img/ephios-1024x.png",
-        "sizes": "1024x1024",
-        "type": "image/png",
-        "purpose": "maskable",
-    },
-    {
-        "src": f"/static/ephios/img/ephios-symbol-{'yellow' if DEBUG else 'red'}.svg",
-        "sizes": "any",
-        "type": "image/svg+xml",
-        "purpose": "any",
-    },
-]
 
 # django-webpush
 VAPID_PRIVATE_KEY_PATH = env.str(
