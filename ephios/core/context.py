@@ -54,4 +54,5 @@ def ephios_base_context(request):
         "DEBUG": settings.DEBUG,
         "organization_name": global_preferences_registry.manager()["general__organization_name"],
         "platform_name": dynamic_settings.PLATFORM_NAME,
+        "brand_color": dynamic_settings.BRAND_COLOR,
     }
