@@ -1,12 +1,18 @@
+import logging
+import os
+from functools import lru_cache
 from urllib.parse import urljoin
 
 from django import template
+from django.conf import settings
+from django.contrib.staticfiles import finders
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models.users import IdentityProvider
 
 register = template.Library()
+logger = logging.getLogger(__name__)
 
 
 @register.simple_tag
@@ -36,7 +42,16 @@ def make_absolute(location):
     return urljoin(dynamic_settings.SITE_URL, location)
 
 
+@lru_cache()
+def _static_file_exists(path):
+    return bool(finders.find(path))
+
+
 @register.filter
 def as_brand_static_path(path):
-    # TODO check that the item at the path exists. if not, try with the default brand static path
-    return f"{dynamic_settings.BRAND_STATIC_PATH}{path}"
+    result = os.path.join(dynamic_settings.BRAND_STATIC_PATH, path)
+    if not _static_file_exists(result):
+        fallback = os.path.join(settings.DEFAULT_BRAND_STATIC_PATH, path)
+        logger.warning(f"could not find brand static file '{result}', using '{fallback}' instead")
+        return fallback
+    return result
