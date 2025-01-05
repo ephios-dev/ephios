@@ -150,6 +150,8 @@ register_model_for_logging(Event, ModelFieldsLogConfig())
 class ParticipationQuerySet(PolymorphicQuerySet):
 
     def viewable_by(self, user):
+        if user.is_anonymous:
+            return self.none()
         viewable_events = get_objects_for_user(user, "core.view_event")
         viewable_userprofiles = get_objects_for_user(user, "core.view_userprofile")
         editable_events = get_objects_for_user(user, "core.change_event")
