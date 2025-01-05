@@ -81,7 +81,7 @@ class Event(Model):
     active = BooleanField(default=False, verbose_name=_("active"))
     group_object_permission_set = GenericRelation(
         GroupObjectPermission, object_id_field="object_pk"
-    )
+    )  # GenericRelation allows us to query Groups that have object permissions for this model in a prefetch
 
     objects = ActiveManager()
     all_objects = Manager()
