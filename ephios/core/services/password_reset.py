@@ -24,7 +24,9 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
             html_content = render_to_string(
                 "core/mails/base.html",
                 {
-                    "subject": _("Your ephios password has been changed"),
+                    "subject": _("Your {platform} password has been changed").format(
+                        platform=dynamic_settings.PLATFORM_NAME
+                    ),
                     "body": text_content,
                 },
             )

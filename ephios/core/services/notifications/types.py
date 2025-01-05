@@ -116,13 +116,18 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return _("ephios account updated")
+        return _("{platform} account updated").format(platform=dynamic_settings.PLATFORM_NAME)
 
     @classmethod
     def get_body(cls, notification):
+        org_name = global_preferences_registry.manager().get("general__organization_name")
         return _(
-            "You're receiving this email because your account at ephios has been updated."
-        ).format(url=cls._get_personal_data_url(notification), email=notification.user.email)
+            "You're receiving this email because your {platform} account ({email} at {org_name}) has been updated."
+        ).format(
+            platform=dynamic_settings.PLATFORM_NAME,
+            org_name=org_name,
+            email=notification.user.email,
+        )
 
     @classmethod
     def get_actions(cls, notification):
@@ -149,16 +154,21 @@ class NewProfileNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        org_name = global_preferences_registry.manager().get("general__organization_name")
-        return _("Welcome to {}!").format(org_name)
+        return _("Welcome to {}!").format(dynamic_settings.PLATFORM_NAME)
 
     @classmethod
     def get_body(cls, notification):
+        org_name = global_preferences_registry.manager().get("general__organization_name")
         return _(
-            "You're receiving this email because a new account has been created for you at ephios.\n"
+            "You're receiving this email because a new account has been created for you at {platform} ({org_name}).\n"
             "Please go to the following page and choose a password: {url} \n"
             "Your username is your email address: {email}"
-        ).format(url=cls._get_reset_url(notification), email=notification.user.email)
+        ).format(
+            url=cls._get_reset_url(notification),
+            email=notification.user.email,
+            platform_name=dynamic_settings.PLATFORM_NAME,
+            org_name=org_name,
+        )
 
     @classmethod
     def get_actions(cls, notification):

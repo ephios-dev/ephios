@@ -6,9 +6,9 @@
     <div class="block-center">
         <h1>{% translate "Integrations" %}</h1>
         <p>
-            {% blocktranslate trimmed %}
-                Other applications can integrate with ephios by asking you for access to your data.
-                You can also create personal API tokens to access ephios from other applications.
+            {% blocktranslate trimmed with platform=platform_name %}
+                Other applications can integrate with {{ platform }} by asking you for access to your data.
+                You can also create personal API tokens to access {{ platform }} from other applications.
                 If you are unsure about the origins of a token or the security of the third party application
                 please revoke access.
             {% endblocktranslate %}

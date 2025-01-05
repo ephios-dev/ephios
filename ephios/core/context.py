@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation
 from ephios.core.signals import footer_link, html_head, nav_link, navbar_html
 
@@ -61,4 +62,5 @@ def ephios_base_context(request):
         "PWA_APP_ICONS": settings.PWA_APP_ICONS,
         "DEBUG": settings.DEBUG,
         "organization_name": global_preferences_registry.manager()["general__organization_name"],
+        "platform_name": dynamic_settings.PLATFORM_NAME,
     }

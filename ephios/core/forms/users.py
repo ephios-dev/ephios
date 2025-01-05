@@ -20,6 +20,7 @@ from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 
 from ephios.core.consequences import WorkingHoursConsequenceHandler
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import QualificationGrant, UserProfile, WorkingHours
 from ephios.core.models.users import IdentityProvider
 from ephios.core.services.notifications.backends import enabled_notification_backends
@@ -132,7 +133,6 @@ class GroupForm(PermissionFormMixin, ModelForm):
         required=False,
     )
     is_management_group = PermissionField(
-        label=_("Can change permissions and manage ephios"),
         help_text=_(
             "If checked, users in this group can edit all users, change groups, their permissions and memberships "
             "as well as define eventtypes and qualifications."
@@ -171,6 +171,9 @@ class GroupForm(PermissionFormMixin, ModelForm):
         for field_name, field in extra_fields:
             self.base_fields[field_name] = field
         super().__init__(**kwargs)
+        self.fields["is_management_group"].label = _(
+            "Can change permissions and manage {platform}"
+        ).format(platform=dynamic_settings.PLATFORM_NAME)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("name"),
@@ -252,7 +255,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
     is_staff = PermissionField(
         label=_("Administrator"),
         help_text=_(
-            "If checked, this user can change technical ephios settings as well as edit all user profiles, "
+            "If checked, this user can change technical settings as well as edit all user profiles, "
             "groups, qualifications, events and event types."
         ),
         permissions=MANAGEMENT_PERMISSIONS,

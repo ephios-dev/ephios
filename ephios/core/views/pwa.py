@@ -7,20 +7,22 @@ from django.views import View
 from django.views.generic import TemplateView
 from dynamic_preferences.registries import global_preferences_registry
 
+from ephios.core.dynamic import dynamic_settings
+
 
 class PWAManifestView(View):
     def get(self, request, *args, **kwargs):
         org_name = global_preferences_registry.manager().get("general__organization_name")
         manifest_json = {
-            "name": f"ephios {org_name}",
-            "short_name": "ephios",
-            "description": "ephios manages events for medical services",
+            "name": org_name,
+            "short_name": dynamic_settings.PLATFORM_NAME,
+            "description": f"{dynamic_settings.PLATFORM_NAME} manages events for {org_name}",
             "id": "/",
             "start_url": "/",
             "display": "standalone",
             "scope": "/",
             "background_color": "#fff",
-            "theme_color": "#ff033f",
+            "theme_color": dynamic_settings.BRAND_COLOR,
             "status_bar": "default",
             "dir": "auto",
             "icons": settings.PWA_APP_ICONS,
