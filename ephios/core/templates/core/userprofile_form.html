@@ -25,8 +25,8 @@
     </div>
     {% if oidc_group_claims %}
         <div class="alert alert-warning" role="alert">
-            {% blocktranslate trimmed %}
-                This ephios instance uses an identity provider that manages group memberships. Any changes to the group
+            {% blocktranslate trimmed with platform=platform_name %}
+                This {{ platform }} instance uses an identity provider that manages group memberships. Any changes to the group
                 memberships here will be overwritten by the identity provider when a user logs in the next time using
                 the identity provider.
             {% endblocktranslate %}

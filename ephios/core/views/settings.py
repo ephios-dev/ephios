@@ -56,7 +56,7 @@ def get_available_settings_sections(request):
     if request.user.is_staff:
         sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
-                "label": _("ephios instance"),
+                "label": _("Functions"),
                 "url": reverse("core:settings_instance"),
                 "active": request.resolver_match.url_name == "settings_instance",
             }

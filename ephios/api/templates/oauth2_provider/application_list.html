@@ -5,9 +5,9 @@
     <div class="block-center">
         <h3 class="block-center-heading">{% translate "App integrations" %}</h3>
         <p>
-            {% blocktranslate trimmed %}
-                On this page you can configure other apps and programs to work with ephios as an authentication provider
-                using the OAuth2-standard. Other ways to integrate with ephios include the plugin system and the API.
+            {% blocktranslate trimmed with platform=platform_name %}
+                On this page you can configure other apps and programs to work with {{ platform }} as an authentication provider
+                using the OAuth2-standard. Other ways to integrate with {{ platform }} include the plugin system and the API.
                 More detailed information can be found in the documentation.
             {% endblocktranslate %}
         </p>
