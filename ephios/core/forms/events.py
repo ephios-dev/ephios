@@ -39,7 +39,8 @@ class EventForm(forms.ModelForm):
         queryset=Group.objects.none(),
         label=_("Visible for"),
         help_text=_(
-            "Select groups which the event shall be visible for. Regardless, the event will be visible for users that already signed up."
+            "Select groups which the event shall be visible for. Regardless, the event will be "
+            "visible for responsible groups and users that already signed up."
         ),
         widget=Select2MultipleWidget,
         required=False,
@@ -48,6 +49,7 @@ class EventForm(forms.ModelForm):
         queryset=UserProfile.objects.all(),
         required=False,
         label=_("Responsible persons"),
+        help_text=_("Individuals can also be made responsible for an event."),
         widget=MultiUserProfileWidget,
     )
     responsible_groups = forms.ModelMultipleChoiceField(
@@ -64,16 +66,17 @@ class EventForm(forms.ModelForm):
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
         can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
-
         if (event := kwargs.get("instance", None)) is not None:
             self.eventtype = event.type
             responsible_users = get_users_with_perms(
                 event, only_with_perms_in=["change_event"], with_group_users=False
             )
-            responsible_groups = get_groups_with_perms(event, only_with_perms_in=["change_event"])
-            visible_for = get_groups_with_perms(event, only_with_perms_in=["view_event"]).exclude(
-                id__in=responsible_groups
+            responsible_groups = get_groups_with_perms(
+                event, only_with_perms_in=["change_event"], accept_global_perms=False
             )
+            visible_for = get_groups_with_perms(
+                event, only_with_perms_in=["view_event"], accept_global_perms=False
+            ).exclude(id__in=responsible_groups)
 
             self.locked_visible_for_groups = set(visible_for.exclude(id__in=can_publish_for_groups))
             kwargs["initial"] = {
@@ -101,12 +104,18 @@ class EventForm(forms.ModelForm):
         self.fields["visible_for"].queryset = can_publish_for_groups
         self.fields["visible_for"].disabled = not can_publish_for_groups
         if self.locked_visible_for_groups:
-            self.fields["visible_for"].help_text = _(
-                "Select groups which the event shall be visible for. "
-                "This event is also visible for <b>{groups}</b>, "
-                "but you don't have the permission to change visibility "
+            self.fields["visible_for"].help_text += " " + _(
+                "Also, this event is visible to <b>{groups}</b>, "
+                "but you don't have permission to change visibility "
                 "for those groups."
             ).format(groups=", ".join(group.name for group in self.locked_visible_for_groups))
+
+        groups_with_global_change_permissions = get_groups_with_perms(
+            None, only_with_perms_in=["core.change_event"]
+        )
+        self.fields["responsible_groups"].help_text = _(
+            "This event is always editable by <b>{groups}</b>, because they manage ephios."
+        ).format(groups=", ".join(group.name for group in groups_with_global_change_permissions))
 
     def save(self, commit=True):
         if not self.instance.pk:
