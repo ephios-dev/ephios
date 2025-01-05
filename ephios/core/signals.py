@@ -14,15 +14,6 @@ of every page. You will get the request as the keyword argument
 ``request`` and are expected to return HTML.
 """
 
-brand_logo_static_path = PluginSignal()
-"""
-This signal allows you to overwrite the default brand logo path.
-You will get the request as the keyword argument
-``request`` and are expected to return a string containing the path to 
-a static file.
-"""
-
-
 register_consequence_handlers = PluginSignal()
 """
 This signal is sent out to get all known consequence handlers. Receivers should return a list of

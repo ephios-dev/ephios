@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="created" content="{% now "c" %}">
         <title>{% translate "An error occurred" %}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="{% static "ephios/img/ephios-symbol-red.svg" %}">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static "appicon-svg-prod.svg"|as_brand_static_path %}">
         {% compress css %}
             <link type="text/css" media="screen" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}">
             <link type="text/x-scss" href="{% static 'ephios/scss/main.scss' %}" rel="stylesheet" media="screen">
@@ -21,7 +21,7 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
                 <div class="container">
                     <a class="navbar-brand" href="/">
-                        <img src="{% static brand_logo_static_path|default:"ephios/img/ephios-text-black.png" %}"
+                        <img src="{% static |default:"ephios/img/ephios-text-black.png" %}"
                              alt="ephios"
                              class="d-inline-block" width="75">
                     </a>

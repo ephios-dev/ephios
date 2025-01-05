@@ -7,16 +7,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation
 from ephios.core.signals import footer_link, html_head, nav_link, navbar_html
-
-
-def get_brand_logo_static_path(request):
-    from ephios.core.signals import brand_logo_static_path
-
-    for _, result in brand_logo_static_path.send(None, request=request):
-        if result:
-            return result
-    return "ephios/img/ephios-text-black.png"
-
+from ephios.core.views.pwa import get_pwa_app_icons
 
 NAV_USERPROFILE_KEY = "__userprofile__"
 
@@ -53,13 +44,13 @@ def ephios_base_context(request):
         "nav": nav,
         "nav_groups": nav_groups,
         "nav_userprofile": nav_userprofile,
-        "brand_logo_static_path": get_brand_logo_static_path(request),
         "signalled_html_head": _html_head,
         "signalled_nav_html": _navbar_additional_html,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": settings.EPHIOS_VERSION,
-        "PWA_APP_ICONS": settings.PWA_APP_ICONS,
+        "PWA_APP_ICONS": get_pwa_app_icons(),
+        "PWA_APP_SPLASH_SCREEN": [],
         "DEBUG": settings.DEBUG,
         "organization_name": global_preferences_registry.manager()["general__organization_name"],
         "platform_name": dynamic_settings.PLATFORM_NAME,

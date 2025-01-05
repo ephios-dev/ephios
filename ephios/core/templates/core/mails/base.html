@@ -1,4 +1,5 @@
 {% load settings_extras %}
+{% load settings_extras %}
 {% load email_extras %}
 {% load settings_extras %}
 {% load rich_text %}
@@ -123,9 +124,8 @@
                         <tr>
                             <td class="top-logo">
                                 <a href="{% site_url %}">
-                                    {% brand_logo_static_path as logo_path %}
                                     <img alt="Logo" height="48"
-                                         src="data:image/png;base64,{% base64_static_file logo_path %}"/>
+                                         src="data:image/png;base64,{% base64_static_file "email_logo.png"|as_brand_static_path %}"/>
                                 </a>
                             </td>
                         </tr>

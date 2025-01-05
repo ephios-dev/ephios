@@ -10,6 +10,35 @@ from dynamic_preferences.registries import global_preferences_registry
 from ephios.core.dynamic import dynamic_settings
 
 
+def get_pwa_app_icons():
+    return [
+        {
+            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-192x.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable",
+        },
+        {
+            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-512x.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable",
+        },
+        {
+            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-1024x.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "maskable",
+        },
+        {
+            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-svg-{'debug' if settings.DEBUG else 'prod'}.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any",
+        },
+    ]
+
+
 class PWAManifestView(View):
     def get(self, request, *args, **kwargs):
         org_name = global_preferences_registry.manager().get("general__organization_name")
@@ -25,14 +54,19 @@ class PWAManifestView(View):
             "theme_color": dynamic_settings.BRAND_COLOR,
             "status_bar": "default",
             "dir": "auto",
-            "icons": settings.PWA_APP_ICONS,
+            "icons": get_pwa_app_icons(),
             "lang": get_language(),
             "shortcuts": [
                 {
                     "name": _("Events"),
                     "description": _("Show the event list"),
                     "url": reverse("core:event_list"),
-                    "icons": [{"src": "/static/ephios/img/ephios-192x.png", "sizes": "192x192"}],
+                    "icons": [
+                        {
+                            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-192x.png",
+                            "sizes": "192x192",
+                        }
+                    ],
                 },
             ],
         }
