@@ -46,7 +46,9 @@ def _make_permission_names_qualified(permission_names, obj: Optional):
     return qualified_permission_names
 
 
-def get_groups_with_perms(obj=None, *, only_with_perms_in=None, must_have_all_perms=False):
+def get_groups_with_perms(
+    obj=None, *, only_with_perms_in=None, must_have_all_perms=False, accept_global_perms=True
+):
     qs = Group.objects.all()
     qualified_permission_names = _make_permission_names_qualified(only_with_perms_in or [], obj)
     required_perms = get_permissions_from_qualified_names(qualified_permission_names)
@@ -66,22 +68,35 @@ def get_groups_with_perms(obj=None, *, only_with_perms_in=None, must_have_all_pe
 
     if must_have_all_perms:
         for perm in required_perms:
-            if obj is not None:
-                qs = qs.filter(
-                    Q(permissions=perm)
-                    | Q(
-                        **{
-                            f"{group_perms_rel_name}__permission": perm,
-                            **obj_filter,
-                        }
+            if accept_global_perms:
+                if obj is not None:
+                    qs = qs.filter(
+                        Q(permissions=perm)
+                        | Q(
+                            **{
+                                f"{group_perms_rel_name}__permission": perm,
+                                **obj_filter,
+                            }
+                        )
                     )
-                )
+                else:
+                    qs = qs.filter(permissions=perm)
             else:
-                qs = qs.filter(permissions=perm)
+                if obj is not None:
+                    qs = qs.filter(
+                        Q(
+                            **{
+                                f"{group_perms_rel_name}__permission": perm,
+                                **obj_filter,
+                            }
+                        )
+                    )
+                else:
+                    qs = qs.none()
     else:
         if obj is not None:
             qs = qs.filter(
-                Q(permissions__in=required_perms)
+                Q(permissions__in=required_perms if accept_global_perms else [])
                 | Q(
                     **{
                         f"{group_perms_rel_name}__permission__in": required_perms,
@@ -89,7 +104,7 @@ def get_groups_with_perms(obj=None, *, only_with_perms_in=None, must_have_all_pe
                     }
                 )
             )
-        else:
+        elif required_perms and accept_global_perms:
             qs = qs.filter(Q(permissions__in=required_perms))
     return qs.distinct()
 
