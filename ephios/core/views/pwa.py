@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.translation import get_language
@@ -8,31 +9,33 @@ from django.views.generic import TemplateView
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
+from ephios.core.templatetags.settings_extras import as_brand_static_path
 
 
 def get_pwa_app_icons():
-    # TODO use get_static_prefix and as_brand_static_path
     return [
         {
-            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-192x.png",
+            "src": staticfiles_storage.url(as_brand_static_path("appicon-192x.png")),
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable",
         },
         {
-            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-512x.png",
+            "src": staticfiles_storage.url(as_brand_static_path("appicon-512x.png")),
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable",
         },
         {
-            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-1024x.png",
+            "src": staticfiles_storage.url(as_brand_static_path("appicon-1024x.png")),
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose": "maskable",
         },
         {
-            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-svg-{'debug' if settings.DEBUG else 'prod'}.svg",
+            "src": staticfiles_storage.url(
+                as_brand_static_path(f"appicon-svg-{'debug' if settings.DEBUG else 'prod'}.svg")
+            ),
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any",
@@ -64,7 +67,9 @@ class PWAManifestView(View):
                     "url": reverse("core:event_list"),
                     "icons": [
                         {
-                            "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-192x.png",
+                            "src": staticfiles_storage.url(
+                                as_brand_static_path("appicon-192x.png")
+                            ),
                             "sizes": "192x192",
                         }
                     ],
