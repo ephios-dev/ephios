@@ -43,7 +43,7 @@ class BaseParticipationForm(forms.ModelForm):
 
     class Meta:
         model = AbstractParticipation
-        fields = ["individual_start_time", "individual_end_time", "comment"]
+        fields = ["individual_start_time", "individual_end_time"]
 
     def __init__(self, *args, **kwargs):
         instance = kwargs["instance"]
