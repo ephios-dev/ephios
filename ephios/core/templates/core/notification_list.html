@@ -2,6 +2,10 @@
 {% load rich_text %}
 {% load i18n %}
 
+{% block title %}
+    {% trans "Notifications" %}
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header clearfix">
         {% translate "Notifications" %}
@@ -34,7 +38,8 @@
                     </div>
                     <div class="col">
                         {% for label, url in notification.get_actions %}
-                            <a class="btn btn-sm {% if not notification.read and not notification.is_obsolete %}btn-secondary{% else %}btn-outline-secondary{% endif %}" href="{{ url }}">{{ label }}</a>
+                            <a class="btn btn-sm {% if not notification.read and not notification.is_obsolete %}btn-secondary{% else %}btn-outline-secondary{% endif %}"
+                               href="{{ url }}">{{ label }}</a>
                         {% endfor %}
                     </div>
                 </div>

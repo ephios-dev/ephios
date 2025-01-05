@@ -122,11 +122,10 @@ class ProfileUpdateNotification(AbstractNotificationHandler):
     def get_body(cls, notification):
         org_name = global_preferences_registry.manager().get("general__organization_name")
         return _(
-            "You're receiving this email because your {platform} account ({email} at {org_name}) has been updated."
+            "You're receiving this email because your {platform} account at {org_name} has been updated."
         ).format(
             platform=dynamic_settings.PLATFORM_NAME,
             org_name=org_name,
-            email=notification.user.email,
         )
 
     @classmethod
@@ -160,7 +159,7 @@ class NewProfileNotification(AbstractNotificationHandler):
     def get_body(cls, notification):
         org_name = global_preferences_registry.manager().get("general__organization_name")
         return _(
-            "You're receiving this email because a new account has been created for you at {platform} ({org_name}).\n"
+            "You're receiving this email because a new {platform} account has been created for you at {org_name}.\n"
             "Please go to the following page and choose a password: {url} \n"
             "Your username is your email address: {email}"
         ).format(
