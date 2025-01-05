@@ -63,7 +63,6 @@ mysql = ["mysqlclient"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-poetry = "^1.8.2"
 black = ">=22.8,<25.0"
 pre-commit = ">=2.20,<5.0"
 django-debug-toolbar = ">=3.6,<5.0"
