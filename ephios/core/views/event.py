@@ -212,6 +212,21 @@ class EventListView(LoginRequiredMixin, ListView):
                     default=False,
                     output_field=BooleanField(),
                 ),
+                is_responsible=Case(
+                    When(
+                        id__in=get_objects_for_user(
+                            self.request.user,
+                            ["core.change_event"],
+                            klass=Event,
+                            accept_global_perms=False,
+                            with_superuser=False,
+                            any_perm=True,  # needed to avoid global permissions
+                        ),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=BooleanField(),
+                ),
             )
             .annotate(
                 pending_disposition_count=Count(
