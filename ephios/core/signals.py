@@ -219,36 +219,52 @@ def register_core_notification_backends(sender, **kwargs):
 @receiver(nav_link, dispatch_uid="ephios.core.signals.register_nav_links")
 def register_nav_links(sender, request, **kwargs):
     return (
-        [
-            {
-                "label": _("Working hours"),
-                "url": reverse_lazy("core:workinghours_list"),
-                "active": request.resolver_match
-                and request.resolver_match.url_name == "workinghours_list",
-                "group": _("Management"),
-            },
-            {
-                "label": _("Users"),
-                "url": reverse_lazy("core:userprofile_list"),
-                "active": request.resolver_match
-                and request.resolver_match.url_name == "userprofile_list",
-                "group": _("Management"),
-            },
-        ]
-        if request.user.has_perm("core.view_userprofile")
-        else []
-    ) + (
-        [
-            {
-                "label": _("Groups"),
-                "url": reverse_lazy("core:group_list"),
-                "active": request.resolver_match
-                and request.resolver_match.url_name == "group_list",
-                "group": _("Management"),
-            }
-        ]
-        if request.user.has_perm("auth.view_group")
-        else []
+        (
+            [
+                {
+                    "label": _("Working hours"),
+                    "url": reverse_lazy("core:workinghours_list"),
+                    "active": request.resolver_match
+                    and request.resolver_match.url_name == "workinghours_list",
+                    "group": _("Management"),
+                },
+                {
+                    "label": _("Users"),
+                    "url": reverse_lazy("core:userprofile_list"),
+                    "active": request.resolver_match
+                    and request.resolver_match.url_name == "userprofile_list",
+                    "group": _("Management"),
+                },
+            ]
+            if request.user.has_perm("core.view_userprofile")
+            else []
+        )
+        + (
+            [
+                {
+                    "label": _("Groups"),
+                    "url": reverse_lazy("core:group_list"),
+                    "active": request.resolver_match
+                    and request.resolver_match.url_name == "group_list",
+                    "group": _("Management"),
+                }
+            ]
+            if request.user.has_perm("auth.view_group")
+            else []
+        )
+        + (
+            [
+                {
+                    "label": _("Settings"),
+                    "url": reverse_lazy("core:settings_instance"),
+                    "active": request.resolver_match
+                    and request.resolver_match.url_name == "settings_instance",
+                    "group": _("Management"),
+                }
+            ]
+            if request.user.is_staff
+            else []
+        )
     )
 
 

@@ -11,6 +11,7 @@ from ephios.core.dynamic import dynamic_settings
 
 
 def get_pwa_app_icons():
+    # TODO use get_static_prefix and as_brand_static_path
     return [
         {
             "src": f"/static/{dynamic_settings.BRAND_STATIC_PATH}appicon-192x.png",
@@ -43,7 +44,7 @@ class PWAManifestView(View):
     def get(self, request, *args, **kwargs):
         org_name = global_preferences_registry.manager().get("general__organization_name")
         manifest_json = {
-            "name": org_name,
+            "name": f"{dynamic_settings.PLATFORM_NAME} {org_name}",
             "short_name": dynamic_settings.PLATFORM_NAME,
             "description": f"{dynamic_settings.PLATFORM_NAME} manages events for {org_name}",
             "id": "/",

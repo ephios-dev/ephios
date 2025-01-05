@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import MinimumLengthValidator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
+from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
 
@@ -18,9 +19,11 @@ class CustomMinimumLengthValidator(MinimumLengthValidator):
                 token.revoke()
 
             # send notification to user
+            org_name = global_preferences_registry.manager().get("general__organization_name")
             text_content = _(
-                "Your password for {site} has been changed. If you didn't request this change, contact an administrator immediately."
-            ).format(site=dynamic_settings.SITE_URL)
+                "The password for your {platform} account at {org_name} has been changed. "
+                "If you didn't request this change, contact an administrator immediately."
+            ).format(platform=dynamic_settings.PLATFORM_NAME, org_name=org_name)
             html_content = render_to_string(
                 "core/mails/base.html",
                 {

@@ -6,6 +6,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext_lazy
 from django.views.generic import FormView, TemplateView
 from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
@@ -56,7 +57,7 @@ def get_available_settings_sections(request):
     if request.user.is_staff:
         sections[SETTINGS_MANAGEMENT_SECTION_KEY].append(
             {
-                "label": _("Functions"),
+                "label": pgettext_lazy("Settings section name", "General"),
                 "url": reverse("core:settings_instance"),
                 "active": request.resolver_match.url_name == "settings_instance",
             }

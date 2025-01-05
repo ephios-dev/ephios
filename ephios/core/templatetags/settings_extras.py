@@ -38,4 +38,5 @@ def make_absolute(location):
 
 @register.filter
 def as_brand_static_path(path):
+    # TODO check that the item at the path exists. if not, try with the default brand static path
     return f"{dynamic_settings.BRAND_STATIC_PATH}{path}"
