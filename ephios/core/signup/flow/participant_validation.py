@@ -126,7 +126,7 @@ def check_conflicting_participations(shift, participant):
     ):
         raise SignupDisallowedError(
             _("You are already confirmed for other shifts at this time: {shifts}.").format(
-                shifts=", ".join(str(conflicting_shift) for conflicting_shift in conflicts)
+                shifts=", ".join(str(conflict.shift) for conflict in conflicts)
             )
         )
 
