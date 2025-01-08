@@ -2,7 +2,7 @@ from dateutil.rrule import rrulestr
 from django.core.exceptions import ValidationError
 from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
-from django.forms.widgets import Input
+from django.forms.widgets import Input, Widget
 from django.utils.translation import gettext as _
 
 
@@ -72,3 +72,16 @@ class RecurrenceField(CharField):
             return rrulestr(value, ignoretz=True)
         except (TypeError, KeyError, ValueError) as e:
             raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e)) from e
+
+
+class PreviousCommentWidget(Widget):
+    template_name = "extra/widgets/previous_comments.html"
+
+    def __init__(self, *args, **kwargs):
+        self.comments = kwargs.pop("comments")
+        super().__init__(*args, **kwargs)
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["comments"] = self.comments
+        return context

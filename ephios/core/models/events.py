@@ -285,7 +285,6 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         return bool(
             self.individual_start_time
             or self.individual_end_time
-            or self.comment
             or self.shift.structure.has_customized_signup(self)
         )
 
@@ -329,10 +328,15 @@ class ParticipationComment(Model):
     authored_by_responsible = models.ForeignKey(
         "UserProfile", on_delete=models.SET_NULL, blank=True, null=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
     visibile_for = IntegerField(
         _("visible for"), choices=Visibility.choices, default=Visibility.RESPONSIBLES_ONLY
     )
     text = models.CharField(_("Comment"), max_length=255)
+
+    @property
+    def author(self):
+        return self.authored_by_responsible or self.participation.participant
 
     def __str__(self):
         return _("Participation comment for {participation}").format(
