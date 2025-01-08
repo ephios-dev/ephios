@@ -16,7 +16,7 @@ documentation = "https://docs.ephios.de/en/stable/"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Django = "~5.0.9"
+Django = {version = "~5.0.10", extras = ["argon2"]}
 django-environ = ">=0.11.2,<0.12"
 django-guardian = "^2.4.0"
 django-ical = "^1.8.3"
