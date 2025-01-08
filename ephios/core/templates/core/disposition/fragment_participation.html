@@ -37,6 +37,9 @@
             <button class="btn" type="button" data-bs-toggle="collapse"
                     data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
                     aria-controls="collapseExample">
+                {% if form.instance.comments.exists %}
+                    <span class="fa fa-comment"></span> <span class="pe-2">{{ form.instance.comments.count }}</span>
+                {% endif %}
                 <span class="{% if form.instance.has_customized_signup %}text-dark{% else %}text-secondary{% endif %}">
                     <i class="fas fa-cog"></i>
                     <i class="fas fa-exclamation{% if not form.instance.has_customized_signup %} invisible{% endif %}"></i>
@@ -57,9 +60,10 @@
             <div class="card-body">
                 {{ form.individual_start_time|as_crispy_field }}
                 {{ form.individual_end_time|as_crispy_field }}
-                {% if form.comment.initial %}
-                    {{ form.comment|as_crispy_field }}
+                {% if form.previous_comments %}
+                    {{ form.previous_comments|as_crispy_field }}
                 {% endif %}
+                {{ form.comment|as_crispy_field }}
                 {% block participation_form %}
                 {% endblock %}
                 <div class="mb-n3"></div>

@@ -1,0 +1,5 @@
+<div>
+    {% for comment in comments %}
+        <p>{{ comment.author }} @ {{ comment.created_at }}: {{ comment.text }}</p>
+    {% endfor %}
+</div>
