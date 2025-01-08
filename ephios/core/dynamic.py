@@ -19,7 +19,10 @@ class DynamicSettingsProxy:
                     return None
                 return result
         # default to django settings
-        return getattr(self._django_settings, f"DEFAULT_{name}")
+        return getattr(self._django_settings, self.get_default_key(name))
+
+    def get_default_key(self, settings_key):
+        return f"DEFAULT_{settings_key}"
 
 
 dynamic_settings = DynamicSettingsProxy()

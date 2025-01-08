@@ -51,7 +51,9 @@ def _static_file_exists(path):
 def as_brand_static_path(path):
     result = os.path.join(dynamic_settings.BRAND_STATIC_PATH, path)
     if not _static_file_exists(result):
-        fallback = os.path.join(settings.DEFAULT_BRAND_STATIC_PATH, path)
+        fallback = os.path.join(
+            getattr(settings, dynamic_settings.get_default_key("BRAND_STATIC_PATH")), path
+        )
         logger.warning(f"could not find brand static file '{result}', using '{fallback}' instead")
         return fallback
     return result
