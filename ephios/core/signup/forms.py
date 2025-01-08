@@ -7,9 +7,10 @@ from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
+from ephios.core.models.events import ParticipationComment
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
-from ephios.extra.widgets import CustomSplitDateTimeWidget
+from ephios.extra.widgets import CustomSplitDateTimeWidget, PreviousCommentWidget
 
 
 class BaseParticipationForm(forms.ModelForm):
@@ -21,6 +22,7 @@ class BaseParticipationForm(forms.ModelForm):
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
+    comment = forms.CharField(label=_("Comment"), max_length=255, required=False)
 
     def clean_individual_start_time(self):
         if self.cleaned_data["individual_start_time"] == self.shift.start_time:
@@ -41,18 +43,31 @@ class BaseParticipationForm(forms.ModelForm):
                 self.add_error("individual_end_time", _("End time must not be before start time."))
             return cleaned_data
 
+    def save(self, commit=True):
+        result = super().save(commit)
+        if comment := self.cleaned_data["comment"]:
+            ParticipationComment.objects.create(
+                participation=result, text=comment, authored_by_responsible=self.acting_user
+            )
+        return result
+
     class Meta:
         model = AbstractParticipation
         fields = ["individual_start_time", "individual_end_time"]
 
     def __init__(self, *args, **kwargs):
         instance = kwargs["instance"]
+        self.acting_user = kwargs.pop("acting_user", None)
         kwargs["initial"] = {
             **kwargs.get("initial", {}),
             "individual_start_time": instance.individual_start_time or self.shift.start_time,
             "individual_end_time": instance.individual_end_time or self.shift.end_time,
         }
         super().__init__(*args, **kwargs)
+        if self.instance and self.instance.comments.exists():
+            self.fields["previous_comments"] = forms.CharField(
+                widget=PreviousCommentWidget(comments=self.instance.comments.all()), required=False
+            )
 
     def get_customization_notification_info(self):
         """
