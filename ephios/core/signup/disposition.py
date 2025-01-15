@@ -40,10 +40,9 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
 
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
-        self.fields["comment"].disabled = True
 
     class Meta(BaseParticipationForm.Meta):
-        fields = ["state", "individual_start_time", "individual_end_time", "comment"]
+        fields = ["state", "individual_start_time", "individual_end_time"]
         widgets = {"state": forms.HiddenInput(attrs={"class": "state-input"})}
 
 
@@ -215,6 +214,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             self.request.POST or None,
             queryset=self.object.participations.all(),
             prefix="participations",
+            form_kwargs={"acting_user": self.request.user},
         )
         return formset
 
