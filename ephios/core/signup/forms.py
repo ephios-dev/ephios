@@ -23,6 +23,8 @@ class BaseParticipationForm(forms.ModelForm):
         required=False,
     )
     comment = forms.CharField(label=_("Comment"), max_length=255, required=False)
+    comment_is_public = forms.BooleanField(label=_("Make comment visible for other participants"), required=False)
+    comment_visibility = forms.ChoiceField(choices=ParticipationComment.Visibility, required=False, widget=forms.HiddenInput)
 
     def clean_individual_start_time(self):
         if self.cleaned_data["individual_start_time"] == self.shift.start_time:
@@ -34,8 +36,12 @@ class BaseParticipationForm(forms.ModelForm):
             return None
         return self.cleaned_data["individual_end_time"]
 
+    def get_comment_visibility(self):
+        return ParticipationComment.Visibility.PUBLIC if self.cleaned_data["comment_is_public"] else ParticipationComment.Visibility.PARTICIPANT
+
     def clean(self):
         cleaned_data = super().clean()
+        cleaned_data["comment_visibility"] = self.get_comment_visibility()
         if not self.errors:
             start = cleaned_data["individual_start_time"] or self.shift.start_time
             end = cleaned_data["individual_end_time"] or self.shift.end_time
@@ -47,7 +53,7 @@ class BaseParticipationForm(forms.ModelForm):
         result = super().save(commit)
         if comment := self.cleaned_data["comment"]:
             ParticipationComment.objects.create(
-                participation=result, text=comment, authored_by_responsible=self.acting_user
+                participation=result, text=comment, authored_by_responsible=self.acting_user, visibile_for=self.cleaned_data["comment_visibility"],
             )
         return result
 
