@@ -1,5 +1,10 @@
+{% load i18n %}
 <div>
     {% for comment in comments %}
-        <p>{{ comment.author }} @ {{ comment.created_at }}: {{ comment.text }}</p>
+        <p class="mt-0 mb-0 d-flex">
+            <span class="pe-1"><b>{{ comment.author }}</b></span>
+            <span class="flex-grow-1">{{ comment.text }}</span>
+            <span>{% blocktranslate with comment.created_at|timesince as time %}{{ time }} ago{% endblocktranslate %}</span>
+        </p>
     {% endfor %}
 </div>
