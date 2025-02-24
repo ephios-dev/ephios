@@ -6,6 +6,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
+    Case,
     CharField,
     DateTimeField,
     ForeignKey,
@@ -16,6 +17,7 @@ from django.db.models import (
     Q,
     SlugField,
     TextField,
+    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import formats
@@ -49,9 +51,10 @@ class ActiveManager(Manager):
 
 class EventType(Model):
     class ShowParticipantDataChoices(models.IntegerChoices):
-        EVERYONE = 0, _("to everyone")
+        INSTANCE_USERS = 0, _("to logged in users")
         CONFIRMED = 1, _("to confirmed participants")
         RESPONSIBLES = 2, _("only to responsible users")
+        PUBLIC = 3, _("to everyone including guests and federated users")
 
     title = CharField(_("title"), max_length=254)
     color = CharField(_("color"), max_length=7, default="#343a40")
@@ -61,7 +64,7 @@ class EventType(Model):
             "If you restrict who can see participant data, others will only be able to see that there is a participation, but not from whom."
         ),
         choices=ShowParticipantDataChoices.choices,
-        default=ShowParticipantDataChoices.EVERYONE,
+        default=ShowParticipantDataChoices.INSTANCE_USERS,
     )
 
     class Meta:
@@ -149,9 +152,31 @@ register_model_for_logging(Event, ModelFieldsLogConfig())
 
 class ParticipationQuerySet(PolymorphicQuerySet):
 
-    def viewable_by(self, user):
-        if user.is_anonymous:
-            return self.none()
+    def with_show_participant_data_to(self, participant):
+        return self.annotate(
+            show_participant_data=Case(
+                When(
+                    id__in=self.viewable_by(participant=participant),
+                    then=True,
+                ),
+                default=False,
+                output_field=BooleanField(),
+            ),
+        )
+
+    def viewable_by(self, participant):
+        from ephios.core.signup.participants import LocalUserParticipant
+
+        if not isinstance(participant, LocalUserParticipant):
+            qs = self.filter(
+                Q(
+                    shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.PUBLIC
+                )
+                | Q(id__in=participant.all_participations())
+            )
+            return qs.distinct()
+
+        user = getattr(participant, "user")
         viewable_events = get_objects_for_user(user, "core.view_event")
         viewable_userprofiles = get_objects_for_user(user, "core.view_userprofile")
         editable_events = get_objects_for_user(user, "core.change_event")
@@ -162,7 +187,10 @@ class ParticipationQuerySet(PolymorphicQuerySet):
         )
         qs = self.filter(shift__event__in=viewable_events).filter(
             Q(
-                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.EVERYONE
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.INSTANCE_USERS
+            )
+            | Q(
+                shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.PUBLIC
             )
             | Q(
                 shift__event__type__show_participant_data=EventType.ShowParticipantDataChoices.CONFIRMED,

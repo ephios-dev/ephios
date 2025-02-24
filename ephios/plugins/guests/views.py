@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
+from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +10,7 @@ from django.views.generic import CreateView, DetailView
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.registries import global_preferences_registry
 
-from ephios.core.models import Event
+from ephios.core.models import AbstractParticipation, Event
 from ephios.core.views.signup import BaseShiftActionView
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.guests.models import EventGuestShare, GuestUser
@@ -86,8 +87,22 @@ class GuestEventDetailView(RedirectAuthenticatedUserMixin, DetailView):
         messages.info(self.request, _("Log out to view the guest version of this page."))
         return self.get_object().event.get_absolute_url()
 
+    def get_event(self):
+        return (
+            Event.objects.filter(id=self.get_object().event_id)
+            .prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                        participant=self.get_object().as_participant()
+                    ),
+                )
+            )
+            .first()
+        )
+
     def get_context_data(self, **kwargs):
-        kwargs["event"] = self.get_object().event
+        kwargs["event"] = self.get_event()
         return super().get_context_data(**kwargs)
 
     def get_object(self, queryset=None):

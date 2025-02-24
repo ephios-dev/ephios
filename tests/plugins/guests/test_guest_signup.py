@@ -41,6 +41,7 @@ def test_guest_signup_flow(django_app, event, qualifications, volunteer):
     assert not GuestParticipation.objects.exists()
     response.form.submit(name="signup_choice", value="sign_up").follow()
     assert GuestParticipation.objects.get(shift=event.shifts.first())
+    assert "Carlson Carlsen" in response.text
 
     participant = GuestUser.objects.get().as_participant()
     django_app.get(participant.reverse_event_detail(event), status=200)
