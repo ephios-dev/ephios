@@ -11,6 +11,9 @@ from ephios.core.signup.flow.participant_validation import (
     ImproperlyConfiguredError,
 )
 from ephios.core.signup.structure.base import BaseShiftStructure
+from ephios.plugins.baseshiftstructures.structure.common import (
+    RenderParticipationPillsShiftStateMixin,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +59,7 @@ class FallbackSignupFlow(BaseSignupFlow):
         raise TypeError(f"{self.__class__} does not support signup")
 
 
-class FallbackShiftStructure(BaseShiftStructure):
+class FallbackShiftStructure(RenderParticipationPillsShiftStateMixin, BaseShiftStructure):
     slug = None
     verbose_name = _("Fallback for missing shift structures")
     description = _(
