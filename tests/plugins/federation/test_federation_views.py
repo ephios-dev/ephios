@@ -51,6 +51,7 @@ def test_federation_shared_event_detail_and_signup(
     response = response.form.submit(name="signup_choice", value="sign_up").follow()
     assert response.status_code == 200
     assert FederatedParticipation.objects.count() == 1
+    assert federated_user.display_name in response.text
 
 
 def test_federation_add_included_qualifications(django_app, federation, qualifications):

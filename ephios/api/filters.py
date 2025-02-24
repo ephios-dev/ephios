@@ -13,7 +13,7 @@ class ParticipationPermissionFilter(BaseFilterBackend):
         # to view public participation information (excl. email) you need to
         # * be able to see the event AND
         # * the event types' show_participation_data mode must fit
-        return queryset.viewable_by(request.user)
+        return queryset.viewable_by(request.user.as_participant())
 
 
 class UserinfoParticipationPermissionFilter(ParticipationPermissionFilter):

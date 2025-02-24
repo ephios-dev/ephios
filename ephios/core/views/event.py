@@ -482,17 +482,8 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         return base.prefetch_related("shifts").prefetch_related(
             Prefetch(
                 "shifts__participations",
-                queryset=AbstractParticipation.objects.all().annotate(
-                    show_participant_data=Case(
-                        When(
-                            id__in=AbstractParticipation.objects.all().viewable_by(
-                                self.request.user
-                            ),
-                            then=True,
-                        ),
-                        default=False,
-                        output_field=BooleanField(),
-                    )
+                queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                    participant=self.request.user.as_participant()
                 ),
             )
         )

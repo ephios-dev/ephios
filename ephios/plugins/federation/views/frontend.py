@@ -5,6 +5,7 @@ import requests
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +16,7 @@ from requests import HTTPError, JSONDecodeError, ReadTimeout
 from rest_framework.exceptions import PermissionDenied
 
 from ephios.api.models import Application
-from ephios.core.models import Event
+from ephios.core.models import AbstractParticipation, Event
 from ephios.core.views.signup import BaseShiftActionView
 from ephios.extra.mixins import StaffRequiredMixin
 from ephios.plugins.federation.forms import InviteCodeForm, RedeemInviteCodeForm
@@ -80,6 +81,14 @@ class CheckFederatedAccessTokenMixin:
         )
         return context
 
+    def get_participant(self):
+        try:
+            return FederatedUser.objects.get(
+                pk=self.request.session["federated_user"]
+            ).as_participant()
+        except FederatedUser.DoesNotExist as e:
+            raise PermissionDenied from e
+
 
 class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
     """
@@ -88,6 +97,20 @@ class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
 
     model = Event
     template_name = "federation/event_detail.html"
+
+    def get_queryset(self):
+        return (
+            Event.objects.all()
+            .prefetch_related("shifts")
+            .prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                        participant=self.get_participant()
+                    ),
+                )
+            )
+        )
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
@@ -106,14 +129,6 @@ class FederatedUserShiftActionView(CheckFederatedAccessTokenMixin, BaseShiftActi
     """
     View that allows a federated user from another instanceto sign up for a shift
     """
-
-    def get_participant(self):
-        try:
-            return FederatedUser.objects.get(
-                pk=self.request.session["federated_user"]
-            ).as_participant()
-        except FederatedUser.DoesNotExist as e:
-            raise PermissionDenied from e
 
 
 class FederationSettingsView(StaffRequiredMixin, TemplateView):

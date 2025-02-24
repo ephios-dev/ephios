@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-05 20:56+0100\n"
-"PO-Revision-Date: 2025-01-06 16:58+0100\n"
+"POT-Creation-Date: 2025-02-24 20:16+0100\n"
+"PO-Revision-Date: 2025-02-24 20:19+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: ephios/api/access/views.py:85 ephios/api/models.py:33 ephios/core/pdf.py:60
 #: ephios/core/pdf.py:150 ephios/core/pdf.py:184
@@ -50,11 +50,11 @@ msgstr "Token ist zu alt, um angezeigt werden zu können."
 msgid "Token was revoked."
 msgstr "Token wurde entfernt."
 
-#: ephios/api/filters.py:44 ephios/core/models/events.py:298
+#: ephios/api/filters.py:44 ephios/core/models/events.py:327
 msgid "start time"
 msgstr "Beginn"
 
-#: ephios/api/filters.py:45 ephios/core/models/events.py:299
+#: ephios/api/filters.py:45 ephios/core/models/events.py:328
 msgid "end time"
 msgstr "Ende"
 
@@ -69,8 +69,8 @@ msgid "start time less than equals (deprecated, use start_time_before instead)"
 msgstr ""
 "Startzeit kleiner-gleich (deprecated, stattdessen start_time_before nutzen)"
 
-#: ephios/api/filters.py:61 ephios/core/models/events.py:68
-#: ephios/core/models/events.py:80 ephios/core/views/event.py:61
+#: ephios/api/filters.py:61 ephios/core/models/events.py:71
+#: ephios/core/models/events.py:83 ephios/core/views/event.py:61
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
@@ -115,6 +115,7 @@ msgstr "API Token hinzufügen"
 #: ephios/api/templates/api/access_token_form.html:16
 #: ephios/api/templates/oauth2_provider/application_form.html:27
 #: ephios/core/forms/users.py:200 ephios/core/forms/users.py:443
+#: ephios/core/signup/forms.py:103
 #: ephios/core/templates/core/disposition/disposition.html:125
 #: ephios/core/templates/core/event_detail.html:25
 #: ephios/core/templates/core/event_form.html:65
@@ -134,6 +135,7 @@ msgstr "Speichern"
 #: ephios/api/templates/api/access_token_form.html:18
 #: ephios/api/templates/oauth2_provider/application_confirm_delete.html:23
 #: ephios/api/templates/oauth2_provider/authorize.html:33
+#: ephios/core/signup/forms.py:114
 #: ephios/core/templates/core/disposition/disposition.html:124
 #: ephios/core/templates/core/event_form.html:68
 #: ephios/core/templates/core/eventtype_form.html:21
@@ -878,32 +880,36 @@ msgstr "Dienst"
 msgid "Training"
 msgstr "Ausbildung"
 
-#: ephios/core/models/events.py:52
-msgid "to everyone"
-msgstr "alle Personen"
+#: ephios/core/models/events.py:54
+msgid "to logged in users"
+msgstr "angemeldete Nutzer"
 
-#: ephios/core/models/events.py:53
+#: ephios/core/models/events.py:55
 msgid "to confirmed participants"
 msgstr "bestätigte Teilnehmende"
 
-#: ephios/core/models/events.py:54
+#: ephios/core/models/events.py:56
 msgid "only to responsible users"
 msgstr "nur verantwortliche Personen"
 
-#: ephios/core/models/events.py:56 ephios/core/models/events.py:77
+#: ephios/core/models/events.py:57
+msgid "to everyone including guests and federated users"
+msgstr "angemeldete Nutzer sowie Gäste und föderierte Nutzer"
+
+#: ephios/core/models/events.py:59 ephios/core/models/events.py:80
 #: ephios/core/models/users.py:247 ephios/core/models/users.py:274
 msgid "title"
 msgstr "Titel"
 
-#: ephios/core/models/events.py:57
+#: ephios/core/models/events.py:60
 msgid "color"
 msgstr "Farbe"
 
-#: ephios/core/models/events.py:59
+#: ephios/core/models/events.py:62
 msgid "show participant data"
 msgstr "Teilnehmendeninformationen sichtbar machen für"
 
-#: ephios/core/models/events.py:61
+#: ephios/core/models/events.py:64
 msgid ""
 "If you restrict who can see participant data, others will only be able to "
 "see that there is a participation, but not from whom."
@@ -911,131 +917,131 @@ msgstr ""
 "Wenn Sie dies einschränken, werden andere nur sehen, dass es eine Teilnahme "
 "gibt, aber nicht von wem."
 
-#: ephios/core/models/events.py:69
+#: ephios/core/models/events.py:72
 msgid "event types"
 msgstr "Veranstaltungstypen"
 
-#: ephios/core/models/events.py:78
+#: ephios/core/models/events.py:81
 msgid "description"
 msgstr "Beschreibung"
 
-#: ephios/core/models/events.py:79
+#: ephios/core/models/events.py:82
 msgid "location"
 msgstr "Ort"
 
-#: ephios/core/models/events.py:81
+#: ephios/core/models/events.py:84
 msgid "active"
 msgstr "aktiv"
 
-#: ephios/core/models/events.py:90 ephios/core/models/events.py:295
+#: ephios/core/models/events.py:93 ephios/core/models/events.py:324
 msgid "event"
 msgstr "Veranstaltung"
 
-#: ephios/core/models/events.py:91
+#: ephios/core/models/events.py:94
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: ephios/core/models/events.py:214
+#: ephios/core/models/events.py:243
 msgid "requested"
 msgstr "angefragt"
 
-#: ephios/core/models/events.py:215 ephios/core/views/event.py:88
+#: ephios/core/models/events.py:244 ephios/core/views/event.py:88
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: ephios/core/models/events.py:216
+#: ephios/core/models/events.py:245
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: ephios/core/models/events.py:217
+#: ephios/core/models/events.py:246
 msgid "rejected by responsible"
 msgstr "abgelehnt durch verantwortliche Person"
 
-#: ephios/core/models/events.py:218
+#: ephios/core/models/events.py:247
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:231 ephios/core/models/events.py:319
+#: ephios/core/models/events.py:260 ephios/core/models/events.py:348
 msgid "shift"
 msgstr "Schicht"
 
-#: ephios/core/models/events.py:234
+#: ephios/core/models/events.py:263
 msgid "state"
 msgstr "Status"
 
-#: ephios/core/models/events.py:237
+#: ephios/core/models/events.py:266
 msgid "Data on where this participation lives in the shift structure"
 msgstr "Daten zur Positionierung der Teilnahme in der Schicht-Struktur"
 
-#: ephios/core/models/events.py:243
+#: ephios/core/models/events.py:272
 msgid "individual start time"
 msgstr "Individueller Beginn"
 
-#: ephios/core/models/events.py:244
+#: ephios/core/models/events.py:273
 msgid "individual end time"
 msgstr "Individuelles Ende"
 
-#: ephios/core/models/events.py:247
+#: ephios/core/models/events.py:276
 msgid "Comment"
 msgstr "Kommentar"
 
-#: ephios/core/models/events.py:253
+#: ephios/core/models/events.py:282
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: ephios/core/models/events.py:297
+#: ephios/core/models/events.py:326
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/models/events.py:301
+#: ephios/core/models/events.py:330
 msgctxt "shift label"
 msgid "label"
 msgstr "Label"
 
-#: ephios/core/models/events.py:304
+#: ephios/core/models/events.py:333
 msgid "Optional label to help differentiate multiple shifts in an event."
 msgstr ""
 "Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung."
 
-#: ephios/core/models/events.py:306
+#: ephios/core/models/events.py:335
 msgid "signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:311
+#: ephios/core/models/events.py:340
 msgid "structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:320
+#: ephios/core/models/events.py:349
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:437
+#: ephios/core/models/events.py:466
 #: ephios/core/templates/core/fragments/shift_box_small.html:26
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:438
+#: ephios/core/models/events.py:467
 #: ephios/core/templates/core/shift_form.html:46
 msgid "Structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:451
+#: ephios/core/models/events.py:480
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:472
+#: ephios/core/models/events.py:501
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:473
+#: ephios/core/models/events.py:502
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:498
+#: ephios/core/models/events.py:527
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:499
+#: ephios/core/models/events.py:528
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1143,6 +1149,11 @@ msgstr "extern verwaltet"
 msgid "The qualification was granted by an external system."
 msgstr "Die Qualifikation wurde durch ein externes System erteilt."
 
+#: ephios/core/models/users.py:364
+#: ephios/extra/templates/extra/widgets/recurrence_picker.html:166
+msgid "for"
+msgstr "für"
+
 #: ephios/core/models/users.py:369
 msgid "Qualification grant"
 msgstr "Qualifikationserteilung"
@@ -1240,7 +1251,7 @@ msgstr ""
 msgid "{subject} for {user}"
 msgstr "{subject} für {user}"
 
-#: ephios/core/models/users.py:544
+#: ephios/core/models/users.py:544 ephios/plugins/guests/models.py:113
 msgid "Guest"
 msgstr "Gast"
 
@@ -1625,6 +1636,10 @@ msgid "Your participation for {shift} has been rejected by a responsible user."
 msgstr ""
 "Ihre Teilnahme an {shift} wurde von einer verantwortlichen Person abgelehnt."
 
+#: ephios/core/services/notifications/types.py:307
+msgid "Your time is"
+msgstr "Ihre Zeit ist"
+
 #: ephios/core/services/notifications/types.py:313
 msgid "A confirmed participation of yours has been tweaked by a responsible"
 msgstr ""
@@ -1930,7 +1945,7 @@ msgstr "Anmeldeaktion"
 msgid "Customize"
 msgstr "Anpassen"
 
-#: ephios/core/signup/forms.py:88
+#: ephios/core/signup/forms.py:88 ephios/core/signup/forms.py:120
 #: ephios/core/templates/core/fragments/shift_box_big.html:74
 msgid "Decline"
 msgstr "Absagen"
@@ -2165,8 +2180,8 @@ msgstr[1] "%(waiting)s Teilnehmende warten auf Disposition."
 #, python-format
 msgid "%(confirmed)s confirmed participation."
 msgid_plural "%(confirmed)s confirmed participations."
-msgstr[0] "%(confirmed)s bestätigte Teilnehmende"
-msgstr[1] "%(confirmed)s bestätigte Teilnehmende"
+msgstr[0] "%(confirmed)s bestätigte Teilnehmende."
+msgstr[1] "%(confirmed)s bestätigte Teilnehmende."
 
 #: ephios/core/templates/core/fragments/pending_consequences.html:8
 msgid "Your requests"
@@ -2409,7 +2424,7 @@ msgstr "oder"
 msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
-#: ephios/core/templates/core/mails/base.html:152 ephios/templates/500.html:53
+#: ephios/core/templates/core/mails/base.html:152 ephios/templates/500.html:54
 #: ephios/templates/base.html:177
 #, python-format
 msgid "powered by %(brand)s"
@@ -2945,16 +2960,16 @@ msgstr "angefragt oder bestätigt"
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: ephios/core/views/event.py:565 ephios/core/views/shift.py:122
+#: ephios/core/views/event.py:569 ephios/core/views/shift.py:122
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: ephios/core/views/event.py:662
+#: ephios/core/views/event.py:666
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
-#: ephios/core/views/event.py:695
+#: ephios/core/views/event.py:699
 msgid "Notifications sent succesfully."
 msgstr "Benachrichtigungen erfolgreich gesendet."
 
@@ -3143,10 +3158,6 @@ msgstr "letzten"
 msgctxt "month"
 msgid "in"
 msgstr "im"
-
-#: ephios/extra/templates/extra/widgets/recurrence_picker.html:166
-msgid "for"
-msgstr "für"
 
 #: ephios/extra/templates/extra/widgets/recurrence_picker.html:170
 msgid "occurrences"
@@ -3576,6 +3587,12 @@ msgstr "jeder in {block} benötigt {qualifications}"
 msgid "at least {at_least} on {block} need {qualifications}"
 msgstr "mindestens {at_least} in {block} benötigen {qualifications}"
 
+#: ephios/plugins/complexsignup/models.py:86
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:81
+#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:242
+msgid "and"
+msgstr "und"
+
 #: ephios/plugins/complexsignup/models.py:90
 msgid "qualification requirement"
 msgstr "Erforderliche Qualifikation"
@@ -3696,11 +3713,6 @@ msgstr "Bitte geben Sie einen Namen an."
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:69
 msgid "qualified as"
 msgstr "qualifiziert als"
-
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:81
-#: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:242
-msgid "and"
-msgstr "und"
 
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:86
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:247
@@ -4115,21 +4127,21 @@ msgstr ""
 msgid "Accept invitation"
 msgstr "Einladung annehmen"
 
-#: ephios/plugins/federation/views/frontend.py:156
+#: ephios/plugins/federation/views/frontend.py:166
 msgid "Invite code has expired."
 msgstr "Einladungs-Code ist abgelaufen."
 
-#: ephios/plugins/federation/views/frontend.py:212
+#: ephios/plugins/federation/views/frontend.py:222
 msgid "Invalid code data. Please try again with a new invite code."
 msgstr "Code ungültig. Bitte mit einem neuen Einladungscode erneut probieren."
 
-#: ephios/plugins/federation/views/frontend.py:217
+#: ephios/plugins/federation/views/frontend.py:227
 msgid "Could not connect to host instance. Please try again later."
 msgstr ""
 "Die ephios-Instanz konnte nicht erreicht werden. Bitte versuchen Sie es "
 "später erneut."
 
-#: ephios/plugins/federation/views/frontend.py:223
+#: ephios/plugins/federation/views/frontend.py:233
 msgid ""
 "Invite code redeemded successfully. You are now receiving events from this "
 "instance."
@@ -4137,15 +4149,15 @@ msgstr ""
 "Einladungs-Code erfolgreich eingelöst. Sie empfangen nun Veranstaltungen "
 "dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:237
+#: ephios/plugins/federation/views/frontend.py:247
 msgid "You are no longer sharing events with this instance."
 msgstr "Sie teilen nun keine Veranstaltungen mehr mit dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:253
+#: ephios/plugins/federation/views/frontend.py:263
 msgid "You are no longer receiving events from this instance."
 msgstr "Sie erhalten nun keine Veranstaltungen mehr von dieser Instanz."
 
-#: ephios/plugins/federation/views/frontend.py:265
+#: ephios/plugins/federation/views/frontend.py:275
 msgid "Failed to remove this instance. Please try again later."
 msgstr ""
 "Instanz konnte nicht entfernt werden. Bitte versuchen Sie es später erneut."
@@ -4316,19 +4328,19 @@ msgstr "Als Gast registrieren"
 msgid "Continue"
 msgstr "Weiter"
 
-#: ephios/plugins/guests/views.py:50
+#: ephios/plugins/guests/views.py:52
 msgid "Log out to register as guest."
 msgstr "Melden Sie sich ab, um sich als Gast zu registrieren."
 
-#: ephios/plugins/guests/views.py:74
+#: ephios/plugins/guests/views.py:76
 msgid "You already registered as a guest for this event."
 msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert."
 
-#: ephios/plugins/guests/views.py:77
+#: ephios/plugins/guests/views.py:79
 msgid "Save the URL of this page to access this site later."
 msgstr "Speichern Sie die URL dieser Seite, um später zurückzukehren."
 
-#: ephios/plugins/guests/views.py:86
+#: ephios/plugins/guests/views.py:88
 msgid "Log out to view the guest version of this page."
 msgstr "Melden Sie sich ab, um die Besucheransicht dieser Seite zu sehen."
 
@@ -4705,35 +4717,35 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: ephios/settings.py:220
+#: ephios/settings.py:228
 msgid "German"
 msgstr "Deutsch"
 
-#: ephios/settings.py:221
+#: ephios/settings.py:229
 msgid "English"
 msgstr "Englisch"
 
-#: ephios/settings.py:436
+#: ephios/settings.py:444
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: ephios/settings.py:437
+#: ephios/settings.py:445
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: ephios/settings.py:438
+#: ephios/settings.py:446
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: ephios/settings.py:439
+#: ephios/settings.py:447
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: ephios/settings.py:441
+#: ephios/settings.py:449
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: ephios/settings.py:444
+#: ephios/settings.py:452
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -4766,11 +4778,11 @@ msgstr "Seite nicht gefunden"
 msgid "The page you requested could not be found."
 msgstr "Die gewünschte Seite konnte nicht gefunden werden."
 
-#: ephios/templates/500.html:10 ephios/templates/500.html:35
+#: ephios/templates/500.html:11 ephios/templates/500.html:36
 msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
 
-#: ephios/templates/500.html:38
+#: ephios/templates/500.html:39
 msgid ""
 "The server encountered an internal error and was unable to retrieve your "
 "request. Please try again later. The administrators have been notified."
@@ -4779,7 +4791,7 @@ msgstr ""
 "beantwortet werden. Bitte versuchen Sie es später erneut. Die "
 "Administratoren wurden informiert."
 
-#: ephios/templates/500.html:45
+#: ephios/templates/500.html:46
 msgid "Return home"
 msgstr "Zurück zur Startseite"
 
@@ -4844,6 +4856,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "to everyone"
+#~ msgstr "alle Personen"
 
 #~ msgid "Functions"
 #~ msgstr "Funktionen"
