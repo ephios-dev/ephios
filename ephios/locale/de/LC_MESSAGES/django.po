@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-24 20:16+0100\n"
-"PO-Revision-Date: 2025-02-24 20:19+0100\n"
+"PO-Revision-Date: 2025-02-28 18:15+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -882,7 +882,7 @@ msgstr "Ausbildung"
 
 #: ephios/core/models/events.py:54
 msgid "to logged in users"
-msgstr "angemeldete Nutzer"
+msgstr "alle Nutzer dieser Organisation"
 
 #: ephios/core/models/events.py:55
 msgid "to confirmed participants"
