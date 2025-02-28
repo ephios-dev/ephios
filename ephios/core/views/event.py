@@ -479,22 +479,26 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         base = Event.objects.all()
         if self.request.user.has_perm("core.add_event"):
             base = Event.all_objects.all()
-        return base.prefetch_related("shifts").prefetch_related(
-            Prefetch(
-                "shifts__participations",
-                queryset=AbstractParticipation.objects.all().annotate(
-                    show_participant_data=Case(
-                        When(
-                            id__in=AbstractParticipation.objects.all().viewable_by(
-                                self.request.user
+        return (
+            base.prefetch_related("shifts")
+            .prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().annotate(
+                        show_participant_data=Case(
+                            When(
+                                id__in=AbstractParticipation.objects.all().viewable_by(
+                                    self.request.user
+                                ),
+                                then=True,
                             ),
-                            then=True,
-                        ),
-                        default=False,
-                        output_field=BooleanField(),
-                    )
-                ),
+                            default=False,
+                            output_field=BooleanField(),
+                        )
+                    ),
+                )
             )
+            .prefetch_related("shifts__participations__comments")
         )
 
     def get_context_data(self, **kwargs):
