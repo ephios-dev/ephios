@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-24 20:16+0100\n"
-"PO-Revision-Date: 2025-02-28 18:15+0100\n"
+"PO-Revision-Date: 2025-02-28 19:08+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -894,7 +894,7 @@ msgstr "nur verantwortliche Personen"
 
 #: ephios/core/models/events.py:57
 msgid "to everyone including guests and federated users"
-msgstr "angemeldete Nutzer sowie Gäste und föderierte Nutzer"
+msgstr "Nutzer dieser Organisation sowie Gäste und föderierte Nutzer"
 
 #: ephios/core/models/events.py:59 ephios/core/models/events.py:80
 #: ephios/core/models/users.py:247 ephios/core/models/users.py:274
