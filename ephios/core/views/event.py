@@ -42,6 +42,7 @@ from ephios.core.services.notifications.types import (
     NewEventNotification,
 )
 from ephios.core.signals import event_forms
+from ephios.core.views.signup import request_to_participant
 from ephios.extra.mixins import (
     CanonicalSlugDetailMixin,
     CustomPermissionRequiredMixin,
@@ -483,7 +484,7 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
             Prefetch(
                 "shifts__participations",
                 queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
-                    participant=self.request.user.as_participant()
+                    participant=request_to_participant(self.request)
                 ),
             )
         )
