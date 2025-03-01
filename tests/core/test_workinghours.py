@@ -105,7 +105,9 @@ class TestWorkingHours:
         workinghours,
     ):
         response = django_app.get(reverse("core:workinghours_list"), user=manager)
-        assert response.html.find(string=floatformat(volunteer.get_workhour_items()[0], arg=2))
+        assert response.html.find(
+            string=floatformat(volunteer.get_workhour_items()[1][0]["duration"], arg=2)
+        )
         participation = LocalParticipation.objects.create(
             shift=event.shifts.first(), user=volunteer, state=LocalParticipation.States.CONFIRMED
         )
