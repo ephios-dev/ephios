@@ -42,8 +42,8 @@ def test_resource_add(django_app, superuser, resources):
 def test_resource_cannot_delete_category(django_app, superuser, resources):
     response = django_app.get(reverse("simpleresource:resource_categories"), user=superuser)
     assert (
-        len(response.html.findAll("button", {"data-formset-delete-button": ""})) == 1
-    )  # only empty form
+        len(response.html.find_all("button", {"data-formset-delete-button": True})) == 0
+    )  # only empty form, button in script is not found by soup
 
 
 def test_resource_delete_category(django_app, superuser, resources):
