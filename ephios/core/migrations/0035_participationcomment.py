@@ -21,7 +21,6 @@ def migrate_comment(apps, schema_editor):
 
 def revert_comments(apps, schema_editor):
     ParticipationComment = apps.get_model("core", "ParticipationComment")
-    AbstractParticipation = apps.get_model("core", "AbstractParticipation")
     db_alias = schema_editor.connection.alias
     for comment in ParticipationComment.objects.using(db_alias).all():
         comment.participation.comment = comment.text
