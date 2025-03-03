@@ -21,7 +21,10 @@
                 {% if show_comments or comment.visible_for == 2 or participation == own_participation %}
                     <div class="mb-3">
                         <i class="fas fa-comment"></i>
-                        <span>{{ comment.text }}</span>
+                        <div>
+                            <span><b>{{ comment.author }}</b></span>
+                            <span>{{ comment.text }}</span>
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}
