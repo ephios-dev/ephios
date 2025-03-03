@@ -21,8 +21,8 @@
                 {% if show_comments or comment.visible_for == 2 or participation == own_participation %}
                     <div class="mb-3">
                         <i class="fas fa-comment"></i>
-                        <div>
-                            <span><b>{{ comment.author }}</b></span>
+                        <div class="d-inline">
+                            <span><b>{{ comment.author }}</b></span><br />
                             <span>{{ comment.text }}</span>
                         </div>
                     </div>
