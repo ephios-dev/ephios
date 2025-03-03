@@ -486,8 +486,7 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
                 queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
                     participant=request_to_participant(self.request)
                 ),
-            )
-            .prefetch_related("shifts__participations__comments")
+            ).prefetch_related("shifts__participations__comments")
         )
 
     def get_context_data(self, **kwargs):
