@@ -31,7 +31,7 @@ def revert_comments(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("core", "0033_eventtype_show_participant_data"),
+        ("core", "0034_alter_eventtype_show_participant_data"),
     ]
 
     operations = [
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+                    models.DateTimeField(auto_now_add=True),
                 ),
                 (
                     "participation",
