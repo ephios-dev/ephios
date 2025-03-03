@@ -81,7 +81,7 @@ class BaseParticipationForm(forms.ModelForm):
             "individual_end_time": instance.individual_end_time or self.shift.end_time,
         }
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.comments.exists():
+        if self.instance.pk and self.instance.comments.exists():
             self.fields["previous_comments"] = forms.CharField(
                 widget=PreviousCommentWidget(comments=self.instance.comments.all()), required=False
             )
