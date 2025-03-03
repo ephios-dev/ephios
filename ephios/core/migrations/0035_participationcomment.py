@@ -80,4 +80,8 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.RunPython(migrate_comment, revert_comments),
+        migrations.RemoveField(
+            model_name="abstractparticipation",
+            name="comment",
+        ),
     ]
