@@ -32,7 +32,9 @@ class MissingParticipation(ValueError):
 
 class BaseDispositionParticipationForm(BaseParticipationForm):
     disposition_participation_template = "core/disposition/fragment_participation.html"
-    comment_is_internal = forms.BooleanField(label=_("Hide comment for participant"), required=False)
+    comment_is_internal = forms.BooleanField(
+        label=_("Hide comment for participant"), required=False
+    )
 
     def __init__(self, **kwargs):
         try:
@@ -44,7 +46,11 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
 
     def get_comment_visibility(self):
-        return ParticipationComment.Visibility.RESPONSIBLES_ONLY if self.cleaned_data["comment_is_internal"] else ParticipationComment.Visibility.PARTICIPANT
+        return (
+            ParticipationComment.Visibility.RESPONSIBLES_ONLY
+            if self.cleaned_data["comment_is_internal"]
+            else ParticipationComment.Visibility.PARTICIPANT
+        )
 
     class Meta(BaseParticipationForm.Meta):
         fields = ["state", "individual_start_time", "individual_end_time"]
