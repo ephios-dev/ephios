@@ -18,11 +18,19 @@ from ephios.api.permissions import (
     ViewUserModelObjectPermissions,
 )
 from ephios.api.serializers import (
+    ConsequenceSerializer,
     ParticipationSerializer,
     UserinfoParticipationSerializer,
     UserProfileSerializer,
+    WorkingHoursSerializer,
 )
-from ephios.core.models import AbstractParticipation, LocalParticipation, UserProfile
+from ephios.core.models import (
+    AbstractParticipation,
+    Consequence,
+    LocalParticipation,
+    UserProfile,
+    WorkingHours,
+)
 
 
 class UserProfileMeView(RetrieveAPIView):
@@ -84,3 +92,20 @@ class UserParticipationView(viewsets.ReadOnlyModelViewSet):
         return AbstractParticipation.objects.filter(
             localparticipation__user=self.kwargs.get("user")
         ).select_related("shift", "shift__event", "shift__event__type")
+
+
+class WorkingHoursViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = WorkingHoursSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["user", "date"]
+    required_scopes = ["CONFIDENTIAL_READ"]
+    queryset = WorkingHours.objects.all()
+
+
+class ConsequenceViewSet(viewsets.ModelViewSet):
+    serializer_class = ConsequenceSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
+    filter_backends = [DjangoFilterBackend]
+    required_scopes = ["CONFIDENTIAL_WRITE"]
+    queryset = Consequence.objects.all()
