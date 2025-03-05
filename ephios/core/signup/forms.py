@@ -2,6 +2,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
+from django.db import transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
@@ -25,9 +26,6 @@ class BaseParticipationForm(forms.ModelForm):
     comment = forms.CharField(label=_("Comment"), max_length=255, required=False)
     comment_is_public = forms.BooleanField(
         label=_("Make comment visible for other participants"), required=False
-    )
-    comment_visibility = forms.ChoiceField(
-        choices=ParticipationComment.Visibility, required=False, widget=forms.HiddenInput
     )
 
     def clean_individual_start_time(self):
@@ -57,16 +55,17 @@ class BaseParticipationForm(forms.ModelForm):
                 self.add_error("individual_end_time", _("End time must not be before start time."))
             return cleaned_data
 
-    def save(self, commit=True):
-        result = super().save(commit)
-        if comment := self.cleaned_data["comment"]:
-            ParticipationComment.objects.create(
-                participation=result,
-                text=comment,
-                authored_by_responsible=self.acting_user,
-                visibile_for=self.cleaned_data["comment_visibility"],
-            )
-        return result
+    def save(self):
+        with transaction.atomic():
+            result = super().save()
+            if comment := self.cleaned_data["comment"]:
+                ParticipationComment.objects.create(
+                    participation=result,
+                    text=comment,
+                    authored_by_responsible=self.acting_user,
+                    visibile_for=self.get_comment_visibility(),
+                )
+            return result
 
     class Meta:
         model = AbstractParticipation
