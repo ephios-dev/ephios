@@ -3,7 +3,6 @@ from datetime import date
 from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
@@ -131,4 +130,3 @@ def get_nonlocal_participant_from_request(request):
     for _, participant in participant_from_request.send(sender=None, request=request):
         if participant is not None:
             return participant
-    raise PermissionDenied

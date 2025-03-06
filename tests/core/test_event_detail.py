@@ -13,8 +13,8 @@ def test_slug_redirect(django_app, volunteer, event):
 
 def test_anon_redirect(django_app, event):
     django_app.get(
-        reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")), status=403
-    )
+        reverse("core:event_detail", kwargs=dict(pk=event.pk, slug="nottheactualslug")),
+    ).follow()
 
 
 def test_event_slug_with_empty_name(django_app, volunteer, event):
