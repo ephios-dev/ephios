@@ -480,11 +480,13 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         base = Event.objects.all()
         if self.request.user.has_perm("core.add_event"):
             base = Event.all_objects.all()
+        if (participant := request_to_participant(self.request)) is None:
+            return base
         return base.prefetch_related("shifts").prefetch_related(
             Prefetch(
                 "shifts__participations",
                 queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
-                    participant=request_to_participant(self.request)
+                    participant=participant
                 ),
             )
         )
