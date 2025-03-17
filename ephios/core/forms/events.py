@@ -66,7 +66,7 @@ class EventForm(forms.ModelForm):
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
         can_publish_for_groups = get_objects_for_user(user, "publish_event_for_group", klass=Group)
-        if (event := kwargs.get("instance", None)) is not None:
+        if (event := kwargs.get("instance", None)) is not None and event.id:
             self.eventtype = event.type
             responsible_users = get_users_with_perms(
                 event, only_with_perms_in=["change_event"], with_group_users=False
@@ -88,12 +88,15 @@ class EventForm(forms.ModelForm):
         else:
             # new event
             self.eventtype = kwargs.pop("eventtype")
+            visible_for = (
+                self.eventtype.preferences.get("visible_for").filter(id__in=can_publish_for_groups)
+                or can_publish_for_groups
+            )
             kwargs["initial"] = {
                 "responsible_users": self.eventtype.preferences.get("responsible_users")
                 | get_user_model().objects.filter(pk=user.pk),
                 "responsible_groups": self.eventtype.preferences.get("responsible_groups"),
-                "visible_for": self.eventtype.preferences.get("visible_for")
-                or get_objects_for_user(user, "publish_event_for_group", klass=Group),
+                "visible_for": visible_for,
             }
             self.locked_visible_for_groups = set()
 
