@@ -6,7 +6,7 @@
 {% load static %}
 
 {% block title %}
-    {% if event %}
+    {% if event.id %}
         {% translate "Edit event" %}
     {% else %}
         {% translate "Create new event" %}
@@ -22,7 +22,7 @@
         {% endfor %}
     {% endif %}
     <div class="page-header">
-        {% if event %}
+        {% if event.id %}
             <h1>{% translate "Edit event" %}</h1>
         {% else %}
             <h1>
@@ -59,7 +59,7 @@
         {% endfor %}
 
         <div class="form-group">
-            {% if event %}
+            {% if event.id %}
                 <a role="button" class="btn btn-secondary"
                    href="{{ event.get_absolute_url }}">{% translate "Back" %}</a>
                 <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>

@@ -61,4 +61,4 @@ class EventAttachedDocumentForm(BasePluginFormMixin, Form):
         return _("Attach files")
 
     def is_function_active(self):
-        return self.event and self.event.documents.exists()
+        return self.event and self.event.id and self.event.documents.exists()
