@@ -47,6 +47,22 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     }  # superuser is in planner group
 
 
+def test_create_form_error(django_app, planner, superuser, service_event_type, groups):
+    managers, planners, volunteers = groups
+
+    event_form = django_app.get(
+        reverse("core:event_create", kwargs=dict(type=service_event_type.pk)),
+        user=planner,
+    ).form
+    event_form["title"] = "Seeed Concert"
+    event_form["location"] = "BOS ARENA"
+    event_form["visible_for"].force_value(
+        [volunteers.id, 999]
+    )  # invalid ID! (perhaps the group was deleted meanwhile)
+    response = event_form.submit()
+    assert "999 is not one of the available choices." in response.text
+
+
 def test_edit_event_with_participating_responsible(
     django_app, planner, qualified_volunteer, event, groups
 ):
