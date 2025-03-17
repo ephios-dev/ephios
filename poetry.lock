@@ -1167,14 +1167,14 @@ python-dateutil = "*"
 
 [[package]]
 name = "django-select2"
-version = "8.3.0"
+version = "8.4.0"
 description = "This is a Django_ integration of Select2_."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django_select2-8.3.0-py3-none-any.whl", hash = "sha256:70af282123db358a9612241d6b077cbb2a92ce642893e6efcbda2cb8ce5b7c8f"},
-    {file = "django_select2-8.3.0.tar.gz", hash = "sha256:9975a74f13f20468d07deae027672045f58e0d6d1983c305805ba40b16a0f0ec"},
+    {file = "django_select2-8.4.0-py3-none-any.whl", hash = "sha256:769429f4300db9a24d029e2e2f90fceb825eef6c012d772af90d12a318fb2438"},
+    {file = "django_select2-8.4.0.tar.gz", hash = "sha256:25eb56a6c024750898ea45cb90d24164c42b85c4673f5052612ce39042d81151"},
 ]
 
 [package.dependencies]
