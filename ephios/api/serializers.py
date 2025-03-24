@@ -12,11 +12,13 @@ from rest_framework.serializers import ModelSerializer
 from ephios.api.fields import ChoiceDisplayField
 from ephios.core.models import (
     AbstractParticipation,
+    Consequence,
     Event,
     EventType,
     Qualification,
     Shift,
     UserProfile,
+    WorkingHours,
 )
 from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.core.templatetags.settings_extras import make_absolute
@@ -200,3 +202,15 @@ class ParticipationSerializer(UserinfoParticipationSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         del self.fields["comment"]
+
+
+class WorkingHoursSerializer(ModelSerializer):
+    class Meta:
+        model = WorkingHours
+        fields = ["user", "hours", "reason", "date"]
+
+
+class ConsequenceSerializer(ModelSerializer):
+    class Meta:
+        model = Consequence
+        fields = ["slug", "user", "state", "data"]
