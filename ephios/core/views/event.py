@@ -492,14 +492,18 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
             base = Event.all_objects.all()
         if (participant := request_to_participant(self.request)) is None:
             return base
-        return base.prefetch_related("shifts").prefetch_related(
-            Prefetch(
-                "shifts__participations",
-                queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
-                    participant=request_to_participant(self.request)
+        return (
+            base.prefetch_related("shifts")
+            .prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                        participant=request_to_participant(self.request)
+                    ),
                 )
             )
-        ).prefetch_related("shifts__participations__comments")
+            .prefetch_related("shifts__participations__comments")
+        )
 
     def get_context_data(self, **kwargs):
         kwargs["can_change_event"] = self.request.user.has_perm("core.change_event", self.object)
