@@ -33,7 +33,7 @@ class MissingParticipation(ValueError):
 class BaseDispositionParticipationForm(BaseParticipationForm):
     disposition_participation_template = "core/disposition/fragment_participation.html"
     comment_is_internal = forms.BooleanField(
-        label=_("Hide comment for participant"), required=False
+        label=_("Hide comment for participant"), required=False, label_suffix=""
     )
 
     def __init__(self, **kwargs):
