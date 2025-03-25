@@ -23,9 +23,9 @@ class BaseParticipationForm(forms.ModelForm):
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
-    comment = forms.CharField(label=_("Comment"), max_length=255, required=False)
+    comment = forms.CharField(label=_("Comment"), max_length=255, required=False, label_suffix="")
     comment_is_public = forms.BooleanField(
-        label=_("Make comment visible for other participants"), required=False
+        label=_("Make comment visible for other participants"), required=False, label_suffix=""
     )
 
     def clean_individual_start_time(self):
@@ -55,17 +55,17 @@ class BaseParticipationForm(forms.ModelForm):
                 self.add_error("individual_end_time", _("End time must not be before start time."))
             return cleaned_data
 
-    def save(self):
-        with transaction.atomic():
-            result = super().save()
-            if comment := self.cleaned_data["comment"]:
-                ParticipationComment.objects.create(
-                    participation=result,
-                    text=comment,
-                    authored_by_responsible=self.acting_user,
-                    visibile_for=self.get_comment_visibility(),
-                )
-            return result
+    @transaction.atomic
+    def save(self, commit=True):
+        result = super().save()
+        if comment := self.cleaned_data["comment"]:
+            ParticipationComment.objects.create(
+                participation=result,
+                text=comment,
+                authored_by_responsible=self.acting_user,
+                visibile_for=self.get_comment_visibility(),
+            )
+        return result
 
     class Meta:
         model = AbstractParticipation

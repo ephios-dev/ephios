@@ -1,10 +1,20 @@
+{% load humanize %}
 {% load i18n %}
 <div>
     {% for comment in comments %}
         <p class="mt-0 mb-0 d-flex">
+            <div class="pt-1 d-inline-block comment-visibility-icon">
+                {% if comment.visibile_for == 2 %}
+                    <span class="fa fa-users"></span>
+                {% elif comment.visibile_for == 1 %}
+                    <span class="fa fa-user"></span>
+                {% elif comment.visibile_for == 0 %}
+                    <span class="fa fa-lock"></span>
+                {% endif %}
+            </div>
             <span class="pe-1"><b>{{ comment.author }}</b></span>
             <span class="flex-grow-1">{{ comment.text }}</span>
-            <span>{% blocktranslate trimmed with comment.created_at|timesince as time %}{{ time }} ago{% endblocktranslate %}</span>
+            <span>{{ comment.created_at|naturaltime }}</span>
         </p>
     {% endfor %}
 </div>
