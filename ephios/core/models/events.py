@@ -329,7 +329,7 @@ class ParticipationComment(Model):
         "UserProfile", on_delete=models.SET_NULL, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    visibile_for = IntegerField(
+    visible_for = IntegerField(
         _("visible for"), choices=Visibility.choices, default=Visibility.RESPONSIBLES_ONLY
     )
     text = models.CharField(_("Comment"), max_length=255)

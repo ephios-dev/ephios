@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "visibile_for",
+                    "visible_for",
                     models.IntegerField(
                         choices=[
                             (0, "responsibles only"),
