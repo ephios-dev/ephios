@@ -63,7 +63,7 @@ class BaseParticipationForm(forms.ModelForm):
                 participation=result,
                 text=comment,
                 authored_by_responsible=self.acting_user,
-                visibile_for=self.get_comment_visibility(),
+                visible_for=self.get_comment_visibility(),
             )
         return result
 
