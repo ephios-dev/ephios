@@ -11,7 +11,8 @@ from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
-from ephios.extra.widgets import CustomSplitDateTimeWidget, PreviousCommentWidget
+from ephios.core.widgets import PreviousCommentWidget
+from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 
 class BaseParticipationForm(forms.ModelForm):
