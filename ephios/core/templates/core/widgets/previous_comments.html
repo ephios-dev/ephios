@@ -1,0 +1,20 @@
+{% load humanize %}
+{% load i18n %}
+<div>
+    {% for comment in comments %}
+        <p class="mt-0 mb-0 d-flex">
+            <span class="comment-visibility-icon">
+                {% if comment.visible_for == 2 %}
+                    <span class="fa fa-users" data-bs-toggle="tooltip" title="{% translate "visible for everyone" %}"></span>
+                {% elif comment.visible_for == 1 %}
+                    <span class="fa fa-user" data-bs-toggle="tooltip" title="{% translate "visible for responsibles and the participant" %}"></span>
+                {% elif comment.visible_for == 0 %}
+                    <span class="fa fa-lock" data-bs-toggle="tooltip" title="{% translate "visible for responsibles only" %}"></span>
+                {% endif %}
+            </span>
+            <span class="pe-1"><b>{{ comment.author }}</b></span>
+            <span class="flex-grow-1">{{ comment.text }}</span>
+            <span>{{ comment.created_at|naturaltime }}</span>
+        </p>
+    {% endfor %}
+</div>
