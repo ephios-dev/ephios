@@ -10,6 +10,7 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from ephios.api.fields import ChoiceDisplayField
+from ephios.core.consequences import consequence_handler_from_slug
 from ephios.core.models import (
     AbstractParticipation,
     Consequence,
@@ -224,3 +225,17 @@ class ConsequenceSerializer(ModelSerializer):
     class Meta:
         model = Consequence
         fields = ["slug", "user", "state", "data"]
+
+    def validate_state(self, value):
+        if value != Consequence.States.NEEDS_CONFIRMATION:
+            raise serializers.ValidationError(
+                _("Consequences must be created in needs_confirmation state")
+            )
+
+    def validate_slug(self, value):
+        try:
+            consequence_handler_from_slug(value)
+        except ValueError:
+            raise serializers.ValidationError(
+                _("Consequence handler for '{slug}' was not found.").format(slug=value)
+            )

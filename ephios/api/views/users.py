@@ -106,5 +106,6 @@ class ConsequenceViewSet(viewsets.ModelViewSet):
     serializer_class = ConsequenceSerializer
     permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
     filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["slug", "user", "state"]
     required_scopes = ["CONFIDENTIAL_WRITE"]
     queryset = Consequence.objects.all()
