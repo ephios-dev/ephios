@@ -18,7 +18,7 @@
         {% endif %}
         {% if participation.comments.exists %}
             {% for comment in participation.comments.all %}
-                {% if show_comments or comment.visible_for == 2 or participation == own_participation %}
+                {% if show_comments or comment.visible_for == 2 or participation == own_participation and comment.visible_for == 1 %}
                     <div class="mb-3">
                         <i class="fas fa-comment"></i>
                         <div class="d-inline">

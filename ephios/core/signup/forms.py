@@ -82,7 +82,22 @@ class BaseParticipationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.pk and self.instance.comments.exists():
             self.fields["previous_comments"] = forms.CharField(
-                widget=PreviousCommentWidget(comments=self.instance.comments.all()), required=False
+                widget=PreviousCommentWidget(
+                    comments=(
+                        self.instance.comments.all()
+                        if self.acting_user
+                        and self.acting_user.has_perm(
+                            "core.change_event", obj=self.instance.shift.event
+                        )
+                        else self.instance.comments.filter(
+                            visible_for__in=[
+                                ParticipationComment.Visibility.PUBLIC,
+                                ParticipationComment.Visibility.PARTICIPANT,
+                            ]
+                        )
+                    )
+                ),
+                required=False,
             )
 
     def get_customization_notification_info(self):
