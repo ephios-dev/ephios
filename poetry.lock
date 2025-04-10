@@ -718,14 +718,14 @@ yaml = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "crispy-bootstrap5"
-version = "2024.10"
+version = "2025.4"
 description = "Bootstrap5 template pack for django-crispy-forms"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "crispy_bootstrap5-2024.10-py3-none-any.whl", hash = "sha256:59e91dac5e45a8c954af3fbcaa6804cd5aef4402f027af2f99a352b096c4016f"},
-    {file = "crispy_bootstrap5-2024.10.tar.gz", hash = "sha256:55b442fe675dd95ad280123c7fe464f454186e90b8e5642e751f436c87627c44"},
+    {file = "crispy_bootstrap5-2025.4-py3-none-any.whl", hash = "sha256:51efa19c7d40e339774a6fe23407e83b95b7634cad6de70fd1f1093131bea1d9"},
+    {file = "crispy_bootstrap5-2025.4.tar.gz", hash = "sha256:d675ea7e245048905077dfe16bf1fa1ee16842f52fe88164ccc8a5e2d11119b3"},
 ]
 
 [package.dependencies]
@@ -3877,4 +3877,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "5abc51e36b0860c5efadb549ddb31870099d24176ed6171afd91f786faaf2cdd"
+content-hash = "33cfc1d7dba3c0b1e7b7b4af4a2eafdcafe2f8eecd44a6e4384fdb0cfea126ac"
