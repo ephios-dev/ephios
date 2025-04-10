@@ -377,6 +377,16 @@ class EventListView(LoginRequiredMixin, ListView):
             .prefetch_related(Prefetch("shifts", queryset=Shift.objects.order_by("start_time")))
         )
 
+        if (participant := request_to_participant(self.request)) is not None:
+            events = events.prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                        participant=participant
+                    ),
+                )
+            )
+
         css_context = self._build_day_css_context(events, shifts)
         ctx.update(
             {
