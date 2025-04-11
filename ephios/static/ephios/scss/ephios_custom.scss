@@ -350,3 +350,8 @@ $shift-box-target: lighten($primary, 20%);
   height: 36px;
   padding: 5px;
 }
+
+// show comment visibility
+.comment-visibility-icon {
+  min-width: 1.5rem;
+}
