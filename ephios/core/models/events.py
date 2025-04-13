@@ -273,9 +273,6 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     individual_start_time = DateTimeField(_("individual start time"), null=True)
     individual_end_time = DateTimeField(_("individual end time"), null=True)
 
-    # human readable comment
-    comment = models.CharField(_("Comment"), max_length=255, blank=True)
-
     """
     The finished flag is used to make sure the participation_finished signal is only sent out once, even
     if the shift time is changed afterwards.
@@ -288,7 +285,6 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
         return bool(
             self.individual_start_time
             or self.individual_end_time
-            or self.comment
             or self.shift.structure.has_customized_signup(self)
         )
 
@@ -318,6 +314,34 @@ PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
     unlogged_fields=["id", "data", "abstractparticipation_ptr"],
     attach_to_func=lambda instance: (Event, instance.shift.event_id),
 )
+
+
+class ParticipationComment(Model):
+    class Visibility(models.IntegerChoices):
+        RESPONSIBLES_ONLY = 0, _("responsibles only")
+        PARTICIPANT = 1, _("responsibles and corresponding participant")
+        PUBLIC = 2, _("everyone")
+
+    participation = models.ForeignKey(
+        AbstractParticipation, on_delete=models.CASCADE, related_name="comments"
+    )
+    authored_by_responsible = models.ForeignKey(
+        "UserProfile", on_delete=models.SET_NULL, blank=True, null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    visible_for = IntegerField(
+        _("visible for"), choices=Visibility.choices, default=Visibility.RESPONSIBLES_ONLY
+    )
+    text = models.CharField(_("Comment"), max_length=255)
+
+    @property
+    def author(self):
+        return self.authored_by_responsible or self.participation.participant
+
+    def __str__(self):
+        return _("Participation comment for {participation}").format(
+            participation=self.participation
+        )
 
 
 class Shift(DatetimeDisplayMixin, Model):

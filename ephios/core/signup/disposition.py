@@ -16,6 +16,7 @@ from ephios.core.models import (
     Shift,
     UserProfile,
 )
+from ephios.core.models.events import ParticipationComment
 from ephios.core.services.notifications.types import (
     ParticipationCustomizationNotification,
     ParticipationStateChangeNotification,
@@ -31,6 +32,9 @@ class MissingParticipation(ValueError):
 
 class BaseDispositionParticipationForm(BaseParticipationForm):
     disposition_participation_template = "core/disposition/fragment_participation.html"
+    comment_is_internal = forms.BooleanField(
+        label=_("Hide comment for participant"), required=False, label_suffix=""
+    )
 
     def __init__(self, **kwargs):
         try:
@@ -40,10 +44,16 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
 
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
-        self.fields["comment"].disabled = True
+
+    def get_comment_visibility(self):
+        return (
+            ParticipationComment.Visibility.RESPONSIBLES_ONLY
+            if self.cleaned_data["comment_is_internal"]
+            else ParticipationComment.Visibility.PARTICIPANT
+        )
 
     class Meta(BaseParticipationForm.Meta):
-        fields = ["state", "individual_start_time", "individual_end_time", "comment"]
+        fields = ["state", "individual_start_time", "individual_end_time"]
         widgets = {"state": forms.HiddenInput(attrs={"class": "state-input"})}
 
 
@@ -215,6 +225,7 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
             self.request.POST or None,
             queryset=self.object.participations.all(),
             prefix="participations",
+            form_kwargs={"acting_user": self.request.user},
         )
         return formset
 

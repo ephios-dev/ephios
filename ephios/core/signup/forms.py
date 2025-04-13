@@ -2,13 +2,16 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
+from django.db import transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
+from ephios.core.models.events import ParticipationComment
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
+from ephios.core.widgets import PreviousCommentWidget
 from ephios.extra.widgets import CustomSplitDateTimeWidget
 
 
@@ -21,6 +24,10 @@ class BaseParticipationForm(forms.ModelForm):
         widget=CustomSplitDateTimeWidget,
         required=False,
     )
+    comment = forms.CharField(label=_("Comment"), max_length=255, required=False, label_suffix="")
+    comment_is_public = forms.BooleanField(
+        label=_("Make comment visible for other participants"), required=False, label_suffix=""
+    )
 
     def clean_individual_start_time(self):
         if self.cleaned_data["individual_start_time"] == self.shift.start_time:
@@ -32,8 +39,16 @@ class BaseParticipationForm(forms.ModelForm):
             return None
         return self.cleaned_data["individual_end_time"]
 
+    def get_comment_visibility(self):
+        return (
+            ParticipationComment.Visibility.PUBLIC
+            if self.cleaned_data["comment_is_public"]
+            else ParticipationComment.Visibility.PARTICIPANT
+        )
+
     def clean(self):
         cleaned_data = super().clean()
+        cleaned_data["comment_visibility"] = self.get_comment_visibility()
         if not self.errors:
             start = cleaned_data["individual_start_time"] or self.shift.start_time
             end = cleaned_data["individual_end_time"] or self.shift.end_time
@@ -41,18 +56,50 @@ class BaseParticipationForm(forms.ModelForm):
                 self.add_error("individual_end_time", _("End time must not be before start time."))
             return cleaned_data
 
+    @transaction.atomic
+    def save(self, commit=True):
+        result = super().save()
+        if comment := self.cleaned_data["comment"]:
+            ParticipationComment.objects.create(
+                participation=result,
+                text=comment,
+                authored_by_responsible=self.acting_user,
+                visible_for=self.get_comment_visibility(),
+            )
+        return result
+
     class Meta:
         model = AbstractParticipation
-        fields = ["individual_start_time", "individual_end_time", "comment"]
+        fields = ["individual_start_time", "individual_end_time"]
 
     def __init__(self, *args, **kwargs):
         instance = kwargs["instance"]
+        self.acting_user = kwargs.pop("acting_user", None)
         kwargs["initial"] = {
             **kwargs.get("initial", {}),
             "individual_start_time": instance.individual_start_time or self.shift.start_time,
             "individual_end_time": instance.individual_end_time or self.shift.end_time,
         }
         super().__init__(*args, **kwargs)
+        if self.instance.pk and self.instance.comments.exists():
+            self.fields["previous_comments"] = forms.CharField(
+                widget=PreviousCommentWidget(
+                    comments=(
+                        self.instance.comments.all()
+                        if self.acting_user
+                        and self.acting_user.has_perm(
+                            "core.change_event", obj=self.instance.shift.event
+                        )
+                        else self.instance.comments.filter(
+                            visible_for__in=[
+                                ParticipationComment.Visibility.PUBLIC,
+                                ParticipationComment.Visibility.PARTICIPANT,
+                            ]
+                        )
+                    )
+                ),
+                required=False,
+            )
 
     def get_customization_notification_info(self):
         """

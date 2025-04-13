@@ -492,13 +492,17 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
             base = Event.all_objects.all()
         if (participant := request_to_participant(self.request)) is None:
             return base
-        return base.prefetch_related("shifts").prefetch_related(
-            Prefetch(
-                "shifts__participations",
-                queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
-                    participant=participant
-                ),
+        return (
+            base.prefetch_related("shifts")
+            .prefetch_related(
+                Prefetch(
+                    "shifts__participations",
+                    queryset=AbstractParticipation.objects.all().with_show_participant_data_to(
+                        participant=participant
+                    ),
+                )
             )
+            .prefetch_related("shifts__participations__comments")
         )
 
     def get_context_data(self, **kwargs):

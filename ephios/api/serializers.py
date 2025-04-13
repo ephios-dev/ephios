@@ -18,6 +18,7 @@ from ephios.core.models import (
     Shift,
     UserProfile,
 )
+from ephios.core.models.events import ParticipationComment
 from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.core.templatetags.settings_extras import make_absolute
 
@@ -152,6 +153,14 @@ class ConfidentialParticipantSerializer(PublicParticipantSerializer):
     age = serializers.IntegerField(source="get_age")
 
 
+class CommentSerializer(ModelSerializer):
+    author = serializers.CharField(source="author.display_name", read_only=True)
+
+    class Meta:
+        model = ParticipationComment
+        fields = ["author", "text", "created_at"]
+
+
 class UserinfoParticipationSerializer(ModelSerializer):
     state = ChoiceDisplayField(choices=AbstractParticipation.States.choices)
     duration = serializers.SerializerMethodField(label=_("Duration in seconds"))
@@ -162,6 +171,7 @@ class UserinfoParticipationSerializer(ModelSerializer):
     event = serializers.PrimaryKeyRelatedField(source="shift.event", read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True, allow_null=True)
     participant = ConfidentialParticipantSerializer(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
 
     def build_unknown_field(self, field_name, model_class):
         if field_name in {"start_time", "end_time"}:
@@ -180,7 +190,7 @@ class UserinfoParticipationSerializer(ModelSerializer):
             "event_title",
             "event_type",
             "state",
-            "comment",
+            "comments",
             "start_time",
             "end_time",
             "duration",
@@ -199,4 +209,4 @@ class ParticipationSerializer(UserinfoParticipationSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        del self.fields["comment"]
+        del self.fields["comments"]
