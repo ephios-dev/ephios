@@ -135,7 +135,7 @@ register_model_for_logging(
 class FederatedUser(models.Model):
     email = models.EmailField(_("email address"))
     display_name = models.CharField(_("name"), max_length=254)
-    date_of_birth = models.DateField(_("date of birth"))
+    date_of_birth = models.DateField(_("date of birth"), null=True, blank=True)
     phone = models.CharField(_("phone number"), max_length=254, blank=True)
     qualifications = models.ManyToManyField(Qualification)
     federated_instance = models.ForeignKey(FederatedGuest, on_delete=models.CASCADE)
