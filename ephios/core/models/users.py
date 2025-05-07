@@ -361,7 +361,8 @@ class QualificationGrant(Model):
         return not self.is_expired()
 
     def __str__(self):
-        return f"{self.qualification!s} {_('for')} {self.user!s}"
+        template = _("{qualification} for {user}")
+        return template.format(qualification=str(self.qualification), user=str(self.user))
 
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
