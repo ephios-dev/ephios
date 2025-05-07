@@ -229,7 +229,7 @@ class M2MLogRecorder(BaseLogRecorder):
             "removed": related_model._base_manager.filter(pk__in=self.removed_pks),
         }
 
-        if current := getattr(self, "current", None):
+        if (current := getattr(self, "current", None)) is not None:
             data["current"] = current
 
         return data
@@ -264,9 +264,6 @@ def _m2m_changed(
 ):  # pylint: disable=unused-argument
     from ephios.modellogging.log import LOGGED_MODELS, update_log
 
-    if "pre" not in action:
-        return
-
     if type(instance) not in LOGGED_MODELS:
         return
 
@@ -275,11 +272,14 @@ def _m2m_changed(
         if recorder.slug != M2MLogRecorder.slug:
             continue
         if getattr(type(instance), recorder.field_name).through == sender:
-            if action == "pre_remove":
-                recorder.removed_pks |= set(pk_set)
-                hit = True
-            elif action == "pre_add":
+            if action == "post_add":
+                # log after add, to make sure the value statements are recorded after the add
+                # when creating a model
                 recorder.added_pks |= set(pk_set)
+                hit = True
+            elif action == "pre_remove":
+                # log before removal/clear, so we can record str-representations in case of deletion
+                recorder.removed_pks |= set(pk_set)
                 hit = True
             elif action == "pre_clear":
                 recorder.record_clear(instance)
@@ -464,7 +464,7 @@ register_log_recorders = Signal()
 
 
 @receiver(register_log_recorders)
-def _register_inbuilt_recorders(sender, **kwargs):
+def _register_builtin_recorders(sender, **kwargs):
     return [
         ModelFieldLogRecorder,
         M2MLogRecorder,
