@@ -273,15 +273,16 @@ def _m2m_changed(
             continue
         if getattr(type(instance), recorder.field_name).through == sender:
             if action == "post_add":
-                # log after add, to make sure the value statements are recorded after the add
-                # when creating a model
+                # Use "post_add" to log after the related objects have been fully added to the relationship.
+                # This ensures that the value statements are recorded accurately after the addition is complete,
+                # which is particularly important when creating a model. Using "pre_add" would not be suitable
+                # because the related objects might not yet be fully associated with the instance at that point.
                 recorder.added_pks |= set(pk_set)
                 hit = True
-            elif action == "pre_remove":
-                # log before removal/clear, so we can record str-representations in case of deletion
+            elif action == "post_remove":
                 recorder.removed_pks |= set(pk_set)
                 hit = True
-            elif action == "pre_clear":
+            elif action == "post_clear":
                 recorder.record_clear(instance)
                 hit = True
         if hit:

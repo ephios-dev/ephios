@@ -53,7 +53,7 @@ class BaseLogConfig:
 class ModelFieldsLogConfig(BaseLogConfig):
     def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
         """
-        Loggs all fields of a model.
+        Logs all fields of a model.
 
         ``unlogged_fields``: Specify a list of field names to exclude in logging.
         Other fields get logged. Defaults to ['id']
