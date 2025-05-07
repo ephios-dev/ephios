@@ -48,7 +48,7 @@ register_model_for_logging(
 
 
 class ResourceAllocation(models.Model):
-    shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE, verbose_name=_("Shift"))
     resources = models.ManyToManyField(Resource, blank=True, verbose_name=_("Resources"))
 
     def __str__(self):
