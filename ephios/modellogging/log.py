@@ -45,7 +45,7 @@ class BaseLogConfig:
     def save_logentry(self, logentry: LogEntry):
         """
         Save the logentry. Overwrite this method to process the logentry
-        bevore saving.
+        before saving.
         """
         logentry.save()
 
@@ -53,7 +53,9 @@ class BaseLogConfig:
 class ModelFieldsLogConfig(BaseLogConfig):
     def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
         """
-        ``unlogged_fields``: Specify a list of field names so that these fields don't get logged.
+        Loggs all fields of a model.
+
+        ``unlogged_fields``: Specify a list of field names to exclude in logging.
         Other fields get logged. Defaults to ['id']
 
         ``attach_to_func``: Specify a function receiving an instance and returning a tuple

@@ -25,7 +25,7 @@ def partition(pred, iterable):
 
 
 def format_anything(value):
-    """Return some inbuilt types in a human readable way."""
+    """Return some built-in types in a human readable way."""
     if isinstance(value, bool):
         return yesno(value)
     if isinstance(value, datetime.datetime):
