@@ -311,6 +311,12 @@ class Qualification(Model):
     natural_key.dependencies = ["core.QualificationCategory"]
 
 
+register_model_for_logging(
+    Qualification,
+    ModelFieldsLogConfig(),
+)
+
+
 class CustomQualificationGrantQuerySet(models.QuerySet):
     # Available on both Manager and QuerySet.
     def unexpired(self):
