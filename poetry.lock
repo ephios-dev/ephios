@@ -857,19 +857,19 @@ files = [
 
 [[package]]
 name = "django"
-version = "5.0.14"
+version = "5.2.1"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "Django-5.0.14-py3-none-any.whl", hash = "sha256:e762bef8629ee704de215ebbd32062b84f4e56327eed412e5544f6f6eb1dfd74"},
-    {file = "Django-5.0.14.tar.gz", hash = "sha256:29019a5763dbd48da1720d687c3522ef40d1c61be6fb2fad27ed79e9f655bc11"},
+    {file = "django-5.2.1-py3-none-any.whl", hash = "sha256:a9b680e84f9a0e71da83e399f1e922e1ab37b2173ced046b541c72e1589a5961"},
+    {file = "django-5.2.1.tar.gz", hash = "sha256:57fe1f1b59462caed092c80b3dd324fd92161b620d59a9ba9181c34746c97284"},
 ]
 
 [package.dependencies]
 argon2-cffi = {version = ">=19.1.0", optional = true, markers = "extra == \"argon2\""}
-asgiref = ">=3.7.0,<4"
+asgiref = ">=3.8.1"
 sqlparse = ">=0.3.1"
 tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
@@ -3873,4 +3873,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "33cfc1d7dba3c0b1e7b7b4af4a2eafdcafe2f8eecd44a6e4384fdb0cfea126ac"
+content-hash = "a6d0fd23e4e24e2fa8c64f1cd8b2dac51d16ef6efa56d18e36ed4c5b76a04f1d"
