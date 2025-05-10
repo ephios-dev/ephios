@@ -229,7 +229,7 @@ class M2MLogRecorder(BaseLogRecorder):
             "removed": related_model._base_manager.filter(pk__in=self.removed_pks),
         }
 
-        if current := getattr(self, "current", None):
+        if (current := getattr(self, "current", None)) is not None:
             data["current"] = current
 
         return data
@@ -264,9 +264,6 @@ def _m2m_changed(
 ):  # pylint: disable=unused-argument
     from ephios.modellogging.log import LOGGED_MODELS, update_log
 
-    if "pre" not in action:
-        return
-
     if type(instance) not in LOGGED_MODELS:
         return
 
@@ -275,13 +272,17 @@ def _m2m_changed(
         if recorder.slug != M2MLogRecorder.slug:
             continue
         if getattr(type(instance), recorder.field_name).through == sender:
-            if action == "pre_remove":
-                recorder.removed_pks |= set(pk_set)
-                hit = True
-            elif action == "pre_add":
+            if action == "post_add":
+                # Use "post_add" to log after the related objects have been fully added to the relationship.
+                # This ensures that the value statements are recorded accurately after the addition is complete,
+                # which is particularly important when creating a model. Using "pre_add" would not be suitable
+                # because the related objects might not yet be fully associated with the instance at that point.
                 recorder.added_pks |= set(pk_set)
                 hit = True
-            elif action == "pre_clear":
+            elif action == "post_remove":
+                recorder.removed_pks |= set(pk_set)
+                hit = True
+            elif action == "post_clear":
                 recorder.record_clear(instance)
                 hit = True
         if hit:
@@ -464,7 +465,7 @@ register_log_recorders = Signal()
 
 
 @receiver(register_log_recorders)
-def _register_inbuilt_recorders(sender, **kwargs):
+def _register_builtin_recorders(sender, **kwargs):
     return [
         ModelFieldLogRecorder,
         M2MLogRecorder,
