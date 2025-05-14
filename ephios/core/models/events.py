@@ -34,7 +34,7 @@ from polymorphic.query import PolymorphicQuerySet
 
 from ephios.core.signup.stats import SignupStats
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
+from ephios.modellogging.log import ModelFieldsLogConfig, dont_log, log, register_model_for_logging
 from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
@@ -49,6 +49,7 @@ class ActiveManager(Manager):
         return super().get_queryset().filter(active=True)
 
 
+@log()
 class EventType(Model):
     class ShowParticipantDataChoices(models.IntegerChoices):
         INSTANCE_USERS = 0, _("to logged in users")
@@ -239,6 +240,7 @@ def NON_POLYMORPHIC_CASCADE(collector, field, sub_objs, using):
     return models.CASCADE(collector, field, sub_objs.non_polymorphic(), using)
 
 
+@dont_log  # as we log the specific models
 class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     class States(models.IntegerChoices):
         REQUESTED = 0, _("requested")
@@ -316,6 +318,7 @@ PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
 )
 
 
+@dont_log  # as they are immutable and have information about author and time
 class ParticipationComment(Model):
     class Visibility(models.IntegerChoices):
         RESPONSIBLES_ONLY = 0, _("responsibles only")
@@ -556,6 +559,7 @@ class PlaceholderParticipation(AbstractParticipation):
 register_model_for_logging(PlaceholderParticipation, PARTICIPATION_LOG_CONFIG)
 
 
+@dont_log  # as the logging framework does not produce sensible logs for preference models
 class EventTypePreference(PerInstancePreferenceModel):
     instance = ForeignKey(EventType, on_delete=models.CASCADE)
 

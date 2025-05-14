@@ -10,9 +10,16 @@ from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
-from ephios.modellogging.log import register_model_for_logging
+from ephios.modellogging.log import ModelFieldsLogConfig, log, register_model_for_logging
 
 
+@log(
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "event"},
+        redacted_fields={"token"},
+        attach_to_func=lambda instance: (Event, instance.event_id),
+    )
+)
 class EventGuestShare(models.Model):
     event = models.OneToOneField(Event, related_name="guest_share", on_delete=models.CASCADE)
     token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
@@ -31,6 +38,13 @@ class EventGuestShare(models.Model):
         )
 
 
+@log(
+    ModelFieldsLogConfig(
+        unlogged_fields={"id", "event"},
+        redacted_fields={"access_token"},
+        attach_to_func=lambda instance: (Event, instance.event_id),
+    )
+)
 class GuestUser(models.Model):
     email = models.EmailField(_("email address"))
     display_name = models.CharField(_("name"), max_length=254)

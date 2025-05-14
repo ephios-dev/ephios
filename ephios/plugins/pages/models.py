@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from ephios.modellogging.log import log
 
+
+@log()
 class Page(models.Model):
     title = models.CharField(verbose_name=_("Title"), max_length=250)
     content = models.TextField(_("Content"), blank=True)
