@@ -182,6 +182,30 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         yield {"label": self.label, "value": self.new_value}
 
 
+class RedactedModelFieldLogRecorder(ModelFieldLogRecorder):
+    slug = "redactedmodelfield"
+
+    def attached(self, instance):
+        old = self.field.value_from_object(instance)
+        self.old_value = "***"
+        self.old_hash = hash(old)
+
+    def record(self, action: InstanceActionType, instance):
+        if self.field.one_to_one or self.field.many_to_one:
+            raise ValueError("RedactedModelFieldLogRecorder does not support foreign keys.")
+        else:
+            new = self.field.value_from_object(instance)
+            self.new_value = "***"
+            self.new_hash = hash(new)
+
+    def is_changed(self):
+        return self.old_hash != self.new_hash
+
+    @property
+    def key(self):
+        return f"redacted-field-{self.field.name}"
+
+
 class M2MLogRecorder(BaseLogRecorder):
     # pylint: disable=too-many-instance-attributes
 
@@ -372,7 +396,7 @@ class PermissionLogRecorder(BaseLogRecorder):
 class DerivedFieldsLogRecorder(BaseLogRecorder):
     """
     This recorder lets you provide a ``derive`` function you can use to derive fields for the log from the instance.
-    Return value must be a dict mapping human readable labels to values.
+    Return value must be a dict mapping human-readable labels to values.
     """
 
     slug = "derived-fields"
@@ -468,6 +492,7 @@ register_log_recorders = Signal()
 def _register_builtin_recorders(sender, **kwargs):
     return [
         ModelFieldLogRecorder,
+        RedactedModelFieldLogRecorder,
         M2MLogRecorder,
         PermissionLogRecorder,
         DerivedFieldsLogRecorder,

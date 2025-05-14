@@ -15,7 +15,7 @@ from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
 from ephios.core.signup.participants import AbstractParticipant
-from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
+from ephios.modellogging.log import ModelFieldsLogConfig, log, register_model_for_logging
 
 
 class FederatedGuest(models.Model):
@@ -128,10 +128,14 @@ class FederatedEventShare(models.Model):
 
 register_model_for_logging(
     FederatedEventShare,
-    ModelFieldsLogConfig(),
+    ModelFieldsLogConfig(
+        unlogged_fields=["id", "event"],
+        attach_to_func=lambda instance: (Event, instance.event_id),
+    ),
 )
 
 
+@log()
 class FederatedUser(models.Model):
     email = models.EmailField(_("email address"))
     display_name = models.CharField(_("name"), max_length=254)
@@ -156,12 +160,6 @@ class FederatedUser(models.Model):
     class Meta:
         verbose_name = _("federated user")
         verbose_name_plural = _("federated users")
-
-
-register_model_for_logging(
-    FederatedUser,
-    ModelFieldsLogConfig(),
-)
 
 
 @dataclasses.dataclass(frozen=True)

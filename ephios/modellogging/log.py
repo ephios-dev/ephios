@@ -5,11 +5,17 @@ from typing import Dict
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.db.models import Model
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
 from ephios.modellogging.models import LogEntry
-from ephios.modellogging.recorders import InstanceActionType, M2MLogRecorder, ModelFieldLogRecorder
+from ephios.modellogging.recorders import (
+    InstanceActionType,
+    M2MLogRecorder,
+    ModelFieldLogRecorder,
+    RedactedModelFieldLogRecorder,
+)
 
 # pylint: disable=protected-access
 
@@ -51,7 +57,13 @@ class BaseLogConfig:
 
 
 class ModelFieldsLogConfig(BaseLogConfig):
-    def __init__(self, unlogged_fields=None, attach_to_func=None, initial_recorders_func=None):
+    def __init__(
+        self,
+        unlogged_fields=None,
+        redacted_fields=None,
+        attach_to_func=None,
+        initial_recorders_func=None,
+    ):
         """
         Logs all fields of a model.
 
@@ -69,6 +81,7 @@ class ModelFieldsLogConfig(BaseLogConfig):
         if unlogged_fields is None:
             unlogged_fields = ["id"]
         self.unlogged_fields = unlogged_fields
+        self.redacted_fields = redacted_fields or []
         self.attach_to_func = attach_to_func
         self.initial_recorders_func = initial_recorders_func
 
@@ -84,7 +97,9 @@ class ModelFieldsLogConfig(BaseLogConfig):
                 continue
             if f.name in self.unlogged_fields:
                 continue
-            if f.many_to_many:
+            if f.name in self.redacted_fields:
+                yield RedactedModelFieldLogRecorder(f)
+            elif f.many_to_many:
                 yield M2MLogRecorder(f)
             else:
                 yield ModelFieldLogRecorder(f)
@@ -100,6 +115,33 @@ LOGGED_MODELS: Dict[models.Model, BaseLogConfig] = {}
 
 def register_model_for_logging(model_class, config):
     LOGGED_MODELS[model_class] = config
+
+
+def log(config=None):
+    """
+    Returns a class decorator that registers a model for logging.
+    """
+    if config is None:
+        config = ModelFieldsLogConfig()
+    elif isinstance(config, Model):
+        raise ValueError("You need to call this as @log() to use the default logging config.")
+
+    def decorator(model_class):
+        register_model_for_logging(model_class, config)
+        return model_class
+
+    return decorator
+
+
+def dont_log(model_class):
+    """
+    Mark a model as intentionally not logged.
+    With this, we can check that all models are either registered for logging or explicitly marked as not logging.
+    We use an attribute on the model class instead of some noop log config
+    to avoid the overhead of the logging machinery.
+    """
+    model_class._ephios_dont_log = True
+    return model_class
 
 
 def add_log_recorder(instance, recorder):
