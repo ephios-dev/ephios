@@ -183,6 +183,11 @@ class ModelFieldLogRecorder(BaseLogRecorder):
 
 
 class RedactedModelFieldLogRecorder(ModelFieldLogRecorder):
+    """
+    Like ModelFieldLogRecorder, but redacts the value of the field.
+    Does not support foreign keys, because how would we know what to redact?
+    """
+
     slug = "redactedmodelfield"
 
     def attached(self, instance):
@@ -193,10 +198,9 @@ class RedactedModelFieldLogRecorder(ModelFieldLogRecorder):
     def record(self, action: InstanceActionType, instance):
         if self.field.one_to_one or self.field.many_to_one:
             raise ValueError("RedactedModelFieldLogRecorder does not support foreign keys.")
-        else:
-            new = self.field.value_from_object(instance)
-            self.new_value = "***"
-            self.new_hash = hash(new)
+        new = self.field.value_from_object(instance)
+        self.new_value = "***"
+        self.new_hash = hash(new)
 
     def is_changed(self):
         return self.old_hash != self.new_hash
