@@ -22,6 +22,10 @@ class Document(models.Model):
     def __str__(self):
         return str(self.title)
 
+    class Meta:
+        verbose_name = _("Document")
+        verbose_name_plural = _("Documents")
+
 
 @receiver(models.signals.post_delete, sender=Document)
 def delete_stale_file(sender, instance, using, **kwargs):

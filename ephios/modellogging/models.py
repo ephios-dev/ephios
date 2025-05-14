@@ -16,6 +16,7 @@ from ephios.modellogging.recorders import (
 
 
 class LogEntry(models.Model):
+    _ephios_dont_log = True
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,

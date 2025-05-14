@@ -38,6 +38,8 @@ from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
+    dont_log,
+    log,
     register_model_for_logging,
 )
 from ephios.modellogging.recorders import FixedMessageLogRecorder, M2MLogRecorder
@@ -242,6 +244,7 @@ class QualificationCategoryManager(models.Manager):
         return self.get(uuid=category_uuid)
 
 
+@log()
 class QualificationCategory(Model):
     uuid = models.UUIDField("UUID", unique=True, default=uuid.uuid4)
     title = CharField(_("title"), max_length=254)
@@ -484,6 +487,7 @@ register_model_for_logging(
 )
 
 
+@log()
 class WorkingHours(Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_("User"))
     hours = models.DecimalField(decimal_places=2, max_digits=7, verbose_name=_("Hours of work"))
@@ -499,6 +503,7 @@ class WorkingHours(Model):
         return f"{self.hours} hours for {self.user} because of {self.reason} on {self.date}"
 
 
+@dont_log
 class Notification(Model):
     slug = models.SlugField(max_length=255)
     user = models.ForeignKey(
@@ -562,6 +567,7 @@ class Notification(Model):
         return self.notification_type.get_actions_with_referrer(self)
 
 
+@log(ModelFieldsLogConfig(unlogged_fields={"id"}, redacted_fields={"client_secret"}))
 class IdentityProvider(Model):
     internal_name = models.CharField(
         max_length=255,
@@ -659,3 +665,7 @@ class IdentityProvider(Model):
 
     def __str__(self):
         return _("Identity provider {label}").format(label=self.label)
+
+    class Meta:
+        verbose_name = _("Identity provider")
+        verbose_name_plural = _("Identity providers")
