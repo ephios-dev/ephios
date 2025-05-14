@@ -168,13 +168,16 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
     @classmethod
     def render(cls, consequence):
         # Get all the strings we need from the annotations, or fetch them from DB as backup
-        try:  # try the annotation
-            event_title = consequence.event_title
-        except AttributeError:
-            if event_id := consequence.data["event_id"]:  # fetch from DB as backup
-                event_title = Event.objects.get(id=event_id).title
-            else:  # no event has been associated
-                event_title = None
+        try:
+            try:  # try the annotation
+                event_title = consequence.event_title
+            except AttributeError:
+                if event_id := consequence.data["event_id"]:  # fetch from DB as backup
+                    event_title = Event.objects.get(id=event_id).title
+                else:  # no event has been associated
+                    event_title = None
+        except Event.DoesNotExist:
+            event_title = _("deleted event")
 
         try:
             qualification_title = consequence.qualification_title

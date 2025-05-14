@@ -71,6 +71,10 @@ class TestQualificationConsequence:
     def test_consequence_pends_for_user(self, volunteer, qualifications_consequence):
         assert qualifications_consequence in pending_consequences(volunteer)
 
+    def test_render_with_deleted_event(self, volunteer, qualifications_consequence, event):
+        event.delete()
+        assert "after participating in deleted event" in qualifications_consequence.render()
+
 
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
