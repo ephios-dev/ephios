@@ -1,4 +1,3 @@
-import collections.abc
 import json
 
 from django.contrib.contenttypes.models import ContentType
@@ -7,9 +6,20 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import dateparse
-from django.utils.functional import SimpleLazyObject
 
 # pylint: disable=protected-access
+
+
+def _is_queryset_like(o):
+    try:
+        return (
+            # assume it's a collection, then every item needs to be a model
+            all(isinstance(elem, models.Model) for elem in o)
+            # if we encode a model and a list of PKs, they must all be the same model
+            and len({type(elem) for elem in o}) == 1
+        )
+    except TypeError:
+        return False
 
 
 class LogJSONEncoder(DjangoJSONEncoder):
@@ -18,12 +28,7 @@ class LogJSONEncoder(DjangoJSONEncoder):
     """
 
     def default(self, o):
-        queryset_like = SimpleLazyObject(
-            lambda: isinstance(o, collections.abc.Collection)
-            and all(isinstance(elem, models.Model) for elem in o)
-            and len({type(elem) for elem in o}) == 1
-        )
-        if isinstance(o, QuerySet) or queryset_like:
+        if isinstance(o, QuerySet) or _is_queryset_like(o):
             pks, strs = [], []
             for instance in o:
                 pks.append(instance.pk)

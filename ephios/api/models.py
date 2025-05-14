@@ -11,7 +11,15 @@ from oauth2_provider.models import (
     ApplicationManager,
 )
 
+from ephios.modellogging.log import ModelFieldsLogConfig, dont_log, log
 
+
+@log(
+    ModelFieldsLogConfig(
+        unlogged_fields={"id"},
+        redacted_fields={"client_secret"},
+    )
+)
 class Application(AbstractApplication):
     objects = ApplicationManager()
 
@@ -25,6 +33,12 @@ class Application(AbstractApplication):
         return reverse("api:settings-oauth-app-detail", args=[str(self.id)])
 
 
+@log(
+    ModelFieldsLogConfig(
+        unlogged_fields={"id"},
+        redacted_fields={"token"},
+    )
+)
 class AccessToken(AbstractAccessToken):
     class Meta(AbstractAccessToken.Meta):
         swappable = "OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL"
@@ -76,16 +90,19 @@ class AccessToken(AbstractAccessToken):
         self.save()
 
 
+@dont_log
 class RefreshToken(AbstractRefreshToken):
     class Meta(AbstractRefreshToken.Meta):
         swappable = "OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL"
 
 
+@dont_log
 class IDToken(AbstractIDToken):
     class Meta(AbstractIDToken.Meta):
         swappable = "OAUTH2_PROVIDER_ID_TOKEN_MODEL"
 
 
+@dont_log
 class Grant(AbstractGrant):
     class Meta(AbstractGrant.Meta):
         swappable = "OAUTH2_PROVIDER_GRANT_MODEL"
