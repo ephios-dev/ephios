@@ -1136,18 +1136,18 @@ requests = ">=2.13.0"
 
 [[package]]
 name = "django-polymorphic"
-version = "3.1.0"
+version = "4.1.0"
 description = "Seamless polymorphic inheritance for Django models"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django-polymorphic-3.1.0.tar.gz", hash = "sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8"},
-    {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
+    {file = "django_polymorphic-4.1.0-py3-none-any.whl", hash = "sha256:0ce3984999e103a0d1a434a5c5617f2c7f990dc3d5fb3585ce0fadadf9ff90ea"},
+    {file = "django_polymorphic-4.1.0.tar.gz", hash = "sha256:4438d95a0aef6c4307cd6c83ead387e1142ce80b65188a931ec2f0dbdd9bfc51"},
 ]
 
 [package.dependencies]
-Django = ">=2.1"
+Django = ">=3.2"
 
 [[package]]
 name = "django-recurrence"
@@ -3873,4 +3873,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "33cfc1d7dba3c0b1e7b7b4af4a2eafdcafe2f8eecd44a6e4384fdb0cfea126ac"
+content-hash = "e298aaeb41997e217dbb460f0727760db5d3499bc7571491cf395087cf0b47d7"
