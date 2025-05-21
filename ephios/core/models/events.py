@@ -318,7 +318,14 @@ PARTICIPATION_LOG_CONFIG = ModelFieldsLogConfig(
 )
 
 
-@dont_log  # as they are immutable and have information about author and time
+@log(
+    ModelFieldsLogConfig(
+        unlogged_fields={
+            "id",
+            "created_at",
+        }
+    )
+)
 class ParticipationComment(Model):
     class Visibility(models.IntegerChoices):
         RESPONSIBLES_ONLY = 0, _("responsibles only")
@@ -326,12 +333,19 @@ class ParticipationComment(Model):
         PUBLIC = 2, _("everyone")
 
     participation = models.ForeignKey(
-        AbstractParticipation, on_delete=models.CASCADE, related_name="comments"
+        AbstractParticipation,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name=_("Participation"),
     )
     authored_by_responsible = models.ForeignKey(
-        "UserProfile", on_delete=models.SET_NULL, blank=True, null=True
+        "UserProfile",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_("Responsible user"),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("created at"))
     visible_for = IntegerField(
         _("visible for"), choices=Visibility.choices, default=Visibility.RESPONSIBLES_ONLY
     )
@@ -342,9 +356,14 @@ class ParticipationComment(Model):
         return self.authored_by_responsible or self.participation.participant
 
     def __str__(self):
-        return _("Participation comment for {participation}").format(
-            participation=self.participation
+        return _('"{text}" by {author} on {participation}').format(
+            text=self.text, author=self.author, participation=self.participation
         )
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+        ordering = ("created_at",)
 
 
 class Shift(DatetimeDisplayMixin, Model):
