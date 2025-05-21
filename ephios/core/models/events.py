@@ -425,9 +425,9 @@ class Shift(DatetimeDisplayMixin, Model):
         self._clear_cached_signup_objects()
         return super().save(*args, **kwargs)
 
-    def refresh_from_db(self, using=None, fields=None, from_queryset=None):
+    def refresh_from_db(self, using=None, fields=None):
         self._clear_cached_signup_objects()
-        return super().refresh_from_db(using, fields, from_queryset)
+        return super().refresh_from_db(using, fields)
 
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
