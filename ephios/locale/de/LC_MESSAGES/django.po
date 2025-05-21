@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-14 14:30+0200\n"
-"PO-Revision-Date: 2025-05-14 14:31+0200\n"
+"POT-Creation-Date: 2025-05-21 22:16+0200\n"
+"PO-Revision-Date: 2025-05-21 22:16+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -50,11 +50,11 @@ msgstr "Token ist zu alt, um angezeigt werden zu können."
 msgid "Token was revoked."
 msgstr "Token wurde entfernt."
 
-#: ephios/api/filters.py:44 ephios/core/models/events.py:355
+#: ephios/api/filters.py:44 ephios/core/models/events.py:362
 msgid "start time"
 msgstr "Beginn"
 
-#: ephios/api/filters.py:45 ephios/core/models/events.py:356
+#: ephios/api/filters.py:45 ephios/core/models/events.py:363
 msgid "end time"
 msgstr "Ende"
 
@@ -937,7 +937,7 @@ msgstr "Ort"
 msgid "active"
 msgstr "aktiv"
 
-#: ephios/core/models/events.py:94 ephios/core/models/events.py:352
+#: ephios/core/models/events.py:94 ephios/core/models/events.py:359
 msgid "event"
 msgstr "Veranstaltung"
 
@@ -965,7 +965,7 @@ msgstr "abgelehnt durch verantwortliche Person"
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: ephios/core/models/events.py:263 ephios/core/models/events.py:376
+#: ephios/core/models/events.py:263 ephios/core/models/events.py:383
 msgid "shift"
 msgstr "Schicht"
 
@@ -989,84 +989,101 @@ msgstr "Individuelles Ende"
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: ephios/core/models/events.py:324
+#: ephios/core/models/events.py:326
 msgid "responsibles only"
 msgstr "nur für Verantwortliche"
 
-#: ephios/core/models/events.py:325
+#: ephios/core/models/events.py:327
 msgid "responsibles and corresponding participant"
 msgstr "Veranwortliche und den betreffende Teilnehmende"
 
-#: ephios/core/models/events.py:326 ephios/plugins/complexsignup/models.py:68
+#: ephios/core/models/events.py:328 ephios/plugins/complexsignup/models.py:68
 msgid "everyone"
 msgstr "jeden"
 
+#: ephios/core/models/events.py:331
+msgid "Participation"
+msgstr "Teilnahme"
+
+#: ephios/core/models/events.py:334
+msgid "Responsible user"
+msgstr "Verantwortlicher Nutzer"
+
 #: ephios/core/models/events.py:336
+msgid "created at"
+msgstr "Erstellt am"
+
+#: ephios/core/models/events.py:338
 msgid "visible for"
 msgstr "Sichtbar für"
 
-#: ephios/core/models/events.py:338 ephios/core/signup/forms.py:27
+#: ephios/core/models/events.py:340 ephios/core/models/events.py:352
+#: ephios/core/signup/forms.py:27
 msgid "Comment"
 msgstr "Kommentar"
 
-#: ephios/core/models/events.py:345
+#: ephios/core/models/events.py:347
 #, python-brace-format
-msgid "Participation comment for {participation}"
-msgstr "Kommentar für {participation}"
+msgid "\"{text}\" by {author} on {participation}"
+msgstr ""
 
-#: ephios/core/models/events.py:354
+#: ephios/core/models/events.py:353
+msgid "Comments"
+msgstr "Kommentare"
+
+#: ephios/core/models/events.py:361
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: ephios/core/models/events.py:358
+#: ephios/core/models/events.py:365
 msgctxt "shift label"
 msgid "label"
 msgstr "Label"
 
-#: ephios/core/models/events.py:361
+#: ephios/core/models/events.py:368
 msgid "Optional label to help differentiate multiple shifts in an event."
 msgstr ""
 "Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung."
 
-#: ephios/core/models/events.py:363
+#: ephios/core/models/events.py:370
 msgid "signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:368
+#: ephios/core/models/events.py:375
 msgid "structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:377
+#: ephios/core/models/events.py:384
 msgid "shifts"
 msgstr "Schichten"
 
-#: ephios/core/models/events.py:494
+#: ephios/core/models/events.py:501
 #: ephios/core/templates/core/fragments/shift_box_small.html:26
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: ephios/core/models/events.py:495
+#: ephios/core/models/events.py:502
 #: ephios/core/templates/core/shift_form.html:46
 msgid "Structure"
 msgstr "Struktur"
 
-#: ephios/core/models/events.py:508
+#: ephios/core/models/events.py:515
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: ephios/core/models/events.py:529
+#: ephios/core/models/events.py:536
 msgid "participation"
 msgstr "Teilnahme"
 
-#: ephios/core/models/events.py:530
+#: ephios/core/models/events.py:537
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: ephios/core/models/events.py:555
+#: ephios/core/models/events.py:562
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: ephios/core/models/events.py:556
+#: ephios/core/models/events.py:563
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -3254,11 +3271,11 @@ msgstr "Änderungseintrag"
 msgid "Log entries"
 msgstr "Änderungseinträge"
 
-#: ephios/modellogging/recorders.py:276 ephios/modellogging/recorders.py:387
+#: ephios/modellogging/recorders.py:280 ephios/modellogging/recorders.py:391
 msgid "added"
 msgstr "hinzugefügt"
 
-#: ephios/modellogging/recorders.py:276 ephios/modellogging/recorders.py:387
+#: ephios/modellogging/recorders.py:280 ephios/modellogging/recorders.py:391
 msgid "removed"
 msgstr "entfernt"
 
@@ -4916,6 +4933,10 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#, python-brace-format
+#~ msgid "Participation comment for {participation}"
+#~ msgstr "Kommentar für {participation}"
 
 #~ msgid "to everyone"
 #~ msgstr "alle Personen"
