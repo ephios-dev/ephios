@@ -7,6 +7,7 @@ from icalendar import vCalAddress
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Shift
+from ephios.extra.auth import access_exempt
 
 
 class EventFeed(ICalFeed):
@@ -68,6 +69,7 @@ class UserEventFeed(EventFeed):
         )
 
 
+@access_exempt
 def user_event_feed_view(request, *args, **kwargs):
     feed = UserEventFeed(get_object_or_404(get_user_model(), **kwargs))
     return feed(request, *args, **kwargs)

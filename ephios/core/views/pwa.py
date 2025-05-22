@@ -10,6 +10,7 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.templatetags.settings_extras import as_brand_static_path
+from ephios.extra.auth import access_exempt
 
 
 def get_pwa_app_icons():
@@ -43,6 +44,7 @@ def get_pwa_app_icons():
     ]
 
 
+@access_exempt
 class PWAManifestView(View):
     def get(self, request, *args, **kwargs):
         org_name = global_preferences_registry.manager().get("general__organization_name")
@@ -81,6 +83,7 @@ class PWAManifestView(View):
         return response
 
 
+@access_exempt
 class ServiceWorkerView(TemplateView):
     template_name = "core/serviceworker.js"
     content_type = "application/javascript"
@@ -106,5 +109,6 @@ class ServiceWorkerView(TemplateView):
         return context
 
 
+@access_exempt
 class OfflineView(TemplateView):
     template_name = "offline.html"

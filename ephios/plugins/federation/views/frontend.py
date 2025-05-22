@@ -18,6 +18,7 @@ from rest_framework.exceptions import PermissionDenied
 from ephios.api.models import Application
 from ephios.core.models import AbstractParticipation, Event
 from ephios.core.views.signup import BaseShiftActionView
+from ephios.extra.auth import access_exempt
 from ephios.extra.mixins import StaffRequiredMixin
 from ephios.plugins.federation.forms import InviteCodeForm, RedeemInviteCodeForm
 from ephios.plugins.federation.models import (
@@ -68,6 +69,7 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
         return context
 
 
+@access_exempt
 class CheckFederatedAccessTokenMixin:
     def dispatch(self, request, *args, **kwargs):
         if "federation_access_token" not in request.session.keys():
