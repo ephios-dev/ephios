@@ -222,7 +222,7 @@ class GroupForm(PermissionFormMixin, ModelForm):
 
     def save(self, commit=True):
         add_log_recorder(self.instance, DerivedFieldsLogRecorder(get_group_permission_log_fields))
-        group = super().save(commit)
+        group = super().save(commit=commit)
 
         group.user_set.set(self.cleaned_data["users"])
 

@@ -17,6 +17,7 @@ from rest_framework.permissions import AllowAny
 from ephios.api.filters import EventFilterSet
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import Event, Qualification
+from ephios.extra.auth import access_exempt
 from ephios.plugins.federation.models import FederatedGuest, FederatedUser
 from ephios.plugins.federation.serializers import (
     FederatedGuestCreateSerializer,
@@ -86,6 +87,7 @@ class SharedEventListView(ListAPIView):
         return context
 
 
+@access_exempt
 class FederationOAuthView(View):
     """
     View that handles the OAuth2 flow for federated users from another instance.

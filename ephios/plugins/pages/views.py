@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
+from ephios.extra.auth import access_exempt
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.pages.models import Page
 
@@ -13,6 +14,7 @@ class PageListView(CustomPermissionRequiredMixin, ListView):
     permission_required = "pages.add_page"
 
 
+@access_exempt
 class PageView(DetailView):
     model = Page
 

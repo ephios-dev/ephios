@@ -12,10 +12,12 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.models import AbstractParticipation, Event
 from ephios.core.views.signup import BaseShiftActionView
+from ephios.extra.auth import access_exempt
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.guests.models import EventGuestShare, GuestUser
 
 
+@access_exempt
 class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -30,6 +32,7 @@ class RedirectAuthenticatedUserMixin:
         return reverse("core:home")
 
 
+@access_exempt
 class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
     model = GuestUser
     form_class = forms.modelform_factory(

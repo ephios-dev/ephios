@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 
 import requests
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -27,9 +28,11 @@ from ephios.core.dynamic_preferences_registry import LoginRedirectToSoleIndentit
 from ephios.core.forms.auth import OIDCLoginForm
 from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
+from ephios.extra.auth import access_exempt
 from ephios.extra.mixins import StaffRequiredMixin
 
 
+@access_exempt
 class OIDCInitiateView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         provider = get_object_or_404(IdentityProvider, id=self.kwargs["provider"])
@@ -49,10 +52,11 @@ class OIDCInitiateView(RedirectView):
         return authorization_url
 
 
+@access_exempt
 class OIDCCallbackView(RedirectView):
     def failure_url(self):
         messages.error(self.request, _("Authentication failed."))
-        return reverse("login")
+        return settings.LOGIN_URL
 
     def get_redirect_url(self, *args, **kwargs):
         if "error" in self.request.GET:
@@ -74,9 +78,10 @@ class OIDCCallbackView(RedirectView):
         return self.failure_url()
 
 
+@access_exempt
 class OIDCLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        logout_url = reverse("login")
+        logout_url = reverse("core:oidc_login")
         if "oidc_provider" in self.request.session:
             providers = IdentityProvider.objects.filter(
                 id=self.request.session.get("oidc_provider")
@@ -112,6 +117,7 @@ def show_login_form(request, providers: QuerySet):
     )
 
 
+@access_exempt
 class OIDCLoginView(LoginView):
     template_name = "core/login.html"
     redirect_authenticated_user = True

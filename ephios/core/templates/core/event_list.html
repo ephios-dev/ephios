@@ -28,19 +28,19 @@
                 <div class="btn-group">
                     <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
                        {% if filter_form.was_submitted %}
-                           href="?{% param_replace mode="list" %}"
+                           href="{% querystring mode="list" %}"
                        {% else %}
                                 {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                           href="?{% param_replace mode="list" date=None %}"
+                           href="{% querystring mode="list" date=None %}"
                        {% endif %}
                     ><span class="fa fa-list"></span></a>
 
                     <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       href="?{% param_replace mode="calendar" %}"
+                       href="{% querystring mode="calendar" %}"
                     ><span class="fa fa-calendar-alt"></span></a>
 
                     <a class="btn btn-sm {% if mode == "day" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       href="?{% param_replace mode="day" %}"
+                       href="{% querystring mode="day" %}"
                     ><span class="fa fa-calendar-day"></span></a>
                 </div>
             </small>
@@ -84,7 +84,7 @@
             {% endif %}
             <div class="d-flex justify-content-between mt-2">
                 <a class="btn btn-secondary"
-                   href="?{% param_replace date=previous_date|date:"Y-m-d" %}"
+                   href="{% querystring date=previous_date|date:"Y-m-d" %}"
                 ><i class="fas fa-arrow-left"></i>
                     {% if mode == "calendar" %}
                         {{ previous_date|date:"F Y" }}
@@ -102,7 +102,7 @@
                 </h3>
 
                 <a class="btn btn-secondary"
-                   href="?{% param_replace date=next_date|date:"Y-m-d" %}"
+                   href="{% querystring date=next_date|date:"Y-m-d" %}"
                 >
                     {% if mode == "calendar" %}
                         {{ next_date|date:"F Y" }}

@@ -6,10 +6,12 @@ from urllib.parse import urljoin
 import jwt
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.decorators import login_not_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
 from django.db.transaction import atomic
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from jwt import InvalidTokenError
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
@@ -20,6 +22,17 @@ from ephios.core.models import Qualification
 from ephios.core.models.users import IdentityProvider, QualificationGrant
 from ephios.core.signals import oidc_update_user
 from ephios.extra.utils import dotted_get
+
+
+def access_exempt(view_class):
+    """
+    Mark a view class as exempt from checking the use of AccessMixin.
+    With this, we can test for our views using an AccessMixin or being intentionally unsecured.
+
+    This is similar to the @login_not_required decorator, but works for class-based views.
+    https://docs.djangoproject.com/en/5.2/topics/auth/default/#django.contrib.auth.decorators.login_not_required
+    """
+    return method_decorator(login_not_required, name="dispatch")(view_class)
 
 
 class EphiosOIDCAB(ModelBackend):
