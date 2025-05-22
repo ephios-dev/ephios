@@ -2,8 +2,10 @@ from django.http import HttpResponse
 from django.views import View
 
 from ephios.core.services.health.healthchecks import HealthCheckStatus, run_healthchecks
+from ephios.extra.auth import access_exempt
 
 
+@access_exempt
 class HealthCheckView(View):
     def get(self, request, *args, **kwargs):
         okays = []

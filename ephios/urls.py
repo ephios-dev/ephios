@@ -7,6 +7,7 @@ from ephios.core.plugins import get_all_plugins
 urlpatterns = [
     path("", include("ephios.core.urls")),
     path("admin/", admin.site.urls),
+    # we use our own login/logout, but djangos builtin password reset views
     path("accounts/", include("django.contrib.auth.urls")),
     path("select2/", include("django_select2.urls")),
     path("webpush/", include("webpush.urls")),

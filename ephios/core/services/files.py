@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.views import View
 
 from ephios.core.dynamic import dynamic_settings
+from ephios.extra.auth import access_exempt
 
 
 class UserContentView(View):
@@ -29,6 +30,7 @@ class UserContentView(View):
         return super().dispatch(request, *args, **kwargs)
 
 
+@access_exempt
 class FileTicketView(UserContentView):
     """
     Deliver user content identified by a short-lived secret.

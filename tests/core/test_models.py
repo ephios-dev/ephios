@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -23,7 +24,7 @@ def test_user_qualifications(qualified_volunteer, qualifications, tz):
 def test_case_insensitive_login(django_app, volunteer, django_username_field):
     volunteer.set_password("test")
     volunteer.save()
-    form = django_app.get(reverse("login")).form
+    form = django_app.get(settings.LOGIN_URL).form
     form["username"] = volunteer.email.upper()
     form["password"] = "test"
     response = form.submit()
