@@ -7,7 +7,7 @@ from django.template.loader import get_template
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
-from ephios.core.signup.forms import BaseSignupForm, SignupConfigurationForm
+from ephios.core.signup.forms import SignupConfigurationForm
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.abstract import AbstractShiftStructure
 from ephios.extra.utils import format_anything
@@ -25,16 +25,15 @@ class BaseShiftStructure(AbstractShiftStructure):
         return BaseDispositionParticipationForm
 
     @property
-    def signup_form_class(self):
-        return BaseSignupForm
-
-    @property
     def configuration_form_class(self):
         return SignupConfigurationForm
 
     @property
     def shift_state_template_name(self):
         raise NotImplementedError()
+
+    def get_signup_formfields(self, shift, participant, participation, signup_choice):
+        return None
 
     def get_participant_count_bounds(self):
         return None, None

@@ -111,6 +111,21 @@ Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize t
 If all forms are valid, `save` will be called on your form.
 """
 
+signup_formfields = PluginSignal()
+"""
+This signal is sent out to get a list of form fields to show on the signup view, especially to collect
+user input for shift structures. Receivers will receive the ``shift``, ``participant``, ``participation``,
+and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 'default': ...,
+'type': ..., 'form_class': ..., 'form_kwargs': ..., 'serializer_class': ..., 'serializer_kwargs': ... },
+'fieldname2: { ... } }``
+"""
+
+signup_save = PluginSignal()
+"""
+This signal is sent out to when a signup is created or modified to allow plugins to handle additional
+user input. Receivers will receive the ``shift`, ``participant``, ``participation``, and ``cleaned_data``.
+"""
+
 register_notification_types = PluginSignal()
 """
 This signal is sent out to get all notification types that can be sent out to a user or participant.

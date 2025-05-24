@@ -9,7 +9,9 @@ from ephios.core.models import Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
+from ephios.core.signals import signup_save
 from ephios.core.signup.flow.participant_validation import BaseSignupError
+from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.database import OF_SELF
 
@@ -23,9 +25,7 @@ class SignupView(FormView):
 
     shift: Shift = ...
     template_name = "core/signup.html"
-
-    def get_form_class(self):
-        return self.shift.structure.signup_form_class
+    form_class = BaseSignupForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -70,7 +70,14 @@ class SignupView(FormView):
         return self.form_invalid(form)
 
     def customize_pressed(self, form):
-        form.save()
+        participation = form.save()
+        signup_save.send(
+            sender=None,
+            shift=self.shift,
+            participant=self.participant,
+            participation=participation,
+            cleaned_data=form.cleaned_data,
+        )
         if claims := form.get_customization_notification_info():
             ResponsibleConfirmedParticipationCustomizedNotification.send(form.instance, claims)
         messages.success(self.request, _("Your participation was saved."))
@@ -87,6 +94,13 @@ class SignupView(FormView):
     def signup_pressed(self, form):
         try:
             participation = form.save()
+            signup_save.send(
+                sender=None,
+                shift=self.shift,
+                participant=self.participant,
+                participation=participation,
+                cleaned_data=form.cleaned_data,
+            )
             self.shift.signup_flow.perform_signup(
                 participant=self.participant,
                 participation=participation,

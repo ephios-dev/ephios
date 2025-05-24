@@ -10,6 +10,7 @@ from django import forms
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import ModelSelect2Widget
+from rest_framework import serializers
 
 from ephios.core.models import AbstractParticipation
 from ephios.core.services.matching import Matching, Position, match_participants_to_positions
@@ -18,7 +19,7 @@ from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import AdditionalField, AdditionalFields, BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
@@ -97,48 +98,6 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
         super().save(commit)
 
 
-class ComplexSignupForm(BaseSignupForm):
-    preferred_unit_path = forms.ChoiceField(
-        label=_("Preferred Unit"),
-        widget=forms.RadioSelect,
-        required=False,
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["preferred_unit_path"].initial = self.instance.structure_data.get(
-            "preferred_unit_path"
-        )
-        self.fields["preferred_unit_path"].required = (
-            self.data.get("signup_choice") == "sign_up"
-            and self.shift.structure.configuration.choose_preferred_unit
-        )
-        complex_structure = self.shift.structure
-        complex_structure._assume_cache()
-        self.fields["preferred_unit_path"].choices = [
-            (b["path"], b["display_with_path"])
-            for b in self.blocks_participant_qualifies_for(complex_structure._structure)
-        ]
-        unqualified_blocks = [
-            b
-            for b in iter_atomic_blocks(complex_structure._structure)
-            if b not in self.blocks_participant_qualifies_for(complex_structure._structure)
-        ]
-        if unqualified_blocks:
-            self.fields["preferred_unit_path"].help_text = _(
-                "You don't qualify for {blocks}."
-            ).format(blocks=", ".join(set(b["display_with_path"] for b in unqualified_blocks)))
-
-    def save(self, commit=True):
-        self.instance.structure_data["preferred_unit_path"] = self.cleaned_data[
-            "preferred_unit_path"
-        ]
-        return super().save(commit)
-
-    def blocks_participant_qualifies_for(self, structure):
-        return atomic_block_participant_qualifies_for(structure, self.participant)
-
-
 class StartingBlockForm(forms.Form):
     building_block = forms.ModelChoiceField(
         label=_("Unit"),
@@ -204,7 +163,6 @@ class ComplexShiftStructure(
     shift_state_template_name = "complexsignup/shift_state.html"
     configuration_form_class = ComplexConfigurationForm
     disposition_participation_form_class = ComplexDispositionParticipationForm
-    signup_form_class = ComplexSignupForm
 
     @cached_property
     def confirmed_participants(self):
@@ -372,6 +330,64 @@ class ComplexShiftStructure(
                     }
                 )
         return export_data
+
+    def get_signup_formfields(self, shift, participant, participation, signup_choice):
+        initial = participation.structure_data.get("preferred_unit_path")
+        required = (
+            # TODO: This is flawed, as the fields will not be required in customize mode
+            signup_choice == BaseSignupForm.CHOICE_SIGNUP
+            and shift.structure.configuration.choose_preferred_unit
+        )
+
+        complex_structure = self.shift.structure
+        complex_structure._assume_cache()
+        choices = [
+            (b["path"], b["display_with_path"])
+            for b in atomic_block_participant_qualifies_for(
+                complex_structure._structure, participant
+            )
+        ]
+
+        help_text = ""
+        unqualified_blocks = [
+            b
+            for b in iter_atomic_blocks(complex_structure._structure)
+            if b
+            not in atomic_block_participant_qualifies_for(complex_structure._structure, participant)
+        ]
+        if unqualified_blocks:
+            help_text = _("You don't qualify for {blocks}.").format(
+                blocks=", ".join(set(b["display_with_path"] for b in unqualified_blocks))
+            )
+
+        return AdditionalFields(
+            "complexsignup",
+            {
+                "preferred_unit_path": AdditionalField(
+                    "preferred_unit_path",
+                    forms.ChoiceField,
+                    {
+                        "label": _("Preferred Unit"),
+                        "initial": initial,
+                        "required": required,
+                        "choices": choices,
+                        "help_text": help_text,
+                        "widget": forms.RadioSelect,
+                    },
+                    serializers.ChoiceField,
+                    {
+                        "required": required,
+                        "choices": choices,
+                    },
+                ),
+            },
+        )
+
+    def save_signup(self, shift, participant, participation, cleaned_data):
+        participation.structure_data["preferred_unit_path"] = cleaned_data[
+            "complexsignup.preferred_unit_path"
+        ]
+        participation.save()
 
 
 def _build_display_name_long(block_name, composed_label, number):
