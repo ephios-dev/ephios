@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
@@ -6,9 +8,11 @@ from django.db import transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
+from ephios.core.signals import signup_formfields
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.widgets import PreviousCommentWidget
@@ -127,12 +131,16 @@ class BaseParticipationForm(forms.ModelForm):
 
 
 class BaseSignupForm(BaseParticipationForm):
+    CHOICE_SIGNUP = "sign_up"
+    CHOICE_CUSTOMIZE = "customize"
+    CHOICE_DECLINE = "decline"
+
     signup_choice = forms.ChoiceField(
         label=_("Signup choice"),
         choices=[
-            ("sign_up", _("Sign up")),
-            ("customize", _("Customize")),
-            ("decline", _("Decline")),
+            (CHOICE_SIGNUP, _("Sign up")),
+            (CHOICE_CUSTOMIZE, _("Customize")),
+            (CHOICE_DECLINE, _("Decline")),
         ],
         widget=forms.HiddenInput,
         required=True,
@@ -173,6 +181,7 @@ class BaseSignupForm(BaseParticipationForm):
         self.shift: Shift = kwargs.pop("shift")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
+        self.collect_fields()
         self.helper = FormHelper()
         self.helper.layout = Layout(
             self._get_field_layout(),
@@ -184,6 +193,22 @@ class BaseSignupForm(BaseParticipationForm):
         ):
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
+
+    def collect_fields(self):
+        responses = signup_formfields.send(
+            sender=None,
+            shift=self.shift,
+            participant=self.participant,
+            participation=self.instance,
+            signup_choice=self.data.get("signup_choice"),
+        )
+
+        for _, additional_fields in responses:
+            if isinstance(additional_fields, AdditionalFields):
+                for fieldname, field in additional_fields.fields.items():
+                    self.fields[f"{additional_fields.provider_id}.{fieldname}"] = field.field_class(
+                        **(field.field_kwargs or {})
+                    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -207,6 +232,29 @@ class BaseSignupForm(BaseParticipationForm):
                     shifts=", ".join(str(shift) for shift in conflicts)
                 ),
             )
+
+
+@dataclass
+class AdditionalField:
+    """
+    A dataclass used to define a single additional field to be added.
+    """
+
+    name: str
+    field_class: forms.Field
+    field_kwargs: dict
+    serializer_class: serializers.Serializer
+    serializer_kwargs: dict
+
+
+@dataclass
+class AdditionalFields:
+    """
+    A dataclass used to pass additional fields to the signup form.
+    """
+
+    provider_id: str
+    fields: dict[str, AdditionalField]
 
 
 class SignupConfigurationForm(forms.Form):
