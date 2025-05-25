@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
+from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
@@ -536,8 +537,8 @@ class EventReminderNotification(AbstractNotificationHandler):
         event = Event.objects.get(pk=notification.data.get("event_id"))
         return _("Your support is needed for {title} ({start} - {end}).").format(
             title=event.title,
-            start=date_format(event.get_start_time(), "SHORT_DATETIME_FORMAT"),
-            end=date_format(event.get_end_time(), "SHORT_DATETIME_FORMAT"),
+            start=date_format(localtime(event.get_start_time()), "SHORT_DATETIME_FORMAT"),
+            end=date_format(localtime(event.get_end_time()), "SHORT_DATETIME_FORMAT"),
         )
 
     @classmethod
