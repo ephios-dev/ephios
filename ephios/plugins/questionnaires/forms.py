@@ -24,13 +24,10 @@ class QuestionForm(forms.ModelForm):
             prefix="choices",
         )
 
-    def save(self, commit=...):
-        question = super().save(commit)
-        question.choices = [
+    def save(self, commit=True):
+        self.instance.choices = [
             choice["name"]
             for choice in self.choices.cleaned_data
             if "name" in choice and not choice["DELETE"]
         ]
-        if commit:
-            question.save()
-        return question
+        return super().save(commit)
