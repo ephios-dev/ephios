@@ -2,8 +2,9 @@ from django.dispatch import receiver
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.signals import nav_link, register_group_permission_fields
+from ephios.core.signals import nav_link, register_group_permission_fields, shift_forms
 from ephios.extra.permissions import PermissionField
+from ephios.plugins.questionnaires.forms import QuestionnaireForm
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.questionnaires.signals.nav_link")
@@ -43,3 +44,8 @@ def group_permission_fields(sender, **kwargs):
             ),
         )
     ]
+
+
+@receiver(shift_forms, dispatch_uid="ephios.plugins.questionnaires.signals.shift_forms")
+def question_selection_form(sender, shift, request, **kwargs):
+    return [QuestionnaireForm(request.POST or None, shift=shift)]
