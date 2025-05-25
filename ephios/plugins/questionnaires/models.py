@@ -35,3 +35,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
+
+    def __str__(self):
+        # pylint: disable=invalid-str-returned
+        return self.name
