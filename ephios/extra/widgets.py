@@ -2,7 +2,6 @@ from dateutil.rrule import rrulestr
 from django.core.exceptions import ValidationError
 from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
-from django.forms.widgets import Input
 from django.utils.translation import gettext as _
 
 
@@ -39,10 +38,6 @@ class CustomSplitDateTimeWidget(MultiWidget):
             value = to_current_timezone(value)
             return [value.date(), value.time()]
         return [None, None]
-
-
-class ColorInput(Input):
-    input_type = "color"
 
 
 class RecurrenceWidget(Textarea):
