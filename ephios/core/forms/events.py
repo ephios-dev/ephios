@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.forms import ColorInput
 from django.forms.utils import from_current_timezone
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
@@ -25,7 +26,7 @@ from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.extra.widgets import ColorInput, CustomDateInput, CustomTimeInput, RecurrenceField
+from ephios.extra.widgets import CustomDateInput, CustomTimeInput, RecurrenceField
 from ephios.modellogging.log import add_log_recorder, update_log
 from ephios.modellogging.recorders import (
     DerivedFieldsLogRecorder,
