@@ -52,7 +52,7 @@ class TestEventCopy:
         response = django_app.get(reverse("core:event_copy", kwargs={"pk": event.id}), user=planner)
         event_count = Event.objects.all().count()
         form = response.form
-        target_date = datetime.now() + timedelta(days=14)
+        target_date = datetime.now().replace(hour=14) + timedelta(days=14)
         recurr = recurrence.Recurrence(
             dtstart=datetime.now(),
             rdates=[target_date],
@@ -119,7 +119,7 @@ class TestEventCopy:
         )
         event_count = Event.objects.all().count()
         form = response.form
-        target_date = datetime.now() + timedelta(days=14)
+        target_date = datetime.now().replace(hour=14) + timedelta(days=14)
         recurr = recurrence.Recurrence(
             dtstart=datetime.now(), rdates=[target_date], include_dtstart=False
         )
