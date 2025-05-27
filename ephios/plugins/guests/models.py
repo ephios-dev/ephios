@@ -51,7 +51,9 @@ class GuestUser(models.Model):
     date_of_birth = models.DateField(_("date of birth"))
     phone = models.CharField(_("phone number"), max_length=254, blank=True)
     access_token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
-    qualifications = models.ManyToManyField(Qualification)
+    qualifications = models.ManyToManyField(
+        Qualification, verbose_name=_("Qualifications"), blank=True
+    )
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
