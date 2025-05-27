@@ -1,4 +1,5 @@
 from dateutil.rrule import rrulestr
+from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
@@ -67,3 +68,12 @@ class RecurrenceField(CharField):
             return rrulestr(value, ignoretz=True)
         except (TypeError, KeyError, ValueError) as e:
             raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e)) from e
+
+
+class MarkdownTextarea(forms.Textarea):
+    """
+    Textarea widget that might be extended in the future
+    to add markdown-specific features.
+
+    Markdown source can be rendered in templates using the `rich_text` filter.
+    """

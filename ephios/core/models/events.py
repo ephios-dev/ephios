@@ -67,6 +67,12 @@ class EventType(Model):
         choices=ShowParticipantDataChoices.choices,
         default=ShowParticipantDataChoices.INSTANCE_USERS,
     )
+    default_description = TextField(
+        _("default description"),
+        blank=True,
+        null=True,
+        help_text=_("New events of this type will start out with this description."),
+    )
 
     class Meta:
         verbose_name = _("event type")

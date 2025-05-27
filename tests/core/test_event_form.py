@@ -16,7 +16,6 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
         user=planner,
     ).form
     event_form["title"] = "Seeed Concert"
-    event_form["description"] = "when at location, call 0123456789"
     event_form["location"] = "BOS ARENA"
     event_form["visible_for"] = [volunteers.id]
     event_form["responsible_groups"] = [planners.id]
@@ -28,6 +27,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     shift_form["end_time"] = time(16, 0)
     event = shift_form.submit().follow().context["event"]
     assert event.title == "Seeed Concert"
+    assert event.description == "Food will be provided."
     assert event.type == service_event_type
     assert set(get_groups_with_perms(event, only_with_perms_in=["view_event"])) == {
         volunteers,

@@ -26,7 +26,7 @@ from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
 from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
-from ephios.extra.widgets import CustomDateInput, CustomTimeInput, RecurrenceField
+from ephios.extra.widgets import CustomDateInput, CustomTimeInput, MarkdownTextarea, RecurrenceField
 from ephios.modellogging.log import add_log_recorder, update_log
 from ephios.modellogging.recorders import (
     DerivedFieldsLogRecorder,
@@ -63,6 +63,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ["title", "type", "description", "location"]
+        widgets = {"description": MarkdownTextarea}
 
     def __init__(self, **kwargs):
         user = kwargs.pop("user")
@@ -98,6 +99,7 @@ class EventForm(forms.ModelForm):
                 | get_user_model().objects.filter(pk=user.pk),
                 "responsible_groups": self.eventtype.preferences.get("responsible_groups"),
                 "visible_for": visible_for,
+                "description": self.eventtype.default_description,
             }
             self.locked_visible_for_groups = set()
 
@@ -280,8 +282,8 @@ class ShiftCopyForm(forms.Form):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ["title", "color", "show_participant_data"]
-        widgets = {"color": ColorInput()}
+        fields = ["title", "color", "show_participant_data", "default_description"]
+        widgets = {"color": ColorInput(), "default_description": MarkdownTextarea}
 
     def clean_color(self):
         regex = re.compile(r"#[a-fA-F\d]{6}")

@@ -143,7 +143,7 @@ def responsible_user():
 
 @pytest.fixture
 def service_event_type():
-    return EventType.objects.create(title="Service")
+    return EventType.objects.create(title="Service", default_description="Food will be provided.")
 
 
 @pytest.fixture
