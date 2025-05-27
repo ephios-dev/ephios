@@ -257,6 +257,8 @@ STATICFILES_FINDERS = [
 COMPRESS_ENABLED = not DEBUG
 # https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+COMPRESS_STORAGE_ALIAS = "staticfiles"
+COMPRESS_OFFLINE_MANIFEST_STORAGE_ALIAS = COMPRESS_STORAGE_ALIAS
 
 # mail configuration
 EMAIL_CONFIG = env.email_url("EMAIL_URL")
