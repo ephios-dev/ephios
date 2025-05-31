@@ -287,6 +287,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     """
     finished = models.BooleanField(default=False, verbose_name=_("finished"))
 
+    questionnaire_answers = models.JSONField(
+        default=dict, verbose_name=_("Answers to questionnaire")
+    )
+
     objects = ParticipationManager()
 
     def has_customized_signup(self):
@@ -393,6 +397,12 @@ class Shift(DatetimeDisplayMixin, Model):
     structure_slug = SlugField(_("structure"))
     structure_configuration = JSONField(
         default=dict,
+        encoder=CustomJSONEncoder,
+        decoder=CustomJSONDecoder,
+    )
+
+    questionnaire = JSONField(
+        default=list,
         encoder=CustomJSONEncoder,
         decoder=CustomJSONDecoder,
     )
