@@ -32,6 +32,9 @@
                         {% translate "Choices" %}
                     </h5>
                     <p class="text-muted">{% translate "For single- and multiple choice questions" %}</p>
+                    {% if question %}
+                        <p class="text-warning">{% translate "You should refrain from editing or removing choices if this question is already in use. Consider creating a new question instead. New choices can always be added safely." %}</p>
+                    {% endif %}
                     {{ form.choices|formset_errors }}
                     <ul class="list-group list-group-flush" data-formset-body>
                         {% for choice_form in form.choices %}
@@ -55,8 +58,8 @@
                     </ul>
 
                     <input class="btn btn-secondary mt-2" type="button"
-                        value="{% translate "Add choice" %}"
-                        data-formset-add>
+                           value="{% translate "Add choice" %}"
+                           data-formset-add>
                 </div>
             </div>
 
