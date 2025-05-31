@@ -288,6 +288,10 @@ class AbstractParticipation(DatetimeDisplayMixin, PolymorphicModel):
     """
     finished = models.BooleanField(default=False, verbose_name=_("finished"))
 
+    questionnaire_answers = models.JSONField(
+        default=dict, verbose_name=_("Answers to questionnaire")
+    )
+
     objects = ParticipationManager()
 
     def has_customized_signup(self):
