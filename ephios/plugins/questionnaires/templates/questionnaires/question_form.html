@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap %}
+{% load static %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load formset_tags %}
@@ -89,4 +90,6 @@
             <input type="submit" class="btn btn-primary float-end" value="{% translate "Save" %}">
         </div>
     </form>
+
+    <script nonce="{{ request.csp_nonce }}" type="text/javascript" src="{% static "questionnaires/choice_visibility.js" %}"></script>
 {% endblock %}
