@@ -15,6 +15,7 @@ class QuestionListView(CustomPermissionRequiredMixin, ListView):
 class QuestionCreateView(CustomPermissionRequiredMixin, CreateView):
     permission_required = "questionnaires.add_question"
     accept_object_perms = False
+    model = Question
     form_class = QuestionForm
     template_name = "questionnaires/question_form.html"
     success_url = reverse_lazy("questionnaires:question_list")
@@ -22,12 +23,10 @@ class QuestionCreateView(CustomPermissionRequiredMixin, CreateView):
 
 class QuestionUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "questionnaires.change_question"
+    model = Question
     form_class = QuestionForm
     template_name = "questionnaires/question_form.html"
     success_url = reverse_lazy("questionnaires:question_list")
-
-    def get_queryset(self):
-        return Question.objects.filter(pk=self.kwargs["pk"])
 
 
 class QuestionDeleteView(CustomPermissionRequiredMixin, DeleteView):
