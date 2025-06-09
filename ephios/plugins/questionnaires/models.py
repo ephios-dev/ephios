@@ -2,6 +2,7 @@ from django import forms
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2Widget, Select2MultipleWidget
 from rest_framework import serializers
 
 from ephios.core.models.events import AbstractParticipation
@@ -66,37 +67,37 @@ class Question(models.Model):
         if self.type != self.TYPE_TEXT and initial not in self.choices:
             initial = None
 
-        field_name = slugify(f"{self.pk} {self.name}")
+        field_name = self.get_form_slug()
         required = self.required if initial is not None else False
 
-        form_class = (
-            forms.CharField
-            if self.type == self.TYPE_TEXT
-            else (
-                forms.MultipleChoiceField if self.type == self.TYPE_MULTIPLE else forms.ChoiceField
-            )
-        )
+        form_class = None
         form_kwargs = {
             "label": self.question_text,
             "help_text": self.description,
             "initial": initial,
             "required": required,
         }
-        if self.type == self.TYPE_SINGLE_RADIO:
-            form_kwargs["widget"] = forms.RadioSelect
 
-        serializer_class = (
-            serializers.CharField
-            if self.type == self.TYPE_TEXT
-            else (
-                serializers.MultipleChoiceField
-                if self.type == self.TYPE_MULTIPLE
-                else serializers.ChoiceField
-            )
-        )
+        serializer_class = None
         serializer_kwargs = {
             "required": required,
         }
+
+        if self.type == self.TYPE_TEXT:
+            form_class = forms.CharField
+            serializer_class = serializers.CharField
+        elif self.type == self.TYPE_SINGLE_RADIO:
+            form_class = forms.ChoiceField
+            serializer_class = serializers.ChoiceField
+            form_kwargs["widget"] = forms.RadioSelect
+        elif self.type == self.TYPE_SINGLE_LIST:
+            form_class = forms.ChoiceField
+            serializer_class = serializers.ChoiceField
+            form_kwargs["widget"] = Select2Widget
+        elif self.type == self.TYPE_MULTIPLE:
+            form_class = forms.MultipleChoiceField
+            serializer_class = serializers.MultipleChoiceField
+            form_kwargs["widget"] = Select2MultipleWidget
 
         if self.type != self.TYPE_TEXT:
             assert isinstance(
@@ -110,3 +111,10 @@ class Question(models.Model):
         return AdditionalField(
             field_name, form_class, form_kwargs, serializer_class, serializer_kwargs
         )
+
+    def get_form_slug(self):
+        return slugify(f"{self.pk} {self.name}")
+
+    @staticmethod
+    def get_pk_from_slug(slug: str):
+        return slug.split(".", maxsplit=1)[1].split("-")[0]
