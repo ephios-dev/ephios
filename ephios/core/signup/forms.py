@@ -204,7 +204,7 @@ class BaseSignupForm(BaseParticipationForm):
         )
 
         for _, additional_fields in responses:
-            if isinstance(additional_fields, AdditionalFields):
+            if isinstance(additional_fields, AdditionalFieldList):
                 for fieldname, field in additional_fields.fields.items():
                     self.fields[f"{additional_fields.provider_id}.{fieldname}"] = field.field_class(
                         **(field.field_kwargs or {})
@@ -248,7 +248,7 @@ class AdditionalField:
 
 
 @dataclass
-class AdditionalFields:
+class AdditionalFieldList:
     """
     A dataclass used to pass additional fields to the signup form.
     """

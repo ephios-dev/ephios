@@ -19,7 +19,7 @@ from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.forms import AdditionalField, AdditionalFields, BaseSignupForm
+from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
@@ -360,7 +360,7 @@ class ComplexShiftStructure(
                 blocks=", ".join(set(b["display_with_path"] for b in unqualified_blocks))
             )
 
-        return AdditionalFields(
+        return AdditionalFieldList(
             "complexsignup",
             {
                 "preferred_unit_path": AdditionalField(
