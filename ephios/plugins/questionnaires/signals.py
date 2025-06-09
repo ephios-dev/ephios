@@ -126,7 +126,7 @@ def save_signup(
             continue
 
         # Field name format: questionnaires.123-question-name
-        question_pk = name.split(".", maxsplit=1)[1].split("-")[0]
+        question_pk = Question.get_pk_from_slug(name)
         answers[question_pk] = value
 
     participation.questionnaire_answers = answers
