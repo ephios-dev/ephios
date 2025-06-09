@@ -12,7 +12,7 @@ from rest_framework import serializers
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
-from ephios.core.signup.forms import AdditionalField, AdditionalFields, BaseSignupForm
+from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
@@ -385,7 +385,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 "{teams} is full.", "{teams} are full.", len(full_teams)
             ).format(teams=", ".join(str(team["title"]) for team in full_teams))
 
-        return AdditionalFields(
+        return AdditionalFieldList(
             "baseshiftstructures.named_teams",
             {
                 "preferred_team_uuid": AdditionalField(
