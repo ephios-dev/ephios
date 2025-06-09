@@ -12,7 +12,7 @@ from ephios.core.signals import (
     signup_formfields,
     signup_save,
 )
-from ephios.core.signup.forms import AdditionalField, AdditionalFields, BaseSignupForm
+from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
@@ -101,7 +101,7 @@ def provide_signup_formfields(
     )
 
     return (
-        AdditionalFields(
+        AdditionalFieldList(
             "questionnaires",
             {formfield.name: formfield for formfield in formfields},
         )

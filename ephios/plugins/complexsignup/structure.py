@@ -19,7 +19,7 @@ from ephios.core.signup.flow.participant_validation import (
 )
 from ephios.core.signup.forms import (
     AdditionalField,
-    AdditionalFields,
+    AdditionalFieldList,
     BaseSignupForm,
     SignupConfigurationForm,
 )
@@ -297,7 +297,7 @@ class ComplexShiftStructure(
                 blocks=", ".join(set(str(b["name"]) for b in unqualified_blocks))
             )
 
-        return AdditionalFields(
+        return AdditionalFieldList(
             "complexsignup",
             {
                 "preferred_unit_path": AdditionalField(
