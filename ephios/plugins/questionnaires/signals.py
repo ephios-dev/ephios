@@ -125,8 +125,7 @@ def save_signup(
         if name == "questionnaires.save_answers" or not name.startswith("questionnaires."):
             continue
 
-        # Field name format: questionnaires.123-question-name
-        question_pk = Question.get_pk_from_slug(name)
+        question_pk = str(Question.get_pk_from_slug(name))
         answers[question_pk] = value
 
     participation.questionnaire_answers = answers
