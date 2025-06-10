@@ -331,7 +331,7 @@ class ComplexShiftStructure(
                 )
         return export_data
 
-    def get_signup_formfields(self, shift, participant, participation, signup_choice):
+    def get_signup_form_fields(self, shift, participant, participation, signup_choice):
         initial = participation.structure_data.get("preferred_unit_path")
         required = (
             # TODO: This is flawed, as the fields will not be required in customize mode

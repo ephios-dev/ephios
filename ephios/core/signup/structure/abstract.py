@@ -52,7 +52,7 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
-    def get_signup_formfields(
+    def get_signup_form_fields(
         self,
         shift: Shift,
         participant: AbstractParticipant,
