@@ -1,4 +1,4 @@
-[![Tests](https://github.com/ephios-dev/ephios/workflows/tests/badge.svg)](https://github.com/ephios-dev/ephios/actions/workflows/tests.yml)
+[![tests](https://github.com/ephios-dev/ephios/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ephios-dev/ephios/actions/workflows/tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/ephios/badge/?version=latest)](https://docs.ephios.de/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/ephios)](https://pypi.org/project/ephios/)
 [![Coverage Status](https://coveralls.io/repos/github/ephios-dev/ephios/badge.svg?branch=main)](https://coveralls.io/github/ephios-dev/ephios?branch=main)
