@@ -24,7 +24,7 @@ class Question(models.Model):
             "The name of the question is used to identify the question, for example when picking questions for a shift"
         ),
     )
-    question_text = models.CharField(max_length=100, verbose_name=_("Question"))
+    question_text = models.CharField(max_length=250, verbose_name=_("Question"))
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
     required = models.BooleanField(
         verbose_name=_("Required"),
