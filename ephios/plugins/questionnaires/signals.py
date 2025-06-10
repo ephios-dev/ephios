@@ -9,7 +9,7 @@ from ephios.core.signals import (
     nav_link,
     register_group_permission_fields,
     shift_forms,
-    signup_formfields,
+    signup_form_fields,
     signup_save,
 )
 from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
@@ -63,8 +63,10 @@ def question_selection_form(sender, shift, request, **kwargs):
     return [QuestionnaireForm(request.POST or None, shift=shift)]
 
 
-@receiver(signup_formfields, dispatch_uid="ephios.plugins.questionnaires.signals.signup_formfields")
-def provide_signup_formfields(
+@receiver(
+    signup_form_fields, dispatch_uid="ephios.plugins.questionnaires.signals.signup_form_fields"
+)
+def provide_signup_form_fields(
     sender,
     shift: Shift,
     participant: AbstractParticipant,
@@ -76,7 +78,7 @@ def provide_signup_formfields(
         return None
 
     formfields = [
-        question.get_signup_formfield(participant, participation, signup_choice)
+        question.get_signup_form_field(participant, participation, signup_choice)
         for question in Question.objects.filter(pk__in=shift.questionnaire)
     ]
 

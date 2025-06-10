@@ -12,7 +12,7 @@ from rest_framework import serializers
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
-from ephios.core.signals import signup_formfields
+from ephios.core.signals import signup_form_fields
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.widgets import PreviousCommentWidget
@@ -192,7 +192,7 @@ class BaseSignupForm(BaseParticipationForm):
             self.fields["individual_end_time"].disabled = True
 
     def collect_fields(self):
-        responses = signup_formfields.send(
+        responses = signup_form_fields.send(
             sender=None,
             shift=self.shift,
             participant=self.participant,
