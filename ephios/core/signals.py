@@ -291,6 +291,16 @@ def update_last_run_periodic_call(sender, **kwargs):
     LastRunPeriodicCall.set_last_call(timezone.now())
 
 
+@receiver(signup_form_fields, dispatch_uid="ephios.core.signals.signup_form_fields")
+def provide_signup_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
+    return shift.structure.get_signup_form_fields(shift, participant, participation, signup_choice)
+
+
+@receiver(signup_save, dispatch_uid="ephios.core.signals.signup_save")
+def save_signup(sender, shift, participant, participation, cleaned_data, **kwargs):
+    shift.structure.save_signup(shift, participant, participation, cleaned_data)
+
+
 periodic_signal.connect(
     send_participation_finished, dispatch_uid="ephios.core.signals.send_participation_finished"
 )
