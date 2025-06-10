@@ -4,7 +4,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
-from django.db import transaction
+from django.db import models, transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
@@ -131,17 +131,14 @@ class BaseParticipationForm(forms.ModelForm):
 
 
 class BaseSignupForm(BaseParticipationForm):
-    CHOICE_SIGNUP = "sign_up"
-    CHOICE_CUSTOMIZE = "customize"
-    CHOICE_DECLINE = "decline"
+    class SignupChoices(models.TextChoices):
+        SIGNUP = "sign_up", _("Sign up")
+        CUSTOMIZE = "customize", _("Customize")
+        DECLINE = "decline", _("Decline")
 
     signup_choice = forms.ChoiceField(
         label=_("Signup choice"),
-        choices=[
-            (CHOICE_SIGNUP, _("Sign up")),
-            (CHOICE_CUSTOMIZE, _("Customize")),
-            (CHOICE_DECLINE, _("Decline")),
-        ],
+        choices=SignupChoices.choices,
         widget=forms.HiddenInput,
         required=True,
     )
