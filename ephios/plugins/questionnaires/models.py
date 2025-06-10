@@ -40,8 +40,7 @@ class Question(models.Model):
         verbose_name_plural = _("Questions")
 
     def __str__(self):
-        # pylint: disable=invalid-str-returned
-        return self.name
+        return str(self.name)
 
     def get_signup_formfield(
         self, participant: AbstractParticipant, participation: AbstractParticipation, signup_choice
