@@ -72,7 +72,7 @@ def provide_signup_formfields(
     signup_choice,
     **kwargs
 ):
-    if signup_choice == BaseSignupForm.CHOICE_DECLINE:
+    if signup_choice == BaseSignupForm.SignupChoices.DECLINE:
         return None
 
     formfields = [
