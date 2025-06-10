@@ -28,7 +28,7 @@ django-csp = "^3.7"
 bleach = ">=6.0.0,<7.0.0"
 Markdown = "^3.3.7"
 
-psycopg2 = {version = "^2.9.3", optional = true}
+psycopg = {version = "^3.2.9", optional = true}
 mysqlclient = {version = "^2.1.1", optional = true}
 redis = {extras = ["hiredis"], version = ">=5,<7", optional = true}
 django-compressor = "^4.5"
@@ -58,7 +58,7 @@ drf-spectacular = {extras = ["sidecar"], version = ">=0.27.2,<0.29.0"}
 python-dateutil = "^2.9.0.post0"
 
 [tool.poetry.extras]
-pgsql = ["psycopg2"]
+pgsql = ["psycopg"]
 mysql = ["mysqlclient"]
 redis = ["redis"]
 
