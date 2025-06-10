@@ -8,7 +8,7 @@ class PluginApp(PluginConfig):
 
     class EphiosPluginMeta:
         name = _("Questionnaires")
-        author = "Lukas Radermacher and the Ephios Team"
+        author = "Lukas Radermacher and the ephios team"
         description = _("This plugin collects answers from users during sign-up.")
 
     def ready(self):
