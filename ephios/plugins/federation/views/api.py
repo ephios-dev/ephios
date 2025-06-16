@@ -1,16 +1,17 @@
+import logging
 from urllib.parse import urljoin
 
 import django_filters
 import requests
-from django.core.exceptions import MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned, PermissionDenied
 from django.db.models import Max, Min
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
 from oauth2_provider.contrib.rest_framework import TokenHasScope
-from oauthlib.oauth2 import WebApplicationClient
+from oauthlib.oauth2 import OAuth2Error, WebApplicationClient
 from requests_oauthlib import OAuth2Session
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied as APIPermissionDenied
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import AllowAny
 
@@ -23,6 +24,8 @@ from ephios.plugins.federation.serializers import (
     FederatedGuestCreateSerializer,
     SharedEventSerializer,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class RedeemInviteCodeView(CreateAPIView):
@@ -50,7 +53,7 @@ class FederatedGuestDeleteView(DestroyAPIView):
             # request.auth is an auth token, federatedguest is the reverse relation
             return self.request.auth.federatedguest
         except FederatedGuest.DoesNotExist as exc:
-            raise PermissionDenied from exc
+            raise APIPermissionDenied from exc
 
 
 class SharedEventListView(ListAPIView):
@@ -69,7 +72,7 @@ class SharedEventListView(ListAPIView):
             # request.auth is an auth token, federatedguest is the reverse relation
             guest = self.request.auth.federatedguest
         except FederatedGuest.DoesNotExist as exc:
-            raise PermissionDenied from exc
+            raise APIPermissionDenied from exc
         return (
             Event.objects.filter(federatedeventshare__shared_with=guest)
             .annotate(
@@ -97,8 +100,12 @@ class FederationOAuthView(View):
         try:
             guest_pk = self.request.session.get("federation_guest_pk", kwargs.get("guest"))
             self.guest = FederatedGuest.objects.get(pk=guest_pk)
-        except (KeyError, FederatedGuest.DoesNotExist, MultipleObjectsReturned) as exc:
-            raise PermissionDenied from exc
+        except (KeyError, FederatedGuest.DoesNotExist, MultipleObjectsReturned):
+            logger.warning(
+                "Federation OAuth Flow failed, information about federated guest missing",
+                exc_info=True,
+            )
+            raise PermissionDenied
         if "error" in request.GET.keys():
             return redirect(
                 urljoin(
@@ -107,18 +114,30 @@ class FederationOAuthView(View):
                 )
             )
         elif "code" in request.GET.keys():
-            self._oauth_callback()
             try:
+                self._oauth_callback()
                 return redirect(
                     "federation:event_detail",
                     pk=self.request.session["federation_event"],
                     guest=guest_pk,
                 )
             except KeyError:
+                logger.warning(
+                    "Federation OAuth Flow failed, information about federated event is missing",
+                    exc_info=True,
+                )
                 return redirect(
                     urljoin(
                         urljoin(self.guest.url, reverse("federation:external_event_list")),
                         "?error=event_error",
+                    )
+                )
+            except OAuth2Error:
+                logger.warning("Federation OAuth Flow failed", exc_info=True)
+                return redirect(
+                    urljoin(
+                        urljoin(self.guest.url, reverse("federation:external_event_list")),
+                        "?error=oauth_error",
                     )
                 )
         else:
