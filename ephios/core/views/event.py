@@ -2,7 +2,6 @@ from calendar import _nextmonth, _prevmonth
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 
-from csp.decorators import csp_exempt
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -43,6 +42,7 @@ from ephios.core.services.notifications.types import (
 )
 from ephios.core.signals import event_forms
 from ephios.core.views.signup import request_to_participant
+from ephios.extra.csp import csp_allow_unsafe_eval
 from ephios.extra.mixins import (
     CanonicalSlugDetailMixin,
     CustomPermissionRequiredMixin,
@@ -517,6 +517,7 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         return super().get_context_data(**kwargs)
 
 
+@csp_allow_unsafe_eval
 class EventUpdateView(CustomPermissionRequiredMixin, PluginFormMixin, UpdateView):
     model = Event
     queryset = Event.all_objects.all()
@@ -601,6 +602,7 @@ class EventDeleteView(CustomPermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("core:event_list")
 
 
+@csp_allow_unsafe_eval
 class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = ["core.add_event", "core.view_event"]
     model = Event
@@ -684,10 +686,6 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
         messages.success(self.request, _("Event copied successfully."))
         return redirect(reverse("core:event_list"))
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        return csp_exempt()(super().as_view(**initkwargs))
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
