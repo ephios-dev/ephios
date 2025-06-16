@@ -9,6 +9,7 @@ from pathlib import Path
 
 import environ
 from cryptography.hazmat.primitives import serialization
+from csp.constants import NONCE, NONE, SELF
 from django.contrib.messages import constants
 from django.utils.translation import gettext_lazy
 from py_vapid import Vapid, b64urlencode
@@ -79,6 +80,7 @@ INSTALLED_APPS = [
     "django.forms",  # for the builtin forms templates
     "django_filters",
     "guardian",
+    "csp",
     "oauth2_provider",
     "rest_framework",
     "drf_spectacular",
@@ -367,9 +369,14 @@ if ENABLE_DEBUG_TOOLBAR:
 # Bootstrap requires embedded SVG files loaded via a data URI. This is not ideal, but will only be fixed in
 # bootstrap v5 or v6. See https://github.com/twbs/bootstrap/issues/25394 for details on the problem and
 # https://security.stackexchange.com/a/167244 on why allowing data: is considered okay
-CSP_IMG_SRC = ("'self'", "data:")
-CSP_STYLE_SRC = "'self'"
-CSP_INCLUDE_NONCE_IN = ["style-src"]
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": [SELF],
+        "style-src": [SELF, NONCE],
+        "img-src": [SELF, "data:"],
+        "frame-src": [NONE],
+    },
+}
 
 # django-crispy-forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap5",)

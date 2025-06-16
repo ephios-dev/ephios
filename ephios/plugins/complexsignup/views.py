@@ -88,4 +88,4 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
 
     @classmethod
     def as_view(cls, **initkwargs):
-        return csp_exempt(super().as_view(**initkwargs))
+        return csp_exempt()(super().as_view(**initkwargs))
