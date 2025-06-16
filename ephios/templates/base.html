@@ -50,8 +50,12 @@
         {% endcompress %}
 
         {% compress js %}
-            <script type="text/javascript" src="{% static "vuejs/vue.global.js" %}"></script>
-            <script type="text/javascript" src="{% static "jquery/js/jquery-3.7.0.min.js" %}"></script>
+            {% if DEBUG %}
+                <script type="text/javascript" src="{% static "vuejs/vue.global.js" %}"></script>
+            {% else %}
+                <script type="text/javascript" src="{% static "vuejs/vue.global.prod.js" %}"></script>
+            {% endif %}
+            <script type="text/javascript" src="{% static "jquery/js/jquery-3.7.1.min.js" %}"></script>
             <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
             <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
             <script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
