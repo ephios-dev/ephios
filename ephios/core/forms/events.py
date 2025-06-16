@@ -9,6 +9,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import Q
 from django.forms import ColorInput
 from django.forms.utils import from_current_timezone
@@ -123,6 +124,7 @@ class EventForm(forms.ModelForm):
             "This event is always editable by <b>{groups}</b>, because they manage ephios."
         ).format(groups=", ".join(group.name for group in groups_with_global_change_permissions))
 
+    @transaction.atomic()
     def save(self, commit=True):
         if not self.instance.pk:
             self.instance.type = self.eventtype
