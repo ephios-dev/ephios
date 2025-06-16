@@ -1,7 +1,11 @@
+import json
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -76,3 +80,10 @@ class LogEntry(models.Model):
         if self.content_object:
             return f"{self.action_type} {type(self.content_object)._meta.verbose_name} {str(self.content_object)}"
         return f"{self.action_type} {self.content_type.model} {self.content_object_or_str}"
+
+
+@receiver(pre_save, sender=LogEntry)
+def encode_data_for_psycopg3(sender, instance, raw, using, update_fields, **kwargs):
+    # psycopg3 does not allow read operations on the database while the model is being saved.
+    # details and source of this workaround: https://forum.djangoproject.com/t/connection-lock-hanging-after-upgrading-psycopg/30826/3
+    instance.data = json.loads(LogJSONEncoder().encode(instance.data))
