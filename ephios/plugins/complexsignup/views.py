@@ -1,6 +1,5 @@
 import json
 
-from csp.decorators import csp_exempt
 from django import forms
 from django.contrib import messages
 from django.db import transaction
@@ -10,6 +9,7 @@ from django.views.generic import FormView
 
 from ephios.core.models import Qualification
 from ephios.core.services.qualification import collect_all_included_qualifications
+from ephios.extra.csp import csp_allow_unsafe_eval
 from ephios.extra.json import CustomJSONEncoder
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.complexsignup.models import BuildingBlock
@@ -44,6 +44,7 @@ class BuildingBlocksForm(forms.Form):
         self.serializer.save()
 
 
+@csp_allow_unsafe_eval
 class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
     template_name = "complexsignup/vue_editor.html"
     permission_required = "complexsignup.change_buildingblock"
@@ -85,7 +86,3 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
             cls=CustomJSONEncoder,
         )
         return context
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        return csp_exempt()(super().as_view(**initkwargs))

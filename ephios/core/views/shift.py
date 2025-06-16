@@ -1,7 +1,6 @@
 from copy import copy
 from datetime import datetime, timedelta
 
-from csp.decorators import csp_exempt
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
@@ -19,6 +18,7 @@ from ephios.core.models import Event, Shift
 from ephios.core.signals import shift_forms
 from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
 from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
+from ephios.extra.csp import csp_allow_unsafe_eval
 from ephios.extra.mixins import CustomPermissionRequiredMixin, PluginFormMixin
 
 
@@ -290,6 +290,7 @@ class ShiftDeleteView(CustomPermissionRequiredMixin, DeleteView):
         return self.object.event
 
 
+@csp_allow_unsafe_eval
 class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
     permission_required = "core.change_event"
     model = Shift
@@ -329,7 +330,3 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         Shift.objects.bulk_create(shifts_to_create)
         messages.success(self.request, _("Shift copied successfully."))
         return super().form_valid(form)
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        return csp_exempt()(super().as_view(**initkwargs))

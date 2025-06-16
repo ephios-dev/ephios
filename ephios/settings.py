@@ -375,6 +375,9 @@ CONTENT_SECURITY_POLICY = {
         "style-src": [SELF, NONCE],
         "img-src": [SELF, "data:"],
         "frame-src": [NONE],
+        "script-src": [
+            SELF
+        ],  # must be explicit as we append to this directive in `csp_allow_unsafe_eval`
     },
 }
 
