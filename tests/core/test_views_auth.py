@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.urls import get_resolver, reverse
-from guardian.mixins import LoginRequiredMixin
+from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 
 
 def test_accounts_login(django_app):
@@ -60,7 +60,7 @@ def _check_view_is_secured(view_func):
     except AttributeError:
         pass
     else:
-        if issubclass(view_class, (AccessMixin, LoginRequiredMixin)):
+        if issubclass(view_class, (AccessMixin, GuardianLoginRequiredMixin)):
             # using an AccessMixin or LoginRequired from Guardian
             return True
     try:
