@@ -58,9 +58,21 @@ class UserEventFeed(EventFeed):
     def item_end_datetime(self, item):
         return item.participations.all()[0].end_time
 
+    def item_status(self, item):
+        # The ical status field can be CONFIRMED|TENTATIVE|CANCELLED
+        return {
+            AbstractParticipation.States.CONFIRMED: "CONFIRMED",
+            AbstractParticipation.States.REQUESTED: "TENTATIVE",  # displayed less opaque in many calendars
+            AbstractParticipation.States.RESPONSIBLE_REJECTED: "CANCELLED",  # often displayed struck out
+        }[item.participations.all()[0].state]
+
     def items(self):
         shift_ids = self.user.participations.filter(
-            state=AbstractParticipation.States.CONFIRMED
+            state__in=(
+                AbstractParticipation.States.CONFIRMED,
+                AbstractParticipation.States.REQUESTED,
+                AbstractParticipation.States.RESPONSIBLE_REJECTED,
+            )
         ).values_list("shift", flat=True)
         return (
             Shift.objects.filter(pk__in=shift_ids)
