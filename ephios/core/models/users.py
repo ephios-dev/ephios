@@ -148,6 +148,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     def get_full_name(self):
         return self.display_name
 
+    def reset_calendar_token(self):
+        self.calendar_token = secrets.token_urlsafe()
+        self.save(update_fields=["calendar_token"])
+
     def __str__(self):
         return str(self.get_full_name())
 

@@ -278,6 +278,7 @@ class UserProfilePasswordTokenRevokationView(
     def post(self, request, *args, **kwargs):
         if request.POST.get("confirm"):
             self.object.set_unusable_password()
+            self.object.reset_calendar_token()
             self.object.save()
             revoke_all_access_tokens(self.object)
             messages.info(request, _("The user's password and API tokens have been revoked."))
