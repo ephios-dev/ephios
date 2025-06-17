@@ -19,15 +19,13 @@ We do offer [paid hosting and support](https://ephios.de), feel free to reach ou
 
 ## Features
 
-Welcome to ephios!
-
 * Single Sign On (OIDC), user management, group based permissions
 * Events with shifts, event types with default values for event-specific visibility
 * powerful qualification system with flexibile per-shift requirement configuration options
 * various signup flows, deadlines, disposition with comments
 * track working hours with statistics and approval workflow
 * bulk-copy events or export/print as pdf
-* log of who made changes to users and eventsw
+* log of who made changes to users and events
 * progressive web app, calendar export, email and push notifications
 * guests and federation, document upload, content pages, ...
 * REST-API, plugin system, OAuth2 for external apps
