@@ -1,13 +1,15 @@
 from collections import defaultdict
 
+from django import forms
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView
 from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
 
@@ -126,12 +128,24 @@ class PersonalDataSettingsView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class CalendarSettingsView(LoginRequiredMixin, TemplateView):
+class CalendarURLResetForm(forms.Form):
+    reset = forms.BooleanField(required=True)
+
+
+class CalendarSettingsView(LoginRequiredMixin, FormView):
     template_name = "core/settings/settings_calendar.html"
+    success_message = _("Calendar-URL was reset.")
+    success_url = reverse_lazy("core:settings_calendar")
+    form_class = CalendarURLResetForm
 
     def get_context_data(self, **kwargs):
         kwargs["userprofile"] = self.request.user
         return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        self.request.user.reset_calendar_token()
+        messages.success(self.request, self.success_message)
+        return super().form_valid(form)
 
 
 class NotificationSettingsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
