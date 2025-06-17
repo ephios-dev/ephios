@@ -347,7 +347,7 @@ def GET_USERCONTENT_QUOTA():
 
 # Guardian configuration
 ANONYMOUS_USER_NAME = None
-GUARDIAN_MONKEY_PATCH = False
+GUARDIAN_MONKEY_PATCH_USER = False
 
 # django-select2
 # Prevent django-select from loading the select2 resources as we want to serve them locally
