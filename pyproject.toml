@@ -44,7 +44,7 @@ django-filter = ">=24,<26"
 djangorestframework-guardian = "^0.3.0"
 uritemplate = "^4.1.1"
 django-oauth-toolkit = "~3.0.1"  # pinned because minor versions sometimes require migrations in our models
-urllib3 = "^1.26.0,<2.0.0"  # pinned because of uberspace issues with urllib3 2.0.0
+urllib3 = "^2.5.0"
 pyyaml = "^6.0.1"
 lxml = ">=4.9.3,<6.0.0"
 beautifulsoup4 = "^4.13.3"
