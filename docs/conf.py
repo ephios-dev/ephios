@@ -3,6 +3,13 @@
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
+import datetime
+
+# -- Project information -----------------------------------------------------
+import os
+from pathlib import Path
+
+import environ
 
 # -- Path setup --------------------------------------------------------------
 
@@ -15,14 +22,8 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 
-# -- Project information -----------------------------------------------------
-import os
-from pathlib import Path
-
-import environ
-
 project = "ephios"
-copyright = "2024, ephios-dev"
+copyright = f"{datetime.datetime.now().strftime("%Y")}, ephios-dev"
 author = "ephios-dev"
 
 

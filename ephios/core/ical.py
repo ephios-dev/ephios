@@ -48,9 +48,6 @@ class EventFeed(ICalFeed):
 
 
 class UserEventFeed(EventFeed):
-    def __init__(self, user):
-        super().__init__()
-        self.user = user
 
     def item_start_datetime(self, item):
         return item.participations.all()[0].start_time
@@ -68,11 +65,7 @@ class UserEventFeed(EventFeed):
 
     def items(self):
         shift_ids = self.user.participations.filter(
-            state__in=(
-                AbstractParticipation.States.CONFIRMED,
-                AbstractParticipation.States.REQUESTED,
-                AbstractParticipation.States.RESPONSIBLE_REJECTED,
-            )
+            state__in=self.include_participation_states,
         ).values_list("shift", flat=True)
         return (
             Shift.objects.filter(pk__in=shift_ids)
@@ -80,8 +73,23 @@ class UserEventFeed(EventFeed):
             .prefetch_related(Prefetch("participations", queryset=self.user.participations.all()))
         )
 
+    def __init__(
+        self, user, include_participation_states=(AbstractParticipation.States.CONFIRMED,)
+    ):
+        super().__init__()
+        self.user = user
+        self.include_participation_states = include_participation_states
+
 
 @access_exempt
 def user_event_feed_view(request, *args, **kwargs):
-    feed = UserEventFeed(get_object_or_404(get_user_model(), **kwargs))
+    include_participation_states = [AbstractParticipation.States.CONFIRMED]
+    if (r := request.GET.get("requested")) and r != "0":
+        include_participation_states.append(AbstractParticipation.States.REQUESTED)
+    if (r := request.GET.get("rejected")) and r != "0":
+        include_participation_states.append(AbstractParticipation.States.RESPONSIBLE_REJECTED)
+    feed = UserEventFeed(
+        get_object_or_404(get_user_model(), **kwargs),
+        include_participation_states=include_participation_states,
+    )
     return feed(request, *args, **kwargs)
