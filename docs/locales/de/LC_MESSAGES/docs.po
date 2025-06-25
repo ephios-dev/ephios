@@ -7,22 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ephios\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-29 00:36+0200\n"
-"PO-Revision-Date: 2023-05-28 23:13+0000\n"
-"Last-Translator: Felix Rindt <felix@rindt.me>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/ephios/"
-"documentation/de/>\n"
+"POT-Creation-Date: 2025-06-26 10:50+0200\n"
+"PO-Revision-Date: 2025-06-26 11:31+0200\n"
+"Last-Translator: Felix Rindt <felix@ephios.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/ephios/documentation/"
+"de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.17.0\n"
+"X-Generator: Poedit 3.6\n"
 
 #: ../../admin/additional_features/index.rst:2
-msgid "Configuring additional features"
-msgstr "Zusätzliche Funktionen konfigurieren"
+msgid "Additional features"
+msgstr "Zusätzliche Funktionen"
 
 #: ../../admin/additional_features/index.rst:4
 msgid "This section shows how to configure optional features in ephios."
@@ -35,31 +35,31 @@ msgstr "SSO/OIDC-Client"
 
 #: ../../admin/additional_features/oidc.rst:4
 msgid ""
-"Apart from creating local user accounts, you can also use external "
-"identity providers to authenticate your users. This is done by using the "
-"OpenID Connect protocol (OIDC), which is built on top of the OAuth 2.0 "
-"protocol. This guide will show you how to configure your application to "
-"use an external OIDC provider to authenticate your users."
+"Apart from creating local user accounts, you can also use external identity "
+"providers to authenticate your users. This is done by using the OpenID Connect "
+"protocol (OIDC), which is built on top of the OAuth 2.0 protocol. This guide "
+"will show you how to configure your application to use an external OIDC "
+"provider to authenticate your users."
 msgstr ""
 
-#: ../../admin/additional_features/oidc.rst:7
+#: ../../admin/additional_features/oidc.rst:7 ../../admin/deployment/index.rst:7
 msgid "Prerequisites"
 msgstr ""
 
 #: ../../admin/additional_features/oidc.rst:8
 msgid ""
-"You need to have an OIDC provider that you can use. OIDC support is built"
-" into a lot of identity providers, but you can also use a dedicated OIDC "
-"provider like `Keycloak <https://www.keycloak.org/>`_. You also need to "
-"register a client with your OIDC provider. This client will be used by "
-"your application to authenticate with the OIDC provider. The exact steps "
-"to do this will vary depending on your OIDC provider, but you will need "
-"to provide the following information:"
+"You need to have an OIDC provider that you can use. OIDC support is built into "
+"a lot of identity providers, but you can also use a dedicated OIDC provider "
+"like `Keycloak <https://www.keycloak.org/>`_. You also need to register a "
+"client with your OIDC provider. This client will be used by your application to "
+"authenticate with the OIDC provider. The exact steps to do this will vary "
+"depending on your OIDC provider, but you will need to provide the following "
+"information:"
 msgstr ""
 
 #: ../../admin/additional_features/oidc.rst:12
 msgid "Redirect URI"
-msgstr ""
+msgstr "Weiterleitungs-URI"
 
 #: ../../admin/additional_features/oidc.rst:12
 msgid "https://your-ephios-instance.com/oidc/callback/"
@@ -67,22 +67,24 @@ msgstr "https://your-ephios-instance.com/oidc/callback/"
 
 #: ../../admin/additional_features/oidc.rst:15
 msgid ""
-"You will also need to know the following information about your OIDC "
-"provider:"
+"You will also need to know the following information about your OIDC provider:"
 msgstr ""
 "Sie müssen außerdem die folgenden Informationen zu Ihrem OIDC-Provider haben:"
 
 #: ../../admin/additional_features/oidc.rst:18
+#: ../../admin/additional_features/oidc.rst:37
+#: ../../admin/additional_features/oidc.rst:48
 msgid "Value"
-msgstr ""
+msgstr "Wert"
 
 #: ../../admin/additional_features/oidc.rst:18
+#: ../../admin/additional_features/oidc.rst:37
 msgid "Usual value"
-msgstr ""
+msgstr "Üblicher Wert"
 
 #: ../../admin/additional_features/oidc.rst:20
-msgid "OIDC_RP_CLIENT_ID"
-msgstr ""
+msgid "client id"
+msgstr "client id"
 
 #: ../../admin/additional_features/oidc.rst:20
 #: ../../admin/additional_features/oidc.rst:21
@@ -90,56 +92,959 @@ msgid "*displayed after OIDC client registration*"
 msgstr ""
 
 #: ../../admin/additional_features/oidc.rst:21
-msgid "OIDC_RP_CLIENT_SECRET"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:22
-msgid "OIDC_RP_SIGN_ALGO"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:22
-msgid "RS256"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:23
-msgid "OIDC_OP_AUTHORIZATION_ENDPOINT"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:23
-msgid "https://your-oidc-provider.com/auth"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:24
-msgid "OIDC_OP_TOKEN_ENDPOINT"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:24
-msgid "https://your-oidc-provider.com/token"
-msgstr ""
+msgid "client secret"
+msgstr "client secret"
 
 #: ../../admin/additional_features/oidc.rst:25
-msgid "OIDC_OP_USER_ENDPOINT"
-msgstr ""
+msgid "Configuration"
+msgstr "Konfiguration"
 
-#: ../../admin/additional_features/oidc.rst:25
-msgid "https://your-oidc-provider.com/me"
-msgstr ""
+#: ../../admin/additional_features/oidc.rst:28 ../../api/index.rst:92
+msgid "Endpoints"
+msgstr "Endpunkte"
 
-#: ../../admin/additional_features/oidc.rst:26
-msgid "OIDC_OP_JWKS_ENDPOINT"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:26
-msgid "https://your-oidc-provider.com/certs"
-msgstr ""
-
-#: ../../admin/additional_features/oidc.rst:29
+#: ../../admin/additional_features/oidc.rst:30
 msgid ""
-"These values as well as ``ENABLE_OIDC_CLIENT=True`` must be provided to "
-"the ephios configuration as environment variables. After completing these"
-" steps, users will see a \"Login\" button that starts the OIDC "
-"authentication flow. If you want to log in with a local user account, you"
-" can still do so by navigating to ``/accounts/login/?local=true``."
+"To configure your ephios instance, head to Settings -> Identity Providers and "
+"add a new OIDC provider. You are then asked to provide the base url of your "
+"identity provider. This is the url that is used to access the OIDC endpoints "
+"and depends on your provider. For example, if you are using Keycloak, this "
+"would be ``https://your-keycloak-instance.com/realms/your-realm``. If your "
+"provider supports auto-discovery, we will automatically fetch the required "
+"information from the OIDC provider. Otherwise, you will need to provide the "
+"following information:"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:39 ../../api/index.rst:82
+msgid "AUTHORIZATION_ENDPOINT"
+msgstr "AUTHORIZATION_ENDPOINT"
+
+#: ../../admin/additional_features/oidc.rst:39
+msgid "https://your-oidc-provider.com/auth"
+msgstr "https://your-oidc-provider.com/auth"
+
+#: ../../admin/additional_features/oidc.rst:40 ../../api/index.rst:83
+msgid "TOKEN_ENDPOINT"
+msgstr "TOKEN_ENDPOINT"
+
+#: ../../admin/additional_features/oidc.rst:40
+msgid "https://your-oidc-provider.com/token"
+msgstr "https://your-oidc-provider.com/token"
+
+#: ../../admin/additional_features/oidc.rst:41
+msgid "USERINFO_ENDPOINT"
+msgstr "USERINFO_ENDPOINT"
+
+#: ../../admin/additional_features/oidc.rst:41
+msgid "https://your-oidc-provider.com/me"
+msgstr "https://your-oidc-provider.com/me"
+
+#: ../../admin/additional_features/oidc.rst:42
+msgid "JWKS_URI"
+msgstr "JWKS_URI"
+
+#: ../../admin/additional_features/oidc.rst:42
+msgid "https://your-oidc-provider.com/certs"
+msgstr "https://your-oidc-provider.com/certs"
+
+#: ../../admin/additional_features/oidc.rst:45
+msgid "The following additional configuration options are available:"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:48
+#: ../../admin/additional_features/oidc.rst:84
+msgid "Usage"
+msgstr "Nutzung"
+
+#: ../../admin/additional_features/oidc.rst:48
+msgid "Default value"
+msgstr "Standardwert"
+
+#: ../../admin/additional_features/oidc.rst:50
+msgid "scopes"
+msgstr "Scopes"
+
+#: ../../admin/additional_features/oidc.rst:50
+msgid "Scopes to request from the IDP (for additional data)"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:50
+msgid "``openid profile email``"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:51
+msgid "end_session_endpoint"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:51
+msgid "redirect the user to the logout page of the IDP"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:51
+msgid "None (no redirect)"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:55
+msgid "Groups and Qualifications"
+msgstr "Gruppen und Qualifikationen"
+
+#: ../../admin/additional_features/oidc.rst:57
+msgid ""
+"Apart from the values above, you can also configure the handling of groups and "
+"qualifications for each identity provider. If your identity providers supports "
+"exposing groups in the identity token, ephios can use this information to "
+"automatically assign users to groups. You may be required to configure your "
+"identity provider to expose the groups in the identity token, please refer to "
+"the documentation of your identity provider for more information. It may also "
+"be neccessary to request an additional scope from the identity provider, e.g. "
+"``groups``. Append this scope to the ``scopes`` setting if required. To enable "
+"the functionality, you need to provide the name of the claim that contains the "
+"group information. For example, if your identity provider exposes the groups in "
+"a claim called ``groups``, you would enter ``groups`` there. You can also "
+"access nested claims by using a dot-separated path, e.g. "
+"``extra_information.groups`` if the group list is situated inside an "
+"``extra_information`` dict in the identity token. The value of the claim must "
+"be a list of strings, where each string is the name of a group in ephios (case-"
+"insensitive). The user will be a member of all groups that are listed in the "
+"claim, meaning they will be removed from groups that they have been manually "
+"assigned to in ephios and that are not listed in the claim. Default groups (if "
+"configured as described below) will be added to the user in addition to the "
+"groups from the claim. By default, any groups from the claim that do not exist "
+"in ephios will be ignored. You can change this behaviour by activating the "
+"``create missing groups`` setting."
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:69
+msgid ""
+"If your identity provider does not expose the groups in the identity token, you "
+"can still assign users to groups by using the ``default groups`` setting. All "
+"users that log in using this identity provider will be added to the groups "
+"listed there. Existing group memberships will not be altered."
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:72
+msgid ""
+"Similarly, qualifications can be assigned from a list of qualification UUIDS in "
+"a claim. If your provider cannot expose the UUIDs used in ephios, you can "
+"provide a JSON dictionary to translate the values your provider uses to the "
+"UUIDs in ephios. Only qualifications that have been added to a user by this "
+"method will be removed if they are not found in the claim at later logins."
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:75
+msgid "Login form"
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:77
+msgid ""
+"If users are logged in exclusively using identity providers, you can also hide "
+"the local login form with the appropriate settings under \"ephios instance\"."
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:80
+msgid ""
+"ephios uses the email adress provided by the IDP to identify a user account. If "
+"the IDP allows the user to change their email adress, users could enter the "
+"email adress of another user and log in as that user. To prevent this, you "
+"should configure your IDP to not allow users to change their email address."
+msgstr ""
+
+#: ../../admin/additional_features/oidc.rst:85
+msgid ""
+"After you configured at least one identity providers, the login page will "
+"display a button for each identity provider. Clicking on this button will "
+"redirect you to the OIDC provider, where you can log in. To log in with a local "
+"user account when the login form is hidden, you can still do so by navigating "
+"to ``/accounts/login/?local=true``."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:2
+msgid "Configuration options"
+msgstr "Optionen"
+
+#: ../../admin/configuration/index.rst:4
+msgid ""
+"Ephios is configured via environment variables. Its often easiest to create a "
+"`.env` file and point ephios to it via the `ENV_PATH` environment variable."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:7
+msgid ""
+"Most variables have a corresponding django setting. See the `django docs "
+"<https://docs.djangoproject.com/en/4.2/ref/settings/>`__ for a more in-depth "
+"explanation of what they do."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:13
+msgid ""
+"The following variables are available (plugins and some niche features might "
+"require additional environment variables)."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:16
+msgid "Setup"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:18
+msgid "`ENV_PATH`:"
+msgstr "`ENV_PATH`:"
+
+#: ../../admin/configuration/index.rst:19
+msgid ""
+"Path to an environment file. Defaults to `.env` in the location of the ephios "
+"package. We recommend setting most of the following variables in this file."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:22
+msgid "`DJANGO_SETTINGS_MODULE`:"
+msgstr "`DJANGO_SETTINGS_MODULE`:"
+
+#: ../../admin/configuration/index.rst:23
+msgid ""
+"Defaults to `ephios.settings`. If you want to use your own settings file, set "
+"this to the path to your settings file. This variable cannot be set in the "
+"environment file."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:27
+msgid "Debugging"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:29
+msgid "`DEBUG`:"
+msgstr "`DEBUG`:"
+
+#: ../../admin/configuration/index.rst:30
+msgid ""
+"**Required**. Set to `True` to enable debug mode. Must be `False` in production."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:32
+msgid "`DEBUG_TOOLBAR`:"
+msgstr "`DEBUG_TOOLBAR`:"
+
+#: ../../admin/configuration/index.rst:33
+msgid ""
+"Set to `True` to enable the django debug toolbar. Must be `False` in "
+"production. Defaults to `False`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:36
+msgid "`INTERNAL_IPS`:"
+msgstr "`INTERNAL_IPS`:"
+
+#: ../../admin/configuration/index.rst:37
+msgid ""
+"Comma-separated list of IP addresses that are allowed to access the debug "
+"toolbar. Defaults to `127.0.0.1`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:41
+msgid "Secrets"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:43
+msgid "`SECRET_KEY`:"
+msgstr "`SECRET_KEY`:"
+
+#: ../../admin/configuration/index.rst:44
+msgid ""
+"**Important**. Django secret key used to encrypt session data and other "
+"sensitive information. Defaults to a random value persisted into "
+"`PRIVATE_DIR/.secret`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:47
+msgid "`VAPID_PRIVATE_KEY_PATH`:"
+msgstr "`VAPID_PRIVATE_KEY_PATH`:"
+
+#: ../../admin/configuration/index.rst:48
+msgid ""
+"Path to the private key used to sign web push notifications. If not provided, "
+"web push notifications wont work on some platforms. "
+"See :ref:`web_push_notifications` for details. Defaults to `PRIVATE_DIR/"
+"vapid_key.pem`. A keypair is automatically generated if it does not exist."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:53
+msgid "Data storage and Logging"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:55
+msgid "`DATA_DIR`:"
+msgstr "`DATA_DIR`:"
+
+#: ../../admin/configuration/index.rst:56
+msgid ""
+"**Important**. Base path where ephios defaults to store files. Defaults to a "
+"`data` folder in the location of the ephios package, which is not recommended "
+"for production use."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:60
+msgid "`PUBLIC_DIR`:"
+msgstr "`PUBLIC_DIR`:"
+
+#: ../../admin/configuration/index.rst:61
+msgid "Path where public files are stored. Defaults to `DATA_DIR/public`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:63
+msgid "`STATIC_ROOT`:"
+msgstr "`STATIC_ROOT`:"
+
+#: ../../admin/configuration/index.rst:64
+msgid ""
+"Path where static files (css/js) are collected to. A reverse proxy should be "
+"configured to serve them at `STATIC_URL`. Defaults to `PUBLIC_DIR/static`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:68
+msgid "`PRIVATE_DIR`:"
+msgstr "`PRIVATE_DIR`:"
+
+#: ../../admin/configuration/index.rst:69
+msgid ""
+"Path where private files are stored. Defaults to `DATA_DIR/private`. Make sure "
+"access to this folder is restricted to the user running ephios."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:72
+msgid "`MEDIA_ROOT`:"
+msgstr "`MEDIA_ROOT`:"
+
+#: ../../admin/configuration/index.rst:73
+msgid ""
+"Path where uploaded files are stored. Defaults to `PRIVATE_DIR/media`. You "
+"should backup this folder regularly."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:77
+msgid "`MEDIA_FILES_DISK_QUOTA`:"
+msgstr "`MEDIA_FILES_DISK_QUOTA`:"
+
+#: ../../admin/configuration/index.rst:78
+msgid ""
+"Quota in MB that is enforced for the media files. Defaults to 0, meaning no "
+"quota is enforced."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:80
+msgid "`LOG_DIR`:"
+msgstr "`LOG_DIR`:"
+
+#: ../../admin/configuration/index.rst:81
+msgid ""
+"Path to the folder where log files are put. Files inside are rotated daily. "
+"Defaults to `PRIVATE_DIR/logs`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:84
+msgid "`LOGGING_BACKUP_DAYS`:"
+msgstr "`LOGGING_BACKUP_DAYS`:"
+
+#: ../../admin/configuration/index.rst:85
+msgid "Number of days to keep log files. Defaults to 14."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:89
+msgid "Database and Caching"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:91
+msgid "`DATABASE_URL`:"
+msgstr "`DATABASE_URL`:"
+
+#: ../../admin/configuration/index.rst:92
+msgid ""
+"**Required**. URL to the database. See `django-environ <https://django-"
+"environ.readthedocs.io/en/latest/types.html#environ-env-db-url>`__ for details."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:95
+msgid "`CONN_MAX_AGE`:"
+msgstr "`CONN_MAX_AGE`:"
+
+#: ../../admin/configuration/index.rst:96
+msgid ""
+"Number of seconds to keep database connections open. Defaults to 0, meaning "
+"connections are closed after each request. Refer to the `django docs <https://"
+"docs.djangoproject.com/en/4.2/ref/databases/#persistent-database-"
+"connections>`__ for details."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:99
+msgid "`CACHE_URL`:"
+msgstr "`CACHE_URL`:"
+
+#: ../../admin/configuration/index.rst:100
+msgid ""
+"URL to the cache. We recommend redis. See `django-environ <https://django-"
+"environ.readthedocs.io/en/latest/types.html#environ-env-cache-url>`__ for "
+"details."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:104
+msgid "URLs and Routing"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:106
+msgid "`ALLOWED_HOSTS`:"
+msgstr "`ALLOWED_HOSTS`:"
+
+#: ../../admin/configuration/index.rst:107
+msgid ""
+"**Required**. Comma-separated list of hostnames that are allowed to access the "
+"ephios instance."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:110
+msgid "`SITE_URL`:"
+msgstr "`SITE_URL`:"
+
+#: ../../admin/configuration/index.rst:111
+msgid ""
+"**Required**. URL used to construct absolute URLs in emails and other places."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:113
+msgid "`STATIC_URL`:"
+msgstr "`STATIC_URL`:"
+
+#: ../../admin/configuration/index.rst:114
+msgid ""
+"URL where the static files can be found by browsers. Defaults to ``/static/``, "
+"meaning they are served by the same host."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:117
+msgid "`MEDIA_URL`:"
+msgstr "`MEDIA_URL`:"
+
+#: ../../admin/configuration/index.rst:118
+msgid ""
+"URL where the media files (meaning files uploaded by users) can be found by "
+"browsers. Defaults to ``/usercontent/``, meaning they are served by the same "
+"host. This is NOT recommended for `security reasons <https://"
+"docs.djangoproject.com/en/5.1/topics/security/#user-uploaded-content>`__. "
+"ephios takes care of necessary redirects if this is set to a different domain. "
+"Please not that files under MEDIA_URL should not be accessible publicly. To "
+"enable appropriate permission checks, a possible setup is to declare this URL "
+"as internal in your reverse proxy while serving the files directly from the "
+"filesystem. ephios will issue a redirect to the correct URL after checking the "
+"permissions. Make sure to add your content domain to ``ALLOWED_HOSTS``."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:128
+msgid "`FALLBACK_MEDIA_SERVING`:"
+msgstr "`FALLBACK_MEDIA_SERVING`:"
+
+#: ../../admin/configuration/index.rst:129
+msgid ""
+"If set to `True`, ephios will serve media files itself if the webserver does "
+"not. This is not recommended for production use. Defaults to `False`. Currently "
+"only nginx with the X-Accel-Redirect header is supported to serve media files."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:134
+msgid "Security"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:137
+msgid "`SECURE_HSTS_SECONDS`:"
+msgstr "`SECURE_HSTS_SECONDS`:"
+
+#: ../../admin/configuration/index.rst:138
+msgid ""
+"Number of seconds to set the `Strict-Transport-Security <https://"
+"developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__ "
+"header to. Defaults to the amount of seconds in 1 day, but should be set to a "
+"higher value in production."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:141
+msgid "`SECURE_HSTS_INCLUDE_SUBDOMAINS`:"
+msgstr "`SECURE_HSTS_INCLUDE_SUBDOMAINS`:"
+
+#: ../../admin/configuration/index.rst:142
+msgid ""
+"Include subdomains in the `Strict-Transport-Security <https://"
+"developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security>`__ "
+"header. Defaults to `False`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:145
+msgid "`SECURE_HSTS_PRELOAD`:"
+msgstr "`SECURE_HSTS_PRELOAD`:"
+
+#: ../../admin/configuration/index.rst:146
+msgid ""
+"Set the `preload <https://hstspreload.org/>`__ flag in the `Strict-Transport-"
+"Security <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-"
+"Transport-Security>`__ header. Defaults to `False`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:149
+msgid "`TRUST_X_FORWARDED_PROTO`:"
+msgstr "`TRUST_X_FORWARDED_PROTO`:"
+
+#: ../../admin/configuration/index.rst:150
+msgid ""
+"ephios must be served over HTTPS in production. In some setups, ephios is "
+"behind a reverse proxy that terminates SSL connections and the Origin header is "
+"not set with a https scheme. In this case, the proxy can communicate the fact "
+"that the connection is secure by setting the `X-Forwarded-Proto <https://"
+"developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto>`__ header. "
+"Then this setting must be set to `True`. See `django docs <https://"
+"docs.djangoproject.com/en/4.2/ref/settings/#std:setting-"
+"SECURE_PROXY_SSL_HEADER>`__ for details. Defaults to `False`."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:159
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: ../../admin/configuration/index.rst:161
+msgid "`EMAIL_URL`:"
+msgstr "`EMAIL_URL`:"
+
+#: ../../admin/configuration/index.rst:162
+msgid ""
+"**Required**. URL to the email smtp server. See `django-environ <https://django-"
+"environ.readthedocs.io/en/latest/types.html#environ-env-email-url>`__ for "
+"details."
+msgstr ""
+
+#: ../../admin/configuration/index.rst:165
+msgid "`DEFAULT_FROM_EMAIL`:"
+msgstr "`DEFAULT_FROM_EMAIL`:"
+
+#: ../../admin/configuration/index.rst:166
+msgid ""
+"**Required**. Email address that is used as the sender for all emails sent by "
+"ephios. (`Django docs <https://docs.djangoproject.com/en/4.2/ref/settings/"
+"#default-from-email>`__)"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:169
+msgid "`SERVER_EMAIL`:"
+msgstr "`SERVER_EMAIL`:"
+
+#: ../../admin/configuration/index.rst:170
+msgid ""
+"**Required**. Email address that is used as the sender for all error emails "
+"sent by django. (`Django docs <https://docs.djangoproject.com/en/4.2/ref/"
+"settings/#server-email>`__)"
+msgstr ""
+
+#: ../../admin/configuration/index.rst:173
+msgid "`ADMINS`:"
+msgstr "`ADMINS`:"
+
+#: ../../admin/configuration/index.rst:174
+msgid "**Required**. Email addresses that receive error emails."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:2
+msgid "Docker"
+msgstr "Docker"
+
+#: ../../admin/deployment/docker/index.rst:5
+msgid "Docker Image"
+msgstr "Docker Image"
+
+#: ../../admin/deployment/docker/index.rst:7
+msgid ""
+"We automatically build a Docker image for every release. It uses gunicorn as a "
+"WSGI-server and still requires a database, redis and some ssl-terminating "
+"webserver/proxy to be set up. Also, static files need to be served by a "
+"webserver from a common volume."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:13
+msgid ""
+"The image is available on the Github Container Registry under `ghcr.io/ephios-"
+"dev/ephios <https://github.com/ephios-dev/ephios/pkgs/container/ephios>`_."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:16
+msgid ""
+"The image is based on the official python image. Tags are ``main`` for the "
+"latest commit on the main branch, ``latest`` for the latest release and "
+"``v0.x.y`` for a specific release."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:22
+msgid "Deployment with Docker Compose"
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:24
+msgid ""
+"We provide a basic docker-compose file that adds nginx, postgres and redis to "
+"the mix and exposes the app on port 80. You still need to either provide an SSL-"
+"terminating proxy in front of it or configure the nginx container to do so."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:30
+msgid ""
+"The compose file can be found at ``deployment/compose/docker-compose.yml`` and "
+"`on github <https://github.com/ephios-dev/ephios/blob/main/deployment/compose/"
+"docker-compose.yml>`_. Feel free to use it as a starting point for your own "
+"deployment."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:35
+msgid ""
+"The container defines two volumes for the database and ephios data files. You "
+"should mount them to a persistent location on your host."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:39
+msgid ""
+"Make sure to change the environment variables in the compose file to your "
+"needs. Have a look at the :ref:`configuration options <env_file_options>`."
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:43
+msgid "To start the compose file and add a first superuser run:"
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:51
+msgid ""
+"If you want to test the container without https, that's only possible by "
+"changing it the compose file:"
+msgstr ""
+
+#: ../../admin/deployment/docker/index.rst:59
+msgid ""
+"The first line enables debug mode and therefore disables a redirect from http "
+"to https. The second line disables trusting the X-Forwarded-Proto header set to "
+"https by the nginx container, which is required for djangos CSRF protection to "
+"not kick in on http requests."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:2
+msgid "Deploying ephios"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:4
+msgid "This section shows how to deploy ephios in a production environment."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:9
+msgid "To run ephios (a django project) in production, you generally need:"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:11
+msgid "A **python** environment (we recommend python3.11)."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:12
+msgid ""
+"A **WSGI application server** (we recommend gunicorn). This will be the program "
+"that actually runs the ephios code. Do not use `manage.py runserver` in "
+"production."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:14
+msgid ""
+"A **reverse proxy** (we recommend nginx) that handles TLS termination, serves "
+"static files and proxies requests to the WSGI application server. You should "
+"also secure your server using a firewall."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:16
+msgid "A **database** (we recommend postgresql) that stores the ephios data."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:17
+msgid ""
+"A program (e.g. **cron**) that periodically runs a management command (e.g. to "
+"send notifications)."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:18
+msgid "A **redis** instance that is used for caching."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:19
+msgid "An **SMTP server** for sending emails."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:20
+msgid "A domain pointing to your server and a TLS certificate for it."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:24
+msgid "Installation"
+msgstr "Installation"
+
+#: ../../admin/deployment/index.rst:26
+msgid ""
+"Generally, ephios can be installed like most django projects. We prepared some "
+"guides for common deployment scenarios:"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:37
+msgid "Securing your installation"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:39
+msgid ""
+"ephios is a web application and as such it is exposed to the internet. It is "
+"therefore important to take some security measures to protect your user data."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:42
+msgid ""
+"You are already using SSL, which is a good start. You should also make sure "
+"that your server is up-to-date and that you have a firewall configured to only "
+"allow access to the ports you need."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:46
+msgid "SSL"
+msgstr "SSL"
+
+#: ../../admin/deployment/index.rst:48
+msgid ""
+"You might want to check out `this Mozilla page <https://mozilla.github.io/"
+"server-side-tls/ssl-config-generator/>`_ on how to configure your SSL ciphers "
+"and protocols."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:52
+msgid "HSTS"
+msgstr "HSTS"
+
+#: ../../admin/deployment/index.rst:54
+msgid ""
+"The `HSTS header <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/"
+"Strict-Transport-Security>`_ is set by ephios to a default of 1 day. After you "
+"confirmed your pages and assets are served via SSL correctly, you should "
+"increase this value to a year. To do so, add the following environment "
+"variables to your ephios environment:"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:65
+msgid ""
+"Restart and maybe also add your domain to the `HSTS preload list <https://"
+"hstspreload.org/>`_."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:68
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:70
+msgid ""
+"You can find the logs of the ephios application inside the ``DATA_DIR``, e.g. "
+"``/var/ephios/data/private/logs``."
+msgstr ""
+
+#: ../../admin/deployment/index.rst:75
+msgid "Error with None values for date fields when using MySQL"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:77
+msgid ""
+"If you are using MySQL, you might encounter errors on date computations like "
+"this:"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:83
+msgid ""
+"This may be caused by MySQL `missing timezone information <https://"
+"stackoverflow.com/a/60844090/4837975>`_. You can fix this by running:"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:91
+msgid "\"Data too long for column\" Error when using MariaDB 10.7+"
+msgstr ""
+
+#: ../../admin/deployment/index.rst:93
+msgid ""
+"If you are upgrading your existing ephios setup to MariaDB 10.7+, you might "
+"encounter problems with \"Data too long for column\" errors. These might be "
+"caused by a change in how django handles UUID fields with MariaDB. Try this "
+"management command to migrate your existing database:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:2
+msgid "Manual installation"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:4
+msgid ""
+"To run ephios on a debian-based system, make sure you have prepared the "
+"prerequisites. What follows is a rough guide to install ephios and configure "
+"the supporting services. Feel free to adapt it to your needs and style. The "
+"guide assumes you are logged in as root (``#`` is a root prompt, ``$`` the "
+"ephios user prompt)."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:10
+msgid "Unix user"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:12
+msgid ""
+"Create a unix user that will run the ephios. You should avoid running ephios "
+"with root privileges."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:19
+msgid "Package dependencies"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:21
+msgid "Install the system packages that ephios depends on."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:28
+msgid "python environment and ephios package"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:30
+msgid ""
+"Create a `virtualenv <https://docs.python.org/3/tutorial/venv.html>`_ for "
+"ephios and install the ephios package. Replace pgsql with mysql if you want to "
+"use mysql."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:39
+msgid "Database"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:41
+msgid ""
+"Create a database user and a database for ephios. For postgres this could look "
+"like this:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:48
+msgid "Make sure the encoding of the database is UTF-8."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:51
+msgid "Data directory"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:53
+msgid ""
+"ephios stores some data in the file system. Create the folders and make sure "
+"the ephios user can write to them. The reverse proxy needs to be able to read "
+"the static files stored in ``/var/ephios/data/public/static``."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:64
+msgid "Config file"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:66
+msgid ""
+"ephios can be configured using environment variables. They can also be read "
+"from a file. Create a file ``/home/ephios/ephios.env`` (owned by the ephios "
+"user) with the following content, replacing the values with your own:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:84
+msgid ""
+"For details on the configuration options and syntax, see :ref:`configuration "
+"options <env_file_options>`."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:86
+msgid "To test your configuration, run:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:97
+msgid "Build ephios files"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:99
+msgid ""
+"Now that the configuration is in place, we can build the static files and the "
+"translation files."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:110
+msgid "Setup cron"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:112
+msgid ""
+"ephios needs to have the ``run_periodic`` management command run periodically "
+"(at least every five minutes). This command sends notifications and performs "
+"other tasks that need to be done regularly. Run ``crontab -e -u ephios`` and "
+"add the following line:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:121
+msgid "Setup gunicorn systemd service"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:123
+msgid ""
+"To run ephios with gunicorn, create a systemd service file ``/etc/systemd/"
+"system/ephios-gunicorn.service`` with the following content:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:145
+msgid "To start the service run:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:155
+msgid "Configure reverse proxy"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:157
+msgid ""
+"Configure your reverse proxy to forward requests to ephios. For nginx, you can "
+"start with this:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:200
+msgid "For apache you can build on this:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:227
+msgid ""
+"Please note that `FALLBACK_MEDIA_SERVING` needs to be set to `True` in the "
+"ephios configuration when using apache."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:229
+msgid ""
+"Remember to replace all the domain names and certificate paths with your own. "
+"Make sure to use secure SSL settings. To obtain SSL certificates, you can use "
+"`certbot <https://certbot.eff.org/>`_ with Let's Encrypt."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:234
+msgid "Next steps"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:236
+msgid ""
+"After restarting your reverse proxy you should be able to access ephios at "
+"https://your.domain.org. You can now create your first user account by running:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:246
+msgid "You should now secure your installation. Try starting with the tips below."
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:248
+msgid "To install a plugin install them via pip:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:259
+msgid "To update ephios create a backup of your database and files and run:"
+msgstr ""
+
+#: ../../admin/deployment/manual/index.rst:270
+msgid "After installing plugins or updating, restart the gunicorn service:"
 msgstr ""
 
 #: ../../admin/index.rst:2
@@ -148,14 +1053,6 @@ msgstr ""
 
 #: ../../admin/index.rst:4
 msgid "This section shows how to install and configure ephios."
-msgstr ""
-
-#: ../../admin/installation/index.rst:2
-msgid "Installing ephios"
-msgstr ""
-
-#: ../../admin/installation/index.rst:4
-msgid "This section shows how to install ephios."
 msgstr ""
 
 #: ../../api/index.rst:2
@@ -172,9 +1069,8 @@ msgstr ""
 
 #: ../../api/index.rst:9
 msgid ""
-"You can authenticate against the API using session based authentication "
-"or tokens acquired using the OAuth2 flow or manually from the user "
-"settings."
+"You can authenticate against the API using session based authentication or "
+"tokens acquired using the OAuth2 flow or manually from the user settings."
 msgstr ""
 
 #: ../../api/index.rst:13
@@ -183,13 +1079,12 @@ msgstr ""
 
 #: ../../api/index.rst:15
 msgid ""
-"A client can authenticate against the API using `session based "
-"authentication <https://www.django-rest-framework.org/api-"
-"guide/authentication/#sessionauthentication>`_. This allows to visit API "
-"endpoints in the browser and use the API in a similar way as the web "
-"interface. Login is required and permissions are checked just like in the"
-" web interface. This is the recommended way to access the API from "
-"interactive ephios webpages (javascript/AJAX)."
+"A client can authenticate against the API using `session based authentication "
+"<https://www.django-rest-framework.org/api-guide/authentication/"
+"#sessionauthentication>`_. This allows to visit API endpoints in the browser "
+"and use the API in a similar way as the web interface. Login is required and "
+"permissions are checked just like in the web interface. This is the recommended "
+"way to access the API from interactive ephios webpages (javascript/AJAX)."
 msgstr ""
 
 #: ../../api/index.rst:23
@@ -198,17 +1093,16 @@ msgstr ""
 
 #: ../../api/index.rst:25
 msgid ""
-"Personal API tokens can be acquired from the user settings page and used "
-"in custom applications or scripts to access the API. When creating a "
-"token you should provide a helpful description as well as set a fitting "
-"expiration date."
+"Personal API tokens can be acquired from the user settings page and used in "
+"custom applications or scripts to access the API. When creating a token you "
+"should provide a helpful description as well as set a fitting expiration date."
 msgstr ""
 
 #: ../../api/index.rst:30
 msgid ""
-"ephios uses Scopes to restrict the validity of API tokens to those "
-"endpoints that are needed by the application that uses the token. The "
-"scope should be as narrow as possible to prevent abuse of the token."
+"ephios uses Scopes to restrict the validity of API tokens to those endpoints "
+"that are needed by the application that uses the token. The scope should be as "
+"narrow as possible to prevent abuse of the token."
 msgstr ""
 
 #: ../../api/index.rst:34
@@ -217,7 +1111,7 @@ msgstr ""
 
 #: ../../api/index.rst:37
 msgid "PUBLIC_READ"
-msgstr ""
+msgstr "PUBLIC_READ"
 
 #: ../../api/index.rst:37
 msgid "Read public data like available events and shifts"
@@ -225,7 +1119,7 @@ msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
 #: ../../api/index.rst:38
 msgid "PUBLIC_WRITE"
-msgstr ""
+msgstr "PUBLIC_WRITE"
 
 #: ../../api/index.rst:38
 msgid "Write public data like available events and shifts"
@@ -233,7 +1127,7 @@ msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
 #: ../../api/index.rst:39
 msgid "ME_READ"
-msgstr ""
+msgstr "ME_READ"
 
 #: ../../api/index.rst:39
 msgid "Read own personal data and participations"
@@ -241,7 +1135,7 @@ msgstr "Eigene Daten und Teilnahmen lesen"
 
 #: ../../api/index.rst:40
 msgid "ME_WRITE"
-msgstr ""
+msgstr "ME_WRITE"
 
 #: ../../api/index.rst:40
 msgid "Write own personal data and participations"
@@ -249,7 +1143,7 @@ msgstr "Eigene Daten und Teilnahmen schreiben"
 
 #: ../../api/index.rst:41
 msgid "CONFIDENTIAL_READ"
-msgstr ""
+msgstr "CONFIDENTIAL_READ"
 
 #: ../../api/index.rst:41
 msgid "Read confidential data like all users profile and participations"
@@ -257,22 +1151,21 @@ msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
 #: ../../api/index.rst:42
 msgid "CONFIDENTIAL_WRITE"
-msgstr ""
+msgstr "CONFIDENTIAL_WRITE"
 
 #: ../../api/index.rst:42
 msgid "Write confidential data like all users profile and participations"
-msgstr ""
-"Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
+msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
 
 #: ../../api/index.rst:45
 msgid ""
-"In your requests to the API the token must be presented in the "
-"Authorization header like this:"
+"In your requests to the API the token must be presented in the Authorization "
+"header like this:"
 msgstr ""
 
 #: ../../api/index.rst:48
 msgid "``Authorization: Bearer <access token>``"
-msgstr ""
+msgstr "``Authorization: Bearer <access token>``"
 
 #: ../../api/index.rst:50
 msgid "For example, a curl request to the events endpoint would look like this:"
@@ -280,22 +1173,23 @@ msgstr ""
 
 #: ../../api/index.rst:52
 msgid ""
-"``curl -X GET https://your-instance.ephios.de/api/events/ -H "
-"'Authorization: Bearer gvRYPujOFh6iiLbT5Dw'``"
+"``curl -X GET https://your-instance.ephios.de/api/events/ -H 'Authorization: "
+"Bearer gvRYPujOFh6iiLbT5Dw'``"
 msgstr ""
+"``curl -X GET https://your-instance.ephios.de/api/events/ -H 'Authorization: "
+"Bearer gvRYPujOFh6iiLbT5Dw'``"
 
 #: ../../api/index.rst:54
 msgid ""
-"Permissions are checked based on the tokens scope and the permissions of "
-"the user that created the token. For example, if a token with the scope "
-"``PUBLIC_READ`` is used, the token can be used to access the events "
-"endpoint, but only events that are visible to that user will be returned."
+"Permissions are checked based on the tokens scope and the permissions of the "
+"user that created the token. For example, if a token with the scope "
+"``PUBLIC_READ`` is used, the token can be used to access the events endpoint, "
+"but only events that are visible to that user will be returned."
 msgstr ""
 
 #: ../../api/index.rst:59
 msgid ""
-"We plan on integrating API-Keys that are independent of users in the "
-"future."
+"We plan on integrating API-Keys that are independent of users in the future."
 msgstr ""
 
 #: ../../api/index.rst:62
@@ -304,20 +1198,19 @@ msgstr ""
 
 #: ../../api/index.rst:64
 msgid ""
-"ephios can act as an OAuth2 provider which allows third-party "
-"applications to obtain API tokens for its users. The API tokens acquired "
-"using the OAuth2 flow function just like the manually created ones."
+"ephios can act as an OAuth2 provider which allows third-party applications to "
+"obtain API tokens for its users. The API tokens acquired using the OAuth2 flow "
+"function just like the manually created ones."
 msgstr ""
 
 #: ../../api/index.rst:68
 msgid ""
 "To get started, you need to create an OAuth2 application under \"OAuth2 "
 "applications\" in the management section of the settings in your ephios "
-"instance. Set the client type to confidential, the authorization grant "
-"type to \"authorization-code\" and the redirect uri to the url of your "
-"client application. Note down client id and client secret. You can "
-"integrate the OAuth2 flow with a library in your preferred language: "
-"https://oauth.net/code/"
+"instance. Set the client type to confidential, the authorization grant type to "
+"\"authorization-code\" and the redirect uri to the url of your client "
+"application. Note down client id and client secret. You can integrate the "
+"OAuth2 flow with a library in your preferred language: https://oauth.net/code/"
 msgstr ""
 
 #: ../../api/index.rst:77
@@ -326,7 +1219,7 @@ msgstr ""
 
 #: ../../api/index.rst:80
 msgid "CLIENT_ID"
-msgstr ""
+msgstr "CLIENT_ID"
 
 #: ../../api/index.rst:80
 msgid "client id you created in ephios"
@@ -334,22 +1227,14 @@ msgstr ""
 
 #: ../../api/index.rst:81
 msgid "CLIENT_SECRET"
-msgstr ""
+msgstr "CLIENT_SECRET"
 
 #: ../../api/index.rst:81
 msgid "client secret you created in ephios"
 msgstr ""
 
 #: ../../api/index.rst:82
-msgid "AUTHORIZATION_ENDPOINT"
-msgstr ""
-
-#: ../../api/index.rst:82
 msgid "https://your-ephios-instance.com/api/oauth/authorize/"
-msgstr ""
-
-#: ../../api/index.rst:83
-msgid "TOKEN_ENDPOINT"
 msgstr ""
 
 #: ../../api/index.rst:83
@@ -358,19 +1243,18 @@ msgstr ""
 
 #: ../../api/index.rst:86
 msgid ""
-"With these values, you should be able to initiate the OAuth2 flow, where "
-"you also need to specify which scope you want to request from the user. "
-"After the user has authorized your application, you will receive an "
-"access token that you can use to authenticate against the API endpoints "
-"described above."
+"With these values, you should be able to initiate the OAuth2 flow, where you "
+"also need to specify which scope you want to request from the user. After the "
+"user has authorized your application, you will receive an access token that you "
+"can use to authenticate against the API endpoints described above."
 msgstr ""
 
-#: ../../api/index.rst:92
-msgid "Endpoints"
-msgstr ""
-
-#: ../../<openapi>
+#: ../../api/index.rst
 msgid "Query Parameters"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "Ende"
 msgstr ""
 
 #: ../../<openapi>:1
@@ -382,7 +1266,7 @@ msgid "The initial index from which to return the results."
 msgstr ""
 
 #: ../../<openapi>:1
-msgid "type"
+msgid "Which field to use when ordering the results."
 msgstr ""
 
 #: ../../<openapi>:1
@@ -390,19 +1274,88 @@ msgid "A search term."
 msgstr ""
 
 #: ../../<openapi>:1
-msgid "Which field to use when ordering the results."
+msgid "Startzeit größer-gleich (deprecated, stattdessen start_time_after nutzen)"
 msgstr ""
 
-#: ../../<openapi>
+#: ../../<openapi>:1
+msgid ""
+"Startzeit kleiner-gleich (deprecated, stattdessen start_time_before nutzen)"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "Beginn"
+msgstr ""
+
+#: ../../api/index.rst
 msgid "Status Codes"
 msgstr ""
 
-#: ../../<openapi>
+#: ../../api/index.rst
 msgid "Parameters"
 msgstr ""
 
 #: ../../<openapi>:1
 msgid "A unique integer value identifying this Veranstaltung."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid ""
+"Remove information that would not be visible in the web version, i.e. no email "
+"and date of birth of participants"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "event id"
+msgstr "event id"
+
+#: ../../<openapi>:1
+msgid "Veranstaltungstyp"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "shift id"
+msgstr "shift id"
+
+#: ../../<openapi>:1
+msgid ""
+"* `0` - angefragt * `1` - bestätigt * `2` - abgesagt durch helfende Person * "
+"`3` - abgelehnt durch verantwortliche Person * `4` - in Zuteilung"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "`0` - angefragt"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "`1` - bestätigt"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "`2` - abgesagt durch helfende Person"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "`3` - abgelehnt durch verantwortliche Person"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "`4` - in Zuteilung"
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A unique integer value identifying this abstract participation."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A unique integer value identifying this Schicht."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A unique integer value identifying this Benutzerprofil."
+msgstr ""
+
+#: ../../<openapi>:1
+msgid "A unique integer value identifying this Teilnahme."
 msgstr ""
 
 #: ../../changelog.rst:2
@@ -415,24 +1368,23 @@ msgstr ""
 
 #: ../../development/contributing.rst:4
 msgid ""
-"Contributions to ephios are welcome. If you want to see what we are "
-"currently up to, check the available `issues <https://github.com/ephios-"
-"dev/ephios/issues>`_."
+"Contributions to ephios are welcome. If you want to see what we are currently "
+"up to, check the available `issues <https://github.com/ephios-dev/ephios/"
+"issues>`_."
 msgstr ""
 
 #: ../../development/contributing.rst:7
 msgid ""
-"If you have an idea for new feature you should start by deciding whether "
-"you want to write a plugin (see :doc:`plugins/index`) or to contribute "
-"the feature to the ephios core code. A plugin is usually suitable if the "
-"feature is very specific to a small set of users (e.g. a specific signup "
-"process only used in your local organisation) or the feature is not "
-"related to the core tasks of ephios (e.g. a system for stock management)."
-" If all ephios users could profit from your feature, you should consider "
-"contributing it to the core code. Please start by describing your feature"
-" in a new issue in the GitHub repository to coordinate the extent with "
-"us. When working on existing issues, please assign yourself and create a "
-"pull request early on."
+"If you have an idea for new feature you should start by deciding whether you "
+"want to write a plugin (see :doc:`plugins/index`) or to contribute the feature "
+"to the ephios core code. A plugin is usually suitable if the feature is very "
+"specific to a small set of users (e.g. a specific signup process only used in "
+"your local organisation) or the feature is not related to the core tasks of "
+"ephios (e.g. a system for stock management). If all ephios users could profit "
+"from your feature, you should consider contributing it to the core code. Please "
+"start by describing your feature in a new issue in the GitHub repository to "
+"coordinate the extent with us. When working on existing issues, please assign "
+"yourself and create a pull request early on."
 msgstr ""
 
 #: ../../development/contributing.rst:16
@@ -441,101 +1393,187 @@ msgstr ""
 
 #: ../../development/contributing.rst:18
 msgid ""
-"To set up a development version on your local machine, you need to "
-"execute the following steps:"
+"To set up a development version on your local machine, you need to execute the "
+"following steps:"
 msgstr ""
 
 #: ../../development/contributing.rst:20
-msgid ""
-"Check out the `repository <https://github.com/ephios-dev/ephios>`_ and cd"
-" to it"
-msgstr ""
-
-#: ../../development/contributing.rst:21
-msgid "Set up a virtualenv for the project with Python >=3.8 and activate it"
+msgid "Install external packages required for developing ephios"
 msgstr ""
 
 #: ../../development/contributing.rst:22
-msgid ""
-"Install poetry (if not already installed): `Installation guide <https"
-"://python-poetry.org/docs/#installation>`_"
+msgid "``git`` (to check out the repository)"
 msgstr ""
 
 #: ../../development/contributing.rst:23
-msgid "Install dependencies with ``poetry install``"
+msgid "``python`` version 3.8 or higher including dev and virtualenv tooling"
 msgstr ""
 
 #: ../../development/contributing.rst:24
-msgid "Create env file with ``cp .env.example .env``"
-msgstr ""
-
-#: ../../development/contributing.rst:25
-msgid "Migrate the database with ``python manage.py migrate``"
+msgid "``gettext`` (to compile translations, might also be named ``msgfmt``)"
 msgstr ""
 
 #: ../../development/contributing.rst:26
 msgid ""
-"Compile translations with ``python manage.py compilemessages`` and "
-"``python manage.py compilejsi18n``"
+"Check out the `repository <https://github.com/ephios-dev/ephios>`_ and cd to it"
 msgstr ""
 
 #: ../../development/contributing.rst:27
-msgid "Load data for testing with ``python manage.py devdata``"
+msgid "Set up a virtualenv for the project activate it"
 msgstr ""
 
 #: ../../development/contributing.rst:28
-msgid "Start the development server with ``python manage.py runserver``"
+msgid ""
+"Install poetry (if not already installed): `Installation guide <https://python-"
+"poetry.org/docs/#installation>`_"
 msgstr ""
 
 #: ../../development/contributing.rst:29
-msgid ""
-"Open your web browser, visit ``http://localhost:8000`` and log in with "
-"the default credentials (user ``admin@localhost`` and password ``admin``)"
+msgid "Install dependencies with ``poetry install``"
+msgstr ""
+
+#: ../../development/contributing.rst:30
+msgid "Create env file with ``cp .env.example .env``"
+msgstr ""
+
+#: ../../development/contributing.rst:31
+msgid "Migrate the database with ``python manage.py migrate``"
 msgstr ""
 
 #: ../../development/contributing.rst:32
-msgid "Tests"
+msgid "Prepare files for the installation with ``python manage.py build``"
+msgstr ""
+
+#: ../../development/contributing.rst:33
+msgid "Load data for testing with ``python manage.py devdata``"
 msgstr ""
 
 #: ../../development/contributing.rst:34
+msgid "Start the development server with ``python manage.py runserver``"
+msgstr ""
+
+#: ../../development/contributing.rst:35
 msgid ""
-"We are using `pytest <https://docs.pytest.org/en/stable/>`_ along with "
-"`django-webtest <https://github.com/django-webtest/django-webtest>`_. "
-"Please write tests for new features or fixed bugs. You can use your IDE "
-"integration to run the tests or execute the whole test suite with "
-"``pytest``."
+"Open your web browser, visit ``http://localhost:8000`` and log in with the "
+"default credentials (user ``admin@localhost`` and password ``admin``)"
 msgstr ""
 
-#: ../../development/contributing.rst:39
-msgid "Code style"
-msgstr ""
-
-#: ../../development/contributing.rst:41
+#: ../../development/contributing.rst:37
 msgid ""
-"We are enforcing a good code style for every pull request. To ensure that"
-" you only commit appropriate code, we recommend installing a pre-commit "
-"hook with ``pre-commit install``. You can have a look at ``.pre-commit-"
-"config.yaml`` to check how this works. In short it executes the following"
-" steps before every commit:"
+"If those steps did not work for you, please contact us or open an issue in the "
+"GitHub repository."
 msgstr ""
 
-#: ../../development/contributing.rst:45
-msgid "run ``autoflake`` with a couple of flags to remove unused imports,"
+#: ../../development/contributing.rst:40
+msgid ""
+"The default development server is not suitable for production use. It is not "
+"secure and not performant. If you want to run ephios in production, please "
+"follow the :doc:`deployment guide </admin/deployment/index>`"
+msgstr ""
+
+#: ../../development/contributing.rst:44
+msgid "Tests"
 msgstr ""
 
 #: ../../development/contributing.rst:46
+msgid ""
+"We are using `pytest <https://docs.pytest.org/en/stable/>`_ along with `django-"
+"webtest <https://github.com/django-webtest/django-webtest>`_. Please write "
+"tests for new features or fixed bugs. You can use your IDE integration to run "
+"the tests or execute the whole test suite with ``pytest``."
+msgstr ""
+
+#: ../../development/contributing.rst:51
+msgid "Code style"
+msgstr ""
+
+#: ../../development/contributing.rst:53
+msgid ""
+"We are enforcing a good code style for every pull request. To ensure that you "
+"only commit appropriate code, we recommend installing a pre-commit hook with "
+"``pre-commit install``. You can have a look at ``.pre-commit-config.yaml`` to "
+"check how this works. In short it executes the following steps before every "
+"commit:"
+msgstr ""
+
+#: ../../development/contributing.rst:57
+msgid "run ``autoflake`` with a couple of flags to remove unused imports,"
+msgstr ""
+
+#: ../../development/contributing.rst:58
 msgid "run ``isort .`` to sort imports,"
 msgstr ""
 
-#: ../../development/contributing.rst:47
+#: ../../development/contributing.rst:59
 msgid "run ``black .`` to format the code."
 msgstr ""
 
-#: ../../development/contributing.rst:49
+#: ../../development/contributing.rst:61
 msgid ""
-"If you want to do that manually, run ``pre-commit run --all-files``. Next"
-" to that, we also run ``pylint ephios`` to check for semantic issues in "
-"the code."
+"If you want to do that manually, run ``pre-commit run --all-files``. Next to "
+"that, we also run ``pylint ephios`` to check for semantic issues in the code."
+msgstr ""
+
+#: ../../development/contributing.rst:65
+msgid "Translations"
+msgstr ""
+
+#: ../../development/contributing.rst:67
+msgid ""
+"We are using the django translation system for translations in python, html and "
+"javascript. After adding new strings to translate, run this to generate the "
+"`locale/**/.po` files for translation:"
+msgstr ""
+
+#: ../../development/contributing.rst:76
+msgid ""
+"Calling ``makemessages`` in the ``djangojs`` domain will find gettext calls in "
+"javascript files in the current working directory. Therefore, we need to ignore "
+"the ``data`` which contains static files from 3rd-party-packages already "
+"translated and the ``docs`` directory. Some 3rd-party-javascript comes without "
+"a translation. To add them, do run ``makemessages`` from the ``data/public/"
+"static/`` directory after running ``collectstatic``, but ignore all directories "
+"of 3rd-party-packages that are already translated, e.g.:"
+msgstr ""
+
+#: ../../development/contributing.rst:87
+msgid ""
+"We tend to edit our .po files using weblate, but a local editor like poedit "
+"works as well."
+msgstr ""
+
+#: ../../development/contributing.rst:90
+msgid "Using other databases"
+msgstr ""
+
+#: ../../development/contributing.rst:92
+msgid ""
+"By default, ephios uses a sqlite database for development and PostgreSQL for "
+"production."
+msgstr ""
+
+#: ../../development/contributing.rst:95
+msgid "Postgres"
+msgstr ""
+
+#: ../../development/contributing.rst:97
+msgid "If you want to use Postgres in development, here are some steps to follow:"
+msgstr ""
+
+#: ../../development/contributing.rst:103 ../../development/contributing.rst:121
+msgid ""
+"Then, you can use the following settings in your .env file. Remember to migrate "
+"etc."
+msgstr ""
+
+#: ../../development/contributing.rst:110
+msgid "MySQL"
+msgstr ""
+
+#: ../../development/contributing.rst:112
+msgid ""
+"We do not recommend using MySQL, but if you need a mysql for development, you "
+"can use the following docker command:"
 msgstr ""
 
 #: ../../development/index.rst:2
@@ -550,147 +1588,257 @@ msgstr ""
 msgid "Base classes"
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod._configure_participation:1 of
+#: ../../development/plugins/classes.rst:5
+msgid "Signup Flow"
+msgstr "Anmeldeverfahren"
+
+#: ../../development/plugins/classes.rst:7
 msgid ""
-"Configure the given participation object for signup according to the "
-"method's configuration. You need at least to set the participations "
-"state, as that is not done with the participation form. `kwargs` contains"
-" the signup form's cleaned_data."
+"When writing a custom signup flow, subclass from ``AbstractSignupFlow`` and "
+"register your class with the corresponding signal. There's also "
+"``BaseSignupFlow`` that provides some basic implementations for common patterns "
+"and is used by many of the builtin flows."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod._decline_checkers:1 of
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow:1 of
+msgid "Abstract base class for signup flow."
+msgstr ""
+
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow:3 of
 msgid ""
-"Return a list of methods that check if the participant can decline the "
-"shift."
+"A signup flow defines the logic for how a participant signs up for a shift. It "
+"checks if the participant is eligible to sign up, and if so, creates a "
+"participation object. It is not responsible for what the participant does "
+"inside the shift, only for the process of signing up. It provides forms for "
+"disposition and configuration."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod._signup_checkers:1 of
-msgid ""
-"Return a list of methods that check if the participant can sign up for "
-"the shift."
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.description:1 of
+msgid "A human-readable description of this signup flow."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.can_customize_signup:1 of
-msgid ""
-"Return whether the participant gets shown the option to customize their "
-"participation."
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.get_configuration_form:1 of
+msgid "Return a form to configure this signup flow."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.can_decline:1 of
-msgid "Return whether the participant is allowed to decline."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.can_sign_up:1 of
-msgid "Return whether the participant is allowed to perform signup."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.disposition_participation_form_class:1
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.get_signup_info:1
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_signup_info:1
 #: of
-msgid ""
-"This form will be used for participations in disposition. Set to None if "
-"you don't want to support the default disposition."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_decline_errors:1 of
-msgid ""
-"Return a list of ParticipationErrors that describe reasons for not being "
-"able to decline."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_participant_count_bounds:1
-#: of
-msgid ""
-"Return a tuple of min, max for how many participants are allowed for the "
-"shift. Use None for any value if it is not specifiable. The default "
-"implementation returns None, None to signify both values are not "
-"specified."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_participant_errors:1 of
-msgid ""
-"Return errors for whether the participant fulfills the requirements set "
-"by the signup methods for participation. This runs a subset of the check "
-"for `get_signup_errors`."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_participation_display:1 of
-msgid ""
-"Returns a displayable representation of participation that can be "
-"rendered into a table (e.g. for pdf export). Must return a list of "
-"participations or empty slots. Each element of the list has to be a list "
-"of a fixed size where each entry is rendered to a separate column. Ex.: "
-"[[\"participant1_name\", \"participant1_qualification\"], "
-"[\"participant2_name\", \"participant2_qualification\"]]"
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_shift_state_context_data:1
-#: of
-msgid ""
-"Additionally to the context of the event detail view, provide context for"
-" rendering `shift_state_template_name`."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_signup_errors:1 of
-msgid ""
-"Return a list of ParticipationErrors that describe reasons for not being "
-"able to sign up."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.get_signup_info:1 of
 msgid "Return key/value pairs about the configuration to show in exports etc."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.get_signup_stats:1 of
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.perform_decline:1 of
+msgid "Perform the decline for the given participant."
+msgstr ""
+
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.perform_signup:1 of
+msgid ""
+"Perform the signup for the given participant. kwargs are passed from the signup "
+"view and can be used to customize the signup. Usually it's the cleaned_data "
+"from the signup form."
+msgstr ""
+
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.slug:1 of
+msgid "A unique identifier for this signup flow."
+msgstr ""
+
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.uses_requested_state:1 of
+msgid "Whether this signup flow uses the requested state."
+msgstr ""
+
+#: ephios.core.signup.flow.abstract.AbstractSignupFlow.verbose_name:1 of
+msgid "The human-readable name of this signup flow."
+msgstr ""
+
+#: ../../development/plugins/classes.rst:17
+msgid "Shift structure"
+msgstr ""
+
+#: ../../development/plugins/classes.rst:19
+msgid ""
+"When writing a custom signup flow, subclass from ``AbstractShiftStructure`` and "
+"register your class with the corresponding signal. There's also "
+"``BaseShiftStructure`` that provides some basic implementations for common "
+"patterns and is used by many of the builtin flows."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure:1 of
+msgid "Abstract base class for shift structure."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure:3 of
+msgid ""
+"A shift structure defines what a participant does inside the shift. There may "
+"be no structure at all or some elaborate staff hierarchy."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure:6 of
+msgid ""
+"The structure is responsible for rendering the participations of the shift."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.description:1 of
+msgid "A human-readable description of this structure."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.disposition_participation_form_class:1
+#: of
+msgid ""
+"This form will be used for participations in disposition. Set to None if you "
+"don't want to support the default disposition."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_checkers:1 of
+msgid ""
+"Return a list of checkers that should be run when validating signup actions."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_configuration_form:1
+#: of
+msgid ""
+"This form will be used to configure this structure. The cleaned data will be "
+"saved to shift.structure_configuration"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:1
+#: of
+msgid ""
+"Returns a list of list of dictionaries corresponding to participations or "
+"positions in this shift. This should include all participations regardless of "
+"state or type as well as unfilled positions. The dictionary must contain the "
+"following items:"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:6
+#: of
+msgid "\"participation\""
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:7
+#: of
+msgid ""
+"contains a participation object can be None only if you provide an unfilled "
+"position"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:9
+#: of
+msgid "\"required_qualifications\""
+msgstr "\"required_qualifications\""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:10
+#: of
+msgid ""
+"contains a collection of Qualification items required for a position can be "
+"empty for unmatched participations"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:12
+#: of
+msgid "\"description\":"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_list_export_data:13
+#: of
+msgid ""
+"contains a string describing the position should be empty for unmatched "
+"participations"
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_participant_count_bounds:1
+#: of
+msgid ""
+"Return a tuple of min, max for how many participants are allowed for the shift. "
+"Use None for any value if it is not specifiable."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.get_signup_stats:1
+#: of
 msgid "Return an instance of SignupStats for the shift."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.has_customized_signup:1 of
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.has_customized_signup:1
+#: of
 msgid ""
-"Return whether the participation was customized in a way specific to this"
-" signup method."
+"Return whether the participation was customized in a way specific to this shift "
+"structure."
 msgstr ""
 
-#: ephios.core.signup.methods.BaseSignupMethod.perform_decline:1 of
-msgid ""
-"Create and configure a declining participation object for the given "
-"participant. `kwargs` may contain further instructions from a e.g. a "
-"form."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.perform_signup:1 of
-msgid ""
-"Creates and/or configures a participation object for a given participant "
-"and sends out notifications. Passes the participation and kwargs to "
-"configure_participation to do configuration specific to the signup "
-"method."
-msgstr ""
-
-#: ephios.core.signup.methods.BaseSignupMethod.render:1 of
-#, python-format
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.render:1 of
+#, python-format, python-brace-format
 msgid ""
 "Render the state/participations of the shift. Match the signature of "
 "template.render for use with the include template tag: {% include "
-"shift.signup_method %} By default, this loads `shift_state_template_name`"
-" and renders it using context from `get_shift_state_context_data`."
+"shift.structure %} By default, this loads `shift_state_template_name` and "
+"renders it using context from `get_shift_state_context_data`."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.signup_form_class:1
+#: of
+msgid "This form will be used for participations in signup."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.slug:1 of
+msgid "A unique identifier for this structure."
+msgstr ""
+
+#: ephios.core.signup.structure.abstract.AbstractShiftStructure.verbose_name:1 of
+msgid "The human-readable name of this structure."
+msgstr ""
+
+#: ../../development/plugins/classes.rst:29
+msgid "Consequences"
+msgstr ""
+
+#: ../../development/plugins/classes.rst:31
+msgid ""
+"Implement custom conseqence types by subclassing from "
+"``BaseConsequenceHandler`` and registering it with the corresponding signal."
 msgstr ""
 
 #: ephios.core.consequences.BaseConsequenceHandler.execute:1 of
 msgid ""
-"Gets a consequence and tries to execute whatever it is the consequence "
-"wants to happen."
+"Gets a consequence and tries to execute whatever it is the consequence wants to "
+"happen."
 msgstr ""
 
 #: ephios.core.consequences.BaseConsequenceHandler.filter_queryset:1 of
 msgid ""
-"Return a filtered that excludes consequences with the slug of this class "
-"that the user is not allowed to edit. Consequences should also be "
-"annotated with values needed for rendering."
+"Return a filtered that excludes consequences with the slug of this class that "
+"the user is not allowed to edit. Consequences should also be annotated with "
+"values needed for rendering."
 msgstr ""
 
 #: ephios.core.consequences.BaseConsequenceHandler.render:1 of
 msgid ""
-"Return html describing the action to be done as a consequence of what. "
-"Return None if you cannot handle this consequence."
+"Return html describing the action to be done as a consequence of what. Return "
+"None if you cannot handle this consequence."
+msgstr ""
+
+#: ../../development/plugins/classes.rst:40
+#: ../../user/integrations/notifications.rst:2
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: ../../development/plugins/classes.rst:42
+msgid ""
+"Implement custom notification types or backends by subclassing from the "
+"following classes and registering them with the corresponding signal."
+msgstr ""
+
+#: ephios.core.services.notifications.types.AbstractNotificationHandler.get_actions:1
+#: of
+msgid ""
+"Return a list of (label, url) tuples that make this notification actionable. "
+"The first url will be used as the primary action in push notifications."
+msgstr ""
+
+#: ephios.core.services.notifications.types.AbstractNotificationHandler.get_actions_with_referrer:1
+#: of
+msgid ""
+"Annotate the actions returned by any subclass with a reference to the "
+"originating notification. This is used by EphiosNotificationMiddleware to mark "
+"the corresponding notification as read once the user clicks on the link."
 msgstr ""
 
 #: ../../development/plugins/index.rst:2
@@ -703,11 +1851,11 @@ msgstr ""
 
 #: ../../development/plugins/introduction.rst:4
 msgid ""
-"ephios is designed to be flexible and extensible. This means that you can"
-" hook into several parts of the system with a plugin and change or add "
-"functionality. We are sending out several Django signals that you can "
-"register for. You can check out the list of :doc:`signals`. For some "
-"signals, you need to return subclasses of our :doc:`classes`"
+"ephios is designed to be flexible and extensible. This means that you can hook "
+"into several parts of the system with a plugin and change or add functionality. "
+"We are sending out several Django signals that you can register for. You can "
+"check out the list of :doc:`signals`. For some signals, you need to return "
+"subclasses of our :doc:`classes`"
 msgstr ""
 
 #: ../../development/plugins/introduction.rst:10
@@ -716,170 +1864,205 @@ msgstr ""
 
 #: ../../development/plugins/introduction.rst:11
 msgid ""
-"In general, an ephios plugin is a python package with a special "
-"entrypoint. To save you the hassle, we are providing a cookiecutter "
-"template with everything prepared for you to start."
+"In general, an ephios plugin is a python package with a special entrypoint. To "
+"save you the hassle, we are providing a cookiecutter template with everything "
+"prepared for you to start."
 msgstr ""
 
-#: ../../development/plugins/introduction.rst:13
+#: ../../development/plugins/introduction.rst:14
 msgid ""
-"To get started, make sure that you have at least Python 3.8 and "
-"cookiecutter installed with ``pip install cookiecutter``"
+"To get started, make sure that you have at least Python 3.10 and cookiecutter "
+"installed with ``pip install cookiecutter``"
 msgstr ""
 
-#: ../../development/plugins/introduction.rst:15
+#: ../../development/plugins/introduction.rst:17
 msgid ""
-"You can create your project by executing ``cookiecutter "
-"https://github.com/ephios-dev/ephios-plugin-template``. Make sure to use "
-"a valid python package name (only letters, numbers and underscores) as "
-"your app name. Change to the newly created folder and make sure to follow"
-" the setup steps metioned in :doc:`/development/contributing/` but "
-"prefixed by ``python -m ephios`` instead of ``python manage.py`` to setup"
-" your local ephios instance for testing."
-msgstr ""
-
-#: ../../development/plugins/introduction.rst:18
-msgid ""
-"You will find a (nearly) empty django app inside your project. This app "
-"will be listed in INSTALLED_APPS of ephios, so you can use all common "
-"django features likes migrations and URLs. You should register to some of"
-" the :doc:`signals` to get called by ephios. Please note that with "
-"instances of ``PluginSignal``, only activated plugins will receive signal"
-" calls."
-msgstr ""
-
-#: ../../development/plugins/introduction.rst:23
-msgid "Installing a plugin"
+"You can create your project by executing ``cookiecutter https://github.com/"
+"ephios-dev/ephios-plugin-template``. Make sure to use a valid python package "
+"name (only letters, numbers and underscores) as your app name. Change to the "
+"newly created folder and make sure to follow the setup steps metioned in :doc:`/"
+"development/contributing/` but prefixed by ``python -m ephios`` instead of "
+"``python manage.py`` to setup your local ephios instance for testing."
 msgstr ""
 
 #: ../../development/plugins/introduction.rst:24
 msgid ""
-"To package your plugin, you can run ``poetry build`` which will produce a"
-" python wheel. You can either copy the wheel file to your server and "
-"install it with ``pip install /path/to/build.whl`` or publish it to pypi "
-"using ``poetry publish``. You need to create an API token with pypi for "
-"that. Then you can install your plugin from pypi with ``pip install "
-"app_name``. Make sure to install the plugin in the same virtual "
-"environment as ephios (if applicable). Please note that you need to "
-"activate the plugin from within ephios in order to see it."
+"You will find a (nearly) empty django app inside your project. This app will be "
+"listed in INSTALLED_APPS of ephios, so you can use all common django features "
+"likes migrations and URLs. You should register to some of the :doc:`signals` to "
+"get called by ephios. Please note that with instances of ``PluginSignal``, only "
+"activated plugins will receive signal calls."
+msgstr ""
+
+#: ../../development/plugins/introduction.rst:31
+msgid ""
+"To further customize specify how your plugin is displayed and shown within "
+"ephios, alter the attributes of the ``EphiosPluginMeta`` class found in your "
+"plugins ``apps.py``. If you set ``visible`` to ``False`` the plugin will not "
+"show up in the ephios settings, so admins wont be able to enable it. If you set "
+"``force_enabled`` to ``True`` ephios will always consider the plugin enabled. "
+"This only makes sense for invisible plugins."
+msgstr ""
+
+#: ../../development/plugins/introduction.rst:38
+msgid "Installing a plugin"
+msgstr ""
+
+#: ../../development/plugins/introduction.rst:39
+msgid ""
+"To package your plugin, you can run ``poetry build`` which will produce a "
+"python wheel. You can either copy the wheel file to your server and install it "
+"with ``pip install /path/to/build.whl`` or publish it to pypi using ``poetry "
+"publish``. You need to create an API token with pypi for that. Then you can "
+"install your plugin from pypi with ``pip install app_name``. Make sure to "
+"install the plugin in the same virtual environment as ephios (if applicable). "
+"Please note that you need to activate the plugin from within ephios in order to "
+"see it."
 msgstr ""
 
 #: ../../development/plugins/signals.rst:2
 msgid "Available signals"
 msgstr ""
 
-#: ../../docstring ephios.core.signals.check_participant_signup:1 of
-msgid ""
-"This signal is sent out so receivers can prevent signup for a shift or "
-"provide feedback for dispatchers. Receivers will receive a "
-"``participant`` and ``method`` keyword argument and should return an "
-"instance of the fitting! subclass of "
-"``ephios.core.signup.methods.ParticipationError`` or None."
-msgstr ""
-
 #: ../../docstring ephios.core.signals.event_action:1 of
 msgid ""
-"This signal is sent out to get a list of actions that a user can perform "
-"on a single event. The actions are displayed in the dropdown menu on the "
-"event detail view. Receivers receive a ``event`` and ``request`` keyword "
-"argument. Each action is represented by a dict with the keys ``url``, "
-"``label`` and ``icon``."
+"This signal is sent out to get a list of actions that a user can perform on a "
+"single event. The actions are displayed in the dropdown menu on the event "
+"detail view. Receivers receive a ``event`` and ``request`` keyword argument. "
+"Each action is represented by a dict with the keys ``url``, ``label`` and "
+"``icon``."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.event_forms:1 of
 msgid ""
-"This signal is sent out to get a list of form instances to show on the "
-"event create and update views. You receive an `Optional[event]` and "
-"`request` keyword arg you should use to create an instance of your form. "
-"Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to "
-"customize the rendering behavior. If all forms are valid, `save` will be "
-"called on your form."
+"This signal is sent out to get a list of form instances to show on the event "
+"create and update views. You receive an `Optional[event]` and `request` keyword "
+"arg you should use to create an instance of your form. "
+"Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize "
+"the rendering behavior. If all forms are valid, `save` will be called on your "
+"form."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.event_info:1 of
 msgid ""
-"This signal is sent out to get additional information to display in the "
-"general section of the event detail view. Receivers will receive an "
-"`event` and `request` keyword arg to generate the information. Receivers "
-"should return html that is added below the event description."
+"This signal is sent out to get additional information to display in the general "
+"section of the event detail view. Receivers will receive an `event` and "
+"`request` keyword arg to generate the information. Receivers should return html "
+"that is added below the event description."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.footer_link:1 of
 msgid ""
-"This signal is sent out to get links for that page footer. Receivers "
-"should return a dict of with keys being the text and values being the url"
-" to link to. Receivers will receive a ``request`` keyword argument."
+"This signal is sent out to get links for that page footer. Receivers should "
+"return a dict of with keys being the text and values being the url to link to. "
+"Receivers will receive a ``request`` keyword argument."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.homepage_info:1 of
 msgid ""
 "This signal is sent out to get additional information to display on the "
-"homepage. Receivers receive a ``request`` keyword argument. Receivers "
-"should return html that will be rendered inside a card."
+"homepage. Receivers receive a ``request`` keyword argument. Receivers should "
+"return html that will be rendered inside a card."
 msgstr ""
 
-#: ../../docstring ephios.core.signals.management_settings_sections:1 of
+#: ../../docstring ephios.core.signals.html_head:1 of
 msgid ""
-"This signal is sent out to get sections for management settings. "
-"Receivers should return a list of dicts containing key-value-pairs for "
-"'label', 'url' and a boolean flag 'active'. Only views that the current "
-"user is allowed to view should be returned. Receivers will receive a "
-"``request`` keyword argument."
+"This signal allows you to put code inside the HTML ``<head>`` tag of every "
+"page. You will get the request as the keyword argument ``request`` and are "
+"expected to return HTML."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.nav_link:1 of
 msgid ""
-"This signal is sent out to get links for the main navbar. Receivers "
-"should return a list of dicts containing key-value-pairs for 'label', "
-"'url' and a boolean flag 'active'. Receivers will receive a ``request`` "
-"keyword argument."
+"This signal is sent out to get links for the main navbar. Receivers should "
+"return a list of dicts containing key-value-pairs for 'label', 'url' and a "
+"boolean flag 'active'. An optional key 'group' can contain a label for a group "
+"under which the link should be displayed. The special group "
+"``NAV_USERPROFILE_KEY`` is reserved for the group under the users name. "
+"Receivers will receive a ``request`` keyword argument."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.navbar_html:1 of
+msgid ""
+"This signal allows you to put additional arbitrary content inside  the navbar. "
+"You will get the request as the keyword argument ``request`` and are expected "
+"to return HTML."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.oidc_update_user:1 of
+msgid ""
+"This signal is sent out to update a user when they login with oidc. Receivers "
+"receive ``user`` and ``claims`` keyword arguments with a user object and the "
+"claims from the oidc provider."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.participant_from_request:1 of
 msgid ""
 "This signal is sent out to get a participant from a request with an "
-"unauthenticated user. Return a subclass of AbstractParticipant or None if"
-" you cannot provide a participant. The first non-None return-value will "
-"be used. Receivers will receive a ``request`` keyword argument."
+"unauthenticated user. Return a subclass of AbstractParticipant or None if you "
+"cannot provide a participant. The first non-None return-value will be used. "
+"Receivers will receive a ``request`` keyword argument."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.participant_signup_checkers:1 of
+msgid ""
+"This signal is sent out so receivers can prevent signup for a shift or provide "
+"feedback for dispatchers. Receivers are expected to return a list of functions "
+"receiving a ``method`` and ``participant`` argument and optionally raising "
+"fitting subclasses of ``ephios.core.signup.checkers.SignupActionError``."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.participation_finished:1 of
 msgid ""
 "This signal is sent out once for every confirmed participation after the "
-"participation ended and the ``finished`` flag is set to True. Changing "
-"the shift date to the future will not cause this to be called again. "
-"Exceptions in receivers are ignored, so make sure your code is robust "
-"enough to handle errors and retry if needed. This signal is based on "
-"``periodic_signal`` and provides a ``participation`` keyword argument."
+"participation ended and the ``finished`` flag is set to True. Changing the "
+"shift date to the future will not cause this to be called again. Exceptions in "
+"receivers are ignored, so make sure your code is robust enough to handle errors "
+"and retry if needed. This signal is based on ``periodic_signal`` and provides a "
+"``participation`` keyword argument."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.periodic_signal:1 of
 msgid "This signal is called periodically, at least every 15 minutes."
 msgstr ""
 
+#: ../../docstring ephios.core.signals.provide_dynamic_settings:1 of
+msgid ""
+"Use this signal to overwrite the defaults of django settings accessed  using "
+"``ephios.core.signals.DynamicSettingsProxy``. Receivers receive a ``name`` "
+"keyword argument naming the setting."
+msgstr ""
+
 #: ../../docstring ephios.core.signals.register_consequence_handlers:1 of
 msgid ""
-"This signal is sent out to get all known consequence handlers. Receivers "
-"should return a list of subclasses of "
+"This signal is sent out to get all known consequence handlers. Receivers should "
+"return a list of subclasses of "
 "``ephios.core.consequences.BaseConsequenceHandler``."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.register_event_bulk_action:1 of
 msgid ""
-"This signal is sent out to get a list of actions that a user can perform "
-"on a list of events. Receivers should return a list of actions. Each "
-"action is represented by a dict with the keys ``url``, ``label`` and "
-"``icon``. Once the user wants to perform the action, a POST request will "
-"be issued to this URL. The ``bulk_action`` field will contain a list of "
-"event ids on which the action should be performed."
+"This signal is sent out to get a list of actions that a user can perform on a "
+"list of events. Receivers should return a list of actions. Each action is "
+"represented by a dict with the keys ``url``, ``label`` and ``icon``. Once the "
+"user wants to perform the action, a POST request will be issued to this URL. "
+"The ``bulk_action`` field will contain a list of event ids on which the action "
+"should be performed."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.register_group_permission_fields:1 of
 msgid ""
-"This signal is sent out to get a list of permission fields that should be"
-" displayed on the group form. Receivers should return a list of tuples of"
-" the form ``(field_name, field)``. field must be an instance of "
+"This signal is sent out to get a list of permission fields that should be "
+"displayed on the group form. Receivers should return a list of tuples of the "
+"form ``(field_name, field)``. field must be an instance of "
 "``ephios.extra.permissions.PermissionField``."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.register_healthchecks:1 of
+msgid ""
+"This signal is sent out to get all health checks that can be run to monitor the "
+"health of the application. Receivers should return a list of subclasses of "
+"``ephios.core.services.health.AbstractHealthCheck``"
 msgstr ""
 
 #: ../../docstring ephios.core.signals.register_notification_backends:1 of
@@ -891,35 +2074,51 @@ msgstr ""
 
 #: ../../docstring ephios.core.signals.register_notification_types:1 of
 msgid ""
-"This signal is sent out to get all notification types that can be sent "
-"out to a user or participant. Receivers should return a list of "
-"subclasses of "
+"This signal is sent out to get all notification types that can be sent out to a "
+"user or participant. Receivers should return a list of subclasses of "
 "``ephios.core.notifications.types.AbstractNotificationHandler``"
 msgstr ""
 
-#: ../../docstring ephios.core.signals.register_signup_methods:1 of
+#: ../../docstring ephios.core.signals.register_shift_structures:1 of
 msgid ""
-"This signal is sent out to get all known signup methods. Receivers should"
-" return a list of subclasses of "
-"``ephios.core.signup.methods.BaseSignupMethod``."
+"This signal is sent out to get all known shift structures. Receivers should "
+"return a list of subclasses of "
+"``ephios.core.signup.structure.abstract.AbstractShiftStructure``."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.register_signup_flows:1 of
+msgid ""
+"This signal is sent out to get all known signup flows. Receivers should return "
+"a list of subclasses of ``ephios.core.signup.flow.abstract.AbstractSignupFlow``."
+msgstr ""
+
+#: ../../docstring ephios.core.signals.settings_sections:1 of
+msgid ""
+"This signal is sent out to get sections for the settings. Receivers should "
+"return a list of dicts containing key-value-pairs for 'label', 'url', 'group' "
+"and a boolean flag 'active'. Only views that the current user is allowed to "
+"view should be returned. Common group choices are "
+"``SETTINGS_PERSONAL_SECTION_KEY``  and ``SETTINGS_MANAGEMENT_SECTION_KEY`` but "
+"can be any other value as well. Receivers will receive a ``request`` keyword "
+"argument."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.shift_forms:1 of
 msgid ""
-"This signal is sent out to get a list of form instances to show on the "
-"shift create and update views. You receive a `shift` and `request` "
-"keyword arg you should use to create an instance of your form. Subclass "
-":py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the"
-" rendering behavior. If all forms are valid, `save` will be called on "
-"your form."
+"This signal is sent out to get a list of form instances to show on the shift "
+"create and update views. You receive a `shift` and `request` keyword arg you "
+"should use to create an instance of your form. "
+"Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize "
+"the rendering behavior. If all forms are valid, `save` will be called on your "
+"form."
 msgstr ""
 
 #: ../../docstring ephios.core.signals.shift_info:1 of
 msgid ""
-"This signal is sent out to get additional information to display in the "
-"shift box of the event detail view. Receivers will receive a `shift` and "
-"`request` keyword arg to generate the information. Receivers should "
-"return html that is added below the participations."
+"This signal is sent out to get additional information to display in the shift "
+"box of the event detail view. Receivers will receive a `shift` and `request` "
+"keyword arg to generate the information. Receivers should return html that is "
+"added below the participations."
 msgstr ""
 
 #: ../../index.rst:7
@@ -928,13 +2127,159 @@ msgstr "Willkommen bei der ephios-Dokumentation!"
 
 #: ../../index.rst:9
 msgid ""
-"This documentation explains how to use, install or extend ephios. If you "
-"can't find what you're looking for in the corresponding section, feel "
-"free to contact us."
+"This documentation explains how to use, install or extend ephios. If you can't "
+"find what you're looking for in the corresponding section, feel free to contact "
+"us."
 msgstr ""
-"Diese Dokumentation erklärt wie man ephios benutzt, installiert und "
-"erweitert. Wenn Sie eine Information nicht finden können Sie uns gerne "
-"kontaktieren."
+"Diese Dokumentation erklärt wie man ephios benutzt, installiert und erweitert. "
+"Wenn Sie eine Information nicht finden können Sie uns gerne kontaktieren."
+
+#: ../../user/events/blocks.rst:2
+msgid "Preconfigured shift structures"
+msgstr ""
+
+#: ../../user/events/blocks.rst:4
+msgid ""
+"When configuring a shift, you can choose to use a preconfigured shift structure "
+"(see :doc:`signup`). The blocks can be configured in the editor, which can be "
+"reached from the shift edit view."
+msgstr ""
+
+#: ../../user/events/blocks.rst:8
+msgid "Adding blocks"
+msgstr ""
+
+#: ../../user/events/blocks.rst:9
+msgid ""
+"To add a block, click on the \"Add atomic block\" or \"Add composite block\" "
+"button. If there are blocks already, you can also click on the copy icon of "
+"block in the block list on the right side of the editor to add a copy of the "
+"block. A form for the new block will appear on the left side in the editor. "
+"There are two types of blocks:"
+msgstr ""
+
+#: ../../user/events/blocks.rst:15
+msgid "Atomic blocks"
+msgstr ""
+
+#: ../../user/events/blocks.rst:17
+msgid ""
+"An atomic block is the smallest unit of a block structure. It has a block name "
+"and a list of positions. Each position can also be named and has a list of "
+"required qualifications. The position can also be marked as optional. One "
+"position represents one person in the structure. Below the positions, you can "
+"allow more participants than positions. This can be compared to not setting a "
+"maximum number of participants for a shift with another shift structure. You "
+"can also define additional conditions for the block, e.g. that everyone has a "
+"drivers license."
+msgstr ""
+
+#: ../../user/events/blocks.rst:24
+msgid "Composite blocks"
+msgstr ""
+
+#: ../../user/events/blocks.rst:26
+msgid ""
+"Composite blocks are a combination of multiple other blocks, both atomic and "
+"composite. After adding a composite block, it can be given a name. Then, you "
+"can add other blocks to the composite block. This is done by clicking the arrow "
+"on one of the blocks in the block list on the right side of the editor. The "
+"included block can also be labeled, e.g. to assign a unique name to a block "
+"that is included multiple times in the composite block. The composite block can "
+"also have additional conditions in the same way as atomic blocks."
+msgstr ""
+
+#: ../../user/events/blocks.rst:33
+msgid "Editing and deleting blocks"
+msgstr ""
+
+#: ../../user/events/blocks.rst:34
+msgid ""
+"By clicking on a block in the block list on the right side of the editor, you "
+"can edit the block. This will show the form for the block on the left side of "
+"the editor. To delete a block, click on the trash icon of the block in the "
+"block list. Keep in mind that changes will be applied to all shifts using this "
+"block."
+msgstr ""
+
+#: ../../user/events/events.rst:2
+msgid "Events, event types and visibility"
+msgstr "Veranstaltungen, Veranstaltungstypen und Sichtbarkeit"
+
+#: ../../user/events/events.rst:4
+msgid ""
+"ephios understands \"event\" as some real world event with a defined timeframe "
+"for which you are planning personnel in a single or multiple shifts. Shifts can "
+"be continuous and overlapping."
+msgstr ""
+
+#: ../../user/events/events.rst:8
+msgid ""
+"While permissions are managed on event level, signup settings are configured on "
+"shift level."
+msgstr ""
+
+#: ../../user/events/events.rst:11
+msgid "Responsibles and event visibility"
+msgstr "Verantwortliche und Sichtbarkeit"
+
+#: ../../user/events/events.rst:13
+msgid ""
+"Single users and groups can be made responsible for an event. That allows them "
+"to edit event details, shift settings and do the disposition for the event's "
+"shifts."
+msgstr ""
+
+#: ../../user/events/events.rst:16
+msgid ""
+"Events are made visible for groups of users. Visibility is required for "
+"participants to view and sign up for the event. You can manually add users to "
+"shifts. These users, as well as everyone who ever singed up or declined for any "
+"of the event's shifts will continue to have visibility permission even if you "
+"change the visibility settings later on."
+msgstr ""
+
+#: ../../user/events/events.rst:22
+msgid "Event types"
+msgstr "Veranstaltungstypen"
+
+#: ../../user/events/events.rst:24
+msgid ""
+"Event types are used for organizing events into different categories. They can "
+"be used in filters and come with defaults for event visibility and "
+"responsibility settings."
+msgstr ""
+
+#: ../../user/events/events.rst:28
+msgid "Showing participant data"
+msgstr ""
+
+#: ../../user/events/events.rst:30
+msgid ""
+"For every event type you can configure who can view the names of participants "
+"in events of that type. By default, participant data is visible to everyone. "
+"You can restrict it to people who have a confirmed participation in any of the "
+"event's shift. The most strict option is to only show participant data to the "
+"event's responsibles."
+msgstr ""
+
+#: ../../user/events/events.rst:37
+msgid "Settings"
+msgstr ""
+
+#: ../../user/events/events.rst:39
+msgid "You can configure event title, location and a rich text description."
+msgstr ""
+
+#: ../../user/events/events.rst:41
+msgid ""
+"Shifts have a start and end time, a meetup time as well as settings for how "
+"signup works."
+msgstr ""
+
+#: ../../user/events/events.rst:43
+msgid "Plugins might provide additional stettings on shift or event level."
+msgstr ""
 
 #: ../../user/events/index.rst:2
 msgid "Managing events"
@@ -942,192 +2287,214 @@ msgstr ""
 
 #: ../../user/events/index.rst:4
 msgid ""
-"This section of the documentation explains how to create and manage "
-"events in ephios as all related concepts like event types, signup methods"
-" and so on."
+"This section of the documentation explains how to create and manage events in "
+"ephios as all related concepts like event types, signup configuration and so on."
+msgstr ""
+"Dieser Abschnitt der Dokumentation erklärt, wie Veranstaltungen in ephios "
+"verwaltet werden. Auch verwandte Konzepte wie Veranstaltungstypen und "
+"Anmeldeeinstellungen werden hier behandelt."
+
+#: ../../user/events/signup.rst:2
+msgid "Signup settings"
+msgstr "Anmeldeeinstellungen"
+
+#: ../../user/events/signup.rst:4
+msgid ""
+"When creating a shift, you need to configure the signup flow and the shift "
+"structure."
 msgstr ""
 
-#: ../../user/events/shifts.rst:2
-msgid "Shifts"
-msgstr "Schichten"
+#: ../../user/events/signup.rst:6
+msgid ""
+"The signup flow controls **how** users can sign up for the shift and what "
+"happens when signing up."
+msgstr ""
+"Das Anmeldeverfahren steuert, **wie** sich Benutzer für die Schicht anmelden "
+"können und was nach der Anmeldung geschieht."
 
-#: ../../user/events/signup_methods.rst:2
-msgid "Signup methods"
+#: ../../user/events/signup.rst:8
+msgid ""
+"The shift structure configures **who** can sign up for the shift and how "
+"personnel is structured."
+msgstr ""
+
+#: ../../user/events/signup.rst:10
+msgid ""
+"To cover different use cases, ephios offers different signup flows and shift "
+"structures. Plugins might provide additional flows and structures that can be "
+"freely mixed with the default ones."
+msgstr ""
+
+#: ../../user/events/signup.rst:14
+msgid "Signup flows"
 msgstr "Anmeldeverfahren"
 
-#: ../../user/events/signup_methods.rst:4
+#: ../../user/events/signup.rst:16
 msgid ""
-"When creating a shift, a signup method has to be selected. This controls "
-"how users can sign up for the shift and what happens after signing up."
+"Signup flows check how people can sign up for your shift. Most let you "
+"configure whether users who have already been confirmed can cancel on their own "
+"and whether individually deviating start and end times can be specified when "
+"registering."
 msgstr ""
-"Beim Anlegen einer Schicht muss jeweils ein Anmeldeverfahren ausgewählt "
-"werden. Dieses steuert, wie sich Benutzer für die Schicht anmelden können "
-"und was nach der Anmeldung geschieht."
+"Anmeldeverfahren prüfen, wie viele Teilnehmende sich anmelden können. Außerdem "
+"kann eingestellt werden, ob Nutzer, die bereits bestätigt sind, selbstständig "
+"wieder absagen können und ob individuell abweichende Start- und Endzeiten bei "
+"der Anmeldung angegeben werden dürfen."
 
-#: ../../user/events/signup_methods.rst:6
-msgid ""
-"To cover different use cases, ephios offers different signup methods. In "
-"the following, the provided signup methods are explained, but additional "
-"signup methods can also be integrated as a plugin."
-msgstr ""
-"Um verschiedene Anwendungsfälle abzudecken, bietet ephios verschiedene "
-"Anmeldeverfahren an. Nachfolgend sind die mitgelieferten Anmeldeverfahren "
-"erläutert, es können jedoch auch zusätzliche Anmeldeverfahren als Plugin "
-"integriert werden."
-
-#: ../../user/events/signup_methods.rst:9
-msgid "Availabe signup methods"
-msgstr "Verfügbare Anmeldeverfahren"
-
-#: ../../user/events/signup_methods.rst:11
+#: ../../user/events/signup.rst:22
 msgid "Instant confirmation"
 msgstr "Direkte Bestätigung"
 
-#: ../../user/events/signup_methods.rst:13
+#: ../../user/events/signup.rst:24
 msgid ""
-"Shifts with this signup methods offer the user a button with the "
-"inscription \"Participate\". Any user who signs up is immediately "
-"confirmed and listed as a participant in the shift."
+"Shifts with this signup flow offer the user a button with the inscription "
+"\"Participate\". Any user who signs up is immediately confirmed and listed as a "
+"participant in the shift."
 msgstr ""
 "Schichten mit diesem Anmeldeverfahren bieten dem Nutzer einen Button mit der "
 "Aufschrift \"Teilnehmen\" an. Jeder Benutzer, der sich anmeldet, wird "
 "unmittelbar bestätigt und als Teilnehmer der Veranstaltung geführt."
 
-#: ../../user/events/signup_methods.rst:15
-msgid ""
-"The shift settings can specify conditions that a user must meet in order "
-"to participate. These include a minimum age and a registration deadline. "
-"In addition, a minimum and a maximum number of participants can be "
-"specified. If the maximum number of participants is reached, no further "
-"users can register. Furthermore, required qualifications can be "
-"specified. Users must have all the specified qualifications to be able to"
-" participate."
-msgstr ""
-"In den Einstellungen der Schicht können Bedingungen angegeben werden, die "
-"ein Benutzer erfüllen muss, um teilnehmen zu können. Dazu gehört ein "
-"Mindestalter und eine Anmeldefrist (Datum). Außerdem kann eine minimale und "
-"eine maximale Anzahl von Teilnehmenden angegeben werden. Ist die maximale "
-"Anzahl von Teilnehmenden erreicht, können sich keine weiteren Benutzer "
-"anmelden. Weiterhin können erforderliche Qualifikationen angegeben werden. "
-"Benutzer müssen dabei alle genannten Qualifikationen aufweisen, um "
-"teilnehmen zu können."
-
-#: ../../user/events/signup_methods.rst:17
-msgid ""
-"In addition, it can be set whether users who have already been confirmed "
-"can cancel on their own and whether individually deviating start and end "
-"times can be specified when registering."
-msgstr ""
-"Außerdem kann eingestellt werden, ob Nutzer, die bereits bestätigt sind, "
-"selbstständig wieder absagen können und ob individuell abweichende Start- "
-"und Endzeiten bei der Anmeldung angegeben werden dürfen."
-
-#: ../../user/events/signup_methods.rst:20
+#: ../../user/events/signup.rst:28
 msgid "Request and confirm"
 msgstr "Anfragen und bestätigen"
 
-#: ../../user/events/signup_methods.rst:22
+#: ../../user/events/signup.rst:30
 msgid ""
-"Shifts with this signup method offer the user a button labeled "
-"\"Request\". Any user requesting to attend will have their request listed"
-" in the disposition. The persons responsible for the event will receive "
-"notification of the request. In the disposition they can then confirm or "
-"reject the participation."
+"Shifts with this signup flow offer the user a button labeled \"Request\". Any "
+"user requesting to attend will have their request listed in the disposition. "
+"The people responsible for the event will receive notification of the request. "
+"In the disposition they can then confirm or reject the participation."
 msgstr ""
 "Schichten mit diesem Anmeldeverfahren bieten dem Nutzer einen Button mit der "
 "Aufschrift \"Anfragen\" an. Jeder Benutzer, der eine Teilnahme anfragt, wird "
 "mit seiner Anfrage in der Disposition gelistet. Die für die Veranstaltung "
-"verantwortlichen Personen erhalten eine Benachrichtigung über die Anfrage. "
-"In der Disposition können diese die Teilnahme dann bestätigen oder ablehnen."
+"verantwortlichen Personen erhalten eine Benachrichtigung über die Anfrage. In "
+"der Disposition können diese die Teilnahme dann bestätigen oder ablehnen."
 
-#: ../../user/events/signup_methods.rst:24
+#: ../../user/events/signup.rst:37
+msgid "Manual disposition"
+msgstr "Manuelle Disposition"
+
+#: ../../user/events/signup.rst:39
 msgid ""
-"The same settings can be made for this signup method as for \"Instant "
-"confirmation\"."
-msgstr ""
-"Es können für dieses Anmeldeverfahren die selben Einstellungen vorgenommen "
-"werden wie bei \"Direkte Bestätigung\"."
-
-#: ../../user/events/signup_methods.rst:27
-msgid "Section based signup"
-msgstr "Bewerbung auf Abschnitte"
-
-#: ../../user/events/signup_methods.rst:29
-msgid ""
-"This signup method works in the same way as \"Request and confirm\". In "
-"addition, several sections can be defined in the shift settings. For each"
-" section, a minimum and maximum number of participants can be specified. "
-"Also per section the required qualifications can be specified. Users must"
-" have all of the specified qualifications to participate in that section."
-" Sections with mixed qualifications (e.g., RTW with 1x RS, 1x NFS) must "
-"either be mapped as multiple sections or use a different signup method."
-msgstr ""
-"Dieses Anmeldeverfahren funktioniert grundlegend genau wie \"Anfragen und "
-"Bestätigen\". Zusätzlich können in den Einstellungen der Schicht mehrere "
-"Abschnitte (z.B. \"UHS\", \"Fußstreife\") definiert werden. Für jeden "
-"Abschnitt kann eine Mindest- und Höchstanzahl an Teilnehmenden angegeben "
-"werden. Ebenfalls pro Abschnitt können die erforderlichen Qualifikationen "
-"angegeben werden. Benutzer müssen alle genannten Qualifikationen aufweisen, "
-"um an diesem Abschnitt teilnehmen zu können. Abschnitte mit gemischten "
-"Qualifikationen (z.B. RTW mit 1x RS, 1x NFS) müssen entweder als mehrere "
-"Abschnitte abgebildet oder mit einem anderen Anmeldeverfahren durchgeführt "
-"werden."
-
-#: ../../user/events/signup_methods.rst:31
-msgid ""
-"Users can specify a preferred section when requesting participation. It "
-"can be set in the shift settings that this specification is mandatory. "
-"The preferred section is visible in the disposition."
-msgstr ""
-"Benutzer können beim Anfragen der Teilnahme einen bevorzugten Abschnitt "
-"angeben. In den Einstellungen der Schicht kann eingestellt werden, dass "
-"diese Angabe verpflichtend ist. Der bevorzugte Abschnitt ist in der "
-"Disposition ersichtlich."
-
-#: ../../user/events/signup_methods.rst:34
-msgid "No registration (disposition only)"
-msgstr "Keine Anmeldung (nur Disposition)"
-
-#: ../../user/events/signup_methods.rst:36
-msgid ""
-"The ability to sign up for this shift is disabled for all users, "
-"optionally a reason can be specified. Users can be added via the "
-"disposition. This signup method can be used e.g. for training courses, "
-"where the responsible persons send individual helpers and a self-"
-"registration is not intended."
+"The ability to sign up for this shift is disabled for all users, optionally a "
+"reason can be specified. Users can be added via the disposition. This signup "
+"flow can be used e.g. for training courses, where the responsible persons send "
+"individual helpers and a self-registration is not intended."
 msgstr ""
 "Die Möglichkeit zur Anmeldung an dieser Schicht ist für alle Nutzer "
 "deaktiviert, optional kann ein Grund hierfür angegeben werden. Nutzer können "
-"über die Disposition hinzugefügt werden. Dieses Anmeldeverfahren kann bspw. "
-"für Lehrgänge verwendet werden, bei dem die Verantwortlichen einzelne "
-"Helfende entsenden und eine Selbstanmeldung nicht vorgesehen ist."
+"über die Disposition hinzugefügt werden. Dieses Anmeldeverfahren kann bspw. für "
+"Lehrgänge verwendet werden, bei dem die Verantwortlichen einzelne Helfende "
+"entsenden und eine eigenständige Anmeldung nicht vorgesehen ist."
 
-#: ../../user/events/signup_methods.rst:39
+#: ../../user/events/signup.rst:45
 msgid "Linked to other shift"
-msgstr "an andere Schicht gekoppelt"
+msgstr "An andere Schicht gekoppelt"
 
-#: ../../user/events/signup_methods.rst:41
+#: ../../user/events/signup.rst:47
 msgid ""
-"With this signup method, it is not possible for volunteers to register; "
-"instead, the participants are mirrored from another shift. The shift to "
-"mirror is selected in the settings. This registration procedure can be "
-"used, for example, for courses lasting several days, where registration "
-"is controlled via the first shift and the participants are automatically "
-"registered for all other days/shifts."
+"With this signup flow, it is not possible for volunteers to register; instead, "
+"the participants are mirrored from another shift. The shift to mirror is "
+"selected in the settings. This registration procedure can be used, for example, "
+"for courses lasting several days, where registration is controlled via the "
+"first shift and the participants are automatically registered for all other "
+"days/shifts."
 msgstr ""
 "Bei diesem Anmeldeverfahren ist eine Anmeldung für Helfende nicht möglich, "
 "stattdessen werden die Teilnahmen von einer anderen Schicht gespiegelt. Die "
-"Schicht, von der gespiegelt werden soll, wird in den Einstellungen "
-"ausgewählt. Dieses Anmeldeverfahren kann bspw. für mehrtägige Lehrgänge "
-"verwendet werden, bei denen die Anmeldung über die erste Schicht geregelt "
-"wird und die Teilnehmenden automatisch für alle weiteren Tage/Schichten "
-"angemeldet werden sollen."
+"Schicht, von der gespiegelt werden soll, wird in den Einstellungen ausgewählt. "
+"Dieses Anmeldeverfahren kann bspw. für mehrtägige Lehrgänge verwendet werden, "
+"bei denen die Anmeldung über die erste Schicht geregelt wird und die "
+"Teilnehmenden automatisch für alle weiteren Tage/Schichten angemeldet werden "
+"sollen."
 
-#: ../../user/events/signup_methods.rst:44
+#: ../../user/events/signup.rst:55
+msgid "Shift structures"
+msgstr ""
+
+#: ../../user/events/signup.rst:57
+msgid ""
+"Shift structures control who can sign up for the shift, e.g. minimum age. They "
+"mainly differ by how qualification requirements and personnel counts can be "
+"required. You need to activate plugins to see more shift structures."
+msgstr ""
+
+#: ../../user/events/signup.rst:62
+msgid "Uniform"
+msgstr ""
+
+#: ../../user/events/signup.rst:64
+msgid ""
+"This is the simplest structure. You can configure min and max participant count "
+"and an optional set of qualifications required."
+msgstr ""
+
+#: ../../user/events/signup.rst:67
+msgid ""
+"This is great for trainings and other events where you don't care about a "
+"specific distribution of qualifications or teams."
+msgstr ""
+
+#: ../../user/events/signup.rst:71
+msgid "Qualification mix"
+msgstr "Qualifikations-Mix"
+
+#: ../../user/events/signup.rst:73
+msgid ""
+"Configure min/max counts of participants having some single minimum "
+"qualification."
+msgstr ""
+
+#: ../../user/events/signup.rst:75
+msgid ""
+"This is great when you require different amounts of people with differing "
+"qualification."
+msgstr ""
+
+#: ../../user/events/signup.rst:78
+msgid "Named teams"
+msgstr ""
+
+#: ../../user/events/signup.rst:80
+msgid ""
+"Configure named teams with individual min/max counts and qualification "
+"requirement to sort participants into. This is a simple way to structure a "
+"shift where teams might have varying tasks or work in different places. "
+"Participants can even be asked for their preferred team, their choice will then "
+"be displayed in the disposition."
+msgstr ""
+
+#: ../../user/events/signup.rst:86
+msgid "Preconfigured Structure"
+msgstr ""
+
+#: ../../user/events/signup.rst:88
+msgid ""
+"This is a very flexible way to structure a shift where various qualifications "
+"are required. Configure reusable nested blocks with labels and qualification "
+"requirements using the web editor (see :doc:`blocks`)."
+msgstr ""
+
+#: ../../user/events/signup.rst:91
+msgid ""
+"In your shift, configure a block to use for that shift. Participants can be "
+"asked for their preferred unit, their choice will then be displayed in the "
+"disposition."
+msgstr ""
+
+#: ../../user/events/signup.rst:94
+msgid ""
+"Participants are automatically assigned a fitting unit. You can overwrite this "
+"in the disposition."
+msgstr ""
+
+#: ../../user/events/signup.rst:97
 msgid "Disposition"
 msgstr "Disposition"
 
-#: ../../user/events/signup_methods.rst:46
+#: ../../user/events/signup.rst:99
 msgid ""
 "On the detail page of an event, responsibles of the event can reach the "
 "disposition for each shift via the button \"Disposition\". There, all "
@@ -1137,36 +2504,36 @@ msgstr ""
 "\"Disposition\" die Disposition erreicht werden. Dort werden alle Teilnahmen "
 "für die Schicht in den zugehörigen Zuständen angezeigt."
 
-#: ../../user/events/signup_methods.rst:48
+#: ../../user/events/signup.rst:102
 msgid ""
-"Requested: The user has requested participation for this shift. The "
-"relevant qualifications of the user and additional information such as "
-"the preferred section are also displayed. If there is an exclamation mark"
-" on the cogwheel, a deviating participation time or comment was entered "
-"during registration. These can be viewed by clicking on the cogwheel."
+"Requested: The user has requested participation for this shift. The relevant "
+"qualifications of the user and additional information such as the preferred "
+"section are also displayed. If there is an exclamation mark on the cogwheel, a "
+"deviating participation time or comment was entered during registration. These "
+"can be viewed by clicking on the cogwheel."
 msgstr ""
-"Angefragt: Der Nutzer hat eine Teilnahme für diese Schicht angefragt. Es "
-"werden zusätzlich die relevanten Qualifikationen des Nutzers und "
-"Zusatzinformationen wie der bevorzugte Abschnitt angezeigt. Befindet sich am "
-"Zahnrad ein Ausrufezeichen, wurde bei der Anmeldung eine abweichende "
-"Teilnahmezeit oder ein Kommentar angegeben. Diese können über einen Klick "
-"auf das Zahnrad eingesehen werden."
+"Angefragt: Der Nutzer hat eine Teilnahme für diese Schicht angefragt. Es werden "
+"zusätzlich die relevanten Qualifikationen des Nutzers und Zusatzinformationen "
+"wie der bevorzugte Abschnitt angezeigt. Befindet sich am Zahnrad ein "
+"Ausrufezeichen, wurde bei der Anmeldung eine abweichende Teilnahmezeit oder ein "
+"Kommentar angegeben. Diese können über einen Klick auf das Zahnrad eingesehen "
+"werden."
 
-#: ../../user/events/signup_methods.rst:49
+#: ../../user/events/signup.rst:103
 msgid ""
-"Rejected by responsible person: the participation was rejected by a "
-"responsible person via the disposition."
+"Rejected by responsible person: the participation was rejected by a responsible "
+"person via the disposition."
 msgstr ""
 "Abgesagt durch verantwortliche Person: die Teilnahme wurde von einer "
 "verantwortlichen Person über die Disposition abgelehnt."
 
-#: ../../user/events/signup_methods.rst:50
+#: ../../user/events/signup.rst:104
 msgid "Declined by participant: the helping person has declined for this shift."
 msgstr ""
-"Abgesagt durch helfende Person: die helfende Person hat selbstständig für "
-"diese Schicht abgesagt."
+"Abgesagt durch helfende Person: die helfende Person hat selbstständig für diese "
+"Schicht abgesagt."
 
-#: ../../user/events/signup_methods.rst:51
+#: ../../user/events/signup.rst:105
 msgid ""
 "Confirmed: participation was confirmed by a responsible person. Here (if "
 "needed) further details like the assigned section can be entered. The "
@@ -1174,43 +2541,35 @@ msgid ""
 msgstr ""
 "Bestätigt: die Teilnahme wurde durch eine verantwortliche Person bestätigt. "
 "Hier können (sofern benötigt) weitere Angaben wie der zugeteilte Abschnitt "
-"gemacht werden. Über das Zahnrad kann der Teilnehmer für eine abweichende "
-"Zeit eingeteilt werden."
+"gemacht werden. Über das Zahnrad kann der Teilnehmer für eine abweichende Zeit "
+"eingeteilt werden."
 
-#: ../../user/events/signup_methods.rst:52
+#: ../../user/events/signup.rst:106
 msgid ""
-"Add more: Using the search field, participation can be created for "
-"additional users who have not previously signed up for this shift. If no "
-"user is found for the entered name, ephios offers the possibility to "
-"create a placeholder with this name. This can be used, for example, if "
-"external helpers without an account are to be assigned."
+"Add more: Using the search field, participation can be created for additional "
+"users who have not previously signed up for this shift. If no user is found for "
+"the entered name, ephios offers the possibility to create a placeholder with "
+"this name. This can be used, for example, if external helpers without an "
+"account are to be assigned."
 msgstr ""
-"Weitere hinzufügen: Über das Suchfeld kann eine Teilnahme für weitere "
-"Benutzer angelegt werden, die für diese Schicht bisher keine Anmeldung in "
-"ephios getätigt haben. Wird für den eingegebenen Namen kein Benutzer "
-"gefunden, bietet ephios die Möglichkeit, einen Platzhalter mit diesem Namen "
-"anzulegen. Dieser kann beispielsweise genutzt werden, wenn externe Helfende "
-"ohne Account eingeteilt werden sollen."
+"Weitere hinzufügen: Über das Suchfeld kann eine Teilnahme für weitere Benutzer "
+"angelegt werden, die für diese Schicht bisher keine Anmeldung in ephios "
+"getätigt haben. Wird für den eingegebenen Namen kein Benutzer gefunden, bietet "
+"ephios die Möglichkeit, einen Platzhalter mit diesem Namen anzulegen. Dieser "
+"kann beispielsweise genutzt werden, wenn externe Helfende ohne Account "
+"eingeteilt werden sollen."
 
-#: ../../user/events/signup_methods.rst:54
+#: ../../user/events/signup.rst:108
 msgid ""
 "The state of a participation can be changed by moving the entry into the "
-"desired field. For example, a requested participation can be confirmed by"
-" moving it to the \"Confirmed\" field. The changes must then be confirmed"
-" with \"Save\"."
+"desired field. For example, a requested participation can be confirmed by "
+"moving it to the \"Confirmed\" field. The changes must then be confirmed with "
+"\"Save\"."
 msgstr ""
 "Der Zustand einer Teilnahme kann durch das Verschieben des Eintrags in das "
-"gewünschte Feld geändert werden. Beispielsweise kann eine angefragte "
-"Teilnahme bestätigt werden, indem sie in das Feld \"Bestätigt\" verschoben "
-"wird. Die Änderungen müssen anschließend mit \"Speichern\" bestätigt werden."
-
-#: ../../user/events/types.rst:2
-msgid "Event types"
-msgstr "Veranstaltungstypen"
-
-#: ../../user/events/visibility.rst:2
-msgid "Event visibility"
-msgstr "Sichtbarkeit von Veranstaltungen"
+"gewünschte Feld geändert werden. Beispielsweise kann eine angefragte Teilnahme "
+"bestätigt werden, indem sie in das Feld \"Bestätigt\" verschoben wird. Die "
+"Änderungen müssen anschließend mit \"Speichern\" bestätigt werden."
 
 #: ../../user/index.rst:2
 msgid "User Guide"
@@ -1221,12 +2580,54 @@ msgid ""
 "This section shows how to use ephios. This includes functionality for "
 "volunteers as well as for planners."
 msgstr ""
-"Dieser Abschnitt zeigt Ihnen, wie Sie ephios nutzen können. Dies umfasst "
-"sowohl Funktionen für Helfende als auch für Planende."
+"Dieser Abschnitt zeigt Ihnen, wie Sie ephios nutzen können. Dies umfasst sowohl "
+"Funktionen für Helfende als auch für Planende."
 
 #: ../../user/integrations/calendar.rst:2
 msgid "Calendar export"
 msgstr "Kalender-Export"
+
+#: ../../user/integrations/calendar.rst:4
+msgid ""
+"To integrate a personalized feed of events into your calendar applications, use "
+"the URL copied from the \"Calendar\" section in your personal settings. In most "
+"calendar apps (Google Calendar, Apple Calendar, Nextcloud Calendar, "
+"Thunderbird, ...) choose the option to subscribe to a calendar by URL. You do "
+"not need authorization with this URL. It will always be read-only."
+msgstr ""
+"Um einen personalisierten Feed von Veranstaltungen in Ihre Kalender-Apps zu "
+"integireren, nutzen Sie die URL aus dem \"Kalender\"-Abschnitt der persönlichen "
+"Einstellungen. In den meisten Kalender-Apps (Google Calendar, Apple Calendar, "
+"Nextcloud Calendar, Thunderbird, ...) können Sie diese Kalender-URL abonnieren. "
+"Sie brauchen keine Autorisierung für diese URL. Der Kalender ist stets "
+"schreibgeschützt."
+
+#: ../../user/integrations/calendar.rst:10
+msgid ""
+"The feed will always contain shifts you are confirmed for, with (your "
+"individual) start and end times. With the parameters ``requested=1`` and "
+"``rejected=1`` it will also contain shifts you have requested participating in "
+"or have been rejected from them, respectively. The ICS ``status`` flag will be "
+"set accordingly, so your clients can show these events as \"tentative\" or "
+"\"cancelled\". You can remove those parameters to customize the behavior for "
+"your needs."
+msgstr ""
+"Der Feed enthält alle Schichten, für die Sie bestätigt sind, mit den "
+"individuellen Start- und Endzeiten. Mit den Parametern ``requested=1`` und "
+"``rejected=1`` wird er auch angefragte und abgelehnte Teilnahmen enthalten. Der "
+"ICS ``status`` wird entsprechend auf \"tentative\" oder \"cancelled\" gesetzt, "
+"sodass Ihre Anwendungen den Status der Teilnahme anzeigen können. Entfernen Sie "
+"die Parameter, um das Verhalten des Feeds an Ihre Bedürfnisse anzupassen."
+
+#: ../../user/integrations/calendar.rst:17
+msgid ""
+"The URL contains a secret to protect unauthorized access to your individual "
+"feed. It can be reset using the button in the settings. Afterwards, all "
+"subscriptions need to be reconfigured using the new secret."
+msgstr ""
+"Die URL enthält einen Schlüssel, um unautorisierten Zugriff zu Ihren Daten zu "
+"verhindern. Er kann in den Einstellungen zurückgesetzt werden. Danach müssen "
+"alle Abonnements mit dem neuen Schlüssel neu eingestellt werden."
 
 #: ../../user/integrations/index.rst:2
 msgid "Notifications and integrations"
@@ -1234,15 +2635,11 @@ msgstr "Benachrichtigungen und Integrationen"
 
 #: ../../user/integrations/index.rst:4
 msgid ""
-"This section of the documentation explains how to manage notifications "
-"and integrations like the calendar export."
+"This section of the documentation explains how to manage notifications and "
+"integrations like the calendar export."
 msgstr ""
-"Dieser Abschnitt der Dokumentation erklärt das Verwalten von "
-"Benachrichtigungen und Integrationen wie den Kalender-Export."
-
-#: ../../user/integrations/notifications.rst:2
-msgid "Notifications"
-msgstr "Benachrichtigungen"
+"Dieser Abschnitt der Dokumentation erklärt das Verwalten von Benachrichtigungen "
+"und Integrationen wie den Kalender-Export."
 
 #: ../../user/qualifications/assignment.rst:2
 msgid "Assigning qualifications"
@@ -1262,11 +2659,10 @@ msgstr "Qualifikationen verwalten"
 
 #: ../../user/qualifications/index.rst:4
 msgid ""
-"This section of the documentation explains how the qualification system "
-"in ephios works."
+"This section of the documentation explains how the qualification system in "
+"ephios works."
 msgstr ""
-"Dieser Abschnitt erklärt, wie das Qualifikationssystem in ephios "
-"funktioniert."
+"Dieser Abschnitt erklärt, wie das Qualifikationssystem in ephios funktioniert."
 
 #: ../../user/users/creating_users.rst:2
 msgid "Creating and changing users"
@@ -1290,138 +2686,75 @@ msgstr "Einführung in das Berechtigungsmodell"
 msgid "Managing working hours"
 msgstr "Arbeitsstunden verwalten"
 
-#~ msgid "Load data for testing with ``python manage.py setupdata debug``"
+#~ msgid ""
+#~ "To cover different use cases, ephios offers different signup methods. In the "
+#~ "following, the provided signup methods are explained, but additional signup "
+#~ "methods can also be integrated as a plugin."
 #~ msgstr ""
+#~ "Um verschiedene Anwendungsfälle abzudecken, bietet ephios verschiedene "
+#~ "Anmeldeverfahren an. Nachfolgend sind die mitgelieferten Anmeldeverfahren "
+#~ "erläutert, es können jedoch auch zusätzliche Anmeldeverfahren als Plugin "
+#~ "integriert werden."
+
+#~ msgid "Availabe signup methods"
+#~ msgstr "Verfügbare Anmeldeverfahren"
 
 #~ msgid ""
-#~ "Configure the given participation object "
-#~ "for signup according to the method's "
-#~ "configuration. You need at least to "
-#~ "set the participations state. `kwargs` "
-#~ "may contain further instructions from "
-#~ "e.g. a form."
+#~ "The shift settings can specify conditions that a user must meet in order to "
+#~ "participate. These include a minimum age and a registration deadline. In "
+#~ "addition, a minimum and a maximum number of participants can be specified. "
+#~ "If the maximum number of participants is reached, no further users can "
+#~ "register. Furthermore, required qualifications can be specified. Users must "
+#~ "have all the specified qualifications to be able to participate."
 #~ msgstr ""
+#~ "In den Einstellungen der Schicht können Bedingungen angegeben werden, die "
+#~ "ein Benutzer erfüllen muss, um teilnehmen zu können. Dazu gehört ein "
+#~ "Mindestalter und eine Anmeldefrist (Datum). Außerdem kann eine minimale und "
+#~ "eine maximale Anzahl von Teilnehmenden angegeben werden. Ist die maximale "
+#~ "Anzahl von Teilnehmenden erreicht, können sich keine weiteren Benutzer "
+#~ "anmelden. Weiterhin können erforderliche Qualifikationen angegeben werden. "
+#~ "Benutzer müssen dabei alle genannten Qualifikationen aufweisen, um "
+#~ "teilnehmen zu können."
 
 #~ msgid ""
-#~ "Return key/value pairs about the "
-#~ "configuration to show in the shift "
-#~ "info box."
+#~ "The same settings can be made for this signup method as for \"Instant "
+#~ "confirmation\"."
 #~ msgstr ""
+#~ "Es können für dieses Anmeldeverfahren die selben Einstellungen vorgenommen "
+#~ "werden wie bei \"Direkte Bestätigung\"."
+
+#~ msgid "Section based signup"
+#~ msgstr "Bewerbung auf Abschnitte"
 
 #~ msgid ""
-#~ "Creates and/or configures a participation "
-#~ "object for a given participant and "
-#~ "sends out notifications. Passes the "
-#~ "participation and kwargs to "
-#~ "configure_participation to do configuration "
-#~ "specific to the signup method"
+#~ "This signup method works in the same way as \"Request and confirm\". In "
+#~ "addition, several sections can be defined in the shift settings. For each "
+#~ "section, a minimum and maximum number of participants can be specified. Also "
+#~ "per section the required qualifications can be specified. Users must have "
+#~ "all of the specified qualifications to participate in that section. Sections "
+#~ "with mixed qualifications (e.g., RTW with 1x RS, 1x NFS) must either be "
+#~ "mapped as multiple sections or use a different signup method."
 #~ msgstr ""
+#~ "Dieses Anmeldeverfahren funktioniert grundlegend genau wie \"Anfragen und "
+#~ "Bestätigen\". Zusätzlich können in den Einstellungen der Schicht mehrere "
+#~ "Abschnitte (z.B. \"UHS\", \"Fußstreife\") definiert werden. Für jeden "
+#~ "Abschnitt kann eine Mindest- und Höchstanzahl an Teilnehmenden angegeben "
+#~ "werden. Ebenfalls pro Abschnitt können die erforderlichen Qualifikationen "
+#~ "angegeben werden. Benutzer müssen alle genannten Qualifikationen aufweisen, "
+#~ "um an diesem Abschnitt teilnehmen zu können. Abschnitte mit gemischten "
+#~ "Qualifikationen (z.B. RTW mit 1x RS, 1x NFS) müssen entweder als mehrere "
+#~ "Abschnitte abgebildet oder mit einem anderen Anmeldeverfahren durchgeführt "
+#~ "werden."
 
 #~ msgid ""
-#~ "Render html that will be shown in"
-#~ " the shift info box. Use it to"
-#~ " inform about the current state of"
-#~ " the shift and participations."
+#~ "Users can specify a preferred section when requesting participation. It can "
+#~ "be set in the shift settings that this specification is mandatory. The "
+#~ "preferred section is visible in the disposition."
 #~ msgstr ""
+#~ "Benutzer können beim Anfragen der Teilnahme einen bevorzugten Abschnitt "
+#~ "angeben. In den Einstellungen der Schicht kann eingestellt werden, dass "
+#~ "diese Angabe verpflichtend ist. Der bevorzugte Abschnitt ist in der "
+#~ "Disposition ersichtlich."
 
-#~ msgid ""
-#~ "This signal is sent out to get "
-#~ "sections for administration settings. "
-#~ "Receivers should return a list of "
-#~ "dicts containing key-value-pairs for "
-#~ "'label', 'url' and a boolean flag "
-#~ "'active'. Receivers will receive a "
-#~ "``request`` keyword argument."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This signal is sent out to get "
-#~ "a list of form instances to show"
-#~ " on the event create and update "
-#~ "views. You receive an `event` and "
-#~ "`request` keyword arg you should use "
-#~ "to create an instance of your "
-#~ "form. Subclass `BaseEventPluginForm` to "
-#~ "customize the rendering behavior. If all"
-#~ " forms are valid, `save` will be "
-#~ "called on your form."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Currently only session based authentication"
-#~ " is available. Permissions are checked "
-#~ "just like in the web interface."
-#~ msgstr ""
-
-#~ msgid "User guide for planners"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This section of the documentation is "
-#~ "intended for users that manage an "
-#~ "ephios instance in any kind, like "
-#~ "creating new events or managing other"
-#~ " users."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "To cover different use cases, ephios "
-#~ "offers different signup methods. In the"
-#~ " following, the provided logon procedures"
-#~ " are explained, but additional signup "
-#~ "methods can also be integrated as "
-#~ "a plugin."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Shifts with this registration procedure "
-#~ "offer the user a button labeled "
-#~ "\"Requests\". Any user requesting to "
-#~ "attend will have their request listed"
-#~ " in the disposition. The persons "
-#~ "responsible for the event will receive"
-#~ " notification of the request. In the"
-#~ " disposition they can then confirm or"
-#~ " reject the participation."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The same settings can be made for"
-#~ " this signup method as for \"Instant"
-#~ " confirmation.\""
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The ability to sign up for this"
-#~ " shift is disabled for all users, "
-#~ "optionally a reason can be specified."
-#~ " Users can be added via the "
-#~ "disposition. This registration procedure can"
-#~ " be used e.g. for training courses,"
-#~ " where the responsible persons send "
-#~ "individual helpers and a self-"
-#~ "registration is not intended."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "With this registration method, it is "
-#~ "not possible for volunteers to register;"
-#~ " instead, the participants are mirrored "
-#~ "by another shift. The shift to be"
-#~ " mirrored is selected in the "
-#~ "settings. This registration procedure can "
-#~ "be used, for example, for courses "
-#~ "lasting several days, where registration "
-#~ "is controlled via the first shift "
-#~ "and the participants are automatically "
-#~ "registered for all other days/shifts."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "On the detail page of an event,"
-#~ " the disposition can be reached for"
-#~ " each shift via the button "
-#~ "\"Disposition\". There, all participations for"
-#~ " the shift are displayed in the "
-#~ "corresponding states."
-#~ msgstr ""
+#~ msgid "No registration (disposition only)"
+#~ msgstr "Keine Anmeldung (nur Disposition)"

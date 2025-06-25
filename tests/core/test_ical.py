@@ -17,11 +17,20 @@ def test_user_event_feed(django_app, qualified_volunteer, event):
     response = django_app.get(event.get_absolute_url(), user=qualified_volunteer)
     response.form.submit(name="signup_choice", value="sign_up")
 
+    # by default only confirmed participations
+    response = django_app.get(
+        reverse(
+            "core:user_event_feed", kwargs=dict(calendar_token=qualified_volunteer.calendar_token)
+        )  # no query!
+    )
+    assert event.title not in response
+
     # requested maps to tentative state
     response = django_app.get(
         reverse(
             "core:user_event_feed", kwargs=dict(calendar_token=qualified_volunteer.calendar_token)
         )
+        + "?requested=1&rejected=0"
     )
     assert event.title in response
     assert "STATUS:TENTATIVE" in response

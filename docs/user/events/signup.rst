@@ -86,7 +86,7 @@ Preconfigured Structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a very flexible way to structure a shift where various qualifications are required.
-Configure reusable nested blocks with labels and qualification requirements using the web editor (see :doc:`user/events/blocks`).
+Configure reusable nested blocks with labels and qualification requirements using the web editor (see :doc:`blocks`).
 
 In your shift, configure a block to use for that shift.
 Participants can be asked for their preferred unit, their choice will then be displayed in the disposition.

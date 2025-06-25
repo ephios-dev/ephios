@@ -1,4 +1,5 @@
 from collections import defaultdict
+from urllib.parse import urljoin
 
 from django import forms
 from django.conf import settings
@@ -13,6 +14,7 @@ from django.views.generic import FormView
 from django.views.generic.edit import UpdateView
 from dynamic_preferences.forms import global_preference_form_builder
 
+from ephios.core.dynamic import dynamic_settings
 from ephios.core.forms.users import UserNotificationPreferenceForm, UserOwnDataForm
 from ephios.core.models.users import IdentityProvider
 from ephios.core.services.health.healthchecks import run_healthchecks
@@ -140,7 +142,12 @@ class CalendarSettingsView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         kwargs["userprofile"] = self.request.user
+        kwargs["calendar_url"] = self.get_calendar_url()
         return super().get_context_data(**kwargs)
+
+    def get_calendar_url(self):
+        location = reverse("core:user_event_feed", args=(self.request.user.calendar_token,))
+        return urljoin(dynamic_settings.SITE_URL, location + "?requested=1&rejected=0")
 
     def form_valid(self, form):
         self.request.user.reset_calendar_token()
