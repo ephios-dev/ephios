@@ -150,3 +150,24 @@ def test_user_participation_list_filter(
         status=200,
     )
     assert event.title not in response
+
+
+def test_participations_me(
+    django_app, event, planner, groups, volunteer, manager, training_event_type
+):
+    LocalParticipation.objects.create(
+        user=volunteer, shift=event.shifts.first(), state=AbstractParticipation.States.CONFIRMED
+    )
+    response = django_app.get(
+        reverse("api:participations-me-list"),
+        user=volunteer,
+        status=200,
+    )
+    assert event.title in response
+
+    response = django_app.get(
+        reverse("api:participations-me-list"),
+        user=manager,
+        status=200,
+    )
+    assert event.title not in response
