@@ -22,7 +22,7 @@ from ephios.api.serializers import (
     UserinfoParticipationSerializer,
     UserProfileSerializer,
 )
-from ephios.core.models import AbstractParticipation, LocalParticipation, UserProfile
+from ephios.core.models import AbstractParticipation, UserProfile
 
 
 class UserProfileMeView(RetrieveAPIView):
@@ -45,9 +45,9 @@ class OwnParticipationsViewSet(viewsets.ReadOnlyModelViewSet):
     required_scopes = ["ME_READ"]
 
     def get_queryset(self):
-        return LocalParticipation.objects.filter(user_id=self.request.user.id).select_related(
-            "shift", "shift__event", "shift__event__type"
-        )
+        return AbstractParticipation.objects.filter(
+            localparticipation__user_id=self.request.user.id
+        ).select_related("shift", "shift__event", "shift__event__type")
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
