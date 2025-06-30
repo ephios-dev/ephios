@@ -33,7 +33,9 @@ class TestUserProfileView:
     def test_correct_qualifications(self, django_app, qualified_volunteer):
         response = django_app.get(reverse("core:settings_personal_data"), user=qualified_volunteer)
         for q in qualified_volunteer.qualifications:
-            assert q.expires is None or response.html.findAll("li", string=re.compile(f"{q.title}"))
+            assert q.expires is None or response.html.find_all(
+                "li", string=re.compile(f"{q.title}")
+            )
 
     def test_userprofile_list_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:userprofile_list"), user=volunteer, status=403)
@@ -50,7 +52,7 @@ class TestUserProfileView:
             reverse("core:userprofile_edit", kwargs={"pk": userprofile_id})
             for userprofile_id in UserProfile.objects.all().values_list("id", flat=True)
         ]
-        assert response.html.findAll("a", href=edit_links)
+        assert response.html.find_all("a", href=edit_links)
 
     @pytest.fixture()
     def userprofile_list_filter_form(self, django_app, superuser, groups):
