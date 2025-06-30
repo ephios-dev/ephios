@@ -21,7 +21,7 @@ class TestGroupView:
             reverse("core:group_edit", kwargs={"pk": group_id})
             for group_id in Group.objects.all().values_list("id", flat=True)
         ]
-        assert response.html.findAll("a", href=edit_links)
+        assert response.html.find_all("a", href=edit_links)
 
     def test_group_create_permission_required(self, django_app, volunteer):
         response = django_app.get(reverse("core:group_add"), user=volunteer, status=403)
