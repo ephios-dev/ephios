@@ -1235,14 +1235,14 @@ django = ">=4.2"
 
 [[package]]
 name = "djangorestframework-guardian"
-version = "0.3.0"
+version = "0.4.0"
 description = "django-guardian support for Django REST Framework"
 optional = false
-python-versions = "*"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "djangorestframework-guardian-0.3.0.tar.gz", hash = "sha256:1883756452d9bfcc2a51fb4e039a6837a8f6697c756447aa83af085749b59330"},
-    {file = "djangorestframework_guardian-0.3.0-py2.py3-none-any.whl", hash = "sha256:3bd3dd6ea58e1bceca5048faf6f8b1a93bb5dcff30ba5eb91b9a0e190a48a0c7"},
+    {file = "djangorestframework_guardian-0.4.0-py3-none-any.whl", hash = "sha256:30c2a349318c1cd603d6953d50d58159f9a0c833f5f8f5a811407d5984a39e14"},
+    {file = "djangorestframework_guardian-0.4.0.tar.gz", hash = "sha256:a8113659e062f65b74cc31af6982420c382642e782d38581b3fdc748a179756c"},
 ]
 
 [package.dependencies]
@@ -3962,4 +3962,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "bacb52fb28bc1c37f48bd3d729c6e00dd5d74c8a63563a36e124c636f0e3e26a"
+content-hash = "6acf050b406975683e771771bad20262276618e87e075dcc7e020441ee02ee67"

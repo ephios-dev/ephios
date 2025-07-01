@@ -41,7 +41,7 @@ crispy-bootstrap5 = ">=0.7,<2025.7"
 djangorestframework = "^3.13.1"
 django-coverage-plugin = ">=2.0.3,<4.0.0"
 django-filter = ">=24,<26"
-djangorestframework-guardian = "^0.3.0"
+djangorestframework-guardian = ">=0.3,<0.5"
 uritemplate = "^4.1.1"
 django-oauth-toolkit = "~3.0.1"  # pinned because minor versions sometimes require migrations in our models
 urllib3 = "^2.5.0"
