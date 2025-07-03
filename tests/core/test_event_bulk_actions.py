@@ -21,6 +21,6 @@ class TestEventBulkDelete:
         )  # webtest cannot read the formaction from button
         form["bulk_action"] = [event.pk, multi_shift_event.pk]
         confirm_page = form.submit(name="delete")
-        # assert confirm_page.html.findAll(string=[event.title, multi_shift_event])
+        # assert confirm_page.html.find_all(string=[event.title, multi_shift_event])
         confirm_page.form.submit()
         assert Event.objects.count() == event_count - 2

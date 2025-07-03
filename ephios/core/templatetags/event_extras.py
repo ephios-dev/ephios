@@ -4,7 +4,6 @@ from functools import reduce
 
 from django import template
 from django.utils import timezone
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, Shift, UserProfile
@@ -122,7 +121,7 @@ def event_bulk_actions():
                 for action in actions
             ]
         )
-    return format_html(html)
+    return mark_safe(html)
 
 
 @register.simple_tag(name="eventtype_colors")
