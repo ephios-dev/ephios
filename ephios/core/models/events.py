@@ -546,8 +546,9 @@ class LocalParticipation(AbstractParticipation):
             # Currently, this permission does not get removed automatically.
             assign_perm("core.view_event", user_or_group=self.user, obj=self.shift.event)
 
-    @property
+    @cached_property
     def participant(self):
+        # pylint: disable=invalid-overridden-method
         return self.user.as_participant()
 
     class Meta:
