@@ -9,6 +9,8 @@ from ephios.core.models import Qualification
 from ephios.core.services.qualification import QualificationUniverse
 from ephios.core.signup.participants import AbstractParticipant
 
+# pylint: disable=too-many-instance-attributes too-many-locals
+
 
 @dataclasses.dataclass(unsafe_hash=True)
 class Position:
@@ -19,6 +21,9 @@ class Position:
     preferred_by: Collection[AbstractParticipant]  # preferred by participant (less important)
     label: Optional[str] = None
     aux_score: float = 0.0  # additional score control in range [0,1]
+    designation_only: bool = (
+        False  # if this Position was created purely out of overdesignation, mark it here
+    )
 
     def __post_init__(self):
         self.required_qualifications = frozenset(self.required_qualifications)
@@ -120,7 +125,7 @@ def score_pairing(
     # (similar for prefers and skill level). It can be arbitrarily big, but must be at least bigger than the sum of
     # all the other constants used in the score.
     padded_participant_count = 10 + 2 * number_of_participants
-    base_score = 1.0
+    base_score = 5.0
     preferred_value = 3.0
     max_aux_value = 2.0
     confirmed_value = 2.0
@@ -128,27 +133,42 @@ def score_pairing(
     required_value = padded_participant_count * sum(
         (base_score, preferred_value, max_skill_value, confirmed_value, max_aux_value)
     )
-    designated_value = required_value**2
-    unqualified_penalty = designated_value**2
+    designated_unqualified_value = required_value * required_value
+    designated_and_qualified_value = 2 * designated_unqualified_value
+    undesignated_unqualified_value = designated_unqualified_value * designated_unqualified_value
 
-    is_designated = participant in position.designated_for
     # optimally, we should reject a pairing for a participant designated for another position,
     # but we don't have that info here.
+    is_designated = participant in position.designated_for
 
-    if not is_designated and not position.required_skill <= participant.skill:
+    is_qualified = position.required_skill <= participant.skill
+
+    if not is_designated and (not is_qualified or position.designation_only):
         # the participant does not have some required skill
-        return -unqualified_penalty  # avoid matching unqualified participants
+        return -undesignated_unqualified_value  # avoid matching unqualified participants
 
     score = base_score
     if is_designated:
-        score += designated_value
+        if is_qualified:
+            score += designated_and_qualified_value
+        else:
+            # designated participants get assigned even if they don't qualify, and at a lower score
+            score += designated_unqualified_value
+
     if participant in position.preferred_by:
         score += preferred_value
     if position.required:
         score += required_value
     if participant in confirmed_participants:
         score += confirmed_value
-    score += position.skill_level * max_skill_value
+
+    if is_qualified:
+        # if qualified, lets prefer high skill positions
+        score += position.skill_level * max_skill_value
+    else:
+        # if not qualified (but designated), let's prefer low skill positions
+        score -= position.skill_level * max_skill_value
+
     score += position.aux_score * max_aux_value
     return score
 
@@ -160,7 +180,9 @@ def match_participants_to_positions(
 ) -> Matching:
     participants = list(participants)
     positions = list(positions)
-    confirmed_participants = list(confirmed_participants) if confirmed_participants else []
+    confirmed_participants = (
+        frozenset(confirmed_participants) if confirmed_participants else frozenset()
+    )
     costs = csr_matrix(
         [
             [
