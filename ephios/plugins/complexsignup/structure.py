@@ -320,8 +320,10 @@ def _search_block(
     composed_label: Optional[str] = None,
 ):  # pylint: disable=too-many-locals
     required_here = set(required_qualifications)
-    for requirement in block.qualification_requirements.filter(everyone=True):
-        # at least one is not supported
+    for requirement in block.qualification_requirements.all():
+        if not requirement.everyone:
+            # at least one is not supported
+            raise ValueError("unsupported requirement")
         required_here |= set(requirement.qualifications.all())
 
     all_positions = []
@@ -343,11 +345,16 @@ def _search_block(
         "signup_stats": SignupStats.ZERO,
     }
     if block.is_composite():
-        for composition in block.sub_blocks.through.objects.filter(
-            composite_block=block
-        ).prefetch_related(
-            "sub_block__positions__qualifications",
-            "sub_block__qualification_requirements__qualifications",
+        for composition in (
+            block.sub_compositions.all()
+            .select_related(
+                "sub_block",
+            )
+            .prefetch_related(
+                "sub_block__positions__qualifications",
+                "sub_block__qualification_requirements__qualifications",
+                "sub_block__sub_compositions",
+            )
         ):
             positions, sub_structure = _search_block(
                 block=composition.sub_block,

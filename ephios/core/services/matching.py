@@ -9,6 +9,8 @@ from ephios.core.models import Qualification
 from ephios.core.services.qualification import QualificationUniverse
 from ephios.core.signup.participants import AbstractParticipant
 
+# pylint: disable=too-many-instance-attributes too-many-locals
+
 
 @dataclasses.dataclass(unsafe_hash=True)
 class Position:
@@ -123,7 +125,7 @@ def score_pairing(
     # (similar for prefers and skill level). It can be arbitrarily big, but must be at least bigger than the sum of
     # all the other constants used in the score.
     padded_participant_count = 10 + 2 * number_of_participants
-    base_score = 1.0
+    base_score = 5.0
     preferred_value = 3.0
     max_aux_value = 2.0
     confirmed_value = 2.0
@@ -131,16 +133,17 @@ def score_pairing(
     required_value = padded_participant_count * sum(
         (base_score, preferred_value, max_skill_value, confirmed_value, max_aux_value)
     )
-    designated_unqualified_value = required_value**2
+    designated_unqualified_value = required_value * required_value
     designated_and_qualified_value = 2 * designated_unqualified_value
-    undesignated_unqualified_value = designated_unqualified_value**2
+    undesignated_unqualified_value = designated_unqualified_value * designated_unqualified_value
 
-    is_designated = participant in position.designated_for
     # optimally, we should reject a pairing for a participant designated for another position,
     # but we don't have that info here.
+    is_designated = participant in position.designated_for
+
     is_qualified = position.required_skill <= participant.skill
 
-    if not is_designated and not is_qualified:
+    if not is_designated and (not is_qualified or position.designation_only):
         # the participant does not have some required skill
         return -undesignated_unqualified_value  # avoid matching unqualified participants
 
@@ -177,7 +180,9 @@ def match_participants_to_positions(
 ) -> Matching:
     participants = list(participants)
     positions = list(positions)
-    confirmed_participants = list(confirmed_participants) if confirmed_participants else []
+    confirmed_participants = (
+        frozenset(confirmed_participants) if confirmed_participants else frozenset()
+    )
     costs = csr_matrix(
         [
             [
