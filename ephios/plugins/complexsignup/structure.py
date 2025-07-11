@@ -34,6 +34,7 @@ def atomic_block_participant_qualifies_for(structure, participant: AbstractParti
         if block["qualification_ids"] <= available_qualification_ids
         and any(
             {q.id for q in position.required_qualifications} <= available_qualification_ids
+            and not position.designation_only
             for position in block["positions"]
         )
     ]
@@ -472,6 +473,7 @@ def _build_atomic_block_structure(
             aux_score=0,
             required=False,  # designated -> always optional
             label=block.name,
+            designation_only=True,
         )
         participation = matching.participation_for_position(opt_match_id) if matching else None
         structure["signup_stats"] += SignupStats.ZERO.replace(
