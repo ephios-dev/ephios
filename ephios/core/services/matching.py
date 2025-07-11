@@ -19,6 +19,9 @@ class Position:
     preferred_by: Collection[AbstractParticipant]  # preferred by participant (less important)
     label: Optional[str] = None
     aux_score: float = 0.0  # additional score control in range [0,1]
+    designation_only: bool = (
+        False  # if this Position was created purely out of overdesignation, mark it here
+    )
 
     def __post_init__(self):
         self.required_qualifications = frozenset(self.required_qualifications)
@@ -128,27 +131,41 @@ def score_pairing(
     required_value = padded_participant_count * sum(
         (base_score, preferred_value, max_skill_value, confirmed_value, max_aux_value)
     )
-    designated_value = required_value**2
-    unqualified_penalty = designated_value**2
+    designated_unqualified_value = required_value**2
+    designated_and_qualified_value = 2 * designated_unqualified_value
+    undesignated_unqualified_value = designated_unqualified_value**2
 
     is_designated = participant in position.designated_for
     # optimally, we should reject a pairing for a participant designated for another position,
     # but we don't have that info here.
+    is_qualified = position.required_skill <= participant.skill
 
-    if not is_designated and not position.required_skill <= participant.skill:
+    if not is_designated and not is_qualified:
         # the participant does not have some required skill
-        return -unqualified_penalty  # avoid matching unqualified participants
+        return -undesignated_unqualified_value  # avoid matching unqualified participants
 
     score = base_score
     if is_designated:
-        score += designated_value
+        if is_qualified:
+            score += designated_and_qualified_value
+        else:
+            # designated participants get assigned even if they don't qualify, and at a lower score
+            score += designated_unqualified_value
+
     if participant in position.preferred_by:
         score += preferred_value
     if position.required:
         score += required_value
     if participant in confirmed_participants:
         score += confirmed_value
-    score += position.skill_level * max_skill_value
+
+    if is_qualified:
+        # if qualified, lets prefer high skill positions
+        score += position.skill_level * max_skill_value
+    else:
+        # if not qualified (but designated), let's prefer low skill positions
+        score -= position.skill_level * max_skill_value
+
     score += position.aux_score * max_aux_value
     return score
 
