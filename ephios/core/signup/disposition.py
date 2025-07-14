@@ -36,12 +36,13 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
         label=_("Hide comment for participant"), required=False, label_suffix=""
     )
 
-    def __init__(self, **kwargs):
-        try:
-            self.shift = kwargs["instance"].shift
-        except (AttributeError, KeyError) as e:
-            raise MissingParticipation("an instance must be provided") from e
-
+    def __init__(self, shift=None, **kwargs):
+        if not shift or not kwargs["instance"]:
+            # we expect to always remember the form with an instance providing participant data
+            raise MissingParticipation("shift and instance kwargs must be provided")
+        # we don't use instance.shift but the explicitly supplied shift instance to make use of
+        # the shift model caching mechanisms (e.g. a structure caching qualification computations)
+        self.shift = shift
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
 
@@ -176,6 +177,7 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
                 queryset=AbstractParticipation.objects.filter(pk=instance.pk),
                 prefix="participations",
                 start_index=form.cleaned_data["new_index"],
+                form_kwargs={"acting_user": self.request.user, "shift": shift},
             )
             form = next(filter(lambda form: form.instance.id == instance.id, formset))
             return self.render_to_response({"form": form, "shift": shift})
@@ -209,6 +211,7 @@ class AddPlaceholderParticipantView(DispositionBaseViewMixin, TemplateResponseMi
             queryset=AbstractParticipation.objects.filter(pk=instance.pk),
             prefix="participations",
             start_index=int(request.POST["new_index"]),
+            form_kwargs={"acting_user": self.request.user, "shift": self.object},
         )
         form = next(filter(lambda form: form.instance.id == instance.id, formset))
         return self.render_to_response({"form": form, "shift": shift})
@@ -223,9 +226,9 @@ class DispositionView(DispositionBaseViewMixin, TemplateView):
         )
         formset = DispositionParticipationFormset(
             self.request.POST or None,
-            queryset=self.object.participations.all(),
+            queryset=self.object.participations.all().select_related("shift__event__type"),
             prefix="participations",
-            form_kwargs={"acting_user": self.request.user},
+            form_kwargs={"acting_user": self.request.user, "shift": self.object},
         )
         return formset
 
