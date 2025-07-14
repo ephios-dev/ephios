@@ -86,7 +86,7 @@ def convert_image_to_cid(image_src, cid_id, verify_ssl=True):
     try:
         if image_src.startswith("data:image/"):
             image_type, image_content = image_src.split(",", 1)
-            image_type = re.find_all(r"data:image/(\w+);base64", image_type)[0]
+            image_type = re.findall(r"data:image/(\w+);base64", image_type)[0]
             mime_image = MIMEImage(image_content, _subtype=image_type, _encoder=encoder_linelength)
             mime_image.add_header("Content-Transfer-Encoding", "base64")
         elif image_src.startswith("data:"):
