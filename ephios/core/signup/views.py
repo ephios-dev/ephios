@@ -11,7 +11,7 @@ from ephios.core.services.notifications.types import (
 )
 from ephios.core.signals import signup_save
 from ephios.core.signup.flow.participant_validation import BaseSignupError
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.database import OF_SELF
 
@@ -25,7 +25,7 @@ class SignupView(FormView):
 
     shift: Shift = ...
     template_name = "core/signup.html"
-    form_class = BaseSignupForm
+    form_class = SignupForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

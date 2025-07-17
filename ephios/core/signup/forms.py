@@ -130,7 +130,7 @@ class BaseParticipationForm(forms.ModelForm):
         return info
 
 
-class BaseSignupForm(BaseParticipationForm):
+class SignupForm(BaseParticipationForm):
     class SignupChoices(models.TextChoices):
         SIGNUP = "sign_up", _("Sign up")
         CUSTOMIZE = "customize", _("Customize")
