@@ -8,6 +8,7 @@ from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.signals import (
     nav_link,
     register_group_permission_fields,
+    shift_copy,
     shift_forms,
     signup_form_fields,
     signup_save,
@@ -16,7 +17,7 @@ from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseS
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
-from ephios.plugins.questionnaires.models import Answer, Question, SavedAnswer
+from ephios.plugins.questionnaires.models import Answer, Question, Questionnaire, SavedAnswer
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.questionnaires.signals.nav_link")
@@ -58,6 +59,16 @@ def group_permission_fields(sender, **kwargs):
     ]
 
 
+@receiver(shift_copy, dispatch_uid="ephios.plugins.questionnaires.signals.shift_copy")
+def copy_shift_questionnaire(sender, shift: Shift, copies: list[Shift], **kwargs):
+    if hasattr(shift, "questionnaire") and shift.questionnaire:
+        questions = shift.questionnaire.questions.all()
+
+        for copy in copies:
+            questionnaire = Questionnaire.objects.create(shift=copy)
+            questionnaire.questions.set(questions)
+
+
 @receiver(shift_forms, dispatch_uid="ephios.plugins.questionnaires.signals.shift_forms")
 def question_selection_form(sender, shift, request, **kwargs):
     return [QuestionnaireForm(request.POST or None, shift=shift)]
@@ -77,9 +88,14 @@ def provide_signup_form_fields(
     if signup_choice == BaseSignupForm.SignupChoices.DECLINE:
         return None
 
+    questions = (
+        shift.questionnaire.questions.all()
+        if hasattr(shift, "questionnaire") and shift.questionnaire
+        else []
+    )
     formfields = [
         question.get_signup_form_field(participant, participation, signup_choice)
-        for question in Question.objects.filter(pk__in=shift.questionnaire)
+        for question in questions
     ]
 
     can_save_answers = isinstance(participant, LocalUserParticipant)
