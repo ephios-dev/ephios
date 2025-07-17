@@ -12,7 +12,7 @@ from rest_framework import serializers
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
@@ -370,7 +370,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         initial = participation.structure_data.get("preferred_team_uuid")
         required = (
             # TODO: This is flawed, as the fields will not be required in customize mode
-            signup_choice == BaseSignupForm.SignupChoices.SIGNUP
+            signup_choice == SignupForm.SignupChoices.SIGNUP
             and shift.structure.configuration.choose_preferred_team
         )
         choices = [(team["uuid"], team["title"]) for team in enabled_teams]
