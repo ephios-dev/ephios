@@ -15,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from ephios.core.forms.events import ShiftCopyForm, ShiftForm
 from ephios.core.models import Event, Shift
-from ephios.core.signals import shift_forms
+from ephios.core.signals import shift_copy, shift_forms
 from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
 from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
 from ephios.extra.csp import csp_allow_unsafe_eval
@@ -327,6 +327,7 @@ class ShiftCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             shift.start_time = dt
             shift.end_time = dt + duration
             shifts_to_create.append(shift)
-        Shift.objects.bulk_create(shifts_to_create)
+        copies = Shift.objects.bulk_create(shifts_to_create)
+        shift_copy.send(sender=None, shift=self.object, copies=copies)
         messages.success(self.request, _("Shift copied successfully."))
         return super().form_valid(form)

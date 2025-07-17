@@ -398,12 +398,6 @@ class Shift(DatetimeDisplayMixin, Model):
         decoder=CustomJSONDecoder,
     )
 
-    questionnaire = JSONField(
-        default=list,
-        encoder=CustomJSONEncoder,
-        decoder=CustomJSONDecoder,
-    )
-
     class Meta:
         verbose_name = _("shift")
         verbose_name_plural = _("shifts")

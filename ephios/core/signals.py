@@ -103,6 +103,12 @@ If all forms are valid, `save` will be called on your form.
 """
 
 
+shift_copy = PluginSignal()
+"""
+This signal is set out after a shift got copied to allow plugins to copy related data as well.
+Receivers will receive the original ``shift`` and a list of the created ``copies``.
+"""
+
 shift_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the shift create and update views.
@@ -123,7 +129,7 @@ and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { '
 signup_save = PluginSignal()
 """
 This signal is sent out to when a signup is created or modified to allow plugins to handle additional
-user input. Receivers will receive the ``shift`, ``participant``, ``participation``, and ``cleaned_data``.
+user input. Receivers will receive the ``shift``, ``participant``, ``participation``, and ``cleaned_data``.
 """
 
 register_notification_types = PluginSignal()
