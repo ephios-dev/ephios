@@ -18,8 +18,6 @@ from ephios.core.signup.flow.participant_validation import (
     SignupDisallowedError,
 )
 from ephios.core.signup.forms import (
-    AdditionalField,
-    AdditionalFieldList,
     BaseSignupForm,
     SignupConfigurationForm,
 )
@@ -297,32 +295,28 @@ class ComplexShiftStructure(
                 blocks=", ".join(set(str(b["name"]) for b in unqualified_blocks))
             )
 
-        return AdditionalFieldList(
-            "complexsignup",
-            {
-                "preferred_unit_path": AdditionalField(
-                    "preferred_unit_path",
-                    forms.ChoiceField,
-                    {
-                        "label": _("Preferred Unit"),
-                        "initial": initial,
-                        "required": required,
-                        "choices": choices,
-                        "help_text": help_text,
-                        "widget": forms.RadioSelect,
-                    },
-                    serializers.ChoiceField,
-                    {
-                        "required": required,
-                        "choices": choices,
-                    },
-                ),
+        return {
+            "complexsignup_preferred_unit_path": {
+                "form_class": forms.ChoiceField,
+                "form_kwargs": {
+                    "label": _("Preferred Unit"),
+                    "initial": initial,
+                    "required": required,
+                    "choices": choices,
+                    "help_text": help_text,
+                    "widget": forms.RadioSelect,
+                },
+                "serializer_class": serializers.ChoiceField,
+                "serializer_kwargs": {
+                    "required": required,
+                    "choices": choices,
+                },
             },
-        )
+        }
 
     def save_signup(self, shift, participant, participation, cleaned_data):
         participation.structure_data["preferred_unit_path"] = self.cleaned_data[
-            "complexsignup.preferred_unit_path"
+            "complexsignup_preferred_unit_path"
         ]
         participation.save()
 
