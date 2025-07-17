@@ -4,7 +4,6 @@ from ephios.core.signup.participants import PlaceholderParticipant
 
 
 def test_match_participants_to_positions(qualifications):
-    # create 3 participants
     ann = PlaceholderParticipant("Ann", {qualifications.nfs}, None, None)
     ben = PlaceholderParticipant("Ben", {qualifications.rs, qualifications.ce}, None, None)
     leader = Position("Führer", True, {qualifications.nfs}, [], [])
@@ -17,6 +16,22 @@ def test_match_participants_to_positions(qualifications):
     assert match_participants_to_positions([ann], [driver]).pairings == set()
     assert match_participants_to_positions([ben, ann], [driver]).pairings == {(ben, driver)}
     assert match_participants_to_positions([ann, ben], [driver]).pairings == {(ben, driver)}
+    assert match_participants_to_positions([ben], [driver, leader]).pairings == {(ben, driver)}
+    assert match_participants_to_positions([ann, ben], [driver, leader]).pairings == {
+        (ben, driver),
+        (ann, leader),
+    }
+
+
+def test_designated_unqualified(qualifications):
+    ann = PlaceholderParticipant("Ann", {qualifications.nfs}, None, None)
+    ben = PlaceholderParticipant("Ben", {qualifications.ce}, None, None)
+
+    # ben doesn't qualify for the positions, but has been designated
+    leader = Position("Führer", True, {qualifications.nfs}, [ann, ben], [])
+    driver = Position("Fahrer", True, {qualifications.rs, qualifications.c}, [ann, ben], [])
+
+    # assert Ben does get matched, but to the lower ranking position (driver)
     assert match_participants_to_positions([ben], [driver, leader]).pairings == {(ben, driver)}
     assert match_participants_to_positions([ann, ben], [driver, leader]).pairings == {
         (ben, driver),
