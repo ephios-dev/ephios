@@ -24,7 +24,13 @@
             <span class="fw-medium">
                 {{ current.label|default:current.name|default:"" }}
             </span>
-            <small class="fw-light text-body-secondary">#{{ current.number }}</small>
+            <small class="fw-light text-body-secondary">
+                {% if current.display != current.name %}
+                    {{ current.name }} #{{ current.number }}
+                {% else %}
+                    #{{ current.number }}
+                {% endif %}
+            </small>
             <span class="text-body-secondary float-end"
                   data-bs-container="body"
                   data-bs-toggle="popover"

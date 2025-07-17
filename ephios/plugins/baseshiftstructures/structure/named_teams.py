@@ -39,9 +39,6 @@ class NamedTeamsDispositionParticipationForm(BaseDispositionParticipationForm):
     team = forms.ChoiceField(
         label=_("Section"),
         required=False,  # only required if participation is confirmed
-        widget=forms.Select(
-            attrs={"data-show-for-state": str(AbstractParticipation.States.CONFIRMED)}
-        ),
     )
 
     def __init__(self, **kwargs):
