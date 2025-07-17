@@ -42,7 +42,11 @@
 
 
 <a class="badge badge-participant
-          {% if participation.state == participation.States.CONFIRMED %}bg-secondary text-dark{% else %}bg-light text-body-secondary{% endif %}
+          {% if participation == own_participation %}
+              {% if participation.state == participation.States.CONFIRMED %}text-bg-success{% else %}text-bg-warning{% endif %}
+          {% else %}
+              {% if participation.state == participation.States.CONFIRMED %}text-bg-secondary text-dark{% else %}text-bg-light text-body-secondary{% endif %}
+          {% endif %}
           {% if participation.participant.is_minor %}participation-card-minor{% endif %}
          "
    tabindex="0"
