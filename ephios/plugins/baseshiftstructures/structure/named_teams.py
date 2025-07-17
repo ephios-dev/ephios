@@ -12,7 +12,7 @@ from rest_framework import serializers
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
-from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
+from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
@@ -385,31 +385,27 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
                 "{teams} is full.", "{teams} are full.", len(full_teams)
             ).format(teams=", ".join(str(team["title"]) for team in full_teams))
 
-        return AdditionalFieldList(
-            "baseshiftstructures.named_teams",
-            {
-                "preferred_team_uuid": AdditionalField(
-                    "preferred_team_uuid",
-                    forms.ChoiceField,
-                    {
-                        "label": _("Preferred Team"),
-                        "initial": initial,
-                        "required": required,
-                        "choices": choices,
-                        "help_text": help_text,
-                        "widget": forms.RadioSelect,
-                    },
-                    serializers.ChoiceField,
-                    {
-                        "required": required,
-                        "choices": choices,
-                    },
-                ),
+        return {
+            "baseshiftstructures_named_teams_preferred_team_uuid": {
+                "form_class": forms.ChoiceField,
+                "form_kwargs": {
+                    "label": _("Preferred Team"),
+                    "initial": initial,
+                    "required": required,
+                    "choices": choices,
+                    "help_text": help_text,
+                    "widget": forms.RadioSelect,
+                },
+                "serializer_class": serializers.ChoiceField,
+                "serializer_kwargs": {
+                    "required": required,
+                    "choices": choices,
+                },
             },
-        )
+        }
 
     def save_signup(self, shift, participant, participation, cleaned_data):
         participation.structure_data["preferred_team_uuid"] = cleaned_data[
-            "baseshiftstructures.named_teams.preferred_team_uuid"
+            "baseshiftstructures_named_teams_preferred_team_uuid"
         ]
         participation.save()
