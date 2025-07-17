@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from rest_framework import serializers
 
-from ephios.core.models.events import AbstractParticipation
+from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.models.users import UserProfile
 from ephios.core.signup.forms import AdditionalField
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
@@ -124,6 +124,15 @@ class Question(models.Model):
         For this slug, this method would return `123`.
         """
         return int(slug.split(".", maxsplit=1)[1].split("-")[0])
+
+
+class Questionnaire(models.Model):
+    shift = models.OneToOneField(Shift, on_delete=models.CASCADE)
+    questions = models.ManyToManyField(Question, blank=True)
+
+    class Meta:
+        verbose_name = _("Questionnaire")
+        verbose_name_plural = _("Questionnaires")
 
 
 class Answer(models.Model):

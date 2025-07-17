@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin
-from ephios.plugins.questionnaires.models import Answer, Question
+from ephios.plugins.questionnaires.models import Answer, Question, Questionnaire
 
 
 class ChoiceForm(forms.Form):
@@ -39,26 +39,31 @@ class QuestionForm(forms.ModelForm):
         return super().save(commit)
 
 
-class QuestionnaireForm(BasePluginFormMixin, forms.Form):
-    questions = forms.ModelMultipleChoiceField(
-        queryset=Question.objects.all(), widget=Select2MultipleWidget, required=False
-    )
+class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
+    class Meta:
+        model = Questionnaire
+        fields = ["questions"]
+        widgets = {"questions": Select2MultipleWidget}
 
     def __init__(self, *args, shift, **kwargs):
         kwargs.setdefault("prefix", "questionnaires")
-        super().__init__(*args, **kwargs)
         self.shift = shift
-        self.fields["questions"].initial = Question.objects.filter(pk__in=self.shift.questionnaire)
+        try:
+            kwargs.setdefault("instance", Questionnaire.objects.get(shift_id=shift.id))
+        except (AttributeError, Questionnaire.DoesNotExist):
+            pass
+        super().__init__(*args, **kwargs)
 
-    def save(self):
-        self.shift.questionnaire = [
-            question.pk for question in self.cleaned_data["questions"].all()
-        ]
-        self.shift.save()
+    def save(self, commit=True):
+        if self.cleaned_data.get("questions"):
+            self.instance.shift = self.shift
+            super().save(commit)
+        elif self.instance.pk:
+            self.instance.delete()
 
     @property
     def heading(self):
         return _("Questionnaire")
 
     def is_function_active(self):
-        return bool(len(self.shift.questionnaire) > 0)
+        return self.instance.pk and self.instance.questions.count() > 0
