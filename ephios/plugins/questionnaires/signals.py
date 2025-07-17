@@ -13,7 +13,7 @@ from ephios.core.signals import (
     signup_form_fields,
     signup_save,
 )
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
@@ -85,7 +85,7 @@ def provide_signup_form_fields(
     signup_choice,
     **kwargs
 ):
-    if signup_choice == BaseSignupForm.SignupChoices.DECLINE:
+    if signup_choice == SignupForm.SignupChoices.DECLINE:
         return None
 
     questions = (

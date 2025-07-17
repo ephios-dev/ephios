@@ -18,7 +18,7 @@ from ephios.core.signup.flow.participant_validation import (
     SignupDisallowedError,
 )
 from ephios.core.signup.forms import (
-    BaseSignupForm,
+    SignupForm,
     SignupConfigurationForm,
 )
 from ephios.core.signup.participants import AbstractParticipant
@@ -270,7 +270,7 @@ class ComplexShiftStructure(
         initial = participation.structure_data.get("preferred_unit_path")
         required = (
             # TODO: This is flawed, as the fields will not be required in customize mode
-            signup_choice == BaseSignupForm.SignupChoices.SIGNUP
+            signup_choice == SignupForm.SignupChoices.SIGNUP
             and shift.structure.configuration.choose_preferred_unit
         )
 
