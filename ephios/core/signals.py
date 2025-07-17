@@ -101,12 +101,33 @@ detail view. Receivers will receive a `shift` and `request` keyword arg to gener
 Receivers should return html that is added below the participations.
 """
 
+shift_copy = PluginSignal()
+"""
+This signal is set out after a shift got copied to allow plugins to copy related data as well.
+Receivers will receive the original ``shift`` and a list of the created ``copies``.
+"""
+
 shift_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the shift create and update views.
 You receive a `shift` and `request` keyword arg you should use to create an instance of your form.
 Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
+"""
+
+signup_form_fields = PluginSignal()
+"""
+This signal is sent out to get a list of form fields to show on the signup view, especially to collect
+user input for shift structures. Receivers will receive the ``shift``, ``participant``, ``participation``,
+and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 'default': ...,
+'type': ..., 'form_class': ..., 'form_kwargs': ..., 'serializer_class': ..., 'serializer_kwargs': ... },
+'fieldname2: { ... } }``
+"""
+
+signup_save = PluginSignal()
+"""
+This signal is sent out to when a signup is created or modified to allow plugins to handle additional
+user input. Receivers will receive the ``shift``, ``participant``, ``participation``, and ``cleaned_data``.
 """
 
 register_notification_types = PluginSignal()
@@ -278,6 +299,16 @@ def update_last_run_periodic_call(sender, **kwargs):
     from ephios.core.dynamic_preferences_registry import LastRunPeriodicCall
 
     LastRunPeriodicCall.set_last_call(timezone.now())
+
+
+@receiver(signup_form_fields, dispatch_uid="ephios.core.signals.signup_form_fields")
+def provide_signup_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
+    return shift.structure.get_signup_form_fields(shift, participant, participation, signup_choice)
+
+
+@receiver(signup_save, dispatch_uid="ephios.core.signals.signup_save")
+def save_signup(sender, shift, participant, participation, cleaned_data, **kwargs):
+    shift.structure.save_signup(shift, participant, participation, cleaned_data)
 
 
 periodic_signal.connect(
