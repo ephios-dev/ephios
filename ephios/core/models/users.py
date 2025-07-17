@@ -119,9 +119,6 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
     disabled_notifications = JSONField(
         default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder
     )
-    saved_questionnaire_answers = JSONField(
-        default=dict, verbose_name=_("Saved questionnaire answers")
-    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
