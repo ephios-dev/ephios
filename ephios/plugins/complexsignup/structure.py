@@ -41,12 +41,11 @@ def atomic_block_participant_qualifies_for(structure, participant: AbstractParti
 
 
 def _build_human_path(structure):
-    return " » ".join(
-        [
-            *[s["display"] for s in reversed(structure["parents"])],
-            f"{structure['display']} #{structure['number']}",
-        ]
-    )
+    # put the atomic block display name first, in case the whole path gets cut off
+    s = f"{structure['display']} #{structure['number']}"
+    if parents := [s["display"] for s in reversed(structure["parents"])]:
+        s += f" ({" » ".join(parents)})"
+    return s
 
 
 class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
@@ -54,9 +53,6 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
     unit_path = forms.ChoiceField(
         label=_("Unit"),
         required=False,
-        widget=forms.Select(
-            attrs={"data-show-for-state": str(AbstractParticipation.States.CONFIRMED)}
-        ),
     )
 
     def __init__(self, **kwargs):
