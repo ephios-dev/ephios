@@ -6,6 +6,7 @@ from operator import attrgetter
 from typing import Optional
 
 from django import forms
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import ModelSelect2Widget
 
@@ -16,11 +17,14 @@ from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.forms import BaseSignupForm, SignupConfigurationForm
+from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
 from ephios.plugins.baseshiftstructures.structure.common import MinimumAgeMixin
+from ephios.plugins.baseshiftstructures.structure.group_common import (
+    AbstractGroupBasedStructureConfigurationForm,
+)
 from ephios.plugins.complexsignup.models import BuildingBlock
 
 logger = logging.getLogger(__name__)
@@ -42,9 +46,12 @@ def atomic_block_participant_qualifies_for(structure, participant: AbstractParti
 
 def _build_human_path(structure):
     # put the atomic block display name first, in case the whole path gets cut off
-    s = f"{structure['display']} #{structure['number']}"
+    if structure["display"] != structure["name"]:
+        s = f"{structure['display']} - {structure['name']} #{structure['number']}"
+    else:
+        s = f"{structure['name']} #{structure['number']}"
     if parents := [s["display"] for s in reversed(structure["parents"])]:
-        s += f" ({" » ".join(parents)})"
+        s += " (" + " » ".join(parents) + ")"  # using an f-string here broke CI in py3.10 to 3.12
     return s
 
 
@@ -131,7 +138,7 @@ class ComplexSignupForm(BaseSignupForm):
         if unqualified_blocks:
             self.fields["preferred_unit_path"].help_text = _(
                 "You don't qualify for {blocks}."
-            ).format(blocks=", ".join(set(str(b["name"]) for b in unqualified_blocks)))
+            ).format(blocks=", ".join(set(_build_human_path(b) for b in unqualified_blocks)))
 
     def save(self, commit=True):
         self.instance.structure_data["preferred_unit_path"] = self.cleaned_data[
@@ -143,14 +150,28 @@ class ComplexSignupForm(BaseSignupForm):
         return atomic_block_participant_qualifies_for(structure, self.participant)
 
 
-class ComplexConfigurationForm(SignupConfigurationForm):
+class StartingBlockForm(forms.Form):
     building_block = forms.ModelChoiceField(
+        label=_("Unit"),
         widget=ModelSelect2Widget(
             model=BuildingBlock,
             search_fields=["name__icontains"],
+            attrs={"data-minimum-input-length": 0},
         ),
         queryset=BuildingBlock.objects.all(),
     )
+    title = forms.CharField(label=_("Title"), required=False)
+    optional = forms.BooleanField(label=_("optional"), required=False)
+
+
+StartingBlocksFormset = forms.formset_factory(
+    StartingBlockForm, can_delete=True, min_num=1, validate_min=1, extra=0
+)
+
+
+class ComplexConfigurationForm(AbstractGroupBasedStructureConfigurationForm):
+    template_name = "complexsignup/configuration_form.html"
+    choose_preferred_team = None  # renamed
     choose_preferred_unit = forms.BooleanField(
         label=_("Participants must provide a preferred unit"),
         help_text=_("Participants will be asked during signup."),
@@ -158,8 +179,26 @@ class ComplexConfigurationForm(SignupConfigurationForm):
         required=False,
         initial=False,
     )
+    starting_blocks = forms.Field(
+        label=_("Units"),
+        widget=forms.HiddenInput,
+        required=False,
+    )
+    formset_data_field_name = "starting_blocks"
 
-    template_name = "complexsignup/configuration_form.html"
+    def get_formset_class(self):
+        return StartingBlocksFormset
+
+    @classmethod
+    def format_formset_item(cls, item):
+        try:
+            return item["title"] or item["building_block"].name
+        except AttributeError:
+            # building block is an id
+            try:
+                return str(BuildingBlock.objects.get(id=item["building_block"]).name)
+            except BuildingBlock.DoesNotExist:
+                return gettext("Deleted unit")
 
 
 class ComplexShiftStructure(
@@ -181,7 +220,9 @@ class ComplexShiftStructure(
             for participation in participations
             if participation.state == AbstractParticipation.States.CONFIRMED
         ]
-        all_positions, structure = convert_blocks_to_positions(self._base_blocks, participations)
+        all_positions, structure = convert_blocks_to_positions(
+            self._starting_blocks, participations
+        )
         matching = match_participants_to_positions(
             participants, all_positions, confirmed_participants=confirmed_participants
         )
@@ -189,7 +230,7 @@ class ComplexShiftStructure(
 
         # let's work up the blocks again, but now with matching
         all_positions, structure = convert_blocks_to_positions(
-            self._base_blocks, participations, matching=matching
+            self._starting_blocks, participations, matching=matching
         )
 
         # for checking signup, we need a matching with only confirmed participations
@@ -219,10 +260,31 @@ class ComplexShiftStructure(
         return matching, confirmed_only_matching, all_positions, structure, signup_stats
 
     @cached_property
-    def _base_blocks(self):
-        # for now, we only support one base block
+    def _starting_blocks(self):
+        """
+        Returns list of tuples of Building Block, title and optional.
+        If there is no title, uses None.
+        """
         qs = BuildingBlock.objects.all()
-        return list(qs.filter(id=self.configuration.building_block))
+        id_to_block = {
+            block.id: block
+            for block in qs.filter(
+                id__in=[unit["building_block"] for unit in self.configuration.starting_blocks]
+            )
+        }
+        starting_blocks = []
+        for idx, unit in enumerate(self.configuration.starting_blocks):
+            if unit["building_block"] not in id_to_block:
+                continue  # block missing from DB
+            starting_blocks.append(
+                (
+                    idx,
+                    id_to_block[unit["building_block"]],
+                    unit["title"],
+                    unit["optional"],
+                )
+            )
+        return starting_blocks
 
     def _assume_cache(self):
         if not hasattr(self, "_cached_work"):
@@ -307,7 +369,7 @@ class ComplexShiftStructure(
                     {
                         "participation": participation,
                         "required_qualifications": position.required_qualifications,
-                        "description": f"{block['display']} #{block['number']}",
+                        "description": _build_human_path(block),
                     }
                 )
         return export_data
@@ -532,17 +594,18 @@ def convert_blocks_to_positions(starting_blocks, participations, matching=None):
         "qualification_label": "",
     }
     opt_counter = defaultdict(partial(itertools.count, 1))
-    for block in starting_blocks:
+    for idx, block, title, optional in starting_blocks:
         positions, sub_structure = _search_block(
             block,
-            path=root_path,
+            path=f"{root_path}{idx}-",
             level=1,
-            path_optional=False,
+            path_optional=optional,
             required_qualifications=set(),
             participations=participations,
             opt_counter=opt_counter,
             matching=matching,
             parents=[],
+            composed_label=title,
         )
         all_positions.extend(positions)
         structure["sub_blocks"].append(sub_structure)
