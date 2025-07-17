@@ -13,8 +13,7 @@ from ephios.core.signup.participants import AbstractParticipant, LocalUserPartic
 class Question(models.Model):
     class Type(models.TextChoices):
         TEXT = "text", _("Text input")
-        SINGLE_RADIO = "single_radio", _("Single choice")
-        SINGLE_LIST = "single_list", _("Single choice (list)")
+        SINGLE = "single", _("Single choice")
         MULTIPLE = "multiple", _("Multiple choice")
 
     name = models.CharField(
@@ -59,10 +58,7 @@ class Question(models.Model):
             initial = None
 
         # Reset answer if selected option does not exist
-        if (
-            self.type in [self.Type.SINGLE_RADIO, self.Type.SINGLE_LIST, self.Type.MULTIPLE]
-            and initial not in self.choices
-        ):
+        if self.type in [self.Type.SINGLE, self.Type.MULTIPLE] and initial not in self.choices:
             initial = None
 
         field_name = self.get_form_slug()
@@ -85,14 +81,12 @@ class Question(models.Model):
             case self.Type.TEXT:
                 form_class = forms.CharField
                 serializer_class = serializers.CharField
-            case self.Type.SINGLE_RADIO:
+            case self.Type.SINGLE:
                 form_class = forms.ChoiceField
                 serializer_class = serializers.ChoiceField
-                form_kwargs["widget"] = forms.RadioSelect
-            case self.Type.SINGLE_LIST:
-                form_class = forms.ChoiceField
-                serializer_class = serializers.ChoiceField
-                form_kwargs["widget"] = Select2Widget
+                form_kwargs["widget"] = (
+                    forms.RadioSelect if len(self.choices) <= 5 else Select2Widget
+                )
             case self.Type.MULTIPLE:
                 form_class = forms.MultipleChoiceField
                 serializer_class = serializers.MultipleChoiceField
