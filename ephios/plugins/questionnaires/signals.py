@@ -16,7 +16,7 @@ from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseS
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
-from ephios.plugins.questionnaires.models import Question
+from ephios.plugins.questionnaires.models import Answer, Question, SavedAnswer
 
 
 @receiver(nav_link, dispatch_uid="ephios.plugins.questionnaires.signals.nav_link")
@@ -121,25 +121,25 @@ def save_signup(
     cleaned_data,
     **kwargs
 ):
-    answers = {}
+    save_answers = cleaned_data["questionnaires.save_answers"]
+    if save_answers:
+        assert isinstance(
+            participant, LocalUserParticipant
+        ), "Cannot save answers, participant is not a local user"
 
     for name, value in cleaned_data.items():
         if name == "questionnaires.save_answers" or not name.startswith("questionnaires."):
             continue
 
-        question_pk = str(Question.get_pk_from_slug(name))
-        answers[question_pk] = value
+        answer, _ = Answer.objects.get_or_create(
+            participation=participation, question_id=Question.get_pk_from_slug(name)
+        )
+        answer.answer = value
+        answer.save()
 
-    participation.questionnaire_answers = answers
-    participation.save()
-
-    if cleaned_data["questionnaires.save_answers"]:
-        assert isinstance(
-            participant, LocalUserParticipant
-        ), "Cannot save answers, participant is not a local user"
-        participant: LocalUserParticipant
-
-        for question, answer in answers.items():
-            participant.user.saved_questionnaire_answers[question] = answer
-
-        participant.user.save()
+        if save_answers:
+            saved_answer, _ = SavedAnswer.objects.get_or_create(
+                user=participant.user, question_id=Question.get_pk_from_slug(name)
+            )
+            saved_answer.answer = value
+            saved_answer.save()

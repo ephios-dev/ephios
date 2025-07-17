@@ -3,11 +3,15 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin
-from ephios.plugins.questionnaires.models import Question
+from ephios.plugins.questionnaires.models import Answer, Question
 
 
 class ChoiceForm(forms.Form):
-    name = forms.CharField(label=_("Choice name"))
+    name = forms.CharField(
+        label=_("Choice name"),
+        # pylint: disable=protected-access
+        max_length=Answer._meta.get_field("answer").max_length,
+    )
 
 
 ChoicesFormset = forms.formset_factory(ChoiceForm, can_delete=True, extra=2)
