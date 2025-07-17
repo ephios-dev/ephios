@@ -201,11 +201,9 @@ class BaseSignupForm(BaseParticipationForm):
         )
 
         for _, additional_fields in responses:
-            if isinstance(additional_fields, AdditionalFieldList):
-                for fieldname, field in additional_fields.fields.items():
-                    self.fields[f"{additional_fields.provider_id}.{fieldname}"] = field.field_class(
-                        **(field.field_kwargs or {})
-                    )
+            if additional_fields:
+                for fieldname, field in additional_fields.items():
+                    self.fields[fieldname] = field["form_class"](**(field["form_kwargs"] or {}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -229,29 +227,6 @@ class BaseSignupForm(BaseParticipationForm):
                     shifts=", ".join(str(shift) for shift in conflicts)
                 ),
             )
-
-
-@dataclass
-class AdditionalField:
-    """
-    A dataclass used to define a single additional field to be added.
-    """
-
-    name: str
-    field_class: forms.Field
-    field_kwargs: dict
-    serializer_class: serializers.Serializer
-    serializer_kwargs: dict
-
-
-@dataclass
-class AdditionalFieldList:
-    """
-    A dataclass used to pass additional fields to the signup form.
-    """
-
-    provider_id: str
-    fields: dict[str, AdditionalField]
 
 
 class SignupConfigurationForm(forms.Form):

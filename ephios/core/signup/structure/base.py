@@ -33,7 +33,7 @@ class BaseShiftStructure(AbstractShiftStructure):
         raise NotImplementedError()
 
     def get_signup_form_fields(self, shift, participant, participation, signup_choice):
-        return None
+        return {}
 
     def get_participant_count_bounds(self):
         return None, None

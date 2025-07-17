@@ -13,7 +13,7 @@ from ephios.core.signals import (
     signup_form_fields,
     signup_save,
 )
-from ephios.core.signup.forms import AdditionalField, AdditionalFieldList, BaseSignupForm
+from ephios.core.signup.forms import BaseSignupForm
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
@@ -93,39 +93,30 @@ def provide_signup_form_fields(
         if hasattr(shift, "questionnaire") and shift.questionnaire
         else []
     )
-    formfields = [
+    formfields = dict(
         question.get_signup_form_field(participant, participation, signup_choice)
         for question in questions
-    ]
+    )
 
-    can_save_answers = isinstance(participant, LocalUserParticipant)
-    formfields.append(
-        AdditionalField(
-            "save_answers",
-            forms.BooleanField,
-            {
+    if len(formfields) > 0:
+        can_save_answers = isinstance(participant, LocalUserParticipant)
+        formfields["questionnaires_save_answers"] = {
+            "form_class": forms.BooleanField,
+            "form_kwargs": {
                 "label": _("Save answers to my user profile for future sign-ups"),
                 "initial": can_save_answers,
                 "disabled": not can_save_answers,
                 "required": False,
                 "widget": forms.HiddenInput if not can_save_answers else forms.CheckboxInput,
             },
-            serializers.BooleanField,
-            {
+            "serializer_class": serializers.BooleanField,
+            "serializer_kwargs": {
                 "disabled": not can_save_answers,
                 "required": False,
             },
-        )
-    )
+        }
 
-    return (
-        AdditionalFieldList(
-            "questionnaires",
-            {formfield.name: formfield for formfield in formfields},
-        )
-        if len(formfields) > 0
-        else None
-    )
+    return formfields
 
 
 @receiver(signup_save, dispatch_uid="ephios.plugins.questionnaires.signals.signup_save")
@@ -137,14 +128,14 @@ def save_signup(
     cleaned_data,
     **kwargs
 ):
-    save_answers = cleaned_data["questionnaires.save_answers"]
+    save_answers = cleaned_data.get("questionnaires_save_answers")
     if save_answers:
         assert isinstance(
             participant, LocalUserParticipant
         ), "Cannot save answers, participant is not a local user"
 
     for name, value in cleaned_data.items():
-        if name == "questionnaires.save_answers" or not name.startswith("questionnaires."):
+        if name == "questionnaires_save_answers" or not name.startswith("questionnaires_"):
             continue
 
         answer, _ = Answer.objects.get_or_create(
