@@ -13,11 +13,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="abstractparticipation",
-            name="questionnaire_answers",
-            field=models.JSONField(default=dict, verbose_name="Answers to questionnaire"),
-        ),
-        migrations.AddField(
             model_name="shift",
             name="questionnaire",
             field=models.JSONField(
@@ -25,10 +20,5 @@ class Migration(migrations.Migration):
                 default=list,
                 encoder=ephios.extra.json.CustomJSONEncoder,
             ),
-        ),
-        migrations.AddField(
-            model_name="userprofile",
-            name="saved_questionnaire_answers",
-            field=models.JSONField(default=dict, verbose_name="Saved questionnaire answers"),
         ),
     ]

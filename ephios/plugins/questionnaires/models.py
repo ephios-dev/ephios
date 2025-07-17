@@ -6,6 +6,7 @@ from django_select2.forms import Select2MultipleWidget, Select2Widget
 from rest_framework import serializers
 
 from ephios.core.models.events import AbstractParticipation
+from ephios.core.models.users import UserProfile
 from ephios.core.signup.forms import AdditionalField
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 
@@ -45,15 +46,16 @@ class Question(models.Model):
         self, participant: AbstractParticipant, participation: AbstractParticipation, signup_choice
     ):
         # Restore answer from participation (when editing) or the user's saved answers (if local participant)
-        # The answers are saved as JSON and therefore, the key is converted to a string
-        answer_key = str(self.pk)
-        if answer_key in participation.questionnaire_answers:
-            initial = participation.questionnaire_answers[answer_key]
-        elif (
-            isinstance(participant, LocalUserParticipant)
-            and answer_key in participant.user.saved_questionnaire_answers
+        if existing_answer := Answer.objects.filter(
+            participation_id=participation.pk, question=self
+        ).first():
+            initial = existing_answer.answer
+        elif saved_answer := (
+            SavedAnswer.objects.filter(user=participant.user, question=self).first()
+            if isinstance(participant, LocalUserParticipant)
+            else None
         ):
-            initial = participant.user.saved_questionnaire_answers[answer_key]
+            initial = saved_answer.answer
         else:
             initial = None
 
@@ -81,6 +83,10 @@ class Question(models.Model):
             case self.Type.TEXT:
                 form_class = forms.CharField
                 serializer_class = serializers.CharField
+                # pylint: disable=protected-access
+                max_length = Answer._meta.get_field("answer").max_length
+                form_kwargs["max_length"] = max_length
+                serializer_kwargs["max_length"] = max_length
             case self.Type.SINGLE:
                 form_class = forms.ChoiceField
                 serializer_class = serializers.ChoiceField
@@ -118,3 +124,29 @@ class Question(models.Model):
         For this slug, this method would return `123`.
         """
         return int(slug.split(".", maxsplit=1)[1].split("-")[0])
+
+
+class Answer(models.Model):
+    participation = models.ForeignKey(AbstractParticipation, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+
+    class Meta:
+        verbose_name = _("Answer")
+        verbose_name_plural = _("Answers")
+
+    def __str__(self):
+        return str(self.answer)
+
+
+class SavedAnswer(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+
+    class Meta:
+        verbose_name = _("Saved answer")
+        verbose_name_plural = _("Saved answers")
+
+    def __str__(self):
+        return str(self.answer)
