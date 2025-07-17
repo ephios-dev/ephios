@@ -196,6 +196,13 @@ class ComplexShiftStructure(
             self._base_blocks, participations, matching=matching
         )
 
+        # for checking signup, we need a matching with only confirmed participations
+        confirmed_only_matching = match_participants_to_positions(
+            confirmed_participants,
+            all_positions,
+            confirmed_participants=confirmed_participants,
+        )
+
         # we just have to add unpaired matches to the full stats
         signup_stats = structure["signup_stats"] + SignupStats.ZERO.replace(
             requested_count=len(
@@ -213,7 +220,7 @@ class ComplexShiftStructure(
                 ]
             ),
         )
-        return matching, all_positions, structure, signup_stats
+        return matching, confirmed_only_matching, all_positions, structure, signup_stats
 
     @cached_property
     def _base_blocks(self):
@@ -231,9 +238,13 @@ class ComplexShiftStructure(
                 if p.state
                 in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
             ]
-            self._matching, self._all_positions, self._structure, self._signup_stats = self._match(
-                participations
-            )
+            (
+                self._matching,
+                self._confirmed_only_matching,
+                self._all_positions,
+                self._structure,
+                self._signup_stats,
+            ) = self._match(participations)
             self._cached_work = True
 
     def get_shift_state_context_data(self, request, **kwargs):
@@ -267,15 +278,14 @@ class ComplexShiftStructure(
             confirmed_participants = [p.participant for p in confirmed_participations]
             if participant in confirmed_participants:
                 return
-            matching_without = match_participants_to_positions(
-                confirmed_participants, self._all_positions
-            )
-            matching_with = match_participants_to_positions(
+            matching_with_this_participant = match_participants_to_positions(
                 confirmed_participants + [participant], self._all_positions
             )
-            if len(matching_with.pairings) > len(matching_without.pairings):
+            if len(matching_with_this_participant.pairings) > len(
+                self._confirmed_only_matching.pairings
+            ):
                 return
-        if (free := shift.get_signup_stats().free) and free > 0:
+        if (free := self._signup_stats.free) and free > 0:
             raise ParticipantUnfitError(_("You are not qualified."))
         raise SignupDisallowedError(_("The maximum number of participants is reached."))
 

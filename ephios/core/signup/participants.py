@@ -3,6 +3,7 @@ from datetime import date
 from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
@@ -50,19 +51,19 @@ class AbstractParticipant:
         """Return all participations for this participant"""
         raise NotImplementedError
 
-    def collect_all_qualifications(self) -> set:
+    def collect_all_qualifications(self) -> QuerySet:
         return collect_all_included_qualifications(self.qualifications)
 
     @cached_property
     def skill(self):
         graph = QualificationUniverse.get_graph()
-        all_qualification_uuids = set(
+        all_qualification_uuids = frozenset(
             graph.spread_from([qualification.uuid for qualification in self.qualifications])
         )
         return all_qualification_uuids
 
     def has_qualifications(self, qualifications):
-        return set(qualifications) <= set(self.collect_all_qualifications())
+        return frozenset(qualifications) <= frozenset(self.collect_all_qualifications())
 
     def reverse_signup_action(self, shift):
         raise NotImplementedError

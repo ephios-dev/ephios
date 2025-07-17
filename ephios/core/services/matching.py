@@ -55,9 +55,9 @@ def skill_level(qualifications):
     if isinstance(qualifications[0], Qualification):
         qualifications = [q.uuid for q in qualifications]
     graph = QualificationUniverse.get_graph()
-    required_skill = set(graph.spread_from(qualifications))
+    required_skill = frozenset(graph.spread_from(qualifications))
     # all_skill is qualifications up and down from the required ones
-    all_skill = required_skill | set(graph.spread_reverse(qualifications))
+    all_skill = required_skill | frozenset(graph.spread_reverse(qualifications))
     return len(required_skill) / len(all_skill)
 
 
@@ -110,10 +110,18 @@ class Matching:
                 return participation
 
 
+BASE_SCORE = 5.0
+PREFERRED_VALUE = 3.0
+MAX_AUX_VALUE = 2.0
+CONFIRMED_VALUE = 2.0
+MAX_SKILL_VALUE = 1.0
+CONSTANT_SUM = BASE_SCORE + PREFERRED_VALUE + MAX_SKILL_VALUE + CONFIRMED_VALUE + MAX_AUX_VALUE
+
+
 def score_pairing(
     participant: AbstractParticipant,
     position: Position,
-    confirmed_participants,
+    participant_is_confirmed,
     number_of_participants=1_000_000,
 ):
     """
@@ -121,18 +129,11 @@ def score_pairing(
     Skill here means a set of qualification.
     """
     # number of participants is used as a scoring value to make sure that in adverse cases
-    # a matching with a someone unqualified pairings gets a worse score than a matching with more valid pairings
+    # a matching with some unqualified pairings gets a worse score than a matching with more valid pairings
     # (similar for prefers and skill level). It can be arbitrarily big, but must be at least bigger than the sum of
     # all the other constants used in the score.
     padded_participant_count = 10 + 2 * number_of_participants
-    base_score = 5.0
-    preferred_value = 3.0
-    max_aux_value = 2.0
-    confirmed_value = 2.0
-    max_skill_value = 1.0
-    required_value = padded_participant_count * sum(
-        (base_score, preferred_value, max_skill_value, confirmed_value, max_aux_value)
-    )
+    required_value = padded_participant_count * CONSTANT_SUM
     designated_unqualified_value = required_value * required_value
     designated_and_qualified_value = 2 * designated_unqualified_value
     undesignated_unqualified_value = designated_unqualified_value * designated_unqualified_value
@@ -140,14 +141,13 @@ def score_pairing(
     # optimally, we should reject a pairing for a participant designated for another position,
     # but we don't have that info here.
     is_designated = participant in position.designated_for
-
     is_qualified = position.required_skill <= participant.skill
 
     if not is_designated and (not is_qualified or position.designation_only):
         # the participant does not have some required skill
         return -undesignated_unqualified_value  # avoid matching unqualified participants
 
-    score = base_score
+    score = BASE_SCORE
     if is_designated:
         if is_qualified:
             score += designated_and_qualified_value
@@ -156,20 +156,20 @@ def score_pairing(
             score += designated_unqualified_value
 
     if participant in position.preferred_by:
-        score += preferred_value
+        score += PREFERRED_VALUE
     if position.required:
         score += required_value
-    if participant in confirmed_participants:
-        score += confirmed_value
+    if participant_is_confirmed:
+        score += CONFIRMED_VALUE
 
     if is_qualified:
         # if qualified, lets prefer high skill positions
-        score += position.skill_level * max_skill_value
+        score += position.skill_level * MAX_SKILL_VALUE
     else:
         # if not qualified (but designated), let's prefer low skill positions
-        score -= position.skill_level * max_skill_value
+        score -= position.skill_level * MAX_SKILL_VALUE
 
-    score += position.aux_score * max_aux_value
+    score += position.aux_score * MAX_AUX_VALUE
     return score
 
 
@@ -190,11 +190,14 @@ def match_participants_to_positions(
                     participant,
                     position,
                     number_of_participants=len(participants),
-                    confirmed_participants=confirmed_participants,
+                    participant_is_confirmed=is_confirmed,
                 )
                 for position in positions
             ]
-            for participant in participants
+            for participant, is_confirmed in zip(
+                participants,
+                map(lambda p: p in confirmed_participants, participants),
+            )
         ]
     )
     matching = min_weight_full_bipartite_matching(costs)

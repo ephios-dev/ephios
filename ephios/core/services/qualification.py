@@ -13,11 +13,16 @@ class QualificationUniverse:
     The graph is invalidated after changes to qualifications.
     """
 
-    cache_key = "ephios.core.services.qualification.QualificationUniverse.qualifications"
+    qs_cache_key = "ephios.core.services.qualification.QualificationUniverse.qualifications_qs"
+    graph_cache_key = (
+        "ephios.core.services.qualification.QualificationUniverse.qualifications_graph"
+    )
 
     @classmethod
     def get_graph(cls):
-        return cls.build_graph(cls.get_qualifications())
+        return cache.get_or_set(
+            cls.graph_cache_key, lambda: cls.build_graph(cls.get_qualifications())
+        )
 
     @classmethod
     def build_graph(cls, qualifications):
@@ -35,11 +40,12 @@ class QualificationUniverse:
             bool(qs)  # force evaluation
             return qs
 
-        return cache.get_or_set(cls.cache_key, _get_qualifications)
+        return cache.get_or_set(cls.qs_cache_key, _get_qualifications)
 
     @classmethod
     def clear(cls):
-        cache.delete(cls.cache_key)
+        cache.delete(cls.qs_cache_key)
+        cache.delete(cls.graph_cache_key)
 
 
 @receiver(post_save, sender=Qualification)
