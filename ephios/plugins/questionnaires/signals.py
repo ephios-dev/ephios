@@ -98,20 +98,16 @@ def provide_signup_form_fields(
         for question in questions
     )
 
-    if len(formfields) > 0:
-        can_save_answers = isinstance(participant, LocalUserParticipant)
+    if len(formfields) > 0 and isinstance(participant, LocalUserParticipant):
         formfields["questionnaires_save_answers"] = {
             "form_class": forms.BooleanField,
             "form_kwargs": {
                 "label": _("Save answers to my user profile for future sign-ups"),
-                "initial": can_save_answers,
-                "disabled": not can_save_answers,
+                "initial": True,
                 "required": False,
-                "widget": forms.HiddenInput if not can_save_answers else forms.CheckboxInput,
             },
             "serializer_class": serializers.BooleanField,
             "serializer_kwargs": {
-                "disabled": not can_save_answers,
                 "required": False,
             },
         }
@@ -128,11 +124,11 @@ def save_signup(
     cleaned_data,
     **kwargs
 ):
-    save_answers = cleaned_data.get("questionnaires_save_answers")
-    if save_answers:
-        assert isinstance(
-            participant, LocalUserParticipant
-        ), "Cannot save answers, participant is not a local user"
+    save_answers = (
+        cleaned_data.get("questionnaires_save_answers")
+        if isinstance(participant, LocalUserParticipant)
+        else False
+    )
 
     for name, value in cleaned_data.items():
         if name == "questionnaires_save_answers" or not name.startswith("questionnaires_"):
