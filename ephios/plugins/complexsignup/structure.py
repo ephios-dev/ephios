@@ -17,10 +17,7 @@ from ephios.core.signup.flow.participant_validation import (
     ParticipantUnfitError,
     SignupDisallowedError,
 )
-from ephios.core.signup.forms import (
-    SignupForm,
-    SignupConfigurationForm,
-)
+from ephios.core.signup.forms import SignupConfigurationForm, SignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 from ephios.core.signup.structure.base import BaseShiftStructure
