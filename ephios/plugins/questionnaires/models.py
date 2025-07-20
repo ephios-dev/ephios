@@ -135,6 +135,9 @@ class Questionnaire(models.Model):
         verbose_name = _("Questionnaire")
         verbose_name_plural = _("Questionnaires")
 
+    def __str__(self):
+        return f"{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}"
+
 
 class Answer(models.Model):
     participation = models.ForeignKey(AbstractParticipation, on_delete=models.CASCADE)
@@ -146,7 +149,7 @@ class Answer(models.Model):
         verbose_name_plural = _("Answers")
 
     def __str__(self):
-        return str(self.answer)
+        return f'{self.question}: "{self.answer}" ({self.participation})'
 
 
 class SavedAnswer(models.Model):
@@ -159,4 +162,4 @@ class SavedAnswer(models.Model):
         verbose_name_plural = _("Saved answers")
 
     def __str__(self):
-        return str(self.answer)
+        return f'{self.question}: "{self.answer}" ({self.user})'
