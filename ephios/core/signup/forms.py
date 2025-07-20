@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
@@ -8,7 +6,6 @@ from django.db import models, transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
-from rest_framework import serializers
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
