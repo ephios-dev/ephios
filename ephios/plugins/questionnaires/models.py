@@ -63,7 +63,7 @@ class Question(models.Model):
             initial = None
 
         field_name = self.get_form_slug()
-        required = self.required if initial is not None else False
+        required = self.required if initial is None else False
 
         field = {
             "form_class": None,
