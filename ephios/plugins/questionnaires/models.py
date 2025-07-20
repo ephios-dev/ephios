@@ -67,20 +67,16 @@ class Question(models.Model):
 
         field = {
             "form_class": None,
-            "form_kwargs": {},
+            "form_kwargs": {
+                "label": self.question_text,
+                "help_text": self.description,
+                "initial": initial,
+                "required": required,
+            },
             "serializer_class": None,
-            "serializer_kwargs": {},
-        }
-
-        field["form_kwargs"] = {
-            "label": self.question_text,
-            "help_text": self.description,
-            "initial": initial,
-            "required": required,
-        }
-
-        field["serializer_kwargs"] = {
-            "required": required,
+            "serializer_kwargs": {
+                "required": required,
+            },
         }
 
         match self.type:
