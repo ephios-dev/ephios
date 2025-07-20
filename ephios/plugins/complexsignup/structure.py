@@ -489,17 +489,19 @@ def _build_atomic_block_structure(
             aux_score=1,
         )
         participation = matching.participation_for_position(match_id) if matching else None
+        has_confirmed_participation = (
+            participation is not None
+            and participation.state == AbstractParticipation.States.CONFIRMED
+        )
         structure["signup_stats"] += SignupStats.ZERO.replace(
             min_count=int(required),
             max_count=1,
-            missing=bool(required and not participation),
-            free=bool(participation is None),
+            missing=int(required and not has_confirmed_participation),
+            free=int(not has_confirmed_participation),
             requested_count=bool(
                 participation and participation.state == AbstractParticipation.States.REQUESTED
             ),
-            confirmed_count=bool(
-                participation and participation.state == AbstractParticipation.States.CONFIRMED
-            ),
+            confirmed_count=has_confirmed_participation,
         )
         all_positions.append(p)
         structure["positions"].append(p)

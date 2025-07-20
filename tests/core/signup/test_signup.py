@@ -21,12 +21,38 @@ from ephios.plugins.baseshiftstructures.structure.uniform import UniformShiftStr
 from ephios.plugins.basesignupflows.flow.participant import InstantConfirmSignupFlow
 
 
-def test_signup_stats_addition(django_app):
+def test_signup_stats_addition():
     a = SignupStats(4, 2, 3, None, 5, None)
     b = SignupStats(5, 2, 3, 5, 5, 7)
     c = SignupStats(3, 2, 0, 2, None, 4)
     assert a + b == SignupStats(9, 4, 6, None, 10, None)
     assert b + c == SignupStats(8, 4, 3, 7, 5, 11)
+
+
+def test_signup_stats_full_count():
+    # default case
+    a = SignupStats(
+        requested_count=0,
+        confirmed_count=4,
+        min_count=4,
+        max_count=6,
+        missing=0,
+        free=2,
+    )
+    assert a.full_count == 6
+    assert a.required_count == 4
+
+    # overbooked with someone unqualified
+    b = SignupStats(
+        requested_count=0,
+        confirmed_count=6,
+        min_count=6,
+        max_count=7,
+        missing=1,
+        free=2,
+    )
+    assert b.full_count == 8
+    assert b.required_count == 7
 
 
 def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_volunteer):

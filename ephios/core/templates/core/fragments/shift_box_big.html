@@ -9,6 +9,20 @@
     {% url "core:shift_disposition" shift.pk as disposition_url %}
 {% endif %}
 
+{# the popover html needs to stay with the shift box, #}
+{# as it might be rendered outside of the event detail view #}
+<div id="statsexplainer-popover-title-{{ shift.id }}" class="d-none"></div>
+<div id="statsexplainer-popover-content-{{ shift.id }}" class="d-none">
+    <i class="far fa-circle text-body-secondary"></i>
+    {% translate "participants needed" %}
+    <br>
+    <i class="far fa-check-circle text-body-secondary"></i>
+    {% translate "enough participants" %}
+    <br/>
+    <i class="fa fa-check-circle text-body-secondary"></i>
+    {% translate "full" %}
+</div>
+
 <div id="shift-{{ shift.pk }}" class="card h-100 shift_box">
     {% setvar request|participation_from_request:shift as participation %}
     {% include "core/fragments/shift_header.html" with shift=shift participation=participation %}
@@ -19,9 +33,25 @@
             </span>
         {% endif %}
         {% with stats=shift.get_signup_stats %}
-            <span class="text-body-secondary float-end pe-1">
+            <span class="text-body-secondary float-end"
+                  data-bs-container="body"
+                  data-bs-toggle="popover"
+                  data-bs-trigger="hover"
+                  data-bs-placement="right"
+                  data-bs-content-ref="#statsexplainer-popover-content-{{ shift.id }}"
+                  data-bs-title-ref="#statsexplainer-popover-title-{{ shift.id }}"
+            >
                 <i class="fas fa-users"></i>
-                <strong>{{ stats.confirmed_count }}{% if stats.max_count %}/{{ stats.max_count }}{% endif %}</strong>
+                <strong>{{ stats.confirmed_count }}{% if stats.full_count %}/{{ stats.full_count }}{% endif %}</strong>
+                <span>
+                    {% if not stats.has_free %}
+                        <i class="fa fa-check-circle"></i>
+                    {% elif not stats.missing %}
+                        <i class="far fa-check-circle"></i>
+                    {% else %}
+                        <i class="far fa-circle "></i>
+                    {% endif %}
+                </span>
             </span>
         {% endwith %}
     </div>

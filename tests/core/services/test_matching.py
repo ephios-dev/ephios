@@ -41,7 +41,7 @@ def test_designated_unqualified(qualifications):
 
 def test_maximise_number_of_matches_in_adverse_case():
     """
-    Test that the matching algorithm maximizes the number of matches even if that means qualificaitons aren't
+    Test that the matching algorithm maximizes the number of matches even if that means qualifications aren't
     utilized in the best way possible.
     For this, we create an adverse szenario:
 
