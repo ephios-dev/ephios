@@ -1,5 +1,6 @@
 import itertools
 import logging
+import uuid
 from collections import defaultdict
 from functools import cached_property, partial
 from operator import attrgetter
@@ -162,6 +163,10 @@ class StartingBlockForm(forms.Form):
     )
     title = forms.CharField(label=_("Title"), required=False)
     optional = forms.BooleanField(label=_("optional"), required=False)
+    uuid = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def clean_uuid(self):
+        return self.cleaned_data.get("uuid") or uuid.uuid4()
 
 
 StartingBlocksFormset = forms.formset_factory(
@@ -262,8 +267,11 @@ class ComplexShiftStructure(
     @cached_property
     def _starting_blocks(self):
         """
-        Returns list of tuples of Building Block, title and optional.
-        If there is no title, uses None.
+        Returns list of tuples of identifier, Building Block, title and optional.
+        If there is no title, uses None. The identifier is a uuid kept per starting block
+        and allows for later title/order change without losing disposition info.
+        A block change is considered breaking and will trigger a change in identifier, because
+        qualifications might not match afterwards.
         """
         qs = BuildingBlock.objects.all()
         id_to_block = {
@@ -273,12 +281,13 @@ class ComplexShiftStructure(
             )
         }
         starting_blocks = []
-        for idx, unit in enumerate(self.configuration.starting_blocks):
+        for unit in self.configuration.starting_blocks:
             if unit["building_block"] not in id_to_block:
                 continue  # block missing from DB
+            identifier = f"{unit['building_block']}-{unit['uuid']}".replace("-", ".")
             starting_blocks.append(
                 (
-                    idx,
+                    identifier,
                     id_to_block[unit["building_block"]],
                     unit["title"],
                     unit["optional"],
@@ -596,10 +605,10 @@ def convert_blocks_to_positions(starting_blocks, participations, matching=None):
         "qualification_label": "",
     }
     opt_counter = defaultdict(partial(itertools.count, 1))
-    for idx, block, title, optional in starting_blocks:
+    for identifier, block, title, optional in starting_blocks:
         positions, sub_structure = _search_block(
             block,
-            path=f"{root_path}{idx}-",
+            path=f"{root_path}{identifier}-",
             level=1,
             path_optional=optional,
             required_qualifications=set(),
