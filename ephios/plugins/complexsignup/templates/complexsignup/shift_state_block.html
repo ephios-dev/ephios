@@ -36,17 +36,17 @@
                   data-bs-toggle="popover"
                   data-bs-trigger="hover"
                   data-bs-placement="right"
-                  data-bs-content-ref="#structuregroups-popover-content-{{ shift.id }}"
-                  data-bs-title-ref="#structuregroups-popover-title-{{ shift.id }}"
+                  data-bs-content-ref="#statsexplainer-popover-content-{{ shift.id }}"
+                  data-bs-title-ref="#statsexplainer-popover-title-{{ shift.id }}"
             >
                 {{ current.signup_stats|format_min_max_count }}
                 {{ current.qualification_label }}
-                {% if not current|has_complex_free:shift %}
-                    <i class="fa fa-check-circle"></i>
-                {% elif current.signup_stats.missing <= 0 %}
+                {% if current.signup_stats.missing > 0 %}
+                    <i class="far fa-circle "></i>
+                {% elif current|has_complex_free:shift %}
                     <i class="far fa-check-circle"></i>
                 {% else %}
-                    <i class="far fa-circle "></i>
+                    <i class="fa fa-check-circle"></i>
                 {% endif %}
             </span>
         </span>

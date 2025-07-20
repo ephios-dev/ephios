@@ -6,6 +6,39 @@ from django.utils.functional import classproperty
 
 @dataclasses.dataclass(frozen=True)
 class SignupStats:
+    """
+    SignupStats store counts about "fullness" of personnel structures.
+    They can be combined using the `add`-operation.
+
+    `requested_count` and `confirmed_count` store the amount of
+    requested and confirmed participants respectively.
+
+    Considering only confirmed participations, `missing` counts the
+    number of open positions that are required in the shift, while
+    `free` counts the number of open positions including those not required.
+    If there is no imposed maximum on the number of participations,
+    `free` will be None.
+    `min_count` and `max_count` store the minimum and maximum number
+    of participants (None meaning no min specified/infinite maximum).
+
+    We store missing and free separate from min and max to allow for
+    correct composition. If for example there are two shifts, one
+    with 3 confirmed for a min of 2, and another with
+    1 confirmed and a min of 2, just adding the numbers would give you
+    4 confirmed for a min of 4. While that is true, the fact that
+    someone is missing was lost.
+
+    When showing something like "5/5 people found", the
+    latter number should commonly be max, as min might be misleading
+    as mentioned above. Also, using `max_count` might
+    give you wrong results if the shift contains an unqualified
+    participant and still has an open position.
+    Use the dynamic `full_count` instead. If you instead want
+    the minimum number of participants required so all missing spots
+    are filled, use the dynamic `required_count`. Displaying `free`
+    and `missing` might be more understandable though.
+    """
+
     requested_count: int
     confirmed_count: int
     missing: int
@@ -33,6 +66,28 @@ class SignupStats:
 
     def has_free(self):
         return self.free is None or self.free > 0
+
+    @property
+    def full_count(self):
+        """
+        Returns the maximum number of participants so the object is considered full.
+        This can be different from `max_count`, if e.g. someone dispatched an
+        unqualified volunteer, so there is still an open spot.
+        """
+        if self.max_count is None or self.free is None:
+            return None
+        return max(
+            self.max_count,
+            self.confirmed_count + self.free,
+        )
+
+    @property
+    def required_count(self):
+        """
+        Returns the minimum number of participants needed so every
+        required position in the object could be accounted for.
+        """
+        return self.confirmed_count + self.missing
 
     def __add__(self, other: "SignupStats"):
         free = self.free + other.free if self.free is not None and other.free is not None else None
