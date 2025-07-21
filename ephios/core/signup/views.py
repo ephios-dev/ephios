@@ -9,7 +9,9 @@ from ephios.core.models import Shift
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
+from ephios.core.signals import signup_save
 from ephios.core.signup.flow.participant_validation import BaseSignupError
+from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.extra.database import OF_SELF
 
@@ -23,9 +25,7 @@ class SignupView(FormView):
 
     shift: Shift = ...
     template_name = "core/signup.html"
-
-    def get_form_class(self):
-        return self.shift.structure.signup_form_class
+    form_class = SignupForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -60,17 +60,27 @@ class SignupView(FormView):
                     .get(pk=self.shift.pk)
                     .signup_flow.get_validator(self.participant)
                 )
-                if choice == "sign_up" and validator.can_sign_up():
+                if choice == SignupForm.SignupChoices.SIGNUP and validator.can_sign_up():
                     return self.signup_pressed(form)
-                if choice == "customize" and validator.can_customize_signup():
+                if (
+                    choice == SignupForm.SignupChoices.CUSTOMIZE
+                    and validator.can_customize_signup()
+                ):
                     return self.customize_pressed(form)
-                if choice == "decline" and validator.can_decline():
+                if choice == SignupForm.SignupChoices.DECLINE and validator.can_decline():
                     return self.decline_pressed(form)
                 messages.error(self.request, _("This action is not allowed."))
         return self.form_invalid(form)
 
     def customize_pressed(self, form):
-        form.save()
+        participation = form.save()
+        signup_save.send(
+            sender=None,
+            shift=self.shift,
+            participant=self.participant,
+            participation=participation,
+            cleaned_data=form.cleaned_data,
+        )
         if claims := form.get_customization_notification_info():
             ResponsibleConfirmedParticipationCustomizedNotification.send(form.instance, claims)
         messages.success(self.request, _("Your participation was saved."))
@@ -79,6 +89,13 @@ class SignupView(FormView):
     def signup_pressed(self, form):
         try:
             participation = form.save()
+            signup_save.send(
+                sender=None,
+                shift=self.shift,
+                participant=self.participant,
+                participation=participation,
+                cleaned_data=form.cleaned_data,
+            )
             self.shift.signup_flow.perform_signup(
                 self.participant, participation, **form.cleaned_data
             )
@@ -97,6 +114,13 @@ class SignupView(FormView):
     def decline_pressed(self, form):
         try:
             participation = form.save()
+            signup_save.send(
+                sender=None,
+                shift=self.shift,
+                participant=self.participant,
+                participation=participation,
+                cleaned_data=form.cleaned_data,
+            )
             self.shift.signup_flow.perform_decline(
                 self.participant, participation, **form.cleaned_data
             )

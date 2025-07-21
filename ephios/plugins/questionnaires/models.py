@@ -1,0 +1,163 @@
+from django import forms
+from django.db import models
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2MultipleWidget, Select2Widget
+from rest_framework import serializers
+
+from ephios.core.models.events import AbstractParticipation, Shift
+from ephios.core.models.users import UserProfile
+from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
+
+
+class Question(models.Model):
+    class Type(models.TextChoices):
+        TEXT = "text", _("Text input")
+        SINGLE = "single", _("Single choice")
+        MULTIPLE = "multiple", _("Multiple choice")
+
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_("Name"),
+        help_text=_(
+            "The name of the question is used to identify the question, for example when picking questions for a shift"
+        ),
+    )
+    question_text = models.CharField(max_length=250, verbose_name=_("Question"))
+    description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
+    required = models.BooleanField(
+        verbose_name=_("Required"),
+        help_text=_("Whether users must submit an answer to this question"),
+    )
+    type = models.CharField(
+        max_length=20, verbose_name=_("Type"), choices=Type.choices, default=Type.TEXT
+    )
+    choices = models.JSONField(default=list, verbose_name=_("Choices"))
+
+    class Meta:
+        verbose_name = _("Question")
+        verbose_name_plural = _("Questions")
+
+    def __str__(self):
+        return str(self.name)
+
+    def get_signup_form_field(
+        self, participant: AbstractParticipant, participation: AbstractParticipation, signup_choice
+    ):
+        # Restore answer from participation (when editing) or the user's saved answers (if local participant)
+        if existing_answer := Answer.objects.filter(
+            participation_id=participation.pk, question=self
+        ).first():
+            initial = existing_answer.answer
+        elif saved_answer := (
+            SavedAnswer.objects.filter(user=participant.user, question=self).first()
+            if isinstance(participant, LocalUserParticipant)
+            else None
+        ):
+            initial = saved_answer.answer
+        else:
+            initial = None
+
+        # Reset answer if selected option does not exist
+        if self.type in [self.Type.SINGLE, self.Type.MULTIPLE] and initial not in self.choices:
+            initial = None
+
+        field_name = self.get_form_slug()
+        required = self.required if initial is None else False
+
+        field = {
+            "form_class": None,
+            "form_kwargs": {
+                "label": self.question_text,
+                "help_text": self.description,
+                "initial": initial,
+                "required": required,
+            },
+            "serializer_class": None,
+            "serializer_kwargs": {
+                "required": required,
+            },
+        }
+
+        match self.type:
+            case self.Type.TEXT:
+                field["form_class"] = forms.CharField
+                field["serializer_class"] = serializers.CharField
+                # pylint: disable=protected-access
+                max_length = Answer._meta.get_field("answer").max_length
+                field["form_kwargs"]["max_length"] = max_length
+                field["serializer_kwargs"]["max_length"] = max_length
+            case self.Type.SINGLE:
+                field["form_class"] = forms.ChoiceField
+                field["serializer_class"] = serializers.ChoiceField
+                field["form_kwargs"]["widget"] = (
+                    forms.RadioSelect if len(self.choices) <= 5 else Select2Widget
+                )
+            case self.Type.MULTIPLE:
+                field["form_class"] = forms.MultipleChoiceField
+                field["serializer_class"] = serializers.MultipleChoiceField
+                field["form_kwargs"]["widget"] = Select2MultipleWidget
+
+        if self.type != self.Type.TEXT:
+            assert isinstance(
+                self.choices, list
+            ), f"The choices of question {self.name} are not a list"
+            # We're intentionally using the plain `choice` as choice key and don't convert it into a slug or similar.
+            # This is uncommon but seems to be the best solution with choices from (potentially changing) user input
+            # pylint: disable=not-an-iterable
+            choices = [(choice, choice) for choice in self.choices]
+            field["form_kwargs"]["choices"] = choices
+            field["serializer_kwargs"]["choices"] = choices
+
+        return field_name, field
+
+    def get_form_slug(self):
+        return "questionnaires_" + slugify(f"{self.pk} {self.name}")
+
+    @staticmethod
+    def get_pk_from_slug(slug: str):
+        """
+        Returns the questions' pk from a form field slug  generated by `Question.get_form_slug`.
+        These slugs have the format `questionnaires_123-demo-question`.
+
+        For this slug, this method would return `123`.
+        """
+        return int(slug.split("_", maxsplit=1)[1].split("-")[0])
+
+
+class Questionnaire(models.Model):
+    shift = models.OneToOneField(Shift, on_delete=models.CASCADE)
+    questions = models.ManyToManyField(Question, blank=True)
+
+    class Meta:
+        verbose_name = _("Questionnaire")
+        verbose_name_plural = _("Questionnaires")
+
+    def __str__(self):
+        return f"{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}"
+
+
+class Answer(models.Model):
+    participation = models.ForeignKey(AbstractParticipation, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+
+    class Meta:
+        verbose_name = _("Answer")
+        verbose_name_plural = _("Answers")
+
+    def __str__(self):
+        return f'{self.question}: "{self.answer}" ({self.participation})'
+
+
+class SavedAnswer(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+
+    class Meta:
+        verbose_name = _("Saved answer")
+        verbose_name_plural = _("Saved answers")
+
+    def __str__(self):
+        return f'{self.question}: "{self.answer}" ({self.user})'
