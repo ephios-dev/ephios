@@ -60,11 +60,14 @@ class SignupView(FormView):
                     .get(pk=self.shift.pk)
                     .signup_flow.get_validator(self.participant)
                 )
-                if choice == "sign_up" and validator.can_sign_up():
+                if choice == SignupForm.SignupChoices.SIGNUP and validator.can_sign_up():
                     return self.signup_pressed(form)
-                if choice == "customize" and validator.can_customize_signup():
+                if (
+                    choice == SignupForm.SignupChoices.CUSTOMIZE
+                    and validator.can_customize_signup()
+                ):
                     return self.customize_pressed(form)
-                if choice == "decline" and validator.can_decline():
+                if choice == SignupForm.SignupChoices.DECLINE and validator.can_decline():
                     return self.decline_pressed(form)
                 messages.error(self.request, _("This action is not allowed."))
         return self.form_invalid(form)
@@ -122,6 +125,13 @@ class SignupView(FormView):
     def decline_pressed(self, form):
         try:
             participation = form.save()
+            signup_save.send(
+                sender=None,
+                shift=self.shift,
+                participant=self.participant,
+                participation=participation,
+                cleaned_data=form.cleaned_data,
+            )
             self.shift.signup_flow.perform_decline(
                 participant=self.participant,
                 participation=participation,
