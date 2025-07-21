@@ -31,7 +31,13 @@
                                 <span class="text-muted">{{ question.question_text }}</span>
                             </div>
                             <div class="col-auto col-lg-4">
-                                <span class="fas fa-pencil-alt"></span>
+                                {% if question.type == "text" %}
+                                    <span class="fas fa-pencil-alt"></span>
+                                {% elif question.type == "single" %}
+                                    <span class="fas fa-list"></span>
+                                {% elif question.type == "multiple" %}
+                                    <span class="fas fa-tasks"></span>
+                                {% endif %}
                                 {{ question.get_type_display }}
                             </div>
                         </div>
