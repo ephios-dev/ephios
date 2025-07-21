@@ -341,19 +341,16 @@ class ComplexShiftStructure(
 
         complex_structure = self.shift.structure
         complex_structure._assume_cache()
-        choices = [
-            (b["path"], b["display_with_path"])
-            for b in atomic_block_participant_qualifies_for(
-                complex_structure._structure, participant
-            )
-        ]
+
+        allowed_blocks = atomic_block_participant_qualifies_for(
+            complex_structure._structure, participant
+        )
+
+        choices = [(b["path"], b["display_with_path"]) for b in allowed_blocks]
 
         help_text = ""
         unqualified_blocks = [
-            b
-            for b in iter_atomic_blocks(complex_structure._structure)
-            if b
-            not in atomic_block_participant_qualifies_for(complex_structure._structure, participant)
+            b for b in iter_atomic_blocks(complex_structure._structure) if b not in allowed_blocks
         ]
         if unqualified_blocks:
             help_text = _("You don't qualify for {blocks}.").format(
