@@ -383,7 +383,7 @@ class ComplexShiftStructure(
         participation.structure_data["preferred_unit_path"] = cleaned_data[
             "complexsignup_preferred_unit_path"
         ]
-        participation.save()
+        participation.save(update_fields=["structure_data"])
 
 
 def _build_display_name_long(block_name, composed_label, number):

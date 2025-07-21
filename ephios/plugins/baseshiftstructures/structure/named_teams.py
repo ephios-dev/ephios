@@ -345,7 +345,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         return export_data
 
     def get_signup_form_fields(self, shift, participant, participation, signup_choice):
-        team_stats = shift.structure._get_signup_stats_per_group(shift.participations.all())
+        team_stats = self._get_signup_stats_per_group(shift.participations.all())
         enabled_teams = []
         not_qualified_teams = []
         full_teams = []
@@ -408,4 +408,4 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         participation.structure_data["preferred_team_uuid"] = cleaned_data[
             "baseshiftstructures_named_teams_preferred_team_uuid"
         ]
-        participation.save()
+        participation.save(update_fields=["structure_data"])
