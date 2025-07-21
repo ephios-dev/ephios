@@ -124,6 +124,10 @@ def save_signup(
     cleaned_data,
     **kwargs
 ):
+    if cleaned_data["signup_choice"] == SignupForm.SignupChoices.DECLINE:
+        Answer.objects.delete(participation=participation)
+        return
+
     save_answers = (
         cleaned_data.get("questionnaires_save_answers")
         if isinstance(participant, LocalUserParticipant)

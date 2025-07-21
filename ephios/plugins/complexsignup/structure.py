@@ -312,10 +312,11 @@ class ComplexShiftStructure(
         }
 
     def save_signup(self, shift, participant, participation, cleaned_data):
-        participation.structure_data["preferred_unit_path"] = self.cleaned_data[
-            "complexsignup_preferred_unit_path"
-        ]
-        participation.save(update_fields=["structure_data"])
+        if cleaned_data["signup_choice"] != SignupForm.SignupChoices.DECLINE:
+            participation.structure_data["preferred_unit_path"] = self.cleaned_data[
+                "complexsignup_preferred_unit_path"
+            ]
+            participation.save(update_fields=["structure_data"])
 
 
 def _search_block(
