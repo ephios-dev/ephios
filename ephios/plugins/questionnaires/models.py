@@ -150,7 +150,7 @@ class Answer(models.Model):
 
 class SavedAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.CharField(max_length=100, verbose_name=_("Answer"))
 
     class Meta:
