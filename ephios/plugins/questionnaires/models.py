@@ -102,6 +102,8 @@ class Question(models.Model):
             assert isinstance(
                 self.choices, list
             ), f"The choices of question {self.name} are not a list"
+            # We're intentionally using the plain `choice` as choice key and don't convert it into a slug or similar.
+            # This is uncommon but seems to be the best solution with choices from (potentially changing) user input
             # pylint: disable=not-an-iterable
             choices = [(choice, choice) for choice in self.choices]
             field["form_kwargs"]["choices"] = choices
