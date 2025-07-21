@@ -26,7 +26,8 @@
     {% if oidc_group_claims %}
         <div class="alert alert-warning" role="alert">
             {% blocktranslate trimmed with platform=platform_name %}
-                This {{ platform }} instance uses an identity provider that manages group memberships. Any changes to the group
+                This {{ platform }} instance uses an identity provider that manages group memberships. Any changes to
+                the group
                 memberships here will be overwritten by the identity provider when a user logs in the next time using
                 the identity provider.
             {% endblocktranslate %}
@@ -84,7 +85,9 @@
                                     <div class="col-md-1">
                                         <button class="btn btn-link" type="button"
                                                 data-formset-delete-button><span
-                                            class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+                                            class="fas fa-trash-alt"></span>
+                                            <span class="sr-only">{% translate "Delete" %}</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="d-none">{{ form.DELETE }}</div>
@@ -113,7 +116,9 @@
                     <div class="col-md-1">
                     <button class="btn btn-link" type="button"
                     data-formset-delete-button><span
-                    class="fas fa-trash-alt"></span> {% translate "Delete" %}</button>
+                    class="fas fa-trash-alt"></span>
+                    <span class="sr-only">{% translate "Delete" %}</span>
+                    </button>
                     </div>
                     </div>
                     <div class="d-none">{{ qualification_formset.empty_form.DELETE }}</div>

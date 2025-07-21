@@ -74,12 +74,9 @@ class SignupStats:
         This can be different from `max_count`, if e.g. someone dispatched an
         unqualified volunteer, so there is still an open spot.
         """
-        if self.max_count is None or self.free is None:
+        if self.free is None:
             return None
-        return max(
-            self.max_count,
-            self.confirmed_count + self.free,
-        )
+        return self.confirmed_count + self.free
 
     @property
     def required_count(self):

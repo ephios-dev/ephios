@@ -21,7 +21,7 @@ def adjust_multiblock(apps, schema_editor):
         block_pk = old_data["building_block"]
         new_block = {
             "building_block": block_pk,
-            "title": "",
+            "label": "",
             "optional": False,
             "uuid": uuid.uuid4(),
         }
@@ -37,11 +37,10 @@ def adjust_multiblock(apps, schema_editor):
                 old_path = participation.structure_data.get(field_name)
                 if not old_path or len(old_path) < 5:
                     continue
-                # we inserted an index number for multiple starting blocks
-                # a number that was root-16-18 should now be root-<identifier>-16-18
-                # so we replace "root" with "root-<identifier>"
-                identifier = f"{new_block['building_block']}-{new_block['uuid']}".replace("-", ".")
-                new_path = f"root-{identifier}{old_path[4:]}"
+                # we inserted a uuid for having multiple starting blocks in the path and
+                # switched to "." as a seperator.
+                # What was root-16-18 should now be root.<uuid>.16.18:
+                new_path = f"root.{new_block['uuid']}{old_path[4:].replace('-', '.')}"
                 participation.structure_data[field_name] = new_path
             participation.save()
 
