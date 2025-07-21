@@ -318,7 +318,7 @@ class ComplexShiftStructure(
         participation.structure_data["preferred_unit_path"] = self.cleaned_data[
             "complexsignup_preferred_unit_path"
         ]
-        participation.save()
+        participation.save(update_fields=["structure_data"])
 
 
 def _search_block(
