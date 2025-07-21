@@ -45,17 +45,6 @@ def atomic_block_participant_qualifies_for(structure, participant: AbstractParti
     ]
 
 
-def _build_human_path(structure):
-    # put the atomic block display name first, in case the whole path gets cut off
-    if structure["display"] != structure["name"]:
-        s = f"{structure['display']} - {structure['name']} #{structure['number']}"
-    else:
-        s = f"{structure['name']} #{structure['number']}"
-    if parents := [s["display"] for s in reversed(structure["parents"])]:
-        s += " (" + " » ".join(parents) + ")"  # using an f-string here broke CI in py3.10 to 3.12
-    return s
-
-
 class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
     disposition_participation_template = "complexsignup/fragment_participation.html"
     unit_path = forms.ChoiceField(
@@ -71,23 +60,22 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
         qualified_blocks = atomic_block_participant_qualifies_for(
             complex_structure._structure, self.instance.participant
         )
-        unqualified_blocks = [
-            b for b in iter_atomic_blocks(complex_structure._structure) if b not in qualified_blocks
-        ]
+        all_blocks = list(iter_atomic_blocks(complex_structure._structure))
+        unqualified_blocks = [b for b in all_blocks if b not in qualified_blocks]
 
         self.fields["unit_path"].choices = [("", _("auto"))]
         if qualified_blocks:
             self.fields["unit_path"].choices += [
                 (
                     _("qualified"),
-                    [(b["path"], _build_human_path(b)) for b in qualified_blocks],
+                    [(b["path"], b["display_with_path"]) for b in qualified_blocks],
                 )
             ]
         if unqualified_blocks:
             self.fields["unit_path"].choices += [
                 (
                     _("unqualified"),
-                    [(b["path"], _build_human_path(b)) for b in unqualified_blocks],
+                    [(b["path"], b["display_with_path"]) for b in unqualified_blocks],
                 )
             ]
         if preferred_unit_path := self.instance.structure_data.get("preferred_unit_path"):
@@ -95,10 +83,10 @@ class ComplexDispositionParticipationForm(BaseDispositionParticipationForm):
                 preferred_block = next(
                     filter(
                         lambda b: b["path"] == preferred_unit_path,
-                        iter_atomic_blocks(complex_structure._structure),
+                        all_blocks,
                     )
                 )
-                self.preferred_unit_name = _build_human_path(preferred_block)
+                self.preferred_unit_name = preferred_block["display_with_path"]
             except StopIteration:
                 pass  # preferred block not found
         if initial := self.instance.structure_data.get("dispatched_unit_path"):
@@ -128,7 +116,7 @@ class ComplexSignupForm(BaseSignupForm):
         complex_structure = self.shift.structure
         complex_structure._assume_cache()
         self.fields["preferred_unit_path"].choices = [
-            (b["path"], _build_human_path(b))
+            (b["path"], b["display_with_path"])
             for b in self.blocks_participant_qualifies_for(complex_structure._structure)
         ]
         unqualified_blocks = [
@@ -139,7 +127,7 @@ class ComplexSignupForm(BaseSignupForm):
         if unqualified_blocks:
             self.fields["preferred_unit_path"].help_text = _(
                 "You don't qualify for {blocks}."
-            ).format(blocks=", ".join(set(_build_human_path(b) for b in unqualified_blocks)))
+            ).format(blocks=", ".join(set(b["display_with_path"] for b in unqualified_blocks)))
 
     def save(self, commit=True):
         self.instance.structure_data["preferred_unit_path"] = self.cleaned_data[
@@ -161,7 +149,7 @@ class StartingBlockForm(forms.Form):
         ),
         queryset=BuildingBlock.objects.all(),
     )
-    title = forms.CharField(label=_("Title"), required=False)
+    label = forms.CharField(label=_("Label"), required=False)
     optional = forms.BooleanField(label=_("optional"), required=False)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -197,7 +185,7 @@ class ComplexConfigurationForm(AbstractGroupBasedStructureConfigurationForm):
     @classmethod
     def format_formset_item(cls, item):
         try:
-            return item["title"] or item["building_block"].name
+            return item["label"] or item["building_block"].name
         except AttributeError:
             # building block is an id
             try:
@@ -267,9 +255,9 @@ class ComplexShiftStructure(
     @cached_property
     def _starting_blocks(self):
         """
-        Returns list of tuples of identifier, Building Block, title and optional.
-        If there is no title, uses None. The identifier is a uuid kept per starting block
-        and allows for later title/order change without losing disposition info.
+        Returns list of tuples of identifier, Building Block, label and optional.
+        If there is no label, uses None. The identifier is a uuid kept per starting block
+        and allows for later label/order change without losing disposition info.
         A block change is considered breaking and will trigger a change in identifier, because
         qualifications might not match afterwards.
         """
@@ -284,12 +272,11 @@ class ComplexShiftStructure(
         for unit in self.configuration.starting_blocks:
             if unit["building_block"] not in id_to_block:
                 continue  # block missing from DB
-            identifier = f"{unit['building_block']}-{unit['uuid']}".replace("-", ".")
             starting_blocks.append(
                 (
-                    identifier,
+                    unit["uuid"],
                     id_to_block[unit["building_block"]],
-                    unit["title"],
+                    unit["label"],
                     unit["optional"],
                 )
             )
@@ -378,10 +365,23 @@ class ComplexShiftStructure(
                     {
                         "participation": participation,
                         "required_qualifications": position.required_qualifications,
-                        "description": _build_human_path(block),
+                        "description": block["display_with_path"],
                     }
                 )
         return export_data
+
+
+def _build_display_name_long(block_name, composed_label, number):
+    if composed_label and composed_label != block_name:
+        return f"{composed_label} - {block_name} #{number}"
+    return f"{block_name} #{number}"
+
+
+def _build_display_path(parents, display_long):
+    # put the display name first, in case the whole path gets cut off
+    if parents := [s["display_short"] for s in reversed(parents)]:
+        return f"{display_long} ({' » '.join(parents)})"
+    return display_long
 
 
 def _search_block(
@@ -404,6 +404,8 @@ def _search_block(
         required_here |= set(requirement.qualifications.all())
 
     all_positions = []
+    number = next(opt_counter[block.name])
+    display_long = _build_display_name_long(block.name, composed_label, number)
     structure = {
         "is_composite": block.is_composite(),
         "positions": [],
@@ -414,8 +416,10 @@ def _search_block(
         "optional": path_optional,
         "name": block.name,
         "label": composed_label,
-        "display": composed_label or block.name,
-        "number": next(opt_counter[block.name]),
+        "display_short": composed_label or block.name,
+        "display_long": display_long,
+        "display_with_path": _build_display_path(parents, display_long),
+        "number": number,
         "qualification_label": ", ".join(q.abbreviation for q in required_here),
         "qualification_ids": {q.id for q in required_here},
         "parents": parents,
@@ -435,7 +439,7 @@ def _search_block(
         ):
             positions, sub_structure = _search_block(
                 block=composition.sub_block,
-                path=f"{path}{composition.id}-",
+                path=f"{path}{composition.id}.",
                 level=level + 1,
                 required_qualifications=required_here,
                 path_optional=path_optional or composition.optional,
@@ -591,7 +595,7 @@ def convert_blocks_to_positions(starting_blocks, participations, matching=None):
     """
     If a matching is provided, the signup stats will have correct participation counts
     """
-    root_path = "root-"
+    root_path = "root."
     all_positions = []
     structure = {
         "is_composite": True,  # root block is "virtual" and always composite
@@ -605,10 +609,10 @@ def convert_blocks_to_positions(starting_blocks, participations, matching=None):
         "qualification_label": "",
     }
     opt_counter = defaultdict(partial(itertools.count, 1))
-    for identifier, block, title, optional in starting_blocks:
+    for identifier, block, label, optional in starting_blocks:
         positions, sub_structure = _search_block(
             block,
-            path=f"{root_path}{identifier}-",
+            path=f"{root_path}{identifier}.",
             level=1,
             path_optional=optional,
             required_qualifications=set(),
@@ -616,7 +620,7 @@ def convert_blocks_to_positions(starting_blocks, participations, matching=None):
             opt_counter=opt_counter,
             matching=matching,
             parents=[],
-            composed_label=title,
+            composed_label=label,
         )
         all_positions.extend(positions)
         structure["sub_blocks"].append(sub_structure)

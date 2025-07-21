@@ -29,7 +29,7 @@ def format_min_max_count_filter(signup_stats: SignupStats):
 def has_complex_free(atomic_block_structure, shift):
     """
     This does a "has_free" check similar to the one in qualification mix. It answers the question:
-    Could another participant sign up for this atomic block?
+    Could another participant sign up for this basic unit?
     """
 
     # assume the participant has every qualification needed in this block

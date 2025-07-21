@@ -22,10 +22,10 @@
     <div>
         <span class="pe-1">
             <span class="fw-medium">
-                {{ current.label|default:current.name|default:"" }}
+                {{ current.display_short }}
             </span>
             <small class="fw-light text-body-secondary">
-                {% if current.display != current.name %}
+                {% if current.display_short != current.name %}
                     {{ current.name }} #{{ current.number }}
                 {% else %}
                     #{{ current.number }}

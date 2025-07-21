@@ -186,7 +186,7 @@
                             </div>
                         </li>
                         <li class="list-group-item list-group-item-secondary text-center">
-                            {% translate "Add items using the buttons in the list" %}
+                            {% translate "Add subunits using the buttons in the list" %}
                         </li>
                     </ul>
                     <div v-if="currentBlock.block_type === 'atomic'" class="mb-3 form-check d-inline-block">
@@ -288,12 +288,12 @@
                 <button class="btn btn-sm btn-secondary me-1 flex-grow-1" type="button" id="add-block"
                         @click="addBlock('atomic')">
                     <i class="fa fa-list-ul"></i>
-                    {% translate "Add atomic block" %}
+                    {% translate "Add basic unit" %}
                 </button>
                 <button class="btn btn-sm btn-secondary flex-grow-1" type="button" id="add-block"
                         @click="addBlock('composite')">
                     <i class="fa fa-network-wired"></i>
-                    {% translate "Add composite block" %}
+                    {% translate "Add composite unit" %}
                 </button>
             </div>
             <input type="text" name="asdasdui" id="asdisajd" class="form-control form-control-sm mt-2"
