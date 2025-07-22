@@ -41,10 +41,51 @@ class Question(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def get_signup_form_field(
-        self, participant: AbstractParticipant, participation: AbstractParticipation, signup_choice
+    def _get_field_classes(self):
+        match self.type:
+            case self.Type.TEXT:
+                return forms.CharField, serializers.CharField
+            case self.Type.SINGLE:
+                return forms.ChoiceField, serializers.ChoiceField
+            case self.Type.MULTIPLE:
+                return forms.MultipleChoiceField, serializers.MultipleChoiceField
+
+    def _get_field_kwargs(self):
+        form_kwargs = {}
+        serializer_kwargs = {}
+
+        match self.type:
+            case self.Type.TEXT:
+                max_length = 100
+                form_kwargs["max_length"] = max_length
+                serializer_kwargs["max_length"] = max_length
+            case self.Type.SINGLE:
+                form_kwargs["widget"] = (
+                    forms.RadioSelect if len(self.choices) <= 5 else Select2Widget
+                )
+            case self.Type.MULTIPLE:
+                form_kwargs["widget"] = Select2MultipleWidget
+
+        if self.type != self.Type.TEXT:
+            assert isinstance(
+                self.choices, list
+            ), f"The choices of question {self.name} are not a list"
+            # We're intentionally using the plain `choice` as choice key and don't convert it into a slug or similar.
+            # This is uncommon but seems to be the best solution with choices from (potentially changing) user input
+            # pylint: disable=not-an-iterable
+            choices = [(choice, choice) for choice in self.choices]
+            form_kwargs["choices"] = choices
+            serializer_kwargs["choices"] = choices
+
+        return form_kwargs, serializer_kwargs
+
+    def _get_initial_answer(
+        self, participant: AbstractParticipant, participation: AbstractParticipation
     ):
-        # Restore answer from participation (when editing) or the user's saved answers (if local participant)
+        """
+        Restores answer from participation (when editing) or the user's saved answers (if local participant)
+        """
+
         if existing_answer := Answer.objects.filter(
             participation_id=participation.pk, question=self
         ).first():
@@ -58,58 +99,67 @@ class Question(models.Model):
         else:
             initial = None
 
-        # Reset answer if selected option does not exist
-        if self.type in [self.Type.SINGLE, self.Type.MULTIPLE] and initial not in self.choices:
-            initial = None
+        # Reset answer it does not match the question type
+        match self.type:
+            case self.Type.TEXT:
+                if isinstance(initial, list):
+                    # Convert multiple answers if the question was a multiple choice question before
+                    initial = ", ".join(initial)
+            case self.Type.SINGLE:
+                if isinstance(initial, list):
+                    # Reset answer if the question was a multiple choice question before
+                    if len(initial) == 1:
+                        initial = initial[0]
+                    else:
+                        initial = None
+
+                if initial not in self.choices:
+                    # Reset answer if the option does not exist any more
+                    initial = None
+            case self.Type.MULTIPLE:
+                if isinstance(initial, str):
+                    # Convert single answer to multi-answer
+                    initial = [initial]
+
+                # Remove invalid answers
+                initial = [answer for answer in initial if answer in self.choices]
+
+        return initial
+
+    def get_signup_form_field(
+        self, participant: AbstractParticipant, participation: AbstractParticipation
+    ):
+        initial = self._get_initial_answer(participant, participation)
 
         field_name = self.get_form_slug()
         required = self.required if initial is None else False
 
+        field_classes = self._get_field_classes()
+        field_kwargs = self._get_field_kwargs()
+
         field = {
-            "form_class": None,
+            "form_class": field_classes[0],
             "form_kwargs": {
                 "label": self.question_text,
                 "help_text": self.description,
                 "initial": initial,
                 "required": required,
+                **field_kwargs[0],
             },
-            "serializer_class": None,
+            "serializer_class": field_classes[1],
             "serializer_kwargs": {
                 "required": required,
+                **field_kwargs[1],
             },
         }
 
-        match self.type:
-            case self.Type.TEXT:
-                field["form_class"] = forms.CharField
-                field["serializer_class"] = serializers.CharField
-                # pylint: disable=protected-access
-                max_length = Answer._meta.get_field("answer").max_length
-                field["form_kwargs"]["max_length"] = max_length
-                field["serializer_kwargs"]["max_length"] = max_length
-            case self.Type.SINGLE:
-                field["form_class"] = forms.ChoiceField
-                field["serializer_class"] = serializers.ChoiceField
-                field["form_kwargs"]["widget"] = (
-                    forms.RadioSelect if len(self.choices) <= 5 else Select2Widget
-                )
-            case self.Type.MULTIPLE:
-                field["form_class"] = forms.MultipleChoiceField
-                field["serializer_class"] = serializers.MultipleChoiceField
-                field["form_kwargs"]["widget"] = Select2MultipleWidget
-
-        if self.type != self.Type.TEXT:
-            assert isinstance(
-                self.choices, list
-            ), f"The choices of question {self.name} are not a list"
-            # We're intentionally using the plain `choice` as choice key and don't convert it into a slug or similar.
-            # This is uncommon but seems to be the best solution with choices from (potentially changing) user input
-            # pylint: disable=not-an-iterable
-            choices = [(choice, choice) for choice in self.choices]
-            field["form_kwargs"]["choices"] = choices
-            field["serializer_kwargs"]["choices"] = choices
-
         return field_name, field
+
+    def get_saved_answer_form_field(self):
+        field_classes = self._get_field_classes()
+        field_kwargs = self._get_field_kwargs()
+
+        return field_classes[0](**field_kwargs[0])
 
     def get_form_slug(self):
         return "questionnaires_" + slugify(f"{self.pk} {self.name}")
@@ -140,7 +190,7 @@ class Questionnaire(models.Model):
 class Answer(models.Model):
     participation = models.ForeignKey(AbstractParticipation, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.PROTECT)
-    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+    answer = models.JSONField(verbose_name=_("Answer"))
 
     class Meta:
         verbose_name = _("Answer")
@@ -153,7 +203,7 @@ class Answer(models.Model):
 class SavedAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.CharField(max_length=100, verbose_name=_("Answer"))
+    answer = models.JSONField(verbose_name=_("Answer"))
 
     class Meta:
         verbose_name = _("Saved answer")

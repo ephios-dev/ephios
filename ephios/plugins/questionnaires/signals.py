@@ -8,6 +8,7 @@ from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.signals import (
     nav_link,
     register_group_permission_fields,
+    settings_sections,
     shift_copy,
     shift_forms,
     signup_form_fields,
@@ -15,6 +16,7 @@ from ephios.core.signals import (
 )
 from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
+from ephios.core.views.settings import SETTINGS_PERSONAL_SECTION_KEY
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.questionnaires.forms import QuestionnaireForm
 from ephios.plugins.questionnaires.models import Answer, Question, Questionnaire, SavedAnswer
@@ -35,6 +37,20 @@ def add_nav_link(sender, request, **kwargs):
         if request.user.has_perm("questionnaires.view_question")
         else []
     )
+
+
+@receiver(settings_sections, dispatch_uid="ephios.plugins.questionnaires.signals.settings_sections")
+def add_settings_section(sender, request, **kwargs):
+    return [
+        {
+            "label": _("Saved answers"),
+            "url": reverse_lazy("questionnaires:saved_answers_list"),
+            "active": request.resolver_match
+            and request.resolver_match.app_name == "questionnaires"
+            and request.resolver_match.url_name == "saved_answers_list",
+            "group": SETTINGS_PERSONAL_SECTION_KEY,
+        }
+    ]
 
 
 @receiver(
@@ -94,8 +110,7 @@ def provide_signup_form_fields(
         else []
     )
     formfields = dict(
-        question.get_signup_form_field(participant, participation, signup_choice)
-        for question in questions
+        question.get_signup_form_field(participant, participation) for question in questions
     )
 
     if len(formfields) > 0 and isinstance(participant, LocalUserParticipant):

@@ -3,14 +3,13 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin
-from ephios.plugins.questionnaires.models import Answer, Question, Questionnaire
+from ephios.plugins.questionnaires.models import Question, Questionnaire, SavedAnswer
 
 
 class ChoiceForm(forms.Form):
     name = forms.CharField(
         label=_("Choice name"),
-        # pylint: disable=protected-access
-        max_length=Answer._meta.get_field("answer").max_length,
+        max_length=100,
     )
 
 
@@ -67,3 +66,14 @@ class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
 
     def is_function_active(self):
         return self.instance.pk and self.instance.questions.count() > 0
+
+
+class SavedAnswerForm(forms.ModelForm):
+    class Meta:
+        model = SavedAnswer
+        fields = ["answer"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["answer"] = self.instance.question.get_saved_answer_form_field()
