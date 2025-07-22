@@ -1,4 +1,5 @@
 import dataclasses
+import itertools
 from typing import Collection, Optional
 
 from django.utils.functional import cached_property
@@ -110,6 +111,8 @@ class Matching:
                 return participation
 
 
+# negative scores get rejected as pairings, so these values must be chosen in a way that valid pairings never go < 0
+# (e.g. valid designation but skill issue --> MAX_SKILL_VALUE way smaller than designated_unqualified_value)
 BASE_SCORE = 5.0
 PREFERRED_VALUE = 3.0
 MAX_AUX_VALUE = 2.0
@@ -122,6 +125,7 @@ def score_pairing(
     participant: AbstractParticipant,
     position: Position,
     participant_is_confirmed,
+    participant_has_designation,
     number_of_participants=1_000_000,
 ):
     """
@@ -138,13 +142,13 @@ def score_pairing(
     designated_and_qualified_value = 2 * designated_unqualified_value
     undesignated_unqualified_value = designated_unqualified_value * designated_unqualified_value
 
-    # optimally, we should reject a pairing for a participant designated for another position,
-    # but we don't have that info here.
     is_designated = participant in position.designated_for
     is_qualified = position.required_skill <= participant.skill
 
-    if not is_designated and (not is_qualified or position.designation_only):
-        # the participant does not have some required skill
+    if not is_designated and (
+        not is_qualified or position.designation_only or participant_has_designation
+    ):
+        # the participant does not have some required skill or is designated elsewhere
         return -undesignated_unqualified_value  # avoid matching unqualified participants
 
     score = BASE_SCORE
@@ -183,6 +187,9 @@ def match_participants_to_positions(
     confirmed_participants = (
         frozenset(confirmed_participants) if confirmed_participants else frozenset()
     )
+    designated_participants = frozenset(
+        itertools.chain(*(position.designated_for for position in positions))
+    )
     costs = csr_matrix(
         [
             [
@@ -191,12 +198,14 @@ def match_participants_to_positions(
                     position,
                     number_of_participants=len(participants),
                     participant_is_confirmed=is_confirmed,
+                    participant_has_designation=has_designation,
                 )
                 for position in positions
             ]
-            for participant, is_confirmed in zip(
+            for participant, is_confirmed, has_designation in zip(
                 participants,
                 map(lambda p: p in confirmed_participants, participants),
+                map(lambda p: p in designated_participants, participants),
             )
         ]
     )

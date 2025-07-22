@@ -42,7 +42,7 @@ class BuildingBlock(models.Model):
         return str(self.name)
 
     def is_composite(self):
-        return self.block_type == BuildingBlockType.COMPOSITE.COMPOSITE.value
+        return self.block_type == BuildingBlockType.COMPOSITE.value
 
     class Meta:
         verbose_name = _("building block")

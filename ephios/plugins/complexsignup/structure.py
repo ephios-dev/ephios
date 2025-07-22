@@ -206,51 +206,73 @@ class ComplexShiftStructure(
     disposition_participation_form_class = ComplexDispositionParticipationForm
     signup_form_class = ComplexSignupForm
 
-    def _match(self, participations):
-        participants = [participation.participant for participation in participations]
-        confirmed_participants = [
+    @cached_property
+    def confirmed_participants(self):
+        return [
             participation.participant
-            for participation in participations
+            for participation in self.shift.participations.all()
             if participation.state == AbstractParticipation.States.CONFIRMED
         ]
-        all_positions, structure = convert_blocks_to_positions(
-            self._starting_blocks, participations
+
+    @cached_property
+    def participations(self):
+        """
+        Returns a list of all participations in the shift that are sorted by confirmed-then-requested.
+        Other states are dropped.
+        """
+        return list(
+            sorted(
+                filter(
+                    lambda p: p.state
+                    in {
+                        AbstractParticipation.States.REQUESTED,
+                        AbstractParticipation.States.CONFIRMED,
+                    },
+                    self.shift.participations.all(),
+                ),
+                key=attrgetter("state"),
+                reverse=True,
+            )
         )
-        matching = match_participants_to_positions(
-            participants, all_positions, confirmed_participants=confirmed_participants
+
+    def _structure_match(self):
+        participants = [participation.participant for participation in self.participations]
+        all_positions, __ = build_structure_from_starting_blocks(
+            self._starting_blocks, self.participations
         )
-        matching.attach_participations(participations)
+        self._matching = match_participants_to_positions(
+            participants, all_positions, confirmed_participants=self.confirmed_participants
+        )
+        self._matching.attach_participations(self.participations)
 
         # let's work up the blocks again, but now with matching
-        all_positions, structure = convert_blocks_to_positions(
-            self._starting_blocks, participations, matching=matching
+        self._all_positions, self._structure = build_structure_from_starting_blocks(
+            self._starting_blocks, self.participations, matching=self._matching
         )
 
         # for checking signup, we need a matching with only confirmed participations
-        confirmed_only_matching = match_participants_to_positions(
-            confirmed_participants,
-            all_positions,
-            confirmed_participants=confirmed_participants,
+        self._confirmed_only_matching = match_participants_to_positions(
+            self.confirmed_participants,
+            self._all_positions,
+            confirmed_participants=self.confirmed_participants,
         )
 
         # we just have to add unpaired matches to the full stats
-        signup_stats = structure["signup_stats"] + SignupStats.ZERO.replace(
-            requested_count=len(
-                [
-                    p
-                    for p in matching.unpaired_participations
-                    if p.state == AbstractParticipation.States.REQUESTED
-                ]
+        self._signup_stats = self._structure["signup_stats"] + SignupStats.ZERO.replace(
+            requested_count=sum(
+                p.state == AbstractParticipation.States.REQUESTED
+                for p in self._matching.unpaired_participations
             ),
-            confirmed_count=len(
-                [
-                    p
-                    for p in matching.unpaired_participations
-                    if p.state == AbstractParticipation.States.CONFIRMED
-                ]
+            confirmed_count=sum(
+                p.state == AbstractParticipation.States.CONFIRMED
+                for p in self._matching.unpaired_participations
             ),
         )
-        return matching, confirmed_only_matching, all_positions, structure, signup_stats
+
+    def _assume_cache(self):
+        if not hasattr(self, "_cached_structure_match"):
+            self._structure_match()
+            self._cached_structure_match = True
 
     @cached_property
     def _starting_blocks(self):
@@ -281,25 +303,6 @@ class ComplexShiftStructure(
                 )
             )
         return starting_blocks
-
-    def _assume_cache(self):
-        if not hasattr(self, "_cached_work"):
-            participations = [
-                p
-                for p in sorted(
-                    self.shift.participations.all(), key=attrgetter("state"), reverse=True
-                )
-                if p.state
-                in {AbstractParticipation.States.REQUESTED, AbstractParticipation.States.CONFIRMED}
-            ]
-            (
-                self._matching,
-                self._confirmed_only_matching,
-                self._all_positions,
-                self._structure,
-                self._signup_stats,
-            ) = self._match(participations)
-            self._cached_work = True
 
     def get_shift_state_context_data(self, request, **kwargs):
         """
@@ -384,6 +387,59 @@ def _build_display_path(parents, display_long):
     return display_long
 
 
+def iter_atomic_blocks(structure):
+    for sub_block in structure["sub_blocks"]:
+        if not sub_block["is_composite"]:
+            yield sub_block
+        else:
+            yield from iter_atomic_blocks(sub_block)
+
+
+def build_structure_from_starting_blocks(starting_blocks, participations, matching=None):
+    """
+    Create a tree structure from the given starting blocks, providing a plethora of information
+    used for display, matching and signup validation.
+    If a matching is provided, the signup stats will have correct participation counts,
+    but only for matched participants.
+    """
+    root_path = "root."  # build a dot-seperated path used to identify blocks and positions.
+    all_positions = []  # collect all positions in a list
+    # The root block is "virtual", always composite and contains the starting blocks as sub_blocks.
+    structure = {
+        "is_composite": True,
+        "positions": [],
+        "position_match_ids": [],
+        "sub_blocks": [],
+        "path": root_path,
+        "optional": False,
+        "level": 0,
+        "name": "ROOT",
+        "qualification_label": "",
+    }
+    # The block usage counter is used to assign indices to usages of atomic blocks so they can be
+    # differentiated in the matching algorithm as well as when displaying units.
+    block_usage_counter = defaultdict(partial(itertools.count, 1))
+    for identifier, block, label, optional in starting_blocks:
+        positions, sub_structure = _search_block(
+            block,
+            path=f"{root_path}{identifier}.",
+            level=1,
+            path_optional=optional,
+            required_qualifications=set(),
+            participations=participations,
+            block_usage_counter=block_usage_counter,
+            matching=matching,
+            parents=[],
+            composed_label=label,
+        )
+        all_positions.extend(positions)
+        structure["sub_blocks"].append(sub_structure)
+    structure["signup_stats"] = SignupStats.reduce(
+        [s["signup_stats"] for s in structure["sub_blocks"]]
+    )
+    return all_positions, structure
+
+
 def _search_block(
     block: BuildingBlock,
     path: str,
@@ -391,20 +447,24 @@ def _search_block(
     required_qualifications: set,
     path_optional: bool,
     participations: list[AbstractParticipation],
-    opt_counter,
+    block_usage_counter,
     matching: Matching,
     parents: list,
     composed_label: Optional[str] = None,
 ):  # pylint: disable=too-many-locals
+    """
+    Recursively build a tree structure from the given block.
+    Return all positions and a dict describing the structure at this block.
+    """
     required_here = set(required_qualifications)
     for requirement in block.qualification_requirements.all():
         if not requirement.everyone:
-            # at least one is not supported
+            # "at least one" is not supported
             raise ValueError("unsupported requirement")
         required_here |= set(requirement.qualifications.all())
 
     all_positions = []
-    number = next(opt_counter[block.name])
+    number = next(block_usage_counter[block.name])
     display_long = _build_display_name_long(block.name, composed_label, number)
     structure = {
         "is_composite": block.is_composite(),
@@ -443,7 +503,7 @@ def _search_block(
                 level=level + 1,
                 required_qualifications=required_here,
                 path_optional=path_optional or composition.optional,
-                opt_counter=opt_counter,
+                block_usage_counter=block_usage_counter,
                 participations=participations,
                 matching=matching,
                 parents=[structure, *parents],
@@ -457,7 +517,7 @@ def _search_block(
             all_positions,
             block,
             matching,
-            opt_counter,
+            block_usage_counter,
             participations,
             path,
             path_optional,
@@ -471,7 +531,7 @@ def _build_atomic_block_structure(
     all_positions,
     block,
     matching,
-    opt_counter,
+    block_usage_counter,
     participations,
     path,
     path_optional,
@@ -487,7 +547,7 @@ def _build_atomic_block_structure(
         p.participant for p in participations if p.structure_data.get("preferred_unit_path") == path
     }
     for block_position in block.positions.all():
-        match_id = _build_position_id(block, block_position.id, path)
+        match_id = _build_position_id(path, is_more=False, position_id=block_position.id)
         label = block_position.label or ", ".join(
             q.abbreviation for q in block_position.qualifications.all()
         )
@@ -525,7 +585,9 @@ def _build_atomic_block_structure(
         len(participations) + 1
     )  # 1 extra in case of signup matching check
     for _ in range(allow_more_count):
-        opt_match_id = _build_position_id(block, next(opt_counter[str(block.id)]), path)
+        opt_match_id = _build_position_id(
+            path, is_more=True, position_id=next(block_usage_counter[str(block.id)])
+        )
         p = Position(
             id=opt_match_id,
             required_qualifications=required_here,
@@ -554,7 +616,9 @@ def _build_atomic_block_structure(
 
     for _ in range(max(0, len(designated_for) - len(block.positions.all()) - allow_more_count)):
         # if more designated participants than we have positions, we need to add placeholder anyway
-        opt_match_id = _build_position_id(block, next(opt_counter[str(block.id)]), path)
+        opt_match_id = _build_position_id(
+            path, is_more=True, position_id=next(block_usage_counter[str(block.id)])
+        )
         p = Position(
             id=opt_match_id,
             required_qualifications=required_here,
@@ -582,57 +646,16 @@ def _build_atomic_block_structure(
         structure["positions"].append(p)
         structure["participations"].append(participation)
 
+    # used to check if this atomic block can be considered "free"
+    structure["has_undesignated_positions"] = len(structure["positions"]) > len(designated_for)
 
-def _build_position_id(block, path, position_id):
+
+def _build_position_id(path, is_more, position_id):
     """
-    For a given block, a counter providing running numbers and a path of blocks,
-    construct an ID for the matching positions.
+    Return a string identifying a position, give by a path identifying the atomic block,
+     some modestring differentiating the origin of the position id, and an id for the position.
     """
-    return f"{path}{block.uuid}-opt-{position_id}"
-
-
-def convert_blocks_to_positions(starting_blocks, participations, matching=None):
-    """
-    If a matching is provided, the signup stats will have correct participation counts
-    """
-    root_path = "root."
-    all_positions = []
-    structure = {
-        "is_composite": True,  # root block is "virtual" and always composite
-        "positions": [],
-        "position_match_ids": [],
-        "sub_blocks": [],
-        "path": root_path,
-        "optional": False,
-        "level": 0,
-        "name": "ROOT",
-        "qualification_label": "",
-    }
-    opt_counter = defaultdict(partial(itertools.count, 1))
-    for identifier, block, label, optional in starting_blocks:
-        positions, sub_structure = _search_block(
-            block,
-            path=f"{root_path}{identifier}.",
-            level=1,
-            path_optional=optional,
-            required_qualifications=set(),
-            participations=participations,
-            opt_counter=opt_counter,
-            matching=matching,
-            parents=[],
-            composed_label=label,
-        )
-        all_positions.extend(positions)
-        structure["sub_blocks"].append(sub_structure)
-    structure["signup_stats"] = SignupStats.reduce(
-        [s["signup_stats"] for s in structure["sub_blocks"]]
-    )
-    return all_positions, structure
-
-
-def iter_atomic_blocks(structure):
-    for sub_block in structure["sub_blocks"]:
-        if not sub_block["is_composite"]:
-            yield sub_block
-        else:
-            yield from iter_atomic_blocks(sub_block)
+    # For use of Position.pk, use "pk" as modestring, for other positions "more". This way,
+    # there are no collisions of count and pk.
+    modestring = "more" if is_more else "pk"
+    return f"{path}{modestring}-{position_id}"
