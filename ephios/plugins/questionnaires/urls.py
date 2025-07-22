@@ -5,6 +5,9 @@ from ephios.plugins.questionnaires.views import (
     QuestionDeleteView,
     QuestionListView,
     QuestionUpdateView,
+    SavedAnswerDeleteView,
+    SavedAnswerListView,
+    SavedAnswerUpdateView,
 )
 
 app_name = "questionnaires"
@@ -28,5 +31,20 @@ urlpatterns = [
         "questions/<int:pk>/delete/",
         QuestionDeleteView.as_view(),
         name="question_delete",
+    ),
+    path(
+        "settings/saved-answers/",
+        SavedAnswerListView.as_view(),
+        name="saved_answers_list",
+    ),
+    path(
+        "settings/saved-answers/<int:question_pk>/edit/",
+        SavedAnswerUpdateView.as_view(),
+        name="saved_answers_edit",
+    ),
+    path(
+        "settings/saved-answers/<int:question_pk>/delete/",
+        SavedAnswerDeleteView.as_view(),
+        name="saved_answers_delete",
     ),
 ]

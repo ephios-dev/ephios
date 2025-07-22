@@ -1,9 +1,10 @@
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from guardian.mixins import LoginRequiredMixin
 
 from ephios.extra.mixins import CustomPermissionRequiredMixin
-from ephios.plugins.questionnaires.forms import QuestionForm
-from ephios.plugins.questionnaires.models import Question
+from ephios.plugins.questionnaires.forms import QuestionForm, SavedAnswerForm
+from ephios.plugins.questionnaires.models import Question, SavedAnswer
 
 
 class QuestionListView(CustomPermissionRequiredMixin, ListView):
@@ -25,7 +26,6 @@ class QuestionUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "questionnaires.change_question"
     model = Question
     form_class = QuestionForm
-    template_name = "questionnaires/question_form.html"
     success_url = reverse_lazy("questionnaires:question_list")
 
 
@@ -33,3 +33,31 @@ class QuestionDeleteView(CustomPermissionRequiredMixin, DeleteView):
     permission_required = "questionnaires.delete_question"
     model = Question
     success_url = reverse_lazy("questionnaires:question_list")
+
+
+class SavedAnswerListView(LoginRequiredMixin, ListView):
+    model = SavedAnswer
+
+    def get_queryset(self):
+        return SavedAnswer.objects.filter(user=self.request.user).order_by("question__name")
+
+
+class SavedAnswerUpdateView(LoginRequiredMixin, UpdateView):
+    model = SavedAnswer
+    form_class = SavedAnswerForm
+    success_url = reverse_lazy("questionnaires:saved_answers_list")
+
+    def get_object(self, queryset=None):
+        return SavedAnswer.objects.get(
+            question_id=self.kwargs["question_pk"], user=self.request.user
+        )
+
+
+class SavedAnswerDeleteView(LoginRequiredMixin, DeleteView):
+    model = SavedAnswer
+    success_url = reverse_lazy("questionnaires:saved_answers_list")
+
+    def get_object(self, queryset=None):
+        return SavedAnswer.objects.get(
+            question_id=self.kwargs["question_pk"], user=self.request.user
+        )
