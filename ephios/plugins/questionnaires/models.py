@@ -121,8 +121,9 @@ class Question(models.Model):
                     # Convert single answer to multi-answer
                     initial = [initial]
 
-                # Remove invalid answers
-                initial = [answer for answer in initial if answer in self.choices]
+                if isinstance(initial, list):
+                    # Remove invalid answers if answers are set
+                    initial = [answer for answer in initial if answer in self.choices]
 
         return initial
 

@@ -152,15 +152,25 @@ def save_signup(
         if name == "questionnaires_save_answers" or not name.startswith("questionnaires_"):
             continue
 
-        answer, _ = Answer.objects.get_or_create(
-            participation=participation, question_id=Question.get_pk_from_slug(name)
-        )
-        answer.answer = value
-        answer.save()
-
-        if save_answers:
-            saved_answer, _ = SavedAnswer.objects.get_or_create(
-                user=participant.user, question_id=Question.get_pk_from_slug(name)
+        if value:
+            Answer.objects.update_or_create(
+                participation=participation,
+                question_id=Question.get_pk_from_slug(name),
+                defaults={"answer": value},
             )
-            saved_answer.answer = value
-            saved_answer.save()
+
+            if save_answers:
+                SavedAnswer.objects.update_or_create(
+                    user=participant.user,
+                    question_id=Question.get_pk_from_slug(name),
+                    defaults={"answer": value},
+                )
+        else:
+            Answer.objects.filter(
+                participation=participation, question_id=Question.get_pk_from_slug(name)
+            ).delete()
+
+            if save_answers:
+                SavedAnswer.objects.filter(
+                    user=participant.user, question_id=Question.get_pk_from_slug(name)
+                ).delete()
