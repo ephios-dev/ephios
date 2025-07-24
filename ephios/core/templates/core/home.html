@@ -2,6 +2,7 @@
 {% load logentries %}
 {% load user_extras %}
 {% load event_extras %}
+{% load signal_extras %}
 {% load cache %}
 {% load i18n %}
 {% load static %}
@@ -132,14 +133,7 @@
             </div>
         {% endif %}
     {% endwith %}
-
-    {% homepage_plugin_content request as plugin_content %}
-    {% for item in plugin_content %}
-        <div class="card mb-3">
-            <div class="card-body">
-                {{ item }}
-            </div>
-        </div>
-    {% endfor %}
-
+    <div id="homepage-plugin-content">
+        {% collect_insert_html_signal "homepage_info" %}
+    </div>
 {% endblock %}

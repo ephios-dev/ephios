@@ -3,13 +3,23 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.signals import nav_link, register_group_permission_fields, shift_forms, shift_info
+from ephios.core.signals import (
+    HTML_SHIFT_INFO,
+    insert_html,
+    nav_link,
+    register_group_permission_fields,
+    shift_forms,
+)
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.simpleresource.forms import ResourceAllocationForm
 from ephios.plugins.simpleresource.models import ResourceAllocation
 
 
-@receiver(shift_info, dispatch_uid="ephios.plugins.simpleresource.signals.shift_info")
+@receiver(
+    insert_html,
+    sender=HTML_SHIFT_INFO,
+    dispatch_uid="ephios.plugins.simpleresource.signals.shift_info",
+)
 def display_shift_resources(shift, request, **kwargs):
     try:
         allocation = ResourceAllocation.objects.get(shift=shift)

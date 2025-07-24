@@ -1,3 +1,5 @@
+import sys
+
 from django.dispatch import receiver
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -7,12 +9,32 @@ from ephios.core.plugins import PluginSignal
 from ephios.core.services.notifications.backends import send_all_notifications
 from ephios.core.services.participation import send_participation_finished
 
-html_head = PluginSignal()
+insert_html = PluginSignal()
 """
-This signal allows you to put code inside the HTML ``<head>`` tag
-of every page. You will get the request as the keyword argument
-``request`` and are expected to return HTML.
+This signal allows you to put html in various places.
+You will get the request as the keyword argument ``request`` 
+and are expected to return HTML. Try to use html elements that
+fit the existing document structure. Return an empty string
+to not render anything.
+
+The sender argument specifies the template location and can be one 
+of these constants:
+
+- ``HTML_HEAD``: Add HTML in the <head> tag.
+- ``HTML_NAVBAR``: Add HTML in the navbar.
+- ``HTML_EVENT_INFO``: Add HTML to the event detail page event info box. Comes with an ``event`` kwarg.
+- ``HTML_SHIFT_INFO``: Add HTML to the event detail page shift box. Comes with a ``shift`` kwarg.
+- ``HTML_HOMEPAGE_INFO``: Add HTML to the homepage content area.
+- ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
 """
+
+HTML_HEAD = sys.intern("head")
+HTML_NAVBAR = sys.intern("navbar")
+HTML_EVENT_INFO = sys.intern("event_info")
+HTML_SHIFT_INFO = sys.intern("shift_info")
+HTML_HOMEPAGE_INFO = sys.intern("homepage_info")
+HTML_PERSONAL_DATA_PAGE = sys.intern("personal_data_page")
+
 
 register_consequence_handlers = PluginSignal()
 """
@@ -55,13 +77,6 @@ is reserved for the group under the users name.
 Receivers will receive a ``request`` keyword argument.
 """
 
-navbar_html = PluginSignal()
-"""
-This signal allows you to put additional arbitrary content inside 
-the navbar. You will get the request as the keyword argument
-``request`` and are expected to return HTML.
-"""
-
 settings_sections = PluginSignal()
 """
 This signal is sent out to get sections for the settings. Receivers should return a list of dicts
@@ -87,19 +102,6 @@ Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize t
 If all forms are valid, `save` will be called on your form.
 """
 
-event_info = PluginSignal()
-"""
-This signal is sent out to get additional information to display in the general section of the event
-detail view. Receivers will receive an `event` and `request` keyword arg to generate the information.
-Receivers should return html that is added below the event description.
-"""
-
-shift_info = PluginSignal()
-"""
-This signal is sent out to get additional information to display in the shift box of the event
-detail view. Receivers will receive a `shift` and `request` keyword arg to generate the information.
-Receivers should return html that is added below the participations.
-"""
 
 shift_forms = PluginSignal()
 """
@@ -154,12 +156,6 @@ This signal is sent out to get a list of actions that a user can perform on a si
 displayed in the dropdown menu on the event detail view.
 Receivers receive a ``event`` and ``request`` keyword argument.
 Each action is represented by a dict with the keys ``url``, ``label`` and ``icon``.
-"""
-
-homepage_info = PluginSignal()
-"""
-This signal is sent out to get additional information to display on the homepage.
-Receivers receive a ``request`` keyword argument. Receivers should return html that will be rendered inside a card.
 """
 
 register_group_permission_fields = PluginSignal()

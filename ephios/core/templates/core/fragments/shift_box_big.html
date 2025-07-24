@@ -1,3 +1,4 @@
+{% load signal_extras %}
 {% load event_extras %}
 {% load guardian_tags %}
 {% load utils %}
@@ -61,10 +62,7 @@
     <div class="card-body">
         {% include shift.structure with own_participation=participation %}
         <div class="shift-plugin-content">
-            {% shift_plugin_content shift request as plugin_content %}
-            {% for item in plugin_content %}
-                <div>{{ item }}</div>
-            {% endfor %}
+            {% collect_insert_html_signal "shift_info" shift=shift %}
         </div>
     </div>
 
