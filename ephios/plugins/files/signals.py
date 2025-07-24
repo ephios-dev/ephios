@@ -3,7 +3,13 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 
-from ephios.core.signals import event_forms, event_info, nav_link, register_group_permission_fields
+from ephios.core.signals import (
+    HTML_EVENT_INFO,
+    event_forms,
+    insert_html,
+    nav_link,
+    register_group_permission_fields,
+)
 from ephios.extra.permissions import PermissionField
 from ephios.plugins.files.forms import EventAttachedDocumentForm
 
@@ -32,7 +38,9 @@ def guests_event_forms(sender, event, request, **kwargs):
     return [EventAttachedDocumentForm(request.POST or None, event=event, request=request)]
 
 
-@receiver(event_info, dispatch_uid="ephios.plugins.files.signals.event_info")
+@receiver(
+    insert_html, sender=HTML_EVENT_INFO, dispatch_uid="ephios.plugins.files.signals.event_info"
+)
 def display_event_files(event, request, **kwargs):
     if event.documents.exists():
         return render_to_string(

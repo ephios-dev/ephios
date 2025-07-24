@@ -6,7 +6,7 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation
-from ephios.core.signals import footer_link, html_head, nav_link, navbar_html
+from ephios.core.signals import footer_link, nav_link
 from ephios.core.views.pwa import get_pwa_app_icons
 
 NAV_USERPROFILE_KEY = "__userprofile__"
@@ -32,20 +32,11 @@ def ephios_base_context(request):
                 nav.append(item)
     nav_groups.default_factory = None  # cannot loop defaultdicts in django templates
 
-    _html_head = ""
-    for _, result in html_head.send(None, request=request):
-        _html_head += result
-    _navbar_additional_html = ""
-    for _, result in navbar_html.send(None, request=request):
-        _navbar_additional_html += result
-
     return {
         "ParticipationStates": AbstractParticipation.States,
         "nav": nav,
         "nav_groups": nav_groups,
         "nav_userprofile": nav_userprofile,
-        "signalled_html_head": _html_head,
-        "signalled_nav_html": _navbar_additional_html,
         "footer": footer,
         "LANGUAGE_CODE": get_language(),
         "ephios_version": settings.EPHIOS_VERSION,

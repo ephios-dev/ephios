@@ -1,4 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
+{% load signal_extras %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 
@@ -49,4 +50,7 @@
         {{ form|crispy }}
         <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
     </form>
+    <div id="plugin-content">
+        {% collect_insert_html_signal "personal_data_page" %}
+    </div>
 {% endblock %}

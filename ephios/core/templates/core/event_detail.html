@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load signal_extras %}
 {% load user_extras %}
 {% load cache %}
 {% load event_extras %}
@@ -132,10 +133,7 @@
                 </div>
             {% endif %}
             <div class="event-plugin-content">
-                {% event_plugin_content event request as plugin_content %}
-                {% for item in plugin_content %}
-                    <div>{{ item }}</div>
-                {% endfor %}
+                {% collect_insert_html_signal "event_info" event=event %}
             </div>
         </div>
     </div>

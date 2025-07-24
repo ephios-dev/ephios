@@ -7,13 +7,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, Shift, UserProfile
-from ephios.core.signals import (
-    event_action,
-    event_info,
-    homepage_info,
-    register_event_bulk_action,
-    shift_info,
-)
+from ephios.core.signals import event_action, register_event_bulk_action
 from ephios.core.signup.fallback import default_on_exception, get_signup_config_invalid_error
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
@@ -138,24 +132,6 @@ def eventtype_colors():
 @register.filter(name="color_css")
 def eventtype_color_css(eventtype):
     return get_eventtype_color_style(eventtype)
-
-
-@register.simple_tag(name="event_plugin_content")
-def event_plugin_content(event, request):
-    results = event_info.send(None, event=event, request=request)
-    return list(map(lambda item: mark_safe(item[1]), results))
-
-
-@register.simple_tag(name="shift_plugin_content")
-def shift_plugin_content(shift, request):
-    results = shift_info.send(None, shift=shift, request=request)
-    return [result[1] for result in results if result[1] is not None]
-
-
-@register.simple_tag(name="homepage_plugin_content")
-def homepage_plugin_content(request):
-    results = homepage_info.send(None, request=request)
-    return list(map(lambda item: mark_safe(item[1]), results))
 
 
 @register.simple_tag(name="event_plugin_actions")
