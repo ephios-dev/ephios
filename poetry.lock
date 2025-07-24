@@ -3019,14 +3019,14 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "reportlab"
-version = "4.4.2"
+version = "4.4.3"
 description = "The Reportlab Toolkit"
 optional = false
 python-versions = "<4,>=3.7"
 groups = ["main"]
 files = [
-    {file = "reportlab-4.4.2-py3-none-any.whl", hash = "sha256:58e11be387457928707c12153b7e41e52533a5da3f587b15ba8f8fd0805c6ee2"},
-    {file = "reportlab-4.4.2.tar.gz", hash = "sha256:fc6283048ddd0781a9db1d671715990e6aa059c8d40ec9baf34294c4bd583a36"},
+    {file = "reportlab-4.4.3-py3-none-any.whl", hash = "sha256:df905dc5ec5ddaae91fc9cb3371af863311271d555236410954961c5ee6ee1b5"},
+    {file = "reportlab-4.4.3.tar.gz", hash = "sha256:073b0975dab69536acd3251858e6b0524ed3e087e71f1d0d1895acb50acf9c7b"},
 ]
 
 [package.dependencies]
