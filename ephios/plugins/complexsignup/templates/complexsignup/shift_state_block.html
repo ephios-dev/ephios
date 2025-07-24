@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load complex_extra %}
 {% if current.is_composite %}
     <div class="row">
@@ -39,14 +40,27 @@
                   data-bs-content-ref="#statsexplainer-popover-content-{{ shift.id }}"
                   data-bs-title-ref="#statsexplainer-popover-title-{{ shift.id }}"
             >
-                {{ current.signup_stats|format_min_max_count }}
-                {{ current.qualification_label }}
-                {% if current.signup_stats.missing > 0 %}
-                    <i class="far fa-circle "></i>
-                {% elif current|has_complex_free:shift %}
-                    <i class="far fa-check-circle"></i>
+                {% if current.optional %}
+                    {{ current.non_optional_signup_stats|format_min_max_count }}
+                    {{ current.qualification_label }}
+                    {% if current.non_optional_signup_stats.missing > 0 %}
+                        {# question mark! #}
+                        <i class="far fa-question-circle"></i>
+                    {% elif current|has_complex_free:shift %}
+                        <i class="far fa-check-circle"></i>
+                    {% else %}
+                        <i class="fa fa-check-circle"></i>
+                    {% endif %}
                 {% else %}
-                    <i class="fa fa-check-circle"></i>
+                    {{ current.signup_stats|format_min_max_count }}
+                    {{ current.qualification_label }}
+                    {% if current.signup_stats.missing > 0 %}
+                        <i class="far fa-circle "></i>
+                    {% elif current|has_complex_free:shift %}
+                        <i class="far fa-check-circle"></i>
+                    {% else %}
+                        <i class="fa fa-check-circle"></i>
+                    {% endif %}
                 {% endif %}
             </span>
         </span>

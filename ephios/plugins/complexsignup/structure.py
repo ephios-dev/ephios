@@ -546,6 +546,9 @@ def _build_atomic_block_structure(
     preferred_by = {
         p.participant for p in participations if p.structure_data.get("preferred_unit_path") == path
     }
+    # for displaying count info about this block, keep a version of signup stats in which is
+    # this block is never considered optional (path_optional)
+    non_optional_signup_stats = SignupStats.ZERO
     for block_position in block.positions.all():
         match_id = _build_position_id(path, is_more=False, position_id=block_position.id)
         label = block_position.label or ", ".join(
@@ -566,10 +569,20 @@ def _build_atomic_block_structure(
             participation is not None
             and participation.state == AbstractParticipation.States.CONFIRMED
         )
-        structure["signup_stats"] += SignupStats.ZERO.replace(
+        structure["signup_stats"] += SignupStats(
             min_count=int(required),
             max_count=1,
             missing=int(required and not has_confirmed_participation),
+            free=int(not has_confirmed_participation),
+            requested_count=bool(
+                participation and participation.state == AbstractParticipation.States.REQUESTED
+            ),
+            confirmed_count=has_confirmed_participation,
+        )
+        non_optional_signup_stats += SignupStats(
+            min_count=int(not block_position.optional),
+            max_count=1,
+            missing=int(not block_position.optional and not has_confirmed_participation),
             free=int(not has_confirmed_participation),
             requested_count=bool(
                 participation and participation.state == AbstractParticipation.States.REQUESTED
@@ -598,7 +611,7 @@ def _build_atomic_block_structure(
             label=block.name,
         )
         participation = matching.participation_for_position(opt_match_id) if matching else None
-        structure["signup_stats"] += SignupStats.ZERO.replace(
+        allow_more_stat = SignupStats(
             min_count=0,
             max_count=None,  # allow_more -> always free
             missing=0,
@@ -610,6 +623,8 @@ def _build_atomic_block_structure(
                 participation and participation.state == AbstractParticipation.States.CONFIRMED
             ),
         )
+        structure["signup_stats"] += allow_more_stat
+        non_optional_signup_stats += allow_more_stat
         all_positions.append(p)
         structure["positions"].append(p)
         structure["participations"].append(participation)
@@ -630,7 +645,7 @@ def _build_atomic_block_structure(
             designation_only=True,
         )
         participation = matching.participation_for_position(opt_match_id) if matching else None
-        structure["signup_stats"] += SignupStats.ZERO.replace(
+        overflow_stat = SignupStats(
             min_count=0,
             max_count=0,  # designated overflow -> runs over max
             missing=0,
@@ -642,12 +657,15 @@ def _build_atomic_block_structure(
                 participation and participation.state == AbstractParticipation.States.CONFIRMED
             ),
         )
+        structure["signup_stats"] += overflow_stat
+        non_optional_signup_stats += overflow_stat
         all_positions.append(p)
         structure["positions"].append(p)
         structure["participations"].append(participation)
 
     # used to check if this atomic block can be considered "free"
     structure["has_undesignated_positions"] = len(structure["positions"]) > len(designated_for)
+    structure["non_optional_signup_stats"] = non_optional_signup_stats
 
 
 def _build_position_id(path, is_more, position_id):
