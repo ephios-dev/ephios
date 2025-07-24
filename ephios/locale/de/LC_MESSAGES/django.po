@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 15:35+0200\n"
-"PO-Revision-Date: 2025-07-22 15:35+0200\n"
+"POT-Creation-Date: 2025-07-24 23:17+0200\n"
+"PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -1622,6 +1622,7 @@ msgid "A new profile has been created"
 msgstr "Ein neues Benutzerprofil wurde erstellt"
 
 #: ephios/core/services/notifications/types.py:157
+#, python-brace-format
 msgid "Welcome to {}!"
 msgstr "Willkommen bei {}!"
 
@@ -1721,7 +1722,7 @@ msgstr ""
 
 #: ephios/core/services/notifications/types.py:385
 #: ephios/core/templates/core/disposition/disposition.html:8
-#: ephios/core/templates/core/fragments/shift_box_big.html:116
+#: ephios/core/templates/core/fragments/shift_box_big.html:119
 #: ephios/core/templates/core/home.html:106
 msgid "Disposition"
 msgstr "Disposition"
@@ -2010,13 +2011,13 @@ msgstr "Anmeldeaktion"
 
 #: ephios/core/signup/forms.py:134
 #: ephios/core/templates/core/disposition/fragment_participation.html:53
-#: ephios/core/templates/core/fragments/shift_box_big.html:90
-#: ephios/core/templates/core/fragments/shift_box_big.html:98
+#: ephios/core/templates/core/fragments/shift_box_big.html:93
+#: ephios/core/templates/core/fragments/shift_box_big.html:101
 msgid "Customize"
 msgstr "Anpassen"
 
 #: ephios/core/signup/forms.py:135 ephios/core/signup/forms.py:167
-#: ephios/core/templates/core/fragments/shift_box_big.html:104
+#: ephios/core/templates/core/fragments/shift_box_big.html:107
 msgid "Decline"
 msgstr "Absagen"
 
@@ -2270,7 +2271,11 @@ msgstr "ausreichend Teilnehmende"
 msgid "full"
 msgstr "voll"
 
-#: ephios/core/templates/core/fragments/shift_box_big.html:126
+#: ephios/core/templates/core/fragments/shift_box_big.html:26
+msgid "unit optional"
+msgstr "Einheit optional"
+
+#: ephios/core/templates/core/fragments/shift_box_big.html:129
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
@@ -3347,7 +3352,7 @@ msgstr "Sie sind zu jung. Das Mindestalter beträgt {age} Jahre."
 
 #: ephios/plugins/baseshiftstructures/structure/common.py:60
 #: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:87
-#: ephios/plugins/complexsignup/structure.py:344
+#: ephios/plugins/complexsignup/structure.py:347
 msgid "The maximum number of participants is reached."
 msgstr "Die maximale Anzahl an Teilnehmenden ist erreicht."
 
@@ -3362,7 +3367,7 @@ msgstr "Maximale Anzahl von Teilnehmenden"
 #: ephios/plugins/baseshiftstructures/structure/common.py:107
 #: ephios/plugins/baseshiftstructures/structure/named_teams.py:269
 #: ephios/plugins/baseshiftstructures/structure/qualification_mix.py:88
-#: ephios/plugins/complexsignup/structure.py:343
+#: ephios/plugins/complexsignup/structure.py:346
 msgid "You are not qualified."
 msgstr "Sie sind nicht qualifiziert."
 
@@ -3516,6 +3521,7 @@ msgid "This plugins adds the standard signup flows."
 msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
 #: ephios/plugins/basesignupflows/flow/coupled.py:28
+#, python-brace-format
 msgid "Participation is coupled to {}."
 msgstr "Teilnahme ist gekoppelt an {}."
 
