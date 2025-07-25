@@ -26,6 +26,7 @@ of these constants:
 - ``HTML_SHIFT_INFO``: Add HTML to the event detail page shift box. Comes with a ``shift`` kwarg.
 - ``HTML_HOMEPAGE_INFO``: Add HTML to the homepage content area.
 - ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
+- ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with an ``participation`` kwarg.
 """
 
 HTML_HEAD = sys.intern("head")
@@ -34,6 +35,7 @@ HTML_EVENT_INFO = sys.intern("event_info")
 HTML_SHIFT_INFO = sys.intern("shift_info")
 HTML_HOMEPAGE_INFO = sys.intern("homepage_info")
 HTML_PERSONAL_DATA_PAGE = sys.intern("personal_data_page")
+HTML_DISPOSITION_PARTICIPATION = sys.intern("disposition_participation")
 
 
 register_consequence_handlers = PluginSignal()
