@@ -37,6 +37,9 @@
             <button class="btn" type="button" data-bs-toggle="collapse"
                     data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
                     aria-controls="collapseExample">
+                {% if form.additional_html %}
+                    <span class="fas fa-info-circle pe-2"></span>
+                {% endif %}
                 {% if form.instance.comments.exists %}
                     <span class="fa fa-comment"></span> <span class="pe-2">{{ form.instance.comments.count }}</span>
                 {% endif %}
@@ -75,7 +78,11 @@
                 </div>
                 {% block participation_form %}
                 {% endblock %}
-                <div class="mb-n3"></div>
+                {% if form.additional_html %}
+                    {{ form.additional_html }}
+                {% else %}
+                    <div class="mb-n3"></div>
+                {% endif %}
             </div>
         </div>
     </div>

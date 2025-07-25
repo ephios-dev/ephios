@@ -2,6 +2,7 @@ from django import forms
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
@@ -22,6 +23,7 @@ from ephios.core.services.notifications.types import (
     ParticipationStateChangeNotification,
     ResponsibleParticipationStateChangeNotification,
 )
+from ephios.core.signals import disposition_participation_html
 from ephios.core.signup.forms import BaseParticipationForm
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
@@ -44,6 +46,13 @@ class BaseDispositionParticipationForm(BaseParticipationForm):
 
         super().__init__(**kwargs)
         self.can_delete = self.instance.state == AbstractParticipation.States.GETTING_DISPATCHED
+
+        additional_html = ""
+        responses = disposition_participation_html.send(None, participation=self.instance)
+        for _, html in responses:
+            if html:
+                additional_html += html
+        self.additional_html = mark_safe(additional_html)
 
     def get_comment_visibility(self):
         return (

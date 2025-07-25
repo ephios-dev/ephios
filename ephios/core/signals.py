@@ -130,6 +130,12 @@ This signal is sent out to when a signup is created or modified to allow plugins
 user input. Receivers will receive the ``shift``, ``participant``, ``participation``, and ``cleaned_data``.
 """
 
+disposition_participation_html = PluginSignal()
+"""
+This signal is sent out to collect additional HTML to be displayed in the expandable details view of
+a participation form in the disposition view. Receivers will receive the ``participation``.
+"""
+
 register_notification_types = PluginSignal()
 """
 This signal is sent out to get all notification types that can be sent out to a user or participant.

@@ -1,11 +1,13 @@
 from django import forms
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.signals import (
+    disposition_participation_html,
     nav_link,
     register_group_permission_fields,
     settings_sections,
@@ -174,3 +176,18 @@ def save_signup(
                 SavedAnswer.objects.filter(
                     user=participant.user, question_id=Question.get_pk_from_slug(name)
                 ).delete()
+
+
+@receiver(
+    disposition_participation_html,
+    dispatch_uid="ephios.plugins.questionnaires.signals.disposition_participation_html",
+)
+def disposition_render_responses(sender, participation: AbstractParticipation, **kwargs):
+    answers = participation.answer_set.all()
+
+    if not answers:
+        return
+
+    return render_to_string(
+        "questionnaires/disposition_participation_answers.html", {"answers": answers}
+    )
