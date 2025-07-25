@@ -14,6 +14,7 @@ from ephios.api.models import AccessToken, Application
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, Qualification
 from ephios.core.models.events import PARTICIPATION_LOG_CONFIG
+from ephios.core.models.users import AbstractConsequence
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.modellogging.log import ModelFieldsLogConfig, log, register_model_for_logging
 
@@ -143,6 +144,7 @@ class FederatedUser(models.Model):
     phone = models.CharField(_("phone number"), max_length=254, blank=True)
     qualifications = models.ManyToManyField(Qualification)
     federated_instance = models.ForeignKey(FederatedGuest, on_delete=models.CASCADE)
+    federated_instance_identifier = models.CharField(null=True, blank=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -162,6 +164,22 @@ class FederatedUser(models.Model):
         verbose_name_plural = _("federated users")
 
 
+class FederatedConsequence(AbstractConsequence):
+    federated_user = models.ForeignKey(FederatedUser, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "federatedconsequence"
+        verbose_name = _("Federated consequence")
+        verbose_name_plural = _("Federated consequences")
+
+    def participant_display_name(self):
+        return f"{self.federated_user.display_name} ({self.federated_user.federated_instance.name})"
+
+    def confirm(self):
+        self.state = AbstractConsequence.States.CONFIRMED
+        self.save()
+
+
 @dataclasses.dataclass(frozen=True)
 class FederatedParticipant(AbstractParticipant):
     federated_user: FederatedUser
@@ -179,6 +197,9 @@ class FederatedParticipant(AbstractParticipant):
 
     def all_participations(self):
         return FederatedParticipation.objects.filter(federated_user=self.federated_user)
+
+    def new_consequence(self) -> AbstractConsequence:
+        return FederatedConsequence()
 
     def reverse_signup_action(self, shift):
         return reverse(

@@ -13,7 +13,7 @@ from ephios.api.fields import ChoiceDisplayField
 from ephios.core.consequences import consequence_handler_from_slug
 from ephios.core.models import (
     AbstractParticipation,
-    Consequence,
+    LocalConsequence,
     Event,
     EventType,
     Qualification,
@@ -22,6 +22,7 @@ from ephios.core.models import (
     WorkingHours,
 )
 from ephios.core.models.events import ParticipationComment
+from ephios.core.models.users import AbstractConsequence
 from ephios.core.services.qualification import collect_all_included_qualifications
 from ephios.core.templatetags.settings_extras import make_absolute
 
@@ -223,11 +224,11 @@ class WorkingHoursSerializer(ModelSerializer):
 
 class ConsequenceSerializer(ModelSerializer):
     class Meta:
-        model = Consequence
+        model = AbstractConsequence
         fields = ["slug", "user", "state", "data"]
 
     def validate_state(self, value):
-        if value != Consequence.States.NEEDS_CONFIRMATION:
+        if value != AbstractConsequence.States.NEEDS_CONFIRMATION:
             raise serializers.ValidationError(
                 _("Consequences must be created in needs_confirmation state")
             )

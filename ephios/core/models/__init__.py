@@ -7,7 +7,7 @@ from .events import (
     Shift,
 )
 from .users import (
-    Consequence,
+    LocalConsequence,
     Notification,
     Qualification,
     QualificationCategory,

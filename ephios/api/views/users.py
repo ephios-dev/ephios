@@ -26,10 +26,12 @@ from ephios.api.serializers import (
 )
 from ephios.core.models import (
     AbstractParticipation,
-    Consequence,
+    LocalConsequence,
+    LocalParticipation,
     UserProfile,
     WorkingHours,
 )
+from ephios.core.models.users import AbstractConsequence
 
 
 class UserProfileMeView(RetrieveAPIView):
@@ -108,4 +110,4 @@ class ConsequenceViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["slug", "user", "state"]
     required_scopes = ["CONFIDENTIAL_WRITE"]
-    queryset = Consequence.objects.all()
+    queryset = AbstractConsequence.objects.all()
