@@ -86,12 +86,12 @@ Preconfigured Structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a very flexible way to structure a shift where various qualifications are required.
-Configure reusable nested blocks with labels and qualification requirements using the web editor (see :doc:`blocks`).
+Configure reusable nestable units with labels and qualification requirements using the web editor (see :doc:`predefined_units`).
 
-In your shift, configure a block to use for that shift.
+In your shift, select predefined units to use for that shift.
 Participants can be asked for their preferred unit, their choice will then be displayed in the disposition.
 
-Participants are automatically assigned a fitting unit. You can overwrite this in the disposition.
+Participants are automatically assigned a fitting basic unit. You can overwrite this in the disposition.
 
 Disposition
 -----------
