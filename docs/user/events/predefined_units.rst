@@ -7,7 +7,7 @@ which can be reached from the shift edit view.
 
 Adding units
 ------------
-To add a unit, click on the "Add baisc unit" or "Add composite unit" button.
+To add a unit, click on the "Add basic unit" or "Add composite unit" button.
 If there are units already, you can also click on the copy icon of the unit in
 the unit list editor to create a copy. A form for the new unit will appear.
 There are two types of units:
