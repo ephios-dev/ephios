@@ -105,7 +105,7 @@ class AbstractNotificationBackend:
             return False
         if (
             acting_user := notification.data.get("acting_user", None)
-        ) and acting_user == notification.user:
+        ) and acting_user == notification.user_id:
             return False
         if not notification.notification_type.unsubscribe_allowed:
             return True
