@@ -339,16 +339,22 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
 
 class ResponsibleMixin:
     @classmethod
-    def _responsible_users(cls, participation: AbstractParticipation):
+    def _other_responsible_users(cls, participation: AbstractParticipation):
+        """
+        Yield users responsible for the participation's event that should receive a notification.
+        This excludes: users if it is their own participation (as they will receive the normal participation notification)
+        Notifications for the acting user are filtered elsewhere.
+        """
         users = get_users_with_perms(
             participation.shift.event, only_with_perms_in=["change_event"]
         ).distinct()
         for user in users:
             if (
-                participation.get_real_instance_class() != LocalParticipation
-                or user != participation.user
+                participation.get_real_instance_class() == LocalParticipation
+                and user == participation.user
             ):
-                yield user
+                continue
+            yield user
 
     @classmethod
     def send(cls, participation: AbstractParticipation, **additional_data):
@@ -368,7 +374,7 @@ class ResponsibleMixin:
                         **additional_data,
                     },
                 )
-                for user in cls._responsible_users(participation)
+                for user in cls._other_responsible_users(participation)
             ]
         )
 

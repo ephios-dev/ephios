@@ -559,6 +559,9 @@ class Notification(Model):
     def __str__(self):
         return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
 
+    def __repr__(self):
+        return f"Notification(user={self.user!r}, slug={self.notification_type.slug}, data={self.data!r})"
+
     def as_html(self):
         """The notification rendered as HTML."""
         return self.notification_type.as_html(self)

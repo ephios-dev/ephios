@@ -76,11 +76,22 @@ class SignupView(FormView):
         messages.success(self.request, _("Your participation was saved."))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
+    @property
+    def _acting_user(self):
+        if self.request.user.is_authenticated:
+            return self.request.user
+        # Anonymous users are handled as None, they can't be serialized
+        # to JSON down the Notification data road. Wouldn't be of use anyway.
+        return None
+
     def signup_pressed(self, form):
         try:
             participation = form.save()
             self.shift.signup_flow.perform_signup(
-                self.participant, participation, **form.cleaned_data
+                participant=self.participant,
+                participation=participation,
+                acting_user=self._acting_user,
+                **form.cleaned_data,
             )
         except BaseSignupError as errors:
             for error in errors:  # pylint:disable=not-an-iterable
@@ -98,7 +109,10 @@ class SignupView(FormView):
         try:
             participation = form.save()
             self.shift.signup_flow.perform_decline(
-                self.participant, participation, **form.cleaned_data
+                participant=self.participant,
+                participation=participation,
+                acting_user=self._acting_user,
+                **form.cleaned_data,
             )
         except BaseSignupError as errors:
             for error in errors:  # pylint:disable=not-an-iterable
