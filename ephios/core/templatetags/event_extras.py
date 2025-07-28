@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 from ephios.core.models import AbstractParticipation, EventType, Shift, UserProfile
-from ephios.core.signals import event_action, register_event_bulk_action, shift_action
+from ephios.core.signals import event_menu, register_event_bulk_action, shift_action
 from ephios.core.signup.fallback import default_on_exception, get_signup_config_invalid_error
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.colors import get_eventtype_color_style
@@ -137,7 +137,7 @@ def eventtype_color_css(eventtype):
 @register.simple_tag(name="event_plugin_actions")
 def event_plugin_actions(event_detail_view):
     html = ""
-    for _, actions in event_action.send(
+    for _, actions in event_menu.send(
         None, event=event_detail_view.object, request=event_detail_view.request
     ):
         html += "".join(
