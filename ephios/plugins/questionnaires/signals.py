@@ -12,6 +12,7 @@ from ephios.core.signals import (
     nav_link,
     register_group_permission_fields,
     settings_sections,
+    shift_action,
     shift_copy,
     shift_forms,
     signup_form_fields,
@@ -193,3 +194,14 @@ def disposition_render_responses(request, participation: AbstractParticipation, 
     return render_to_string(
         "questionnaires/disposition_participation_answers.html", {"answers": answers}
     )
+
+
+@receiver(shift_action, dispatch_uid="ephios.plugins.questionnaires.signals.shift_action")
+def add_shift_action(sender, shift: Shift, request, **kwargs):
+    if hasattr(shift, "questionnaire") and shift.questionnaire and shift.questionnaire.questions:
+        return [
+            {
+                "label": "View answers",
+                "url": reverse_lazy("questionnaires:shift_aggregate_answers", args=(shift.pk,)),
+            }
+        ]

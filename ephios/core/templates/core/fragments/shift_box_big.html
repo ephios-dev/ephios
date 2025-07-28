@@ -110,14 +110,22 @@
                     </div>
                 {% endif %}
 
-                {% if disposition_url %}
-                    <div class="col-auto ms-auto order-3">
-                        <span class="float-end">
+                <div class="col-auto ms-auto order-3">
+                    <span class="float-end">
+                        {% if can_change_event %}
+                            {% shift_plugin_actions shift request as plugin_actions %}
+                            {% for plugin_action in plugin_actions %}
+                                <a href="{{ plugin_action.url }}"
+                                   class="btn btn-outline-info">{{ plugin_action.label }}</a>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if disposition_url %}
                             <a href="{{ disposition_url }}"
                                class="btn btn-info">{% translate "Disposition" %}</a>
-                        </span>
-                    </div>
-                {% endif %}
+                        {% endif %}
+                    </span>
+                </div>
 
                 <div class="d-flex align-items-center col-12 order-4{% if not can_sign_up and not can_decline and not can_customize_signup or not disposition_url %} col-md order-md-2{% endif %}">
                     <div>

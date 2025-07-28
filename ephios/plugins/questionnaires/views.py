@@ -1,7 +1,9 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from guardian.mixins import LoginRequiredMixin
 
+from ephios.core.models.events import Shift
+from ephios.core.signup.disposition import DispositionBaseViewMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.questionnaires.forms import QuestionForm, SavedAnswerForm
 from ephios.plugins.questionnaires.models import Question, SavedAnswer
@@ -61,3 +63,15 @@ class SavedAnswerDeleteView(LoginRequiredMixin, DeleteView):
         return SavedAnswer.objects.get(
             question_id=self.kwargs["question_pk"], user=self.request.user
         )
+
+
+class AggregateAnswerView(DispositionBaseViewMixin, TemplateView):
+    template_name = "questionnaires/aggregate_answers.html"
+
+    def get_context_data(self, **kwargs):
+        self.object: Shift
+        print(self.object, self.object.questionnaire)
+
+        context = super().get_context_data(**kwargs)
+
+        return context
