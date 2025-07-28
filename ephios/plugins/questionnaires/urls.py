@@ -1,6 +1,7 @@
 from django.urls import path
 
 from ephios.plugins.questionnaires.views import (
+    AggregateAnswerView,
     QuestionCreateView,
     QuestionDeleteView,
     QuestionListView,
@@ -46,5 +47,10 @@ urlpatterns = [
         "settings/saved-answers/<int:question_pk>/delete/",
         SavedAnswerDeleteView.as_view(),
         name="saved_answers_delete",
+    ),
+    path(
+        "shifts/<int:pk>/answers/",
+        AggregateAnswerView.as_view(),
+        name="shift_aggregate_answers",
     ),
 ]
