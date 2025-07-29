@@ -22,17 +22,22 @@ class EphiosNotificationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        from ephios.core.models import Notification
-
         response = self.get_response(request)
-        if NOTIFICATION_READ_PARAM_NAME in request.GET:
+        if getattr(request.user, "is_authenticated", False) and (
+            notification_id := request.GET.get(NOTIFICATION_READ_PARAM_NAME)
+        ):
+            from ephios.core.models import Notification
+
             try:
                 notification = Notification.objects.get(
-                    pk=request.GET[NOTIFICATION_READ_PARAM_NAME]
+                    pk=notification_id,
+                    user=request.user,
+                    read=False,
                 )
-                if notification.user == request.user and not notification.read:
-                    notification.read = True
-                    notification.save()
-            except Notification.DoesNotExist:
+            except (Notification.DoesNotExist, ValueError):
+                # ValueError if `notification_id` is not an integer
                 pass
+            else:
+                notification.read = True
+                notification.save(update_fields=["read"])
         return response
