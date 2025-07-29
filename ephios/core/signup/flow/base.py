@@ -85,12 +85,14 @@ class BaseSignupFlow(AbstractSignupFlow):
             )
         return participation
 
-    def perform_decline(self, participant, participation=None, **kwargs):
+    def perform_decline(self, participant, participation=None, acting_user=None, **kwargs):
         """Create and configure a declining participation object for the given participant. `kwargs` may contain further instructions from a e.g. a form."""
         participation = participation or self.get_or_create_participation_for(participant)
         participation.state = AbstractParticipation.States.USER_DECLINED
         participation.save()
-        ResponsibleConfirmedParticipationDeclinedNotification.send(participation)
+        ResponsibleConfirmedParticipationDeclinedNotification.send(
+            participation, acting_user=acting_user
+        )
         return participation
 
     def _configure_participation(
