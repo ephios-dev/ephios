@@ -7,6 +7,7 @@ from guardian.shortcuts import get_users_with_perms
 from ephios.core.models import AbstractParticipation, LocalParticipation, Notification
 from ephios.core.services.notifications.backends import EmailNotificationBackend
 from ephios.core.services.notifications.types import (
+    NOTIFICATION_READ_PARAM_NAME,
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
     CustomEventParticipantNotification,
@@ -201,9 +202,32 @@ def test_middleware_marks_notification_as_read(django_app, qualified_volunteer, 
         user=planner, slug=ResponsibleParticipationAwaitsDispositionNotification.slug
     )
     assert not notification.read
-    response = django_app.get(notification.get_actions()[0][1], user=planner)
+    django_app.get(notification.get_actions()[0][1], user=planner)
     notification.refresh_from_db()
     assert notification.read
+
+
+def test_broken_middleware_query_param(django_app, planner):
+    django_app.get(
+        f"/?{NOTIFICATION_READ_PARAM_NAME}=1",
+        user=None,  # anonymous user
+    )
+    django_app.get(
+        f"/?{NOTIFICATION_READ_PARAM_NAME}",
+        user=planner,
+    )
+    django_app.get(
+        f"/?{NOTIFICATION_READ_PARAM_NAME}=123",
+        user=planner,
+    )
+    django_app.get(
+        f"/?{NOTIFICATION_READ_PARAM_NAME}=abc",
+        user=planner,
+    )
+    django_app.get(
+        f"/?{NOTIFICATION_READ_PARAM_NAME}=1&{NOTIFICATION_READ_PARAM_NAME}=2",
+        user=planner,
+    )
 
 
 def test_notification_doesnotexist_gets_deleted(django_app, qualified_volunteer, event):
