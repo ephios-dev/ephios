@@ -5,9 +5,9 @@
 
 {% block title %}
     {% if form.set_archived %}
-        {% trans "archive" as action %}
+        {% translate "archive" as action %}
     {% else %}
-        {% trans "unarchive" as action %}
+        {% translate "unarchive" as action %}
     {% endif %}
     {% blocktranslate trimmed with action=action|capfirst %}
         {{ action }} question
@@ -16,9 +16,9 @@
 
 {% block content %}
     {% if form.set_archived %}
-        {% trans "archive" as action %}
+        {% translate "archive" as action %}
     {% else %}
-        {% trans "unarchive" as action %}
+        {% translate "unarchive" as action %}
     {% endif %}
     <div class="page-header">
         <h1>

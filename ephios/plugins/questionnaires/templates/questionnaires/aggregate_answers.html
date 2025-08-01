@@ -4,13 +4,13 @@
 {% load questionnaires_extras %}
 
 {% block title %}
-    {% blocktrans trimmed %}Answers for {{ shift }}{% endblocktrans %}
+    {% blocktranslate trimmed %}Answers for {{ shift }}{% endblocktranslate %}
 {% endblock %}
 
 {% block content %}
-    <h1>{% blocktrans trimmed %}Answers for {{ shift }}{% endblocktrans %}</h1>
+    <h1>{% blocktranslate trimmed %}Answers for {{ shift }}{% endblocktranslate %}</h1>
 
-    {% trans "This page only shows answers of confirmed participants. You can see the answers of other participants in the disposition view." as alert %}
+    {% translate "This page only shows answers of confirmed participants. You can see the answers of other participants in the disposition view." as alert %}
     {% render_alert alert "info" False %}
 
     {% for question in shift.questionnaire.questions.all %}
@@ -30,7 +30,7 @@
                 </ul>
             {% else %}
                 <p>
-                    <em>{% trans "No answers so far" %}</em>
+                    <em>{% translate "No answers so far" %}</em>
                 </p>
             {% endif %}
         {% else %}
@@ -39,8 +39,8 @@
                 <table class="table table-sm table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">{% trans "Answer" %}</th>
-                            <th scope="col">{% trans "Count" %}</th>
+                            <th scope="col">{% translate "Answer" %}</th>
+                            <th scope="col">{% translate "Count" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,7 +55,7 @@
                 </table>
             {% else %}
                 <p>
-                    <em>{% trans "No answers so far" %}</em>
+                    <em>{% translate "No answers so far" %}</em>
                 </p>
             {% endif %}
         {% endif %}
