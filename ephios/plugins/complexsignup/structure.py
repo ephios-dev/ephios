@@ -331,26 +331,23 @@ class ComplexShiftStructure(
                 )
         return export_data
 
-    def get_signup_form_fields(self, shift, participant, participation, signup_choice):
+    def get_signup_form_fields(self, participant, participation, signup_choice):
         initial = participation.structure_data.get("preferred_unit_path")
         required = (
             # TODO: This is flawed, as the fields will not be required in customize mode
             signup_choice == SignupForm.SignupChoices.SIGNUP
-            and shift.structure.configuration.choose_preferred_unit
+            and self.shift.structure.configuration.choose_preferred_unit
         )
 
-        complex_structure = self.shift.structure
-        complex_structure._assume_cache()
+        self._assume_cache()
 
-        allowed_blocks = atomic_block_participant_qualifies_for(
-            complex_structure._structure, participant
-        )
+        allowed_blocks = atomic_block_participant_qualifies_for(self._structure, participant)
 
         choices = [(b["path"], b["display_with_path"]) for b in allowed_blocks]
 
         help_text = ""
         unqualified_blocks = [
-            b for b in iter_atomic_blocks(complex_structure._structure) if b not in allowed_blocks
+            b for b in iter_atomic_blocks(self._structure) if b not in allowed_blocks
         ]
         if unqualified_blocks:
             help_text = _("You don't qualify for {blocks}.").format(

@@ -54,7 +54,6 @@ class AbstractShiftStructure(ABC):
 
     def get_signup_form_fields(
         self,
-        shift: Shift,
         participant: AbstractParticipant,
         participation: AbstractParticipation,
         signup_choice,
