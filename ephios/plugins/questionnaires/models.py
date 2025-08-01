@@ -192,7 +192,7 @@ class Questionnaire(models.Model):
         verbose_name_plural = _("Questionnaires")
 
     def __str__(self):
-        return f"{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}"
+        return f'{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}'
 
 
 class Answer(models.Model):
