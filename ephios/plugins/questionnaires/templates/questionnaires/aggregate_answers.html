@@ -11,7 +11,7 @@
     <h1>{% blocktrans trimmed %}Answers for {{ shift }}{% endblocktrans %}</h1>
 
     {% trans "This page only shows answers of confirmed participants. You can see the answers of other participants in the disposition view." as alert %}
-    {% render_alert alert "warning" False %}
+    {% render_alert alert "info" False %}
 
     {% for question in shift.questionnaire.questions.all %}
         <h2>{{ question.question_text }}</h2>
