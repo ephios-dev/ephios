@@ -389,7 +389,7 @@ def test_complex_composite_signup_disposition_and_export(
     signup_form = django_app.get(
         reverse("core:signup_action", kwargs=dict(pk=rettungswache_shift.pk)), user=nfs_user
     ).form
-    signup_form["preferred_unit_path"] = "root.rettungswache-uuid.1."
+    signup_form["complexsignup_preferred_unit_path"] = "root.rettungswache-uuid.1."
     response = signup_form.submit(name="signup_choice", value="sign_up").follow()
     assert str(nfs_user) in response
     assert (
