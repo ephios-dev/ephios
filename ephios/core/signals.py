@@ -111,7 +111,7 @@ This signal is sent out to collect additional actions that managers can perform 
 each action, a button will be displayed in the shift card next to the disposition button. Receivers
 of the signal will receive the ``shift`` and ``request`` and are expected to return an array of
 ``{label: str, url: str}`` dicts, representing the available actions.
-The buttons will only be shown to managers of the respective shift.
+The buttons will only be shown to responsibles of the respective shift.
 """
 
 shift_copy = PluginSignal()
