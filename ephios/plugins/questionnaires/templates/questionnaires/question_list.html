@@ -92,6 +92,12 @@
                     </div>
                 </div>
             </li>
+        {% empty %}
+            {% if show_archived %}
+                <em>{% trans "There are no archived questions." %}</em>
+            {% else %}
+                <em>{% trans "There are no active questions. Use the button above to create one!" %}</em>
+            {% endif %}
         {% endfor %}
     </ul>
 {% endblock %}

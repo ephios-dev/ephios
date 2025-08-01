@@ -37,6 +37,11 @@
                     </div>
                 </div>
             </li>
+        {% empty %}
+            <em>
+                You haven't answered a question during sign-up yet or decided to not save your answer for future sign-ups.
+                Once you save your first answer, you can view and edit it here.
+            </em>
         {% endfor %}
     </ul>
 {% endblock %}
