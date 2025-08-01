@@ -2,6 +2,7 @@ from django.urls import path
 
 from ephios.plugins.questionnaires.views import (
     AggregateAnswerView,
+    QuestionArchiveView,
     QuestionCreateView,
     QuestionDeleteView,
     QuestionListView,
@@ -19,6 +20,11 @@ urlpatterns = [
         name="question_list",
     ),
     path(
+        "questions/archived/",
+        QuestionListView.as_view(show_archived=True),
+        name="question_list_archived",
+    ),
+    path(
         "questions/add/",
         QuestionCreateView.as_view(),
         name="question_add",
@@ -27,6 +33,16 @@ urlpatterns = [
         "questions/<int:pk>/edit/",
         QuestionUpdateView.as_view(),
         name="question_edit",
+    ),
+    path(
+        "questions/<int:pk>/archive/",
+        QuestionArchiveView.as_view(set_archived=True),
+        name="question_archive",
+    ),
+    path(
+        "questions/<int:pk>/unarchive/",
+        QuestionArchiveView.as_view(set_archived=False),
+        name="question_unarchive",
     ),
     path(
         "questions/<int:pk>/delete/",

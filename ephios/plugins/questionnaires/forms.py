@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
@@ -38,11 +39,32 @@ class QuestionForm(forms.ModelForm):
         return super().save(commit)
 
 
+class QuestionArchiveForm(forms.ModelForm):
+    archived = forms.BooleanField(required=False, widget=forms.HiddenInput)
+
+    class Meta:
+        model = Question
+        fields = ["archived"]
+
+    def __init__(self, *args, set_archived: bool, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.set_archived = set_archived
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == "archived":
+            return self.set_archived
+
+        return super().get_initial_for_field(field, field_name)
+
+
 class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
+    questions = forms.ModelMultipleChoiceField(
+        queryset=Question.objects.filter(archived=False), widget=Select2MultipleWidget
+    )
+
     class Meta:
         model = Questionnaire
         fields = ["questions"]
-        widgets = {"questions": Select2MultipleWidget}
 
     def __init__(self, *args, shift, **kwargs):
         kwargs.setdefault("prefix", "questionnaires")
@@ -52,6 +74,10 @@ class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
         except (AttributeError, Questionnaire.DoesNotExist):
             pass
         super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["questions"].queryset = Question.objects.filter(
+                Q(archived=False) | Q(pk__in=self.instance.questions.values_list("pk", flat=True))
+            )
 
     def save(self, commit=True):
         if self.cleaned_data.get("questions"):

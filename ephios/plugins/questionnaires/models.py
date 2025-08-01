@@ -33,6 +33,13 @@ class Question(models.Model):
         max_length=20, verbose_name=_("Type"), choices=Type.choices, default=Type.TEXT
     )
     choices = models.JSONField(default=list, verbose_name=_("Choices"))
+    archived = models.BooleanField(
+        default=False,
+        verbose_name=_("Archived"),
+        help_text=_(
+            "Archive a question to hide it in the question selection for new shifts without affecting shifts where this question is already in use"
+        ),
+    )
 
     class Meta:
         verbose_name = _("Question")
