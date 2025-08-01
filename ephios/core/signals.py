@@ -310,7 +310,7 @@ def update_last_run_periodic_call(sender, **kwargs):
 
 @receiver(signup_form_fields, dispatch_uid="ephios.core.signals.signup_form_fields")
 def provide_signup_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
-    return shift.structure.get_signup_form_fields(shift, participant, participation, signup_choice)
+    return shift.structure.get_signup_form_fields(participant, participation, signup_choice)
 
 
 @receiver(signup_save, dispatch_uid="ephios.core.signals.signup_save")

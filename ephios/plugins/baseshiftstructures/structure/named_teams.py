@@ -344,23 +344,23 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         return export_data
 
-    def get_signup_form_fields(self, shift, participant, participation, signup_choice):
-        team_stats = self._get_signup_stats_per_group(shift.participations.all())
+    def get_signup_form_fields(self, participant, participation, signup_choice):
+        team_stats = self._get_signup_stats_per_group(self.shift.participations.all())
         enabled_teams = []
         not_qualified_teams = []
         full_teams = []
-        for team in shift.structure.configuration.teams:
+        for team in self.shift.structure.configuration.teams:
             if team["uuid"] in [
                 participation.structure_data.get("preferred_team_uuid"),
                 participation.structure_data.get("dispatched_team_uuid"),
             ]:
                 enabled_teams.append(team)
             elif team not in teams_participant_qualifies_for(
-                shift.structure.configuration.teams, participant
+                self.shift.structure.configuration.teams, participant
             ):
                 not_qualified_teams.append(team)
             elif (
-                not shift.signup_flow.uses_requested_state
+                not self.shift.signup_flow.uses_requested_state
                 and not team_stats[team["uuid"]].has_free()
             ):
                 full_teams.append(team)
@@ -371,7 +371,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
         required = (
             # TODO: This is flawed, as the fields will not be required in customize mode
             signup_choice == SignupForm.SignupChoices.SIGNUP
-            and shift.structure.configuration.choose_preferred_team
+            and self.shift.structure.configuration.choose_preferred_team
         )
         choices = [(team["uuid"], team["title"]) for team in enabled_teams]
 
