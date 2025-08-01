@@ -8,12 +8,8 @@
 
 {% block settings_content %}
     <h3>
-        {% translate "Edit saved questionnaire answer" %}
-    </h3>
-
-    <h4>
         {{ savedanswer.question.question_text }}
-    </h4>
+    </h3>
 
     {% if savedanswer.question.description %}
         <p>
