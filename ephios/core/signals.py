@@ -26,6 +26,7 @@ of these constants:
 - ``HTML_SHIFT_INFO``: Add HTML to the event detail page shift box. Comes with a ``shift`` kwarg.
 - ``HTML_HOMEPAGE_INFO``: Add HTML to the homepage content area.
 - ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
+- ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with an ``participation`` kwarg.
 """
 
 HTML_HEAD = sys.intern("head")
@@ -34,6 +35,7 @@ HTML_EVENT_INFO = sys.intern("event_info")
 HTML_SHIFT_INFO = sys.intern("shift_info")
 HTML_HOMEPAGE_INFO = sys.intern("homepage_info")
 HTML_PERSONAL_DATA_PAGE = sys.intern("personal_data_page")
+HTML_DISPOSITION_PARTICIPATION = sys.intern("disposition_participation")
 
 
 register_consequence_handlers = PluginSignal()
@@ -103,12 +105,42 @@ If all forms are valid, `save` will be called on your form.
 """
 
 
+shift_action = PluginSignal()
+"""
+This signal is sent out to collect additional actions that managers can perform on on a shift. For
+each action, a button will be displayed in the shift card next to the disposition button. Receivers
+of the signal will receive the ``shift`` and ``request`` and are expected to return an array of
+``{label: str, url: str}`` dicts, representing the available actions.
+The buttons will only be shown to responsibles of the respective shift.
+"""
+
+shift_copy = PluginSignal()
+"""
+This signal is set out after a shift got copied to allow plugins to copy related data as well.
+Receivers will receive the original ``shift`` and a list of the created ``copies``.
+"""
+
 shift_forms = PluginSignal()
 """
 This signal is sent out to get a list of form instances to show on the shift create and update views.
 You receive a `shift` and `request` keyword arg you should use to create an instance of your form.
 Subclass :py:class:`ephios.core.forms.events.BasePluginFormMixin` to customize the rendering behavior.
 If all forms are valid, `save` will be called on your form.
+"""
+
+signup_form_fields = PluginSignal()
+"""
+This signal is sent out to get a list of form fields to show on the signup view, especially to collect
+user input for shift structures. Receivers will receive the ``shift``, ``participant``, ``participation``,
+and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 'default': ...,
+'type': ..., 'form_class': ..., 'form_kwargs': ..., 'serializer_class': ..., 'serializer_kwargs': ... },
+'fieldname2: { ... } }``
+"""
+
+signup_save = PluginSignal()
+"""
+This signal is sent out to when a signup is created or modified to allow plugins to handle additional
+user input. Receivers will receive the ``shift``, ``participant``, ``participation``, and ``cleaned_data``.
 """
 
 register_notification_types = PluginSignal()
@@ -150,7 +182,7 @@ Once the user wants to perform the action, a POST request will be issued to this
 will contain a list of event ids on which the action should be performed.
 """
 
-event_action = PluginSignal()
+event_menu = PluginSignal()
 """
 This signal is sent out to get a list of actions that a user can perform on a single event. The actions are
 displayed in the dropdown menu on the event detail view.
@@ -274,6 +306,16 @@ def update_last_run_periodic_call(sender, **kwargs):
     from ephios.core.dynamic_preferences_registry import LastRunPeriodicCall
 
     LastRunPeriodicCall.set_last_call(timezone.now())
+
+
+@receiver(signup_form_fields, dispatch_uid="ephios.core.signals.signup_form_fields")
+def provide_signup_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
+    return shift.structure.get_signup_form_fields(participant, participation, signup_choice)
+
+
+@receiver(signup_save, dispatch_uid="ephios.core.signals.signup_save")
+def save_signup(sender, shift, participant, participation, cleaned_data, **kwargs):
+    shift.structure.save_signup(shift, participant, participation, cleaned_data)
 
 
 periodic_signal.connect(
