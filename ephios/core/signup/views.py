@@ -79,6 +79,7 @@ class SignupView(FormView):
             shift=self.shift,
             participant=self.participant,
             participation=participation,
+            signup_choice=form.cleaned_data["signup_choice"],
             cleaned_data=form.cleaned_data,
         )
         if claims := form.get_customization_notification_info():
@@ -102,6 +103,7 @@ class SignupView(FormView):
                 shift=self.shift,
                 participant=self.participant,
                 participation=participation,
+                signup_choice=form.cleaned_data["signup_choice"],
                 cleaned_data=form.cleaned_data,
             )
             self.shift.signup_flow.perform_signup(
@@ -130,6 +132,7 @@ class SignupView(FormView):
                 shift=self.shift,
                 participant=self.participant,
                 participation=participation,
+                signup_choice=form.cleaned_data["signup_choice"],
                 cleaned_data=form.cleaned_data,
             )
             self.shift.signup_flow.perform_decline(

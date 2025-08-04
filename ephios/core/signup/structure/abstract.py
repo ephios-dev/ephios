@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 from typing import Any
 
-from ephios.core.models.events import AbstractParticipation, Shift
+from ephios.core.models.events import AbstractParticipation
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 
@@ -62,9 +62,9 @@ class AbstractShiftStructure(ABC):
 
     def save_signup(
         self,
-        shift: Shift,
         participant: AbstractParticipant,
         participation: AbstractParticipation,
+        signup_choice,
         cleaned_data: dict[str, Any],
     ):
         pass

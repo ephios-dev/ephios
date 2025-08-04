@@ -140,7 +140,8 @@ and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { '
 signup_save = PluginSignal()
 """
 This signal is sent out to when a signup is created or modified to allow plugins to handle additional
-user input. Receivers will receive the ``shift``, ``participant``, ``participation``, and ``cleaned_data``.
+user input. Receivers will receive the ``shift``, ``participant``, ``participation``, ``signup_choice``,
+and ``cleaned_data``.
 """
 
 register_notification_types = PluginSignal()
@@ -309,13 +310,17 @@ def update_last_run_periodic_call(sender, **kwargs):
 
 
 @receiver(signup_form_fields, dispatch_uid="ephios.core.signals.provide_structure_form_fields")
-def provide_structure_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
+def provide_structure_form_fields(
+    sender, shift, participant, participation, signup_choice, **kwargs
+):
     return shift.structure.get_signup_form_fields(participant, participation, signup_choice)
 
 
 @receiver(signup_save, dispatch_uid="ephios.core.signals.structure_signup_save")
-def structure_signup_save(sender, shift, participant, participation, cleaned_data, **kwargs):
-    shift.structure.save_signup(shift, participant, participation, cleaned_data)
+def structure_signup_save(
+    sender, shift, participant, participation, signup_choice, cleaned_data, **kwargs
+):
+    shift.structure.save_signup(participant, participation, signup_choice, cleaned_data)
 
 
 periodic_signal.connect(
