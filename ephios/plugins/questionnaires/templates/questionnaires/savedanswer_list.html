@@ -1,6 +1,5 @@
 {% extends "core/settings/settings_base.html" %}
 {% load i18n %}
-{% load questionnaires_extras %}
 
 {% block title %}
     {% translate "Saved questionnaire answers" %}
@@ -23,7 +22,7 @@
                         <span class="text-muted">{{ answer.question.question_text }}</span>
                     </div>
                     <div class="col-12 col-lg-5">
-                        {{ answer.answer | answer_text }}
+                        {{ answer.answer_text }}
                     </div>
                     <div class="col-12 col-lg-auto d-flex align-items-end align-items-lg-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"

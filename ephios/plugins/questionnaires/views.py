@@ -1,12 +1,14 @@
+from collections import Counter
+
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from guardian.mixins import LoginRequiredMixin
 
-from ephios.core.models.events import Shift
+from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.signup.disposition import DispositionBaseViewMixin
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.questionnaires.forms import QuestionArchiveForm, QuestionForm, SavedAnswerForm
-from ephios.plugins.questionnaires.models import Question, SavedAnswer
+from ephios.plugins.questionnaires.models import Answer, Question, SavedAnswer
 
 
 class QuestionListView(CustomPermissionRequiredMixin, ListView):
@@ -107,10 +109,46 @@ class SavedAnswerDeleteView(LoginRequiredMixin, DeleteView):
 class AggregateAnswerView(DispositionBaseViewMixin, TemplateView):
     template_name = "questionnaires/aggregate_answers.html"
 
+    def get_question_data(self, question: Question):
+        data = {
+            "question": question,
+        }
+
+        all_answers = Answer.objects.filter(
+            participation__shift=self.object,
+            participation__state=AbstractParticipation.States.CONFIRMED,
+            question=question,
+        ).values_list("answer", flat=True)
+
+        if question.type == Question.Type.TEXT:
+            data["aggregation_type"] = "list"
+            data["aggregated_answers"] = all_answers
+        else:
+            # A user's answer can be an array (multiple choice) or string (single choice)
+            # We want a flat array of all individual choices made
+            flat_answers = [
+                answer
+                for answers in all_answers
+                for answer in (answers if isinstance(answers, list) else [answers])
+            ]
+
+            data["aggregation_type"] = "counts"
+            data["aggregated_answers"] = dict(
+                sorted(
+                    Counter(flat_answers).items(),
+                    key=lambda item: item[1],
+                    reverse=True,
+                )
+            )
+
+        return data
+
     def get_context_data(self, **kwargs):
         self.object: Shift
-        print(self.object, self.object.questionnaire)
 
         context = super().get_context_data(**kwargs)
-
+        context["question_data"] = [
+            self.get_question_data(question)
+            for question in self.object.questionnaire.questions.all()
+        ]
         return context

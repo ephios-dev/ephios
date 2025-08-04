@@ -202,6 +202,10 @@ class Questionnaire(models.Model):
         return f'{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}'
 
 
+def answer_text(answer):
+    return ", ".join(answer) if isinstance(answer, list) else answer
+
+
 @log(
     ModelFieldsLogConfig(
         attach_to_func=lambda answer: (AbstractParticipation, answer.participation_id)
@@ -219,6 +223,10 @@ class Answer(models.Model):
     def __str__(self):
         return f'{self.question}: "{self.answer}" ({self.participation})'
 
+    @property
+    def answer_text(self):
+        return answer_text(self.answer)
+
 
 @dont_log
 class SavedAnswer(models.Model):
@@ -232,3 +240,7 @@ class SavedAnswer(models.Model):
 
     def __str__(self):
         return f'{self.question}: "{self.answer}" ({self.user})'
+
+    @property
+    def answer_text(self):
+        return answer_text(self.answer)
