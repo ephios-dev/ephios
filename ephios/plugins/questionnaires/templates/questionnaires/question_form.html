@@ -34,12 +34,11 @@
                     </h5>
                     <p class="text-muted">{% translate "For single- and multiple choice questions" %}</p>
                     {% if question %}
-                        <p class="text-warning">
-                            {% url "questionnaires:question_archive" question.pk as archive_url %}
-                            {% blocktranslate trimmed with archive_url=archive_url %}
-                                You should refrain from editing or removing choices if this question is already in use. Consider creating a new question and <a href="{{ archive_url }}">archiving this question</a> instead. New choices can always be added safely.
-                            {% endblocktranslate %}
-                        </p>
+                        {% url "questionnaires:question_archive" question.pk as archive_url %}
+                        {% blocktranslate trimmed with archive_url=archive_url asvar choice_edit_warning %}
+                            You should refrain from editing or removing choices if this question is already in use. Consider creating a new question and <a href="{{ archive_url }}">archiving this question</a> instead. New choices can always be added safely.
+                        {% endblocktranslate %}
+                        {% render_alert choice_edit_warning "warning" False %}
                     {% endif %}
                     {{ form.choices|formset_errors }}
                     <ul class="list-group list-group-flush" data-formset-body>
