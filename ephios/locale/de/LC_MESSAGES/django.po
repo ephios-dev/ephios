@@ -5010,7 +5010,7 @@ msgid ""
 "Editing your answer below only affects future sign-ups. You answers to "
 "existing sign-ups will remain unchanged."
 msgstr ""
-"Das Bearbeiten Ihrer gespeicherten Antwort beeinflusst nur neue Anmeldungen."
+"Das Bearbeiten Ihrer gespeicherten Antwort beeinflusst nur neue Anmeldungen. "
 "Ihre Antworten zu bestehenden Anmeldungen bleiben unverändert."
 
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:6
