@@ -23,9 +23,9 @@
         {% if question.type == "text" %}
             {% all_answers question shift as answers %}
             {% if answers %}
-                <ul>
+                <ul class="list-group list-group-flush">
                     {% for answer in answers %}
-                        <li>{{ answer }}</li>
+                        <li class="list-group-item">{{ answer }}</li>
                     {% endfor %}
                 </ul>
             {% else %}
@@ -61,5 +61,5 @@
         {% endif %}
     {% endfor %}
 
-    <a role="button" class="btn btn-secondary" href="{{ shift.event.get_absolute_url }}">{% translate "Back to event" %}</a>
+    <a role="button" class="btn btn-secondary mt-3" href="{{ shift.event.get_absolute_url }}">{% translate "Back to event" %}</a>
 {% endblock %}
