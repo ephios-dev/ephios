@@ -25,9 +25,9 @@ urlpatterns = [
         name="question_list_archived",
     ),
     path(
-        "questions/add/",
+        "questions/create/",
         QuestionCreateView.as_view(),
-        name="question_add",
+        name="question_create",
     ),
     path(
         "questions/<int:pk>/edit/",
