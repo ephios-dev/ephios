@@ -26,7 +26,7 @@ of these constants:
 - ``HTML_SHIFT_INFO``: Add HTML to the event detail page shift box. Comes with a ``shift`` kwarg.
 - ``HTML_HOMEPAGE_INFO``: Add HTML to the homepage content area.
 - ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
-- ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with an ``participation`` kwarg.
+- ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with a ``participation`` kwarg.
 """
 
 HTML_HEAD = sys.intern("head")
@@ -308,13 +308,13 @@ def update_last_run_periodic_call(sender, **kwargs):
     LastRunPeriodicCall.set_last_call(timezone.now())
 
 
-@receiver(signup_form_fields, dispatch_uid="ephios.core.signals.signup_form_fields")
-def provide_signup_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
+@receiver(signup_form_fields, dispatch_uid="ephios.core.signals.provide_structure_form_fields")
+def provide_structure_form_fields(sender, shift, participant, participation, signup_choice, **kwargs):
     return shift.structure.get_signup_form_fields(participant, participation, signup_choice)
 
 
-@receiver(signup_save, dispatch_uid="ephios.core.signals.signup_save")
-def save_signup(sender, shift, participant, participation, cleaned_data, **kwargs):
+@receiver(signup_save, dispatch_uid="ephios.core.signals.structure_signup_save")
+def structure_signup_save(sender, shift, participant, participation, cleaned_data, **kwargs):
     shift.structure.save_signup(shift, participant, participation, cleaned_data)
 
 
