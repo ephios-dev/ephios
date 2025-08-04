@@ -198,9 +198,8 @@ class SignupForm(BaseParticipationForm):
         )
 
         for _, additional_fields in responses:
-            if additional_fields:
-                for fieldname, field in additional_fields.items():
-                    self.fields[fieldname] = field["form_class"](**field.get("form_kwargs", {}))
+            for fieldname, field in additional_fields.items():
+                self.fields[fieldname] = field["form_class"](**field.get("form_kwargs", {}))
 
     def clean(self):
         cleaned_data = super().clean()

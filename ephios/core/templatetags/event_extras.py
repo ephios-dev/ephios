@@ -154,7 +154,6 @@ def shift_plugin_actions(shift, request):
     return [
         action
         for _, actions in shift_action.send(None, shift=shift, request=request)
-        if actions
         for action in actions
     ]
 
