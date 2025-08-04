@@ -165,10 +165,12 @@ class Question(models.Model):
         return field_name, field
 
     def get_saved_answer_form_field(self):
-        field_classes = self._get_field_classes()
-        field_kwargs = self._get_field_kwargs()
+        field_class = self._get_field_classes()[0]
+        field_kwargs = self._get_field_kwargs()[0]
 
-        return field_classes[0](**field_kwargs[0])
+        field_kwargs["label"] = _("Answer")
+
+        return field_class(**field_kwargs)
 
     def get_form_slug(self):
         return "questionnaires_" + slugify(f"{self.pk} {self.name}")
