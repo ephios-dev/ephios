@@ -20,27 +20,33 @@
         </h1>
     </div>
 
-    <div class="form-group">
+    <div class="row justify-content-between">
         {% if show_archived %}
-            <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_list" %}">
-                <span class="fa fa-arrow-left"></span>
-                <span>{% translate "Back to active questions" %}</span>
-            </a>
+            <div class="col-12 col-sm-auto">
+                <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_list" %}">
+                    <span class="fa fa-arrow-left"></span>
+                    <span>{% translate "Back to active questions" %}</span>
+                </a>
+            </div>
         {% else %}
             {% if perms.questionnaires.add_question %}
-                <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_add" %}"><span
-                    class="fa fa-plus"></span> <span>{% translate "Add question" %}</span></a>
+                <div class="col-12 col-sm-auto">
+                    <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_add" %}"><span
+                        class="fa fa-plus"></span> <span>{% translate "Add question" %}</span></a>
+                </div>
             {% endif %}
-            <a class="btn btn-secondary mb-3 float-end" href="{% url "questionnaires:question_list_archived" %}">
-                <span>{% translate "Show archived questions" %}</span>
-            </a>
+            <div class="col-12 col-sm-auto">
+                <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_list_archived" %}">
+                    <span>{% translate "Show archived questions" %}</span>
+                </a>
+            </div>
         {% endif %}
     </div>
 
     <ul class="list-group mb-3">
         {% for question in question_list %}
             <li class="list-group-item">
-                <div class="row mb-0">
+                <div class="row mb-0 justify-content-between">
                     <div class="col-12 col-lg-8">
                         <div class="row">
                             <div class="col col-lg-8">
@@ -59,24 +65,32 @@
                                     <span class="fas fa-tasks"></span>
                                 {% endif %}
                                 {{ question.get_type_display }}
+                                <div class="d-none d-lg-inline">
+                                    {% if question.required %}
+                                        <br/>
+                                        <span class="badge bg-warning">
+                                            {% translate "Answer required" %}
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-8 col-lg">
+                    <div class="col d-lg-none">
                         {% if question.required %}
                             <span class="badge bg-warning">
                                 {% translate "Answer required" %}
                             </span>
                         {% endif %}
                     </div>
-                    <div class="col-4 col-lg-auto d-flex align-items-end align-items-lg-center justify-content-end">
+                    <div class="col-auto d-flex align-items-end align-items-lg-center justify-content-end">
                         {% if show_archived %}
-                            <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                            <a class="btn btn-secondary btn-sm text-nowrap"
                                href="{% url "questionnaires:question_unarchive" question.pk %}"><span
                                 class="fa fa-undo"></span> <span
                                     class="d-none d-md-inline">{% translate "Unarchive" %}</span></a>
                         {% else %}
-                            <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                            <a class="btn btn-secondary btn-sm text-nowrap"
                                href="{% url "questionnaires:question_edit" question.pk %}"><span
                                 class="fa fa-edit"></span> <span
                                     class="d-none d-md-inline">{% translate "Edit" %}</span></a>
