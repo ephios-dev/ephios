@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load bootstrap %}
-{% load questionnaires_extras %}
 
 {% block title %}
     {% blocktranslate trimmed %}Answers for {{ shift }}{% endblocktranslate %}
@@ -13,29 +12,21 @@
     {% translate "This page only shows answers of confirmed participants. You can see the answers of other participants in the disposition view." as alert %}
     {% render_alert alert "info" False %}
 
-    {% for question in shift.questionnaire.questions.all %}
-        <h2>{{ question.question_text }}</h2>
+    {% for question in question_data %}
+        <h2>{{ question.question.question_text }}</h2>
 
         <p>
-            <em>{{ question.get_type_display }}, {{ question|required_text }}</em>
+            <em>{{ question.question.get_type_display }}, {{ question.question.required|yesno:_("required,optional") }}</em>
         </p>
 
-        {% if question.type == "text" %}
-            {% all_answers question shift as answers %}
-            {% if answers %}
+        {% if question.aggregated_answers %}
+            {% if question.aggregation_type == "list" %}
                 <ul class="list-group list-group-flush">
-                    {% for answer in answers %}
+                    {% for answer in question.aggregated_answers %}
                         <li class="list-group-item">{{ answer }}</li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>
-                    <em>{% translate "No answers so far" %}</em>
-                </p>
-            {% endif %}
-        {% else %}
-            {% aggregate_answers question shift as answer_counts %}
-            {% if answer_counts %}
                 <table class="table table-sm table-striped">
                     <thead>
                         <tr>
@@ -44,8 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-
-                        {% for answer, count in answer_counts.items %}
+                        {% for answer, count in question.aggregated_answers.items %}
                             <tr>
                                 <td>{{ answer }}</td>
                                 <td>{{ count }}</td>
@@ -53,11 +43,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            {% else %}
-                <p>
-                    <em>{% translate "No answers so far" %}</em>
-                </p>
             {% endif %}
+        {% else %}
+            <p>
+                <em>{% translate "No answers so far" %}</em>
+            </p>
         {% endif %}
     {% endfor %}
 
