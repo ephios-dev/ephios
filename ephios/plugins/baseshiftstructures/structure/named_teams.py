@@ -404,8 +404,8 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             },
         }
 
-    def save_signup(self, shift, participant, participation, cleaned_data):
-        if cleaned_data["signup_choice"] != SignupForm.SignupChoices.DECLINE:
+    def save_signup(self, participant, participation, signup_choice, cleaned_data):
+        if signup_choice != SignupForm.SignupChoices.DECLINE:
             participation.structure_data["preferred_team_uuid"] = cleaned_data[
                 "baseshiftstructures_named_teams_preferred_team_uuid"
             ]

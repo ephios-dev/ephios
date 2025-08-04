@@ -140,10 +140,11 @@ def save_signup(
     shift: Shift,
     participant: AbstractParticipant,
     participation: AbstractParticipation,
+    signup_choice,
     cleaned_data,
     **kwargs
 ):
-    if cleaned_data["signup_choice"] == SignupForm.SignupChoices.DECLINE:
+    if signup_choice == SignupForm.SignupChoices.DECLINE:
         return
 
     save_answers = (
