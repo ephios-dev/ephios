@@ -38,7 +38,7 @@ class Question(models.Model):
         default=False,
         verbose_name=_("Archived"),
         help_text=_(
-            "Archive a question to hide it in the question selection for new shifts without affecting shifts where this question is already in use"
+            "Archive a question to hide it in the question selection for new shifts without affecting shifts where this question is already in use."
         ),
     )
 
