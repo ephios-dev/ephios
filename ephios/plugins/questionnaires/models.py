@@ -8,9 +8,10 @@ from rest_framework import serializers
 from ephios.core.models.events import AbstractParticipation, Shift
 from ephios.core.models.users import UserProfile
 from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
-from ephios.modellogging.log import ModelFieldsLogConfig, register_model_for_logging
+from ephios.modellogging.log import ModelFieldsLogConfig, dont_log, log
 
 
+@log()
 class Question(models.Model):
     class Type(models.TextChoices):
         TEXT = "text", _("Text input")
@@ -186,9 +187,9 @@ class Question(models.Model):
         return int(slug.split("_", maxsplit=1)[1].split("-")[0])
 
 
-register_model_for_logging(Question, ModelFieldsLogConfig())
-
-
+@log(
+    ModelFieldsLogConfig(attach_to_func=lambda questionnaire: (Shift, questionnaire.shift_id)),
+)
 class Questionnaire(models.Model):
     shift = models.OneToOneField(Shift, on_delete=models.CASCADE)
     questions = models.ManyToManyField(Question, blank=True)
@@ -201,12 +202,11 @@ class Questionnaire(models.Model):
         return f'{", ".join(self.questions.values_list("name", flat=True))} @ {self.shift}'
 
 
-register_model_for_logging(
-    Questionnaire,
-    ModelFieldsLogConfig(attach_to_func=lambda questionnaire: (Shift, questionnaire.shift_id)),
+@log(
+    ModelFieldsLogConfig(
+        attach_to_func=lambda answer: (AbstractParticipation, answer.participation_id)
+    ),
 )
-
-
 class Answer(models.Model):
     participation = models.ForeignKey(AbstractParticipation, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.PROTECT)
@@ -220,20 +220,11 @@ class Answer(models.Model):
         return f'{self.question}: "{self.answer}" ({self.participation})'
 
 
-register_model_for_logging(
-    Answer,
-    ModelFieldsLogConfig(
-        attach_to_func=lambda answer: (AbstractParticipation, answer.participation_id)
-    ),
-)
-
-
+@dont_log
 class SavedAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.JSONField(verbose_name=_("Answer"))
-
-    _ephios_dont_log = True
 
     class Meta:
         verbose_name = _("Saved answer")
