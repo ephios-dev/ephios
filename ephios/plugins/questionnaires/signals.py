@@ -106,7 +106,7 @@ def provide_signup_form_fields(
     **kwargs
 ):
     if signup_choice == SignupForm.SignupChoices.DECLINE:
-        return None
+        return {}
 
     questions = (
         shift.questionnaire.questions.all()
@@ -206,3 +206,5 @@ def add_shift_action(sender, shift: Shift, request, **kwargs):
                 "url": reverse_lazy("questionnaires:shift_aggregate_answers", args=(shift.pk,)),
             }
         ]
+
+    return []
