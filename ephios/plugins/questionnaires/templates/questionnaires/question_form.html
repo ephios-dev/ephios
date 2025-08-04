@@ -95,6 +95,8 @@
             <input type="submit" class="btn btn-primary float-end" value="{% translate "Save" %}">
         </div>
     </form>
+{% endblock %}
 
+{% block javascript %}
     <script nonce="{{ request.csp_nonce }}" type="text/javascript" src="{% static "questionnaires/choice_visibility.js" %}"></script>
 {% endblock %}

@@ -1,11 +1,15 @@
-function setChoicesVisibility() {
+function updateChoicesVisibility() {
     let typeInput = document.getElementById("id_type");
-    let choices = document.getElementById("choices-formset");
+    let choices = $("#choices-formset");
 
-    choices.style.display = typeInput.value === "text" ? "none" : "initial";
+    if (typeInput.value === "text") {
+        choices.slideUp();
+    } else {
+        choices.slideDown();
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    setChoicesVisibility();
-    document.getElementById("id_type").addEventListener("change", setChoicesVisibility);
+    updateChoicesVisibility();
+    document.getElementById("id_type").addEventListener("change", updateChoicesVisibility);
 });
