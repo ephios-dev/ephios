@@ -31,7 +31,7 @@
         {% else %}
             {% if perms.questionnaires.add_question %}
                 <div class="col-12 col-sm-auto">
-                    <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_add" %}"><span
+                    <a class="btn btn-secondary mb-3" href="{% url "questionnaires:question_create" %}"><span
                         class="fa fa-plus"></span> <span>{% translate "Add question" %}</span></a>
                 </div>
             {% endif %}
