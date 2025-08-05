@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-01 14:17+0200\n"
+"POT-Creation-Date: 2025-08-05 14:18+0200\n"
 "PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: ephios/api/access/views.py:85 ephios/api/models.py:47 ephios/core/pdf.py:60
 #: ephios/core/pdf.py:150 ephios/core/pdf.py:184
-#: ephios/plugins/questionnaires/models.py:27
+#: ephios/plugins/questionnaires/models.py:29
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -129,7 +129,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/userprofile_form.html:150
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:285
 #: ephios/plugins/qualification_management/forms.py:121
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:95
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:94
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:29
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:90
 msgid "Save"
@@ -143,7 +143,7 @@ msgstr "Speichern"
 #: ephios/core/templates/core/event_form.html:68
 #: ephios/core/templates/core/eventtype_form.html:21
 #: ephios/core/templates/core/userprofile_form.html:152
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:94
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:93
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:28
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -298,9 +298,9 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:35
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:70
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_delete.html:19
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:90
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:19
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:36
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:104
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:18
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:35
 #: ephios/plugins/simpleresource/forms.py:49
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:19
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:33
@@ -378,7 +378,7 @@ msgstr "Benutzer"
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:84
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_archive.html:37
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_delete.html:18
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:18
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:17
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_confirm_delete.html:18
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:89
 #: ephios/templates/offline.html:13
@@ -398,8 +398,8 @@ msgstr "Zurück"
 #: ephios/plugins/files/templates/files/document_list.html:40
 #: ephios/plugins/pages/templates/pages/page_list.html:24
 #: ephios/plugins/qualification_management/templates/core/qualification_list.html:56
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:82
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:32
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:96
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:31
 #: ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:31
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -442,7 +442,7 @@ msgstr "Neue Anwendung"
 #: ephios/plugins/complexsignup/models.py:18
 #: ephios/plugins/federation/templates/federation/federation_settings.html:15
 #: ephios/plugins/federation/templates/federation/federation_settings.html:56
-#: ephios/plugins/questionnaires/models.py:21
+#: ephios/plugins/questionnaires/models.py:23
 #: ephios/plugins/simpleresource/models.py:9
 msgid "Name"
 msgstr "Name"
@@ -759,7 +759,7 @@ msgstr ""
 "sowie Veranstaltungstypen und Qualifikationen definieren."
 
 #: ephios/core/forms/users.py:145 ephios/core/models/users.py:240
-#: ephios/core/signals.py:260
+#: ephios/core/signals.py:261
 #: ephios/core/templates/core/userprofile_list.html:9
 #: ephios/core/templates/core/userprofile_list.html:15
 msgid "Users"
@@ -770,9 +770,9 @@ msgstr "Benutzer"
 msgid "Can change permissions and manage {platform}"
 msgstr "Kann Rechte ändern und {platform} verwalten"
 
-#: ephios/core/forms/users.py:182 ephios/core/signals.py:257
-#: ephios/core/signals.py:264 ephios/core/signals.py:277
-#: ephios/core/signals.py:290 ephios/core/views/settings.py:26
+#: ephios/core/forms/users.py:182 ephios/core/signals.py:258
+#: ephios/core/signals.py:265 ephios/core/signals.py:278
+#: ephios/core/signals.py:291 ephios/core/views/settings.py:26
 #: ephios/plugins/complexsignup/signals.py:34
 #: ephios/plugins/files/signals.py:25
 #: ephios/plugins/questionnaires/signals.py:38
@@ -796,7 +796,7 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:249 ephios/core/signals.py:273
+#: ephios/core/forms/users.py:249 ephios/core/signals.py:274
 #: ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11
 #: ephios/core/templates/core/settings/settings_personal_data.html:22
@@ -1283,7 +1283,7 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: ephios/core/models/users.py:503 ephios/core/models/users.py:504
-#: ephios/core/signals.py:253
+#: ephios/core/signals.py:254
 #: ephios/core/templates/core/userprofile_list.html:96
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
@@ -1876,7 +1876,7 @@ msgstr "Ihr {platform}-Passwort wurde geändert"
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: ephios/core/signals.py:286
+#: ephios/core/signals.py:287
 #: ephios/core/templates/core/settings/settings_base.html:6
 #: ephios/core/templates/core/settings/settings_base.html:11
 #: ephios/templates/base.html:143
@@ -1994,7 +1994,7 @@ msgstr ""
 "{eventtype} teilzunehmen."
 
 #: ephios/core/signup/flow/participant_validation.py:128
-#: ephios/core/signup/forms.py:223
+#: ephios/core/signup/forms.py:222
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
 msgstr "Sie sind zu dieser Zeit bereits eingeteilt für {shifts}."
@@ -2049,7 +2049,7 @@ msgstr "Schicht-Struktur '{slug}' wurde nicht gefunden."
 msgid "This action is not allowed."
 msgstr "Diese Aktion ist nicht erlaubt."
 
-#: ephios/core/signup/views.py:86
+#: ephios/core/signup/views.py:87
 msgid "Your participation was saved."
 msgstr "Ihre Teilnahme wurde gespeichert."
 
@@ -2722,7 +2722,7 @@ msgid "Signup mode"
 msgstr "Anmeldeverfahren"
 
 #: ephios/core/templates/core/shift_form.html:64
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:64
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:54
 msgid "Back to event"
 msgstr "Zurück zur Veranstaltung"
 
@@ -3645,7 +3645,7 @@ msgid "composite"
 msgstr "zusammengesetzt"
 
 #: ephios/plugins/complexsignup/models.py:23
-#: ephios/plugins/questionnaires/models.py:33
+#: ephios/plugins/questionnaires/models.py:35
 msgid "Type"
 msgstr "Typ"
 
@@ -3714,7 +3714,6 @@ msgstr "Erforderliche Qualifikationen"
 #: ephios/plugins/complexsignup/structure.py:112
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:54
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:173
-#: ephios/plugins/questionnaires/templatetags/questionnaires_extras.py:17
 msgid "optional"
 msgstr "optional"
 
@@ -3804,12 +3803,12 @@ msgstr ""
 "Nutzen Sie vordefinierte Einheiten um eine individuelle Struktur zu "
 "gestalten."
 
-#: ephios/plugins/complexsignup/structure.py:356
+#: ephios/plugins/complexsignup/structure.py:353
 #, python-brace-format
 msgid "You don't qualify for {blocks}."
 msgstr "Sie sind nicht qualifiziert für {blocks}."
 
-#: ephios/plugins/complexsignup/structure.py:364
+#: ephios/plugins/complexsignup/structure.py:361
 msgid "Preferred Unit"
 msgstr "Bevorzugte Einheit"
 
@@ -4757,7 +4756,7 @@ msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
 msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/plugins/questionnaires/apps.py:10
-#: ephios/plugins/questionnaires/models.py:192
+#: ephios/plugins/questionnaires/models.py:199
 msgid "Questionnaires"
 msgstr "Fragebögen"
 
@@ -4769,24 +4768,24 @@ msgstr "Dieses Plugin fragt Antowrten von Nutzern bei der Anmeldung ab."
 msgid "Choice name"
 msgstr "Name der Auswahlmöglichkeit"
 
-#: ephios/plugins/questionnaires/forms.py:91
-#: ephios/plugins/questionnaires/models.py:191
+#: ephios/plugins/questionnaires/forms.py:88
+#: ephios/plugins/questionnaires/models.py:198
 msgid "Questionnaire"
 msgstr "Fragebogen"
 
-#: ephios/plugins/questionnaires/models.py:15
+#: ephios/plugins/questionnaires/models.py:17
 msgid "Text input"
 msgstr "Texteingabe"
 
-#: ephios/plugins/questionnaires/models.py:16
+#: ephios/plugins/questionnaires/models.py:18
 msgid "Single choice"
 msgstr "Einfachauswahl"
 
-#: ephios/plugins/questionnaires/models.py:17
+#: ephios/plugins/questionnaires/models.py:19
 msgid "Multiple choice"
 msgstr "Mehrfachauswahl"
 
-#: ephios/plugins/questionnaires/models.py:23
+#: ephios/plugins/questionnaires/models.py:25
 msgid ""
 "The name of the question is used to identify the question, for example when "
 "picking questions for a shift"
@@ -4794,60 +4793,61 @@ msgstr ""
 "Der Name der Frage wird genutzt, um diese zu identifizieren, beispielsweise "
 "beim Auswählen von Fragen für eine Schicht"
 
-#: ephios/plugins/questionnaires/models.py:26
-#: ephios/plugins/questionnaires/models.py:45
+#: ephios/plugins/questionnaires/models.py:28
+#: ephios/plugins/questionnaires/models.py:47
 msgid "Question"
 msgstr "Frage"
 
-#: ephios/plugins/questionnaires/models.py:29
+#: ephios/plugins/questionnaires/models.py:31
 msgid "Required"
 msgstr "Erforderlich"
 
-#: ephios/plugins/questionnaires/models.py:30
+#: ephios/plugins/questionnaires/models.py:32
 msgid "Whether users must submit an answer to this question"
 msgstr "Ob Nutzer diese Frage beantworten müssen"
 
-#: ephios/plugins/questionnaires/models.py:35
+#: ephios/plugins/questionnaires/models.py:37
 #: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:33
 msgid "Choices"
 msgstr "Auswahlmöglichkeiten"
 
-#: ephios/plugins/questionnaires/models.py:38
+#: ephios/plugins/questionnaires/models.py:40
 msgid "Archived"
 msgstr "Archiviert"
 
-#: ephios/plugins/questionnaires/models.py:40
+#: ephios/plugins/questionnaires/models.py:42
 msgid ""
 "Archive a question to hide it in the question selection for new shifts "
-"without affecting shifts where this question is already in use"
+"without affecting shifts where this question is already in use."
 msgstr ""
 "Archivieren Sie eine Frage, um sie in der Auswahl bei neuen Schichten "
 "auszublenden, ohne Schichten zu beeinflussen, bei denen diese Frage schon "
-"genutzt wird"
+"genutzt wird."
 
-#: ephios/plugins/questionnaires/models.py:46
+#: ephios/plugins/questionnaires/models.py:48
 #: ephios/plugins/questionnaires/signals.py:34
 #: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:8
 #: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:18
 msgid "Questions"
 msgstr "Fragen"
 
-#: ephios/plugins/questionnaires/models.py:201
-#: ephios/plugins/questionnaires/models.py:204
-#: ephios/plugins/questionnaires/models.py:214
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:42
+#: ephios/plugins/questionnaires/models.py:172
+#: ephios/plugins/questionnaires/models.py:217
+#: ephios/plugins/questionnaires/models.py:220
+#: ephios/plugins/questionnaires/models.py:235
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:33
 msgid "Answer"
 msgstr "Antwort"
 
-#: ephios/plugins/questionnaires/models.py:205
+#: ephios/plugins/questionnaires/models.py:221
 msgid "Answers"
 msgstr "Antworten"
 
-#: ephios/plugins/questionnaires/models.py:217
+#: ephios/plugins/questionnaires/models.py:238
 msgid "Saved answer"
 msgstr "Gespeicherte Antwort"
 
-#: ephios/plugins/questionnaires/models.py:218
+#: ephios/plugins/questionnaires/models.py:239
 #: ephios/plugins/questionnaires/signals.py:50
 msgid "Saved answers"
 msgstr "Gespeicherte Antworten"
@@ -4866,28 +4866,31 @@ msgstr ""
 msgid "Save answers to my user profile for future sign-ups"
 msgstr "Speichere meine Antworten für spätere Anmeldungen in meinem Profil"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:7
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:11
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:6
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:10
 #, python-format
 msgid "Answers for %(shift)s"
-msgstr "Antworten für  %(shift)s"
+msgstr "Antworten für %(shift)s"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:13
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:12
 msgid ""
 "This page only shows answers of confirmed participants. You can see the "
 "answers of other participants in the disposition view."
 msgstr ""
-"Diese Seite zeigt nur Antworten von bestätigten Teilnehmern. Sie können "
-"die Antworten anderer Teilnehmer in der Disposition einsehen."
+"Diese Seite zeigt nur Antworten von bestätigten Teilnehmern. Sie können die "
+"Antworten anderer Teilnehmer in der Disposition einsehen."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:33
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:58
-msgid "No answers so far"
-msgstr "Bisher keine Antworten"
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:19
+msgid "required,optional"
+msgstr "erforderlich,optional"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:43
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:34
 msgid "Count"
 msgstr "Anzahl"
+
+#: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:49
+msgid "No answers so far"
+msgstr "Bisher keine Antworten"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_archive.html:8
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_archive.html:19
@@ -4906,6 +4909,7 @@ msgid "%(action)s question"
 msgstr "Frage %(action)s"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_archive.html:34
+#, python-format
 msgid "Are you sure you want to %(action)s the question %(question)s?"
 msgstr ""
 "Sind sie sicher, dass Sie die Frage \"%(question)s\" %(action)s möchten?"
@@ -4916,9 +4920,9 @@ msgid "Delete question"
 msgstr "Frage löschen"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_delete.html:15
+#, python-format
 msgid "Are you sure you want to delete the question %(question)s?"
-msgstr ""
-"Sind sie sicher, dass Sie die Frage \"%(question)s\" löschen möchten?"
+msgstr "Sind Sie sicher, dass Sie die Frage \"%(question)s\" löschen möchten?"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:10
 #: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:19
@@ -4934,7 +4938,7 @@ msgstr "Frage hinzufügen"
 msgid "For single- and multiple choice questions"
 msgstr "Für Fragen mit Ein- und Mehrfachauswahl"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:39
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:38
 #, python-format
 msgid ""
 "You should refrain from editing or removing choices if this question is "
@@ -4947,7 +4951,7 @@ msgstr ""
 "<a href=\"%(archive_url)s\">archivieren Sie diese Frage</a>. Neue "
 "Auswahlmöglichkeiten können jederzeit sicher hinzugefügt werden."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:67
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:66
 msgid "Add choice"
 msgstr "Auswahlmöglichkeit hinzufügen"
 
@@ -4956,49 +4960,53 @@ msgstr "Auswahlmöglichkeit hinzufügen"
 msgid "Archived Questions"
 msgstr "Archivierte Fragen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:27
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:28
 msgid "Back to active questions"
 msgstr "Zurück zu aktiven Fragen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:32
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:35
 msgid "Add question"
 msgstr "Frage hinzufügen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:35
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:40
 msgid "Show archived questions"
 msgstr "Archivierte Fragen anzeigen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:68
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:72
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:82
 msgid "Answer required"
 msgstr "Antwort erforderlich"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:77
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:91
 msgid "Unarchive"
 msgstr "Wiederherstellen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:86
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:100
 msgid "Archive"
 msgstr "Archivieren"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:97
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:111
 msgid "There are no archived questions."
 msgstr "Es gibt keine archivierten Fragen."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:99
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:113
 msgid "There are no active questions. Use the button above to create one!"
 msgstr ""
-"Es gibt keine aktiven Fragen. Nutzen Sie den obigen Button, um eine zu erstellen!"
+"Es gibt keine aktiven Fragen. Nutzen Sie den obigen Button, um eine zu "
+"erstellen!"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:6
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:11
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:5
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:10
 msgid "Delete saved questionnaire answer"
 msgstr "Gespeicherte Antwort löschen"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:15
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:14
+#, python-format
 msgid ""
 "Are you sure you want to delete your saved answer \"%(answer_text)s\" for "
 "question %(question)s?"
-msgstr "Möchten Sie ihre gespeicherte Antwort \"%(answer_text)s\" zur Frage "
+msgstr ""
+"Möchten Sie ihre gespeicherte Antwort \"%(answer_text)s\" zur Frage "
 "%(question)s wirklich löschen?"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:7
@@ -5013,14 +5021,10 @@ msgstr ""
 "Das Bearbeiten Ihrer gespeicherten Antwort beeinflusst nur neue Anmeldungen. "
 "Ihre Antworten zu bestehenden Anmeldungen bleiben unverändert."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:6
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:11
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:5
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:10
 msgid "Saved questionnaire answers"
 msgstr "Gespeicherte Antowrten"
-
-#: ephios/plugins/questionnaires/templatetags/questionnaires_extras.py:17
-msgid "required"
-msgstr "erforderlich"
 
 #: ephios/plugins/simpleresource/apps.py:10
 msgid "Simple Resource Management Plugin"
@@ -5255,6 +5259,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "required"
+#~ msgstr "erforderlich"
 
 #~ msgid "Optional"
 #~ msgstr "optional"
