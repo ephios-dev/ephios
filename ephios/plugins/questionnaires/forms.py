@@ -32,9 +32,9 @@ class QuestionForm(forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.choices = [
-            choice["name"]
-            for choice in self.choices.cleaned_data
-            if "name" in choice and not choice["DELETE"]
+            choice_form_data["name"]
+            for choice_form_data in self.choices.cleaned_data
+            if choice_form_data and not choice_form_data["DELETE"]
         ]
         return super().save(commit)
 
