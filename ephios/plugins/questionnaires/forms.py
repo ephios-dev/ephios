@@ -47,14 +47,9 @@ class QuestionArchiveForm(forms.ModelForm):
         fields = ["archived"]
 
     def __init__(self, *args, set_archived: bool, **kwargs):
+        kwargs["initial"] = {"archived": set_archived} | kwargs.get("initial", {})
         super().__init__(*args, **kwargs)
         self.set_archived = set_archived
-
-    def get_initial_for_field(self, field, field_name):
-        if field_name == "archived":
-            return self.set_archived
-
-        return super().get_initial_for_field(field, field_name)
 
 
 class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
