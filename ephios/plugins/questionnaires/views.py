@@ -1,6 +1,8 @@
 from collections import Counter
 
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from guardian.mixins import LoginRequiredMixin
 
@@ -28,23 +30,25 @@ class QuestionListView(CustomPermissionRequiredMixin, ListView):
         return context
 
 
-class QuestionCreateView(CustomPermissionRequiredMixin, CreateView):
+class QuestionCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
     permission_required = "questionnaires.add_question"
     accept_object_perms = False
     model = Question
     form_class = QuestionForm
     template_name = "questionnaires/question_form.html"
     success_url = reverse_lazy("questionnaires:question_list")
+    success_message = _("Question created successfully.")
 
 
-class QuestionUpdateView(CustomPermissionRequiredMixin, UpdateView):
+class QuestionUpdateView(CustomPermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     permission_required = "questionnaires.change_question"
     model = Question
     form_class = QuestionForm
     success_url = reverse_lazy("questionnaires:question_list")
+    success_message = _("Question updated successfully.")
 
 
-class QuestionArchiveView(CustomPermissionRequiredMixin, UpdateView):
+class QuestionArchiveView(CustomPermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     permission_required = "questionnaires.change_question"
     model = Question
     form_class = QuestionArchiveForm
@@ -69,11 +73,19 @@ class QuestionArchiveView(CustomPermissionRequiredMixin, UpdateView):
             else reverse_lazy("questionnaires:question_list_archived")
         )
 
+    def get_success_message(self, cleaned_data):
+        return (
+            _("Question archived successfully.")
+            if self.set_archived
+            else _("Question unarchived successfully.")
+        )
 
-class QuestionDeleteView(CustomPermissionRequiredMixin, DeleteView):
+
+class QuestionDeleteView(CustomPermissionRequiredMixin, SuccessMessageMixin, DeleteView):
     permission_required = "questionnaires.delete_question"
     model = Question
     success_url = reverse_lazy("questionnaires:question_list")
+    success_message = _("Question deleted successfully.")
 
 
 class SavedAnswerListView(LoginRequiredMixin, ListView):
@@ -85,10 +97,11 @@ class SavedAnswerListView(LoginRequiredMixin, ListView):
         return queryset.filter(user=self.request.user, question__archived=False)
 
 
-class SavedAnswerUpdateView(LoginRequiredMixin, UpdateView):
+class SavedAnswerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = SavedAnswer
     form_class = SavedAnswerForm
     success_url = reverse_lazy("questionnaires:saved_answers_list")
+    success_message = _("Saved answer updated successfully.")
 
     def get_object(self, queryset=None):
         return SavedAnswer.objects.get(
@@ -96,9 +109,10 @@ class SavedAnswerUpdateView(LoginRequiredMixin, UpdateView):
         )
 
 
-class SavedAnswerDeleteView(LoginRequiredMixin, DeleteView):
+class SavedAnswerDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = SavedAnswer
     success_url = reverse_lazy("questionnaires:saved_answers_list")
+    success_message = _("Saved answer deleted successfully.")
 
     def get_object(self, queryset=None):
         return SavedAnswer.objects.get(

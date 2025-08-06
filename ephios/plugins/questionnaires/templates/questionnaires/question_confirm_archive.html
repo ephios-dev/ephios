@@ -35,7 +35,7 @@
             Are you sure you want to {{ action }} the question {{ question }}?
         {% endblocktranslate %}</p>
         <a role="button" class="btn btn-secondary" href="{{ back_url }}">{% translate "Back" %}</a>
-        <button type="submit" class="btn btn-danger">{{ action | capfirst }}</button>
+        <button type="submit" class="btn {% if form.set_archived %}btn-danger{% else %}btn-primary{% endif %}">{{ action | capfirst }}</button>
     </form>
 
 {% endblock %}

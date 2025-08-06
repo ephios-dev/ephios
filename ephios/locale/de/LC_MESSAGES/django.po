@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-05 14:18+0200\n"
+"POT-Creation-Date: 2025-08-06 16:35+0200\n"
 "PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -298,7 +298,8 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:35
 #: ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:70
 #: ephios/plugins/questionnaires/templates/questionnaires/question_confirm_delete.html:19
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:104
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:105
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:110
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_confirm_delete.html:18
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:35
 #: ephios/plugins/simpleresource/forms.py:49
@@ -4756,7 +4757,7 @@ msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
 msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/plugins/questionnaires/apps.py:10
-#: ephios/plugins/questionnaires/models.py:199
+#: ephios/plugins/questionnaires/models.py:202
 msgid "Questionnaires"
 msgstr "Fragebögen"
 
@@ -4769,7 +4770,7 @@ msgid "Choice name"
 msgstr "Name der Auswahlmöglichkeit"
 
 #: ephios/plugins/questionnaires/forms.py:88
-#: ephios/plugins/questionnaires/models.py:198
+#: ephios/plugins/questionnaires/models.py:201
 msgid "Questionnaire"
 msgstr "Fragebogen"
 
@@ -4831,23 +4832,23 @@ msgstr ""
 msgid "Questions"
 msgstr "Fragen"
 
-#: ephios/plugins/questionnaires/models.py:172
-#: ephios/plugins/questionnaires/models.py:217
+#: ephios/plugins/questionnaires/models.py:175
 #: ephios/plugins/questionnaires/models.py:220
-#: ephios/plugins/questionnaires/models.py:235
+#: ephios/plugins/questionnaires/models.py:223
+#: ephios/plugins/questionnaires/models.py:238
 #: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:33
 msgid "Answer"
 msgstr "Antwort"
 
-#: ephios/plugins/questionnaires/models.py:221
+#: ephios/plugins/questionnaires/models.py:224
 msgid "Answers"
 msgstr "Antworten"
 
-#: ephios/plugins/questionnaires/models.py:238
+#: ephios/plugins/questionnaires/models.py:241
 msgid "Saved answer"
 msgstr "Gespeicherte Antwort"
 
-#: ephios/plugins/questionnaires/models.py:239
+#: ephios/plugins/questionnaires/models.py:242
 #: ephios/plugins/questionnaires/signals.py:50
 msgid "Saved answers"
 msgstr "Gespeicherte Antworten"
@@ -4985,11 +4986,19 @@ msgstr "Wiederherstellen"
 msgid "Archive"
 msgstr "Archivieren"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:111
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:107
+msgid ""
+"This question cannot be deleted as it is used by at least one shift or "
+"answer. You can still archive it."
+msgstr ""
+"Diese Frage kann nicht gelöscht werden, da sie von mindestens einer Schicht "
+"oder Antwort genutzt wird. Sie können sie stattdessen archivieren."
+
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:119
 msgid "There are no archived questions."
 msgstr "Es gibt keine archivierten Fragen."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:113
+#: ephios/plugins/questionnaires/templates/questionnaires/question_list.html:121
 msgid "There are no active questions. Use the button above to create one!"
 msgstr ""
 "Es gibt keine aktiven Fragen. Nutzen Sie den obigen Button, um eine zu "
@@ -5025,6 +5034,34 @@ msgstr ""
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:10
 msgid "Saved questionnaire answers"
 msgstr "Gespeicherte Antowrten"
+
+#: ephios/plugins/questionnaires/views.py:40
+msgid "Question created successfully."
+msgstr "Frage erfolgreich gespeichert."
+
+#: ephios/plugins/questionnaires/views.py:48
+msgid "Question updated successfully."
+msgstr "Frage erfolgreich aktualisiert."
+
+#: ephios/plugins/questionnaires/views.py:78
+msgid "Question archived successfully."
+msgstr "Frage erfolgreich archiviert."
+
+#: ephios/plugins/questionnaires/views.py:80
+msgid "Question unarchived successfully."
+msgstr "Frage erfolgreich wiederhergestellt."
+
+#: ephios/plugins/questionnaires/views.py:88
+msgid "Question deleted successfully."
+msgstr "Frage erfolgreich gelöscht."
+
+#: ephios/plugins/questionnaires/views.py:104
+msgid "Saved answer updated successfully."
+msgstr "Gespeicherte Antwort erfolgreich aktualisiert."
+
+#: ephios/plugins/questionnaires/views.py:115
+msgid "Saved answer deleted successfully."
+msgstr "Gespeicherte Antwort erfolgreich gelöscht."
 
 #: ephios/plugins/simpleresource/apps.py:10
 msgid "Simple Resource Management Plugin"
@@ -5423,9 +5460,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "View working hours"
 #~ msgstr "Arbeitsstunden anzeigen"
-
-#~ msgid "User {name} ({user}) updated successfully."
-#~ msgstr "Benutzer {name} ({user}) erfolgreich aktualisiert."
 
 #~ msgid "Staff user"
 #~ msgstr "Mitarbeiter"

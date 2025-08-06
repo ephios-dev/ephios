@@ -50,6 +50,9 @@ class Question(models.Model):
     def __str__(self):
         return str(self.name)
 
+    def can_delete(self):
+        return not self.questionnaire_set.exists() and not self.answer_set.exists()
+
     def _get_field_classes(self):
         match self.type:
             case self.Type.TEXT:

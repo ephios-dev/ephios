@@ -98,10 +98,18 @@
                                href="{% url "questionnaires:question_archive" question.pk %}"><span
                                 class="fa fa-archive"></span> <span
                                     class="d-none d-md-inline">{% translate "Archive" %}</span></a>
-                            <a class="btn btn-secondary btn-sm text-nowrap ms-1"
-                               href="{% url "questionnaires:question_delete" question.pk %}"><span
-                                class="fa fa-trash-alt"></span> <span
-                                    class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
+                            {% if question.can_delete %}
+                                <a class="btn btn-secondary btn-sm text-nowrap ms-1"
+                                   href="{% url "questionnaires:question_delete" question.pk %}"><span
+                                    class="fa fa-trash-alt"></span> <span
+                                        class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
+                            {% else %}
+                                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% translate "This question cannot be deleted as it is used by at least one shift or answer. You can still archive it."%}">
+                                    <a class="btn btn-secondary btn-sm disabled text-nowrap ms-1" aria-disabled="true"><span
+                                        class="fa fa-trash-alt"></span> <span
+                                            class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
+                                </span>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
