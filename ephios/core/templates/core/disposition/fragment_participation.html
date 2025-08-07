@@ -6,8 +6,6 @@
 {% load i18n %}
 
 {% block participation_body %}
-    {% collect_insert_html_signal "disposition_participation" participation=form.instance as additional_html %}
-
     <div class="row align-items-start mb-0 gx-2">
         <div class="col">
             <div class="row">
@@ -46,9 +44,6 @@
             <button class="btn" type="button" data-bs-toggle="collapse"
                     data-bs-target="#participation-collapse-{{ form.instance.id }}" aria-expanded="false"
                     aria-controls="collapseExample">
-                {% if additional_html %}
-                    <span class="fas fa-info-circle pe-2"></span>
-                {% endif %}
                 {% if form.instance.comments.exists %}
                     <span class="fa fa-comment"></span> <span class="pe-2">{{ form.instance.comments.count }}</span>
                 {% endif %}
@@ -83,6 +78,7 @@
                 </div>
                 {% block participation_form %}
                 {% endblock %}
+                {% collect_insert_html_signal "disposition_participation" participation=form.instance as additional_html %}
                 {% if additional_html %}
                     {{ additional_html }}
                 {% else %}
