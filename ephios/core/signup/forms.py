@@ -166,7 +166,7 @@ class SignupForm(BaseParticipationForm):
         if self.shift.signup_flow.get_validator(self.participant).can_decline():
             buttons.append(
                 HTML(
-                    f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
+                    f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline" formnovalidate>{_("Decline")}</button>'
                 )
             )
         return buttons
