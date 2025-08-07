@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap %}
+
+{% block title %}
+    {% blocktranslate trimmed %}Answers for {{ shift }}{% endblocktranslate %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% blocktranslate trimmed %}Answers for {{ shift }}{% endblocktranslate %}</h1>
+
+    {% translate "This page only shows answers of confirmed participants. You can see the answers of other participants in the disposition view." as alert %}
+    {% render_alert alert "info" False %}
+
+    {% for question in question_data %}
+        <h2>{{ question.question.question_text }}</h2>
+
+        <p>
+            <em>{{ question.question.get_type_display }}, {{ question.question.required|yesno:_("required,optional") }}</em>
+        </p>
+
+        {% if question.aggregated_answers %}
+            {% if question.aggregation_type == "list" %}
+                <ul class="list-group list-group-flush">
+                    {% for answer in question.aggregated_answers %}
+                        <li class="list-group-item">{{ answer }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% translate "Answer" %}</th>
+                            <th scope="col">{% translate "Count" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for answer, count in question.aggregated_answers.items %}
+                            <tr>
+                                <td>{{ answer }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% else %}
+            <p>
+                <em>{% translate "No answers so far" %}</em>
+            </p>
+        {% endif %}
+    {% endfor %}
+
+    <a role="button" class="btn btn-secondary mt-3" href="{{ shift.event.get_absolute_url }}">{% translate "Back to event" %}</a>
+{% endblock %}
