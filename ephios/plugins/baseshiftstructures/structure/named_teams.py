@@ -369,8 +369,7 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         initial = participation.structure_data.get("preferred_team_uuid")
         required = (
-            # TODO: This is flawed, as the fields will not be required in customize mode
-            signup_choice == SignupForm.SignupChoices.SIGNUP
+            signup_choice != SignupForm.SignupChoices.DECLINE
             and self.shift.structure.configuration.choose_preferred_team
         )
         choices = [(team["uuid"], team["title"]) for team in enabled_teams]
