@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-06 16:35+0200\n"
+"POT-Creation-Date: 2025-08-08 14:16+0200\n"
 "PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -2022,7 +2022,7 @@ msgid "{label} was changed from {initial} to {current}."
 msgstr "{label} wurde von {initial} zu {current} geändert."
 
 #: ephios/core/signup/forms.py:133
-#: ephios/core/templates/core/disposition/fragment_participation.html:59
+#: ephios/core/templates/core/disposition/fragment_participation.html:54
 #: ephios/core/templates/core/fragments/shift_box_big.html:91
 #: ephios/core/templates/core/fragments/shift_box_big.html:99
 msgid "Customize"
@@ -2058,12 +2058,12 @@ msgstr "Ihre Teilnahme wurde gespeichert."
 msgid "Add others"
 msgstr "Weitere hinzufügen"
 
-#: ephios/core/templates/core/disposition/fragment_participation.html:23
+#: ephios/core/templates/core/disposition/fragment_participation.html:21
 #, python-format
 msgid "%(participant)s already participates in %(conflicts)s at the same time."
 msgstr "%(participant)s nimmt zur selben Zeit bereits an %(conflicts)s teil."
 
-#: ephios/core/templates/core/disposition/fragment_participation.html:30
+#: ephios/core/templates/core/disposition/fragment_participation.html:28
 #: ephios/plugins/baseshiftstructures/templates/baseshiftstructures/participation_card_inline.html:34
 msgid "Minor"
 msgstr "Minderjährig"
@@ -3474,19 +3474,19 @@ msgstr "Alle Teams, für die Sie qualifiziert sind, sind voll."
 msgid "unassigned"
 msgstr "nicht zugeteilt"
 
-#: ephios/plugins/baseshiftstructures/structure/named_teams.py:380
+#: ephios/plugins/baseshiftstructures/structure/named_teams.py:379
 #, python-brace-format
 msgid "You don't qualify for {teams}."
 msgstr "Sie sind nicht qualifiziert für {teams}."
 
-#: ephios/plugins/baseshiftstructures/structure/named_teams.py:385
+#: ephios/plugins/baseshiftstructures/structure/named_teams.py:384
 #, python-brace-format
 msgid "{teams} is full."
 msgid_plural "{teams} are full."
 msgstr[0] "{teams} ist voll."
 msgstr[1] "{teams} sind voll."
 
-#: ephios/plugins/baseshiftstructures/structure/named_teams.py:392
+#: ephios/plugins/baseshiftstructures/structure/named_teams.py:391
 msgid "Preferred Team"
 msgstr "Bevorzugtes Team"
 
@@ -3804,12 +3804,12 @@ msgstr ""
 "Nutzen Sie vordefinierte Einheiten um eine individuelle Struktur zu "
 "gestalten."
 
-#: ephios/plugins/complexsignup/structure.py:353
+#: ephios/plugins/complexsignup/structure.py:352
 #, python-brace-format
 msgid "You don't qualify for {blocks}."
 msgstr "Sie sind nicht qualifiziert für {blocks}."
 
-#: ephios/plugins/complexsignup/structure.py:361
+#: ephios/plugins/complexsignup/structure.py:360
 msgid "Preferred Unit"
 msgstr "Bevorzugte Einheit"
 
@@ -4866,6 +4866,10 @@ msgstr ""
 #: ephios/plugins/questionnaires/signals.py:124
 msgid "Save answers to my user profile for future sign-ups"
 msgstr "Speichere meine Antworten für spätere Anmeldungen in meinem Profil"
+
+#: ephios/plugins/questionnaires/signals.py:205
+msgid "View answers"
+msgstr "Antworten anzeigen"
 
 #: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:6
 #: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:10

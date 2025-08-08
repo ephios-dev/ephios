@@ -205,7 +205,7 @@ def add_shift_action(sender, shift: Shift, request, **kwargs):
     if hasattr(shift, "questionnaire") and shift.questionnaire and shift.questionnaire.questions:
         return [
             {
-                "label": "View answers",
+                "label": _("View answers"),
                 "url": reverse_lazy("questionnaires:shift_aggregate_answers", args=(shift.pk,)),
             }
         ]
