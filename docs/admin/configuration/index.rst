@@ -46,7 +46,7 @@ Secrets
 
 `VAPID_PRIVATE_KEY_PATH`:
     Path to the private key used to sign web push notifications. If not provided, web push notifications wont work
-    on some platforms. See :ref:`web_push_notifications` for details.
+    on some platforms.
     Defaults to `PRIVATE_DIR/vapid_key.pem`. A keypair is automatically generated if it does not exist.
 
 Data storage and Logging

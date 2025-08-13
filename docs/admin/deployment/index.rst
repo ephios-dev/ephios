@@ -8,10 +8,10 @@ Prerequisites
 
 To run ephios (a django project) in production, you generally need:
 
-- A **python** environment (we recommend python3.11).
-- A **WSGI application server** (we recommend gunicorn). This will be the program that actually runs the ephios code.
+- A **python** environment (we recommend the latest supported python release).
+- A **WSGI application server** (e.g. gunicorn). This will be the program that actually runs the ephios code.
   Do not use `manage.py runserver` in production.
-- A **reverse proxy** (we recommend nginx) that handles TLS termination, serves static files and
+- A **reverse proxy** (e.g. nginx) that handles TLS termination, serves static files and
   proxies requests to the WSGI application server. You should also secure your server using a firewall.
 - A **database** (we recommend postgresql) that stores the ephios data.
 - A program (e.g. **cron**) that periodically runs a management command (e.g. to send notifications).
@@ -60,9 +60,9 @@ To do so, add the following environment variables to your ephios environment:
 
     SECURE_HSTS_SECONDS=31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS=True
-    SECURE_HSTS_PRELOAD=True
+    SECURE_HSTS_PRELOAD=False
 
-Restart and maybe also add your domain to the `HSTS preload list <https://hstspreload.org/>`_.
+Restart and maybe also setup `HSTS preloading <https://hstspreload.org/>`_.
 
 Troubleshooting
 ---------------
