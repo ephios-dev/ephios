@@ -1253,13 +1253,13 @@ djangorestframework = "*"
 
 [[package]]
 name = "djhtml"
-version = "3.0.8"
+version = "3.0.9"
 description = "Django/Jinja template indenter"
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "djhtml-3.0.8.tar.gz", hash = "sha256:ec3b4cf25f0959474c7793da1becba654ca9587689ce143955bcbc2638eeabce"},
+    {file = "djhtml-3.0.9.tar.gz", hash = "sha256:b21d7e6836b5aa8fb415233eb853ad14fdc26694f19ed17158ba71c97fa23f39"},
 ]
 
 [package.extras]
