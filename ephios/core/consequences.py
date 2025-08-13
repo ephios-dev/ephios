@@ -40,11 +40,14 @@ def consequence_handler_from_slug(slug):
 
 def editable_consequences(user):
     handlers = list(installed_consequence_handlers())
-    # qs = LocalConsequence.objects.all().select_related("user")
-    # for handler in handlers:
-    #     qs = handler.filter_queryset(qs, user)
-    qs = AbstractConsequence.objects.all()
-    return qs.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
+    consequence_classes = AbstractConsequence.__subclasses__()
+
+    qs = AbstractConsequence.objects.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
+    q_obj = Q()
+    for handler in handlers:
+        for ConcreteConsequence in consequence_classes:
+            q_obj = q_obj | ConcreteConsequence.filter_editable_by_user(handler, user)
+    return qs.filter(q_obj)
 
 
 def pending_consequences(user):
@@ -81,10 +84,9 @@ class BaseConsequenceHandler:
         raise NotImplementedError
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
+    def filter_editable_by_user(cls, user: UserProfile) -> Q:
         """
-        Return a filtered that excludes consequences with the slug of this class that the user is not allowed to edit.
-        Consequences should also be annotated with values needed for rendering.
+        Return a Q object that include consequences with the slug of this class that the user is allowed to edit.
         """
         raise NotImplementedError
 
@@ -126,15 +128,12 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
         )
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
-        return qs.filter(
-            ~Q(slug=cls.slug)
-            | Q(
-                user__groups__in=get_objects_for_user(
+    def filter_editable_by_user(cls, user: UserProfile):
+        return Q(slug=cls.slug,
+                localconsequence__user__groups__in=get_objects_for_user(
                     user, "decide_workinghours_for_group", klass=Group
                 )
             )
-        )
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
@@ -215,25 +214,14 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         return s
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
-        qs = qs.annotate(
-            qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField()),
-            event_id=Cast(KeyTransform("event_id", "data"), IntegerField()),
-        ).annotate(
-            qualification_title=Subquery(
-                Qualification.objects.filter(id=OuterRef("qualification_id")).values("title")[:1]
-            ),
-            event_title=Subquery(Event.objects.filter(id=OuterRef("event_id")).values("title")[:1]),
-        )
-
-        return qs.filter(
-            ~Q(slug=cls.slug)
+    def filter_editable_by_user(cls, user: UserProfile):
+        return Q(slug=cls.slug) & Q(
             # Qualifications can be granted by people who...
-            | Q(  # are responsible for the event the consequence originated from, if applicable
-                event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
+            Q(  # are responsible for the event the consequence originated from, if applicable
+                data__event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
             )
             | Q(  # can edit the affected user anyway
-                user__in=get_objects_for_user(
+                localconsequence__user__in=get_objects_for_user(
                     user, perms="change_userprofile", klass=get_user_model()
                 )
             )
