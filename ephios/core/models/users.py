@@ -416,6 +416,10 @@ class AbstractConsequence(PolymorphicModel):
         verbose_name = _("Abstract consequence")
         verbose_name_plural = _("Abstract consequences")
 
+    @classmethod
+    def filter_editable_by_user(cls, handler, user):
+        raise NotImplementedError
+
     @property
     def handler(self):
         from ephios.core import consequences
@@ -490,6 +494,10 @@ class LocalConsequence(AbstractConsequence):
         db_table = "localconsequence"
         verbose_name = _("Local consequence")
         verbose_name_plural = _("Local consequences")
+
+    @classmethod
+    def filter_editable_by_user(cls, handler, user):
+        return handler.filter_editable_by_user(user)
 
     def participant_display_name(self):
         return self.user.display_name

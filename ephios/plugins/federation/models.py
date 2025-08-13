@@ -4,7 +4,9 @@ import datetime
 import json
 from secrets import token_hex
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -172,6 +174,10 @@ class FederatedConsequence(AbstractConsequence):
         verbose_name = _("Federated consequence")
         verbose_name_plural = _("Federated consequences")
 
+    @classmethod
+    def filter_editable_by_user(cls, handler, user):
+        return Q(polymorphic_ctype=ContentType.objects.get_for_model(cls))
+
     def participant_display_name(self):
         return f"{self.federated_user.display_name} ({self.federated_user.federated_instance.name})"
 
@@ -199,7 +205,7 @@ class FederatedParticipant(AbstractParticipant):
         return FederatedParticipation.objects.filter(federated_user=self.federated_user)
 
     def new_consequence(self) -> AbstractConsequence:
-        return FederatedConsequence()
+        return FederatedConsequence(federated_user=self.federated_user)
 
     def reverse_signup_action(self, shift):
         return reverse(
