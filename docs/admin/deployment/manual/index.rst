@@ -27,12 +27,13 @@ Install the system packages that ephios depends on.
 python environment and ephios package
 '''''''''''''''''''''''''''''''''''''
 
-Create a `virtualenv <https://docs.python.org/3/tutorial/venv.html>`_ for ephios and install the ephios package.
+Create a `virtualenv <https://docs.python.org/3/tutorial/venv.html>`_ for ephios and
+install the ephios package. You may need to specify an exact python executable (e.g. ``python3.13``)
 Replace pgsql with mysql if you want to use mysql.
 
 .. code-block:: console
 
-    # sudo -u ephios python3.11 -m venv /home/ephios/venv
+    # sudo -u ephios python3 -m venv /home/ephios/venv
     # sudo -u ephios /home/ephios/venv/bin/pip install gunicorn "ephios[redis,pgsql]"
 
 Database
@@ -57,8 +58,6 @@ The reverse proxy needs to be able to read the static files stored in ``/var/eph
 
     # mkdir -p /var/ephios/data/
     # chown -R ephios:ephios /var/ephios
-
-.. _web_push_notifications:
 
 Config file
 '''''''''''
@@ -243,7 +242,7 @@ You can now create your first user account by running:
     $ source /home/ephios/venv/bin/activate
     $ python -m ephios createsuperuser
 
-You should now secure your installation. Try starting with the tips below.
+You should now secure your installation. Try starting with the tips in the security section.
 
 To install a plugin install them via pip:
 
