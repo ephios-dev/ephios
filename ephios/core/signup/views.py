@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
-from ephios.core.models import Shift
+from ephios.core.models import Shift, UserProfile
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
@@ -16,7 +16,7 @@ from ephios.core.signup.flow.participant_validation import (
     get_conflicting_participations,
 )
 from ephios.core.signup.forms import SignupForm
-from ephios.core.signup.participants import AbstractParticipant
+from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.extra.database import OF_SELF
 
 
@@ -42,25 +42,50 @@ class SignupView(FormView):
         )
         return kwargs
 
-    @cached_property
-    def participation(self):
-        return self.shift.signup_flow.get_or_create_participation_for(self.participant)
-
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.participant: AbstractParticipant = kwargs["participant"]
         prevent_getting_participant_from_request_user(request)
 
+    # We need to avoid race conditions like:
+    # - multiple people signing up at the same time violating the max participation count
+    # - the user signing up for two conflicting shifts at the same time
+    # - there being multiple participation objects for the same participant/shift combination
+    # Therefore we select shift and user for update, making transactions block
+    # To avoid Deadlocks, the lock order must always be user, then shift.
+
+    @cached_property
+    def participation(self):
+        if isinstance(self.participant, LocalUserParticipant):
+            UserProfile.objects.select_for_update(of=OF_SELF).get(pk=self.participant.user.pk)
+        return self.shift.signup_flow.get_or_create_participation_for(self.participant)
+
+    def _select_shift_for_update(self):
+        return (
+            Shift.objects.select_for_update(of=OF_SELF)
+            .prefetch_related("participations")
+            .select_related("event", "event__type")
+            .get(pk=self.shift.pk)
+        )
+
     def _collect_quick_action_signup_data(self):
+        """
+        Collect defaults for the signup fields to use instead of clean_data from a SignupForm.
+        Returns None and adds messages to the request if conditions don't allow providing this data
+        without explicit user input.
+        """
         signup_choice = self.request.POST.get("signup_choice")
         data = {
             "signup_choice": signup_choice,  # validated later
-            "individual_start_time": self.shift.start_time,
-            "individual_end_time": self.shift.end_time,
+            "individual_start_time": self.participation.individual_start_time
+            or self.shift.start_time,
+            "individual_end_time": self.participation.individual_end_time or self.shift.end_time,
         }
         if signup_choice != "decline" and (
             conflicts := get_conflicting_participations(
                 participant=self.participant,
+                # intentionally use the original shift times here (ignoring individual times)
+                # so participants are forced to recheck their individual times (except when declining)
                 start_time=self.shift.start_time,
                 end_time=self.shift.end_time,
                 shift=self.shift,
@@ -70,7 +95,7 @@ class SignupView(FormView):
             messages.warning(
                 self.request,
                 gettext_lazy(
-                    "You are already confirmed for other shifts at this time: {shifts}. Please adjust the timing."
+                    "You are already confirmed for other shifts at this time: {shifts}. Please check the timing."
                 ).format(shifts=", ".join(str(shift) for shift in conflicts)),
             )
             return None
@@ -93,55 +118,79 @@ class SignupView(FormView):
         return data
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
         if request.POST.get("quick_action"):
-            instance = self.participation
             if not (signup_data := self._collect_quick_action_signup_data()):
-                # quick action not valid -> redirect so it acts like a click on the customize button
+                # quick action not valid -> redirect so it acts like a click on the customize-button
                 return redirect(self.participant.reverse_signup_action(self.shift))
-            with transaction.atomic():
-                instance.save()
-                return self._process_signup_action(instance, signup_data)
-        else:
-            if not form.is_valid():
-                return self.form_invalid(form)
-            signup_data = form.cleaned_data
-            with transaction.atomic():
-                instance = form.save()
-                if claims := form.get_customization_notification_info():
-                    ResponsibleConfirmedParticipationCustomizedNotification.send(
-                        form.instance, claims
+            try:
+                with transaction.atomic():
+                    validator = self._select_shift_for_update().signup_flow.get_validator(
+                        self.participant
                     )
-                return self._process_signup_action(instance, signup_data)
+                    instance = self.participation
+                    instance.save()
+                    return self._process_signup_action(instance, signup_data, validator)
+            except BaseSignupError:
+                return redirect(self.participant.reverse_event_detail(self.shift.event))
 
-    def _process_signup_action(self, participation, signup_data):
-        # select shift for update and get a fresh validator
-        validator = (
-            Shift.objects.select_for_update(of=OF_SELF)
-            .prefetch_related("participations")
-            .select_related("event", "event__type")
-            .get(pk=self.shift.pk)
-            .signup_flow.get_validator(self.participant)
-        )
-        if (
-            signup_data["signup_choice"] == SignupForm.SignupChoices.SIGNUP
-            and validator.can_sign_up()
-        ):
-            return self.signup_pressed(participation, signup_data)
-        if (
-            signup_data["signup_choice"] == SignupForm.SignupChoices.CUSTOMIZE
-            and validator.can_customize_signup()
-        ):
-            return self.customize_pressed(participation, signup_data)
-        if (
-            signup_data["signup_choice"] == SignupForm.SignupChoices.DECLINE
-            and validator.can_decline()
-        ):
-            return self.decline_pressed(participation, signup_data)
-        messages.error(self.request, _("This action is not allowed."))
+        # deal with a regular SignupForm submit
+        try:
+            with transaction.atomic():
+                form = (
+                    self.get_form()
+                )  # might create a participation object, so must be inside transaction
+                if form.is_valid():
+                    signup_data = form.cleaned_data
+                    validator = self._select_shift_for_update().signup_flow.get_validator(
+                        self.participant
+                    )
+                    instance = form.save()
+                    if claims := form.get_customization_notification_info():
+                        ResponsibleConfirmedParticipationCustomizedNotification.send(
+                            form.instance, claims
+                        )
+                    return self._process_signup_action(instance, signup_data, validator)
+        except BaseSignupError:
+            # jump back to event-detail, in case SignupForm should be unreachable
+            return redirect(self.participant.reverse_event_detail(self.shift.event))
+        return self.form_invalid(form)
+
+    def _process_signup_action(self, participation, signup_data, validator):
+        match signup_data["signup_choice"]:
+            case SignupForm.SignupChoices.SIGNUP if validator.can_sign_up():
+                flow_action = self.shift.signup_flow.perform_signup
+                error_message = self.shift.signup_flow.signup_error_message
+                success_message = self.shift.signup_flow.signup_success_message
+            case SignupForm.SignupChoices.DECLINE if validator.can_decline():
+                flow_action = self.shift.signup_flow.perform_decline
+                error_message = self.shift.signup_flow.decline_error_message
+                success_message = self.shift.signup_flow.decline_success_message
+            case SignupForm.SignupChoices.CUSTOMIZE if validator.can_customize_signup():
+                flow_action = lambda **kwargs: None  # noop
+                error_message = _("There was an error saving your participation.")
+                success_message = _("Your participation was saved.")
+            case _:
+                transaction.rollback()
+                messages.error(self.request, _("This action is not allowed."))
+                # always jump back to event-detail, in case SignupForm should be unreachable
+                return redirect(self.participant.reverse_event_detail(self.shift.event))
+        try:
+            self._send_signup_save_signal(participation, signup_data)
+            flow_action(
+                participant=self.participant,
+                participation=participation,
+                acting_user=self._acting_user,
+                **signup_data,
+            )
+        except BaseSignupError as error:
+            # except hook for inserting the error message
+            messages.error(self.request, error_message.format(error=error))
+            raise  # must reraise for transaction rollback
+        else:
+            messages.success(self.request, success_message.format(shift=self.shift))
         return redirect(self.participant.reverse_event_detail(self.shift.event))
 
-    def customize_pressed(self, participation, signup_data):
+    def _send_signup_save_signal(self, participation, signup_data):
         signup_save.send(
             sender=None,
             shift=self.shift,
@@ -150,8 +199,6 @@ class SignupView(FormView):
             signup_choice=signup_data["signup_choice"],
             cleaned_data=signup_data,
         )
-        messages.success(self.request, _("Your participation was saved."))
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
     @property
     def _acting_user(self):
@@ -160,62 +207,6 @@ class SignupView(FormView):
         # Anonymous users are handled as None, they can't be serialized
         # to JSON down the Notification data road. Wouldn't be of use anyway.
         return None
-
-    def signup_pressed(self, participation, signup_data):
-        try:
-            signup_save.send(
-                sender=None,
-                shift=self.shift,
-                participant=self.participant,
-                participation=participation,
-                signup_choice=signup_data["signup_choice"],
-                cleaned_data=signup_data,
-            )
-            self.shift.signup_flow.perform_signup(
-                participant=self.participant,
-                participation=participation,
-                acting_user=self._acting_user,
-                **signup_data,
-            )
-        except BaseSignupError as errors:
-            for error in errors:  # pylint:disable=not-an-iterable
-                messages.error(
-                    self.request, self.shift.signup_flow.signup_error_message.format(error=error)
-                )
-        else:
-            messages.success(
-                self.request,
-                self.shift.signup_flow.signup_success_message.format(shift=self.shift),
-            )
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
-
-    def decline_pressed(self, participation, signup_data):
-        try:
-            signup_save.send(
-                sender=None,
-                shift=self.shift,
-                participant=self.participant,
-                participation=participation,
-                signup_choice=signup_data["signup_choice"],
-                cleaned_data=signup_data,
-            )
-            self.shift.signup_flow.perform_decline(
-                participant=self.participant,
-                participation=participation,
-                acting_user=self._acting_user,
-                **signup_data,
-            )
-        except BaseSignupError as errors:
-            for error in errors:  # pylint:disable=not-an-iterable
-                messages.error(
-                    self.request, self.shift.signup_flow.decline_error_message.format(error=error)
-                )
-        else:
-            messages.info(
-                self.request,
-                self.shift.signup_flow.decline_success_message.format(shift=self.shift),
-            )
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
 
 
 def prevent_getting_participant_from_request_user(request):
