@@ -150,7 +150,14 @@ class Question(models.Model):
         field_classes = self._get_field_classes()
         field_kwargs = self._get_field_kwargs()
 
+        # When should a question actually be required?
+        # We could theoretically have a saved answer with an emtpy value.
+        # In most cases that should not be considered a sufficient answer for a required question.
+
         field = {
+            "default": initial,
+            "type": str,  # hardcoded for every question type we currently offer
+            "required": required,
             "form_class": field_classes[0],
             "form_kwargs": {
                 "label": self.question_text,

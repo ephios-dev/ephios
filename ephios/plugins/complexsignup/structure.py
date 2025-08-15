@@ -355,6 +355,9 @@ class ComplexShiftStructure(
 
         return {
             "complexsignup_preferred_unit_path": {
+                "required": required,
+                "default": initial,
+                "type": str,
                 "form_class": forms.ChoiceField,
                 "form_kwargs": {
                     "label": _("Preferred Unit"),

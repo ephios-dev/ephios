@@ -132,9 +132,15 @@ signup_form_fields = PluginSignal()
 """
 This signal is sent out to get a list of form fields to show on the signup view, especially to collect
 user input for shift structures. Receivers will receive the ``shift``, ``participant``, ``participation``,
-and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 'default': ...,
-'type': ..., 'form_class': ..., 'form_kwargs': ..., 'serializer_class': ..., 'serializer_kwargs': ... },
-'fieldname2: { ... } }``
+and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 
+    'default': ...,
+    'type': ...,
+    'required': ...,  # meaning a non-Falsey value must be provided
+    'form_class': ..., 
+    'form_kwargs': ..., 
+    'serializer_class': ..., 
+    'serializer_kwargs': ...,
+    }, 'fieldname2: { ... } }``
 """
 
 signup_save = PluginSignal()
