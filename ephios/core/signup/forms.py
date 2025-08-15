@@ -175,7 +175,7 @@ class SignupForm(BaseParticipationForm):
         self.shift: Shift = kwargs.pop("shift")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
-        self.collect_fields()
+        self._collect_fields()
         self.helper = FormHelper()
         self.helper.layout = Layout(
             self._get_field_layout(),
@@ -188,7 +188,7 @@ class SignupForm(BaseParticipationForm):
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 
-    def collect_fields(self):
+    def _collect_fields(self):
         responses = signup_form_fields.send(
             sender=None,
             shift=self.shift,

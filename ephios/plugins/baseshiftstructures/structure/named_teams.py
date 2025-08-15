@@ -386,6 +386,9 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         return {
             "baseshiftstructures_named_teams_preferred_team_uuid": {
+                "required": required,
+                "default": initial,
+                "type": str,
                 "form_class": forms.ChoiceField,
                 "form_kwargs": {
                     "label": _("Preferred Team"),

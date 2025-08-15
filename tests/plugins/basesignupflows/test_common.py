@@ -88,8 +88,9 @@ def test_comment_is_only_visible_to_responsibles(
     django_app, planner, volunteer, qualified_volunteer, event
 ):
     comment_text = "n.f.D. super secret comment text"
-    response = django_app.get(event.get_absolute_url(), user=volunteer)
-    form = response.form.submit(name="signup_choice", value="customize").form
+    form = django_app.get(
+        volunteer.as_participant().reverse_signup_action(event.shifts.first()), user=volunteer
+    ).form
     form["comment"] = comment_text
     response = form.submit(name="signup_choice", value="sign_up").follow()
 
