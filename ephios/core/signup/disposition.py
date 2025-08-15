@@ -1,4 +1,5 @@
 from django import forms
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.functional import cached_property
@@ -23,6 +24,7 @@ from ephios.core.services.notifications.types import (
     ResponsibleParticipationStateChangeNotification,
 )
 from ephios.core.signup.forms import BaseParticipationForm
+from ephios.extra.database import OF_SELF
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
@@ -166,9 +168,12 @@ class AddUserView(DispositionBaseViewMixin, TemplateResponseMixin, View):
         )
         if form.is_valid():
             user: UserProfile = form.cleaned_data["user"]
-            instance = shift.signup_flow.get_or_create_participation_for(user.as_participant())
-            instance.state = AbstractParticipation.States.GETTING_DISPATCHED
-            instance.save()
+            with transaction.atomic():
+                # lock user row in case to avoid duplicate participation objects
+                UserProfile.objects.select_for_update(of=OF_SELF).get(pk=user.pk)
+                instance = shift.signup_flow.get_or_create_participation_for(user.as_participant())
+                instance.state = AbstractParticipation.States.GETTING_DISPATCHED
+                instance.save()
 
             DispositionParticipationFormset = get_disposition_formset(
                 self.object.structure.disposition_participation_form_class
