@@ -70,7 +70,7 @@ class SignupView(FormView):
 
     def _collect_quick_action_signup_data(self):
         """
-        Collect defaults for the signup fields to use instead of clean_data from a SignupForm.
+        Collect defaults for the signup fields to use instead of cleaned_data from a SignupForm.
         Returns None and adds messages to the request if conditions don't allow providing this data
         without explicit user input.
         """
@@ -81,10 +81,10 @@ class SignupView(FormView):
             or self.shift.start_time,
             "individual_end_time": self.participation.individual_end_time or self.shift.end_time,
         }
-        if signup_choice != "decline" and (
+        if signup_choice != SignupForm.SignupChoices.DECLINE and (
             conflicts := get_conflicting_participations(
                 participant=self.participant,
-                # intentionally use the original shift times here (ignoring individual times)
+                # intentionally use the original shift times here (ignoring individual times on quick_signup)
                 # so participants are forced to recheck their individual times (except when declining)
                 start_time=self.shift.start_time,
                 end_time=self.shift.end_time,
@@ -124,10 +124,10 @@ class SignupView(FormView):
                 return redirect(self.participant.reverse_signup_action(self.shift))
             try:
                 with transaction.atomic():
+                    instance = self.participation  # locks participation object
                     validator = self._select_shift_for_update().signup_flow.get_validator(
                         self.participant
                     )
-                    instance = self.participation
                     instance.save()
                     return self._process_signup_action(instance, signup_data, validator)
             except BaseSignupError:
@@ -145,7 +145,9 @@ class SignupView(FormView):
                         self.participant
                     )
                     instance = form.save()
-                    if claims := form.get_customization_notification_info():
+                    if signup_data["signup_choice"] == SignupForm.SignupChoices.CUSTOMIZE and (
+                        claims := form.get_customization_notification_info()
+                    ):
                         ResponsibleConfirmedParticipationCustomizedNotification.send(
                             form.instance, claims
                         )
