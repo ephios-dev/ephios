@@ -386,21 +386,17 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
 
         return {
             "baseshiftstructures_named_teams_preferred_team_uuid": {
-                "required": required,
+                "label": _("Preferred Team"),
+                "help_text": help_text,
                 "default": initial,
-                "type": str,
+                "required": required,
                 "form_class": forms.ChoiceField,
                 "form_kwargs": {
-                    "label": _("Preferred Team"),
-                    "initial": initial,
-                    "required": required,
                     "choices": choices,
-                    "help_text": help_text,
                     "widget": forms.RadioSelect,
                 },
                 "serializer_class": serializers.ChoiceField,
                 "serializer_kwargs": {
-                    "required": required,
                     "choices": choices,
                 },
             },

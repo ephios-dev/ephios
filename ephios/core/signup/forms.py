@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
-from ephios.core.signals import signup_form_fields
+from ephios.core.signals import collect_signup_form_fields
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.widgets import PreviousCommentWidget
@@ -189,17 +189,10 @@ class SignupForm(BaseParticipationForm):
             self.fields["individual_end_time"].disabled = True
 
     def _collect_fields(self):
-        responses = signup_form_fields.send(
-            sender=None,
-            shift=self.shift,
-            participant=self.participant,
-            participation=self.instance,
-            signup_choice=self.data.get("signup_choice"),
-        )
-
-        for _, additional_fields in responses:
-            for fieldname, field in additional_fields.items():
-                self.fields[fieldname] = field["form_class"](**field.get("form_kwargs", {}))
+        for fieldname, field in collect_signup_form_fields(
+            self.shift, self.participant, self.instance, self.data.get("signup_choice")
+        ):
+            self.fields[fieldname] = field["form_class"](**field.get("form_kwargs", {}))
 
     def clean(self):
         cleaned_data = super().clean()

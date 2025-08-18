@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.functional import SimpleLazyObject, cached_property
-from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
@@ -10,7 +9,7 @@ from ephios.core.models import Shift, UserProfile
 from ephios.core.services.notifications.types import (
     ResponsibleConfirmedParticipationCustomizedNotification,
 )
-from ephios.core.signals import signup_form_fields, signup_save
+from ephios.core.signals import collect_signup_form_fields, signup_save
 from ephios.core.signup.flow.participant_validation import (
     BaseSignupError,
     get_conflicting_participations,
@@ -94,27 +93,20 @@ class SignupView(FormView):
         ):
             messages.warning(
                 self.request,
-                gettext_lazy(
+                _(
                     "You are already confirmed for other shifts at this time: {shifts}. Please check the timing."
                 ).format(shifts=", ".join(str(shift) for shift in conflicts)),
             )
             return None
-        responses = signup_form_fields.send(
-            sender=None,
-            shift=self.shift,
-            participant=self.participant,
-            participation=self.participation,
-            signup_choice=signup_choice,
-        )
-        for _, additional_fields in responses:
-            for fieldname, field in additional_fields.items():
-                if field["required"] and not field["default"]:
-                    # not supported by quick action
-                    messages.warning(
-                        self.request, gettext_lazy("Some fields are required for signup.")
-                    )
-                    return None
-                data[fieldname] = field["default"]
+
+        for fieldname, field in collect_signup_form_fields(
+            self.shift, self.participant, self.participation, signup_choice
+        ):
+            if field["required"] and not field["default"]:
+                # not supported by quick action
+                messages.info(self.request, _("Please fill out the form to sign up."))
+                return None
+            data[fieldname] = field["default"]
         return data
 
     def post(self, request, *args, **kwargs):
