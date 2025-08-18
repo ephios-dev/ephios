@@ -133,15 +133,46 @@ signup_form_fields = PluginSignal()
 This signal is sent out to get a list of form fields to show on the signup view, especially to collect
 user input for shift structures. Receivers will receive the ``shift``, ``participant``, ``participation``,
 and ``signup_choice`` and should return a dict in the form ``{ 'fieldname1': { 
+    'label':, ...,
+    'help_text':, ...,
     'default': ...,
-    'type': ...,
     'required': ...,  # meaning a non-Falsey value must be provided
     'form_class': ..., 
     'form_kwargs': ..., 
     'serializer_class': ..., 
     'serializer_kwargs': ...,
-    }, 'fieldname2: { ... } }``
+    }, 'fieldname2: { ... } }``.
+``label`` (only form), ``help_text`` (only form), ``default`` (only form, as ``initial``), and ``required``
+(form and serializer) will be applied to the kwargs dicts for convenience. Values specified directly
+as kwarg have precedence.
 """
+
+
+def collect_signup_form_fields(shift, participant, participation, signup_choice):
+    responses = signup_form_fields.send(
+        sender=None,
+        shift=shift,
+        participant=participant,
+        participation=participation,
+        signup_choice=signup_choice,
+    )
+    for _, additional_fields in responses:
+        for fieldname, field in additional_fields.items():
+            yield fieldname, {
+                **field,
+                "form_kwargs": {
+                    "label": field["label"],
+                    "help_text": field.get("help_text", ""),
+                    "initial": field["default"],
+                    "required": field["required"],
+                    **field["form_kwargs"],
+                },
+                "serializer_kwargs": {
+                    "required": field["required"],
+                    **field["serializer_kwargs"],
+                },
+            }
+
 
 signup_save = PluginSignal()
 """

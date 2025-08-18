@@ -355,21 +355,17 @@ class ComplexShiftStructure(
 
         return {
             "complexsignup_preferred_unit_path": {
-                "required": required,
+                "label": _("Preferred Unit"),
+                "help_text": help_text,
                 "default": initial,
-                "type": str,
+                "required": required,
                 "form_class": forms.ChoiceField,
                 "form_kwargs": {
-                    "label": _("Preferred Unit"),
-                    "initial": initial,
-                    "required": required,
                     "choices": choices,
-                    "help_text": help_text,
                     "widget": forms.RadioSelect,
                 },
                 "serializer_class": serializers.ChoiceField,
                 "serializer_kwargs": {
-                    "required": required,
                     "choices": choices,
                 },
             },

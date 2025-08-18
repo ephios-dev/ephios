@@ -145,30 +145,21 @@ class Question(models.Model):
         initial = self._get_initial_answer(participant, participation)
 
         field_name = self.get_form_slug()
-        required = self.required if initial is None else False
 
         field_classes = self._get_field_classes()
         field_kwargs = self._get_field_kwargs()
 
-        # When should a question actually be required?
-        # We could theoretically have a saved answer with an emtpy value.
-        # In most cases that should not be considered a sufficient answer for a required question.
-
         field = {
+            "label": self.question_text,
+            "help_text": self.description,
             "default": initial,
-            "type": str,  # hardcoded for every question type we currently offer
-            "required": required,
+            "required": self.required,
             "form_class": field_classes[0],
             "form_kwargs": {
-                "label": self.question_text,
-                "help_text": self.description,
-                "initial": initial,
-                "required": required,
                 **field_kwargs[0],
             },
             "serializer_class": field_classes[1],
             "serializer_kwargs": {
-                "required": required,
                 **field_kwargs[1],
             },
         }
