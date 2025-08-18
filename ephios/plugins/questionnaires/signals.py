@@ -119,6 +119,9 @@ def provide_signup_form_fields(
 
     if len(formfields) > 0 and isinstance(participant, LocalUserParticipant):
         formfields["questionnaires_save_answers"] = {
+            "default": True,
+            "type": bool,
+            "required": False,
             "form_class": forms.BooleanField,
             "form_kwargs": {
                 "label": _("Save answers to my user profile for future sign-ups"),

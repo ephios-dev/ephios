@@ -73,15 +73,9 @@
                     <div class="col-auto order-1">
                         <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
                               action="{{ request|reverse_signup_action:shift }}">
-                            {# If signup form is invalid, provide the shift times as initial values by including them in post data. #}
-                            <input type="hidden" name="individual_start_time_0"
-                                   value="{{ shift.start_time|date:"Y-m-d" }}">
-                            <input type="hidden" name="individual_start_time_1"
-                                   value="{{ shift.start_time|time:"H:i" }}">
-                            <input type="hidden" name="individual_end_time_0" value="{{ shift.end_time|date:"Y-m-d" }}">
-                            <input type="hidden" name="individual_end_time_1" value="{{ shift.end_time|time:"H:i" }}">
                             {% csrf_token %}
-
+                            {# Sentinel value to bypass signup form #}
+                            <input type="hidden" name="quick_action" value="1">
                             {% if can_sign_up and can_customize_signup %}
                                 <div class="btn-group">
                                     <button type="submit" name="signup_choice" value="sign_up"
