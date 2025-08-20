@@ -1,0 +1,13 @@
+<h5>Questionnaire Answers</h5>
+
+<ul>
+    {% for answer in answers %}
+        <li>
+            <strong>
+                {{ answer.question.name }}
+                <span class="fas fa-question-circle" data-bs-toggle="tooltip" title="{{ answer.question.question_text }}"></span>:
+            </strong>
+            {{ answer.answer_text }}
+        </li>
+    {% endfor %}
+</ul>

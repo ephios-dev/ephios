@@ -1,6 +1,5 @@
 import uuid
 from collections import Counter, defaultdict
-from functools import cached_property
 from itertools import groupby
 from operator import itemgetter
 
@@ -8,11 +7,12 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
+from rest_framework import serializers
 
 from ephios.core.models import AbstractParticipation, Qualification
 from ephios.core.signup.disposition import BaseDispositionParticipationForm
 from ephios.core.signup.flow.participant_validation import ParticipantUnfitError
-from ephios.core.signup.forms import BaseSignupForm
+from ephios.core.signup.forms import SignupForm
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.plugins.baseshiftstructures.structure.group_common import (
     AbstractGroupBasedStructureConfigurationForm,
@@ -90,74 +90,6 @@ class NamedTeamsDispositionParticipationForm(BaseDispositionParticipationForm):
         super().save(commit)
 
 
-class NamedTeamsSignupForm(BaseSignupForm):
-    preferred_team_uuid = forms.ChoiceField(
-        label=_("Preferred Team"),
-        widget=forms.RadioSelect,
-        required=False,
-        # choices are later set as (uuid, title) of team
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["preferred_team_uuid"].initial = self.instance.structure_data.get(
-            "preferred_team_uuid"
-        )
-        self.fields["preferred_team_uuid"].required = (
-            self.data.get("signup_choice") == "sign_up"
-            and self.shift.structure.configuration.choose_preferred_team
-        )
-
-        team_stats = self.shift.structure._get_signup_stats_per_group(
-            self.shift.participations.all()
-        )
-        enabled_teams = []
-        not_qualified_teams = []
-        full_teams = []
-        for team in self.shift.structure.configuration.teams:
-            if team["uuid"] in [
-                self.instance.structure_data.get("preferred_team_uuid"),
-                self.instance.structure_data.get("dispatched_team_uuid"),
-            ]:
-                enabled_teams.append(team)
-            elif team not in self.teams_participant_qualifies_for:
-                not_qualified_teams.append(team)
-            elif (
-                not self.shift.signup_flow.uses_requested_state
-                and not team_stats[team["uuid"]].has_free()
-            ):
-                full_teams.append(team)
-            else:
-                enabled_teams.append(team)
-
-        self.fields["preferred_team_uuid"].choices = [
-            (team["uuid"], team["title"]) for team in enabled_teams
-        ]
-        help_text = ""
-        if not_qualified_teams:
-            help_text = _("You don't qualify for {teams}.").format(
-                teams=", ".join(str(team["title"]) for team in not_qualified_teams)
-            )
-        if full_teams:
-            help_text += " " + ngettext_lazy(
-                "{teams} is full.", "{teams} are full.", len(full_teams)
-            ).format(teams=", ".join(str(team["title"]) for team in full_teams))
-        if help_text:
-            self.fields["preferred_team_uuid"].help_text = help_text
-
-    def save(self, commit=True):
-        self.instance.structure_data["preferred_team_uuid"] = self.cleaned_data[
-            "preferred_team_uuid"
-        ]
-        return super().save(commit)
-
-    @cached_property
-    def teams_participant_qualifies_for(self):
-        return teams_participant_qualifies_for(
-            self.shift.structure.configuration.teams, self.participant
-        )
-
-
 class NamedTeamForm(QualificationRequirementForm):
     title = forms.CharField(label=_("Title"), required=True)
     uuid = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -204,7 +136,6 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
     configuration_form_class = NamedTeamsConfigurationForm
     shift_state_template_name = "baseshiftstructures/named_teams/fragment_state.html"
     disposition_participation_form_class = NamedTeamsDispositionParticipationForm
-    signup_form_class = NamedTeamsSignupForm
 
     NO_TEAM_UUID = "noteam"
 
@@ -412,3 +343,68 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             )
 
         return export_data
+
+    def get_signup_form_fields(self, participant, participation, signup_choice):
+        team_stats = self._get_signup_stats_per_group(self.shift.participations.all())
+        enabled_teams = []
+        not_qualified_teams = []
+        full_teams = []
+        for team in self.shift.structure.configuration.teams:
+            if team["uuid"] in [
+                participation.structure_data.get("preferred_team_uuid"),
+                participation.structure_data.get("dispatched_team_uuid"),
+            ]:
+                enabled_teams.append(team)
+            elif team not in teams_participant_qualifies_for(
+                self.shift.structure.configuration.teams, participant
+            ):
+                not_qualified_teams.append(team)
+            elif (
+                not self.shift.signup_flow.uses_requested_state
+                and not team_stats[team["uuid"]].has_free()
+            ):
+                full_teams.append(team)
+            else:
+                enabled_teams.append(team)
+
+        initial = participation.structure_data.get("preferred_team_uuid")
+        required = (
+            signup_choice != SignupForm.SignupChoices.DECLINE
+            and self.shift.structure.configuration.choose_preferred_team
+        )
+        choices = [(team["uuid"], team["title"]) for team in enabled_teams]
+
+        help_text = ""
+        if not_qualified_teams:
+            help_text = _("You don't qualify for {teams}.").format(
+                teams=", ".join(str(team["title"]) for team in not_qualified_teams)
+            )
+        if full_teams:
+            help_text += " " + ngettext_lazy(
+                "{teams} is full.", "{teams} are full.", len(full_teams)
+            ).format(teams=", ".join(str(team["title"]) for team in full_teams))
+
+        return {
+            "baseshiftstructures_named_teams_preferred_team_uuid": {
+                "label": _("Preferred Team"),
+                "help_text": help_text,
+                "default": initial,
+                "required": required,
+                "form_class": forms.ChoiceField,
+                "form_kwargs": {
+                    "choices": choices,
+                    "widget": forms.RadioSelect,
+                },
+                "serializer_class": serializers.ChoiceField,
+                "serializer_kwargs": {
+                    "choices": choices,
+                },
+            },
+        }
+
+    def save_signup(self, participant, participation, signup_choice, cleaned_data):
+        if signup_choice != SignupForm.SignupChoices.DECLINE:
+            participation.structure_data["preferred_team_uuid"] = cleaned_data[
+                "baseshiftstructures_named_teams_preferred_team_uuid"
+            ]
+            participation.save(update_fields=["structure_data"])

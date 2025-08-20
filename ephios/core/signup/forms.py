@@ -2,13 +2,14 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Field, Layout
 from django import forms
-from django.db import transaction
+from django.db import models, transaction
 from django.utils.formats import date_format
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import AbstractParticipation, Shift
 from ephios.core.models.events import ParticipationComment
+from ephios.core.signals import collect_signup_form_fields
 from ephios.core.signup.flow.participant_validation import get_conflicting_participations
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.widgets import PreviousCommentWidget
@@ -126,14 +127,15 @@ class BaseParticipationForm(forms.ModelForm):
         return info
 
 
-class BaseSignupForm(BaseParticipationForm):
+class SignupForm(BaseParticipationForm):
+    class SignupChoices(models.TextChoices):
+        SIGNUP = "sign_up", _("Sign up")
+        CUSTOMIZE = "customize", _("Customize")
+        DECLINE = "decline", _("Decline")
+
     signup_choice = forms.ChoiceField(
         label=_("Signup choice"),
-        choices=[
-            ("sign_up", _("Sign up")),
-            ("customize", _("Customize")),
-            ("decline", _("Decline")),
-        ],
+        choices=SignupChoices.choices,
         widget=forms.HiddenInput,
         required=True,
     )
@@ -164,7 +166,7 @@ class BaseSignupForm(BaseParticipationForm):
         if self.shift.signup_flow.get_validator(self.participant).can_decline():
             buttons.append(
                 HTML(
-                    f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline">{_("Decline")}</button>'
+                    f'<button class="btn btn-secondary mt-1 ms-1 float-end" type="submit" name="signup_choice" value="decline" formnovalidate>{_("Decline")}</button>'
                 )
             )
         return buttons
@@ -173,6 +175,7 @@ class BaseSignupForm(BaseParticipationForm):
         self.shift: Shift = kwargs.pop("shift")
         self.participant: AbstractParticipant = kwargs.pop("participant")
         super().__init__(*args, **kwargs)
+        self._collect_fields()
         self.helper = FormHelper()
         self.helper.layout = Layout(
             self._get_field_layout(),
@@ -184,6 +187,12 @@ class BaseSignupForm(BaseParticipationForm):
         ):
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
+
+    def _collect_fields(self):
+        for fieldname, field in collect_signup_form_fields(
+            self.shift, self.participant, self.instance, self.data.get("signup_choice")
+        ):
+            self.fields[fieldname] = field["form_class"](**field.get("form_kwargs", {}))
 
     def clean(self):
         cleaned_data = super().clean()

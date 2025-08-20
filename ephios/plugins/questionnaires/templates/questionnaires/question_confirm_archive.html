@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+    {% if form.set_archived %}
+        {% translate "archive" as action %}
+    {% else %}
+        {% translate "unarchive" as action %}
+    {% endif %}
+    {% blocktranslate trimmed with action=action|capfirst %}
+        {{ action }} question
+    {% endblocktranslate %}
+{% endblock %}
+
+{% block content %}
+    {% if form.set_archived %}
+        {% translate "archive" as action %}
+    {% else %}
+        {% translate "unarchive" as action %}
+    {% endif %}
+    <div class="page-header">
+        <h1>
+            {% blocktranslate trimmed with action=action|capfirst %}
+                {{ action }} question
+            {% endblocktranslate %}
+        </h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <p>{% blocktranslate trimmed with action=action %}
+            Are you sure you want to {{ action }} the question {{ question }}?
+        {% endblocktranslate %}</p>
+        <a role="button" class="btn btn-secondary" href="{{ back_url }}">{% translate "Back" %}</a>
+        <button type="submit" class="btn {% if form.set_archived %}btn-danger{% else %}btn-primary{% endif %}">{{ action | capfirst }}</button>
+    </form>
+
+{% endblock %}

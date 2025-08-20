@@ -98,8 +98,9 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, teamed_shi
         )
         .forms[1]
         .submit(name="signup_choice", value="sign_up")
+        .follow()
     )
-    response.form["preferred_team_uuid"] = KTW_UUID
+    response.form["baseshiftstructures_named_teams_preferred_team_uuid"] = KTW_UUID
     response.form.submit(name="signup_choice", value="sign_up").follow()
     assert (
         LocalParticipation.objects.get(user=qualified_volunteer, shift=teamed_shift).state
