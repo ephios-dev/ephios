@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Group, PermissionsMixin
+from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -30,6 +31,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.fields import EndOfDayDateTimeField
@@ -275,6 +277,16 @@ class QualificationManager(models.Manager):
     def get_by_natural_key(self, qualification_uuid, *args):
         return self.get(uuid=qualification_uuid)
 
+expiration_format_validator = RegexValidator(
+    regex=(
+        r"^$|"  # empty
+        r"^(?:\d{1,2}|0{1,2}|\+\d+)\."          # day: 1–2 digits OR 0/00 OR +N
+        r"(?:\d{1,2}|0{1,2}|\+\d+)\."           # month: 1–2 digits OR 0/00 OR +N
+        r"(?:\d{4}|0{1,2}|0000|\+\d+)$|"        # year: 4 digits OR 0 OR 00 OR 0000 OR +N
+        r"^\+\d+$"                              # relative only: +N
+    ),
+    message=_("Invalid format."),
+)
 
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
@@ -293,6 +305,24 @@ class Qualification(Model):
         help_text=_("other qualifications that this qualification includes"),
         symmetrical=False,
         blank=True,
+    )
+    default_expiration_time = models.CharField(
+        max_length=254,
+        verbose_name=_("Default expiration format"),
+        help_text=_(
+            "Allowed are:<br>"
+            "- leave empty<br>"
+            "- DD.MM.YYYY (e.g. 31.12.2025)<br>"
+            "- +N (relative years/months/days)<br>"
+            "- Mixed like 30.06.+2 or 0.6.+1<br>"
+            "- Fully relative like +1.+1.+1<br>"
+            "- Placeholders:<br>"
+            "&nbsp;&nbsp;• 0 or 00 for day/month<br>"
+            "&nbsp;&nbsp;• 0, 00 or 0000 for year"
+        ),
+        null=True,
+        blank=True,
+        validators=[expiration_format_validator],
     )
     is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
@@ -316,7 +346,6 @@ class Qualification(Model):
         return (self.uuid, self.title)
 
     natural_key.dependencies = ["core.QualificationCategory"]
-
 
 register_model_for_logging(
     Qualification,

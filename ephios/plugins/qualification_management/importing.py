@@ -21,7 +21,7 @@ class DeserializedQualification:
             "included_by": validated_data["included_by"],
         }
         self.object = Qualification(
-            **{key: validated_data[key] for key in ("title", "abbreviation", "uuid")},
+            **{key: validated_data[key] for key in ("title", "abbreviation", "default_expiration_time", "uuid")},
         )
         self.category = QualificationCategory(
             **{key: validated_data["category"][key] for key in ("title", "uuid")},

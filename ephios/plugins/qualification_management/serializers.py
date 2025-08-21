@@ -35,5 +35,6 @@ class QualificationFixtureSerializer(serializers.ModelSerializer):
             "abbreviation",
             "includes",
             "included_by",
+            "default_expiration_time",
             "category",
         ]
