@@ -294,6 +294,19 @@ class Qualification(Model):
         symmetrical=False,
         blank=True,
     )
+    default_expiration_time = models.CharField(
+        max_length=254,
+        verbose_name=_("Default expiration format"),
+        help_text=_(
+            "The default expiration format for this qualification. "
+            "Leave empty to not set a default expiration format. "
+            "Format: DD.MM.YYYY, Set a specific date or use a relative format like +1 for years, +6 for month, etc. "
+            "You can do something like 30.06.+2 for 30th of June in two years. "
+            "Leave some with 00 to take the date of the qualification for this day/month/year. "
+        ),
+        null=True,
+        blank=True,
+    )
     is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
     objects = QualificationManager()
