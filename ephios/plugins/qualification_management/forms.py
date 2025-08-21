@@ -25,7 +25,7 @@ from ephios.plugins.qualification_management.importing import (
 class QualificationForm(forms.ModelForm):
     class Meta:
         model = Qualification
-        fields = ["title", "uuid", "abbreviation", "category", "includes"]
+        fields = ["title", "uuid", "abbreviation", "category", "includes", "default_expiration_time"]
         widgets = {"includes": Select2MultipleWidget}
         help_texts = {
             "uuid": _(
