@@ -14,7 +14,7 @@
         <p>{% blocktranslate trimmed with answer_text=savedanswer.answer_text question=savedanswer.question %}
             Are you sure you want to delete your saved answer "{{ answer_text }}" for question {{ question }}?
         {% endblocktranslate %}</p>
-        <a role="button" class="btn btn-secondary" href="{% url "questionnaires:saved_answers_list" %}">{% translate "Back" %}</a>
+        <a role="button" class="btn btn-secondary" href="{% url "questionnaires:saved_answer_list" %}">{% translate "Back" %}</a>
         <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
     </form>
 {% endblock %}

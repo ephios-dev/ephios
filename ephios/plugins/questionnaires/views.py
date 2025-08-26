@@ -100,7 +100,7 @@ class SavedAnswerListView(LoginRequiredMixin, ListView):
 class SavedAnswerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = SavedAnswer
     form_class = SavedAnswerForm
-    success_url = reverse_lazy("questionnaires:saved_answers_list")
+    success_url = reverse_lazy("questionnaires:saved_answer_list")
     success_message = _("Saved answer updated successfully.")
 
     def get_object(self, queryset=None):
@@ -111,7 +111,7 @@ class SavedAnswerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
 
 class SavedAnswerDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = SavedAnswer
-    success_url = reverse_lazy("questionnaires:saved_answers_list")
+    success_url = reverse_lazy("questionnaires:saved_answer_list")
     success_message = _("Saved answer deleted successfully.")
 
     def get_object(self, queryset=None):

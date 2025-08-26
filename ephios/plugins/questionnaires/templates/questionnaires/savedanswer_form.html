@@ -25,7 +25,7 @@
         {% csrf_token %}
         {{ form|crispy }}
         <div class="form-group">
-            <a class="btn btn-secondary" href="{% url "questionnaires:saved_answers_list" %}">{% translate "Cancel" %}</a>
+            <a class="btn btn-secondary" href="{% url "questionnaires:saved_answer_list" %}">{% translate "Cancel" %}</a>
             <input type="submit" class="btn btn-primary float-end" value="{% translate "Save" %}">
         </div>
     </form>

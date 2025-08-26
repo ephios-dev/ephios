@@ -52,17 +52,17 @@ urlpatterns = [
     path(
         "settings/saved-answers/",
         SavedAnswerListView.as_view(),
-        name="saved_answers_list",
+        name="saved_answer_list",
     ),
     path(
         "settings/saved-answers/<int:question_pk>/edit/",
         SavedAnswerUpdateView.as_view(),
-        name="saved_answers_edit",
+        name="saved_answer_edit",
     ),
     path(
         "settings/saved-answers/<int:question_pk>/delete/",
         SavedAnswerDeleteView.as_view(),
-        name="saved_answers_delete",
+        name="saved_answer_delete",
     ),
     path(
         "shifts/<int:pk>/answers/",

@@ -48,10 +48,10 @@ def add_settings_section(sender, request, **kwargs):
     return [
         {
             "label": _("Saved answers"),
-            "url": reverse_lazy("questionnaires:saved_answers_list"),
+            "url": reverse_lazy("questionnaires:saved_answer_list"),
             "active": request.resolver_match
             and request.resolver_match.app_name == "questionnaires"
-            and request.resolver_match.url_name == "saved_answers_list",
+            and request.resolver_match.url_name == "saved_answer_list",
             "group": SETTINGS_PERSONAL_SECTION_KEY,
         }
     ]
