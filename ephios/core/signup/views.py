@@ -46,26 +46,26 @@ class SignupView(FormView):
         self.participant: AbstractParticipant = kwargs["participant"]
         prevent_getting_participant_from_request_user(request)
 
-    # We need to avoid race conditions like:
-    # - multiple people signing up at the same time violating the max participation count
-    # - the user signing up for two conflicting shifts at the same time
-    # - there being multiple participation objects for the same participant/shift combination
-    # Therefore we select shift and user for update, making transactions block
-    # To avoid Deadlocks, the lock order must always be user, then shift.
-
     @cached_property
     def participation(self):
-        if isinstance(self.participant, LocalUserParticipant):
-            UserProfile.objects.select_for_update(of=OF_SELF).get(pk=self.participant.user.pk)
         return self.shift.signup_flow.get_or_create_participation_for(self.participant)
 
-    def _select_shift_for_update(self):
+    def _get_shift_participant_locked_validator(self):
+        # We need to avoid race conditions like:
+        # - multiple people signing up at the same time violating the max participation count
+        # - the user signing up for two conflicting shifts at the same time
+        # - there being multiple participation objects for the same participant/shift combination
+        # Therefore we select user and shift for update, making transactions block.
+        # To avoid Deadlocks, the lock order must always be user, then shift.
+        # pylint: disable = protected-access
+        if isinstance(self.participant, LocalUserParticipant):
+            UserProfile._base_manager.select_for_update(of=OF_SELF).get(pk=self.participant.user.pk)
         return (
-            Shift.objects.select_for_update(of=OF_SELF)
+            Shift._base_manager.select_for_update(of=OF_SELF)
             .prefetch_related("participations")
             .select_related("event", "event__type")
             .get(pk=self.shift.pk)
-        )
+        ).signup_flow.get_validator(self.participant)
 
     def _collect_quick_action_signup_data(self):
         """
@@ -118,11 +118,9 @@ class SignupView(FormView):
                 # quick action not valid -> redirect so it acts like a click on the customize-button
                 return redirect(self.participant.reverse_signup_action(self.shift))
             try:
+                instance = self.participation
                 with transaction.atomic():
-                    instance = self.participation  # locks participation object
-                    validator = self._select_shift_for_update().signup_flow.get_validator(
-                        self.participant
-                    )
+                    validator = self._get_shift_participant_locked_validator()
                     instance.save()
                     return self._process_signup_action(instance, signup_data, validator)
             except BaseSignupError:
@@ -130,15 +128,11 @@ class SignupView(FormView):
 
         # deal with a regular SignupForm submit
         try:
-            with transaction.atomic():
-                form = (
-                    self.get_form()
-                )  # might create a participation object, so must be inside transaction
-                if form.is_valid():
-                    signup_data = form.cleaned_data
-                    validator = self._select_shift_for_update().signup_flow.get_validator(
-                        self.participant
-                    )
+            form = self.get_form()
+            if form.is_valid():
+                signup_data = form.cleaned_data
+                with transaction.atomic():
+                    validator = self._get_shift_participant_locked_validator()
                     instance = form.save()
                     if signup_data["signup_choice"] == SignupForm.SignupChoices.CUSTOMIZE and (
                         claims := form.get_customization_notification_info()
