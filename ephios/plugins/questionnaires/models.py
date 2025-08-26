@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.utils.html import escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -150,8 +151,8 @@ class Question(models.Model):
         field_kwargs = self._get_field_kwargs()
 
         field = {
-            "label": self.question_text,
-            "help_text": self.description,
+            "label": escape(self.question_text),
+            "help_text": escape(self.description),
             "default": initial,
             "required": self.required,
             "form_class": field_classes[0],
