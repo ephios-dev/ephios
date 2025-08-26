@@ -167,11 +167,8 @@ class SignupView(FormView):
                 flow_action = lambda **kwargs: None  # noop
                 error_message = _("There was an error saving your participation.")
                 success_message = _("Your participation was saved.")
-            case _:
-                transaction.rollback()
                 messages.error(self.request, _("This action is not allowed."))
-                # always jump back to event-detail, in case SignupForm should be unreachable
-                return redirect(self.participant.reverse_event_detail(self.shift.event))
+                raise BaseSignupError
         try:
             self._send_signup_save_signal(participation, signup_data)
             flow_action(
