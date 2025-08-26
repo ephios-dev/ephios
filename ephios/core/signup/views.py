@@ -94,7 +94,7 @@ class SignupView(FormView):
             messages.warning(
                 self.request,
                 _(
-                    "You are already confirmed for other shifts at this time: {shifts}. Please check the timing."
+                    "You are already confirmed for the following other shifts: {shifts}. Please check your individual availability."
                 ).format(shifts=", ".join(str(shift) for shift in conflicts)),
             )
             return None
