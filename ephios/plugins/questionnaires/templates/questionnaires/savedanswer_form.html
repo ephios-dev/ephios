@@ -1,0 +1,32 @@
+{% extends "core/settings/settings_base.html" %}
+{% load bootstrap %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% translate "Edit saved questionnaire answer" %}
+{% endblock %}
+
+{% block settings_content %}
+    <h3>
+        {{ savedanswer.question.question_text }}
+    </h3>
+
+    {% if savedanswer.question.description %}
+        <p>
+            {{ savedanswer.question.description }}
+        </p>
+    {% endif %}
+
+    {% translate "Editing your answer below only affects future sign-ups. You answers to existing sign-ups will remain unchanged." as alert %}
+    {% render_alert alert "warning" False %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group">
+            <a class="btn btn-secondary" href="{% url "questionnaires:saved_answer_list" %}">{% translate "Cancel" %}</a>
+            <input type="submit" class="btn btn-primary float-end" value="{% translate "Save" %}">
+        </div>
+    </form>
+{% endblock %}

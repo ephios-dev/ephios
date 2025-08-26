@@ -1,6 +1,9 @@
 import logging
 from abc import ABC
+from typing import Any
 
+from ephios.core.models.events import AbstractParticipation
+from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.signup.stats import SignupStats
 
 logger = logging.getLogger(__name__)
@@ -49,12 +52,22 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
-    @property
-    def signup_form_class(self):
-        """
-        This form will be used for participations in signup.
-        """
-        raise NotImplementedError()
+    def get_signup_form_fields(
+        self,
+        participant: AbstractParticipant,
+        participation: AbstractParticipation,
+        signup_choice,
+    ):
+        pass
+
+    def save_signup(
+        self,
+        participant: AbstractParticipant,
+        participation: AbstractParticipation,
+        signup_choice,
+        cleaned_data: dict[str, Any],
+    ):
+        pass
 
     def get_configuration_form(self, *args, **kwargs):
         """

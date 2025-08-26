@@ -1,0 +1,72 @@
+from django.urls import path
+
+from ephios.plugins.questionnaires.views import (
+    AggregateAnswerView,
+    QuestionArchiveView,
+    QuestionCreateView,
+    QuestionDeleteView,
+    QuestionListView,
+    QuestionUpdateView,
+    SavedAnswerDeleteView,
+    SavedAnswerListView,
+    SavedAnswerUpdateView,
+)
+
+app_name = "questionnaires"
+urlpatterns = [
+    path(
+        "questions/",
+        QuestionListView.as_view(),
+        name="question_list",
+    ),
+    path(
+        "questions/archived/",
+        QuestionListView.as_view(show_archived=True),
+        name="question_list_archived",
+    ),
+    path(
+        "questions/create/",
+        QuestionCreateView.as_view(),
+        name="question_create",
+    ),
+    path(
+        "questions/<int:pk>/edit/",
+        QuestionUpdateView.as_view(),
+        name="question_edit",
+    ),
+    path(
+        "questions/<int:pk>/archive/",
+        QuestionArchiveView.as_view(set_archived=True),
+        name="question_archive",
+    ),
+    path(
+        "questions/<int:pk>/unarchive/",
+        QuestionArchiveView.as_view(set_archived=False),
+        name="question_unarchive",
+    ),
+    path(
+        "questions/<int:pk>/delete/",
+        QuestionDeleteView.as_view(),
+        name="question_delete",
+    ),
+    path(
+        "settings/saved-answers/",
+        SavedAnswerListView.as_view(),
+        name="saved_answer_list",
+    ),
+    path(
+        "settings/saved-answers/<int:question_pk>/edit/",
+        SavedAnswerUpdateView.as_view(),
+        name="saved_answer_edit",
+    ),
+    path(
+        "settings/saved-answers/<int:question_pk>/delete/",
+        SavedAnswerDeleteView.as_view(),
+        name="saved_answer_delete",
+    ),
+    path(
+        "shifts/<int:pk>/answers/",
+        AggregateAnswerView.as_view(),
+        name="shift_aggregate_answers",
+    ),
+]

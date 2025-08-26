@@ -2,6 +2,7 @@
 {% load ephios_crispy %}
 {% load crispy_forms_filters %}
 {% load user_extras %}
+{% load signal_extras %}
 {% load i18n %}
 
 {% block participation_body %}
@@ -77,7 +78,12 @@
                 </div>
                 {% block participation_form %}
                 {% endblock %}
-                <div class="mb-n3"></div>
+                {% collect_insert_html_signal "disposition_participation" participation=form.instance as additional_html %}
+                {% if additional_html %}
+                    {{ additional_html }}
+                {% else %}
+                    <div class="mb-n3"></div>
+                {% endif %}
             </div>
         </div>
     </div>

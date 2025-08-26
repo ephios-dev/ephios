@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+{% load static %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load formset_tags %}
+
+{% block title %}
+    {% if question %}
+        {% translate "Edit question" %}
+    {% else %}
+        {% translate "Create new question" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if question %}
+            <h2>{% translate "Edit question" %}</h2>
+        {% else %}
+            <h2>{% translate "Create new question" %}</h2>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div id="choices-formset" class="formset" data-formset data-formset-prefix="{{ form.choices.prefix }}">
+            {{ form.choices.management_form }}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% translate "Choices" %}
+                    </h5>
+                    <p class="text-muted">{% translate "For single- and multiple choice questions" %}</p>
+                    {% if question %}
+                        {% url "questionnaires:question_archive" question.pk as archive_url %}
+                        {% blocktranslate trimmed with archive_url=archive_url asvar choice_edit_warning %}
+                            You should refrain from editing or removing choices if this question is already in use. Consider creating a new question and <a href="{{ archive_url }}">archiving this question</a> instead. New choices can always be added safely.
+                        {% endblocktranslate %}
+                        {% render_alert choice_edit_warning "warning" False %}
+                    {% endif %}
+                    {{ form.choices|formset_errors }}
+                    <ul class="list-group list-group-flush" data-formset-body>
+                        {% for choice_form in form.choices %}
+                            <li class="list-group-item" data-formset-form>
+                                <div class="row align-items-center">
+                                    <div class="col-md-11">
+                                        {{ choice_form.name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-link" type="button"
+                                                data-formset-delete-button><span
+                                            class="fas fa-trash-alt"></span></button>
+                                    </div>
+                                </div>
+                                <div class="d-none">
+                                    {{ choice_form.DELETE }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <input class="btn btn-secondary mt-2" type="button"
+                           value="{% translate "Add choice" %}"
+                           data-formset-add>
+                </div>
+            </div>
+
+            <script type="form-template" data-formset-empty-form>
+                {% escapescript %}
+                    <li class="list-group-item" data-formset-form>
+                    <div class="row align-items-center">
+                    <div class="col-md-11">
+                    {{ form.choices.empty_form.name|as_crispy_field }}
+                    </div>
+                    <div class="col-md-1">
+                    <button class="btn btn-link" type="button"
+                    data-formset-delete-button><span
+                    class="fas fa-trash-alt"></span></button>
+                    </div>
+                    </div>
+                    <div class="d-none">
+                    {{ form.choices.empty_form.DELETE }}
+                    </div>
+                    </li>
+                {% endescapescript %}
+            </script>
+        </div>
+        <div class="form-group">
+            <a class="btn btn-secondary" href="{% url "questionnaires:question_list" %}">{% translate "Cancel" %}</a>
+            <input type="submit" class="btn btn-primary float-end" value="{% translate "Save" %}">
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    <script nonce="{{ request.csp_nonce }}" type="text/javascript" src="{% static "questionnaires/choice_visibility.js" %}"></script>
+{% endblock %}

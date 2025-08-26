@@ -22,14 +22,12 @@ def end_in_rollback_shift(event, tz):
 
 
 def test_signup_into_clock_rollback(django_app, volunteer, end_in_rollback_shift):
-    response = (
-        django_app.get(
-            end_in_rollback_shift.event.get_absolute_url(),
-            user=volunteer,
-        )
-        .forms[f"signup-form-{end_in_rollback_shift.pk}"]
-        .submit()
-    )
+    response = django_app.get(
+        volunteer.as_participant().reverse_signup_action(end_in_rollback_shift),
+        user=volunteer,
+    ).form.submit()
+    # not using quick signup, but the customization view, signup might fail with indvalid individual time fields
+    # if their field values are ambigous (which can exist e.g. when copying shifts around)
     assert "may be ambiguous" in response.text
 
 

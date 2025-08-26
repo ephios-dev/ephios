@@ -91,11 +91,15 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
     shift_b = conflicting_event.shifts.first()
     shift_b.end_time -= timedelta(hours=1)
     shift_b.save()
-    response = django_app.get(
-        event.get_absolute_url(),
-        user=volunteer,
-    ).form.submit(name="signup_choice", value="sign_up")
-    assert "You are already confirmed for other shifts at this time" in response
+    response = (
+        django_app.get(
+            event.get_absolute_url(),
+            user=volunteer,
+        )
+        .form.submit(name="signup_choice", value="sign_up")
+        .follow()
+    )
+    assert "You are already confirmed for the following other shifts:" in response
     # move start to after the conflicting event ended
     response.form["individual_start_time_1"] = "19:42"
     assert (
