@@ -104,7 +104,10 @@ class SignupView(FormView):
         ):
             if field["required"] and not field["default"]:
                 # not supported by quick action
-                messages.info(self.request, _("Please fill out the form to sign up."))
+                messages.info(
+                    self.request,
+                    _("We need some additional information to sign you up for this shift."),
+                )
                 return None
             data[fieldname] = field["default"]
         return data

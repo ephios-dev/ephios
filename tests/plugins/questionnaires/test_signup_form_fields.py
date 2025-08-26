@@ -41,7 +41,7 @@ def test_signup_form_if_required_question(django_app, shift_with_required_text_q
     signup_form = response.form
 
     assert response.status_code == 200
-    assert "Please fill out the form to sign up." in response
+    assert "We need some additional information to sign you up for this shift." in response
     assert "questionnaires_save_answers" in signup_form.fields
     assert question.get_form_slug() in signup_form.fields
 
@@ -95,7 +95,7 @@ def test_saved_answer_as_initial(
     signup_form = response.form
 
     assert response.status_code == 200
-    assert "Please fill out the form to sign up." in response
+    assert "We need some additional information to sign you up for this shift." in response
     assert signup_form[optional_question.get_form_slug()].value == saved_optional_text_answer.answer
     assert required_question.get_form_slug() in signup_form.fields
 
