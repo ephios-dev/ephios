@@ -56,7 +56,6 @@
                                 </div>
                                 <div class="d-none">
                                     {{ choice_form.DELETE }}
-                                    {{ choice_form.uuid }}
                                 </div>
                             </li>
                         {% endfor %}
@@ -82,8 +81,7 @@
                     </div>
                     </div>
                     <div class="d-none">
-                    {{ form.formset.empty_form.DELETE }}
-                    {{ form.formset.empty_form.uuid }}
+                    {{ form.choices.empty_form.DELETE }}
                     </div>
                     </li>
                 {% endescapescript %}
