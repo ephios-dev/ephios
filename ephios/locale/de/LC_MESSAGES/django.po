@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-08 14:16+0200\n"
+"POT-Creation-Date: 2025-08-26 16:55+0200\n"
 "PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -129,7 +129,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/userprofile_form.html:150
 #: ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:285
 #: ephios/plugins/qualification_management/forms.py:121
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:94
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:92
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:29
 #: ephios/plugins/simpleresource/templates/simpleresource/resourcecategories_form.html:90
 msgid "Save"
@@ -143,7 +143,7 @@ msgstr "Speichern"
 #: ephios/core/templates/core/event_form.html:68
 #: ephios/core/templates/core/eventtype_form.html:21
 #: ephios/core/templates/core/userprofile_form.html:152
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:93
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:91
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:28
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -760,7 +760,7 @@ msgstr ""
 "sowie Veranstaltungstypen und Qualifikationen definieren."
 
 #: ephios/core/forms/users.py:145 ephios/core/models/users.py:240
-#: ephios/core/signals.py:261
+#: ephios/core/signals.py:298
 #: ephios/core/templates/core/userprofile_list.html:9
 #: ephios/core/templates/core/userprofile_list.html:15
 msgid "Users"
@@ -771,9 +771,9 @@ msgstr "Benutzer"
 msgid "Can change permissions and manage {platform}"
 msgstr "Kann Rechte ändern und {platform} verwalten"
 
-#: ephios/core/forms/users.py:182 ephios/core/signals.py:258
-#: ephios/core/signals.py:265 ephios/core/signals.py:278
-#: ephios/core/signals.py:291 ephios/core/views/settings.py:26
+#: ephios/core/forms/users.py:182 ephios/core/signals.py:295
+#: ephios/core/signals.py:302 ephios/core/signals.py:315
+#: ephios/core/signals.py:328 ephios/core/views/settings.py:26
 #: ephios/plugins/complexsignup/signals.py:34
 #: ephios/plugins/files/signals.py:25
 #: ephios/plugins/questionnaires/signals.py:38
@@ -797,7 +797,7 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: ephios/core/forms/users.py:249 ephios/core/signals.py:274
+#: ephios/core/forms/users.py:249 ephios/core/signals.py:311
 #: ephios/core/templates/core/group_list.html:6
 #: ephios/core/templates/core/group_list.html:11
 #: ephios/core/templates/core/settings/settings_personal_data.html:22
@@ -1284,7 +1284,7 @@ msgid "Occasion"
 msgstr "Anlass"
 
 #: ephios/core/models/users.py:503 ephios/core/models/users.py:504
-#: ephios/core/signals.py:254
+#: ephios/core/signals.py:291
 #: ephios/core/templates/core/userprofile_list.html:96
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
@@ -1639,6 +1639,7 @@ msgid "A new profile has been created"
 msgstr "Ein neues Benutzerprofil wurde erstellt"
 
 #: ephios/core/services/notifications/types.py:157
+#, python-brace-format
 msgid "Welcome to {}!"
 msgstr "Willkommen bei {}!"
 
@@ -1738,7 +1739,7 @@ msgstr ""
 
 #: ephios/core/services/notifications/types.py:391
 #: ephios/core/templates/core/disposition/disposition.html:8
-#: ephios/core/templates/core/fragments/shift_box_big.html:125
+#: ephios/core/templates/core/fragments/shift_box_big.html:119
 #: ephios/core/templates/core/home.html:107
 msgid "Disposition"
 msgstr "Disposition"
@@ -1877,18 +1878,18 @@ msgstr "Ihr {platform}-Passwort wurde geändert"
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: ephios/core/signals.py:287
+#: ephios/core/signals.py:324
 #: ephios/core/templates/core/settings/settings_base.html:6
 #: ephios/core/templates/core/settings/settings_base.html:11
 #: ephios/templates/base.html:143
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ephios/core/signup/disposition.py:36
+#: ephios/core/signup/disposition.py:38
 msgid "Hide comment for participant"
 msgstr "Kommentar für Teilnehmenden verstecken"
 
-#: ephios/core/signup/disposition.py:129
+#: ephios/core/signup/disposition.py:131
 msgid "search"
 msgstr "suchen"
 
@@ -1995,7 +1996,7 @@ msgstr ""
 "{eventtype} teilzunehmen."
 
 #: ephios/core/signup/flow/participant_validation.py:128
-#: ephios/core/signup/forms.py:222
+#: ephios/core/signup/forms.py:215
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
 msgstr "Sie sind zu dieser Zeit bereits eingeteilt für {shifts}."
@@ -2023,13 +2024,13 @@ msgstr "{label} wurde von {initial} zu {current} geändert."
 
 #: ephios/core/signup/forms.py:133
 #: ephios/core/templates/core/disposition/fragment_participation.html:54
-#: ephios/core/templates/core/fragments/shift_box_big.html:91
-#: ephios/core/templates/core/fragments/shift_box_big.html:99
+#: ephios/core/templates/core/fragments/shift_box_big.html:85
+#: ephios/core/templates/core/fragments/shift_box_big.html:93
 msgid "Customize"
 msgstr "Anpassen"
 
 #: ephios/core/signup/forms.py:134 ephios/core/signup/forms.py:169
-#: ephios/core/templates/core/fragments/shift_box_big.html:105
+#: ephios/core/templates/core/fragments/shift_box_big.html:99
 msgid "Decline"
 msgstr "Absagen"
 
@@ -2046,13 +2047,28 @@ msgstr "Platzhalter"
 msgid "Shift structure '{slug}' was not found."
 msgstr "Schicht-Struktur '{slug}' wurde nicht gefunden."
 
-#: ephios/core/signup/views.py:72
-msgid "This action is not allowed."
-msgstr "Diese Aktion ist nicht erlaubt."
+#: ephios/core/signup/views.py:97
+#, python-brace-format
+msgid "You are already confirmed for the following other shifts: {shifts}. Please "
+"check your individual availability."
+msgstr "Sie sind bereits für die folgenden Schichten eingeteilt: {shifts}. "
+"Bitte prüfen Sie Ihre individuelle Verfügbarkeit"
 
-#: ephios/core/signup/views.py:87
+#: ephios/core/signup/views.py:109
+msgid "We need some additional information to sign you up for this shift."
+msgstr "Wir benötigen weitere Informationen um Sie für diese Schicht anzumelden."
+
+#: ephios/core/signup/views.py:168
+msgid "There was an error saving your participation."
+msgstr "Beim Speichern Ihrer Teilnahme ist ein Fehler aufgetreten."
+
+#: ephios/core/signup/views.py:169
 msgid "Your participation was saved."
 msgstr "Ihre Teilnahme wurde gespeichert."
+
+#: ephios/core/signup/views.py:172
+msgid "This action is not allowed."
+msgstr "Diese Aktion ist nicht erlaubt."
 
 #: ephios/core/templates/core/disposition/disposition.html:42
 msgid "Add others"
@@ -2291,7 +2307,7 @@ msgstr "voll"
 msgid "unit optional"
 msgstr "Einheit optional"
 
-#: ephios/core/templates/core/fragments/shift_box_big.html:135
+#: ephios/core/templates/core/fragments/shift_box_big.html:129
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
@@ -3486,7 +3502,7 @@ msgid_plural "{teams} are full."
 msgstr[0] "{teams} ist voll."
 msgstr[1] "{teams} sind voll."
 
-#: ephios/plugins/baseshiftstructures/structure/named_teams.py:391
+#: ephios/plugins/baseshiftstructures/structure/named_teams.py:389
 msgid "Preferred Team"
 msgstr "Bevorzugtes Team"
 
@@ -3538,6 +3554,7 @@ msgid "This plugins adds the standard signup flows."
 msgstr "Dieses Plugin fügt grundlegende Anmeldeverfahren hinzu."
 
 #: ephios/plugins/basesignupflows/flow/coupled.py:28
+#, python-brace-format
 msgid "Participation is coupled to {}."
 msgstr "Teilnahme ist gekoppelt an {}."
 
@@ -3809,7 +3826,7 @@ msgstr ""
 msgid "You don't qualify for {blocks}."
 msgstr "Sie sind nicht qualifiziert für {blocks}."
 
-#: ephios/plugins/complexsignup/structure.py:360
+#: ephios/plugins/complexsignup/structure.py:358
 msgid "Preferred Unit"
 msgstr "Bevorzugte Einheit"
 
@@ -4757,7 +4774,7 @@ msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
 msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/plugins/questionnaires/apps.py:10
-#: ephios/plugins/questionnaires/models.py:202
+#: ephios/plugins/questionnaires/models.py:200
 msgid "Questionnaires"
 msgstr "Fragebögen"
 
@@ -4770,7 +4787,7 @@ msgid "Choice name"
 msgstr "Name der Auswahlmöglichkeit"
 
 #: ephios/plugins/questionnaires/forms.py:88
-#: ephios/plugins/questionnaires/models.py:201
+#: ephios/plugins/questionnaires/models.py:199
 msgid "Questionnaire"
 msgstr "Fragebogen"
 
@@ -4832,23 +4849,23 @@ msgstr ""
 msgid "Questions"
 msgstr "Fragen"
 
-#: ephios/plugins/questionnaires/models.py:175
-#: ephios/plugins/questionnaires/models.py:220
-#: ephios/plugins/questionnaires/models.py:223
-#: ephios/plugins/questionnaires/models.py:238
+#: ephios/plugins/questionnaires/models.py:173
+#: ephios/plugins/questionnaires/models.py:218
+#: ephios/plugins/questionnaires/models.py:221
+#: ephios/plugins/questionnaires/models.py:236
 #: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:33
 msgid "Answer"
 msgstr "Antwort"
 
-#: ephios/plugins/questionnaires/models.py:224
+#: ephios/plugins/questionnaires/models.py:222
 msgid "Answers"
 msgstr "Antworten"
 
-#: ephios/plugins/questionnaires/models.py:241
+#: ephios/plugins/questionnaires/models.py:239
 msgid "Saved answer"
 msgstr "Gespeicherte Antwort"
 
-#: ephios/plugins/questionnaires/models.py:242
+#: ephios/plugins/questionnaires/models.py:240
 #: ephios/plugins/questionnaires/signals.py:50
 msgid "Saved answers"
 msgstr "Gespeicherte Antworten"
@@ -4863,11 +4880,11 @@ msgstr ""
 "Erlaubt dieser Gruppe Fragen hinzuzufügen und zu verwalten. Fragen können "
 "durch Planer zu Schichten zugeordnet werden."
 
-#: ephios/plugins/questionnaires/signals.py:124
+#: ephios/plugins/questionnaires/signals.py:122
 msgid "Save answers to my user profile for future sign-ups"
 msgstr "Speichere meine Antworten für spätere Anmeldungen in meinem Profil"
 
-#: ephios/plugins/questionnaires/signals.py:205
+#: ephios/plugins/questionnaires/signals.py:202
 msgid "View answers"
 msgstr "Antworten anzeigen"
 
@@ -4956,7 +4973,7 @@ msgstr ""
 "<a href=\"%(archive_url)s\">archivieren Sie diese Frage</a>. Neue "
 "Auswahlmöglichkeiten können jederzeit sicher hinzugefügt werden."
 
-#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:66
+#: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:65
 msgid "Add choice"
 msgstr "Auswahlmöglichkeit hinzufügen"
 
@@ -5560,9 +5577,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "at most {max}"
 #~ msgstr "höchstens {max}"
-
-#~ msgid "You can not sign up for this shift."
-#~ msgstr "Sie können sich für diese Schicht nicht anmelden."
 
 #~ msgid "Medical"
 #~ msgstr "Medizinisch"
