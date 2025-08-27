@@ -49,14 +49,14 @@
                 <div class="row mb-0 justify-content-between">
                     <div class="col-12 col-lg-8">
                         <div class="row">
-                            <div class="col col-lg-8">
+                            <div class="col col-lg-7">
                                 <h5 class="mb-0 d-inline">
                                     {{ question.name }}
                                 </h5>
                                 <br/>
                                 <span class="text-muted">{{ question.question_text }}</span>
                             </div>
-                            <div class="col-auto col-lg-4">
+                            <div class="col-auto col-lg-5">
                                 {% if question.type == "text" %}
                                     <span class="fas fa-pencil-alt"></span>
                                 {% elif question.type == "single" %}
@@ -66,10 +66,17 @@
                                 {% endif %}
                                 {{ question.get_type_display }}
                                 <div class="d-none d-lg-inline">
-                                    {% if question.required %}
+                                    {% if question.required or question.use_saved_answers %}
                                         <br/>
+                                    {% endif %}
+                                    {% if question.required %}
                                         <span class="badge bg-warning">
                                             {% translate "Answer required" %}
+                                        </span>
+                                    {% endif %}
+                                    {% if question.use_saved_answers %}
+                                        <span class="badge bg-info">
+                                            {% translate "Uses saved answers" %}
                                         </span>
                                     {% endif %}
                                 </div>
@@ -80,6 +87,11 @@
                         {% if question.required %}
                             <span class="badge bg-warning">
                                 {% translate "Answer required" %}
+                            </span>
+                        {% endif %}
+                        {% if question.use_saved_answers %}
+                            <span class="badge bg-info">
+                                {% translate "Uses saved answers" %}
                             </span>
                         {% endif %}
                     </div>
@@ -104,8 +116,10 @@
                                     class="fa fa-trash-alt"></span> <span
                                         class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
                             {% else %}
-                                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% translate "This question cannot be deleted as it is used by at least one shift or answer. You can still archive it."%}">
-                                    <a class="btn btn-secondary btn-sm disabled text-nowrap ms-1" aria-disabled="true"><span
+                                <span data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                      title="{% translate "This question cannot be deleted as it is used by at least one shift or answer. You can still archive it." %}">
+                                    <a class="btn btn-secondary btn-sm disabled text-nowrap ms-1"
+                                       aria-disabled="true"><span
                                         class="fa fa-trash-alt"></span> <span
                                             class="d-none d-lg-inline">{% translate "Delete" %}</span></a>
                                 </span>

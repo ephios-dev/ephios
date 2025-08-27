@@ -43,6 +43,14 @@ class Question(models.Model):
             "Archive a question to hide it in the question selection for new shifts without affecting shifts where this question is already in use."
         ),
     )
+    use_saved_answers = models.BooleanField(
+        verbose_name=_("Use saved answers"),
+        help_text=_(
+            "If checked, forms will be prefilled with a users saved answer to this question, if available. "
+            "Enable this for answers that don't depend on the event it is used in."
+        ),
+        default=False,
+    )
 
     class Meta:
         verbose_name = _("Question")
@@ -103,10 +111,12 @@ class Question(models.Model):
             participation_id=participation.pk, question=self
         ).first():
             initial = existing_answer.answer
-        elif saved_answer := (
-            SavedAnswer.objects.filter(user=participant.user, question=self).first()
-            if isinstance(participant, LocalUserParticipant)
-            else None
+        elif self.use_saved_answers and (
+            saved_answer := (
+                SavedAnswer.objects.filter(user=participant.user, question=self).first()
+                if isinstance(participant, LocalUserParticipant)
+                else None
+            )
         ):
             initial = saved_answer.answer
         else:
