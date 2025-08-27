@@ -117,7 +117,9 @@ def provide_signup_form_fields(
         question.get_signup_form_field(participant, participation) for question in questions
     )
 
-    if len(formfields) > 0 and isinstance(participant, LocalUserParticipant):
+    if sum(q.use_saved_answers for q in questions) > 0 and isinstance(
+        participant, LocalUserParticipant
+    ):
         formfields["questionnaires_save_answers"] = {
             "label": _("Save answers to my user profile for future sign-ups"),
             "default": True,
@@ -145,7 +147,7 @@ def save_signup(
         return
 
     save_answers = (
-        cleaned_data.get("questionnaires_save_answers")
+        cleaned_data.get("questionnaires_save_answers", False)
         if isinstance(participant, LocalUserParticipant)
         else False
     )
@@ -153,15 +155,19 @@ def save_signup(
     for name, value in cleaned_data.items():
         if name == "questionnaires_save_answers" or not name.startswith("questionnaires_"):
             continue
+        try:
+            question = Question.objects.get(pk=Question.get_pk_from_slug(name))
+        except Question.DoesNotExist:
+            continue
 
         if value:
             Answer.objects.update_or_create(
                 participation=participation,
-                question_id=Question.get_pk_from_slug(name),
+                question=question,
                 defaults={"answer": value},
             )
 
-            if save_answers:
+            if save_answers and question.use_saved_answers:
                 SavedAnswer.objects.update_or_create(
                     user=participant.user,
                     question_id=Question.get_pk_from_slug(name),
@@ -172,7 +178,7 @@ def save_signup(
                 participation=participation, question_id=Question.get_pk_from_slug(name)
             ).delete()
 
-            if save_answers:
+            if save_answers and question.use_saved_answers:
                 SavedAnswer.objects.filter(
                     user=participant.user, question_id=Question.get_pk_from_slug(name)
                 ).delete()

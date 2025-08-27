@@ -94,7 +94,9 @@ class SavedAnswerListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user, question__archived=False)
+        return queryset.filter(
+            user=self.request.user, question__archived=False, question__use_saved_answers=True
+        )
 
 
 class SavedAnswerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
