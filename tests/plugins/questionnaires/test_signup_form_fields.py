@@ -100,6 +100,23 @@ def test_saved_answer_as_initial(
     assert required_question.get_form_slug() in signup_form.fields
 
 
+def test_saved_answer_not_as_initial_when_usage_disabled(
+    django_app,
+    shift_with_text_questions,
+    volunteer,
+    saved_optional_text_answer,
+):
+    shift, optional_question, required_question = shift_with_text_questions
+    optional_question.use_saved_answers = False
+    optional_question.save()
+
+    form = django_app.get(shift.event.get_absolute_url(), user=volunteer).form
+    response = form.submit(name="signup_choice", value="sign_up").follow()
+    signup_form = response.form
+
+    assert signup_form[optional_question.get_form_slug()].value == ""
+
+
 def test_show_choices(django_app, volunteer, shift_with_required_choice_question):
     shift, question = shift_with_required_choice_question
 

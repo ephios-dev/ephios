@@ -89,3 +89,21 @@ def test_dont_save_answer(django_app, volunteer, shift_with_required_text_questi
 
     assert response.status_code == 200
     assert not volunteer.savedanswer_set.filter(question=question).exists()
+
+
+def test_dont_save_answer_when_usage_disabled(
+    django_app, volunteer, shift_with_required_text_question
+):
+    shift, question = shift_with_required_text_question
+    question.use_saved_answers = False
+    question.save()
+
+    form = django_app.get(shift.event.get_absolute_url(), user=volunteer).form
+    signup_form = form.submit(name="signup_choice", value="sign_up").follow().form
+
+    answer = "Answer to required text question"
+    signup_form[question.get_form_slug()] = answer
+    assert "questionnaires_save_answers" not in signup_form.fields
+
+    signup_form.submit(name="signup_choice", value="sign_up")
+    assert not volunteer.savedanswer_set.filter(question=question).exists()

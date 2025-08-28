@@ -20,7 +20,7 @@ ChoicesFormset = forms.formset_factory(ChoiceForm, can_delete=True, extra=2)
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ["name", "question_text", "description", "required", "type"]
+        fields = ["name", "question_text", "description", "required", "use_saved_answers", "type"]
 
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
