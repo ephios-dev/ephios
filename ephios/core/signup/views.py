@@ -97,8 +97,8 @@ class SignupView(FormView):
                 self.request,
                 format_html(
                     gettext(
-                        "Please check that your individual start and end times account for these other confirmed "
-                        "participations: {shifts}"
+                        "Please check that your individual start and end times do not overlap with these "
+                        "other confirmed participations: {shifts}"
                     ),
                     shifts=", ".join(str(shift) for shift in conflicts),
                 ),

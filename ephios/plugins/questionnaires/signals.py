@@ -117,7 +117,7 @@ def provide_signup_form_fields(
         question.get_signup_form_field(participant, participation) for question in questions
     )
 
-    if sum(q.use_saved_answers for q in questions) > 0 and isinstance(
+    if any(q.use_saved_answers for q in questions) and isinstance(
         participant, LocalUserParticipant
     ):
         formfields["questionnaires_save_answers"] = {
@@ -155,10 +155,7 @@ def save_signup(
     for name, value in cleaned_data.items():
         if name == "questionnaires_save_answers" or not name.startswith("questionnaires_"):
             continue
-        try:
-            question = Question.objects.get(pk=Question.get_pk_from_slug(name))
-        except Question.DoesNotExist:
-            continue
+        question = Question.objects.get(pk=Question.get_pk_from_slug(name))
 
         if value:
             Answer.objects.update_or_create(

@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -47,7 +47,7 @@ class Question(models.Model):
         verbose_name=_("Use saved answers"),
         help_text=_(
             "If checked, forms will be prefilled with a users saved answer to this question, if available. "
-            "Enable this for answers that don't depend on the event it is used in."
+            "Enable this if answers are independent of the event the question is used for."
         ),
         default=False,
     )
@@ -97,6 +97,18 @@ class Question(models.Model):
             choices = [(choice, choice) for choice in self.choices]
             form_kwargs["choices"] = choices
             serializer_kwargs["choices"] = choices
+
+        # show an icon in forms indicating the answer can be saved
+        if self.use_saved_answers:
+            form_kwargs["help_text"] = format_html(
+                (
+                    '{description}<br/><i class="fas fa-info-circle"></i> {infotext}'
+                    if self.description
+                    else '<i class="fas fa-info-circle"></i> {infotext}'
+                ),
+                description=self.description,
+                infotext=_("Answer can be saved to your profile."),
+            )
 
         return form_kwargs, serializer_kwargs
 

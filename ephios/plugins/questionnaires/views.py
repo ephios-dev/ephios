@@ -94,8 +94,10 @@ class SavedAnswerListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(
-            user=self.request.user, question__archived=False, question__use_saved_answers=True
+        return (
+            queryset.select_related("question")
+            .filter(user=self.request.user)
+            .order_by("question__archived", "-question__use_saved_answers")
         )
 
 
