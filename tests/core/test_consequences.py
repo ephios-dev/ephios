@@ -11,7 +11,8 @@ from ephios.core.consequences import (
     editable_consequences,
     pending_consequences,
 )
-from ephios.core.models import Consequence, Qualification
+from ephios.core.models import Qualification
+from ephios.core.models.users import LocalConsequence, AbstractConsequence
 
 
 class TestQualificationConsequence:
@@ -20,7 +21,7 @@ class TestQualificationConsequence:
 
     def test_render_qualification_without_shift_information(self, volunteer, qualifications, tz):
         c = QualificationConsequenceHandler.create(
-            user=volunteer,
+            participant=volunteer.as_participant(),
             qualification=qualifications.nfs,
             expires=datetime.datetime(2064, 4, 1).astimezone(tz),
         )
@@ -28,7 +29,7 @@ class TestQualificationConsequence:
 
     def test_annotation_with_json(self, qualifications_consequence, qualifications):
         qs = (
-            Consequence.objects.filter(state=Consequence.States.NEEDS_CONFIRMATION)
+            LocalConsequence.objects.filter(state=LocalConsequence.States.NEEDS_CONFIRMATION)
             .annotate(
                 qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField())
             )
@@ -48,7 +49,7 @@ class TestQualificationConsequence:
         self, superuser, qualifications_consequence, qualifications
     ):
         assert qualifications.nfs not in qualifications_consequence.user.qualifications
-        qualifications_consequence.confirm(superuser)
+        qualifications_consequence.confirm()
         assert qualifications.nfs in qualifications_consequence.user.qualifications
 
     def test_extend_qualification(
@@ -60,7 +61,7 @@ class TestQualificationConsequence:
             qualified_volunteer.qualifications.get(
                 pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
             )
-        qualifications_consequence.confirm(qualified_volunteer)
+        qualifications_consequence.confirm()
         assert qualified_volunteer.qualifications.get(
             pk=qualifications.nfs.pk, expires=qualifications_consequence.data.get("expires")
         )
@@ -83,7 +84,7 @@ class TestWorkingHourConsequence:
         form["hours"] = 42
         form["reason"] = "testing"
         form.submit()
-        Consequence.objects.get(
+        LocalConsequence.objects.get(
             user=volunteer,
             data__date=datetime.datetime.now().date(),
             data__hours=42,
@@ -95,7 +96,7 @@ class TestWorkingHourConsequence:
 
     def test_confirm_workinghours(self, volunteer, superuser, workinghours_consequence):
         assert volunteer.get_workhour_items()[0] == datetime.timedelta(0)
-        workinghours_consequence.confirm(superuser)
+        workinghours_consequence.confirm()
         assert volunteer.get_workhour_items()[0] == datetime.timedelta(
             hours=workinghours_consequence.data.get("hours")
         )
@@ -108,7 +109,7 @@ class TestWorkingHourConsequence:
 
 
 def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualifications_consequence):
-    assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
+    assert qualifications_consequence.state == LocalConsequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "confirm"}
     csrf_exempt_django_app.post(
         reverse("core:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
@@ -116,11 +117,11 @@ def test_post_consequence_confirm(csrf_exempt_django_app, superuser, qualificati
         params=POST_DATA,
     )
     qualifications_consequence.refresh_from_db()
-    assert qualifications_consequence.state == Consequence.States.EXECUTED
+    assert qualifications_consequence.state == LocalConsequence.States.EXECUTED
 
 
 def test_post_consequence_deny(csrf_exempt_django_app, superuser, qualifications_consequence):
-    assert qualifications_consequence.state == Consequence.States.NEEDS_CONFIRMATION
+    assert qualifications_consequence.state == LocalConsequence.States.NEEDS_CONFIRMATION
     POST_DATA = {"action": "deny"}
     csrf_exempt_django_app.post(
         reverse("core:consequence_edit", kwargs=dict(pk=qualifications_consequence.pk)),
@@ -128,4 +129,4 @@ def test_post_consequence_deny(csrf_exempt_django_app, superuser, qualifications
         params=POST_DATA,
     )
     qualifications_consequence.refresh_from_db()
-    assert qualifications_consequence.state == Consequence.States.DENIED
+    assert qualifications_consequence.state == LocalConsequence.States.DENIED

@@ -59,7 +59,7 @@ def create_qualification_consequence(sender, participation, **kwargs):
             return
 
         consequence = QualificationConsequenceHandler.create(
-            user=user,
+            participant=participation.participant,
             qualification=event.auto_qualification_config.qualification,
             expires=event.auto_qualification_config.expiration_date,
             shift=participation.shift,

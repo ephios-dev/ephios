@@ -52,11 +52,10 @@ class AbstractParticipant:
         """Return all participations for this participant"""
         raise NotImplementedError
 
-    def collect_all_qualifications(self) -> QuerySet:
     def new_consequence(self) -> AbstractConsequence:
         raise NotImplementedError
 
-    def collect_all_qualifications(self) -> set:
+    def collect_all_qualifications(self) -> QuerySet:
         return collect_all_included_qualifications(self.qualifications)
 
     @cached_property
