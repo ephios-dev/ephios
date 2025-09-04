@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -42,6 +42,14 @@ class Question(models.Model):
         help_text=_(
             "Archive a question to hide it in the question selection for new shifts without affecting shifts where this question is already in use."
         ),
+    )
+    use_saved_answers = models.BooleanField(
+        verbose_name=_("Use saved answers"),
+        help_text=_(
+            "If checked, forms will be prefilled with a users saved answer to this question, if available. "
+            "Enable this if answers are independent of the event the question is used for."
+        ),
+        default=False,
     )
 
     class Meta:
@@ -90,6 +98,18 @@ class Question(models.Model):
             form_kwargs["choices"] = choices
             serializer_kwargs["choices"] = choices
 
+        # show an icon in forms indicating the answer can be saved
+        if self.use_saved_answers:
+            form_kwargs["help_text"] = format_html(
+                (
+                    '{description}<br/><i class="fas fa-info-circle"></i> {infotext}'
+                    if self.description
+                    else '<i class="fas fa-info-circle"></i> {infotext}'
+                ),
+                description=self.description,
+                infotext=_("Answer can be saved to your profile."),
+            )
+
         return form_kwargs, serializer_kwargs
 
     def _get_initial_answer(
@@ -103,10 +123,12 @@ class Question(models.Model):
             participation_id=participation.pk, question=self
         ).first():
             initial = existing_answer.answer
-        elif saved_answer := (
-            SavedAnswer.objects.filter(user=participant.user, question=self).first()
-            if isinstance(participant, LocalUserParticipant)
-            else None
+        elif self.use_saved_answers and (
+            saved_answer := (
+                SavedAnswer.objects.filter(user=participant.user, question=self).first()
+                if isinstance(participant, LocalUserParticipant)
+                else None
+            )
         ):
             initial = saved_answer.answer
         else:

@@ -13,16 +13,22 @@
     <ul class="list-group mb-3">
         {% for answer in savedanswer_list %}
             <li class="list-group-item">
-                <div class="row mb-0">
+                <div class="row mb-0 {% if not answer.question.use_saved_answers or answer.question.archived %}text-muted{% endif %}">
                     <div class="col-12 col-lg-5">
                         <h5 class="mb-0 d-inline">
                             {{ answer.question.name }}
                         </h5>
                         <br/>
                         <span class="text-muted">{{ answer.question.question_text }}</span>
-                    </div>
-                    <div class="col-12 col-lg-5">
+                        <br/>
                         {{ answer.answer_text }}
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        {% if not answer.question.use_saved_answers or answer.question.archived%}
+                            <span class="badge bg-secondary">
+                                {% translate "not used anymore" %}
+                            </span>
+                        {% endif %}
                     </div>
                     <div class="col-12 col-lg-auto d-flex align-items-end align-items-lg-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
@@ -38,8 +44,10 @@
             </li>
         {% empty %}
             <em>
-                You haven't answered a question during sign-up yet or decided to not save your answer for future sign-ups.
-                Once you save your first answer, you can view and edit it here.
+                {% blocktranslate trimmed %}
+                    You haven't answered a question during sign-up yet or decided to not save your answer for future
+                    sign-ups. Once you save your first answer, you can view and edit it here.
+                {% endblocktranslate %}
             </em>
         {% endfor %}
     </ul>

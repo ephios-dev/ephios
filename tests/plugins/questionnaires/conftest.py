@@ -15,6 +15,7 @@ def optional_text_question():
         question_text="Optional Text Question Text?",
         required=False,
         type=Question.Type.TEXT,
+        use_saved_answers=True,
     )
 
 
@@ -25,6 +26,7 @@ def required_text_question():
         question_text="Required Text Question Text?",
         required=True,
         type=Question.Type.TEXT,
+        use_saved_answers=True,
     )
 
 

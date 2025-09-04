@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.functional import SimpleLazyObject, cached_property
+from django.utils.html import format_html
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
@@ -93,9 +95,13 @@ class SignupView(FormView):
         ):
             messages.warning(
                 self.request,
-                _(
-                    "You are already confirmed for the following other shifts: {shifts}. Please check your individual availability."
-                ).format(shifts=", ".join(str(shift) for shift in conflicts)),
+                format_html(
+                    gettext(
+                        "Please check that your individual start and end times do not overlap with these "
+                        "other confirmed participations: {shifts}"
+                    ),
+                    shifts=", ".join(str(shift) for shift in conflicts),
+                ),
             )
             return None
 

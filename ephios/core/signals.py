@@ -158,6 +158,7 @@ def collect_signup_form_fields(shift, participant, participation, signup_choice)
     )
     for _, additional_fields in responses:
         for fieldname, field in additional_fields.items():
+            # add some defaults to form field and serializer kwargs
             yield fieldname, {
                 **field,
                 "form_kwargs": {
