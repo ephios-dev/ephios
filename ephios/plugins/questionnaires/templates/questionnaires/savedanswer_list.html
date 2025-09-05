@@ -20,17 +20,17 @@
                         </h5>
                         <br/>
                         <span class="text-muted">{{ answer.question.question_text }}</span>
-                        <br/>
-                        {{ answer.answer_text }}
-                    </div>
-                    <div class="col-12 col-lg-4">
                         {% if not answer.question.use_saved_answers or answer.question.archived%}
+                            <br/>
                             <span class="badge bg-secondary">
                                 {% translate "not used anymore" %}
                             </span>
                         {% endif %}
                     </div>
-                    <div class="col-12 col-lg-auto d-flex align-items-end align-items-lg-center justify-content-end">
+                    <div class="col-12 col-lg-5">
+                        {{ answer.answer_text }}
+                    </div>
+                    <div class="col d-flex align-items-end align-items-lg-center justify-content-end">
                         <a class="btn btn-secondary btn-sm text-nowrap"
                            href="{% url "questionnaires:saved_answer_edit" answer.question.pk %}"><span
                             class="fa fa-edit"></span> <span
