@@ -66,4 +66,4 @@ def create_qualification_consequence(sender, participation, **kwargs):
         )
 
         if not event.auto_qualification_config.needs_confirmation:
-            consequence.confirm(user=None)
+            consequence.confirm()
