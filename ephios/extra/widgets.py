@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class CustomDateInput(DateInput):

@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse, reverse_lazy
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     CreateView,
     DeleteView,

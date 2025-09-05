@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import make_aware
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext
 from guardian.shortcuts import assign_perm
 
 from ephios.core.models import Event, EventType, Shift, UserProfile
@@ -23,15 +23,15 @@ def create_objects():
 
     from django.contrib.auth.models import Group
 
-    volunteers = Group.objects.create(name=_("Volunteers"))
+    volunteers = Group.objects.create(name=gettext("Volunteers"))
     volunteers.user_set.add(admin_user)
     volunteers.save()
 
-    planners = Group.objects.create(name=_("Planners"))
+    planners = Group.objects.create(name=gettext("Planners"))
     planners.user_set.add(admin_user)
     planners.save()
 
-    managers = Group.objects.create(name=_("Managers"))
+    managers = Group.objects.create(name=gettext("Managers"))
     managers.user_set.add(admin_user)
     managers.save()
 
@@ -47,8 +47,8 @@ def create_objects():
     assign_perm("auth.change_group", managers)
     assign_perm("auth.delete_group", managers)
 
-    service_type = EventType.objects.create(title=_("Service"))
-    EventType.objects.create(title=_("Training"))
+    service_type = EventType.objects.create(title=gettext("Service"))
+    EventType.objects.create(title=gettext("Training"))
 
     user = UserProfile(
         email="user@localhost",

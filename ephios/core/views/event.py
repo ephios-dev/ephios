@@ -16,7 +16,7 @@ from django.utils.datastructures import MultiValueDict
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import get_current_timezone, make_aware
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.views import View
 from django.views.generic import (

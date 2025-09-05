@@ -3,7 +3,7 @@ import logging
 from django.contrib.auth.password_validation import MinimumLengthValidator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings

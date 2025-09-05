@@ -7,7 +7,7 @@ from django.db.models import Count, Exists, OuterRef, Prefetch, Q, QuerySet
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import ModelSelect2Widget, Select2Widget
