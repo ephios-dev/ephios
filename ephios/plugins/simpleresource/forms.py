@@ -1,6 +1,6 @@
 from django.forms import BaseModelFormSet, BooleanField, ModelForm, modelformset_factory
 from django.forms.formsets import DELETION_FIELD_NAME
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin

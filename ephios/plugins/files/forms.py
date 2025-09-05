@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import FileInput, Form, ModelForm, ModelMultipleChoiceField
 from django.template.defaultfilters import filesizeformat
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.forms.events import BasePluginFormMixin

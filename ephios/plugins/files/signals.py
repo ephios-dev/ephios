@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signals import (
     HTML_EVENT_INFO,

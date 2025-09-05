@@ -1,5 +1,5 @@
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 def render_alert(content, alert_type=None, dismissible=True):

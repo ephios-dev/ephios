@@ -3,7 +3,7 @@ import io
 from django.http import FileResponse
 from django.utils import formats
 from django.utils.timezone import get_default_timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from reportlab.lib import colors

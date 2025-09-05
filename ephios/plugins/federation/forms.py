@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import CheckboxSelectMultiple
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.forms.events import BasePluginFormMixin

@@ -15,7 +15,7 @@ from django.forms import (
     inlineformset_factory,
 )
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from guardian.shortcuts import assign_perm, get_objects_for_group, remove_perm
 

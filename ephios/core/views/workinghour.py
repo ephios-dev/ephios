@@ -13,7 +13,7 @@ from django.db.models import DurationField, ExpressionWrapper, F, Sum
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
 from django_select2.forms import Select2Widget
 from guardian.shortcuts import get_objects_for_user
