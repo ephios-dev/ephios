@@ -44,7 +44,7 @@ router.register(
     r"users/(?P<user>[\d]+)/participations", UserParticipationView, basename="user-participations"
 )
 router.register(r"workinghours", WorkingHoursViewSet)
-router.register(r"consequences", ConsequenceViewSet)
+router.register(r"consequences", ConsequenceViewSet, basename="consequences")
 
 app_name = "api"
 urlpatterns = [

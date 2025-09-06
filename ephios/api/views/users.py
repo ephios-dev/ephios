@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope, TokenHasScope
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import SearchFilter
@@ -24,14 +24,8 @@ from ephios.api.serializers import (
     UserProfileSerializer,
     WorkingHoursSerializer,
 )
-from ephios.core.models import (
-    AbstractParticipation,
-    LocalConsequence,
-    LocalParticipation,
-    UserProfile,
-    WorkingHours,
-)
-from ephios.core.models.users import AbstractConsequence
+from ephios.core.models import AbstractParticipation, UserProfile, WorkingHours
+from ephios.plugins.federation.models import FederatedConsequence, FederatedGuest
 
 
 class UserProfileMeView(RetrieveAPIView):
@@ -106,8 +100,15 @@ class WorkingHoursViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ConsequenceViewSet(viewsets.ModelViewSet):
     serializer_class = ConsequenceSerializer
-    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
+    permission_classes = [TokenHasScope]
+    required_scopes = []
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["slug", "user", "state"]
-    required_scopes = ["CONFIDENTIAL_WRITE"]
-    queryset = AbstractConsequence.objects.all()
+    filterset_fields = ["slug", "state"]
+
+    def get_queryset(self):
+        try:
+            # request.auth is an auth token, federatedguest is the reverse relation
+            guest = self.request.auth.federatedguest
+        except (AttributeError, FederatedGuest.DoesNotExist) as exc:
+            raise PermissionDenied from exc
+        return FederatedConsequence.objects.filter(federated_user__federated_instance=guest)
