@@ -40,8 +40,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(deduplicate_guest_participations),
-        migrations.AlterUniqueTogether(
-            name="guestuser",
-            unique_together={("event", "email")},
-        ),
     ]
