@@ -15,6 +15,7 @@ from ephios.core.views.signup import BaseShiftActionView
 from ephios.extra.auth import access_exempt
 from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.guests.models import EventGuestShare, GuestUser
+from ephios.plugins.guests.notifications import GuestUserSignupNotification
 
 
 @access_exempt
@@ -78,8 +79,15 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
                 _("You already registered as a guest for this event."),
             )
             return self.form_invalid(form)
+        event_url = guest.as_participant().reverse_event_detail(self.event)
+        GuestUserSignupNotification.send(
+            event_title=self.event.title,
+            guest_name=guest.display_name,
+            email=guest.email,
+            event_url=event_url,
+        )
         messages.info(self.request, _("Save the URL of this page to access this site later."))
-        return redirect(guest.as_participant().reverse_event_detail(self.event))
+        return redirect(event_url)
 
 
 class GuestEventDetailView(RedirectAuthenticatedUserMixin, DetailView):

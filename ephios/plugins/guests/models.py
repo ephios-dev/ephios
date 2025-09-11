@@ -71,7 +71,7 @@ class GuestUser(models.Model):
 
     class Meta:
         # there might be two people using the same email *sigh*
-        unique_together = [["event", "email", "display_name"]]
+        unique_together = [["event", "email"]]
         verbose_name = _("guest user")
         verbose_name_plural = _("guest users")
 
