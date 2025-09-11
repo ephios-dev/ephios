@@ -10,11 +10,12 @@ from ephios.plugins.guests.models import GuestParticipation
 def deduplicate_guest_participations(apps, schema_editor):
     GuestUser = apps.get_model("guests", "GuestUser")
     for duplicate_guest in (
-        GuestUser.objects.values("email").annotate(Count("id")).order_by().filter(id__count__gt=1)
+        GuestUser.objects.values("email", "event_id").annotate(Count("id")).filter(id__count__gt=1)
     ):
         try:
             for participation in GuestParticipation.objects.filter(
-                guest_user__email=duplicate_guest["email"]
+                guest_user__email=duplicate_guest["email"],
+                guest_user__event_id=duplicate_guest["event_id"],
             ):
                 PlaceholderParticipation.objects.create(
                     display_name=participation.guest_user.display_name,
@@ -26,7 +27,9 @@ def deduplicate_guest_participations(apps, schema_editor):
                     individual_end_time=participation.individual_end_time,
                 )
                 participation.delete()
-            GuestUser.objects.filter(email=duplicate_guest["email"]).delete()
+            GuestUser.objects.filter(
+                email=duplicate_guest["email"], event_id=duplicate_guest["event_id"]
+            ).delete()
         except Exception:
             continue
 
