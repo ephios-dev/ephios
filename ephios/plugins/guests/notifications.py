@@ -23,7 +23,7 @@ class GuestUserSignupNotification(AbstractNotificationHandler):
     @classmethod
     def get_body(cls, notification):
         return _(
-            "You have signed up for {event} at {platform}. You can use the link in this email to make changes to your participation."
+            "You have signed up for {event} at {platform}. You can use the link below to make changes to your participation."
         ).format(event=notification.data["event_title"], platform=dynamic_settings.PLATFORM_NAME)
 
     @classmethod
