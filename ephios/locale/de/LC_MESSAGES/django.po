@@ -4483,7 +4483,7 @@ msgstr "Sie haben sich für {event} angemeldet."
 msgid ""
 "You have signed up for {event} at {platform}. You can use the link below to "
 "make changes to your participation."
-msgstr "Sie haben sich für {event} angemeldet. Sie können den Link unten benutzen, um Ihre Teilnahme anzupassen."
+msgstr "Sie haben sich für {event} bei {platform} angemeldet. Sie können den Link unten benutzen, um Ihre Teilnahme anzupassen."
 
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:7
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:16

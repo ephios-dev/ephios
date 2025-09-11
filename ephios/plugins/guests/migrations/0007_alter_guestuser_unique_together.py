@@ -12,26 +12,23 @@ def deduplicate_guest_participations(apps, schema_editor):
     for duplicate_guest in (
         GuestUser.objects.values("email", "event_id").annotate(Count("id")).filter(id__count__gt=1)
     ):
-        try:
-            for participation in GuestParticipation.objects.filter(
-                guest_user__email=duplicate_guest["email"],
-                guest_user__event_id=duplicate_guest["event_id"],
-            ):
-                PlaceholderParticipation.objects.create(
-                    display_name=participation.guest_user.display_name,
-                    shift=participation.shift,
-                    state=participation.state,
-                    structure_data=participation.structure_data,
-                    finished=participation.finished,
-                    individual_start_time=participation.individual_start_time,
-                    individual_end_time=participation.individual_end_time,
-                )
-                participation.delete()
-            GuestUser.objects.filter(
-                email=duplicate_guest["email"], event_id=duplicate_guest["event_id"]
-            ).delete()
-        except Exception:
-            continue
+        for participation in GuestParticipation.objects.filter(
+            guest_user__email=duplicate_guest["email"],
+            guest_user__event_id=duplicate_guest["event_id"],
+        ):
+            PlaceholderParticipation.objects.create(
+                display_name=participation.guest_user.display_name,
+                shift=participation.shift,
+                state=participation.state,
+                structure_data=participation.structure_data,
+                finished=participation.finished,
+                individual_start_time=participation.individual_start_time,
+                individual_end_time=participation.individual_end_time,
+            )
+            participation.delete()
+        GuestUser.objects.filter(
+            email=duplicate_guest["email"], event_id=duplicate_guest["event_id"]
+        ).delete()
 
 
 class Migration(migrations.Migration):

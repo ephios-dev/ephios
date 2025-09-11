@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 
 from django.utils.translation import gettext_lazy as _
+from dynamic_preferences.registries import global_preferences_registry
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import Notification
@@ -24,7 +25,10 @@ class GuestUserSignupNotification(AbstractNotificationHandler):
     def get_body(cls, notification):
         return _(
             "You have signed up for {event} at {platform}. You can use the link below to make changes to your participation."
-        ).format(event=notification.data["event_title"], platform=dynamic_settings.PLATFORM_NAME)
+        ).format(
+            event=notification.data["event_title"],
+            platform=global_preferences_registry.manager()["general__organization_name"],
+        )
 
     @classmethod
     def get_actions(cls, notification):
