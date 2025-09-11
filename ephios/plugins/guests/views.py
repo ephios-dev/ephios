@@ -72,8 +72,6 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
         form.instance.event = self.event
         try:
             guest = form.save()
-            messages.info(self.request, _("Save the URL of this page to access this site later."))
-            return redirect(guest.as_participant().reverse_event_detail(self.event))
         except IntegrityError:
             # unique_together constraint not passed
             form.add_error(
@@ -83,14 +81,22 @@ class GuestRegistrationView(RedirectAuthenticatedUserMixin, CreateView):
                 ),
             )
             guest = GuestUser.objects.get(email=form.cleaned_data["email"], event=self.event)
-            return self.form_invalid(form)
-        finally:
             GuestUserSignupNotification.send(
                 event_title=self.event.title,
                 guest_name=guest.display_name,
                 email=guest.email,
                 event_url=guest.as_participant().reverse_event_detail(self.event),
             )
+            return self.form_invalid(form)
+        event_url = guest.as_participant().reverse_event_detail(self.event)
+        GuestUserSignupNotification.send(
+            event_title=self.event.title,
+            guest_name=guest.display_name,
+            email=guest.email,
+            event_url=event_url,
+        )
+        messages.info(self.request, _("Save the URL of this page to access this site later."))
+        return redirect(event_url)
 
 
 class GuestEventDetailView(RedirectAuthenticatedUserMixin, DetailView):

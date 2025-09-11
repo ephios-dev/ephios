@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 22:33+0200\n"
+"POT-Creation-Date: 2025-09-11 23:54+0200\n"
 "PO-Revision-Date: 2025-09-04 22:35+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -1688,6 +1688,7 @@ msgstr ""
 #: ephios/core/services/notifications/types.py:624
 #: ephios/core/templates/core/mails/new_event.html:35
 #: ephios/core/templates/core/userprofile_workinghours.html:47
+#: ephios/plugins/guests/notifications.py:33
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
@@ -4468,6 +4469,22 @@ msgstr "Gastteilnehmahme"
 msgid "guest participations"
 msgstr "Gastteilnehmahmen"
 
+#: ephios/plugins/guests/notifications.py:12
+msgid "A guest user has signed up"
+msgstr "Ein Gast hat sich angemeldet"
+
+#: ephios/plugins/guests/notifications.py:21
+#, python-brace-format
+msgid "You have signed up for {event}"
+msgstr "Sie haben sich für {event} angemeldet."
+
+#: ephios/plugins/guests/notifications.py:26
+#, python-brace-format
+msgid ""
+"You have signed up for {event} at {platform}. You can use the link below to "
+"make changes to your participation."
+msgstr "Sie haben sich für {event} angemeldet. Sie können den Link unten benutzen, um Ihre Teilnahme anzupassen."
+
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:7
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:16
 msgid "Register as guest"
@@ -4477,19 +4494,21 @@ msgstr "Als Gast registrieren"
 msgid "Continue"
 msgstr "Weiter"
 
-#: ephios/plugins/guests/views.py:54
+#: ephios/plugins/guests/views.py:55
 msgid "Log out to register as guest."
 msgstr "Melden Sie sich ab, um sich als Gast zu registrieren."
 
-#: ephios/plugins/guests/views.py:78
-msgid "You already registered as a guest for this event."
-msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert."
+#: ephios/plugins/guests/views.py:80
+msgid ""
+"You already registered as a guest for this event. We sent you an email with "
+"a link that you can use to change your participation."
+msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert. Wir haben Ihnen eine E-Mail mit einem Link geschickt, über den Sie Ihre Teilnahme ändern können."
 
-#: ephios/plugins/guests/views.py:81
+#: ephios/plugins/guests/views.py:98
 msgid "Save the URL of this page to access this site later."
 msgstr "Speichern Sie die URL dieser Seite, um später zurückzukehren."
 
-#: ephios/plugins/guests/views.py:90
+#: ephios/plugins/guests/views.py:107
 msgid "Log out to view the guest version of this page."
 msgstr "Melden Sie sich ab, um die Besucheransicht dieser Seite zu sehen."
 
@@ -5082,7 +5101,7 @@ msgstr ""
 msgid "Saved questionnaire answers"
 msgstr "Gespeicherte Antworten"
 
-#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:29
+#: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_list.html:26
 msgid "not used anymore"
 msgstr "nicht mehr verwendet"
 
@@ -5356,6 +5375,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "You already registered as a guest for this event."
+#~ msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert."
 
 #, python-brace-format
 #~ msgid ""
