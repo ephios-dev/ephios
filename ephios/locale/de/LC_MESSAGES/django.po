@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-15 14:21+0200\n"
+"POT-Creation-Date: 2025-09-15 17:46+0200\n"
 "PO-Revision-Date: 2025-07-24 23:17+0200\n"
 "Last-Translator: Ben Samuelson <ben.samuelson@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -3316,17 +3316,33 @@ msgstr "In x Jahren"
 msgid "On x day of month y in z years"
 msgstr "Am x. Tag des Monats y in z Jahren"
 
-#: ephios/extra/widgets.py:91
+#: ephios/extra/widgets.py:88 ephios/extra/widgets.py:89
+#: ephios/extra/widgets.py:124
+msgid "Choice"
+msgstr "Auswahl"
+
+#: ephios/extra/widgets.py:95 ephios/extra/widgets.py:98
+#: ephios/extra/widgets.py:99
 msgid "Days (1-31)"
 msgstr "Tage (1-31)"
 
-#: ephios/extra/widgets.py:99
+#: ephios/extra/widgets.py:105 ephios/extra/widgets.py:108
+#: ephios/extra/widgets.py:109
 msgid "Months (1-12)"
 msgstr "Monate (1-12)"
 
-#: ephios/extra/widgets.py:107
+#: ephios/extra/widgets.py:115 ephios/extra/widgets.py:117
+#: ephios/extra/widgets.py:118 ephios/extra/widgets.py:127
 msgid "Years"
 msgstr "Jahre"
+
+#: ephios/extra/widgets.py:125
+msgid "Day"
+msgstr "Tag"
+
+#: ephios/extra/widgets.py:126
+msgid "Month"
+msgstr "Monat"
 
 #: ephios/modellogging/models.py:48
 msgid "Log entry"
