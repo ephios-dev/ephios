@@ -1,5 +1,11 @@
-<div class="row align-items-center">
-    {% spaceless %}{% for widget in widget.subwidgets %}
-        <div class="col"> {% include widget.template_name %} </div>
-    {% endfor %}{% endspaceless %}
+<div class="row align-items-center relative-time-widget">
+    {% for widget in widget.subwidgets %}
+        <div class="col field-{{ forloop.counter0 }}">
+            <label for="{{ widget.id_for_label }}">{{ widget.label }}</label>
+            {% include widget.template_name %}
+        </div>
+    {% endfor %}
 </div>
+
+{% load static %}
+<script src="{% static 'extra/js/relative_time_field.js' %}"></script>

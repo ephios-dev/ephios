@@ -83,7 +83,11 @@ class RelativeTimeWidget(MultiWidget):
                     (1, _("In x years")),
                     (2, _("On x day of month y in z years")),
                 ),
-                attrs={"class": "form-control"},
+                attrs={
+                    "class": "form-control",
+                    "title": _("Choice"),
+                    "aria-label": _("Choice"),
+                },
             ),
             forms.NumberInput(
                 attrs={
@@ -91,6 +95,8 @@ class RelativeTimeWidget(MultiWidget):
                     "placeholder": _("Days (1-31)"),
                     "min": 1,
                     "max": 31,
+                    "title": _("Days (1-31)"),
+                    "aria-label": _("Days (1-31)"),
                 }
             ),
             forms.NumberInput(
@@ -99,6 +105,8 @@ class RelativeTimeWidget(MultiWidget):
                     "placeholder": _("Months (1-12)"),
                     "min": 1,
                     "max": 12,
+                    "title": _("Months (1-12)"),
+                    "aria-label": _("Months (1-12)"),
                 }
             ),
             forms.NumberInput(
@@ -106,15 +114,29 @@ class RelativeTimeWidget(MultiWidget):
                     "class": "form-control",
                     "placeholder": _("Years"),
                     "min": 0,
+                    "title": _("Years"),
+                    "aria-label": _("Years"),
                 }
             ),
         )
         super().__init__(widgets, *args, **kwargs)
+        self.labels = [
+            _("Choice"),
+            _("Day"),
+            _("Month"),
+            _("Years"),
+        ]
     
     def decompress(self, value):
         if value is None:
             return [0, None, None, None]
         return value    # always a list now
+    
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        for idx, subwidget in enumerate(context["widget"]["subwidgets"]):
+            subwidget["label"] = self.labels[idx]
+        return context
 
         
 
