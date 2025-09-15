@@ -34,9 +34,9 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.extra.fields import EndOfDayDateTimeField
+from ephios.extra.fields import EndOfDayDateTimeField, RelativeTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
-from ephios.extra.widgets import CustomDateInput
+from ephios.extra.widgets import CustomDateInput, RelativeTimeWidget
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
@@ -277,7 +277,20 @@ class QualificationManager(models.Manager):
     def get_by_natural_key(self, qualification_uuid, *args):
         return self.get(uuid=qualification_uuid)
 
-expiration_format_validator = RegexValidator(
+class DefaultExpirationTimeField(models.JSONField):
+    """
+    A model field whose formfield is a RelativeTimeField
+    """
+
+    def formfield(self, **kwargs):
+        return super().formfield(
+            widget = RelativeTimeWidget,
+            form_class=RelativeTimeField,
+            **kwargs,
+        )
+
+
+"""expiration_format_validator = RegexValidator(
     regex=(
         r"^$|"  # empty
         r"^(?:\d{1,2}|0{1,2}|\+\d+)\."          # day: 1–2 digits OR 0/00 OR +N
@@ -286,7 +299,7 @@ expiration_format_validator = RegexValidator(
         r"^\+\d+$"                              # relative only: +N
     ),
     message=_("Invalid format."),
-)
+)"""
 
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
@@ -306,7 +319,7 @@ class Qualification(Model):
         symmetrical=False,
         blank=True,
     )
-    default_expiration_time = models.CharField(
+    """default_expiration_time = models.CharField(
         max_length=254,
         verbose_name=_("Default expiration format"),
         help_text=_(
@@ -323,6 +336,14 @@ class Qualification(Model):
         null=True,
         blank=True,
         validators=[expiration_format_validator],
+    )"""
+    default_expiration_time = DefaultExpirationTimeField(
+        verbose_name=_("Default expiration time"),
+        help_text=_(
+            "The default expiration time for this qualification. Leave empty for no expiration."
+        ),
+        null=True,
+        blank=True,
     )
     is_imported = models.BooleanField(verbose_name=_("imported"), default=True)
 
