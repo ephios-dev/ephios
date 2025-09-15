@@ -5,6 +5,8 @@ from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
 from django.utils.translation import gettext as _
 
+import json
+
 
 class CustomDateInput(DateInput):
     template_name = "extra/widgets/custom_date_input.html"
@@ -68,6 +70,53 @@ class RecurrenceField(CharField):
             return rrulestr(value, ignoretz=True)
         except (TypeError, KeyError, ValueError) as e:
             raise ValidationError(_("Invalid recurrence rule: {error}").format(error=e)) from e
+
+
+class RelativeTimeWidget(MultiWidget):
+    template_name = "extra/widgets/relative_time_field.html"
+    
+    def __init__(self, *args, **kwargs):
+        widgets = (
+            forms.Select(
+                choices=(
+                    (0, _("No expiration")),
+                    (1, _("In x years")),
+                    (2, _("On x day of month y in z years")),
+                ),
+                attrs={"class": "form-control"},
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Days (1-31)"),
+                    "min": 1,
+                    "max": 31,
+                }
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Months (1-12)"),
+                    "min": 1,
+                    "max": 12,
+                }
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Years"),
+                    "min": 0,
+                }
+            ),
+        )
+        super().__init__(widgets, *args, **kwargs)
+    
+    def decompress(self, value):
+        if value is None:
+            return [0, None, None, None]
+        return value    # always a list now
+
+        
 
 
 class MarkdownTextarea(forms.Textarea):
