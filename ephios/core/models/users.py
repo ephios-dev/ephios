@@ -340,7 +340,7 @@ class Qualification(Model):
     default_expiration_time = DefaultExpirationTimeField(
         verbose_name=_("Default expiration time"),
         help_text=_(
-            "The default expiration time for this qualification. Leave empty for no expiration."
+            "The default expiration time for this qualification."
         ),
         null=True,
         blank=True,
