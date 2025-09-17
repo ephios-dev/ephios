@@ -1043,18 +1043,19 @@ django-jquery-js = "*"
 
 [[package]]
 name = "django-guardian"
-version = "3.0.4"
+version = "3.2.0"
 description = "Per object permissions for Django"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django_guardian-3.0.4-py3-none-any.whl", hash = "sha256:c6e07165f5e7174d004f7814cca76f66af1986147c4420bc656469629e29dec5"},
-    {file = "django_guardian-3.0.4.tar.gz", hash = "sha256:1462739aa57ea15435bbc1f722ad37a1b4aec80964a6eadd2ac5b3492e57d343"},
+    {file = "django_guardian-3.2.0-py3-none-any.whl", hash = "sha256:0768565a057988a93fc4a1d93649c4a794abfd7473a8408a079cfbf83c559d77"},
+    {file = "django_guardian-3.2.0.tar.gz", hash = "sha256:9e18ecd2e211b665972690c2d03d27bce0ea4932b5efac24a4bb9d526950a69e"},
 ]
 
 [package.dependencies]
 django = ">=3.2"
+typing_extensions = {version = ">=4.12.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "django-ical"
