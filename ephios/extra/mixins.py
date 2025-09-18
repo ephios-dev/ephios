@@ -1,39 +1,45 @@
 import functools
 from typing import Collection
 
-from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import AccessMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin as DjangoPermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import resolve
+from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
 
-class CustomPermissionRequiredMixin(PermissionRequiredMixin):
+class CustomPermissionRequiredMixin(GuardianPermissionRequiredMixin):
     """
-    We modify Django's Mixin to support object permissions:
-    * Logged in users without permission get 403
-    * not logged in users get redirected to login
+    Modifies the GuardianPermissionRequiredMixin to
 
-    Set accept_object_perms to False to disable
-    object permissions (e.g. on create views).
+    - redirect anonymous users to login on failed permission
+    - raise PermissionDenied for authenticated users on failed permission
+    - allows you to disable `accept_object_perms` for use in e.g. CreateViews
+    - does `accept_global_perms` by default.
+
+    If you want to do a manual permisison check, use CustomCheckPermissionMixin instead.
     """
 
     accept_global_perms = True
     accept_object_perms = True
 
-    def get_permission_object(self):
-        if hasattr(self, "permission_object"):
-            return self.permission_object
-        if hasattr(self, "get_object") and (obj := self.get_object()) is not None:
-            return obj
-        return getattr(self, "object", None)
+    @property
+    def raise_exception(self):
+        # as proposed in https://github.com/django-guardian/django-guardian/issues/200#issuecomment-3306632790
+        return self.request.user.is_authenticated
 
-    def has_permission(self):
-        user = self.request.user
-        perms = self.get_permission_required()
-        if self.accept_global_perms and all(user.has_perm(perm) for perm in perms):
-            return True
-        if not self.accept_object_perms or (obj := self.get_permission_object()) is None:
-            return False
-        return all(user.has_perm(perm, obj) for perm in perms)
+    def get_permission_object(self):
+        if not self.accept_object_perms:
+            return None
+        return super().get_permission_object()
+
+
+class CustomCheckPermissionMixin(DjangoPermissionRequiredMixin):
+    """
+    Overwrite has_permission to do a manual permission check.
+    Like CustomPermissionRequiredMixin, redirect anonymous users on fail and
+    raise PermissionDenied for authenticated users.
+    """
 
 
 class StaffRequiredMixin(AccessMixin):
