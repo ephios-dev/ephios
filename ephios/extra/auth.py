@@ -1,3 +1,5 @@
+import logging
+import pprint
 import uuid
 from datetime import date
 from typing import Any, Dict
@@ -22,6 +24,8 @@ from ephios.core.models import Qualification
 from ephios.core.models.users import IdentityProvider, QualificationGrant
 from ephios.core.signals import oidc_update_user
 from ephios.extra.utils import dotted_get
+
+logger = logging.getLogger(__name__)
 
 
 def access_exempt(view_class):
@@ -124,6 +128,11 @@ class EphiosOIDCAB(ModelBackend):
                 token["id_token"]
             )  # this already contains the claims for the tested OP, check the standard to see if we can omit the call to the user endpoint
             user_info = oauth.request("GET", self.provider.userinfo_endpoint).json()
+            logger.debug(
+                "Trying to OIDC login user with info user_info\n: {}".format(
+                    pprint.pformat(user_info)
+                )
+            )
             if "email" not in user_info:
                 raise SuspiciousOperation("OIDC client did not return email address")
             users = get_user_model().objects.filter(email__iexact=user_info["email"])
