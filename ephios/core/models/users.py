@@ -31,6 +31,7 @@ from django.db.models import (
 from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from polymorphic.models import PolymorphicModel
 
 from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
@@ -390,20 +391,14 @@ register_model_for_logging(
 )
 
 
-class Consequence(Model):
+@dont_log  # as we log the specific models
+class AbstractConsequence(PolymorphicModel):
     slug = models.CharField(max_length=255)
     data = models.JSONField(default=dict, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder)
 
-    user = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        verbose_name=_("affected user"),
-        null=True,
-        related_name="affecting_consequences",
-    )
-
     class States(models.TextChoices):
         NEEDS_CONFIRMATION = "needs_confirmation", _("needs confirmation")
+        CONFIRMED = "confirmed", _("confirmed")
         EXECUTED = "executed", _("executed")
         FAILED = "failed", _("failed")
         DENIED = "denied", _("denied")
@@ -415,10 +410,15 @@ class Consequence(Model):
         verbose_name=_("State"),
     )
 
+
     class Meta:
-        db_table = "consequence"
-        verbose_name = _("Consequence")
-        verbose_name_plural = _("Consequences")
+        db_table = "abstractconsequence"
+        verbose_name = _("Abstract consequence")
+        verbose_name_plural = _("Abstract consequences")
+
+    @classmethod
+    def filter_editable_by_user(cls, handler, user):
+        raise NotImplementedError
 
     @property
     def handler(self):
@@ -426,7 +426,7 @@ class Consequence(Model):
 
         return consequences.consequence_handler_from_slug(self.slug)
 
-    def confirm(self, user):
+    def confirm(self):
         from ephios.core.consequences import ConsequenceError
 
         if self.state not in {
@@ -441,8 +441,7 @@ class Consequence(Model):
                 self.handler.execute(self)
                 from ephios.core.services.notifications.types import ConsequenceApprovedNotification
 
-                if user != self.user:
-                    ConsequenceApprovedNotification.send(self)
+                ConsequenceApprovedNotification.send(self)
         except Exception as e:  # pylint: disable=broad-except
             self.state = self.States.FAILED
             add_log_recorder(
@@ -458,7 +457,7 @@ class Consequence(Model):
         finally:
             self.save()
 
-    def deny(self, user):
+    def deny(self):
         from ephios.core.consequences import ConsequenceError
 
         if self.state not in {self.States.NEEDS_CONFIRMATION, self.States.FAILED}:
@@ -467,28 +466,53 @@ class Consequence(Model):
         self.save()
         from ephios.core.services.notifications.types import ConsequenceDeniedNotification
 
-        if user != self.user:
-            ConsequenceDeniedNotification.send(self)
+        ConsequenceDeniedNotification.send(self)
 
     def render(self):
-        return self.handler.render(self)
+        return f"{self.participant_display_name()} {self.handler.render(self)}"
 
     def __str__(self):
         return self.render()
 
+    def participant_display_name(self):
+        raise NotImplementedError
+
     def attach_log_to_object(self):
-        if self.user_id:
-            return UserProfile, self.user_id
-        return Consequence, self.id
+        return AbstractConsequence, self.id
 
 
-register_model_for_logging(
-    Consequence,
-    ModelFieldsLogConfig(
-        unlogged_fields=["id", "slug", "user", "data"],
-        attach_to_func=lambda consequence: consequence.attach_log_to_object(),
-    ),
-)
+class LocalConsequence(AbstractConsequence):
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name=_("affected user"),
+        null=True,
+        related_name="affecting_consequences",
+    )
+
+    class Meta:
+        db_table = "localconsequence"
+        verbose_name = _("Local consequence")
+        verbose_name_plural = _("Local consequences")
+
+    @classmethod
+    def filter_editable_by_user(cls, handler, user):
+        return handler.filter_editable_by_user(user)
+
+    def participant_display_name(self):
+        return self.user.display_name
+
+    def attach_log_to_object(self):
+        return UserProfile, self.user_id
+
+
+# register_model_for_logging(
+#     LocalConsequence,
+#     ModelFieldsLogConfig(
+#         unlogged_fields=["id", "slug", "user", "data"],
+#         attach_to_func=lambda consequence: consequence.attach_log_to_object(),
+#     ),
+# )
 
 
 @log()

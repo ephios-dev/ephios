@@ -14,10 +14,10 @@ class ConsequenceUpdateView(LoginRequiredMixin, SingleObjectMixin, View):
         consequence = self.get_object()
         fail_reason = None
         if request.POST["action"] == "deny":
-            consequence.deny(request.user)
+            consequence.deny()
         elif request.POST["action"] == "confirm":
             try:
-                consequence.confirm(request.user)
+                consequence.confirm()
             except ConsequenceError as e:
                 fail_reason = str(e)
         return JsonResponse(
