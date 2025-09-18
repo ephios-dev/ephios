@@ -129,9 +129,7 @@ class EphiosOIDCAB(ModelBackend):
             )  # this already contains the claims for the tested OP, check the standard to see if we can omit the call to the user endpoint
             user_info = oauth.request("GET", self.provider.userinfo_endpoint).json()
             logger.debug(
-                "Trying to OIDC login user with info user_info\n: {}".format(
-                    pprint.pformat(user_info)
-                )
+                f"Trying to OIDC login user with info user_info\n: {pprint.pformat(user_info)}"
             )
             if "email" not in user_info:
                 raise SuspiciousOperation("OIDC client did not return email address")
