@@ -49,6 +49,11 @@ def _make_permission_names_qualified(permission_names, obj: Optional):
 def get_groups_with_perms(
     obj=None, *, only_with_perms_in=None, must_have_all_perms=False, accept_global_perms=True
 ):
+    """
+    Version of `get_groups_with_perms` that has `only_with_perms` and `must_have_all_perms`.
+    As of 2025-09-18, guardian is missing the `must_have_all_perms` option on this shortcut,
+    but does support the `attach_perms` parameter.
+    """
     qs = Group.objects.all()
     qualified_permission_names = _make_permission_names_qualified(only_with_perms_in or [], obj)
     required_perms = get_permissions_from_qualified_names(qualified_permission_names)
