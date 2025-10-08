@@ -7,6 +7,8 @@ from django.utils.translation import gettext as _
 
 import json
 
+from ephios.extra.relative_time import RelativeTimeTypeRegistry
+
 
 class CustomDateInput(DateInput):
     template_name = "extra/widgets/custom_date_input.html"
@@ -73,63 +75,63 @@ class RecurrenceField(CharField):
 
 
 class RelativeTimeWidget(MultiWidget):
+    """
+    A MultiWidget that renders all registered RelativeTime types dynamically.
+    """
+
     template_name = "extra/widgets/relative_time_field.html"
     
     def __init__(self, *args, **kwargs):
-        widgets = (
+        # Generate dynamic choices
+        choices = [(i, _(name.replace("_", " ").title())) for i, (name, handler) in enumerate(RelativeTimeTypeRegistry.all())]
+        self.type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
+
+        widgets = [
             forms.Select(
-                choices=(
-                    (0, _("No expiration")),
-                    (1, _("In x years")),
-                    (2, _("On x day of month y in z years")),
-                ),
+                choices=choices,
                 attrs={
                     "class": "form-control",
-                    "title": _("Choice"),
-                    "aria-label": _("Choice"),
+                    "title": _("Type"),
+                    "aria-label": _("Type"),
                 },
-            ),
-            forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Days (1-31)"),
-                    "min": 1,
-                    "max": 31,
-                    "title": _("Days (1-31)"),
-                    "aria-label": _("Days (1-31)"),
-                }
-            ),
-            forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Months (1-12)"),
-                    "min": 1,
-                    "max": 12,
-                    "title": _("Months (1-12)"),
-                    "aria-label": _("Months (1-12)"),
-                }
-            ),
-            forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Years"),
-                    "min": 0,
-                    "title": _("Years"),
-                    "aria-label": _("Years"),
-                }
-            ),
-        )
-        super().__init__(widgets, *args, **kwargs)
-        self.labels = [
-            _("Choice"),
-            _("Day"),
-            _("Month"),
-            _("Years"),
+            )
         ]
+
+        # Collect all possible parameter names across all registered types
+        field_placeholders = {
+            "years": _("Years"),
+            "months": _("Months (1–12)"),
+            "day": _("Day (1–31)"),
+            "month": _("Month (1–12)"),
+        }
+
+        # Build a unified list of NumberInputs for all possible numeric parameters
+        # (widget values will still be passed as a list)
+        param_names = sorted({p for name, handler in RelativeTimeTypeRegistry.all() for p in getattr(handler, "fields", [])})
+        self.param_names = param_names
+
+        for param in param_names:
+            widgets.append(
+                forms.NumberInput(
+                    attrs={
+                        "class": "form-control",
+                        "placeholder": field_placeholders.get(param, param.title()),
+                        "min": 0,
+                        "title": field_placeholders.get(param, param.title()),
+                        "aria-label": field_placeholders.get(param, param.title()),
+                    }
+                )
+            )
+
+        super().__init__(widgets, *args, **kwargs)
+
+        # Labels: first is the type choice, then one per param
+        self.labels = [_("Type")] + [param.title() for param in self.param_names]
     
     def decompress(self, value):
+        # Expect value as list [choice, param1, param2, ...]
         if value is None:
-            return [0, None, None, None]
+            return [0] + [None] * len(self.param_names)
         return value    # always a list now
     
     def get_context(self, name, value, attrs):
