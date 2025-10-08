@@ -3,6 +3,7 @@ import datetime
 from django.utils.translation import gettext as _
 from django import forms
 from django.forms.utils import from_current_timezone
+from ephios.extra.relative_time import RelativeTimeTypeRegistry
 from ephios.extra.widgets import RelativeTimeWidget
 
 import json
@@ -27,16 +28,12 @@ class EndOfDayDateTimeField(forms.DateTimeField):
 
 class RelativeTimeField(forms.JSONField):
     """
-    A custom form field that allows selection between two options:
-    - 'after_x_years': After X years
-    - 'at_xy_after_z_years': For at the X.Y. after Z years
-    The value is stored as JSON.
+    A form field that dynamically adapts to all registered RelativeTime types.
     """
 
     widget = RelativeTimeWidget
 
     def bound_data(self, data, initial):
-        # If the widget gave us a list, just return it directly
         if isinstance(data, list):
             return data
         return super().bound_data(data, initial)
@@ -44,95 +41,73 @@ class RelativeTimeField(forms.JSONField):
     def to_python(self, value):
         if not value:
             return None
-        
-        try:
-            if isinstance(value, list):
-                choice, day, month, years = value
-                
-                choice = int(choice) if choice is not None else 0
 
-                if choice == 0:
-                    return {
-                        "type": "no_expiration"
-                    }
-                elif choice == 1:
-                    return {
-                        "type": "after_x_years",
-                        "years": int(years) if years is not None else 0
-                    }
-                elif choice == 2:
-                    return {
-                        "type": "at_xy_after_z_years",
-                        "day": int(day) if day else None,
-                        "month": int(month) if month else None,
-                        "years": int(years) if years else 0
-                    }
-                else:
-                    raise ValueError(
-                        _("Invalid choice")
-                    )
-            
+        try:
+            # Determine all known types and their parameters
+            type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
+
+            if isinstance(value, list):
+                # first element = type index
+                type_index = int(value[0]) if value and value[0] is not None else 0
+                type_name = type_names[type_index] if 0 <= type_index < len(type_names) else None
+                handler = RelativeTimeTypeRegistry.get(type_name)
+                if not handler:
+                    raise ValueError(_("Invalid choice"))
+
+                params = {}
+                # remaining values correspond to all known parameters
+                all_param_names = sorted({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+                for param_name, param_value in zip(all_param_names, value[1:]):
+                    if param_value not in (None, ""):
+                        params[param_name] = int(param_value)
+                return {"type": type_name, **params}
+
             if isinstance(value, str):
                 data = json.loads(value)
             else:
-                data = value  # could already be a dict
+                data = value
 
-            # Validation
             if not isinstance(data, dict):
                 raise ValueError("Not a dict")
 
-            if data.get("type") == "after_x_years":
-                if not isinstance(data.get("years"), int) or data["years"] < 0:
-                    raise ValueError("Invalid years")
+            type_name = data.get("type")
+            handler = RelativeTimeTypeRegistry.get(type_name)
+            if not handler:
+                raise ValueError(_("Unknown type"))
 
-            elif data.get("type") == "at_xy_after_z_years":
-                if not isinstance(data.get("years"), int) or data["years"] < 0:
-                    raise ValueError("Invalid years")
-                if not (1 <= int(data.get("day", 0)) <= 31):
-                    raise ValueError("Invalid day")
-                if not (1 <= int(data.get("month", 0)) <= 12):
-                    raise ValueError("Invalid month")
-
-            elif data.get("type") == "no_expiration":
-                pass
-
-            else:
-                raise ValueError("Invalid type")
+            # basic validation: ensure required params exist
+            for param in getattr(handler, "fields", []):
+                if param not in data:
+                    raise ValueError(_("Missing field: {param}").format(param=param))
 
             return data
-        
+
         except (json.JSONDecodeError, ValueError, TypeError) as e:
             raise forms.ValidationError(
                 _("Invalid format: {error}").format(error=e)
             ) from e
-    
-    def prepare_value(self, value):
-        """
-        Ensure the widget always gets a list [choice, day, month, years].
-        """
-        if value is None:
-            return [0, None, None, None]
 
-        # If already a list, just pass it through
+    def prepare_value(self, value):
+        if value is None:
+            return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+
         if isinstance(value, list):
             return value
 
-        # If it's a JSON string, parse it
         if isinstance(value, str):
             try:
                 value = json.loads(value)
             except json.JSONDecodeError:
-                return [0, None, None, None]
+                return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
 
         if not isinstance(value, dict):
-            return [0, None, None, None]
+            return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
 
-        t = value.get("type")
-        if t == "no_expiration":
-            return [0, None, None, None]
-        elif t == "after_x_years":
-            return [1, None, None, value.get("years")]
-        elif t == "at_xy_after_z_years":
-            return [2, value.get("day"), value.get("month"), value.get("years")]
+        type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
+        type_name = value.get("type", "no_expiration")
+        type_index = type_names.index(type_name) if type_name in type_names else 0
 
-        return [0, None, None, None]
+        all_param_names = sorted({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+        params = [value.get(p) for p in all_param_names]
+
+        return [type_index] + params
