@@ -1206,14 +1206,14 @@ pywebpush = ">=1.14.0"
 
 [[package]]
 name = "django-webtest"
-version = "1.9.13"
+version = "1.9.14"
 description = "Instant integration of Ian Bicking's WebTest (http://docs.pylonsproject.org/projects/webtest/) with Django's testing framework."
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "django_webtest-1.9.13-py3-none-any.whl", hash = "sha256:1903d35f429cbff54bd89d41ddc42376529d56e3c35bfe7cb83827b17fbf962d"},
-    {file = "django_webtest-1.9.13.tar.gz", hash = "sha256:97b2db843588128332326e4fc0a37bd825cf4d68f1ab0188c8cc00a9710e8279"},
+    {file = "django_webtest-1.9.14-py3-none-any.whl", hash = "sha256:1385ec303b766765413e7caa87f2be14c54826c0178050b00dc8746816d9fa1b"},
+    {file = "django_webtest-1.9.14.tar.gz", hash = "sha256:edbdc62f74b84e53ad3b49821e839669c812fafabb54ede713b45209bf732aeb"},
 ]
 
 [package.dependencies]
@@ -1253,14 +1253,14 @@ djangorestframework = "*"
 
 [[package]]
 name = "djhtml"
-version = "3.0.9"
+version = "3.0.10"
 description = "Django/Jinja template indenter"
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "djhtml-3.0.9-py3-none-any.whl", hash = "sha256:1bcde56d0d469546f391a269d84c71df4054c7df73ad5c51572b38a611156dc4"},
-    {file = "djhtml-3.0.9.tar.gz", hash = "sha256:b21d7e6836b5aa8fb415233eb853ad14fdc26694f19ed17158ba71c97fa23f39"},
+    {file = "djhtml-3.0.10-py3-none-any.whl", hash = "sha256:d6efbe6001008d730ede5c21944a427a76c901c6cd168c138e494d2a1091e0b9"},
+    {file = "djhtml-3.0.10.tar.gz", hash = "sha256:dd4ebf778d3b7da7a6e6970f7e66740f08ed7485485491b9a80527f526c838d9"},
 ]
 
 [package.extras]
