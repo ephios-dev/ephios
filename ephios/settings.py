@@ -114,6 +114,7 @@ CORE_PLUGINS = [
     "ephios.plugins.simpleresource.apps.PluginApp",
     "ephios.plugins.federation.apps.PluginApp",
     "ephios.plugins.files.apps.PluginApp",
+    "ephios.plugins.qualification_requests.apps.PluginApp",
 ]
 PLUGINS = copy.copy(CORE_PLUGINS)
 for ep in metadata.entry_points(group="ephios.plugins"):
