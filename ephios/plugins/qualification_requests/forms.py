@@ -8,7 +8,7 @@ from ephios.plugins.qualification_requests.models import QualificationRequest
 class QualificationRequestForm(forms.ModelForm):
     class Meta:
         model = QualificationRequest
-        fields = ["user", "qualification", "qualification_date", "expiration_date", "status"]
+        fields = ["user", "qualification", "qualification_date", "expiration_date"]
         widgets = {
             "qualification": ModelSelect2Widget(
                 model=Qualification.objects.all(),
