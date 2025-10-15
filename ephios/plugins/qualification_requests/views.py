@@ -80,11 +80,11 @@ class QualificationRequestListView(CustomPermissionRequiredMixin, ListView):
         qs = QualificationRequest.objects.select_related("user", "qualification")
         if self.filter_form.is_valid():
             qs = self.filter_form.filter(qs)
-        return qs.order_by("-created_at", "-user__first_name", "-user__last_name")
+        return qs.order_by("-created_at", "-user__display_name")
 
 class QualificationRequestOwnListView(LoginRequiredMixin, ListView):
     model = QualificationRequest
-    ordering = ("-created_at")
+    ordering = ("-created_at",)
     template_name = "qualification_requests/qualification_requests_list_own.html"
 
     def get_queryset(self):
@@ -102,5 +102,38 @@ class QualificationRequestAddView(LoginRequiredMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        qualification_request = QualificationRequest.objects.create(
+            user=self.request.user,
+            qualification=form.instance.qualification,
+            qualification_date=form.instance.qualification_date
+        )
+
+        print(f"Created qualification request: {qualification_request}")
+
+        return super().form_valid(form)
+
+class QualificationRequestUpdateView(LoginRequiredMixin, FormView):
+    model = QualificationRequest
+    form_class = QualificationRequestForm
+    template_name = "qualification_requests/qualification_requests_form.html"
+    success_url = reverse_lazy("qualification_requests:qualification_requests_list_own")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user != request.user:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return QualificationRequest.objects.get(pk=self.kwargs["pk"])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"instance": self.object})
+        return kwargs
+
+    def form_valid(self, form):
+        self.object.qualification = form.instance.qualification
+        self.object.qualification_date = form.instance.qualification_date
+        self.object.save()
         return super().form_valid(form)
