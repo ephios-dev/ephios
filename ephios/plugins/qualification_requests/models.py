@@ -7,15 +7,28 @@ class QualificationRequest(models.Model):
         UserProfile,
         on_delete=models.CASCADE,
         related_name='qualification_requests',
+        verbose_name=_("User"),
     )
     qualification = models.ForeignKey(
         Qualification,
         on_delete=models.CASCADE,
-        related_name='qualification_requests',
+        related_name='qualification_request',
+        verbose_name=_("Qualification"),
     )
-    qualification_date = models.DateField(null=False, blank=False)
-    expiration_date = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    qualification_date = models.DateField(
+        null=False,
+        blank=False,
+        verbose_name=_("Qualification Date"),
+    )
+    expiration_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expiration Date"),
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At"),
+    )
     status = models.CharField(
         max_length=20,
         choices=[
@@ -24,6 +37,7 @@ class QualificationRequest(models.Model):
             ('rejected', _("Rejected")),
         ],
         default='pending',
+        verbose_name=_("Status"),
     )
     #image_data = models.BinaryField(null=True, blank=True)
     #image_content_type = models.CharField(max_length=100, null=True, blank=True)
