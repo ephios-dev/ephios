@@ -30,13 +30,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for request in qualification_requests %}
+            {% for request in qualificationrequest_list %}
                 <tr>
                     <td>{{ request.user.get_full_name }}</td>
                     <td>{{ request.qualification }}</td>
                     <td>{{ request.status }}</td>
                     <td>
-                        <a href="{% url 'ephios_submit_qualifications:qualification_request_detail' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
+                        <a href="{% url 'qualification_requests:qualification_request_update' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
                     </td>
                 </tr>
             {% empty %}

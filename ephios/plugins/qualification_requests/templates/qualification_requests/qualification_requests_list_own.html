@@ -15,12 +15,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for request in qualification_requests %}
+            {% for request in qualificationrequest_list %}
                 <tr>
                     <td>{{ request.qualification }}</td>
                     <td>{{ request.status }}</td>
                     <td>
-                        <a href="{% url 'qualification_requests:qualification_request_detail' request.id %}" class="btn btn-info">{% trans "View" %}</a>
+                        <a href="{% url 'qualification_requests:qualification_request_update' request.id %}" class="btn btn-info">{% trans "View" %}</a>
                     </td>
                 </tr>
             {% empty %}
