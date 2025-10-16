@@ -3,7 +3,7 @@ from ephios.plugins.qualification_requests.views import (
     QualificationRequestListView,
     QualificationRequestOwnListView,
     QualificationRequestAddView,
-    QualificationRequestUpdateView,
+    QualificationRequestCheckView,
 )
 
 app_name = "qualification_requests"
@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     path(
         "settings/qualifications/requests/<int:pk>/",
-        QualificationRequestUpdateView.as_view(),
-        name="qualification_request_update",
+        QualificationRequestCheckView.as_view(),
+        name="qualification_request_check",
     ),
 ]
