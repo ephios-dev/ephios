@@ -29,6 +29,11 @@ class QualificationRequest(models.Model):
         auto_now_add=True,
         verbose_name=_("Created At"),
     )
+    user_comment = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("User Comment"),
+    )
     status = models.CharField(
         max_length=20,
         choices=[
