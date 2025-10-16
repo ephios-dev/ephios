@@ -1,17 +1,19 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.db.models import Count, Exists, OuterRef, Prefetch, Q, QuerySet
+from django.db.models import Q, QuerySet
 from django.urls import reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, FormView
-from django.views.generic.detail import SingleObjectMixin
-from django_select2.forms import ModelSelect2Widget, Select2Widget
+from django_select2.forms import ModelSelect2Widget
 
 from ephios.core.models import Qualification
 from ephios.extra.mixins import CustomPermissionRequiredMixin
-from ephios.plugins.qualification_requests.forms import QualificationRequestForm
+from ephios.plugins.qualification_requests.forms import (
+    QualificationRequestAddForm,
+    QualificationRequestCheckForm,
+)
 from ephios.plugins.qualification_requests.models import QualificationRequest
 
 class UserProfileFilterForm(forms.Form):
@@ -92,7 +94,7 @@ class QualificationRequestOwnListView(LoginRequiredMixin, ListView):
 
 class QualificationRequestAddView(LoginRequiredMixin, FormView):
     model = QualificationRequest
-    form_class = QualificationRequestForm
+    form_class = QualificationRequestAddForm
     template_name = "qualification_requests/qualification_requests_form.html"
     success_url = reverse_lazy("qualification_requests:qualification_requests_list_own")
 
@@ -112,9 +114,9 @@ class QualificationRequestAddView(LoginRequiredMixin, FormView):
 
         return super().form_valid(form)
 
-class QualificationRequestUpdateView(LoginRequiredMixin, FormView):
+class QualificationRequestCheckView(LoginRequiredMixin, FormView):
     model = QualificationRequest
-    form_class = QualificationRequestForm
+    form_class = QualificationRequestCheckForm
     template_name = "qualification_requests/qualification_requests_form.html"
     success_url = reverse_lazy("qualification_requests:qualification_requests_list_own")
 
