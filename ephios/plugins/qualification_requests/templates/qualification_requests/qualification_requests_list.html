@@ -36,7 +36,7 @@
                     <td>{{ request.qualification }}</td>
                     <td>{{ request.status }}</td>
                     <td>
-                        <a href="{% url 'qualification_requests:qualification_request_update' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
+                        <a href="{% url 'qualification_requests:qualification_request_check' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
                     </td>
                 </tr>
             {% empty %}
