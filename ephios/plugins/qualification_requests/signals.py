@@ -2,6 +2,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from ephios.core.signals import settings_sections
 from ephios.core.views.settings import (
     SETTINGS_PERSONAL_SECTION_KEY,
     SETTINGS_MANAGEMENT_SECTION_KEY
