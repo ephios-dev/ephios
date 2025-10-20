@@ -27,6 +27,4 @@ def send_participation_finished(sender, **kwargs):
             if isinstance(result, Exception):
                 if settings.DEBUG:
                     raise result
-                logger.exception(
-                    "Error while dispatching participation_finished: %s", exc_info=result
-                )
+                logger.exception("Error while dispatching participation_finished.", exc_info=result)

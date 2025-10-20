@@ -118,7 +118,7 @@ class Question(models.Model):
         """
         Restores answer from participation (when editing) or the user's saved answers (if local participant)
         """
-
+        initial = None
         if existing_answer := Answer.objects.filter(
             participation_id=participation.pk, question=self
         ).first():
@@ -131,8 +131,6 @@ class Question(models.Model):
             )
         ):
             initial = saved_answer.answer
-        else:
-            initial = None
 
         # Reset answer it does not match the question type
         match self.type:

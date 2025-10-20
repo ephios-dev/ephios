@@ -71,7 +71,7 @@ jobs:
           path: playbook
 
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v4
+        uses: dawidd6/action-ansible-playbook@v5
         with:
           playbook: playbook/uberspace/provision.yml
           directory: ./
