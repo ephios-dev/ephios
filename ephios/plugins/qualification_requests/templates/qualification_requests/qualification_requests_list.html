@@ -4,8 +4,8 @@
 {% load i18n %}
 
 {% block settings_content %}
-    <h2>{% trans "Submitted Qualificationsrequests" %}</h2>
-    <p>{% trans "Here you can manage all submitted qualificationsrequests." %}</p>
+    <h2>{% trans "Qualificationrequests" %}</h2>
+    <p>{% trans "Here you see all qualificationsrequests." %}</p>
 
     <form method="GET" id="filter-form" class="row align-items-center">
         {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
@@ -36,7 +36,7 @@
                     <td>{{ request.qualification }}</td>
                     <td>{{ request.status }}</td>
                     <td>
-                        <a href="{% url 'qualification_requests:qualification_request_check' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
+                        <a href="{% url 'qualification_requests:qualification_requests_check' request.id %}" class="btn btn-info">{% trans "Check" %}</a>
                     </td>
                 </tr>
             {% empty %}

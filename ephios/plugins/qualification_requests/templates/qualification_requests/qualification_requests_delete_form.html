@@ -1,0 +1,18 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load i18n %}
+
+{% block settings_content %}
+  <h2>{% trans "Delete Qualification Request" %}</h2>
+
+  <p>
+    {% trans "Are you sure you want to delete the qualification request" %}
+    "{{ object }}"?
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <a href="{% url 'qualification_requests:qualification_requests_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    <button type="submit" class="btn btn-danger">{% trans "Yes, delete" %}</button>
+  </form>
+{% endblock %}
