@@ -19,7 +19,7 @@ def add_navigation_item(sender, request, **kwargs):
                 {
                     "label": _(" Own Qualification Requests"),
                     "url": reverse("qualification_requests:qualification_requests_list_own"),
-                    "active": request.resolver_match.url_name.startswith("qualification_requests_list_own"),
+                    "active": request.resolver_match.url_name.startswith("qualification_requests") and request.resolver_match.url_name.endswith("_own"),
                     "group": SETTINGS_PERSONAL_SECTION_KEY,
                 },
             ]
@@ -29,7 +29,7 @@ def add_navigation_item(sender, request, **kwargs):
                 {
                     "label": _("Qualification Requests"),
                     "url": reverse("qualification_requests:qualification_requests_list"),
-                    "active": request.resolver_match.url_name.startswith("qualification_requests_list"),
+                    "active": request.resolver_match.url_name.startswith("qualification_requests") and not request.resolver_match.url_name.endswith("_own"),
                     "group": SETTINGS_MANAGEMENT_SECTION_KEY,
                 }
             ]
