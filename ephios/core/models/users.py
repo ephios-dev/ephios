@@ -289,18 +289,6 @@ class DefaultExpirationTimeField(models.JSONField):
             **kwargs,
         )
 
-
-"""expiration_format_validator = RegexValidator(
-    regex=(
-        r"^$|"  # empty
-        r"^(?:\d{1,2}|0{1,2}|\+\d+)\."          # day: 1–2 digits OR 0/00 OR +N
-        r"(?:\d{1,2}|0{1,2}|\+\d+)\."           # month: 1–2 digits OR 0/00 OR +N
-        r"(?:\d{4}|0{1,2}|0000|\+\d+)$|"        # year: 4 digits OR 0 OR 00 OR 0000 OR +N
-        r"^\+\d+$"                              # relative only: +N
-    ),
-    message=_("Invalid format."),
-)"""
-
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
     title = CharField(_("title"), max_length=254)
@@ -319,24 +307,6 @@ class Qualification(Model):
         symmetrical=False,
         blank=True,
     )
-    """default_expiration_time = models.CharField(
-        max_length=254,
-        verbose_name=_("Default expiration format"),
-        help_text=_(
-            "Allowed are:<br>"
-            "- leave empty<br>"
-            "- DD.MM.YYYY (e.g. 31.12.2025)<br>"
-            "- +N (relative years/months/days)<br>"
-            "- Mixed like 30.06.+2 or 0.6.+1<br>"
-            "- Fully relative like +1.+1.+1<br>"
-            "- Placeholders:<br>"
-            "&nbsp;&nbsp;• 0 or 00 for day/month<br>"
-            "&nbsp;&nbsp;• 0, 00 or 0000 for year"
-        ),
-        null=True,
-        blank=True,
-        validators=[expiration_format_validator],
-    )"""
     default_expiration_time = DefaultExpirationTimeField(
         verbose_name=_("Default expiration time"),
         help_text=_(
