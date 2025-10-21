@@ -1,38 +1,38 @@
 from django import forms
+from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import ModelSelect2Widget
+from django_select2.forms import Select2Widget
 
-from ephios.core.models import Qualification
+from ephios.extra.widgets import CustomDateInput
 from ephios.plugins.qualification_requests.models import QualificationRequest
 
-class QualificationRequestAddForm(forms.ModelForm):
+class QualificationRequestCreateForm(ModelForm):
     class Meta:
         model = QualificationRequest
         fields = [
             "qualification",
             "qualification_date",
-            "user_comment"
+            "user_comment",
         ]
         widgets = {
-            "qualification": ModelSelect2Widget(
-                model=Qualification.objects.all(),
-                search_fields=["title__icontains", "abbreviation__icontains"],
-                attrs={
-                    "data-placeholder": _("Select Qualification"),
-                },
-            ),
-            "qualification_date": forms.DateInput(attrs={"type": "date"}),
-            "user_comment": forms.Textarea(attrs={"rows": 4}),
+            "qualification": Select2Widget,
+            "qualification_date": CustomDateInput,
         }
 
-class QualificationRequestCheckForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    created_at = forms.DateTimeField(
-        label=_("Created At"),
-        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "readonly": "readonly"}),
-        required=False,
-    )
+        # Default auf "pending", wenn status nicht existiert
+        status = getattr(self.instance, "status", "pending")
+        if status != "pending":
+            self.disable_fields(self.fields.keys())
+    
+    def disable_fields(self, field_names):
+        """Helper function to disable multiple fields."""
+        for field_name in field_names:
+            self.fields[field_name].disabled = True
 
+class QualificationRequestCheckForm(ModelForm):
     class Meta:
         model = QualificationRequest
         fields = [
@@ -41,18 +41,32 @@ class QualificationRequestCheckForm(forms.ModelForm):
             "qualification_date",
             "expiration_date",
             "user_comment",
-            "status"
+            "status",
+            "reason",
         ]
         widgets = {
-            "user": forms.TextInput(attrs={"readonly": "readonly"}),
-            "qualification": forms.TextInput(attrs={"readonly": "readonly"}),
-            "qualification_date": forms.DateInput(attrs={"type": "date", "readonly": "readonly"}),
-            "expiration_date": forms.DateInput(attrs={"type": "date"}),
-            "user_comment": forms.Textarea(attrs={"rows": 4, "readonly": "readonly"}),
-            "status": forms.Select(),
+            "qualification": Select2Widget,
+            "qualification_date": CustomDateInput,
+            "expiration_date": CustomDateInput,
+        }
+        help_texts = {
+            "expiration_date": _("Leave empty for no expiration."),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            self.fields["created_at"].initial = self.instance.created_at
+
+        if self.instance.status != "pending":
+            self.disable_fields(self.fields.keys())
+            return
+        
+        self.disable_fields([
+            "user",
+            "user_comment",
+            "status",
+        ])
+    
+    def disable_fields(self, field_names):
+        """Helper function to disable multiple fields."""
+        for field_name in field_names:
+            self.fields[field_name].disabled = True
