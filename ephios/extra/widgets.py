@@ -90,7 +90,7 @@ class RelativeTimeWidget(MultiWidget):
             forms.Select(
                 choices=choices,
                 attrs={
-                    "class": "form-control",
+                    "class": "form-select",
                     "title": _("Type"),
                     "aria-label": _("Type"),
                 },

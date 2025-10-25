@@ -25,6 +25,7 @@ from ephios.api.views.users import (
     UserParticipationView,
     UserProfileMeView,
     UserViewSet,
+    calculate_expiration_date,
 )
 from ephios.extra.permissions import staff_required
 
@@ -108,6 +109,11 @@ urlpatterns = [
         "schema/swagger-ui/",
         SpectacularSwaggerSplitView.as_view(url_name="openapi-schema"),
         name="swagger-ui",
+    ),
+    path(
+        "qualifications/default-expiration-date/calculate/",
+        calculate_expiration_date,
+        name="default_expiration_time_calculate"
     ),
     path("", include(router.urls)),
 ]

@@ -11,7 +11,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Group, PermissionsMixin
-from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models import (
     BooleanField,
@@ -31,11 +30,11 @@ from django.db.models import (
 )
 from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from ephios.extra.fields import EndOfDayDateTimeField, RelativeTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
+from ephios.extra.relative_time import RelativeTimeModelField
 from ephios.extra.widgets import CustomDateInput, RelativeTimeWidget
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
@@ -277,7 +276,7 @@ class QualificationManager(models.Manager):
     def get_by_natural_key(self, qualification_uuid, *args):
         return self.get(uuid=qualification_uuid)
 
-class DefaultExpirationTimeField(models.JSONField):
+class DefaultExpirationTimeField(RelativeTimeModelField):
     """
     A model field whose formfield is a RelativeTimeField
     """
