@@ -18,6 +18,7 @@ from django.views.generic import (
 from django_select2.forms import ModelSelect2Widget
 
 from ephios.core.models import Qualification, QualificationGrant
+from ephios.core.services.notifications.types import ConsequenceApprovedNotification, ConsequenceDeniedNotification
 from ephios.extra.mixins import CustomPermissionRequiredMixin
 from ephios.plugins.qualification_requests.forms import (
     QualificationRequestCreateForm,
@@ -188,11 +189,17 @@ class QualificationRequestCheckView(CustomPermissionRequiredMixin, FormView):
         if action == "approve":
             form.instance.status = "approved"
             form.instance.save()
-            messages.success(self.request, _("Qualification request approved."))
             self.grant_qualification()
+
+            ConsequenceApprovedNotification.send(self.object)
+
+            messages.success(self.request, _("Qualification request approved."))
         elif action == "reject":
             form.instance.status = "rejected"
             form.instance.save()
+
+            ConsequenceDeniedNotification.send(self.object)
+
             messages.success(self.request, _("Qualification request rejected."))
         return super().form_valid(form)
     
