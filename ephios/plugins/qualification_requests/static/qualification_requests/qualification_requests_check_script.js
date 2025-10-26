@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try{
             const response = await fetch(
-                calculateExpirationURL + `?qualification=${qualification}&qualification_date=${qualification_date}`
+                `${calculateExpirationURL}?qualification=${qualification}&qualification_date=${qualification_date}`
             );
 
             const data = await response.json();
@@ -39,22 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function observeField(field){
-        let lastValue = field.value;
-
-        const observer = new MutationObserver(() => {
-            if (field.value !== lastValue){
-                lastValue = field.value;
-                updateExpirationDate();
-            }
-        })
-
-        observer.observe(field, { attributes: true, attributeFilter: ["value"] });
+        field.addEventListener("input", updateExpirationDate)
+        field.addEventListener("change", updateExpirationDate)
     }
 
-    observeField(qualificationField);
     observeField(qualificationDateField);
 
-    qualificationField.addEventListener("change", updateExpirationDate);
+    if(window.jQuery && jQuery.fn.select2){
+        jQuery('#id_qualification').on('select2:select select2:clear', updateExpirationDate);
+    }else{
+        const observer = new MutationObserver(() => updateExpirationDate());
+        observer.observe(qualificationField, { attributes: true, attributeFilter: ["value"] });
+    }
 
     updateExpirationDate();
 })
