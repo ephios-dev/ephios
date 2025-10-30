@@ -90,7 +90,7 @@ class AfterXYearsType:
     def apply(base_date, years=0, **kwargs):
         return base_date + relativedelta(years=years)
 
-@RelativeTime.register_type("at_xy_after_z_years")
+@RelativeTime.register_type("at_x_y_after_z_years")
 class AtXYAfterZYearsType:
     fields = ["day", "month", "years"]
 
