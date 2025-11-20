@@ -25,7 +25,7 @@ jobs:
           poetry install
       - name: build
         run: poetry build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ephios-dev-wheel
           path: dist/ephios-*.whl
