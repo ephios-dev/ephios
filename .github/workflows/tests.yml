@@ -13,7 +13,7 @@ jobs:
       matrix:
         python-version: [ "3.11" ]
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install poetry
       run: pipx install "poetry<2.0"
     - uses: actions/setup-python@v6
@@ -62,7 +62,7 @@ jobs:
             database_url: "psql://pytest:pass@127.0.0.1:5432"
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install poetry
       run: pipx install poetry
     - uses: actions/setup-python@v6
