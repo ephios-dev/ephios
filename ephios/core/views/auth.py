@@ -54,8 +54,9 @@ class OIDCInitiateView(RedirectView):
 
 @access_exempt
 class OIDCCallbackView(RedirectView):
-    def failure_url(self):
-        messages.error(self.request, _("Authentication failed."))
+    def failure_url(self, message=_("Authentication failed.")):
+        if message:
+            messages.error(self.request, message)
         return settings.LOGIN_URL
 
     def get_redirect_url(self, *args, **kwargs):
@@ -70,7 +71,9 @@ class OIDCCallbackView(RedirectView):
 
             user = auth.authenticate(self.request)
 
-            if user and user.is_active:
+            if user:
+                if not user.is_active:
+                    return self.failure_url(_("The user account is deactivated."))
                 request_user = getattr(self.request, "user", None)
                 if not request_user or not request_user.is_authenticated or request_user != user:
                     auth.login(self.request, user)
