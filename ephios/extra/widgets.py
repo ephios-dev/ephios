@@ -5,9 +5,7 @@ from django.forms import CharField, DateInput, MultiWidget, Textarea, TimeInput
 from django.forms.utils import to_current_timezone
 from django.utils.translation import gettext as _
 
-import json
-
-from ephios.extra.relative_time import RelativeTimeTypeRegistry
+from ephios.extra.relative_time import RelativeTime
 
 
 class CustomDateInput(DateInput):
@@ -80,67 +78,50 @@ class RelativeTimeWidget(MultiWidget):
     """
 
     template_name = "extra/widgets/relative_time_field.html"
-    
-    def __init__(self, *args, **kwargs):
-        # Generate dynamic choices
-        choices = [(i, _(name.replace("_", " ").title())) for i, (name, handler) in enumerate(RelativeTimeTypeRegistry.all())]
-        self.type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
 
+    def __init__(self, *args, **kwargs):
         widgets = [
             forms.Select(
-                choices=choices,
+                choices=[
+                    (0, _("No expiration")),
+                    (1, _("After X years")),
+                    (2, _("At set date after X years")),
+                ],
                 attrs={
                     "class": "form-select",
-                    "title": _("Type"),
+                    "label": _("Type"),
                     "aria-label": _("Type"),
                 },
-            )
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                    "label": _("Day (1–31)"),
+                }
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                    "label": _("Months (1–12)"),
+                }
+            ),
+            forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                    "label": _("Years"),
+                }
+            ),
         ]
-
-        # Collect all possible parameter names across all registered types
-        field_placeholders = {
-            "years": _("Years"),
-            "months": _("Months (1–12)"),
-            "day": _("Day (1–31)"),
-            "month": _("Month (1–12)"),
-        }
-
-        # Build a unified list of NumberInputs for all possible numeric parameters
-        # (widget values will still be passed as a list)
-        param_names = sorted({p for name, handler in RelativeTimeTypeRegistry.all() for p in getattr(handler, "fields", [])})
-        self.param_names = param_names
-
-        for param in param_names:
-            widgets.append(
-                forms.NumberInput(
-                    attrs={
-                        "class": "form-control",
-                        "placeholder": field_placeholders.get(param, param.title()),
-                        "min": 0,
-                        "title": field_placeholders.get(param, param.title()),
-                        "aria-label": field_placeholders.get(param, param.title()),
-                    }
-                )
-            )
 
         super().__init__(widgets, *args, **kwargs)
 
-        # Labels: first is the type choice, then one per param
-        self.labels = [_("Type")] + [param.title() for param in self.param_names]
-    
     def decompress(self, value):
-        # Expect value as list [choice, param1, param2, ...]
-        if value is None:
-            return [0] + [None] * len(self.param_names)
-        return value    # always a list now
-    
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        for idx, subwidget in enumerate(context["widget"]["subwidgets"]):
-            subwidget["label"] = self.labels[idx]
-        return context
-
-        
+        if isinstance(value, RelativeTime):
+            return [2, value.days, value.months, value.years]
+        return [None, None, None, None]
 
 
 class MarkdownTextarea(forms.Textarea):

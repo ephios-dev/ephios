@@ -32,10 +32,10 @@ from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from ephios.extra.fields import EndOfDayDateTimeField, RelativeTimeField
+from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.extra.relative_time import RelativeTimeModelField
-from ephios.extra.widgets import CustomDateInput, RelativeTimeWidget
+from ephios.extra.widgets import CustomDateInput
 from ephios.modellogging.log import (
     ModelFieldsLogConfig,
     add_log_recorder,
@@ -276,17 +276,6 @@ class QualificationManager(models.Manager):
     def get_by_natural_key(self, qualification_uuid, *args):
         return self.get(uuid=qualification_uuid)
 
-class DefaultExpirationTimeField(RelativeTimeModelField):
-    """
-    A model field whose formfield is a RelativeTimeField
-    """
-
-    def formfield(self, **kwargs):
-        return super().formfield(
-            widget = RelativeTimeWidget,
-            form_class=RelativeTimeField,
-            **kwargs,
-        )
 
 class Qualification(Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, verbose_name="UUID")
@@ -306,11 +295,9 @@ class Qualification(Model):
         symmetrical=False,
         blank=True,
     )
-    default_expiration_time = DefaultExpirationTimeField(
+    default_expiration_time = RelativeTimeModelField(
         verbose_name=_("Default expiration time"),
-        help_text=_(
-            "The default expiration time for this qualification."
-        ),
+        help_text=_("The default expiration time for this qualification."),
         null=True,
         blank=True,
     )
@@ -337,9 +324,10 @@ class Qualification(Model):
 
     natural_key.dependencies = ["core.QualificationCategory"]
 
+
 register_model_for_logging(
     Qualification,
-    ModelFieldsLogConfig(),
+    ModelFieldsLogConfig(unlogged_fields=["default_expiration_time"]),
 )
 
 
