@@ -1,6 +1,6 @@
 import datetime
 import json
-from calendar import calendar
+from calendar import monthrange
 
 from dateutil.relativedelta import relativedelta
 from django.db import models
@@ -32,7 +32,7 @@ class RelativeTime:
         target_date = base_date + relativedelta(years=self.years)
         if self.days and self.months:
             target_date = target_date.replace(month=self.months)
-            last_day = calendar.monthrange(target_date.year, self.months)[1]
+            last_day = monthrange(target_date.year, self.months)[1]
             target_day = min(self.days, last_day)
             target_date = target_date.replace(day=target_day)
         return target_date
@@ -47,7 +47,7 @@ class RelativeTimeModelField(models.JSONField):
 
     def from_db_value(self, value, expression, connection):
         if value is None:
-            return RelativeTime()
+            return None
         return RelativeTime.from_json(value)
 
     def to_python(self, value):
