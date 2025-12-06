@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 from calendar import monthrange
 
 from dateutil.relativedelta import relativedelta
@@ -12,13 +13,13 @@ class RelativeTime:
     Represents a relative time duration.
     """
 
-    def __init__(self, years=None, months=None, days=None, **kwargs):
-        self.years = years
-        self.months = months
-        self.days = days
+    def __init__(self, year=None, month=None, day=None, **kwargs):
+        self.year = year
+        self.month = month
+        self.day = day
 
     def to_json(self):
-        return {"years": self.years, "months": self.months, "days": self.days}
+        return {"year": self.year, "month": self.month, "day": self.day}
 
     @classmethod
     def from_json(cls, data):
@@ -29,12 +30,29 @@ class RelativeTime:
         return cls(**data)
 
     def apply_to(self, base_date: datetime.date):
-        target_date = base_date + relativedelta(years=self.years)
-        if self.days and self.months:
-            target_date = target_date.replace(month=self.months)
-            last_day = monthrange(target_date.year, self.months)[1]
-            target_day = min(self.days, last_day)
-            target_date = target_date.replace(day=target_day)
+        if not (self.year or self.month or self.day):
+            return None
+        target_date = base_date
+        if self.year:
+            if type(self.year) is int:
+                target_date = target_date.replace(year=self.year)
+            elif match := re.match(r"^\+(\d+)$", self.year):
+                target_date = target_date + relativedelta(years=int(match.group(0)))
+        if self.month:
+            if type(self.month) is int and 1 <= self.month <= 12:
+                target_date = target_date.replace(month=self.month)
+            elif (match := re.match(r"^\+(\d+)$", self.month)) and (
+                target_month := int(match.group(0))
+            ) < 12:
+                target_date = target_date + relativedelta(month=target_month)
+        if self.day:
+            last_day = monthrange(target_date.year, target_date.month)[1]
+            if type(self.day) is int:
+                target_date = target_date.replace(day=min(self.day, last_day))
+            elif (match := re.match(r"^\+(\d+)$", self.day)) and (
+                target_day := int(match.group(0))
+            ) < last_day:
+                target_date = target_date + relativedelta(day=target_day)
         return target_date
 
 

@@ -1,3 +1,5 @@
+import re
+
 from dateutil.rrule import rrulestr
 from django import forms
 from django.core.exceptions import ValidationError
@@ -73,19 +75,15 @@ class RecurrenceField(CharField):
 
 
 class RelativeTimeWidget(MultiWidget):
-    """
-    A MultiWidget that renders all registered RelativeTime types dynamically.
-    """
-
     template_name = "extra/widgets/relative_time_field.html"
 
     def __init__(self, *args, **kwargs):
         widgets = [
             forms.Select(
                 choices=[
-                    (0, _("No expiration")),
-                    (1, _("After X years")),
-                    (2, _("At set date after X years")),
+                    ("no_expiration", _("No expiration")),
+                    ("after_years", _("After X years")),
+                    ("date_after_years", _("At set date after X years")),
                 ],
                 attrs={
                     "class": "form-select",
@@ -97,21 +95,21 @@ class RelativeTimeWidget(MultiWidget):
                 attrs={
                     "class": "form-control",
                     "min": 0,
-                    "label": _("Day (1–31)"),
+                    "label": _("At day"),
                 }
             ),
             forms.NumberInput(
                 attrs={
                     "class": "form-control",
                     "min": 0,
-                    "label": _("Months (1–12)"),
+                    "label": _("in month"),
                 }
             ),
             forms.NumberInput(
                 attrs={
                     "class": "form-control",
                     "min": 0,
-                    "label": _("Years"),
+                    "label": _("after years"),
                 }
             ),
         ]
@@ -120,7 +118,10 @@ class RelativeTimeWidget(MultiWidget):
 
     def decompress(self, value):
         if isinstance(value, RelativeTime):
-            return [2, value.days, value.months, value.years]
+            if re.match(r"^\+(\d+)$", value.year) and not (value.month and value.day):
+                return ["after_years", None, None, value.year.strip("+")]
+            elif re.match(r"^\+(\d+)$", value.year) and value.month and value.day:
+                return ["date_after_years", value.day, value.month, value.year.strip("+")]
         return [None, None, None, None]
 
 
