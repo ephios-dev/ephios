@@ -1,0 +1,30 @@
+{% extends "core/settings/settings_base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block settings_content %}
+  <h2>{% trans "Check Qualificationrequest" %}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>{% trans "Created at" %}: {{ form.instance.created_at }}</p>
+    {{ form|crispy }}
+    <p>
+      <a href="{% url 'qualification_requests:qualification_requests_list' %}" class="btn btn-secondary">{% trans "Back" %}</a>
+      {% if form.instance.status == "pending" %}
+        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+      {% else %}
+        <a href="{% url 'qualification_requests:qualification_requests_delete' form.instance.id %}" class="btn btn-danger">{% trans "Delete" %}</a>
+      {% endif %}
+    </p>
+    {% if form.instance.status == "pending" %}
+      <p>
+        <button type="submit" name="action" value="approve" class="btn btn-success">{% trans "Approve" %}</button>
+        <button type="submit" name="action" value="reject" class="btn btn-danger">{% trans "Reject" %}</button>
+      </p>
+    {% endif %}
+  </form>
+
+  <script src="{% static 'qualification_requests/qualification_requests_check_script.js' %}"></script>
+{% endblock %}

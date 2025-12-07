@@ -8,13 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const all_fields = [day, month, years];
 
         const relative_time_map = {
-            "no_expiration": [], // no_expiration
-            "after_years": [years], // after_x_years
-            "date_after_years": [day, month, years], // at_xy_after_z_years
+            0: [], // no_expiration
+            1: [years], // after_x_years
+            2: [day, month, years], // at_xy_after_z_years
         };
 
         function updateVisibility() {
-            const show = relative_time_map[select.value] || [];
+            const val = parseInt(select.value);
+            const show = relative_time_map[val] || [];
 
             all_fields.forEach((field) => {
                 if (!field) return;

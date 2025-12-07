@@ -1,41 +1,72 @@
-from crispy_forms.bootstrap import FormActions
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit
 from django import forms
-from django.utils.translation import gettext as _
+from django.forms import ModelForm
+from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2Widget
 
-from ephios.core.consequences import QualificationConsequenceHandler
-from ephios.core.models import Qualification
 from ephios.extra.widgets import CustomDateInput
+from ephios.plugins.qualification_requests.models import QualificationRequest
 
-
-class QualificationRequestForm(forms.Form):
-    qualification = forms.ModelChoiceField(queryset=Qualification.objects.all())
-    acquired = forms.DateField(widget=CustomDateInput)
+class QualificationRequestCreateForm(ModelForm):
+    class Meta:
+        model = QualificationRequest
+        fields = [
+            "qualification",
+            "qualification_date",
+            "user_comment",
+        ]
+        widgets = {
+            "qualification": Select2Widget,
+            "qualification_date": CustomDateInput,
+        }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Field("qualification"),
-            Field("acquired"),
-            FormActions(
-                Submit("submit", _("Save"), css_class="float-end"),
-            ),
-        )
 
-    def create_consequence(self):
-        qualification = self.cleaned_data["qualification"]
-        acquired = self.cleaned_data["acquired"]
-        expires = None
+        # Default auf "pending", wenn status nicht existiert
+        status = getattr(self.instance, "status", "pending")
+        if status != "pending":
+            self.disable_fields(self.fields.keys())
+    
+    def disable_fields(self, field_names):
+        """Helper function to disable multiple fields."""
+        for field_name in field_names:
+            self.fields[field_name].disabled = True
 
-        if qualification.default_expiration_time:
-            expires = qualification.default_expiration_time.apply_to(acquired)
+class QualificationRequestCheckForm(ModelForm):
+    class Meta:
+        model = QualificationRequest
+        fields = [
+            "user",
+            "qualification",
+            "qualification_date",
+            "expiration_date",
+            "user_comment",
+            "status",
+            "reason",
+        ]
+        widgets = {
+            "qualification": Select2Widget,
+            "qualification_date": CustomDateInput,
+            "expiration_date": CustomDateInput,
+        }
+        help_texts = {
+            "expiration_date": _("Leave empty for no expiration."),
+        }
 
-        QualificationConsequenceHandler.create(
-            user=self.user,
-            qualification=self.cleaned_data["qualification"],
-            acquired=self.cleaned_data["acquired"] or None,
-            expires=expires,
-        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance.status != "pending":
+            self.disable_fields(self.fields.keys())
+            return
+        
+        self.disable_fields([
+            "user",
+            "user_comment",
+            "status",
+        ])
+    
+    def disable_fields(self, field_names):
+        """Helper function to disable multiple fields."""
+        for field_name in field_names:
+            self.fields[field_name].disabled = True
