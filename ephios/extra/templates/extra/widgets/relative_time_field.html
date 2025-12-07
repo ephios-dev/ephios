@@ -1,7 +1,7 @@
-<div class="row relative-time-widget mb-2">
+<div class="row align-items-center relative-time-widget">
     {% for widget in widget.subwidgets %}
-        <div class="col-12 col-sm-6 col-md-3 field-{{ forloop.counter0 }}">
-            <label for="{{ widget.attrs.id }}" class="form-label">{{ widget.attrs.label }}</label>
+        <div class="col-12 col-sm-6 col-md-3 mb-2 field-{{ forloop.counter0 }}">
+            <label for="{{ widget.id_for_label }}">{{ widget.label }}</label>
             {% include widget.template_name %}
         </div>
     {% endfor %}

@@ -1,15 +1,12 @@
 import datetime
 
-from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import ChoiceField
-from django.forms.fields import IntegerField
-from django.forms.utils import from_current_timezone
 from django.utils.translation import gettext as _
-
-from ephios.extra.relative_time import RelativeTime
+from django import forms
+from django.forms.utils import from_current_timezone
+from ephios.extra.relative_time import RelativeTimeTypeRegistry
 from ephios.extra.widgets import RelativeTimeWidget
 
+import json
 
 class EndOfDayDateTimeField(forms.DateTimeField):
     """
@@ -29,44 +26,88 @@ class EndOfDayDateTimeField(forms.DateTimeField):
             )
         )
 
+class RelativeTimeField(forms.JSONField):
+    """
+    A form field that dynamically adapts to all registered RelativeTime types.
+    """
 
-class RelativeTimeField(forms.MultiValueField):
-    require_all_fields = False
     widget = RelativeTimeWidget
 
-    def clean(self, value):
-        if value[0] == "after_years" and not value[3]:
-            raise ValidationError(_("You must specify a number of years."))
-        if value[0] == "date_after_years" and not (value[1] and value[2] and value[3]):
-            raise ValidationError(_("You must specify a date and a number of years."))
-        return super().clean(value)
+    def bound_data(self, data, initial):
+        if isinstance(data, list):
+            return data
+        return super().bound_data(data, initial)
 
-    def validate(self, value):
+    def to_python(self, value):
+        if not value:
+            return None
+
         try:
-            value.apply_to(datetime.datetime.now())
-        except ValueError:
-            raise forms.ValidationError(_("Not a valid date"))
+            # Determine all known types and their parameters
+            type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
 
-    def __init__(self, **kwargs):
-        fields = (
-            ChoiceField(
-                choices=[
-                    ("no_expiration", _("No expiration")),
-                    ("after_years", _("After X years")),
-                    ("date_after_years", _("At set date after X years")),
-                ],
-                required=True,
-            ),
-            IntegerField(label=_("Days"), min_value=1, max_value=31, required=False),
-            IntegerField(label=_("Months"), min_value=1, max_value=12, required=False),
-            IntegerField(label=_("Years"), min_value=0, required=False),
-        )
-        super().__init__(fields, require_all_fields=False)
+            if isinstance(value, list):
+                # first element = type index
+                type_index = int(value[0]) if value and value[0] is not None else 0
+                type_name = type_names[type_index] if 0 <= type_index < len(type_names) else None
+                handler = RelativeTimeTypeRegistry.get(type_name)
+                if not handler:
+                    raise ValueError(_("Invalid choice"))
 
-    def compress(self, data_list):
-        match data_list[0]:
-            case "after_years":
-                return RelativeTime(year=f"+{data_list[3]}")
-            case "date_after_years":
-                return RelativeTime(day=data_list[1], month=data_list[2], year=f"+{data_list[3]}")
-        return None
+                params = {}
+                # remaining values correspond to all known parameters
+                all_param_names = sorted({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+                for param_name, param_value in zip(all_param_names, value[1:]):
+                    if param_value not in (None, ""):
+                        params[param_name] = int(param_value)
+                return {"type": type_name, **params}
+
+            if isinstance(value, str):
+                data = json.loads(value)
+            else:
+                data = value
+
+            if not isinstance(data, dict):
+                raise ValueError("Not a dict")
+
+            type_name = data.get("type")
+            handler = RelativeTimeTypeRegistry.get(type_name)
+            if not handler:
+                raise ValueError(_("Unknown type"))
+
+            # basic validation: ensure required params exist
+            for param in getattr(handler, "fields", []):
+                if param not in data:
+                    raise ValueError(_("Missing field: {param}").format(param=param))
+
+            return data
+
+        except (json.JSONDecodeError, ValueError, TypeError) as e:
+            raise forms.ValidationError(
+                _("Invalid format: {error}").format(error=e)
+            ) from e
+
+    def prepare_value(self, value):
+        if value is None:
+            return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+
+        if isinstance(value, list):
+            return value
+
+        if isinstance(value, str):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError:
+                return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+
+        if not isinstance(value, dict):
+            return [0] + [None] * len({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+
+        type_names = [name for name, _ in RelativeTimeTypeRegistry.all()]
+        type_name = value.get("type", "no_expiration")
+        type_index = type_names.index(type_name) if type_name in type_names else 0
+
+        all_param_names = sorted({p for _, h in RelativeTimeTypeRegistry.all() for p in getattr(h, "fields", [])})
+        params = [value.get(p) for p in all_param_names]
+
+        return [type_index] + params
