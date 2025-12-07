@@ -137,6 +137,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         cls,
         user: UserProfile,
         qualification: Qualification,
+        acquired: datetime = None,
         expires: datetime = None,
         shift: Shift = None,
     ):
@@ -146,6 +147,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
             data={
                 "qualification_id": qualification.id,
                 "event_id": None if shift is None else shift.event_id,
+                "acquired": acquired,
                 "expires": expires,
             },
         )
@@ -189,6 +191,9 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         if expires := consequence.data.get("expires"):
             expires = date_format(expires)
 
+        if acquired := consequence.data.get("acquired"):
+            acquired = date_format(acquired)
+
         user = consequence.user.get_full_name()
 
         # build string based on available data
@@ -202,6 +207,9 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
                 user=user,
                 qualification=qualification_title,
             )
+
+        if acquired:
+            s += " " + _("on {acquired_str}").format(acquired_str=acquired)
 
         if expires:
             s += " " + _("(valid until {expires_str})").format(expires_str=expires)

@@ -3,37 +3,20 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from ephios.core.signals import settings_sections
-from ephios.core.views.settings import (
-    SETTINGS_PERSONAL_SECTION_KEY,
-    SETTINGS_MANAGEMENT_SECTION_KEY
-)
+from ephios.core.views.settings import SETTINGS_PERSONAL_SECTION_KEY
+
 
 @receiver(
-        settings_sections,
-        dispatch_uid="ephios.plugins.qualification_requests.signals.add_navigation_item",
+    settings_sections,
+    dispatch_uid="ephios.plugins.qualification_requests.signals.add_navigation_item",
 )
 def add_navigation_item(sender, request, **kwargs):
-    return (
-        (
-            [
-                {
-                    "label": _(" Own Qualification Requests"),
-                    "url": reverse("qualification_requests:qualification_requests_list_own"),
-                    "active": request.resolver_match.url_name.startswith("qualification_requests") and request.resolver_match.url_name.endswith("_own"),
-                    "group": SETTINGS_PERSONAL_SECTION_KEY,
-                },
-            ]
-        )
-        + (
-            [
-                {
-                    "label": _("Qualification Requests"),
-                    "url": reverse("qualification_requests:qualification_requests_list"),
-                    "active": request.resolver_match.url_name.startswith("qualification_requests") and not request.resolver_match.url_name.endswith("_own"),
-                    "group": SETTINGS_MANAGEMENT_SECTION_KEY,
-                }
-            ]
-            if request.user.has_perm("core.view_userprofile")
-            else []
-        )
-    )
+    return [
+        {
+            "label": _("Request qualification"),
+            "url": reverse("qualification_requests:qualification_requests_create_own"),
+            "active": request.resolver_match.url_name.startswith("qualification_requests")
+            and request.resolver_match.url_name.endswith("_own"),
+            "group": SETTINGS_PERSONAL_SECTION_KEY,
+        },
+    ]
