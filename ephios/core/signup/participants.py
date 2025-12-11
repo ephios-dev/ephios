@@ -9,8 +9,9 @@ from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ephios.core.models import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation, LocalParticipation, LocalConsequence
 from ephios.core.models.events import PlaceholderParticipation
+from ephios.core.models.users import AbstractConsequence
 from ephios.core.services.qualification import (
     QualificationUniverse,
     collect_all_included_qualifications,
@@ -49,6 +50,9 @@ class AbstractParticipant:
 
     def all_participations(self):
         """Return all participations for this participant"""
+        raise NotImplementedError
+
+    def new_consequence(self) -> AbstractConsequence:
         raise NotImplementedError
 
     def collect_all_qualifications(self) -> QuerySet:
@@ -91,6 +95,9 @@ class LocalUserParticipant(AbstractParticipant):
 
     def all_participations(self):
         return LocalParticipation.objects.filter(user=self.user)
+
+    def new_consequence(self):
+        return LocalConsequence(user=self.user)
 
     def reverse_signup_action(self, shift):
         return reverse("core:signup_action", kwargs={"pk": shift.pk})

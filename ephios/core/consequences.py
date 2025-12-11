@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
 
 from ephios.core.models import (
-    Consequence,
+    LocalConsequence,
     Event,
     Qualification,
     QualificationGrant,
@@ -21,7 +21,9 @@ from ephios.core.models import (
     UserProfile,
     WorkingHours,
 )
+from ephios.core.models.users import AbstractConsequence
 from ephios.core.signals import register_consequence_handlers
+from ephios.core.signup.participants import AbstractParticipant
 
 
 def installed_consequence_handlers():
@@ -38,18 +40,26 @@ def consequence_handler_from_slug(slug):
 
 def editable_consequences(user):
     handlers = list(installed_consequence_handlers())
-    qs = Consequence.objects.all().select_related("user")
+    consequence_classes = AbstractConsequence.__subclasses__()
+
+    qs = AbstractConsequence.objects.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
+    q_obj = Q()
     for handler in handlers:
-        qs = handler.filter_queryset(qs, user)
-    return qs.filter(slug__in=map(operator.attrgetter("slug"), handlers)).distinct()
+        for ConcreteConsequence in consequence_classes:
+            q_obj = q_obj | ConcreteConsequence.filter_editable_by_user(handler, user)
+    return qs.filter(q_obj)
 
 
 def pending_consequences(user):
-    qs = Consequence.objects.filter(user=user, state=Consequence.States.NEEDS_CONFIRMATION)
+    qs = LocalConsequence.objects.filter(user=user, state=LocalConsequence.States.NEEDS_CONFIRMATION)
     return qs
 
 
 class ConsequenceError(Exception):
+    pass
+
+
+class UnsupportedConsequenceTarget(ConsequenceError):
     pass
 
 
@@ -74,10 +84,9 @@ class BaseConsequenceHandler:
         raise NotImplementedError
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
+    def filter_editable_by_user(cls, user: UserProfile) -> Q:
         """
-        Return a filtered that excludes consequences with the slug of this class that the user is not allowed to edit.
-        Consequences should also be annotated with values needed for rendering.
+        Return a Q object that include consequences with the slug of this class that the user is allowed to edit.
         """
         raise NotImplementedError
 
@@ -88,19 +97,21 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
     @classmethod
     def create(
         cls,
-        user: UserProfile,
+        participant: AbstractParticipant,
         when: date,
         hours: float,
         reason: str,
     ):
-        return Consequence.objects.create(
-            slug=cls.slug,
-            user=user,
-            data={"hours": hours, "date": when, "reason": reason},
-        )
+        consequence = participant.new_consequence()
+        consequence.slug = cls.slug
+        consequence.data = {"hours": hours, "date": when, "reason": reason}
+        consequence.save()
+        return consequence
 
     @classmethod
     def execute(cls, consequence):
+        if not isinstance(consequence, LocalConsequence):
+            raise UnsupportedConsequenceTarget
         WorkingHours.objects.create(
             user=consequence.user,
             date=consequence.data["date"],
@@ -110,23 +121,19 @@ class WorkingHoursConsequenceHandler(BaseConsequenceHandler):
 
     @classmethod
     def render(cls, consequence):
-        return _("{user} obtains {hours} working hours for {reason} on {date}").format(
-            user=consequence.user.get_full_name(),
+        return _("obtains {hours} working hours for {reason} on {date}").format(
             hours=floatformat(consequence.data.get("hours"), arg=-2),
             reason=consequence.data.get("reason"),
             date=date_format(consequence.data.get("date")),
         )
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
-        return qs.filter(
-            ~Q(slug=cls.slug)
-            | Q(
-                user__groups__in=get_objects_for_user(
+    def filter_editable_by_user(cls, user: UserProfile):
+        return Q(slug=cls.slug,
+                localconsequence__user__groups__in=get_objects_for_user(
                     user, "decide_workinghours_for_group", klass=Group
                 )
             )
-        )
 
 
 class QualificationConsequenceHandler(BaseConsequenceHandler):
@@ -135,23 +142,25 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
     @classmethod
     def create(
         cls,
-        user: UserProfile,
+        participant: AbstractParticipant,
         qualification: Qualification,
         expires: datetime = None,
         shift: Shift = None,
     ):
-        return Consequence.objects.create(
-            slug=cls.slug,
-            user=user,
-            data={
+        consequence = participant.new_consequence()
+        consequence.slug = cls.slug
+        consequence.data = {
                 "qualification_id": qualification.id,
                 "event_id": None if shift is None else shift.event_id,
                 "expires": expires,
-            },
-        )
+            }
+        consequence.save()
+        return consequence
 
     @classmethod
     def execute(cls, consequence):
+        if not isinstance(consequence, LocalConsequence):
+            raise UnsupportedConsequenceTarget
         qg, created = QualificationGrant.objects.get_or_create(
             defaults={"expires": consequence.data["expires"]},
             user=consequence.user,
@@ -189,17 +198,14 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         if expires := consequence.data.get("expires"):
             expires = date_format(expires)
 
-        user = consequence.user.get_full_name()
-
         # build string based on available data
 
         if event_title:
-            s = _("{user} acquires '{qualification}' after participating in {event}.").format(
-                user=user, qualification=qualification_title, event=event_title
+            s = _("acquires '{qualification}' after participating in {event}.").format(
+                qualification=qualification_title, event=event_title
             )
         else:
-            s = _("{user} acquires '{qualification}'.").format(
-                user=user,
+            s = _("acquires '{qualification}'.").format(
                 qualification=qualification_title,
             )
 
@@ -208,25 +214,14 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         return s
 
     @classmethod
-    def filter_queryset(cls, qs, user: UserProfile):
-        qs = qs.annotate(
-            qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField()),
-            event_id=Cast(KeyTransform("event_id", "data"), IntegerField()),
-        ).annotate(
-            qualification_title=Subquery(
-                Qualification.objects.filter(id=OuterRef("qualification_id")).values("title")[:1]
-            ),
-            event_title=Subquery(Event.objects.filter(id=OuterRef("event_id")).values("title")[:1]),
-        )
-
-        return qs.filter(
-            ~Q(slug=cls.slug)
+    def filter_editable_by_user(cls, user: UserProfile):
+        return Q(slug=cls.slug) & Q(
             # Qualifications can be granted by people who...
-            | Q(  # are responsible for the event the consequence originated from, if applicable
-                event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
+            Q(  # are responsible for the event the consequence originated from, if applicable
+                data__event_id__in=get_objects_for_user(user, perms="change_event", klass=Event),
             )
             | Q(  # can edit the affected user anyway
-                user__in=get_objects_for_user(
+                localconsequence__user__in=get_objects_for_user(
                     user, perms="change_userprofile", klass=get_user_model()
                 )
             )
