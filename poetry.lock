@@ -1247,18 +1247,18 @@ dev = ["m2r", "pytest", "pytest-cov", "sphinx-rtd-theme"]
 
 [[package]]
 name = "django-polymorphic"
-version = "4.1.0"
-description = "Seamless polymorphic inheritance for Django models"
+version = "4.3.0"
+description = "Seamless polymorphic inheritance for Django models."
 optional = false
-python-versions = "*"
+python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "django_polymorphic-4.1.0-py3-none-any.whl", hash = "sha256:0ce3984999e103a0d1a434a5c5617f2c7f990dc3d5fb3585ce0fadadf9ff90ea"},
-    {file = "django_polymorphic-4.1.0.tar.gz", hash = "sha256:4438d95a0aef6c4307cd6c83ead387e1142ce80b65188a931ec2f0dbdd9bfc51"},
+    {file = "django_polymorphic-4.3.0-py3-none-any.whl", hash = "sha256:83bff692dc4f5013795a153b28c173aaa3ffea9eb27288405cdf3140b6639b32"},
+    {file = "django_polymorphic-4.3.0.tar.gz", hash = "sha256:ced3a0dec4da117e4ec49364870d04b39d941069b1c94983386c848f1acbdf8b"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+django = ">=4.2"
 
 [[package]]
 name = "django-recurrence"
