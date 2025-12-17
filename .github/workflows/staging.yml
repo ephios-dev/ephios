@@ -38,7 +38,7 @@ jobs:
     env:
       ANSIBLE_PIPELINING: True
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         id: download
         with:
           name: ephios-dev-wheel
