@@ -1,4 +1,5 @@
 {% extends "core/mails/notification.html" %}
+{% load rich_text %}
 {% load settings_extras %}
 {% load i18n %}
 
@@ -22,7 +23,7 @@
                 {% endif %}
             {% endwith %}
             <p>
-                {{ event.description }}
+                {{ event.description|rich_text}}
             </p>
             <p>
                 {% translate "Location" %}: {{ event.location }}<br/>
