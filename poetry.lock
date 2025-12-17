@@ -1278,14 +1278,14 @@ python-dateutil = "*"
 
 [[package]]
 name = "django-select2"
-version = "8.4.3"
+version = "8.4.5"
 description = "This is a Django_ integration of Select2_."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django_select2-8.4.3-py3-none-any.whl", hash = "sha256:c5910cf7c1e1d393af3e96842df8c28c1efa55e23a7c5f26494cadeb3911579f"},
-    {file = "django_select2-8.4.3.tar.gz", hash = "sha256:49626ccea8327dde7797d42788094fd362b502a479bc84b016d5c5c5ea976344"},
+    {file = "django_select2-8.4.5-py3-none-any.whl", hash = "sha256:cb9955714df970af3072ec05452c9aa4f7e9287ef87c2b17f925b987c9e5c6e7"},
+    {file = "django_select2-8.4.5.tar.gz", hash = "sha256:5e3c1719825ad1048a0e0a3de20d6c9d022057146cf06c4e06e701861f96bb3f"},
 ]
 
 [package.dependencies]
@@ -2788,14 +2788,14 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "4.5.0"
+version = "4.5.1"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "pre_commit-4.5.0-py2.py3-none-any.whl", hash = "sha256:25e2ce09595174d9c97860a95609f9f852c0614ba602de3561e267547f2335e1"},
-    {file = "pre_commit-4.5.0.tar.gz", hash = "sha256:dc5a065e932b19fc1d4c653c6939068fe54325af8e741e74e88db4d28a4dd66b"},
+    {file = "pre_commit-4.5.1-py2.py3-none-any.whl", hash = "sha256:3b3afd891e97337708c1674210f8eba659b52a38ea5f822ff142d10786221f77"},
+    {file = "pre_commit-4.5.1.tar.gz", hash = "sha256:eb545fcff725875197837263e977ea257a402056661f09dae08e4b149b030a61"},
 ]
 
 [package.dependencies]
