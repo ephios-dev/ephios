@@ -53,6 +53,7 @@ from ephios.core.views.eventtype import (
 from ephios.core.views.healthcheck import HealthCheckView
 from ephios.core.views.log import LogView
 from ephios.core.views.notifications import (
+    MassNotificationWriteView,
     NotificationDetailView,
     NotificationListView,
     NotificationMarkAllAsReadView,
@@ -293,6 +294,7 @@ urlpatterns = [
     path("oidc/logout/", OIDCLogoutView.as_view(), name="oidc_logout"),
     path("accounts/login/", OIDCLoginView.as_view(), name="oidc_login"),
     path("notifications/", NotificationListView.as_view(), name="notification_list"),
+    path("notifications/mass/", MassNotificationWriteView.as_view(), name="notification_mass"),
     path(
         "notifications/read/", NotificationMarkAllAsReadView.as_view(), name="notification_all_read"
     ),
