@@ -1278,24 +1278,19 @@ python-dateutil = "*"
 
 [[package]]
 name = "django-select2"
-version = "8.4.5"
+version = "8.4.7"
 description = "This is a Django_ integration of Select2_."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django_select2-8.4.5-py3-none-any.whl", hash = "sha256:cb9955714df970af3072ec05452c9aa4f7e9287ef87c2b17f925b987c9e5c6e7"},
-    {file = "django_select2-8.4.5.tar.gz", hash = "sha256:5e3c1719825ad1048a0e0a3de20d6c9d022057146cf06c4e06e701861f96bb3f"},
+    {file = "django_select2-8.4.7-py3-none-any.whl", hash = "sha256:1868c34938bcfffe44d846f49ab823f971a3cbaab8faad0625ec672a5c63231b"},
+    {file = "django_select2-8.4.7.tar.gz", hash = "sha256:75453b27a44af839723376d58e0d6bee6a16fa49b5758f44bc8e420690ab321f"},
 ]
 
 [package.dependencies]
 django = ">=4.2"
 django-appconf = ">=0.6.0"
-
-[package.extras]
-docs = ["sphinx"]
-selenium = ["selenium"]
-test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-statici18n"
