@@ -404,7 +404,7 @@ def qualifications():
 @pytest.fixture
 def qualifications_consequence(volunteer, qualifications, event, tz):
     return QualificationConsequenceHandler.create(
-        user=volunteer,
+        participant=volunteer.as_participant(),
         shift=event.shifts.first(),
         qualification=qualifications.nfs,
         expires=datetime(2065, 4, 1, tzinfo=tz),
@@ -414,7 +414,7 @@ def qualifications_consequence(volunteer, qualifications, event, tz):
 @pytest.fixture
 def workinghours_consequence(volunteer):
     return WorkingHoursConsequenceHandler.create(
-        user=volunteer, when=date(2020, 1, 1), hours=42, reason="testing"
+        participant=volunteer.as_participant(), when=date(2020, 1, 1), hours=42, reason="testing"
     )
 
 

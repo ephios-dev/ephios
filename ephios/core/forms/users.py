@@ -446,7 +446,7 @@ class WorkingHourRequestForm(ModelForm):
 
     def create_consequence(self):
         WorkingHoursConsequenceHandler.create(
-            user=self.user,
+            participant=self.user.as_participant(),
             when=self.cleaned_data["date"],
             hours=float(self.cleaned_data["hours"]),
             reason=self.cleaned_data["reason"],
