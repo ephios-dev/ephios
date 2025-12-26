@@ -33,13 +33,8 @@ from guardian.models import GroupObjectPermission
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with_perms
 
 from ephios.core.calendar import ShiftCalendar
-from ephios.core.forms.events import EventCopyForm, EventForm, EventNotificationForm
+from ephios.core.forms.events import EventCopyForm, EventForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
-from ephios.core.services.notifications.types import (
-    CustomEventParticipantNotification,
-    EventReminderNotification,
-    NewEventNotification,
-)
 from ephios.core.signals import event_forms
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.csp import csp_allow_unsafe_eval
@@ -690,28 +685,3 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "core/home.html"
-
-
-class EventNotificationView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
-    model = Event
-    permission_required = "core.change_event"
-    template_name = "core/event_notification.html"
-    form_class = EventNotificationForm
-
-    def get_form_kwargs(self):
-        return {**super().get_form_kwargs(), "event": self.object}
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.object = self.get_object()
-
-    def form_valid(self, form):
-        action = form.cleaned_data["action"]
-        if action == form.NEW_EVENT:
-            NewEventNotification.send(self.object)
-        elif action == form.REMINDER:
-            EventReminderNotification.send(self.object)
-        elif action == form.PARTICIPANTS:
-            CustomEventParticipantNotification.send(self.object, form.cleaned_data["mail_content"])
-        messages.success(self.request, _("Notifications sent succesfully."))
-        return redirect(self.object.get_absolute_url())

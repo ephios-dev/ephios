@@ -11,7 +11,7 @@ from ephios.core.services.notifications.types import (
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
     CustomEventParticipantNotification,
-    EventReminderNotification,
+    CustomEventReminderNotification,
     NewEventNotification,
     NewProfileNotification,
     ParticipationCustomizationNotification,
@@ -52,7 +52,7 @@ def test_user_notification_sending(volunteer):
 
 def test_event_notification_sending(event, volunteer):
     NewEventNotification.send(event)
-    EventReminderNotification.send(event)
+    CustomEventReminderNotification.send(event)
     assert Notification.objects.count() == 2 * len(
         get_users_with_perms(event, only_with_perms_in=["view_event"])
     )
