@@ -2,9 +2,6 @@ import operator
 import re
 from datetime import datetime, timedelta
 
-from crispy_forms.bootstrap import FormActions
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -25,7 +22,6 @@ from ephios.core.signup.flow import enabled_signup_flows, signup_flow_from_slug
 from ephios.core.signup.structure import enabled_shift_structures, shift_structure_from_slug
 from ephios.core.widgets import MultiUserProfileWidget
 from ephios.extra.colors import clear_eventtype_color_css_fragment_cache
-from ephios.extra.crispy import AbortLink
 from ephios.extra.permissions import get_groups_with_perms
 from ephios.extra.widgets import CustomDateInput, CustomTimeInput, MarkdownTextarea, RecurrenceField
 from ephios.modellogging.log import add_log_recorder, update_log
@@ -315,40 +311,3 @@ class BasePluginFormMixin:
         With the default template, if this is True, the collapse is expanded on page load.
         """
         return False
-
-
-class EventNotificationForm(forms.Form):
-    NEW_EVENT = "new"
-    REMINDER = "remind"
-    PARTICIPANTS = "participants"
-    action = forms.ChoiceField(
-        choices=[
-            (NEW_EVENT, _("Send notification about new event to everyone")),
-            (REMINDER, _("Send reminder to everyone that is not participating")),
-            (PARTICIPANTS, _("Send a message to all participants")),
-        ],
-        widget=forms.RadioSelect,
-        label=False,
-    )
-    mail_content = forms.CharField(required=False, widget=forms.Textarea, label=_("Mail content"))
-
-    def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop("event")
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Field("action"),
-            Field("mail_content"),
-            FormActions(
-                Submit("submit", _("Send"), css_class="float-end"),
-                AbortLink(href=self.event.get_absolute_url()),
-            ),
-        )
-
-    def clean(self):
-        if (
-            self.cleaned_data.get("action") == self.PARTICIPANTS
-            and not self.cleaned_data["mail_content"]
-        ):
-            raise ValidationError(_("You cannot send an empty mail."))
-        return super().clean()

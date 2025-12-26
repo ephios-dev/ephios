@@ -1,13 +1,11 @@
-from typing import List
+from typing import Collection, List
 from urllib.parse import urlparse
 
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
-from django.utils.formats import date_format
 from django.utils.http import urlsafe_base64_encode
-from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import get_users_with_perms
@@ -17,7 +15,7 @@ from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
-from ephios.core.signup.participants import LocalUserParticipant
+from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
 
 NOTIFICATION_READ_PARAM_NAME = "fromNotification"
@@ -184,51 +182,6 @@ class NewProfileNotification(AbstractNotificationHandler):
             },
         )
         return make_absolute(reset_link)
-
-
-class NewEventNotification(AbstractNotificationHandler):
-    slug = "ephios_new_event"
-    title = _("A new event has been added")
-    email_template_name = "core/mails/new_event.html"
-
-    @classmethod
-    def send(cls, event: Event, **kwargs):
-        notifications = []
-        for user in get_users_with_perms(event, only_with_perms_in=["view_event"]):
-            notifications.append(
-                Notification(slug=cls.slug, user=user, data={"event_id": event.id, **kwargs})
-            )
-        Notification.objects.bulk_create(notifications)
-
-    @classmethod
-    def get_subject(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("New {type}: {title}").format(type=event.type, title=event.title)
-
-    @classmethod
-    def get_body(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _(
-            "A new {type} ({title}, {location}) has been added.\n"
-            "Further information: {description}"
-        ).format(
-            type=event.type,
-            title=event.title,
-            location=event.location,
-            description=event.description,
-        )
-
-    @classmethod
-    def get_render_context(cls, notification):
-        context = super().get_render_context(notification)
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        context["event"] = event
-        return context
-
-    @classmethod
-    def get_actions(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
 
 
 class ParticipationMixin:
@@ -514,100 +467,108 @@ class ResponsibleConfirmedParticipationCustomizedNotification(
         return message
 
 
-class EventReminderNotification(AbstractNotificationHandler):
-    slug = "ephios_event_reminder"
-    title = _("An event has vacant spots")
-    unsubscribe_allowed = False
-
-    @classmethod
-    def send(cls, event: Event):
-        users_not_participating = UserProfile.objects.exclude(
-            pk__in=AbstractParticipation.objects.filter(shift__event=event).values_list(
-                "localparticipation__user", flat=True
-            )
-        ).filter(pk__in=get_users_with_perms(event, only_with_perms_in=["view_event"]))
-        notifications = []
-        for user in users_not_participating:
-            notifications.append(
-                Notification(slug=cls.slug, user=user, data={"event_id": event.id})
-            )
-        Notification.objects.bulk_create(notifications)
+class SubjectBodyDataMixin:
 
     @classmethod
     def get_subject(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("Help needed for {title}").format(title=event.title)
+        return notification.data.get("subject")
 
     @classmethod
     def get_body(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("Your support is needed for {title} ({start} - {end}).").format(
-            title=event.title,
-            start=date_format(localtime(event.get_start_time()), "SHORT_DATETIME_FORMAT"),
-            end=date_format(localtime(event.get_end_time()), "SHORT_DATETIME_FORMAT"),
-        )
-
-    @classmethod
-    def get_actions(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return [(str(_("View event")), make_absolute(event.get_absolute_url()))]
+        return notification.data.get("body")
 
 
-class CustomEventParticipantNotification(AbstractNotificationHandler):
-    slug = "ephios_custom_event_participant"
-    title = _("Message to all participants")
+class GenericMassNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
+    slug = "ephios_custom_event_reminder"
+    title = _("Information on an event you are not participating in")
     unsubscribe_allowed = False
 
     @classmethod
-    def send(cls, event: Event, content: str):
-        participants = set()
+    def send(cls, users: Collection[UserProfile], subject, body):
         notifications = []
-        responsible_users = get_users_with_perms(
-            event, with_superusers=False, only_with_perms_in=["change_event"]
-        )
-        for participation in AbstractParticipation.objects.filter(
-            shift__event=event, state=AbstractParticipation.States.CONFIRMED
-        ):
-            participant = participation.participant
-            if participant not in participants:
-                participants.add(participant)
-                user = participant.user if isinstance(participant, LocalUserParticipant) else None
-                if user in responsible_users:
-                    continue
-                notifications.append(
-                    Notification(
-                        slug=cls.slug,
-                        user=user,
-                        data={
-                            "email": participant.email,
-                            "participation_id": participation.id,
-                            "event_id": event.id,
-                            "content": content,
-                        },
-                    )
-                )
-        for responsible in responsible_users:
+        for user in users:
             notifications.append(
                 Notification(
                     slug=cls.slug,
-                    user=responsible,
+                    user=user,
                     data={
-                        "email": responsible.email,
-                        "event_id": event.id,
-                        "content": content,
+                        "email": user.email,
+                        "subject": subject,
+                        "body": body,
                     },
                 )
             )
         Notification.objects.bulk_create(notifications)
 
     @classmethod
-    def get_subject(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return _("Information regarding {title}").format(title=event.title)
+    def get_actions(cls, notification):
+        return [
+            (
+                str(_("View message")),
+                make_absolute(reverse("core:notification_detail", kwargs={"pk": notification.pk})),
+            )
+        ]
+
+
+class CustomEventReminderNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
+    slug = "ephios_custom_event_reminder"
+    title = _("Information on an event you are not participating in")
+    unsubscribe_allowed = False
 
     @classmethod
-    def get_body(cls, notification):
-        return notification.data.get("content")
+    def send(cls, event: Event, participants: Collection[LocalUserParticipant], subject, body):
+        notifications = []
+        for participant in participants:
+            notifications.append(
+                Notification(
+                    slug=cls.slug,
+                    user=getattr(participant, "user", None),
+                    data={
+                        "event_id": event.id,
+                        "email": participant.email,
+                        "subject": subject,
+                        "body": body,
+                    },
+                )
+            )
+        Notification.objects.bulk_create(notifications)
+
+    @classmethod
+    def get_actions(cls, notification):
+        event = Event.objects.get(pk=notification.data.get("event_id"))
+        return [
+            (
+                str(_("View message")),
+                make_absolute(reverse("core:notification_detail", kwargs={"pk": notification.pk})),
+            ),
+            (str(_("View event")), make_absolute(event.get_absolute_url())),
+        ]
+
+
+class CustomEventParticipantNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
+    slug = "ephios_custom_event_participant"
+    title = _("Message to all participants")
+    unsubscribe_allowed = False
+
+    @classmethod
+    def send(
+        cls, event: Event, participants: Collection[AbstractParticipant], subject: str, body: str
+    ):
+        notifications = []
+        for participant in participants:
+            notifications.append(
+                Notification(
+                    slug=cls.slug,
+                    user=getattr(participant, "user", None),
+                    data={
+                        "email": participant.email,
+                        "event_id": event.id,
+                        "subject": subject,
+                        "body": body,
+                    },
+                )
+            )
+        Notification.objects.bulk_create(notifications)
 
     @classmethod
     def get_actions(cls, notification):
@@ -680,8 +641,9 @@ CORE_NOTIFICATION_TYPES = [
     ResponsibleParticipationStateChangeNotification,
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
-    NewEventNotification,
-    EventReminderNotification,
+    GenericMassNotification,
+    CustomEventParticipantNotification,
+    CustomEventReminderNotification,
     CustomEventParticipantNotification,
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
