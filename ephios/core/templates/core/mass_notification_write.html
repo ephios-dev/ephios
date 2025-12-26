@@ -1,7 +1,12 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load crispy_forms_tags %}
 {% load static %}
 {% load i18n %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static "ephios/js/mass_notification_write.js" %}"></script>
+{% endblock %}
 
 {% block title %}
     {% translate "Mass notification" %}
@@ -9,13 +14,48 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>{% translate "Mass Notification" %}</h1>
+        <div class="card mb-3">
+            <div class="card-body pb-0">
+                <h1 class="card-title fw-bold fs-1">
+                    {% translate "Mass Notification" %}
+                </h1>
+                {% if form.event %}
+                    <h5 class="card-subtitle mb-2 text-body-secondary fw-bolder lh-base">
+                        {{ form.event }}
+                    </h5>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% crispy form %}
-    <button class="btn btn-primary float-end" type="submit">{% translate "Send" %}</button>
-    <a role="button" class="btn btn-secondary mt-1" href="{% url 'core:home' %}">{% translate "Cancel" %}</a>
-{% endblock %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.subject|as_crispy_field }}
+        {{ form.body|as_crispy_field }}
 
-{% block javascript %}
-{#    <script type="text/javascript" src="{% static "ephios/js/group_form.js" %}"></script>#}
+
+        <label for="id_body" class="form-label requiredField d-block">
+            {% translate "Recipients" %}<span class="asteriskField">*</span>
+        </label>
+
+        <div class="btn-group pb-3" role="group" aria-label="Recipients button group">
+            <button class="btn btn-outline-success btn-add-recipients" type="button"
+                    id="btn-participants-confirmed"
+                    data-participants="{% for i in form.event_confirmed %}{{ i }} {% endfor %}">
+                {% translate "Add confirmed participants" %}
+            </button>
+            <button class="btn btn-outline-warning btn-add-recipients" type="button"
+                    id="btn-participants-requested"
+                    data-participants="{% for i in form.event_requested %}{{ i }} {% endfor %}">
+                {% translate "Add participants with requested participation" %}
+            </button>
+            <button class="btn btn-outline-dark btn-add-recipients" type="button"
+                    id="btn-participants-nonfeedback"
+                    data-participants="{% for i in form.event_nonfeedback %}{{ i }} {% endfor %}">
+                {% translate "Add users that did not yet respond to the event invitation" %}
+            </button>
+        </div>
+        {% crispy_field form.to_participants show_labels=False %}
+        <button class="btn btn-primary float-end" type="submit">{% translate "Send" %}</button>
+        <a role="button" class="btn btn-secondary mt-1" href="{{ cancel_url }}">{% translate "Cancel" %}</a>
+    </form>
 {% endblock %}

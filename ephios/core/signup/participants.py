@@ -25,6 +25,15 @@ class AbstractParticipant:
     date_of_birth: Optional[date]
     email: Optional[str]  # if set to None, no notifications are sent
 
+    @property
+    def identifier(self):
+        """
+        Return a string identifying this participant. It should be unique to the ephios instance, and should not
+        change if changeable attributes like qualifications change.
+        The string must only contain alphanumeric characters and -_ special characters.
+        """
+        raise NotImplementedError
+
     def get_age(self, today: date = None):
         if self.date_of_birth is None:
             return None
@@ -80,6 +89,10 @@ class AbstractParticipant:
 class LocalUserParticipant(AbstractParticipant):
     user: get_user_model()
 
+    @property
+    def identifier(self):
+        return f"localuser-{self.user.pk}"
+
     def new_participation(self, shift):
         return LocalParticipation(shift=shift, user=self.user)
 
@@ -101,6 +114,11 @@ class LocalUserParticipant(AbstractParticipant):
 
 @dataclasses.dataclass(frozen=True)
 class PlaceholderParticipant(AbstractParticipant):
+
+    @property
+    def identifier(self):
+        return f"placeholder-{hash(self)}"
+
     def new_participation(self, shift):
         return PlaceholderParticipation(shift=shift, display_name=self.display_name)
 
