@@ -100,6 +100,10 @@ register_model_for_logging(GuestParticipation, PARTICIPATION_LOG_CONFIG)
 class GuestParticipant(AbstractParticipant):
     guest_user: GuestUser
 
+    @property
+    def identifier(self):
+        return f"guestuser-{self.guest_user.pk}"
+
     def new_participation(self, shift):
         return GuestParticipation(shift=shift, guest_user=self.guest_user)
 

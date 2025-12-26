@@ -76,7 +76,7 @@
                                     {% translate "Download PDF" %}
                                 </a></li>
                                 <li><a class="dropdown-item"
-                                       href="{% url "core:event_notifications" event.pk %}">
+                                       href="{% url "core:notification_mass" %}{% querystring None event_id=event.id %}">
                                     <span class="fas fa-envelope"></span>
                                     {% translate "Send notifications" %}
                                 </a></li>
