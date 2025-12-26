@@ -166,6 +166,10 @@ class FederatedUser(models.Model):
 class FederatedParticipant(AbstractParticipant):
     federated_user: FederatedUser
 
+    @property
+    def identifier(self):
+        return f"federateduser-{self.federated_user.pk}"
+
     def new_participation(self, shift):
         return FederatedParticipation(shift=shift, federated_user=self.federated_user)
 
