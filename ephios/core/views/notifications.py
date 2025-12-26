@@ -1,18 +1,27 @@
 from functools import cached_property
+from operator import attrgetter
 
-from build.lib.guardian.shortcuts import get_objects_for_user
+from build.lib.guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.formats import date_format
+from django.utils.functional import partition
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 from django.views.generic import DetailView, FormView, ListView, RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import Select2MultipleWidget
 
 from ephios.core.models import AbstractParticipation, Notification
+from ephios.core.services.notifications.types import (
+    CustomEventParticipantNotification,
+    CustomEventReminderNotification,
+    GenericMassNotification,
+)
 from ephios.extra.mixins import CustomCheckPermissionMixin
 
 
@@ -69,7 +78,14 @@ class MassNotificationForm(forms.Form):
     def _configure_choices(self):
         choices = {}
         self.participants_by_identifier = {}
-        for user in get_objects_for_user(user=self.request.user, perms=["core.view_userprofile"]):
+
+        user_qs = get_objects_for_user(user=self.request.user, perms=["core.view_userprofile"])
+        if self.event:
+            # users must also be able to see the event
+            user_qs = user_qs.filter(
+                pk__in=get_users_with_perms(self.event, only_with_perms_in=["view_event"])
+            )
+        for user in user_qs:
             participant = user.as_participant()
             choices[participant.identifier] = str(participant)
             self.participants_by_identifier[participant.identifier] = participant
@@ -163,12 +179,41 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
         return initial
 
     def form_valid(self, form):
-        for participant in form.cleaned_data["to_participants"]:
-            confirmed_or_requested = participant.identifier in (
-                form.event_confirmed | form.event_requested
+        subject_and_body = {
+            "subject": form.cleaned_data["subject"],
+            "body": form.cleaned_data["body"],
+        }
+        recipients = form.cleaned_data["to_participants"]
+        if self.event:
+            others, confirmed_or_requested = partition(
+                lambda p: p.identifier in (form.event_confirmed | form.event_requested),
+                recipients,
             )
-            # send notifications
-
+            CustomEventParticipantNotification.send(
+                self.event, confirmed_or_requested, **subject_and_body
+            )
+            CustomEventReminderNotification.send(self.event, others, **subject_and_body)
+            messages.success(
+                self.request,
+                ngettext_lazy(
+                    "Send notification to {count} participant.",
+                    "Send notification to {count} participants.",
+                    len(recipients),
+                ).format(count=len(recipients)),
+            )
+        else:
+            GenericMassNotification.send(
+                users=list(map(attrgetter("user"), recipients)),
+                **subject_and_body,
+            )
+            messages.success(
+                self.request,
+                ngettext_lazy(
+                    "Send notification to {count} user.",
+                    "Send notification to {count} users.",
+                    len(recipients),
+                ).format(count=len(recipients)),
+            )
         return redirect(self.get_success_url())
 
     def get_success_url(self):
