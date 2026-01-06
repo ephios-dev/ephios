@@ -904,27 +904,27 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "css-inline"
-version = "0.18.0"
+version = "0.19.0"
 description = "High-performance library for inlining CSS into HTML 'style' attributes"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "css_inline-0.18.0-cp39-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:78f5ebaed7531c29d0298c67749a40058f57815b7d1eb6c8a4386c174de6782b"},
-    {file = "css_inline-0.18.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:10d1f00c43de1e45d33f53f7e0c21374837298ec782fe47dab5e260d4ae18d05"},
-    {file = "css_inline-0.18.0-cp39-abi3-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:13501197b040fb93ced4644aa280f485343fdc18b5ba4e05e4c0fa49106d099f"},
-    {file = "css_inline-0.18.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:655ed62839cb436764139ee32fc065e3fcdc9a21b7f17246e8fa9162254c64f0"},
-    {file = "css_inline-0.18.0-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:4150e85496a438a86fa0a069102269d31d688a6653d6925c9fb58cc319d2cc9a"},
-    {file = "css_inline-0.18.0-cp39-abi3-manylinux_2_24_armv7l.whl", hash = "sha256:368d49fb97fdb23cb72912a5fa1ba488cf24d96e67148b7bad88d3dd2a131f09"},
-    {file = "css_inline-0.18.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:38269a3d9cfe3900193399db77ba1ed379ec807b31677d93f2eab3c320d43db9"},
-    {file = "css_inline-0.18.0-cp39-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:36ce7b1e103202cc1b53766b1b856bdd034f9dbb4f858f11a39a8379105bb727"},
-    {file = "css_inline-0.18.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:b9bbbda9984bc82f69ee0955dc2d7c5db11ba5368c4783d9535a9501bf9690d8"},
-    {file = "css_inline-0.18.0-cp39-abi3-win32.whl", hash = "sha256:156b6f2b2f095041fbe879e9d947f2fb0450ae30bf7841c69ea90c2cc87e91e0"},
-    {file = "css_inline-0.18.0-cp39-abi3-win_amd64.whl", hash = "sha256:1404fd471ce6110382ad942bc93353bb17d92f5676c1126178db4a57dcb00438"},
-    {file = "css_inline-0.18.0-pp311-pypy311_pp73-macosx_10_12_x86_64.whl", hash = "sha256:cb78af494f8958d73ce36295263279a23bfc7bc962e47bc626ae979f39449f98"},
-    {file = "css_inline-0.18.0-pp311-pypy311_pp73-manylinux_2_24_aarch64.whl", hash = "sha256:71f0c05188c394b264ec108464bb8c0e584e070117b1e2051fb29b68f8da9911"},
-    {file = "css_inline-0.18.0-pp311-pypy311_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:8bc20150a649426f44fe41bb845c10f160df07a6a9313ba6583a8daa3c550135"},
-    {file = "css_inline-0.18.0.tar.gz", hash = "sha256:dc07d7b19dd0bbe7600417c4213d42d5718b1a22cce5ff227cf36f0f585709c9"},
+    {file = "css_inline-0.19.0-cp39-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:286c00f4df005ed895b3c0778ce96f18d451af402ea06748904fefb7ed66febe"},
+    {file = "css_inline-0.19.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:6132934ac99aa106d6d1058d5991ac83bfcc17f9344d20f6614d6123fc99b9f7"},
+    {file = "css_inline-0.19.0-cp39-abi3-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:33aaa141265b307589a85bbe99dc0af983f7a149d661ae13fb57d67513a6c990"},
+    {file = "css_inline-0.19.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:38c2d280ac662c0522514ebcb2181a70243d83fa1e7b4aa1fcc0fe8c54005dc4"},
+    {file = "css_inline-0.19.0-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:88acf02be856dab4593e52a2ff21c1f81bc71916f1ebf1dcfb4b97bee99a15cf"},
+    {file = "css_inline-0.19.0-cp39-abi3-manylinux_2_24_armv7l.whl", hash = "sha256:f84a706c55c8fb9d57e0a128fa68d4402faf2519d1464dc31d1cbc58a6165fd7"},
+    {file = "css_inline-0.19.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:f9d7cb2037227ea255444a4e8a83ba50a1f4e65f5f4824f3a3cabe8297b8b7c2"},
+    {file = "css_inline-0.19.0-cp39-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:7aceb6f4b29d682507815a8a7982e3a65d2f75eaf39ce727141011ca1dc61fdb"},
+    {file = "css_inline-0.19.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:35a798e76edb4cf86ccdd2ca25c59cc258720e58935fe2dd395042e517e8b0f6"},
+    {file = "css_inline-0.19.0-cp39-abi3-win32.whl", hash = "sha256:53423d638987454174679f05d444305c74dcce7ae82e01512225b06c3bb70bc2"},
+    {file = "css_inline-0.19.0-cp39-abi3-win_amd64.whl", hash = "sha256:887d9f1e07e43032f63ad3f00c1cc3664944f9a7780252119c3caf3b5e6e262e"},
+    {file = "css_inline-0.19.0-pp311-pypy311_pp73-macosx_10_12_x86_64.whl", hash = "sha256:e2e95a3f6879707fb3662bd08b414be9aafe54056aece75ab7fd146c4efdd802"},
+    {file = "css_inline-0.19.0-pp311-pypy311_pp73-manylinux_2_24_aarch64.whl", hash = "sha256:de43bf175848a80718489b58329cf8a4bb7e26c3fa322c6e67a65130f81b2be2"},
+    {file = "css_inline-0.19.0-pp311-pypy311_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:dd22d7e84e6d4b8954180b90b15b1374dd438043903337edd5ba2fa9e58a65e4"},
+    {file = "css_inline-0.19.0.tar.gz", hash = "sha256:1fe3432758262397332f137e427635062fb76df7c67425ce3d8df1069347385c"},
 ]
 
 [[package]]
@@ -4405,4 +4405,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "a3790c54fc77fd31d604e217f80c13c414be860715ec218922e6482eb0d038e7"
+content-hash = "5e9efbb2dabbc88b705d47e7f42c0b31867a792113a4472a293f9403212bdae8"
