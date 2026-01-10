@@ -1,3 +1,4 @@
+import logging
 from typing import Collection, List
 from urllib.parse import urlparse
 
@@ -18,6 +19,8 @@ from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
 
+logger = logging.getLogger(__name__)
+
 NOTIFICATION_READ_PARAM_NAME = "fromNotification"
 
 
@@ -35,7 +38,8 @@ def notification_type_from_slug(slug):
     for notification in installed_notification_types():
         if notification.slug == slug:
             return notification
-    raise ValueError(_("Notification type '{slug}' was not found.").format(slug=slug))
+    logger.warning(f"No notification type found for slug {slug}")
+    return FallbackNotification
 
 
 class AbstractNotificationHandler:
@@ -103,6 +107,23 @@ class AbstractNotificationHandler:
                 url = req.url
             actions.append((label, url))
         return actions
+
+
+class FallbackNotification(AbstractNotificationHandler):
+    slug = "fallback"
+    title = "Fallback"
+
+    @classmethod
+    def get_subject(cls, notification):
+        return notification.data.get("subject")
+
+    @classmethod
+    def get_body(cls, notification):
+        return notification.data.get("body")
+
+    @classmethod
+    def is_obsolete(cls, notification):
+        return True
 
 
 class ProfileUpdateNotification(AbstractNotificationHandler):

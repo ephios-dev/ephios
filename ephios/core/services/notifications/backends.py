@@ -168,7 +168,7 @@ class WebPushNotificationBackend(AbstractNotificationBackend):
             payload = {
                 "head": str(notification.subject),
                 "body": notification.body,
-                "icon": as_brand_static_path("appicon-prod.svg"),
+                "icon": as_brand_static_path("appicon-svg-prod.svg"),
             }
             if actions := notification.get_actions():
                 payload["url"] = actions[0][1]
