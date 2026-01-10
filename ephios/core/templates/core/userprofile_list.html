@@ -17,21 +17,29 @@
     </div>
 
     <form method="GET" id="filter-form" class="row align-items-center">
-        {% if perms.core.add_userprofile and show_local_user_management %}
-            <div class="col-12 col-lg-auto">
-                <a class="btn btn-secondary mb-3" href="{% url "core:userprofile_create" %}"><span
-                    class="fa fa-plus"></span> {% translate "Add user" %}</a>
+        <div class="col-12 col-lg">
+            <div class="row align-items-center">
+                {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
+                {% crispy_field filter_form.group wrapper_class="col-12 col-lg" show_labels=False %}
+                {% crispy_field filter_form.qualification wrapper_class="col-12 col-lg" show_labels=False %}
             </div>
-        {% endif %}
-        {% crispy_field filter_form.query wrapper_class="col-12 col-lg" show_labels=False %}
-        {% crispy_field filter_form.group wrapper_class="col-12 col-lg" show_labels=False %}
-        {% crispy_field filter_form.qualification wrapper_class="col-12 col-lg" show_labels=False %}
-
+        </div>
         <div class="col-12 col-lg-auto mb-3">
             <button type="submit" class="btn btn-primary">
                 <span class="fa fa-funnel"></span> {% translate "Apply" %}
             </button>
             <a class="btn btn-secondary" href="?">{% translate "Reset" %}</a>
+        </div>
+
+        <div class="col-12 mb-3">
+            {% if perms.core.add_userprofile and show_local_user_management %}
+                <a class="btn btn-sm btn-secondary" href="{% url "core:userprofile_create" %}"><span
+                    class="fa fa-plus"></span> {% translate "Add user" %}</a>
+            {% endif %}
+            <a class="btn btn-sm btn-secondary" href="{% url "core:notification_mass" %}?{{ mass_notification_tos }}">
+                <span class="fa fa-envelope"></span>
+                {% translate "Send notifications" %}
+            </a>
         </div>
     </form>
 
