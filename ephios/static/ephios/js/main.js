@@ -155,7 +155,65 @@ $(document).ready(function () {
         });
     }
 
+    const pwaAndroidOffcanvas = document.getElementById('pwaAndroidOffcanvas');
+    const pwaAndroidBsOffcanvas = new bootstrap.Offcanvas('#pwaAndroidOffcanvas')
+    pwaAndroidOffcanvas.addEventListener('hide.bs.offcanvas', _ => rememberDismissed("pwaPrompt"));
+
+    const pwaAppleOffcanvas = document.getElementById('pwaAppleOffcanvas');
+    const pwaAppleBsOffcanvas = new bootstrap.Offcanvas('#pwaAppleOffcanvas')
+    pwaAppleOffcanvas.addEventListener('hide.bs.offcanvas', _ => rememberDismissed("pwaPrompt"));
+
+    const notificationOffcanvas = document.getElementById("notificationOffcanvas");
+    const notificationBsOffcanvas = new bootstrap.Offcanvas('#notificationOffcanvas');
+    notificationOffcanvas.addEventListener("hide.bs.offcanvas", _ => rememberDismissed("notificationPrompt"))
+
+    let deferredInstallPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      if (!getCookie("pwaPrompt") && !window.location.pathname.startsWith("/accounts")) {
+          pwaAndroidBsOffcanvas.show();
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      pwaAndroidBsOffcanvas.hide();
+      if (typeof isPushEnabled !== undefined && !isPushEnabled) {
+          notificationBsOffcanvas.show();
+          document.getElementById("webpush-subscribe-button")
+              .addEventListener("click", _ => notificationBsOffcanvas.hide())
+      }
+      deferredInstallPrompt = null;
+    });
+
+    const buttonInstall = document.getElementById("pwaInstall");
+    buttonInstall.addEventListener('click', async () => {
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      pwaAndroidBsOffcanvas.hide();
+      deferredInstallPrompt = null;
+    });
+
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !getCookie("pwaPrompt") && !window.location.pathname.startsWith("/accounts")) {
+        pwaAppleBsOffcanvas.show();
+    }
+
+    setTimeout(() => {
+        if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) && typeof isPushEnabled !== undefined && !isPushEnabled && !getCookie("notificationPrompt")) {
+            document.getElementById("webpush-subscribe-button")
+              .addEventListener("click", _ => notificationBsOffcanvas.hide())
+            notificationBsOffcanvas.show();
+        }
+    }, 2000);
+
 })
+
+function rememberDismissed(key) {
+    const date = new Date();
+    date.setDate(date.getDate() + 30);
+    document.cookie = key + "=hidden;expires=" + date.toUTCString();
+}
 
 function getCookie(name) {
     let cookieValue = null;
