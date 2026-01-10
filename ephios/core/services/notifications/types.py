@@ -15,7 +15,7 @@ from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
 from ephios.core.models.users import Consequence, Notification
 from ephios.core.signals import register_notification_types
-from ephios.core.signup.participants import AbstractParticipant, LocalUserParticipant
+from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
 
 NOTIFICATION_READ_PARAM_NAME = "fromNotification"
@@ -480,7 +480,7 @@ class SubjectBodyDataMixin:
 
 class GenericMassNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
     slug = "ephios_custom_event_reminder"
-    title = _("Information on an event you are not participating in")
+    title = _("Mass mailing")
     unsubscribe_allowed = False
 
     @classmethod
@@ -510,44 +510,9 @@ class GenericMassNotification(SubjectBodyDataMixin, AbstractNotificationHandler)
         ]
 
 
-class CustomEventReminderNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
-    slug = "ephios_custom_event_reminder"
-    title = _("Information on an event you are not participating in")
-    unsubscribe_allowed = False
-
-    @classmethod
-    def send(cls, event: Event, participants: Collection[LocalUserParticipant], subject, body):
-        notifications = []
-        for participant in participants:
-            notifications.append(
-                Notification(
-                    slug=cls.slug,
-                    user=getattr(participant, "user", None),
-                    data={
-                        "event_id": event.id,
-                        "email": participant.email,
-                        "subject": subject,
-                        "body": body,
-                    },
-                )
-            )
-        Notification.objects.bulk_create(notifications)
-
-    @classmethod
-    def get_actions(cls, notification):
-        event = Event.objects.get(pk=notification.data.get("event_id"))
-        return [
-            (
-                str(_("View message")),
-                make_absolute(reverse("core:notification_detail", kwargs={"pk": notification.pk})),
-            ),
-            (str(_("View event")), make_absolute(event.get_absolute_url())),
-        ]
-
-
-class CustomEventParticipantNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
-    slug = "ephios_custom_event_participant"
-    title = _("Message to all participants")
+class CustomEventNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
+    slug = "ephios_custom_event_notification"
+    title = _("Information on an event")
     unsubscribe_allowed = False
 
     @classmethod
@@ -642,9 +607,7 @@ CORE_NOTIFICATION_TYPES = [
     ResponsibleConfirmedParticipationDeclinedNotification,
     ResponsibleConfirmedParticipationCustomizedNotification,
     GenericMassNotification,
-    CustomEventParticipantNotification,
-    CustomEventReminderNotification,
-    CustomEventParticipantNotification,
+    CustomEventNotification,
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
 ]

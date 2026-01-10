@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load cache %}
+{% load event_extras %}
 {% load ephios_crispy %}
 {% load crispy_forms_tags %}
 {% load static %}
@@ -12,22 +14,57 @@
     {% translate "Mass notification" %}
 {% endblock %}
 
+{% block html_head %}
+    {% if form.event %}
+        <style nonce="{{ request.csp_nonce }}">
+            {% cache 900 "single_eventtype_color" event.type.pk %}
+                {{ form.event.type|color_css }}
+            {% endcache %}
+        </style>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
-        <div class="card mb-3">
-            <div class="card-body pb-0">
-                <h1 class="card-title fw-bold fs-1">
-                    {% translate "Mass Notification" %}
-                </h1>
-                {% if form.event %}
+
+        <h1 class="card-title fw-bold fs-1">
+            {% translate "Mass Notification" %}
+        </h1>
+        {% if form.event %}
+            <div class="card my-3">
+                <div class="card-body pb-1">
+                    <h2 class="card-title fw-bold fs-2">
+                        {{ form.event.title }}
+                    </h2>
                     <h5 class="card-subtitle mb-2 text-body-secondary fw-bolder lh-base">
-                        {{ form.event }}
+                        <span class="me-1 badge badge-eventtype eventtype-{{ form.event.type.pk }}-color">{{ form.event.type }}</span>
+                        <span class="text-body-secondary me-1 d-inline-block">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ form.event.location }}
+                        </span>
+                        {% with start_time=form.event.get_start_time end_time=form.event.get_end_time %}
+                            {% if start_time %}
+                                <span class="text-body-secondary d-inline-block">
+                                    <i class="far fa-calendar"></i>
+                                    {{ start_time|date:"D" }},
+                                    {% if not form.event.is_multi_day %}
+                                        {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                                        {{ start_time|date:"TIME_FORMAT" }} –
+                                        {{ end_time|date:"TIME_FORMAT" }}
+                                    {% else %}
+                                        {{ start_time|date:"SHORT_DATE_FORMAT" }}
+                                        {% translate "to" %}
+                                        {{ end_time|date:"SHORT_DATE_FORMAT" }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        {% endwith %}
                     </h5>
-                {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
-    <form method="post">
+    <form method="post" id="form">
         {% csrf_token %}
         {{ form.subject|as_crispy_field }}
         {{ form.body|as_crispy_field }}
@@ -37,26 +74,60 @@
             {% translate "Recipients" %}<span class="asteriskField">*</span>
         </label>
 
+
         {% if form.event %}
-            <div class="btn-group pb-3" role="group" aria-label="Recipients button group">
-                <button class="btn btn-outline-success btn-add-recipients" type="button"
-                        id="btn-participants-confirmed"
-                        data-participants="{% for i in form.event_confirmed %}{{ i }} {% endfor %}">
-                    {% translate "Add confirmed participants" %}
-                </button>
-                <button class="btn btn-outline-warning btn-add-recipients" type="button"
-                        id="btn-participants-requested"
-                        data-participants="{% for i in form.event_requested %}{{ i }} {% endfor %}">
-                    {% translate "Add participants with requested participation" %}
-                </button>
-                <button class="btn btn-outline-dark btn-add-recipients" type="button"
-                        id="btn-participants-nonfeedback"
-                        data-participants="{% for i in form.event_nonfeedback %}{{ i }} {% endfor %}">
-                    {% translate "Add users that did not yet respond to the event invitation" %}
-                </button>
-            </div>
+            <fieldset class="form-group mb-3">
+                <div class="form-check">
+                    <input class="form-check-input check-add-recipients" type="checkbox" value=""
+                           id="check-event-confirmed"
+                           {% if not form.event_confirmed %}disabled{% endif %}
+                           data-participants="{% for i in form.event_confirmed %}{{ i }} {% endfor %}">
+                    <label class="form-check-label" for="check-event-confirmed">
+                        {% blocktranslate count counter=form.event_confirmed|length %}
+                            Include {{ counter }} confirmed participant
+                        {% plural %}
+                            Include {{ counter }} confirmed participants
+                        {% endblocktranslate %}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input check-add-recipients" type="checkbox" value=""
+                           id="check-event-requested"
+                           {% if not form.event_requested %}disabled{% endif %}
+                           data-participants="{% for i in form.event_requested %}{{ i }} {% endfor %}">
+                    <label class="form-check-label" for="check-event-requested">
+                        {% blocktranslate count counter=form.event_requested|length %}
+                            Include {{ counter }} participant with a requested participation
+                        {% plural %}
+                            Include {{ counter }} participants with requested participation
+                        {% endblocktranslate %}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input check-add-recipients" type="checkbox" value=""
+                           id="check-event-nonfeedback"
+                           {% if not form.event_nonfeedback %}disabled{% endif %}
+                           data-participants="{% for i in form.event_nonfeedback %}{{ i }} {% endfor %}">
+                    <label class="form-check-label" for="check-event-nonfeedback">
+                        {% blocktranslate count counter=form.event_nonfeedback|length %}
+                            Include {{ counter }} user that did not yet respond to the event invitation
+                        {% plural %}
+                            Include {{ counter }} users that did not yet respond to the event invitation
+                        {% endblocktranslate %}
+                    </label>
+                </div>
+            </fieldset>
         {% endif %}
-        {% crispy_field form.to_participants show_labels=False %}
+        <p>
+            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseToParticipants" aria-expanded="false"
+                    aria-controls="collapseToParticipants">
+                {% translate "Show recipient list" %}
+            </button>
+        </p>
+        <div class="collapse" id="collapseToParticipants">
+            {% crispy_field form.to_participants show_labels=False %}
+        </div>
         <button class="btn btn-primary float-end" type="submit">{% translate "Send" %}</button>
         <a role="button" class="btn btn-secondary mt-1" href="{{ cancel_url }}">{% translate "Cancel" %}</a>
     </form>

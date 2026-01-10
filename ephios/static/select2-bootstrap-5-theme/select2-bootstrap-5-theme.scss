@@ -6,4 +6,6 @@
 @import "../bootstrap/scss/variables";
 @import "../bootstrap/scss/mixins";
 
+$s2bs5-group-color: darken($secondary, 50%);
+
 @import "include-all";
