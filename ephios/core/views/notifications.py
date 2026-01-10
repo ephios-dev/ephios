@@ -1,25 +1,23 @@
 from functools import cached_property
 from operator import attrgetter
 
-from build.lib.guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.formats import date_format
-from django.utils.functional import partition
 from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 from django.views.generic import DetailView, FormView, ListView, RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django_select2.forms import Select2MultipleWidget
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, Notification
 from ephios.core.services.notifications.types import (
-    CustomEventParticipantNotification,
-    CustomEventReminderNotification,
+    CustomEventNotification,
     GenericMassNotification,
 )
 from ephios.extra.mixins import CustomCheckPermissionMixin
@@ -55,11 +53,15 @@ class NotificationMarkAllAsReadView(LoginRequiredMixin, RedirectView):
 
 
 class MassNotificationForm(forms.Form):
-    subject = forms.CharField()
+    subject = forms.CharField(
+        label=_("Subject"),
+    )
     body = forms.CharField(
+        label=_("Message"),
         widget=forms.Textarea(attrs={"rows": 8}),
     )
     to_participants = forms.MultipleChoiceField(
+        label=_("Recipients"),
         widget=Select2MultipleWidget(
             attrs={
                 "data-placeholder": _("Add recipients"),
@@ -74,6 +76,18 @@ class MassNotificationForm(forms.Form):
         self.event = kwargs.pop("event", None)
         super().__init__(*args, **kwargs)
         self._configure_choices()
+        if self.event:
+            self.fields["body"].widget.attrs["placeholder"] = _(
+                "Hello,\n\nregarding {event_title} starting at {event_start} we want to communicate...\n\nKind regards\n"
+            ).format(
+                event_title=self.event.title,
+                event_start=date_format(
+                    localtime(self.event.get_start_time()), "SHORT_DATETIME_FORMAT"
+                ),
+            )
+            self.fields["to_participants"].help_text = _(
+                "You can only select users that have permission to view the event."
+            )
 
     def _configure_choices(self):
         choices = {}
@@ -113,7 +127,6 @@ class MassNotificationForm(forms.Form):
 
         # because a participant might be in multiple participations states with multiple shifts,
         # we adjust the sets to have them in the most important group
-        self.event_nonfeedback -= self.event_confirmed | self.event_requested
         self.event_requested -= self.event_confirmed
 
         sorted_names = sorted(choices.values())
@@ -126,7 +139,23 @@ class MassNotificationForm(forms.Form):
                 return sorted_names.index(name)
             return len(sorted_names) + sorted_names.index(name)
 
-        self.fields["to_participants"].choices = sorted(choices.items(), key=sort_key)
+        choices = list(sorted(choices.items(), key=sort_key))
+
+        if self.event:
+            optgroup_choices = {
+                _("confirmed"): {i: p for i, p in choices if i in self.event_confirmed},
+                _("requested"): {i: p for i, p in choices if i in self.event_requested},
+                _("without response"): {i: p for i, p in choices if i in self.event_nonfeedback},
+                _("others"): {
+                    i: p
+                    for i, p in choices
+                    if i not in self.event_confirmed | self.event_requested | self.event_nonfeedback
+                },
+            }
+        else:
+            optgroup_choices = choices
+
+        self.fields["to_participants"].choices = optgroup_choices
 
     def clean_to_participants(self):
         return list(map(self.participants_by_identifier.get, self.cleaned_data["to_participants"]))
@@ -168,14 +197,6 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
             initial["subject"] = _("Information on {event_title}").format(
                 event_title=self.event.title
             )
-            initial["body"] = _(
-                "Hello,\n\nregarding {event_title} starting at {event_start} we want to communicate...\n\nKind regards\n"
-            ).format(
-                event_title=self.event.title,
-                event_start=date_format(
-                    localtime(self.event.get_start_time()), "SHORT_DATETIME_FORMAT"
-                ),
-            )
         return initial
 
     def form_valid(self, form):
@@ -185,14 +206,7 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
         }
         recipients = form.cleaned_data["to_participants"]
         if self.event:
-            others, confirmed_or_requested = partition(
-                lambda p: p.identifier in (form.event_confirmed | form.event_requested),
-                recipients,
-            )
-            CustomEventParticipantNotification.send(
-                self.event, confirmed_or_requested, **subject_and_body
-            )
-            CustomEventReminderNotification.send(self.event, others, **subject_and_body)
+            CustomEventNotification.send(self.event, recipients, **subject_and_body)
             messages.success(
                 self.request,
                 ngettext_lazy(

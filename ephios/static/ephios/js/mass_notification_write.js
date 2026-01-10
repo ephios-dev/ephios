@@ -1,30 +1,45 @@
 $(document).ready(function () {
     const jSelect = $("#id_to_participants");
-    const confirmedIDs = $("#btn-participants-confirmed").data("participants").trim().split(" ")
-    const requestedIDs = $("#btn-participants-requested").data("participants").trim().split(" ")
-
-    function formatState(state) {
-        let $state = $('<span><span></span></span>');
-        const span = $state.find("span");
-        span.text(state.text);
-        if (confirmedIDs.indexOf(state.id) >= 0) {
-            span.addClass("text-success");
-        } else if (requestedIDs.indexOf(state.id) >= 0) {
-            span.addClass("text-warning");
-        }
-        return $state;
-    }
 
     jSelect.select2({
-            templateSelection: formatState,
-            sorter: data => data.sort((a, b) => a.text.localeCompare(b.text))
+            closeOnSelect: false
         }
     )
-    Array.from(document.getElementsByClassName("btn-add-recipients")).forEach(button => {
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            const namesToSelect = button.dataset.participants.trim().split(" ");
-            jSelect.val(jSelect.val().concat(namesToSelect)).trigger('change');
-        })
+
+    document.getElementById("id_to_participants").addEventListener("invalid", (event) => {
+        document.getElementById('collapseToParticipants').classList.add("show");
     });
+
+    Array.from(document.getElementsByClassName("check-add-recipients")).forEach(check => {
+        check.addEventListener("click", function (e) {
+            const namesToSelect = check.dataset.participants.trim().split(" ");
+            if (check.checked) {
+                jSelect.val(jSelect.val().concat(namesToSelect)).trigger('change');
+            } else {
+                jSelect.val(jSelect.val().filter(item => {
+                    // keep items not in namesToSelect
+                    return namesToSelect.indexOf(item) < 0;
+                })).trigger('change');
+            }
+        });
+    });
+    jSelect.on("change", function (e) {
+        Array.from(document.getElementsByClassName("check-add-recipients")).forEach(check => {
+            const namesToSelect = check.dataset.participants.trim().split(" ");
+            const namesSelected = jSelect.val().filter(item => {
+                return namesToSelect.indexOf(item) >= 0;
+            });
+            if (namesSelected.length === 0) {
+                check.indeterminate = false;
+                check.checked = false;
+            } else if (namesSelected.length === namesToSelect.length) {
+                check.indeterminate = false;
+                check.checked = true;
+            } else {
+                check.indeterminate = true;
+                check.checked = true;
+            }
+        });
+    });
+
 });

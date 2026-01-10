@@ -102,8 +102,13 @@ $(document).ready(function () {
     $('.cb-element').change(function () {
         if ($('.cb-element:checked').length === $('.cb-element').length) {
             $('#checkall').prop('checked', true);
-        } else {
+            $('#checkall').prop('indeterminate', false);
+        } else if ($('.cb-element:checked').length === 0) {
             $('#checkall').prop('checked', false);
+            $('#checkall').prop('indeterminate', false);
+        } else {
+            $('#checkall').prop('checked', true);
+            $('#checkall').prop('indeterminate', true);
         }
     });
 
