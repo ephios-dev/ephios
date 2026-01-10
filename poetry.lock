@@ -1247,14 +1247,14 @@ dev = ["m2r", "pytest", "pytest-cov", "sphinx-rtd-theme"]
 
 [[package]]
 name = "django-polymorphic"
-version = "4.4.1"
+version = "4.9.0"
 description = "Seamless polymorphic inheritance for Django models."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "django_polymorphic-4.4.1-py3-none-any.whl", hash = "sha256:89f998583dedab1c7bc7459cafb439cb0b13f63daf194eb609d720f604b7259f"},
-    {file = "django_polymorphic-4.4.1.tar.gz", hash = "sha256:b8733cf17742df2fb34141c824a29eb9e7533ea7d7139b80e9ae710218cc7046"},
+    {file = "django_polymorphic-4.9.0-py3-none-any.whl", hash = "sha256:ac13eb365d65ea5275f901011e80386c4147994f6879fa5138f7b92337ef8655"},
+    {file = "django_polymorphic-4.9.0.tar.gz", hash = "sha256:9baaba6b4db67f148c073406dc65a52f3c693d7a60f1b62153f7cd00374f48e7"},
 ]
 
 [package.dependencies]
