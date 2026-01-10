@@ -1,3 +1,5 @@
+import urllib.parse
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -103,6 +105,9 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         ctx["filter_form"] = self.filter_form
         ctx["show_local_user_management"] = show_login_form(
             self.request, IdentityProvider.objects.all()
+        )
+        ctx["mass_notification_tos"] = urllib.parse.urlencode(
+            [("to", user.as_participant().identifier) for user in self.get_queryset()]
         )
         return ctx
 

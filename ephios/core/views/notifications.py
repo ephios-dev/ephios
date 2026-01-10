@@ -197,6 +197,7 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
             initial["subject"] = _("Information on {event_title}").format(
                 event_title=self.event.title
             )
+        initial["to_participants"] = self.request.GET.getlist("to", [])
         return initial
 
     def form_valid(self, form):
