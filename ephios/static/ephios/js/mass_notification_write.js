@@ -7,7 +7,7 @@ $(document).ready(function () {
     )
 
     document.getElementById("id_to_participants").addEventListener("invalid", (event) => {
-        new bootstrap.Collapse('#collapseToParticipants').show();
+        new bootstrap.Collapse('#collapseToParticipants', {toggle: false}).show();
     });
 
     Array.from(document.getElementsByClassName("check-add-recipients")).forEach(check => {
