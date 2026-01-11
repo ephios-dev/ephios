@@ -14,6 +14,8 @@ from ephios.core.signals import register_healthchecks
 # health checks are meant to monitor the health of the application while it is running
 # in contrast there are django checks which are meant to check the configuration of the application
 
+# pylint: disable=broad-exception-raised, broad-exception-caught
+
 
 def run_healthchecks():
     for _, healthchecks in register_healthchecks.send(None):
@@ -128,26 +130,24 @@ class CronJobHealthCheck(AbstractHealthCheck):
 
     def check(self):
         last_call = LastRunPeriodicCall.get_last_call()
-        if LastRunPeriodicCall.is_stuck():
-            if last_call:
-                return (
-                    HealthCheckStatus.WARNING,
-                    mark_safe(
-                        _("Cronjob stuck, last run {last_call}.").format(
-                            last_call=naturaltime(last_call),
-                        )
-                    ),
-                )
-            else:
-                return (
-                    HealthCheckStatus.ERROR,
-                    mark_safe(_("Cronjob stuck, no last run.")),
-                )
-        else:
+        if not LastRunPeriodicCall.is_stuck():
             return (
                 HealthCheckStatus.OK,
                 mark_safe(_("Last run {last_call}.").format(last_call=naturaltime(last_call))),
             )
+        if last_call:
+            return (
+                HealthCheckStatus.WARNING,
+                mark_safe(
+                    _("Cronjob stuck, last run {last_call}.").format(
+                        last_call=naturaltime(last_call),
+                    )
+                ),
+            )
+        return (
+            HealthCheckStatus.ERROR,
+            mark_safe(_("Cronjob stuck, no last run.")),
+        )
 
 
 class DiskSpaceHealthCheck(AbstractHealthCheck):

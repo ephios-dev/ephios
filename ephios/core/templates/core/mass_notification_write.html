@@ -17,7 +17,7 @@
 {% block html_head %}
     {% if form.event %}
         <style nonce="{{ request.csp_nonce }}">
-            {% cache 900 "single_eventtype_color" event.type.pk %}
+            {% cache 900 "single_eventtype_color" form.event.type.pk %}
                 {{ form.event.type|color_css }}
             {% endcache %}
         </style>
@@ -100,7 +100,7 @@
                            {% if not form.event_confirmed %}disabled{% endif %}
                            data-participants="{% for i in form.event_confirmed %}{{ i }} {% endfor %}">
                     <label class="form-check-label" for="check-event-confirmed">
-                        {% blocktranslate count counter=form.event_confirmed|length %}
+                        {% blocktranslate trimmed count counter=form.event_confirmed|length %}
                             Include {{ counter }} confirmed participant
                         {% plural %}
                             Include {{ counter }} confirmed participants
@@ -113,7 +113,7 @@
                            {% if not form.event_requested %}disabled{% endif %}
                            data-participants="{% for i in form.event_requested %}{{ i }} {% endfor %}">
                     <label class="form-check-label" for="check-event-requested">
-                        {% blocktranslate count counter=form.event_requested|length %}
+                        {% blocktranslate trimmed count counter=form.event_requested|length %}
                             Include {{ counter }} participant with a requested participation
                         {% plural %}
                             Include {{ counter }} participants with requested participation
@@ -126,7 +126,7 @@
                            {% if not form.event_nonfeedback %}disabled{% endif %}
                            data-participants="{% for i in form.event_nonfeedback %}{{ i }} {% endfor %}">
                     <label class="form-check-label" for="check-event-nonfeedback">
-                        {% blocktranslate count counter=form.event_nonfeedback|length %}
+                        {% blocktranslate trimmed count counter=form.event_nonfeedback|length %}
                             Include {{ counter }} user that did not yet respond to the event invitation
                         {% plural %}
                             Include {{ counter }} users that did not yet respond to the event invitation

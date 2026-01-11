@@ -10,9 +10,6 @@ from ephios.core.services.notifications.types import (
     NOTIFICATION_READ_PARAM_NAME,
     ConsequenceApprovedNotification,
     ConsequenceDeniedNotification,
-    CustomEventParticipantNotification,
-    CustomEventReminderNotification,
-    NewEventNotification,
     NewProfileNotification,
     ParticipationCustomizationNotification,
     ParticipationStateChangeNotification,
@@ -34,11 +31,13 @@ def test_notification_form_render(django_app, volunteer):
 
 def test_notification_form_submit(django_app, volunteer):
     form = django_app.get(reverse("core:settings_notifications"), user=volunteer).form
-    form["ephios_new_event"] = ["ephios_backend_email"]
+    form["ephios_participation_awaits_disposition"] = ["ephios_backend_email"]
     form.submit()
     assert (
         "ephios_backend_email"
-        in volunteer.preferences["notifications__notifications"]["ephios_new_event"]
+        in volunteer.preferences["notifications__notifications"][
+            "ephios_participation_awaits_disposition"
+        ]
     )
 
 
@@ -46,16 +45,6 @@ def test_user_notification_sending(volunteer):
     NewProfileNotification.send(volunteer)
     ProfileUpdateNotification.send(volunteer)
     assert Notification.objects.count() == 2
-    call_command("send_notifications")
-    assert not Notification.objects.filter(processing_completed=False).exists()
-
-
-def test_event_notification_sending(event, volunteer):
-    NewEventNotification.send(event)
-    CustomEventReminderNotification.send(event)
-    assert Notification.objects.count() == 2 * len(
-        get_users_with_perms(event, only_with_perms_in=["view_event"])
-    )
     call_command("send_notifications")
     assert not Notification.objects.filter(processing_completed=False).exists()
 
@@ -178,17 +167,6 @@ def test_consequence_notifications(volunteer, workinghours_consequence):
     assert Notification.objects.count() == 2
     call_command("send_notifications")
     assert not Notification.objects.filter(processing_completed=False).exists()
-
-
-def test_responsibles_receive_custom_notification(django_app, qualified_volunteer, planner, event):
-    participation = LocalParticipation.objects.create(
-        shift=event.shifts.first(),
-        user=qualified_volunteer,
-        state=AbstractParticipation.States.CONFIRMED,
-    )
-    CustomEventParticipantNotification.send(event, "test notification")
-    assert planner.has_perm("change_event", event)
-    assert Notification.objects.get(user=planner)
 
 
 def test_middleware_marks_notification_as_read(django_app, qualified_volunteer, planner, event):
