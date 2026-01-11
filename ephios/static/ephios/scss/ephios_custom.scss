@@ -355,3 +355,16 @@ $shift-box-target: lighten($primary, 20%);
 .comment-visibility-icon {
   min-width: 1.5rem;
 }
+
+// collapsable card
+.card-header[data-bs-toggle="collapse"] a {
+    text-decoration: none;
+  }
+.card-header[data-bs-toggle="collapse"] {
+  transition: border-bottom-width 0.2s linear;
+}
+.card-header[data-bs-toggle="collapse"].collapsed {
+    border-bottom-width: 0;
+    background-color: transparent;
+}
+

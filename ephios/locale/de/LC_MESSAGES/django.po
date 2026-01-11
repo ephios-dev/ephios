@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-11 17:42+0100\n"
-"PO-Revision-Date: 2026-01-11 17:55+0100\n"
+"POT-Creation-Date: 2026-01-11 19:08+0100\n"
+"PO-Revision-Date: 2026-01-11 19:09+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -142,7 +142,7 @@ msgstr "Speichern"
 #: ephios/core/templates/core/disposition/disposition.html:124
 #: ephios/core/templates/core/event_form.html:68
 #: ephios/core/templates/core/eventtype_form.html:21
-#: ephios/core/templates/core/mass_notification_write.html:151
+#: ephios/core/templates/core/mass_notification_write.html:135
 #: ephios/core/templates/core/userprofile_form.html:152
 #: ephios/plugins/questionnaires/templates/questionnaires/question_form.html:91
 #: ephios/plugins/questionnaires/templates/questionnaires/savedanswer_form.html:28
@@ -2093,7 +2093,7 @@ msgstr "Änderungsverlauf"
 #: ephios/core/templates/core/event_detail.html:114
 #: ephios/core/templates/core/fragments/event_list_list_mode.html:121
 #: ephios/core/templates/core/mails/new_event.html:19
-#: ephios/core/templates/core/mass_notification_write.html:73
+#: ephios/core/templates/core/mass_notification_write.html:57
 #: ephios/core/templates/core/workinghours_list.html:18
 #: ephios/plugins/federation/templates/federation/external_event_list.html:66
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:14
@@ -2523,46 +2523,26 @@ msgstr "Massenbenachrichtigung"
 msgid "Mass Notification"
 msgstr "Massenbenachrichtigung"
 
-#: ephios/core/templates/core/mass_notification_write.html:36
-msgid ""
-"Use this form to craft and send a mass notification to your selected "
-"recipients. You can specify the message subject and body and adjust the "
-"recipients to your needs."
-msgstr ""
-"Mit diesem Formular können Sie eine Nachricht an die ausgewählten Empfänger "
-"versenden. "
-
-#: ephios/core/templates/core/mass_notification_write.html:41
-msgid ""
-"Use this form to craft and send a mass notification to your selected "
-"recipients. You can specify the message subject and body. Recipients can be "
-"chosen based on their attendance status. The list of recipients can be "
-"tweaked to your needs."
-msgstr ""
-"Mit diesem Formular können Sie eine Nachricht an mehrere Nutzer versenden. "
-"Neben Betreff und Inhalt können Empfänger basierend auf ihrem "
-"Teilnahmestatus in der Veranstaltung gewählt werden."
-
-#: ephios/core/templates/core/mass_notification_write.html:91
+#: ephios/core/templates/core/mass_notification_write.html:75
 #: ephios/core/views/notifications.py:64
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: ephios/core/templates/core/mass_notification_write.html:103
+#: ephios/core/templates/core/mass_notification_write.html:87
 #, python-format
 msgid "Include %(counter)s confirmed participant"
 msgid_plural "Include %(counter)s confirmed participants"
 msgstr[0] "An %(counter)s bestätigten Teilnehmenden senden"
 msgstr[1] "An %(counter)s bestätigte Teilnehmende senden"
 
-#: ephios/core/templates/core/mass_notification_write.html:116
+#: ephios/core/templates/core/mass_notification_write.html:100
 #, python-format
 msgid "Include %(counter)s participant with a requested participation"
 msgid_plural "Include %(counter)s participants with requested participation"
 msgstr[0] "An %(counter)s Teilnehmenden mit angefragter Teilnahme senden"
 msgstr[1] "An %(counter)s Teilnehmende mit angefragter Teilnahme senden"
 
-#: ephios/core/templates/core/mass_notification_write.html:129
+#: ephios/core/templates/core/mass_notification_write.html:113
 #, python-format
 msgid ""
 "Include %(counter)s user that did not yet respond to the event invitation"
@@ -2575,11 +2555,11 @@ msgstr[1] ""
 "An %(counter)s Benutzer senden, die noch nicht auf die Einladung zur "
 "Veranstaltung geantwortet haben"
 
-#: ephios/core/templates/core/mass_notification_write.html:143
-msgid "Show recipient list"
-msgstr "Empfängerliste anzeigen"
+#: ephios/core/templates/core/mass_notification_write.html:125
+msgid "Recipient list"
+msgstr "Liste der Empfänger"
 
-#: ephios/core/templates/core/mass_notification_write.html:150
+#: ephios/core/templates/core/mass_notification_write.html:134
 msgid "Send"
 msgstr "Senden"
 
@@ -5508,6 +5488,27 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid ""
+#~ "Use this form to craft and send a mass notification to your selected "
+#~ "recipients. You can specify the message subject and body and adjust the "
+#~ "recipients to your needs."
+#~ msgstr ""
+#~ "Mit diesem Formular können Sie eine Nachricht an die ausgewählten "
+#~ "Empfänger versenden. "
+
+#~ msgid ""
+#~ "Use this form to craft and send a mass notification to your selected "
+#~ "recipients. You can specify the message subject and body. Recipients can "
+#~ "be chosen based on their attendance status. The list of recipients can be "
+#~ "tweaked to your needs."
+#~ msgstr ""
+#~ "Mit diesem Formular können Sie eine Nachricht an mehrere Nutzer "
+#~ "versenden. Neben Betreff und Inhalt können Empfänger basierend auf ihrem "
+#~ "Teilnahmestatus in der Veranstaltung gewählt werden."
+
+#~ msgid "Show recipient list"
+#~ msgstr "Empfängerliste anzeigen"
 
 #~ msgid "Send notification about new event to everyone"
 #~ msgstr "Alle Benutzer über die neue Veranstaltung benachrichtigen"
