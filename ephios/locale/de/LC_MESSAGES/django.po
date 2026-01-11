@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-11 23:54+0200\n"
+"POT-Creation-Date: 2026-01-11 17:22+0100\n"
 "PO-Revision-Date: 2025-09-04 22:35+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -123,7 +123,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/eventtype_form.html:20
 #: ephios/core/templates/core/identityprovider_form.html:16
 #: ephios/core/templates/core/settings/settings_instance.html:10
-#: ephios/core/templates/core/settings/settings_notifications.html:42
+#: ephios/core/templates/core/settings/settings_notifications.html:37
 #: ephios/core/templates/core/settings/settings_personal_data.html:51
 #: ephios/core/templates/core/shift_form.html:72
 #: ephios/core/templates/core/userprofile_form.html:150
@@ -1288,7 +1288,7 @@ msgstr "Anlass"
 #: ephios/core/templates/core/userprofile_list.html:96
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/templates/base.html:139
+#: ephios/templates/base.html:144
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
@@ -1506,7 +1506,7 @@ msgid "Qualifications"
 msgstr "Qualifikationen"
 
 #: ephios/core/pdf.py:135 ephios/core/pdf.py:182
-#: ephios/core/templates/core/mails/new_event.html:28
+#: ephios/core/templates/core/mails/new_event.html:29
 #: ephios/core/templates/core/shift_form.html:104
 msgid "Location"
 msgstr "Ort"
@@ -1686,9 +1686,9 @@ msgstr ""
 #: ephios/core/services/notifications/types.py:388
 #: ephios/core/services/notifications/types.py:553
 #: ephios/core/services/notifications/types.py:624
-#: ephios/core/templates/core/mails/new_event.html:35
+#: ephios/core/templates/core/mails/new_event.html:36
 #: ephios/core/templates/core/userprofile_workinghours.html:47
-#: ephios/plugins/guests/notifications.py:33
+#: ephios/plugins/guests/notifications.py:37
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
@@ -1882,7 +1882,7 @@ msgstr "Ihr Passwort wurde geändert"
 #: ephios/core/signals.py:325
 #: ephios/core/templates/core/settings/settings_base.html:6
 #: ephios/core/templates/core/settings/settings_base.html:11
-#: ephios/templates/base.html:143
+#: ephios/templates/base.html:148
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -2153,7 +2153,7 @@ msgstr "Änderungsverlauf"
 
 #: ephios/core/templates/core/event_detail.html:114
 #: ephios/core/templates/core/fragments/event_list_list_mode.html:121
-#: ephios/core/templates/core/mails/new_event.html:18
+#: ephios/core/templates/core/mails/new_event.html:19
 #: ephios/core/templates/core/workinghours_list.html:18
 #: ephios/plugins/federation/templates/federation/external_event_list.html:66
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:14
@@ -2197,7 +2197,7 @@ msgstr "Weiter"
 
 #: ephios/core/templates/core/event_list.html:11
 #: ephios/core/templates/core/event_list.html:22 ephios/core/views/pwa.py:67
-#: ephios/templates/base.html:99
+#: ephios/templates/base.html:104
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -2415,7 +2415,7 @@ msgstr "Benutzer bearbeiten"
 msgid "change permissions"
 msgstr "Berechtigungen ändern"
 
-#: ephios/core/templates/core/home.html:12 ephios/templates/base.html:95
+#: ephios/core/templates/core/home.html:12 ephios/templates/base.html:100
 msgid "Home"
 msgstr "Startseite"
 
@@ -2541,7 +2541,7 @@ msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
 #: ephios/core/templates/core/mails/base.html:152 ephios/templates/500.html:54
-#: ephios/templates/base.html:182
+#: ephios/templates/base.html:187
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2581,8 +2581,8 @@ msgstr "Andere Benachrichtigungen anzeigen"
 
 #: ephios/core/templates/core/notification_list.html:6
 #: ephios/core/templates/core/notification_list.html:11
-#: ephios/core/templates/core/settings/settings_notifications.html:12
-#: ephios/core/views/settings.py:38 ephios/templates/base.html:141
+#: ephios/core/templates/core/settings/settings_notifications.html:7
+#: ephios/core/views/settings.py:38 ephios/templates/base.html:146
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2656,21 +2656,22 @@ msgstr "Unbekannt"
 msgid "Learn more"
 msgstr "Mehr erfahren"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:15
+#: ephios/core/templates/core/settings/settings_notifications.html:10
 msgid "Activate push notifications on each device you want to receive them."
 msgstr ""
 "Aktiveren Sie Push-Benachrichtigungen auf jedem Gerät, auf dem Sie diese "
 "empfangen wollen."
 
-#: ephios/core/templates/core/settings/settings_notifications.html:21
+#: ephios/core/templates/core/settings/settings_notifications.html:16
+#: ephios/templates/base.html:277
 msgid "Subscribe to Push Messaging"
 msgstr "Push-Benachrichtigungen abonnieren"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:25
+#: ephios/core/templates/core/settings/settings_notifications.html:20
 msgid "Notification occasions"
 msgstr "Benachrichtigungsanlässe"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:27
+#: ephios/core/templates/core/settings/settings_notifications.html:22
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
@@ -2756,7 +2757,7 @@ msgid "Save event"
 msgstr "Veranstaltung speichern"
 
 #: ephios/core/templates/core/shift_form.html:103
-#: ephios/core/views/workinghour.py:50 ephios/core/views/workinghour.py:55
+#: ephios/core/views/workinghour.py:31 ephios/core/views/workinghour.py:36
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
@@ -3030,27 +3031,31 @@ msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
 
-#: ephios/core/views/auth.py:58
+#: ephios/core/views/auth.py:57
 msgid "Authentication failed."
 msgstr "Anmeldung fehlgeschlagen."
 
-#: ephios/core/views/auth.py:108
+#: ephios/core/views/auth.py:76
+msgid "The user account is deactivated."
+msgstr "Der Benutzeraccount ist deaktiviert."
+
+#: ephios/core/views/auth.py:111
 #: ephios/templates/registration/logged_out.html:9
 msgid "Logged out successfully."
 msgstr "Erfolgreich abgemeldet."
 
-#: ephios/core/views/auth.py:161 ephios/core/views/auth.py:210
+#: ephios/core/views/auth.py:164 ephios/core/views/auth.py:213
 msgid "Identity provider saved."
 msgstr "Identitätsprovider gespeichert."
 
-#: ephios/core/views/auth.py:181
+#: ephios/core/views/auth.py:184
 msgid ""
 "Successfully fetched OIDC configuration. Please fill in the remaining fields."
 msgstr ""
 "OIDC-Konfiguration erfolgreich geladen. Bitte füllen Sie die restlichen "
 "Felder aus."
 
-#: ephios/core/views/auth.py:188
+#: ephios/core/views/auth.py:191
 msgid ""
 "Could not fetch OIDC configuration from the given URL. Please configure the "
 "client manually below."
@@ -3198,23 +3203,23 @@ msgstr "Die Schicht wurde gelöscht."
 msgid "Shift copied successfully."
 msgstr "Schicht erfolgreich kopiert."
 
-#: ephios/core/views/workinghour.py:47
+#: ephios/core/views/workinghour.py:28
 msgid "From"
 msgstr "Von"
 
-#: ephios/core/views/workinghour.py:48
+#: ephios/core/views/workinghour.py:29
 msgid "To"
 msgstr "Bis"
 
-#: ephios/core/views/workinghour.py:171
+#: ephios/core/views/workinghour.py:142
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: ephios/core/views/workinghour.py:189
+#: ephios/core/views/workinghour.py:191
 msgid "Working hours have been added."
 msgstr "Arbeitsstunden wurden hinzugefügt."
 
-#: ephios/core/views/workinghour.py:218
+#: ephios/core/views/workinghour.py:215
 msgid "Working hours have been deleted."
 msgstr "Arbeitsstunden wurden gelöscht."
 
@@ -4469,21 +4474,23 @@ msgstr "Gastteilnehmahme"
 msgid "guest participations"
 msgstr "Gastteilnehmahmen"
 
-#: ephios/plugins/guests/notifications.py:12
+#: ephios/plugins/guests/notifications.py:13
 msgid "A guest user has signed up"
 msgstr "Ein Gast hat sich angemeldet"
 
-#: ephios/plugins/guests/notifications.py:21
+#: ephios/plugins/guests/notifications.py:22
 #, python-brace-format
 msgid "You have signed up for {event}"
 msgstr "Sie haben sich für {event} angemeldet."
 
-#: ephios/plugins/guests/notifications.py:26
+#: ephios/plugins/guests/notifications.py:27
 #, python-brace-format
 msgid ""
 "You have signed up for {event} at {platform}. You can use the link below to "
 "make changes to your participation."
-msgstr "Sie haben sich für {event} bei {platform} angemeldet. Sie können den Link unten benutzen, um Ihre Teilnahme anzupassen."
+msgstr ""
+"Sie haben sich für {event} bei {platform} angemeldet. Sie können den Link "
+"unten benutzen, um Ihre Teilnahme anzupassen."
 
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:7
 #: ephios/plugins/guests/templates/guests/guestuser_form.html:16
@@ -4502,7 +4509,10 @@ msgstr "Melden Sie sich ab, um sich als Gast zu registrieren."
 msgid ""
 "You already registered as a guest for this event. We sent you an email with "
 "a link that you can use to change your participation."
-msgstr "Sie sind bereits als Gast für diese Veranstaltung registriert. Wir haben Ihnen eine E-Mail mit einem Link geschickt, über den Sie Ihre Teilnahme ändern können."
+msgstr ""
+"Sie sind bereits als Gast für diese Veranstaltung registriert. Wir haben "
+"Ihnen eine E-Mail mit einem Link geschickt, über den Sie Ihre Teilnahme "
+"ändern können."
 
 #: ephios/plugins/guests/views.py:98
 msgid "Save the URL of this page to access this site later."
@@ -4796,7 +4806,7 @@ msgstr[0] "Einem Nutzer wurde '{qualification}' zugewiesen."
 msgstr[1] "{count} Nutzern wurde '{qualification}' zugewiesen."
 
 #: ephios/plugins/questionnaires/apps.py:10
-#: ephios/plugins/questionnaires/models.py:223
+#: ephios/plugins/questionnaires/models.py:221
 msgid "Questionnaires"
 msgstr "Fragebögen"
 
@@ -4809,7 +4819,7 @@ msgid "Choice name"
 msgstr "Name der Auswahlmöglichkeit"
 
 #: ephios/plugins/questionnaires/forms.py:88
-#: ephios/plugins/questionnaires/models.py:222
+#: ephios/plugins/questionnaires/models.py:220
 msgid "Questionnaire"
 msgstr "Fragebogen"
 
@@ -4889,23 +4899,23 @@ msgstr "Fragen"
 msgid "Answer can be saved to your profile."
 msgstr "Antworten können in Ihrem Profil gespeichert werden."
 
-#: ephios/plugins/questionnaires/models.py:196
-#: ephios/plugins/questionnaires/models.py:241
-#: ephios/plugins/questionnaires/models.py:244
-#: ephios/plugins/questionnaires/models.py:259
+#: ephios/plugins/questionnaires/models.py:194
+#: ephios/plugins/questionnaires/models.py:239
+#: ephios/plugins/questionnaires/models.py:242
+#: ephios/plugins/questionnaires/models.py:257
 #: ephios/plugins/questionnaires/templates/questionnaires/aggregate_answers.html:33
 msgid "Answer"
 msgstr "Antwort"
 
-#: ephios/plugins/questionnaires/models.py:245
+#: ephios/plugins/questionnaires/models.py:243
 msgid "Answers"
 msgstr "Antworten"
 
-#: ephios/plugins/questionnaires/models.py:262
+#: ephios/plugins/questionnaires/models.py:260
 msgid "Saved answer"
 msgstr "Gespeicherte Antwort"
 
-#: ephios/plugins/questionnaires/models.py:263
+#: ephios/plugins/questionnaires/models.py:261
 #: ephios/plugins/questionnaires/signals.py:50
 msgid "Saved answers"
 msgstr "Gespeicherte Antworten"
@@ -5314,9 +5324,62 @@ msgstr ""
 msgid "Return home"
 msgstr "Zurück zur Startseite"
 
-#: ephios/templates/base.html:145
+#: ephios/templates/base.html:150
 msgid "Logout"
 msgstr "Abmelden"
+
+#: ephios/templates/base.html:198 ephios/templates/base.html:212
+msgid "Install %(platform_name)s app"
+msgstr "%(platform_name)s-App installieren"
+
+#: ephios/templates/base.html:204 ephios/templates/base.html:218
+msgid ""
+"You can install %(platform_name)s on your device and use it like any other "
+"app!"
+msgstr ""
+"Sie können %(platform_name)s auf ihrem Gerät installieren und wie jede andere App "
+"benutzen!"
+
+#: ephios/templates/base.html:206
+msgid "Simply click the button below to continue."
+msgstr "Drücken Sie den folgenden Button um fortzufahren."
+
+#: ephios/templates/base.html:207
+#, python-format
+msgid "Install %(platform_name)s"
+msgstr "%(platform_name)s installieren"
+
+#: ephios/templates/base.html:220
+msgid "Simply follow the steps below."
+msgstr "Folgen Sie einfach den Anweisungen unten."
+
+#: ephios/templates/base.html:231
+msgid "Open in your main browser"
+msgstr "Öffnen Sie die Seite in ihrem Hauptbrowser"
+
+#: ephios/templates/base.html:243
+msgid "Press More if no Share icon"
+msgstr "Drücken Sie auf Mehr, falls kein Teilen-Icon angezeigt wird"
+
+#: ephios/templates/base.html:253
+msgid "Press Share in Navigation bar"
+msgstr "Drücken Sie auf Teilen"
+
+#: ephios/templates/base.html:263
+msgid "Scroll down to &quot;Add to Home Screen&quot;"
+msgstr "Drücken Sie auf &quot;Zu Home-Bildschirm hinzufügen&quot;"
+
+#: ephios/templates/base.html:270
+msgid "Activate notifications"
+msgstr "Benachrichtigungen aktivieren"
+
+#: ephios/templates/base.html:274
+msgid ""
+"%(platform_name)s can send you push notifications so that you stay up to "
+"date. Do you want to activate them?\""
+msgstr ""
+"%(platform_name)s kann Ihnen Push-Benachrichtigungen senden, damit Sie auf dem "
+"aktuellen Stand bleiben. Möchten Sie Benachrichtigungen aktivieren?"
 
 #: ephios/templates/offline.html:10
 msgid "No connection"
