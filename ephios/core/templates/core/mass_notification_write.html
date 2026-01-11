@@ -31,22 +31,6 @@
             {% translate "Mass Notification" %}
         </h1>
 
-        <div class="alert alert-info">
-            {% if form.event %}
-                {% blocktranslate trimmed %}
-                    Use this form to craft and send a mass notification to your selected recipients.
-                    You can specify the message subject and body and adjust the recipients to your needs.
-                {% endblocktranslate %}
-            {% else %}
-                {% blocktranslate trimmed %}
-                    Use this form to craft and send a mass notification to your selected recipients.
-                    You can specify the message subject and body.
-                    Recipients can be chosen based on their attendance status. The list of recipients can
-                    be tweaked to your needs.
-                {% endblocktranslate %}
-            {% endif %}
-        </div>
-
         {% if form.event %}
             <div class="card my-3">
                 <div class="card-body pb-1">
@@ -135,18 +119,18 @@
                 </div>
             </fieldset>
         {% endif %}
-        {% if form.event %}
-            <p>
-                <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseToParticipants" aria-expanded="false"
-                        aria-controls="collapseToParticipants">
-                    {% translate "Show recipient list" %}
-                </button>
-            </p>
-        {% endif %}
-        <div class="collapse {% if not form.event %}show{% endif %}" id="collapseToParticipants">
-            {% crispy_field form.to_participants show_labels=False %}
+
+        <div class="card mb-3">
+            <div class="card-header{% if form.event %} collapsed{% endif %}" data-bs-toggle="collapse" data-bs-target="#collapseToParticipants">
+                <a href="#">{% translate "Recipient list" %}</a>
+            </div>
+            <div id="collapseToParticipants" class="collapse{% if not form.event %} show{% endif %}">
+                <div class="card-body">
+                    {% crispy_field form.to_participants show_labels=False %}
+                </div>
+            </div>
         </div>
+
         <button class="btn btn-primary float-end" type="submit">{% translate "Send" %}</button>
         <a role="button" class="btn btn-secondary mt-1" href="{{ cancel_url }}">{% translate "Cancel" %}</a>
     </form>

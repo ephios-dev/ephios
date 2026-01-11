@@ -84,6 +84,8 @@ class MassNotificationForm(forms.Form):
                 event_start=date_format(
                     localtime(self.event.get_start_time()), "SHORT_DATETIME_FORMAT"
                 ),
+            ) + str(
+                self.request.user
             )
             self.fields["to_participants"].help_text = _(
                 "You can only select users that have permission to view the event."
