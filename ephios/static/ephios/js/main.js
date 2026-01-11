@@ -183,19 +183,6 @@ $(document).ready(function () {
       }
     });
 
-    // The browser fires the appinstalled event after the PWA has been installed.
-    // We use this opportunity to ask the user if they want to receive notifications
-    window.addEventListener('appinstalled', () => {
-      pwaAndroidBsOffcanvas.hide();
-      // isPushEnabled is set by webpush.js from django-webpush
-      if (typeof isPushEnabled !== undefined && !isPushEnabled) {
-          notificationBsOffcanvas.show();
-          document.getElementById("webpush-subscribe-button")
-              .addEventListener("click", _ => notificationBsOffcanvas.hide())
-      }
-      deferredInstallPrompt = null;
-    });
-
     // When the user clicks on the install button in our PWA install prompt, we can used the saved prompt
     // from the browser event to actually trigger the installation
     const buttonInstall = document.getElementById("pwaInstall");
