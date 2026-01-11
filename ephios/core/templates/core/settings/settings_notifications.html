@@ -2,11 +2,6 @@
 {% load crispy_forms_filters %}
 {% load utils %}
 {% load i18n %}
-{% load webpush_notifications %}
-
-{% block html_head %}
-    {% webpush_header %}
-{% endblock %}
 
 {% block settings_content %}
     <h3 class="mt-3">{% translate "Notifications" %}</h3>

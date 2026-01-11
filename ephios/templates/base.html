@@ -15,6 +15,9 @@
         <link rel="shortcut icon" type="image/x-icon" href="{% static "appicon-svg-prod.svg"|as_brand_static_path %}">
         <link rel="manifest" href="/manifest.json">
 
+        <meta name="service-worker-js" content="{% url 'service_worker' %}">
+        <meta name="django-webpush-vapid-key" content="{{ VAPID_PUBLIC_KEY }}">
+
     <!-- Add to homescreen for Chrome on Android -->
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="application-name" content="{{ platform_name }}">
@@ -57,6 +60,7 @@
             {% else %}
                 <script type="text/javascript" src="{% static "vuejs/vue.global.prod.js" %}"></script>
             {% endif %}
+            <script id="webpush-js" type="text/javascript" src="{% static 'webpush/webpush.js' %}"></script>
             <script type="text/javascript" src="{% static "jquery/js/jquery-3.7.1.min.js" %}"></script>
             <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
             <script type="text/javascript" src="{% static "select2/js/select2.js" %}"></script>
@@ -67,13 +71,12 @@
             <script type="text/javascript" src="{% static "ephios/js/main.js" %}"></script>
             {% block javascript %}{% endblock %}
         {% endcompress %}
-        {% webpush_header %}
         {% collect_insert_html_signal "head" %}
         {% block html_head %}
         {% endblock %}
     </head>
 
-    <body data-pwa-network="online">
+    <body data-pwa-network="online" data-user-is-authenticated="{{ request.user.is_authenticated }}">
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
                 <div class="container">
