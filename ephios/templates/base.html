@@ -194,21 +194,30 @@
             </footer>
             <div id="pwaAndroidOffcanvas" class="offcanvas offcanvas-bottom">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="pwaOffcanvasLabel">{% translate "Install ephios app" %}</h5>
+                    <h5 class="offcanvas-title" id="pwaOffcanvasLabel">
+                        {% blocktranslate trimmed with platform_name=platform_name %}
+                            Install {{ platform_name }} app
+                        {% endblocktranslate %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <p class="pb-2">{% translate "You can install ephios on your device and use it like any other app!" %} {% translate "Simply click the button below to continue." %}</p>
-                    <button id="pwaInstall" class="btn btn-primary">Install ephios</button>
+                    <p class="pb-2">{% blocktranslate trimmed with platform_name=platform_name %}
+                        You can install {{ platform_name }} on your device and use it like any other app!
+                    {% endblocktranslate %} {% translate "Simply click the button below to continue." %}</p>
+                    <button id="pwaInstall" class="btn btn-primary">{% blocktranslate with platform_name=platform_name %}Install {{ platform_name }}{% endblocktranslate %}</button>
                 </div>
             </div>
             <div id="pwaAppleOffcanvas" class="offcanvas offcanvas-bottom">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="pwaOffcanvasLabel">{% translate "Install ephios app" %}</h5>
+                    <h5 class="offcanvas-title" id="pwaOffcanvasLabel">{% blocktranslate trimmed with platform_name=platform_name %}
+                        Install {{ platform_name }} app
+                    {% endblocktranslate %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <p class="pb-2">{% translate "You can install ephios on your device and use it like any other app!" %} {%translate "Simply follow the steps below." %}</p>
+                    <p class="pb-2">{% blocktranslate trimmed with platform_name=platform_name %}
+                        You can install {{ platform_name }} on your device and use it like any other app!
+                    {% endblocktranslate %} {%translate "Simply follow the steps below." %}</p>
                     <hr>
                     <div class="container">
                         <div class="row align-items-center">
@@ -262,7 +271,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <p>{% translate "ephios can send you push notifications so that you stay up to date. Do you want to activate them?" %}</p>
+                    <p>{% blocktranslate trimmed with platform_name=platform_name %}{{ platform_name }} can send you push notifications so that you stay up to date. Do you want to activate them?" {% endblocktranslate %}</p>
                     <button id="webpush-subscribe-button" class="btn btn-sm btn-primary"
                             data-url="{% url "save_webpush_info" %}">
                         {% translate "Subscribe to Push Messaging" %}
