@@ -93,12 +93,11 @@ class MassNotificationForm(forms.Form):
         choices = {}
         self.participants_by_identifier = {}
 
+        # without event context, a user can send notifications to profiles they can see
         user_qs = get_objects_for_user(user=self.request.user, perms=["core.view_userprofile"])
         if self.event:
-            # users must also be able to see the event
-            user_qs = user_qs.filter(
-                pk__in=get_users_with_perms(self.event, only_with_perms_in=["view_event"])
-            )
+            # if we are planning for an event, we can reach users that can view the event
+            user_qs = get_users_with_perms(self.event, only_with_perms_in=["view_event"])
         for user in user_qs:
             participant = user.as_participant()
             choices[participant.identifier] = str(participant)
@@ -162,11 +161,6 @@ class MassNotificationForm(forms.Form):
 
 
 class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
-    """
-    - [] next url parameter, get from target object?
-    - [] permission check based on target object?
-    """
-
     form_class = MassNotificationForm
     template_name = "core/mass_notification_write.html"
 

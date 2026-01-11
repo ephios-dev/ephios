@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 # source:
 # https://github.com/pretix/pretix/blob/a08272571b7b67a3f41e02cf05af8183e3f94a02/src/pretix/base/services/mail.py
 
+# pylint: disable = logging-not-lazy, missing-timeout, bare-except
+
 
 class CustomEmail(EmailMultiAlternatives):
     def _create_mime_attachment(self, content, mimetype):
@@ -31,7 +33,7 @@ class CustomEmail(EmailMultiAlternatives):
         If the mimetype is message/rfc822, content may be an
         email.Message or EmailMessage object, as well as a str.
         """
-        basetype, subtype = mimetype.split("/", 1)
+        basetype, __ = mimetype.split("/", 1)
         if basetype == "multipart" and isinstance(content, SafeMIMEMultipart):
             return content
         return super()._create_mime_attachment(content, mimetype)
@@ -50,8 +52,7 @@ def replace_images_with_cid_paths(body_html):
                 cid_id = "image_%s" % (len(cid_images) - 1)
             image["src"] = "cid:%s" % cid_id
         return str(email), cid_images
-    else:
-        return body_html, []
+    return body_html, []
 
 
 def attach_cid_images(msg, cid_images, verify_ssl=True):
