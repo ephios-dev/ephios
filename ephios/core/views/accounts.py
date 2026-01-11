@@ -106,9 +106,12 @@ class UserProfileListView(CustomPermissionRequiredMixin, ListView):
         ctx["show_local_user_management"] = show_login_form(
             self.request, IdentityProvider.objects.all()
         )
-        ctx["mass_notification_tos"] = urllib.parse.urlencode(
-            [("to", user.as_participant().identifier) for user in self.get_queryset()]
-        )
+        if len(users := self.get_queryset()) <= 200:
+            # as we encode every participant identifier in the URL, we must make sure the URL doesn't get too long
+            # URLs can be 2000 characters long, so with <10 characters per recipient, 200 is a good bound.
+            ctx["mass_notification_tos"] = urllib.parse.urlencode(
+                [("to", user.as_participant().identifier) for user in users]
+            )
         return ctx
 
     def get_queryset(self):

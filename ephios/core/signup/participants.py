@@ -91,7 +91,7 @@ class LocalUserParticipant(AbstractParticipant):
 
     @property
     def identifier(self):
-        return f"localuser-{self.user.pk}"
+        return f"user-{self.user.pk}"
 
     def new_participation(self, shift):
         return LocalParticipation(shift=shift, user=self.user)

@@ -36,10 +36,13 @@
                 <a class="btn btn-sm btn-secondary" href="{% url "core:userprofile_create" %}"><span
                     class="fa fa-plus"></span> {% translate "Add user" %}</a>
             {% endif %}
-            <a class="btn btn-sm btn-secondary" href="{% url "core:notification_mass" %}?{{ mass_notification_tos }}">
-                <span class="fa fa-envelope"></span>
-                {% translate "Send notifications" %}
-            </a>
+            {% if mass_notification_tos %}
+                <a class="btn btn-sm btn-secondary"
+                   href="{% url "core:notification_mass" %}?{{ mass_notification_tos }}">
+                    <span class="fa fa-envelope"></span>
+                    {% translate "Send message to displayed accounts" %}
+                </a>
+            {% endif %}
         </div>
     </form>
 
