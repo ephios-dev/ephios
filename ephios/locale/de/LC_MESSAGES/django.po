@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-10 23:20+0100\n"
+"POT-Creation-Date: 2026-01-11 17:22+0100\n"
 "PO-Revision-Date: 2025-09-04 22:35+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
@@ -123,7 +123,7 @@ msgstr "API Token hinzufügen"
 #: ephios/core/templates/core/eventtype_form.html:20
 #: ephios/core/templates/core/identityprovider_form.html:16
 #: ephios/core/templates/core/settings/settings_instance.html:10
-#: ephios/core/templates/core/settings/settings_notifications.html:42
+#: ephios/core/templates/core/settings/settings_notifications.html:37
 #: ephios/core/templates/core/settings/settings_personal_data.html:51
 #: ephios/core/templates/core/shift_form.html:72
 #: ephios/core/templates/core/userprofile_form.html:150
@@ -1288,7 +1288,7 @@ msgstr "Anlass"
 #: ephios/core/templates/core/userprofile_list.html:96
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
-#: ephios/templates/base.html:141
+#: ephios/templates/base.html:144
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
@@ -1882,7 +1882,7 @@ msgstr "Ihr Passwort wurde geändert"
 #: ephios/core/signals.py:325
 #: ephios/core/templates/core/settings/settings_base.html:6
 #: ephios/core/templates/core/settings/settings_base.html:11
-#: ephios/templates/base.html:145
+#: ephios/templates/base.html:148
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -2197,7 +2197,7 @@ msgstr "Weiter"
 
 #: ephios/core/templates/core/event_list.html:11
 #: ephios/core/templates/core/event_list.html:22 ephios/core/views/pwa.py:67
-#: ephios/templates/base.html:101
+#: ephios/templates/base.html:104
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -2415,7 +2415,7 @@ msgstr "Benutzer bearbeiten"
 msgid "change permissions"
 msgstr "Berechtigungen ändern"
 
-#: ephios/core/templates/core/home.html:12 ephios/templates/base.html:97
+#: ephios/core/templates/core/home.html:12 ephios/templates/base.html:100
 msgid "Home"
 msgstr "Startseite"
 
@@ -2541,7 +2541,7 @@ msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
 #: ephios/core/templates/core/mails/base.html:152 ephios/templates/500.html:54
-#: ephios/templates/base.html:184
+#: ephios/templates/base.html:187
 #, python-format
 msgid "powered by %(brand)s"
 msgstr "powered by %(brand)s"
@@ -2581,8 +2581,8 @@ msgstr "Andere Benachrichtigungen anzeigen"
 
 #: ephios/core/templates/core/notification_list.html:6
 #: ephios/core/templates/core/notification_list.html:11
-#: ephios/core/templates/core/settings/settings_notifications.html:12
-#: ephios/core/views/settings.py:38 ephios/templates/base.html:143
+#: ephios/core/templates/core/settings/settings_notifications.html:7
+#: ephios/core/views/settings.py:38 ephios/templates/base.html:146
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2656,22 +2656,22 @@ msgstr "Unbekannt"
 msgid "Learn more"
 msgstr "Mehr erfahren"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:15
+#: ephios/core/templates/core/settings/settings_notifications.html:10
 msgid "Activate push notifications on each device you want to receive them."
 msgstr ""
 "Aktiveren Sie Push-Benachrichtigungen auf jedem Gerät, auf dem Sie diese "
 "empfangen wollen."
 
-#: ephios/core/templates/core/settings/settings_notifications.html:21
-#: ephios/templates/base.html:265
+#: ephios/core/templates/core/settings/settings_notifications.html:16
+#: ephios/templates/base.html:277
 msgid "Subscribe to Push Messaging"
 msgstr "Push-Benachrichtigungen abonnieren"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:25
+#: ephios/core/templates/core/settings/settings_notifications.html:20
 msgid "Notification occasions"
 msgstr "Benachrichtigungsanlässe"
 
-#: ephios/core/templates/core/settings/settings_notifications.html:27
+#: ephios/core/templates/core/settings/settings_notifications.html:22
 msgid ""
 "You can configure whether you want to receive notifications for the "
 "following occasions:"
@@ -5324,53 +5324,62 @@ msgstr ""
 msgid "Return home"
 msgstr "Zurück zur Startseite"
 
-#: ephios/templates/base.html:147
+#: ephios/templates/base.html:150
 msgid "Logout"
 msgstr "Abmelden"
 
-#: ephios/templates/base.html:194 ephios/templates/base.html:204
-msgid "Install ephios app"
-msgstr "ephios-App installieren"
+#: ephios/templates/base.html:198 ephios/templates/base.html:212
+msgid "Install %(platform_name)s app"
+msgstr "%(platform_name)s-App installieren"
 
-#: ephios/templates/base.html:198 ephios/templates/base.html:208
-msgid "You can install ephios on your device and use it like any other app!"
-msgstr "Sie können ephios auf ihrem Gerät installieren und wie jede andere App benutzen!"
+#: ephios/templates/base.html:204 ephios/templates/base.html:218
+msgid ""
+"You can install %(platform_name)s on your device and use it like any other "
+"app!"
+msgstr ""
+"Sie können %(platform_name)s auf ihrem Gerät installieren und wie jede andere App "
+"benutzen!"
 
-#: ephios/templates/base.html:198
+#: ephios/templates/base.html:206
 msgid "Simply click the button below to continue."
 msgstr "Drücken Sie den folgenden Button um fortzufahren."
 
-#: ephios/templates/base.html:208
+#: ephios/templates/base.html:207
+#, python-format
+msgid "Install %(platform_name)s"
+msgstr "%(platform_name)s installieren"
+
+#: ephios/templates/base.html:220
 msgid "Simply follow the steps below."
 msgstr "Folgen Sie einfach den Anweisungen unten."
 
-#: ephios/templates/base.html:219
+#: ephios/templates/base.html:231
 msgid "Open in your main browser"
 msgstr "Öffnen Sie die Seite in ihrem Hauptbrowser"
 
-#: ephios/templates/base.html:231
+#: ephios/templates/base.html:243
 msgid "Press More if no Share icon"
 msgstr "Drücken Sie auf Mehr, falls kein Teilen-Icon angezeigt wird"
 
-#: ephios/templates/base.html:241
+#: ephios/templates/base.html:253
 msgid "Press Share in Navigation bar"
 msgstr "Drücken Sie auf Teilen"
 
-#: ephios/templates/base.html:251
+#: ephios/templates/base.html:263
 msgid "Scroll down to &quot;Add to Home Screen&quot;"
 msgstr "Drücken Sie auf &quot;Zu Home-Bildschirm hinzufügen&quot;"
 
-#: ephios/templates/base.html:258
+#: ephios/templates/base.html:270
 msgid "Activate notifications"
 msgstr "Benachrichtigungen aktivieren"
 
-#: ephios/templates/base.html:262
+#: ephios/templates/base.html:274
 msgid ""
-"ephios can send you push notifications so that you stay up to date. Do you "
-"want to activate them?"
+"%(platform_name)s can send you push notifications so that you stay up to "
+"date. Do you want to activate them?\""
 msgstr ""
-"ephios kann Ihnen Push-Benachrichtigungen senden, damit Sie auf dem aktuellen Stand bleiben. "
-"Möchten Sie Benachrichtigungen aktivieren?"
+"%(platform_name)s kann Ihnen Push-Benachrichtigungen senden, damit Sie auf dem "
+"aktuellen Stand bleiben. Möchten Sie Benachrichtigungen aktivieren?"
 
 #: ephios/templates/offline.html:10
 msgid "No connection"
