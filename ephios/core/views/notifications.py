@@ -207,8 +207,8 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
             messages.success(
                 self.request,
                 ngettext_lazy(
-                    "Send notification to {count} participant.",
-                    "Send notification to {count} participants.",
+                    "Sent notification to {count} participant.",
+                    "Sent notification to {count} participants.",
                     len(recipients),
                 ).format(count=len(recipients)),
             )
@@ -220,8 +220,8 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
             messages.success(
                 self.request,
                 ngettext_lazy(
-                    "Send notification to {count} user.",
-                    "Send notification to {count} users.",
+                    "Sent notification to {count} user.",
+                    "Sent notification to {count} users.",
                     len(recipients),
                 ).format(count=len(recipients)),
             )
@@ -230,4 +230,4 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
     def get_success_url(self):
         if self.event:
             return self.event.get_absolute_url()
-        return reverse("core:home")
+        return reverse("core:userprofile_list")
