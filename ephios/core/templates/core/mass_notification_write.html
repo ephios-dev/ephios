@@ -111,9 +111,9 @@
                            data-participants="{% for i in form.event_nonfeedback %}{{ i }} {% endfor %}">
                     <label class="form-check-label" for="check-event-nonfeedback">
                         {% blocktranslate trimmed count counter=form.event_nonfeedback|length %}
-                            Include {{ counter }} user that did not yet respond to the event invitation
+                            Include {{ counter }} user that did not respond to the event yet
                         {% plural %}
-                            Include {{ counter }} users that did not yet respond to the event invitation
+                            Include {{ counter }} users that did not respond to the event yet
                         {% endblocktranslate %}
                     </label>
                 </div>

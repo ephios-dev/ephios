@@ -42,7 +42,7 @@ def ephios_base_context(request):
         "ephios_version": settings.EPHIOS_VERSION,
         "PWA_APP_ICONS": get_pwa_app_icons(),
         "PWA_APP_SPLASH_SCREEN": [],
-        "VAPID_PUBLIC_KEY": settings.WEBPUSH_SETTINGS.get(" ", ""),
+        "VAPID_PUBLIC_KEY": settings.WEBPUSH_SETTINGS.get("VAPID_PUBLIC_KEY", ""),
         "DEBUG": settings.DEBUG,
         "organization_name": global_preferences_registry.manager()["general__organization_name"],
         "platform_name": dynamic_settings.PLATFORM_NAME,

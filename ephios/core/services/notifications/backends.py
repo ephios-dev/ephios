@@ -38,6 +38,7 @@ def enabled_notification_backends():
 def send_all_notifications():
     CACHE_LOCK_KEY = "notification_sending_running"
     if cache.get(CACHE_LOCK_KEY):
+        logger.warning("Previous notification sending job not finished. Skipping...")
         return
     cache.set(CACHE_LOCK_KEY, str(uuid.uuid4()), timeout=1800)  # will be cleared if no errors occur
     backends = set(installed_notification_backends())

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-11 19:08+0100\n"
-"PO-Revision-Date: 2026-01-11 19:09+0100\n"
+"POT-Creation-Date: 2026-01-11 20:18+0100\n"
+"PO-Revision-Date: 2026-01-11 20:19+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -286,7 +286,7 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: ephios/core/templates/core/userprofile_confirm_delete.html:21
 #: ephios/core/templates/core/userprofile_form.html:89
 #: ephios/core/templates/core/userprofile_form.html:120
-#: ephios/core/templates/core/userprofile_list.html:116
+#: ephios/core/templates/core/userprofile_list.html:120
 #: ephios/core/templates/core/userprofile_workinghours.html:50
 #: ephios/core/templates/core/workinghours_confirm_delete.html:17
 #: ephios/plugins/files/templates/files/document_confirm_delete.html:19
@@ -395,7 +395,7 @@ msgstr "Zurück"
 #: ephios/core/templates/core/group_list.html:63
 #: ephios/core/templates/core/identityprovider_list.html:27
 #: ephios/core/templates/core/shift_form.html:98
-#: ephios/core/templates/core/userprofile_list.html:111
+#: ephios/core/templates/core/userprofile_list.html:115
 #: ephios/core/templates/core/userprofile_workinghours.html:49
 #: ephios/plugins/files/templates/files/document_list.html:40
 #: ephios/plugins/pages/templates/pages/page_list.html:24
@@ -948,12 +948,12 @@ msgstr "Veranstaltung"
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: ephios/core/models/events.py:253 ephios/core/views/notifications.py:146
+#: ephios/core/models/events.py:253 ephios/core/views/notifications.py:148
 msgid "requested"
 msgstr "angefragt"
 
 #: ephios/core/models/events.py:254 ephios/core/views/event.py:84
-#: ephios/core/views/notifications.py:145
+#: ephios/core/views/notifications.py:147
 msgid "confirmed"
 msgstr "bestätigt"
 
@@ -1263,7 +1263,7 @@ msgstr "Anlass"
 
 #: ephios/core/models/users.py:503 ephios/core/models/users.py:504
 #: ephios/core/signals.py:292
-#: ephios/core/templates/core/userprofile_list.html:107
+#: ephios/core/templates/core/userprofile_list.html:111
 #: ephios/core/templates/core/workinghours_list.html:9
 #: ephios/core/templates/core/workinghours_list.html:14
 #: ephios/templates/base.html:144
@@ -1577,13 +1577,18 @@ msgstr "Weniger als 1 GB Speicherplatz verfügbar. Bitte schaffen Sie Platz."
 msgid "{disk_space} of disk space available."
 msgstr "{disk_space} verfügbar."
 
-#: ephios/core/services/notifications/backends.py:138
+#: ephios/core/services/notifications/backends.py:139
 msgid "via email"
 msgstr "via E-Mail"
 
-#: ephios/core/services/notifications/backends.py:163
+#: ephios/core/services/notifications/backends.py:164
 msgid "via push notification"
 msgstr "via Push-Benachrichtigung"
+
+#: ephios/core/services/notifications/types.py:122
+#, python-brace-format
+msgid "Unknown content for notification #{}"
+msgstr "Unbekannter Inhalt für Benachrichtigung #{}"
 
 #: ephios/core/services/notifications/types.py:131
 msgid "Your profile has been edited"
@@ -1767,8 +1772,8 @@ msgid "{participant} altered their participation in {shift}."
 msgstr "{participant} hat die Teilnahme an {shift} angepasst."
 
 #: ephios/core/services/notifications/types.py:504
-msgid "Mass mailing"
-msgstr "Massenbenachrichtigung"
+msgid "You received a message from another user"
+msgstr "Sie haben eine Nachricht von einem anderen Nutzer erhalten"
 
 #: ephios/core/services/notifications/types.py:528
 #: ephios/core/services/notifications/types.py:567
@@ -1776,8 +1781,8 @@ msgid "View message"
 msgstr "Nachricht anzeigen"
 
 #: ephios/core/services/notifications/types.py:536
-msgid "Information on an event"
-msgstr "Informationen zu einer Veranstaltung"
+msgid "A responsible shares information on an event"
+msgstr "Ein Verantwortlicher teilt Informationen zu einer Veranstaltung"
 
 #: ephios/core/services/notifications/types.py:583
 #: ephios/core/services/notifications/types.py:593
@@ -2544,16 +2549,12 @@ msgstr[1] "An %(counter)s Teilnehmende mit angefragter Teilnahme senden"
 
 #: ephios/core/templates/core/mass_notification_write.html:113
 #, python-format
-msgid ""
-"Include %(counter)s user that did not yet respond to the event invitation"
-msgid_plural ""
-"Include %(counter)s users that did not yet respond to the event invitation"
+msgid "Include %(counter)s user that did not respond to the event yet"
+msgid_plural "Include %(counter)s users that did not respond to the event yet"
 msgstr[0] ""
-"An %(counter)s Benutzer senden, der noch nicht auf die Einladung zur "
-"Veranstaltung geantwortet hat"
+"An %(counter)s Benutzer senden, der noch keine Rückmeldung gegeben hat"
 msgstr[1] ""
-"An %(counter)s Benutzer senden, die noch nicht auf die Einladung zur "
-"Veranstaltung geantwortet haben"
+"An %(counter)s Benutzer senden, die noch keine Rückmeldung gegeben haben"
 
 #: ephios/core/templates/core/mass_notification_write.html:125
 msgid "Recipient list"
@@ -2855,35 +2856,38 @@ msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
 #: ephios/core/templates/core/userprofile_list.html:43
-msgid "Send message to displayed accounts"
-msgstr "Nachricht an angezeigte Nutzer senden"
+#, python-format
+msgid "Send message to this %(counter)s account"
+msgid_plural "Send message to these %(counter)s accounts"
+msgstr[0] "Nachricht an diesen %(counter)s Nutzer senden"
+msgstr[1] "Nachricht an diese %(counter)s Nutzer senden"
 
-#: ephios/core/templates/core/userprofile_list.html:65
+#: ephios/core/templates/core/userprofile_list.html:69
 msgid "minor"
 msgstr "minderjährig"
 
-#: ephios/core/templates/core/userprofile_list.html:72
+#: ephios/core/templates/core/userprofile_list.html:76
 #, python-format
 msgid "Last login: %(timeframe)s ago"
 msgstr "Letze Anmeldung vor %(timeframe)s"
 
-#: ephios/core/templates/core/userprofile_list.html:74
+#: ephios/core/templates/core/userprofile_list.html:78
 msgid "Last login: never"
 msgstr "Letze Anmeldung: nie"
 
-#: ephios/core/templates/core/userprofile_list.html:76
+#: ephios/core/templates/core/userprofile_list.html:80
 msgid "not seen recently"
 msgstr "länger nicht gesehen"
 
-#: ephios/core/templates/core/userprofile_list.html:81
+#: ephios/core/templates/core/userprofile_list.html:85
 msgid "inactive"
 msgstr "inaktiv"
 
-#: ephios/core/templates/core/userprofile_list.html:83
+#: ephios/core/templates/core/userprofile_list.html:87
 msgid "admin"
 msgstr "Admin"
 
-#: ephios/core/templates/core/userprofile_list.html:94
+#: ephios/core/templates/core/userprofile_list.html:98
 msgid "no groups"
 msgstr "keine Gruppen"
 
@@ -3156,37 +3160,37 @@ msgstr ""
 "\n"
 "Viele Grüße\n"
 
-#: ephios/core/views/notifications.py:89
+#: ephios/core/views/notifications.py:91
 msgid "You can only select users that have permission to view the event."
 msgstr ""
 "Sie können nur Nutzer auswählen, die Zugriff auf die Veranstaltung haben."
 
-#: ephios/core/views/notifications.py:147
+#: ephios/core/views/notifications.py:149
 msgid "without response"
 msgstr "ohne Rückmeldung"
 
-#: ephios/core/views/notifications.py:148
+#: ephios/core/views/notifications.py:150
 msgid "others"
 msgstr "andere"
 
-#: ephios/core/views/notifications.py:191
+#: ephios/core/views/notifications.py:193
 #, python-brace-format
 msgid "Information on {event_title}"
 msgstr "Informationen zu {event_title}"
 
-#: ephios/core/views/notifications.py:208
+#: ephios/core/views/notifications.py:210
 #, python-brace-format
-msgid "Send notification to {count} participant."
-msgid_plural "Send notification to {count} participants."
-msgstr[0] "Benachrichtigung an {count} Teilnehmenden senden."
-msgstr[1] "Benachrichtigung an {count} Teilnehmende senden."
+msgid "Sent notification to {count} participant."
+msgid_plural "Sent notification to {count} participants."
+msgstr[0] "Benachrichtigung an {count} Teilnehmenden gesendet."
+msgstr[1] "Benachrichtigung an {count} Teilnehmende gesendet."
 
-#: ephios/core/views/notifications.py:221
+#: ephios/core/views/notifications.py:223
 #, python-brace-format
-msgid "Send notification to {count} user."
-msgid_plural "Send notification to {count} users."
-msgstr[0] "Benachrichtigung an {count} Nutzer senden."
-msgstr[1] "Benachrichtigung an {count} Nutzern senden."
+msgid "Sent notification to {count} user."
+msgid_plural "Sent notification to {count} users."
+msgstr[0] "Benachrichtigung an {count} Nutzer gesendet."
+msgstr[1] "Benachrichtigung an {count} Nutzern gesendet."
 
 #: ephios/core/views/pwa.py:68
 msgid "Show the event list"
@@ -5488,6 +5492,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Mass mailing"
+#~ msgstr "Massenbenachrichtigung"
 
 #~ msgid ""
 #~ "Use this form to craft and send a mass notification to your selected "

@@ -115,11 +115,13 @@ class FallbackNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_subject(cls, notification):
-        return notification.data.get("subject")
+        return notification.data.get("subject", notification.slug)
 
     @classmethod
     def get_body(cls, notification):
-        return notification.data.get("body")
+        return notification.data.get(
+            "body", _("Unknown content for notification #{}").format(notification.pk)
+        )
 
     @classmethod
     def is_obsolete(cls, notification):
@@ -500,8 +502,8 @@ class SubjectBodyDataMixin:
 
 
 class GenericMassNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
-    slug = "ephios_custom_event_reminder"
-    title = _("Mass mailing")
+    slug = "ephios_generic_mass"
+    title = _("You received a message from another user")
     unsubscribe_allowed = False
 
     @classmethod
@@ -533,7 +535,7 @@ class GenericMassNotification(SubjectBodyDataMixin, AbstractNotificationHandler)
 
 class CustomEventNotification(SubjectBodyDataMixin, AbstractNotificationHandler):
     slug = "ephios_custom_event_notification"
-    title = _("Information on an event")
+    title = _("A responsible shares information on an event")
     unsubscribe_allowed = False
 
     @classmethod

@@ -40,7 +40,11 @@
                 <a class="btn btn-sm btn-secondary"
                    href="{% url "core:notification_mass" %}?{{ mass_notification_tos }}">
                     <span class="fa fa-envelope"></span>
-                    {% translate "Send message to displayed accounts" %}
+                    {% blocktranslate trimmed count counter=page_obj.paginator.count %}
+                        Send message to this {{ counter }} account
+                    {% plural %}
+                        Send message to these {{ counter }} accounts
+                    {% endblocktranslate %}
                 </a>
             {% endif %}
         </div>
