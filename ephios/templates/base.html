@@ -204,7 +204,7 @@
                     <p class="pb-2">{% blocktranslate trimmed with platform_name=platform_name %}
                         You can install {{ platform_name }} on your device and use it like any other app!
                     {% endblocktranslate %} {% translate "Simply click the button below to continue." %}</p>
-                    <button id="pwaInstall" class="btn btn-primary">{% blocktranslate with platform_name=platform_name %}Install {{ platform_name }}{% endblocktranslate %}</button>
+                    <button id="pwaInstall" class="btn btn-primary">{% blocktranslate trimmed with platform_name=platform_name %}Install {{ platform_name }}{% endblocktranslate %}</button>
                 </div>
             </div>
             <div id="pwaAppleOffcanvas" class="offcanvas offcanvas-bottom">
