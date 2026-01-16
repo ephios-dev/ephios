@@ -1247,14 +1247,14 @@ dev = ["m2r", "pytest", "pytest-cov", "sphinx-rtd-theme"]
 
 [[package]]
 name = "django-polymorphic"
-version = "4.9.0"
+version = "4.10.3"
 description = "Seamless polymorphic inheritance for Django models."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "django_polymorphic-4.9.0-py3-none-any.whl", hash = "sha256:ac13eb365d65ea5275f901011e80386c4147994f6879fa5138f7b92337ef8655"},
-    {file = "django_polymorphic-4.9.0.tar.gz", hash = "sha256:9baaba6b4db67f148c073406dc65a52f3c693d7a60f1b62153f7cd00374f48e7"},
+    {file = "django_polymorphic-4.10.3-py3-none-any.whl", hash = "sha256:9c5983ba87534dc253ade67c35416cb71164bf6b6d4af4e44362750d02a6d5d6"},
+    {file = "django_polymorphic-4.10.3.tar.gz", hash = "sha256:8b8e4fbb195659ec8d694cf81504d5d1bdf8fba39c8742e945e2f8b19ae794f2"},
 ]
 
 [package.dependencies]
@@ -3366,6 +3366,7 @@ python-versions = "<4,>=3.9"
 groups = ["main"]
 files = [
     {file = "reportlab-4.4.9-py3-none-any.whl", hash = "sha256:68e2d103ae8041a37714e8896ec9b79a1c1e911d68c3bd2ea17546568cf17bfd"},
+    {file = "reportlab-4.4.9.tar.gz", hash = "sha256:7cf487764294ee791a4781f5a157bebce262a666ae4bbb87786760a9676c9378"},
 ]
 
 [package.dependencies]
