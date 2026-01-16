@@ -1226,20 +1226,20 @@ libsass = ">=0.7.0,<1"
 
 [[package]]
 name = "django-oauth-toolkit"
-version = "3.1.0"
+version = "3.2.0"
 description = "OAuth2 Provider for Django"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "django_oauth_toolkit-3.1.0-py3-none-any.whl", hash = "sha256:10ddc90804297d913dfb958edd58d5fac541eb1ca912f47893ca1e482bb2a11f"},
-    {file = "django_oauth_toolkit-3.1.0.tar.gz", hash = "sha256:d5a59d07588cfefa8818e99d65040a252eb2ede22512483e2240c91d0b885c8e"},
+    {file = "django_oauth_toolkit-3.2.0-py3-none-any.whl", hash = "sha256:bd2cd2719b010231a2f370f927dbcc740454fb1d0dd7e7f4138f36227363dc26"},
+    {file = "django_oauth_toolkit-3.2.0.tar.gz", hash = "sha256:c36761ae6810083d95a652e9c820046cde0d45a2e2a5574bbe7202656ec20bb6"},
 ]
 
 [package.dependencies]
 django = ">=4.2"
 jwcrypto = ">=1.5.0"
-oauthlib = ">=3.2.2"
+oauthlib = ">=3.3.0"
 requests = ">=2.13.0"
 
 [package.extras]
@@ -3366,6 +3366,7 @@ python-versions = "<4,>=3.9"
 groups = ["main"]
 files = [
     {file = "reportlab-4.4.9-py3-none-any.whl", hash = "sha256:68e2d103ae8041a37714e8896ec9b79a1c1e911d68c3bd2ea17546568cf17bfd"},
+    {file = "reportlab-4.4.9.tar.gz", hash = "sha256:7cf487764294ee791a4781f5a157bebce262a666ae4bbb87786760a9676c9378"},
 ]
 
 [package.dependencies]
@@ -4380,4 +4381,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "5e9efbb2dabbc88b705d47e7f42c0b31867a792113a4472a293f9403212bdae8"
+content-hash = "5c0c1cf7c64666aa9538a1efb6276914fa5d70a5025457386a1692dd6a8e275b"
