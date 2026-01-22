@@ -52,7 +52,7 @@ css-inline = ">=0.10.3,<0.20.0"
 requests = "^2.31.0"
 requests-oauthlib = "^2.0"
 pyjwt = "^2.8.0"
-scipy = "^1.12.0"
+scipy = "^1.15.0"
 black = ">=24.10,<27.0"
 drf-spectacular = {extras = ["sidecar"], version = ">=0.27.2,<0.30.0"}
 python-dateutil = "^2.9.0.post0"
