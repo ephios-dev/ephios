@@ -56,7 +56,10 @@ scipy = "^1.15.0"
 black = ">=24.10,<27.0"
 drf-spectacular = {extras = ["sidecar"], version = ">=0.27.2,<0.30.0"}
 python-dateutil = "^2.9.0.post0"
-cryptography = "<46"  # until fix of https://github.com/web-push-libs/vapid/issues/105
+cryptography = "^46.0.3"
+# py-vapid is required by pywebpush (a dependency of django-webpush), but we need to
+# explicitly require at least 1.9.4 to work with cryptography >= 46
+py-vapid = "^1.9.4"
 
 [tool.poetry.extras]
 pgsql = ["psycopg2"]
