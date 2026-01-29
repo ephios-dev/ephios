@@ -1160,14 +1160,14 @@ drf = ["djangorestframework"]
 
 [[package]]
 name = "django-formset-js-improved"
-version = "0.5.0.4"
+version = "0.5.0.5"
 description = "Extend Django formsets with JavaScript"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django_formset_js_improved-0.5.0.4-py3-none-any.whl", hash = "sha256:10767d942901af2a53955c8451b10a657ffd996f83579e78c1ee48b28ab76e32"},
-    {file = "django_formset_js_improved-0.5.0.4.tar.gz", hash = "sha256:82130af33b2f4c3514638a442dd5305f08db8016b734573ed16570f0417fabab"},
+    {file = "django_formset_js_improved-0.5.0.5-py3-none-any.whl", hash = "sha256:10e91b538fbbfcd4e917050e7b4728723b9a81ff2b592b7705b779175e367ed7"},
+    {file = "django_formset_js_improved-0.5.0.5.tar.gz", hash = "sha256:374dd339a14321683e6aa9be7098bf56bb4bdeb93bd42ccacc73374c7a055dad"},
 ]
 
 [package.dependencies]
