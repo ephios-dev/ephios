@@ -169,6 +169,8 @@ class MassNotificationWriteView(CustomCheckPermissionMixin, FormView):
     def has_permission(self):
         # either has permission "core.view_userprofile"
         # or event is given and user is responsible
+        if not self.request.user.is_authenticated:
+            return False
         if self.event and self.request.user.has_perm("core.change_event", obj=self.event):
             return True
         return self.request.user.has_perm("core.view_userprofile")
