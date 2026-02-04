@@ -1,7 +1,13 @@
+from urllib.parse import urljoin
+
+import requests
+from django.db import transaction
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from ephios.core.models import UserProfile
+from ephios.core.models.users import AbstractConsequence, LocalConsequence
 from ephios.core.signals import (
     event_forms,
     nav_link,
@@ -69,10 +75,38 @@ def federation_settings_section(sender, request, **kwargs):
     )
 
 
-@receiver(periodic_signal, dispatch_uid="ephios.plugins.federation.signals.periodic_signal")
+@receiver(periodic_signal, dispatch_uid="ephios.plugins.federation.signals.delete_expired_invites")
 def delete_expired_invites(sender, **kwargs):
     from ephios.plugins.federation.models import InviteCode
 
     for invite in InviteCode.objects.all():
         if invite.is_expired:
             invite.delete()
+
+
+@receiver(
+    periodic_signal, dispatch_uid="ephios.plugins.federation.signals.fetch_federated_consequences"
+)
+def fetch_federated_consequences(sender, **kwargs):
+    for federated_host in FederatedHost.objects.all():
+        response = requests.get(
+            urljoin(federated_host.url, "api/consequences?state=confirmed"),
+            headers={"Authorization": f"Bearer {federated_host.access_token}"},
+        )
+        response.raise_for_status()
+        pending_consequences = response.json()["results"]
+        for consequence in pending_consequences:
+            with transaction.atomic():
+                user = UserProfile.objects.get(pk=consequence["user"])
+                LocalConsequence.objects.create(
+                    user=user,
+                    state=AbstractConsequence.States.NEEDS_CONFIRMATION,
+                    slug=consequence["slug"],
+                    data=consequence["data"],
+                )
+                response = requests.patch(
+                    urljoin(federated_host.url, f"api/consequences/{consequence['id']}/"),
+                    data={"state": AbstractConsequence.States.EXECUTED},
+                    headers={"Authorization": f"Bearer {federated_host.access_token}"},
+                )
+                response.raise_for_status()

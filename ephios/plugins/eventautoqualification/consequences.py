@@ -5,7 +5,7 @@ from collections import Counter
 from django.db.models import Q
 
 from ephios.core.consequences import QualificationConsequenceHandler
-from ephios.core.models import AbstractParticipation, LocalParticipation
+from ephios.core.models import AbstractParticipation
 from ephios.plugins.eventautoqualification.models import EventAutoQualificationConfiguration
 
 logger = logging.getLogger(__name__)
@@ -42,28 +42,26 @@ def create_qualification_consequence(sender, participation, **kwargs):
         )
 
     if requirements_met:
-        if not isinstance(participation, LocalParticipation):
-            logger.warning(
-                "Cannot create an automatic qualification consequence for non-local participants."
+        try:
+            # skip if extent/refresh only but the user does not have a grant
+            if (
+                (user := getattr(participation, "user", None))
+                and event.auto_qualification_config.extend_only
+                and not event.auto_qualification_config.qualification_id
+                in user.qualification_grants.values_list("qualification_id", flat=True)
+            ):
+                return
+
+            consequence = QualificationConsequenceHandler.create(
+                participant=participation.participant,
+                qualification=event.auto_qualification_config.qualification,
+                expires=event.auto_qualification_config.expiration_date,
+                shift=participation.shift,
             )
-            return
 
-        user = participation.user
-
-        # skip if extent/refresh only but the user does not have a grant
-        if (
-            event.auto_qualification_config.extend_only
-            and not event.auto_qualification_config.qualification_id
-            in user.qualification_grants.values_list("qualification_id", flat=True)
-        ):
-            return
-
-        consequence = QualificationConsequenceHandler.create(
-            user=user,
-            qualification=event.auto_qualification_config.qualification,
-            expires=event.auto_qualification_config.expiration_date,
-            shift=participation.shift,
-        )
-
-        if not event.auto_qualification_config.needs_confirmation:
-            consequence.confirm(user=None)
+            if not event.auto_qualification_config.needs_confirmation:
+                consequence.confirm()
+        except NotImplementedError:
+            logger.warning(
+                f"Cannot create an automatic qualification consequence for participant {participation.participant}."
+            )

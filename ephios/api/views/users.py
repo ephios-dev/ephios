@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope, TokenHasScope
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import SearchFilter
@@ -18,11 +18,14 @@ from ephios.api.permissions import (
     ViewUserModelObjectPermissions,
 )
 from ephios.api.serializers import (
+    ConsequenceSerializer,
     ParticipationSerializer,
     UserinfoParticipationSerializer,
     UserProfileSerializer,
+    WorkingHoursSerializer,
 )
-from ephios.core.models import AbstractParticipation, UserProfile
+from ephios.core.models import AbstractParticipation, UserProfile, WorkingHours
+from ephios.plugins.federation.models import FederatedConsequence, FederatedGuest
 
 
 class UserProfileMeView(RetrieveAPIView):
@@ -84,3 +87,28 @@ class UserParticipationView(viewsets.ReadOnlyModelViewSet):
         return AbstractParticipation.objects.filter(
             localparticipation__user=self.kwargs.get("user")
         ).select_related("shift", "shift__event", "shift__event__type")
+
+
+class WorkingHoursViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = WorkingHoursSerializer
+    permission_classes = [IsAuthenticatedOrTokenHasScope, ViewObjectPermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["user", "date"]
+    required_scopes = ["CONFIDENTIAL_READ"]
+    queryset = WorkingHours.objects.all()
+
+
+class ConsequenceViewSet(viewsets.ModelViewSet):
+    serializer_class = ConsequenceSerializer
+    permission_classes = [TokenHasScope]
+    required_scopes = []
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["slug", "state"]
+
+    def get_queryset(self):
+        try:
+            # request.auth is an auth token, federatedguest is the reverse relation
+            guest = self.request.auth.federatedguest
+        except (AttributeError, FederatedGuest.DoesNotExist) as exc:
+            raise PermissionDenied from exc
+        return FederatedConsequence.objects.filter(federated_user__federated_instance=guest)

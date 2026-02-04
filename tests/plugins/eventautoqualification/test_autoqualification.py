@@ -8,10 +8,10 @@ from guardian.shortcuts import assign_perm
 
 from ephios.core.models import (
     AbstractParticipation,
-    Consequence,
     LocalParticipation,
     QualificationGrant,
 )
+from ephios.core.models.users import AbstractConsequence
 from ephios.core.signals import periodic_signal
 from ephios.plugins.eventautoqualification.models import EventAutoQualificationConfiguration
 
@@ -176,14 +176,14 @@ def test_consequence_gets_created(
         if wanted_state:
             LocalParticipation.objects.create(user=volunteer, shift=shift, state=wanted_state)
 
-    assert not Consequence.objects.exists()
+    assert not AbstractConsequence.objects.exists()
     periodic_signal.send(None)
 
     if not consequence_expected:
-        assert not Consequence.objects.exists()
+        assert not AbstractConsequence.objects.exists()
     else:
-        assert Consequence.objects.count() == 1
+        assert AbstractConsequence.objects.count() == 1
         periodic_signal.send(None)
-        consequence = Consequence.objects.get()
+        consequence = AbstractConsequence.objects.get()
         assert consequence.data["qualification_id"] == qualifications.na.id
         assert consequence.user == volunteer

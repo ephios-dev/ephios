@@ -20,11 +20,13 @@ from ephios.api.views.events import (
     UserinfoParticipationViewSet,
 )
 from ephios.api.views.users import (
+    ConsequenceViewSet,
     OwnParticipationsViewSet,
     UserByMailView,
     UserParticipationView,
     UserProfileMeView,
     UserViewSet,
+    WorkingHoursViewSet,
 )
 from ephios.extra.permissions import staff_required
 
@@ -41,6 +43,8 @@ router.register(r"users/me/participations", OwnParticipationsViewSet, basename="
 router.register(
     r"users/(?P<user>[\d]+)/participations", UserParticipationView, basename="user-participations"
 )
+router.register(r"workinghours", WorkingHoursViewSet)
+router.register(r"consequences", ConsequenceViewSet, basename="consequences")
 
 app_name = "api"
 urlpatterns = [

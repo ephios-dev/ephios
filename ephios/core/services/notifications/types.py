@@ -14,7 +14,7 @@ from requests import PreparedRequest
 
 from ephios.core.dynamic import dynamic_settings
 from ephios.core.models import AbstractParticipation, Event, LocalParticipation, UserProfile
-from ephios.core.models.users import Consequence, Notification
+from ephios.core.models.users import LocalConsequence, Notification
 from ephios.core.signals import register_notification_types
 from ephios.core.signup.participants import AbstractParticipant
 from ephios.core.templatetags.settings_extras import make_absolute
@@ -585,7 +585,7 @@ class ConsequenceApprovedNotification(AbstractNotificationHandler):
     title = _("Your request has been approved")
 
     @classmethod
-    def send(cls, consequence: Consequence):
+    def send(cls, consequence: LocalConsequence):
         Notification.objects.create(
             slug=cls.slug, user=consequence.user, data={"consequence_id": consequence.id}
         )
@@ -596,7 +596,7 @@ class ConsequenceApprovedNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_body(cls, notification):
-        consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
+        consequence = LocalConsequence.objects.get(id=notification.data.get("consequence_id"))
         return _('"{consequence}" has been approved.').format(consequence=consequence)
 
 
@@ -605,7 +605,7 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
     title = _("Your request has been denied")
 
     @classmethod
-    def send(cls, consequence: Consequence):
+    def send(cls, consequence: LocalConsequence):
         Notification.objects.create(
             slug=cls.slug, user=consequence.user, data={"consequence_id": consequence.id}
         )
@@ -616,7 +616,7 @@ class ConsequenceDeniedNotification(AbstractNotificationHandler):
 
     @classmethod
     def get_body(cls, notification):
-        consequence = Consequence.objects.get(id=notification.data.get("consequence_id"))
+        consequence = LocalConsequence.objects.get(id=notification.data.get("consequence_id"))
         return _('"{consequence}" has been denied.').format(consequence=consequence)
 
 
