@@ -28,7 +28,8 @@ class TestQualificationConsequence:
 
     def test_annotation_with_json(self, qualifications_consequence, qualifications):
         qs = (
-            Consequence.objects.filter(state=Consequence.States.NEEDS_CONFIRMATION)
+            Consequence.objects
+            .filter(state=Consequence.States.NEEDS_CONFIRMATION)
             .annotate(
                 qualification_id=Cast(KeyTransform("qualification_id", "data"), IntegerField())
             )

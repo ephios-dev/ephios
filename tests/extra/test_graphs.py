@@ -5,30 +5,26 @@ from ephios.extra.graphs import DirectedGraph
 
 @pytest.fixture
 def graph1():
-    return DirectedGraph(
-        {
-            "RS": ["San"],
-            "BF": ["WR", "BM"],
-            "WR": ["San", "DRSA"],
-            "BM": ["DRSA"],
-            "DRSA": ["EH"],
-            "NFS": ["RS"],
-            "San": ["EH"],
-            "GF": ["TF"],
-            "ZF": ["GF"],
-        }
-    )
+    return DirectedGraph({
+        "RS": ["San"],
+        "BF": ["WR", "BM"],
+        "WR": ["San", "DRSA"],
+        "BM": ["DRSA"],
+        "DRSA": ["EH"],
+        "NFS": ["RS"],
+        "San": ["EH"],
+        "GF": ["TF"],
+        "ZF": ["GF"],
+    })
 
 
 @pytest.fixture
 def cyclic_graph():
-    return DirectedGraph(
-        {
-            "A": ["B"],
-            "B": ["C"],
-            "C": ["A"],
-        }
-    )
+    return DirectedGraph({
+        "A": ["B"],
+        "B": ["C"],
+        "C": ["A"],
+    })
 
 
 def test_directed_graph_contains(graph1):

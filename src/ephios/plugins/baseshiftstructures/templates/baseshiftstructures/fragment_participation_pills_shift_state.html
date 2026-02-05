@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<div class="mb-3">
+    {% for participation in participations %}
+        {% include "baseshiftstructures/participation_card_inline.html" %}
+    {% endfor %}
+    {% for index in empty_spots %}
+        <span class="badge bg-light badge-placeholder">&nbsp;</span>
+    {% endfor %}
+</div>

@@ -146,25 +146,23 @@ class TestUserProfileView:
         assert response.status_code == 200
         userprofile_email = "testuser@localhost"
 
-        POST_DATA = OrderedDict(
-            {
-                "email": userprofile_email,
-                "display_name": "testname",
-                "date_of_birth": "1999-01-01",
-                "phone": "",
-                "groups": volunteers.id,
-                "is_active": "on",
-                "qualification_grants": "",
-                "qualification_grants-0-qualification": qualifications.rs.id,
-                "qualification_grants-0-expires": "",
-                "qualification_grants-1-qualification": qualifications.na.id,
-                "qualification_grants-1-expires": "2030-01-01",
-                "qualification_grants-INITIAL_FORMS": "0",
-                "qualification_grants-MAX_NUM_FORMS": "1000",
-                "qualification_grants-MIN_NUM_FORMS": "0",
-                "qualification_grants-TOTAL_FORMS": "2",
-            }
-        )
+        POST_DATA = OrderedDict({
+            "email": userprofile_email,
+            "display_name": "testname",
+            "date_of_birth": "1999-01-01",
+            "phone": "",
+            "groups": volunteers.id,
+            "is_active": "on",
+            "qualification_grants": "",
+            "qualification_grants-0-qualification": qualifications.rs.id,
+            "qualification_grants-0-expires": "",
+            "qualification_grants-1-qualification": qualifications.na.id,
+            "qualification_grants-1-expires": "2030-01-01",
+            "qualification_grants-INITIAL_FORMS": "0",
+            "qualification_grants-MAX_NUM_FORMS": "1000",
+            "qualification_grants-MIN_NUM_FORMS": "0",
+            "qualification_grants-TOTAL_FORMS": "2",
+        })
         response = csrf_exempt_django_app.post(
             reverse("core:userprofile_create"),
             user=manager,
@@ -273,7 +271,7 @@ class TestUserProfileView:
             reverse("core:userprofile_edit", kwargs={"pk": volunteer.id}), user=manager
         ).form
         form["is_staff"] = True
-        response = form.submit()
+        form.submit()
         assert not manager.is_staff
         assert not UserProfile.objects.get(id=volunteer.id).is_staff
 

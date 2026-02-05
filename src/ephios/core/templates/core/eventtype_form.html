@@ -1,0 +1,23 @@
+{% extends "core/settings/settings_base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block settings_title %}
+    {% if eventtype %}
+        - {% translate "Edit event type" %}
+    {% else %}
+        - {% translate "Add event type" %}
+    {% endif %}
+{% endblock %}
+
+{% block settings_content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if preference_form %}
+            {{ preference_form|crispy }}
+        {% endif %}
+        <button class="btn btn-primary float-end" type="submit">{% translate "Save" %}</button>
+        <a role="button" class="btn btn-secondary mt-1" href="{% url 'core:settings_eventtype_list' %}">{% translate "Cancel" %}</a>
+    </form>
+{% endblock %}

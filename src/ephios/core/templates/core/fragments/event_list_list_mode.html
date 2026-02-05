@@ -1,0 +1,141 @@
+{% load event_extras %}
+{% load i18n %}
+{% load utils %}
+
+<form id="bulk_action_form" method="post">
+    {% csrf_token %}
+    {% if perms.core.add_event %}
+        <div id="event-controls" class="d-flex flex-wrap pb-3">
+            {% include "core/fragments/event_list_add_event_button.html" %}
+            <div class="bulk-actions">
+                <button class="btn btn-secondary btn-sm m-1 ms-0" type="submit" name="delete"
+                        formaction="{% url "core:event_bulk_delete" %}"><span
+                    class="fa fa-trash-alt"></span> {% translate "Delete selected" %}</button>
+                {% event_bulk_actions %}
+            </div>
+        </div>
+    {% endif %}
+
+    <ul class="list-group mb-3">
+        {% if event_list and perms.core.add_event %}
+            <li class="list-group-item px-0">
+                <div class="ps-2">
+                    <input type="checkbox" id="checkall">
+                </div>
+            </li>
+        {% endif %}
+        {% for event in event_list %}
+            {% with counter=event|event_list_signup_state_counts stats=event.get_signup_stats %}
+                <li class="list-group-item p-0 d-flex flex-row">
+                    <div class="m-0 py-2 d-flex flex-column flex-lg-row-reverse justify-content-around flex-grow-0">
+                        <div class="ps-lg-2 d-flex flex-column justify-content-center event-list-status-icon">
+                            <span {% if counter %}
+                                      data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                      title="{% for state in counter %}<div>
+                                                 {% if event.shifts.all|length > 1 %}
+                                                     {{ counter|get:state }} {% endif %}{{ ParticipationStates.labels_dict|get:state }}
+                                                 </div>{% endfor %}"
+                                  {% endif %}>
+                                {% if counter|get:ParticipationStates.CONFIRMED > 0 %}
+                                    <i class="text-{% if event.is_responsible %}info{% else %}success{% endif %} fa fa-user-check ps-2"></i>
+                                {% elif counter|get:ParticipationStates.REQUESTED > 0 %}
+                                    <i class="text-{% if event.is_responsible %}info{% else %}warning{% endif %} fa fa-user-clock ps-2"></i>
+                                {% elif counter|get:ParticipationStates.RESPONSIBLE_REJECTED > 0 %}
+                                    <i class="text-{% if event.is_responsible %}info{% else %}danger{% endif %} fa fa-user-times ps-2"></i>
+                                {% elif counter|get:ParticipationStates.USER_DECLINED > 0 and counter|length == 1 %}
+                                    <i class="text-{% if event.is_responsible %}info{% else %}danger{% endif %} fa fa-user-minus ps-2"></i>
+                                {% else %}
+                                    <i class="text-{% if event.is_responsible %}info{% else %}body-secondary{% endif %} far fa-user ps-2"></i>
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if perms.core.add_event %}
+                            <div class="ps-lg-2 d-flex flex-row flex-lg-column justify-content-center">
+                                <input name="bulk_action" value="{{ event.pk }}" type="checkbox"
+                                       class="cb-element">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="w-100 py-2 event-list-item">
+                        <div class="grid-wrapper m-0 py-0 ps-2 pe-3">
+                            <a class="grid-title event-list-item-link" href="{{ event.get_absolute_url }}">
+                                <h5 class="mb-0 text-break">
+                                    {{ event.title }}
+                                </h5>
+                                <span class="w-100 text-body-secondary text-break">
+                                    {{ event.location }}
+                                </span>
+                            </a>
+                            <a class="grid-badge event-list-item-link" href="{{ event.get_absolute_url }}">
+                                <span class="badge badge-eventtype eventtype-{{ event.type.pk }}-color">{{ event.type }}</span>
+                            </a>
+                            <a class="grid-signup d-flex flex-row justify-content-end event-list-item-link w-100"
+                               href="{{ event.get_absolute_url }}">
+                                <div class="d-flex flex-column align-items-end justify-content-center">
+                                    <div>
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="{% if event|viewable_by %}
+                                                         {% translate "Viewable by" %} {{ event|viewable_by }}.
+                                                     {% else %}
+                                                         {% translate "Event has not been made visible to any groups." %}
+                                                     {% endif %}
+                                                     {% if event.pending_disposition_count %}
+                                                         {% blocktranslate trimmed count waiting=event.pending_disposition_count %}
+                                                             {{ waiting }} participation is awaiting disposition.
+                                                         {% plural %}
+                                                             {{ waiting }} participations are awaiting disposition.
+                                                         {% endblocktranslate %}
+                                                     {% endif %}
+                                                     {% blocktranslate trimmed count confirmed=stats.confirmed_count %}
+                                                         {{ confirmed }} confirmed participation.
+                                                     {% plural %}
+                                                         {{ confirmed }} confirmed participations.
+                                                     {% endblocktranslate %}">
+                                            {% if not event|viewable_by %}
+                                                <i class="fas fa-eye-slash pe-1 text-warning"></i>
+                                            {% endif %}
+                                            {% if event.pending_disposition_count %}
+                                                <i class="fas fa-hourglass-half pe-1 text-warning"></i>
+                                            {% endif %}
+                                            <i class="fas fa-users"></i>
+                                            {{ stats.confirmed_count }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        {% include "core/fragments/signup_stats_indicator.html" with stats=stats %}
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="grid-time event-list-item-link" href="{{ event.get_absolute_url }}">
+                                <div>
+                                    {{ event.start_time|date:"D" }},
+                                    {% if event.start_time.date == event.end_time.date %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                        <span class="d-lg-none">,</span>
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {{ event.start_time|date:"TIME_FORMAT" }} –
+                                        {{ event.end_time|date:"TIME_FORMAT" }}
+                                    {% else %}
+                                        {{ event.start_time|date:"SHORT_DATE_FORMAT" }}
+                                        <span class="d-none d-lg-inline"><br></span>
+                                        {% translate "to" %}
+                                        {{ event.end_time|date:"SHORT_DATE_FORMAT" }}
+                                    {% endif %}
+                                </div>
+                            </a>
+                            <div class="grid-action d-none d-lg-flex flex-column justify-content-center">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endwith %}
+        {% empty %}
+            <div class="mb-3">
+                <h5 class="mt-5 text-center">
+                    {% translate "No results" %}
+                </h5>
+            </div>
+        {% endfor %}
+    </ul>
+    {% include 'core/pagination.html' %}
+</form>

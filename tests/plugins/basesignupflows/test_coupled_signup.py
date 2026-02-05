@@ -99,7 +99,7 @@ def test_editing_coupled_shift_with_missing_leader_shift(
     )
     response.form["leader_shift_id"] = new_shift.pk
     response.form.submit()
-    log_message = get_template("modellogging/logentry.html").render(
-        {"log": LogEntry.objects.first()}
-    )
+    log_message = get_template("modellogging/logentry.html").render({
+        "log": LogEntry.objects.first()
+    })
     assert "missing" in log_message
