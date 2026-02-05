@@ -1,0 +1,11 @@
+{% extends "core/fragments/plugin_form.html" %}
+{% load i18n %}
+
+{% block card-body %}
+    {% if not edit_permission %}
+        <div class="alert alert-warning">
+            {% translate "You don't have permission to grant qualifications, so you can't edit these settings." %}
+        </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

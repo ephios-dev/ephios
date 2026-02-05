@@ -11,33 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.11" ]
+        python-version: [ "3.14" ]
     steps:
     - uses: actions/checkout@v6
-    - name: Install poetry
-      run: pipx install "poetry<2.0"
-    - uses: actions/setup-python@v6
+    - name: Setup python and uv
+      uses: astral-sh/setup-uv@v7
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
     - name: Install dependencies
       run: |
-        poetry run pip install -U pip
-        poetry install --with=dev
-    - name: check format with black
+        uv sync --dev --inexact --all-extras
+    - name: lint and format check with ruff
       run: |
-        poetry run black --version
-        poetry run black --check .
-    - name: check import order with isort
-      run: |
-        poetry run isort --version
-        poetry run isort -c .
-    - name: Lint with pylint
-      run: |
-        poetry run pylint --version
-        poetry run pylint ephios
+        uv run ruff format --check
+        uv run ruff check
     - name: Run djhtml
-      run: poetry run djhtml -c ephios/
+      run: uv run djhtml -c src/ephios/
     - name: Make sure we always use trimmed translation strings
       run: "! git grep ' blocktranslate ' | grep -v trimmed"
     - name: No use of the trans tag
@@ -51,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.10", "3.11", "3.12" ]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         database: [ sqlite, mysql, postgres ]
         include:
           - database: sqlite
@@ -63,22 +52,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - name: Install poetry
-      run: pipx install poetry
-    - uses: actions/setup-python@v6
+    - name: Setup python and uv
+      uses: astral-sh/setup-uv@v7
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
     - name: Install dependencies
       run: |
         sudo apt-get install gettext
-        poetry run pip install -U pip
-        poetry install --all-extras --with=dev
-        poetry run pip install git+https://github.com/ephios-dev/ephios-testplugin
+        uv sync --dev --inexact --all-extras
+        uv run pip install git+https://github.com/ephios-dev/ephios-testplugin
     - name: Prepare files for test run
       run: |
         cp .env.example .env
-        poetry run python manage.py build
+        uv run manage.py build
 
     - name: Setup postgres # postgres 14 on ubuntu 22.04
       run: |
@@ -94,14 +80,14 @@ jobs:
       if: matrix.database == 'mysql'
 
     - name: Make sure all migrations are up to date # apps specified explicitly to avoid checking migrations in dependencies
-      run: poetry run python manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource
+      run: uv run manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource questionnaires
 
     - name: Test apps
       env:
         DATABASE_URL: ${{ matrix.database_url }}
-      run: poetry run coverage run --source=ephios -m pytest tests/
+      run: uv run coverage run -m pytest tests/
     - name: Coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: poetry run coveralls --service=github
+      run: uv run coveralls --service=github
       if: matrix.python-version == '3.11' && matrix.database == 'sqlite'

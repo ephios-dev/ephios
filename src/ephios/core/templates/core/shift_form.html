@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load ephios_crispy %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% if object %}
+        {% translate "Edit shift" %}
+    {% else %}
+        {% translate "Create new shift for event" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if object %}
+            <h1>{% translate "Edit shift" %}</h1>
+        {% else %}
+            <h1>{% translate "Create new shift for event" %}</h1>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <form method="post" class="form">
+                {% csrf_token %}
+                <div class="row">
+                    {% crispy_field form.date wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.meeting_time wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.start_time wrapper_class="col-12 col-lg-6" %}
+                    {% crispy_field form.end_time wrapper_class="col-12 col-lg-6" %}
+                </div>
+                {% crispy_field form.label %}
+                <hr class="border border-secondary border-dark opacity-75">
+                <h2>
+                    {% translate "Signup mode" %}
+                </h2>
+                {% crispy_field form.signup_flow_slug show_labels=False %}
+                <div data-ajax-replace-select="id_signup_flow_slug"
+                     {% url "core:signup_flow_configuration_form" event.id "SELECT_VALUE" as flow_url %}
+                     data-ajax-replace-url="{{ flow_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                    {% include 'core/fragments/shift_signup_config_form.html' with form=flow_configuration_form %}
+                </div>
+                <hr class="border border-secondary border-dark opacity-75">
+                <h2>
+                    {% translate "Structure" %}
+                </h2>
+                {% crispy_field form.structure_slug show_labels=False %}
+                <div data-ajax-replace-select="id_structure_slug"
+                     {% url "core:shift_structure_configuration_form" event.id "SELECT_VALUE" as structure_url %}
+                     data-ajax-replace-url="{{ structure_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                    {% include 'core/fragments/shift_signup_config_form.html' with form=structure_configuration_form %}
+                </div>
+                <hr class="border border-secondary border-dark opacity-75">
+                <div class="plugin-forms">
+                    {% for plugin_form in plugin_forms %}
+                        {{ plugin_form }}
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {% if object or event.active %}
+                        <a role="button" class="btn btn-secondary"
+                           href="{{ event.get_absolute_url }}">
+                            <span class="fas fa-arrow-left"></span> {% translate "Back to event" %}
+                        </a>
+                        {% if object and object.event.shifts.count > 1 %}
+                            <a role="button" class="btn btn-danger"
+                               href="{% url "core:shift_delete" object.pk %}"><span
+                                class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary float-end ms-1">
+                            <span class="fas fa-save"></span> {% translate "Save" %}
+                        </button>
+                    {% else %}
+                        <a role="button" class="btn btn-danger"
+                           href="{% url "core:event_delete" event.pk %}">{% translate "Discard event" %}</a>
+                        <button type="submit" class="btn btn-primary float-end ms-1">
+                            <span class="fas fa-save"></span> {% translate "Save event" %}
+                        </button>
+                    {% endif %}
+                    <button type="submit" name="addAnother" class="btn btn-secondary float-end">
+                        <span class="fas fa-plus"></span> {% translate "Add another shift" %}
+                    </button>
+                    <button type="submit" name="copyShift" class="btn btn-secondary float-end me-1">
+                        <span class="fas fa-copy"></span> {% translate "Copy shift" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ event.title }}
+                        <small class="float-end">
+                            <a href="{% url "core:event_edit" event.pk %}">
+                                <span class="fas fa-edit"></span>
+                                {% translate "Edit" %}
+                            </a>
+                        </small>
+                    </h5>
+                    <p class="card-text">
+                        {% translate "Event type" %}: {{ event.type }}<br>
+                        {% translate "Location" %}: {{ event.location }}
+                    </p>
+                </div>
+            </div>
+            {% for shift in event.shifts.all %}
+                {% include "core/fragments/shift_box_small.html" with shift=shift editing_shift=object can_change=perms.core.change_event %}
+            {% endfor %}
+            {% if not object %}
+                <div class="card mb-2 border-info">
+                    <div class="card-body">
+                        <h5 class="card-subtitle mb-2 text-body-secondary">{% translate "Shift" %}</h5>
+                        <p class="card-text">{% translate "You are currently adding this shift" %}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
