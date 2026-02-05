@@ -34,13 +34,11 @@ def test_redeem_invitecode_frontend(mock_requests, django_app, superuser, invite
     global_preferences_registry.manager()["general__organization_name"] = "Test"
     form = django_app.get(reverse("federation:frontend_redeem_invite_code"), user=superuser).form
     form["code"] = base64.b64encode(
-        json.dumps(
-            {
-                "guest_url": invite_code.url,
-                "code": invite_code.code,
-                "host_url": "http://localhost:8000",
-            }
-        ).encode("ascii")
+        json.dumps({
+            "guest_url": invite_code.url,
+            "code": invite_code.code,
+            "host_url": "http://localhost:8000",
+        }).encode("ascii")
     ).decode("ascii")
     form.submit().follow()
     assert FederatedHost.objects.count() == 1

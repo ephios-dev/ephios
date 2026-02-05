@@ -112,10 +112,10 @@ class TestWorkingHours:
             shift=event.shifts.first(), user=volunteer, state=LocalParticipation.States.CONFIRMED
         )
         response = django_app.get(
-            f'{reverse("core:workinghours_list")}?type={training_event_type.pk}', user=manager
+            f"{reverse('core:workinghours_list')}?type={training_event_type.pk}", user=manager
         )
         assert response.html.find(string="No entries")
         response = django_app.get(
-            f'{reverse("core:workinghours_list")}?type={service_event_type.pk}', user=manager
+            f"{reverse('core:workinghours_list')}?type={service_event_type.pk}", user=manager
         )
         assert response.html.find(string=floatformat(participation.hours_value, arg=2))

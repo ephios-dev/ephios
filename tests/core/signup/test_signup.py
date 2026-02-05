@@ -172,13 +172,13 @@ def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, total, 
         start_time=aware(a_times[0]),
         end_time=aware(a_times[1]),
         meeting_time=aware(a_times[0]) - timedelta(minutes=15),
-        **common
+        **common,
     )
     b = Shift.objects.create(
         start_time=aware(b_times[0]),
         end_time=aware(b_times[1]),
         meeting_time=aware(b_times[0]) - timedelta(minutes=15),
-        **common
+        **common,
     )
     a_participation = LocalParticipation.objects.create(
         shift=a, user=volunteer, state=AbstractParticipation.States.CONFIRMED

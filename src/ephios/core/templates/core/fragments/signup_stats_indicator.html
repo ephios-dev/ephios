@@ -1,0 +1,25 @@
+{% load i18n %}
+
+{% if stats.missing is not None and stats.missing > 0 %}
+    <span class="badge bg-light text-danger">
+        {% blocktranslate trimmed context "signup stats" count count=stats.missing %}
+            {{ count }} missing
+        {% plural %}
+            {{ count }} missing
+        {% endblocktranslate %}
+    </span>
+{% else %}
+    {% if stats.free is not None and stats.free > 0 %}
+        <span class="badge bg-light text-dark">
+            {% blocktranslate trimmed context "signup stats" count count=stats.free %}
+                {{ count }} open
+            {% plural %}
+                {{ count }} open
+            {% endblocktranslate %}
+        </span>
+    {% elif stats.free is not None and stats.free == 0 %}
+        <span class="badge bg-light text-dark">{% translate "full" %}</span>
+    {% else %}
+        <span class="badge bg-light text-dark">{% translate "open" %}</span>
+    {% endif %}
+{% endif %}
