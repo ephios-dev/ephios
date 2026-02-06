@@ -1,6 +1,6 @@
 [project]
 name = "ephios"
-version = "0.0.0"
+dynamic = ["version"]
 description = "ephios is a tool to manage shifts for medical services."
 authors = [
     { name = "Julian Baumann", email = "julian@ephios.de" },
@@ -9,6 +9,11 @@ authors = [
 requires-python = ">=3.11,<4"
 readme = "README.md"
 license = "MIT"
+
+###############################
+# Dependencies
+###############################
+
 dependencies = [
     "Django[argon2]>=5.2,<5.3",
     "django-environ>=0.11.2,<0.13",
@@ -54,14 +59,6 @@ pgsql = ["psycopg2>=2.9.3,<3"]
 mysql = ["mysqlclient>=2.1.1,<3"]
 redis = ["redis[hiredis]>=5,<8"]
 
-[project.urls]
-Homepage = "https://ephios.de"
-Repository = "https://github.com/ephios-dev/ephios"
-Documentation = "https://docs.ephios.de/en/stable/"
-Changelog = "https://docs.ephios.de/en/latest/changelog.html"
-Coverage = "https://coveralls.io/github/ephios-dev/ephios"
-"Report bugs" = "https://github.com/ephios-dev/ephios/issues"
-
 [dependency-groups]
 dev = [
     "django-debug-toolbar>=3.6,<7.0",
@@ -83,6 +80,32 @@ dev = [
     "ruff>=0.15.0",
 ]
 
+[project.urls]
+Homepage = "https://ephios.de"
+Repository = "https://github.com/ephios-dev/ephios"
+Documentation = "https://docs.ephios.de/en/stable/"
+Changelog = "https://docs.ephios.de/en/latest/changelog.html"
+Coverage = "https://coveralls.io/github/ephios-dev/ephios"
+"Report bugs" = "https://github.com/ephios-dev/ephios/issues"
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"  # used if no VCS info is available, e.g. dependabot builds
+
+[tool.uv]
+# as per https://github.com/ninoseki/uv-dynamic-versioning/blob/main/docs/tips.md#build-caching-and-editable-installs
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true }}]
+
+###############################
+# Tool configurations
+###############################
+
 [tool.ruff]
 line-length = 100
 
@@ -91,7 +114,6 @@ preview = true
 
 [tool.ruff.lint]
 preview = true
-
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
@@ -107,11 +129,6 @@ filterwarnings = [
     'error:DateTimeField .* received a naive datetime',
 ]
 
-#[build-system] TODO
-#requires = ["poetry-core>=1.0.0,<2.0", "poetry-dynamic-versioning"]
-#build-backend = "poetry_dynamic_versioning.backend"
-
-
 [tool.coverage.run]
 plugins = [
     'django_coverage_plugin',
@@ -121,9 +138,3 @@ branch = true
 
 [tool.coverage.django_coverage_plugin]
 template_extensions = 'html, txt, tex, email'
-
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-style = "semver"
-bump = true
