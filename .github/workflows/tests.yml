@@ -20,7 +20,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        uv sync --dev --active
+        uv sync --dev --inexact
     - name: lint and format check with ruff
       run: |
         uvx ruff check
@@ -59,12 +59,12 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install gettext
-        uv sync --dev --active
-        pip install git+https://github.com/ephios-dev/ephios-testplugin
+        uv sync --dev --inexact
+        uv run pip install git+https://github.com/ephios-dev/ephios-testplugin
     - name: Prepare files for test run
       run: |
         cp .env.example .env
-        python manage.py build
+        uv run manage.py build
 
     - name: Setup postgres # postgres 14 on ubuntu 22.04
       run: |
@@ -85,9 +85,9 @@ jobs:
     - name: Test apps
       env:
         DATABASE_URL: ${{ matrix.database_url }}
-      run: coverage run -m pytest tests/
+      run: uv run coverage run -m pytest tests/
     - name: Coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: coveralls --service=github
+      run: uv run coveralls --service=github
       if: matrix.python-version == '3.11' && matrix.database == 'sqlite'
