@@ -23,8 +23,8 @@ jobs:
         uv sync --dev --inexact
     - name: lint and format check with ruff
       run: |
+        uv run ruff format --check
         uv run ruff check
-        uv run  ruff format --check
     - name: Run djhtml
       run: uv run djhtml -c src/ephios/
     - name: Make sure we always use trimmed translation strings
