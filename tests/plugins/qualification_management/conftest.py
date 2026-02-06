@@ -12,45 +12,39 @@ NOTSAN_UUID = "d114125b-7cf4-49e2-8908-f93e2f95dfb8"
 
 @pytest.fixture
 def deserialized_qualifications():
-    b = DeserializedQualification(
-        {
-            "uuid": "247fab6a-8784-4976-a406-985fe47dc683",
-            "title": "Deutsches Rettungsschwimmabzeichen Bronze",
-            "abbreviation": "DRSA Bronze",
-            "includes": [],
-            "included_by": ["ef95a854-2eeb-431c-a795-bc291b341d49"],
-            "category": {
-                "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
-                "title": "Wasserrettung Allgemein",
-            },
-        }
-    )
-    s = DeserializedQualification(
-        {
-            "uuid": "ef95a854-2eeb-431c-a795-bc291b341d49",
-            "title": "Deutsches Rettungsschwimmabzeichen Silber",
-            "abbreviation": "DRSA Silber",
-            "includes": ["247fab6a-8784-4976-a406-985fe47dc683"],
-            "included_by": ["b601a18b-cee8-4037-af33-dd7aabeac295"],
-            "category": {
-                "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
-                "title": "Wasserrettung Allgemein",
-            },
-        }
-    )
-    g = DeserializedQualification(
-        {
-            "uuid": "b601a18b-cee8-4037-af33-dd7aabeac295",
-            "title": "Deutsches Rettungsschwimmabzeichen Gold",
-            "abbreviation": "DRSA Gold",
-            "includes": ["ef95a854-2eeb-431c-a795-bc291b341d49"],
-            "included_by": [],
-            "category": {
-                "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
-                "title": "Wasserrettung Allgemein",
-            },
-        }
-    )
+    b = DeserializedQualification({
+        "uuid": "247fab6a-8784-4976-a406-985fe47dc683",
+        "title": "Deutsches Rettungsschwimmabzeichen Bronze",
+        "abbreviation": "DRSA Bronze",
+        "includes": [],
+        "included_by": ["ef95a854-2eeb-431c-a795-bc291b341d49"],
+        "category": {
+            "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
+            "title": "Wasserrettung Allgemein",
+        },
+    })
+    s = DeserializedQualification({
+        "uuid": "ef95a854-2eeb-431c-a795-bc291b341d49",
+        "title": "Deutsches Rettungsschwimmabzeichen Silber",
+        "abbreviation": "DRSA Silber",
+        "includes": ["247fab6a-8784-4976-a406-985fe47dc683"],
+        "included_by": ["b601a18b-cee8-4037-af33-dd7aabeac295"],
+        "category": {
+            "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
+            "title": "Wasserrettung Allgemein",
+        },
+    })
+    g = DeserializedQualification({
+        "uuid": "b601a18b-cee8-4037-af33-dd7aabeac295",
+        "title": "Deutsches Rettungsschwimmabzeichen Gold",
+        "abbreviation": "DRSA Gold",
+        "includes": ["ef95a854-2eeb-431c-a795-bc291b341d49"],
+        "included_by": [],
+        "category": {
+            "uuid": "cd10e68f-41fe-4ca0-a624-3ab3eb85bd08",
+            "title": "Wasserrettung Allgemein",
+        },
+    })
     return b, s, g
 
 

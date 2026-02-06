@@ -26,7 +26,8 @@ def test_planners_cant_edit_autoqualification(django_app, event, planner):
 
     assert (
         "disabled"
-        in django_app.get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
+        in django_app
+        .get(reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=planner)
         .form["autoqualification-qualification"]
         .attrs
     )

@@ -66,7 +66,7 @@ def test_group_logging(django_app, superuser, groups, qualified_volunteer):
     assert form.submit()
     assert LogEntry.objects.count() == pre_count + 1
     response = django_app.get(
-        f'{reverse("core:log")}?object_type=group&object_id={planners.id}', user=superuser
+        f"{reverse('core:log')}?object_type=group&object_id={planners.id}", user=superuser
     )
     assert f"Users added: {qualified_volunteer}" in response
     assert any(

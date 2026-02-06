@@ -184,7 +184,6 @@ def test_user_specific_answer(
     qualified_participation_with_text_answers,
     state,
 ):
-
     participation, optional_answer, required_answer = participation_with_text_answers
     participation.state = state
     participation.save()

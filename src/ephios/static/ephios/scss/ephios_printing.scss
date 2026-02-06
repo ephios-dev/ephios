@@ -1,0 +1,32 @@
+@media print {
+  .no-print, // apply as needed to interactive areas unsuited for printing
+  .nav-item, .navbar-toggler, // hide nav elements
+  #messages,
+  footer,
+  .dropstart // dropdown options e.g. on event detail
+  {
+    display: none !important;
+  }
+
+  body {
+    // remove gray background to print on white paper
+    background-color: transparent !important;
+  }
+
+  .navbar-collapse {
+    // show the navbar like it's displayed on desktop devices
+    display: block !important;
+    flex-basis: auto;
+    flex-grow: 0;
+  }
+
+  nav.navbar {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .container-main, nav > .container {
+    // use full width of paper
+    max-width: 100% !important;
+  }
+}

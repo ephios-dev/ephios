@@ -13,7 +13,7 @@ jobs:
       id-token: write
     steps:
     - uses: actions/checkout@v6
-    - name: Install poetry
+    - name: Install poetry # TODO use uv in this file
       run: |
         pipx install "poetry<2.0"
         pipx inject poetry "poetry-dynamic-versioning[plugin]"

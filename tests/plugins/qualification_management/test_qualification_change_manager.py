@@ -18,9 +18,9 @@ def test_plain_import(deserialized_qualifications):
     # assert inclusion
     assert Qualification.includes.through.objects.count() == 2
     assert set(
-        collect_all_included_qualifications(
-            [Qualification.objects.get(uuid=deserialized_qualifications[2].object.uuid)]
-        )
+        collect_all_included_qualifications([
+            Qualification.objects.get(uuid=deserialized_qualifications[2].object.uuid)
+        ])
     ) == set(Qualification.objects.all())
 
 

@@ -1,0 +1,369 @@
+body {
+  hyphens: auto;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 500; // somewhere between the normal widgets and popups (defined by bootstrap)
+}
+
+.container-main {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-flow: column;
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  height: 60px;
+  margin-top: 2rem;
+}
+
+.btn-disabled {
+  pointer-events: none;
+}
+
+.btn-consequence {
+  width: 31px;
+}
+
+.consequence-list {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.event-list-status-icon {
+  min-width: 36px;
+}
+
+.tooltip-inner {
+  text-align: left;
+}
+
+.unloading {
+  transition: filter 0.5s;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+#unloading-spinner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -38vh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+}
+
+
+/* event detail and mannequin */
+
+.participant-anon {
+  filter: blur(3px);
+  padding-left: 0.1rem;
+}
+
+.mannequin {
+  border-radius: $card-border-radius;
+  border: $card-border-width solid;
+  display: inline;
+  aspect-ratio: 1;
+  width: 48px;
+  height: 48px;
+  padding: 7px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.mannequin-neutral {
+  background: $gray-200;
+  border-color: $gray-500;
+}
+
+.mannequin-confirmed {
+  background: #e0ffec;
+  border-color: #006627;
+}
+
+.mannequin-requested {
+  background: #fef6cd;
+  border-color: #aa8409;
+}
+
+.mannequin-denied {
+  background: #232c32;
+  border-color: #0000;
+}
+
+.event-list-item-link {
+  // remove link style (.text-reset)
+  text-decoration: none;
+  --bs-text-opacity: 1;
+  color: inherit !important;
+}
+
+/* event list layout */
+
+.event-list-item {
+  .grid-wrapper {
+    display: grid;
+    grid-column-gap: 0;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "title badge"
+      "title signup"
+      "time signup";
+  }
+
+  .grid-title {
+    grid-area: title;
+  }
+
+  .grid-time {
+    grid-area: time;
+    width: 100%;
+    @media (min-width: 992px) {
+      padding-left: 0.5rem;
+    }
+  }
+
+  .grid-badge {
+    grid-area: badge;
+    justify-self: end;
+    max-width: 33vw;
+    padding-left: 0.5rem;
+  }
+
+  .grid-signup {
+    grid-area: signup;
+    justify-self: end;
+    align-self: end;
+  }
+
+  .grid-action {
+    grid-area: action;
+  }
+
+
+  @media (min-width: 992px) {
+    .grid-wrapper {
+      grid-template-columns: 6fr auto 8rem 6rem 0;
+      grid-template-rows: auto;
+      grid-template-areas:
+        "title badge time signup action"
+    }
+    .grid-signup {
+      justify-self: center;
+    }
+  }
+}
+
+/*
+When select2s are hidden on page load, they tend to have the wrong size.
+This hack fixes that. Inspired by https://github.com/select2/select2/issues/4220#issuecomment-705855505
+*/
+.select2 {
+  width: 100% !important;
+}
+
+// Indicate participations of minors with a warning right border, though explanation must be available
+.participation-card-minor {
+  border-right: 0.5rem solid $warning;
+  box-sizing: border-box;
+}
+
+// Event Calendar classes
+.table-fixed {
+  table-layout: fixed;
+}
+
+.calendar-row-height {
+  height: 100px;
+}
+
+// disable link badges underlining
+a.badge {
+  text-decoration: none;
+}
+
+// shift participation badges
+.badge-placeholder {
+  min-width: 8rem;
+}
+
+.badge-participant {
+  max-width: 100%;
+  overflow: clip;
+  text-overflow: ellipsis;
+}
+
+// eventtype badge
+
+.badge-eventtype {
+  overflow: clip;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+// show form feedback
+.invalid-feedback {
+  display: block;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.calendar-shift {
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap
+}
+
+@media (min-width: 992px) {
+  //calendar eventtype indicator
+  .eventtype-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-clip: padding-box;
+    border-radius: 50%;
+  }
+
+  .calendar-shift {
+    background-color: $gray-200 !important;
+    color: $gray-900 !important;
+  }
+
+  .calendar-truncate {
+    text-overflow: ellipsis;
+  }
+}
+
+// complexsignup editor
+
+.btn-insert-subblock {
+  // add a whiping effect to the button
+  border: none;
+  border-radius: 0;
+  color: $dark;
+  background: repeating-linear-gradient(to left,
+          transparent 0%,
+          transparent 65%,
+          $secondary 75%,
+          transparent 80%,
+          transparent 100%
+  );
+  background-size: 300%;
+  animation: btn-insert-subblock-animation 4s linear infinite;
+  transition: width 0.5s;
+}
+
+@keyframes btn-insert-subblock-animation {
+  0% {
+    background-position: -100%;
+  }
+  25% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 100%;
+  }
+}
+
+.notification-content ul {
+  padding-bottom: 1rem;
+}
+
+#notification-list li {
+  border-left-width: 0.5rem;
+
+  &.unread {
+    border-left-color: $primary;
+  }
+}
+
+$shift-box-target: lighten($primary, 20%);
+.shift_box:target {
+  border-color: $shift-box-target;
+  box-shadow: 0 0 10px $shift-box-target;
+}
+
+// day calendar view
+
+.day-calendar-container {
+  display: grid;
+  grid-template-rows: [head] auto [content] 1fr;
+  height: 100%;
+  overflow-y: scroll;
+  position: relative;
+  margin-top: 1em;
+}
+
+.day-calendar-head {
+  grid-row: head;
+}
+
+.day-calendar-content {
+  grid-row: content;
+  position: relative;
+  background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
+  background-color: var(--bs-body-bg);
+}
+
+.day-calendar-content:nth-child(odd) {
+  background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) 0.1em, transparent 0.1em, transparent);
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+.day-calendar-content > .card {
+  margin: 0.2em;
+  position: absolute;
+  border-bottom: none;
+  border-right: none;
+  border-top: none;
+  max-width: 100%;
+}
+
+.day-calendar-content > .card > .card-body {
+  overflow: auto;
+  padding-bottom: 0;
+  padding-top: .5em;
+}
+
+.day-calendar-container .shift-time {
+  font-size: 1.25rem !important;
+}
+
+.day-calendar-container .mannequin {
+  width: 36px;
+  height: 36px;
+  padding: 5px;
+}
+
+// show comment visibility
+.comment-visibility-icon {
+  min-width: 1.5rem;
+}
+
+// collapsable card
+.card-header[data-bs-toggle="collapse"] a {
+    text-decoration: none;
+  }
+.card-header[data-bs-toggle="collapse"] {
+  transition: border-bottom-width 0.2s linear;
+}
+.card-header[data-bs-toggle="collapse"].collapsed {
+    border-bottom-width: 0;
+    background-color: transparent;
+}
