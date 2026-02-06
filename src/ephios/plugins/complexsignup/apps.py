@@ -15,4 +15,4 @@ class PluginApp(PluginConfig):
         )
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa

@@ -12,4 +12,4 @@ class PluginApp(PluginConfig):
         description = _("This plugins adds the standard signup flows.")
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa

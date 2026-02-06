@@ -12,4 +12,4 @@ class PluginApp(PluginConfig):
         description = _("This plugins allows you to upload files and link to them in events.")
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa

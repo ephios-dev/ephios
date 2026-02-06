@@ -12,4 +12,4 @@ class PluginApp(PluginConfig):
         description = _("This plugin collects answers from users during sign-up.")
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa

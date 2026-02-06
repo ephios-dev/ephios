@@ -12,4 +12,4 @@ class PluginApp(PluginConfig):
         description = _("This plugins provides a simple resource management system.")
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa

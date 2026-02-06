@@ -12,4 +12,4 @@ class PluginApp(PluginConfig):
         description = _("This plugins lets you add and edit qualifications.")
 
     def ready(self):
-        pass  # pylint: disable=unused-import
+        from . import signals  # noqa
