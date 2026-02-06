@@ -3,9 +3,9 @@
 set -e
 
 if [ "$1" == "run" ]; then
-  python manage.py migrate
-  python manage.py build
+  uv run manage.py migrate
+  uv run manage.py build
   exec supervisord -n -c /etc/supervisord.conf
 fi
 
-exec python manage.py "$@"
+exec uv run manage.py "$@"
