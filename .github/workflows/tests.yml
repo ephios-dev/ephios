@@ -23,10 +23,10 @@ jobs:
         uv sync --dev --inexact
     - name: lint and format check with ruff
       run: |
-        uvx ruff check
-        uvx ruff format --check
+        uv run ruff check
+        uv run  ruff format --check
     - name: Run djhtml
-      run: uvx djhtml -c src/ephios/
+      run: uv run djhtml -c src/ephios/
     - name: Make sure we always use trimmed translation strings
       run: "! git grep ' blocktranslate ' | grep -v trimmed"
     - name: No use of the trans tag
