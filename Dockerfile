@@ -1,10 +1,9 @@
 # syntax=docker/dockerfile:1
-FROM python:3.11-bookworm
+FROM ghcr.io/astral-sh/uv:0.10.0-python3.14-trixie-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV POETRY_VIRTUALENVS_CREATE=false
-ENV POETRY_VERSION=1.6.1
+ENV UV_NO_DEV=1
 
 WORKDIR /usr/src/ephios
 
@@ -20,15 +19,15 @@ RUN dpkg-reconfigure locales && \
 	locale-gen C.UTF-8 && \
 	/usr/sbin/update-locale LANG=C.UTF-8
 
-RUN pip install "poetry==$POETRY_VERSION" gunicorn
-RUN poetry self add "poetry-dynamic-versioning[plugin]"
+ENV PATH=/root/.local/bin:$PATH
+RUN uv tool install gunicorn
 
 RUN mkdir -p /var/ephios/data/ && \
     mkdir -p /var/log/supervisord/ && \
     mkdir -p /var/run/supervisord/
 
 COPY . /usr/src/ephios
-RUN poetry install --all-extras --without=dev
+RUN uv sync --locked --all-extras
 
 COPY deployment/docker/entrypoint.sh /usr/local/bin/ephios
 RUN chmod +x /usr/local/bin/ephios
