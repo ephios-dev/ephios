@@ -80,7 +80,7 @@ jobs:
       if: matrix.database == 'mysql'
 
     - name: Make sure all migrations are up to date # apps specified explicitly to avoid checking migrations in dependencies
-      run: python manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource
+      run: uv run manage.py makemigrations --check core extra api complexsignup eventautoqualification federation files guests pages qualification_management simpleresource questionaires
 
     - name: Test apps
       env:
