@@ -84,7 +84,8 @@ def confirmed_participations(user: UserProfile):
     # can't use order_by, as postgres gets confused when using the
     # `start_time` coalesce, the shift select related and order_by on start_time at the same time.
     return sorted(
-        user.participations.filter(state=AbstractParticipation.States.CONFIRMED)
+        user.participations
+        .filter(state=AbstractParticipation.States.CONFIRMED)
         .filter(end_time__gte=timezone.now())
         .select_related("shift", "shift__event"),
         key=operator.attrgetter("start_time", "end_time"),

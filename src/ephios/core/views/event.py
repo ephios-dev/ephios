@@ -294,7 +294,8 @@ class EventListView(LoginRequiredMixin, ListView):
 
     def _get_shifts_for_calendar(self):
         return (
-            Shift.objects.filter(
+            Shift.objects
+            .filter(
                 event__in=get_objects_for_user(self.request.user, "core.view_event", klass=Event),
             )
             .annotate(
@@ -364,7 +365,8 @@ class EventListView(LoginRequiredMixin, ListView):
             shifts = self.filter_form.filter_shifts(shifts)
 
         events = (
-            Event.objects.filter(
+            Event.objects
+            .filter(
                 id__in=shifts.values_list("event_id", flat=True),
             )
             .distinct()
@@ -486,7 +488,8 @@ class EventDetailView(CustomPermissionRequiredMixin, CanonicalSlugDetailMixin, D
         if (participant := request_to_participant(self.request)) is None:
             return base
         return (
-            base.prefetch_related("shifts")
+            base
+            .prefetch_related("shifts")
             .prefetch_related(
                 Prefetch(
                     "shifts__participations",

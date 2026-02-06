@@ -67,7 +67,8 @@ class UserEventFeed(EventFeed):
             state__in=self.include_participation_states,
         ).values_list("shift", flat=True)
         return (
-            Shift.objects.filter(pk__in=shift_ids)
+            Shift.objects
+            .filter(pk__in=shift_ids)
             .select_related("event")
             .prefetch_related(Prefetch("participations", queryset=self.user.participations.all()))
         )

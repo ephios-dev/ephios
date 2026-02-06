@@ -74,7 +74,8 @@ def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_vol
 
 def test_cannot_sign_up_for_conflicting_shifts(django_app, volunteer, event, conflicting_event):
     assert (
-        not conflicting_event.shifts.first()
+        not conflicting_event.shifts
+        .first()
         .signup_flow.get_validator(volunteer.as_participant())
         .can_sign_up()
     )
@@ -92,7 +93,8 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
     shift_b.end_time -= timedelta(hours=1)
     shift_b.save()
     response = (
-        django_app.get(
+        django_app
+        .get(
             event.get_absolute_url(),
             user=volunteer,
         )

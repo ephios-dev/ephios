@@ -55,7 +55,8 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     ]
 
     queryset = (
-        Event.objects.all()
+        Event.objects
+        .all()
         .annotate(
             start_time=Min("shifts__start_time"),
             end_time=Max("shifts__end_time"),
@@ -75,7 +76,8 @@ class UserinfoParticipationViewSet(viewsets.ReadOnlyModelViewSet):
     required_scopes = ["CONFIDENTIAL_READ"]
 
     queryset = (
-        AbstractParticipation.objects.all()
+        AbstractParticipation.objects
+        .all()
         .select_related("shift", "shift__event", "shift__event__type")
         .order_by("id")
     )
@@ -93,9 +95,8 @@ class ParticipationViewSet(UserinfoParticipationViewSet):
     required_scopes = ["CONFIDENTIAL_READ"]
 
     queryset = (
-        AbstractParticipation.objects.filter(
-            state__in=AbstractParticipation.States.REQUESTED_AND_CONFIRMED
-        )
+        AbstractParticipation.objects
+        .filter(state__in=AbstractParticipation.States.REQUESTED_AND_CONFIRMED)
         .select_related("shift", "shift__event", "shift__event__type")
         .order_by("id")
     )

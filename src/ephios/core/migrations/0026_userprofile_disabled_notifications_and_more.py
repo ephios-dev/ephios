@@ -17,7 +17,8 @@ def migrate_disabled_notifications(apps, schema_editor):
     for profile in UserProfile.all_objects.using(db_alias).all():
         try:
             preferences = JSONSerializer.deserialize(
-                UserPreferenceModel.objects.using(db_alias)
+                UserPreferenceModel.objects
+                .using(db_alias)
                 .get(section="notifications", name="notifications", instance__pk=profile.pk)
                 .raw_value
             )

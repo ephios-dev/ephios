@@ -109,7 +109,8 @@ class GuestEventDetailView(RedirectAuthenticatedUserMixin, DetailView):
 
     def get_event(self):
         return (
-            Event.objects.filter(id=self.get_object().event_id)
+            Event.objects
+            .filter(id=self.get_object().event_id)
             .prefetch_related(
                 Prefetch(
                     "shifts__participations",

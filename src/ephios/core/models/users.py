@@ -184,7 +184,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         Be careful to not use this in a loop, as it will perform a query for each iteration.
         """
         return (
-            Qualification.objects.filter(
+            Qualification.objects
+            .filter(
                 pk__in=self.qualification_grants.unexpired().values_list(
                     "qualification_id", flat=True
                 )
@@ -199,7 +200,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         from ephios.core.models import AbstractParticipation
 
         participations = (
-            self.participations.filter(state=AbstractParticipation.States.CONFIRMED)
+            self.participations
+            .filter(state=AbstractParticipation.States.CONFIRMED)
             .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),

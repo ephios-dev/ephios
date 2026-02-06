@@ -61,7 +61,8 @@ class SignupView(FormView):
         if isinstance(self.participant, LocalUserParticipant):
             UserProfile._base_manager.select_for_update(of=OF_SELF).get(pk=self.participant.user.pk)
         return (
-            Shift._base_manager.select_for_update(of=OF_SELF)
+            Shift._base_manager
+            .select_for_update(of=OF_SELF)
             .prefetch_related("participations")
             .select_related("event", "event__type")
             .get(pk=self.shift.pk)

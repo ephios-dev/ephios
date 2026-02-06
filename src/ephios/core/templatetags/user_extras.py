@@ -42,7 +42,8 @@ def participation_conflicts(participation):
 @register.filter(name="shifts_needing_disposition")
 def shifts_needing_disposition(user):
     return (
-        Shift.objects.filter(
+        Shift.objects
+        .filter(
             event__in=get_objects_for_user(
                 user,
                 perms=["core.change_event"],

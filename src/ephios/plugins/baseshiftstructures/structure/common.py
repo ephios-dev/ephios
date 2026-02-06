@@ -119,7 +119,8 @@ class QualificationsRequiredSignupMixin(_Base):
                         "Participants also need to have the qualifications <b>{qualifications}</b> to participate in {eventtype}"
                     ).format(
                         qualifications=",".join(
-                            self.event.type.preferences.get("general_required_qualifications")
+                            self.event.type.preferences
+                            .get("general_required_qualifications")
                             .all()
                             .values_list("title", flat=True)
                         ),

@@ -70,7 +70,8 @@ def test_resource_allocation_edit(django_app, superuser, groups, event, resource
     form.submit()
     assert ResourceAllocation.objects.get(shift=event.shifts.first()).resources.count() == 1
     assert (
-        ResourceAllocation.objects.get(shift=event.shifts.first())
+        ResourceAllocation.objects
+        .get(shift=event.shifts.first())
         .resources.filter(pk=resources[0].pk)
         .exists()
     )

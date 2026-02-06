@@ -102,7 +102,8 @@ class FederatedEventDetailView(CheckFederatedAccessTokenMixin, DetailView):
 
     def get_queryset(self):
         return (
-            Event.objects.all()
+            Event.objects
+            .all()
             .prefetch_related("shifts")
             .prefetch_related(
                 Prefetch(

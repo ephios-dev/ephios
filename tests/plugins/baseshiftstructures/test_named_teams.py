@@ -90,7 +90,8 @@ def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
 def test_signup_flow(django_app, qualified_volunteer, planner, event, teamed_shift):
     # request a participation as volunteer on *second* shift
     response = (
-        django_app.get(
+        django_app
+        .get(
             event.get_absolute_url(),
             user=qualified_volunteer,
         )

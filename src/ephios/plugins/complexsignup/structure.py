@@ -490,7 +490,8 @@ def _search_block(
     }
     if block.is_composite():
         for composition in (
-            block.sub_compositions.all()
+            block.sub_compositions
+            .all()
             .select_related(
                 "sub_block",
             )

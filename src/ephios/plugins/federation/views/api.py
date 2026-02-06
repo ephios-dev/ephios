@@ -74,7 +74,8 @@ class SharedEventListView(ListAPIView):
         except FederatedGuest.DoesNotExist as exc:
             raise APIPermissionDenied from exc
         return (
-            Event.objects.filter(federatedeventshare__shared_with=guest)
+            Event.objects
+            .filter(federatedeventshare__shared_with=guest)
             .annotate(
                 start_time=Min("shifts__start_time"),
                 end_time=Max("shifts__end_time"),

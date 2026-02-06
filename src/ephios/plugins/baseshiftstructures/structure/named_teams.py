@@ -268,7 +268,8 @@ class NamedTeamsShiftStructure(BaseGroupBasedShiftStructure):
             {
                 "name": str(participation.participant),
                 "relevant_qualifications": ", ".join(
-                    participation.participant.qualifications.filter(
+                    participation.participant.qualifications
+                    .filter(
                         category__show_with_user=True,
                     )
                     .order_by("category", "abbreviation")

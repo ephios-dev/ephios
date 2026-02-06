@@ -55,12 +55,14 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
             participations = participations.filter(shift__event__type=eventtype)
         else:
             workinghours = (
-                WorkingHours.objects.filter(date__gte=start, date__lte=end)
+                WorkingHours.objects
+                .filter(date__gte=start, date__lte=end)
                 .annotate(hour_sum=Sum("hours"))
                 .values_list("user__pk", "user__display_name", "hour_sum")
             )
         participations = (
-            participations.annotate(
+            participations
+            .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),
                     output_field=DurationField(),

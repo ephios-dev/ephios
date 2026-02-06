@@ -84,7 +84,8 @@ class EventExport(BasePDFExporter):
                 (
                     Paragraph(
                         ", ".join(
-                            p.participant.qualifications.filter(
+                            p.participant.qualifications
+                            .filter(
                                 category__show_with_user=True,
                             )
                             .order_by("category", "title")

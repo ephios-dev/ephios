@@ -38,7 +38,8 @@ class RepoError(Exception):
 def fetch_deserialized_qualifications_from_repo():
     repo_urls = (
         stripped_url
-        for url in global_preferences_registry.manager()
+        for url in global_preferences_registry
+        .manager()
         .get("general__qualification_management_repos")
         .splitlines()
         if (stripped_url := url.strip())
