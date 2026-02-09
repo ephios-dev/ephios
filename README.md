@@ -47,4 +47,4 @@ Contributions to ephios are very welcome! Feel free to ask us for what can be do
 Report bugs [on github](https://github.com/ephios-dev/ephios/issues/new?template=bug-report.md). Fork the project and create a pull request to contribute code.
 You can find information about the **development setup** in [the documentation](https://docs.ephios.de/en/latest/development/contributing.html)
 We are using Weblate for translations, you can also contribute [there](https://hosted.weblate.org/engage/ephios/).
-Please follow our [code of conduct](https://github.com/ephios-dev/ephios/blob/main/CODE_OF_CONDUCT.md). 
+Please follow our [code of conduct](https://github.com/ephios-dev/ephios/blob/main/CODE_OF_CONDUCT.md).

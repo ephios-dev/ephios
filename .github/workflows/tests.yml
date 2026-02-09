@@ -25,6 +25,7 @@ jobs:
       run: |
         uv run ruff format --check
         uv run ruff check
+        uv run pylint src/ephios  # ruff does not have feature parity with pylint yet
     - name: Run djhtml
       run: uv run djhtml -c src/ephios/
     - name: Make sure we always use trimmed translation strings

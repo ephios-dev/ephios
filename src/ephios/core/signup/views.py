@@ -57,7 +57,7 @@ class SignupView(FormView):
         # - there being multiple participation objects for the same participant/shift combination
         # Therefore we select user and shift for update, making transactions block.
         # To avoid Deadlocks, the lock order must always be user, then shift.
-        # pylint: disable = protected-access
+        # pylint: disable=protected-access
         if isinstance(self.participant, LocalUserParticipant):
             UserProfile._base_manager.select_for_update(of=OF_SELF).get(pk=self.participant.user.pk)
         return (

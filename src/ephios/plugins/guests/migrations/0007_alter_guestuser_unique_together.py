@@ -12,6 +12,7 @@ def deduplicate_guest_participations(apps, schema_editor):
     for duplicate_guest in (
         GuestUser.objects.values("email", "event_id").annotate(Count("id")).filter(id__count__gt=1)
     ):
+        # pylint: disable=not-an-iterable
         for participation in GuestParticipation.objects.filter(
             guest_user__email=duplicate_guest["email"],
             guest_user__event_id=duplicate_guest["event_id"],

@@ -29,6 +29,7 @@ def create_qualification_consequence(sender, participation, **kwargs):
         )
     elif mode == EventAutoQualificationConfiguration.Modes.EVERY_SHIFT:
         # count participant hashes in finished participations (and this one)
+        # pylint: disable=not-an-iterable
         participant_hash_counter = Counter(
             hash(participation.participant)
             for participation in AbstractParticipation.objects.filter(
