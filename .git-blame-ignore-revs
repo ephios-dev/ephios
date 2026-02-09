@@ -1,0 +1,6 @@
+
+# 2026-02-09 migrate from pylint to uv, move code to src/, format with ruff
+ae0f0a6d10ff593f444e4ee7cb7441e454accf8d
+f89c0968cf80bd97129ddb95b102bea2e15b650a
+4264c48f4581a1348188ee90cfd89c1f61ebd5a3
+df8978e2fe69bad3cb826b5f15818860075ec8e1
