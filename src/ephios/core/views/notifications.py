@@ -107,6 +107,7 @@ class MassNotificationForm(forms.Form):
         self.event_requested = set()
         self.event_nonfeedback = set(choices.keys())
         if self.event:
+            # pylint: disable=not-an-iterable, assignment-from-no-return
             event_participations = AbstractParticipation.objects.filter(
                 shift__event=self.event,
             )

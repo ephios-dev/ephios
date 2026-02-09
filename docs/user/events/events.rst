@@ -41,4 +41,3 @@ You can configure event title, location and a rich text description.
 Shifts have a start and end time, a meetup time as well as settings for how signup works.
 
 Plugins might provide additional stettings on shift or event level.
-

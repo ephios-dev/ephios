@@ -45,6 +45,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     permission_required = "core.view_userprofile"
 
     def _get_working_hours_stats(self, start: date, end: date, eventtype: Optional[EventType]):
+        # pylint: disable=assignment-from-no-return
         participations = LocalParticipation.objects.filter(
             state=LocalParticipation.States.CONFIRMED,
             start_time__date__gte=start,

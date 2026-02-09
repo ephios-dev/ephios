@@ -36,8 +36,8 @@ consider the plugin enabled. This only makes sense for invisible plugins.
 
 Installing a plugin
 -------------------
-To package your plugin, you can run ``poetry build`` which will produce a python wheel. You can either copy the wheel file
-to your server and install it with ``pip install /path/to/build.whl`` or publish it to pypi using ``poetry publish``. You need to create
+To package your plugin, you can run ``uv build`` which will produce a python wheel. You can either copy the wheel file
+to your server and install it with ``pip install /path/to/build.whl`` or publish it to pypi using ``uv publish``. You need to create
 an API token with pypi for that. Then you can install your plugin from pypi with ``pip install app_name``. Make sure to install the
 plugin in the same virtual environment as ephios (if applicable). Please note that you need to activate the plugin from within ephios in order to see it.
 
