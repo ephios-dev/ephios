@@ -6,7 +6,7 @@ import sys
 
 
 def main():
-    sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ephios.settings")
     try:
         from django.core.management import execute_from_command_line
