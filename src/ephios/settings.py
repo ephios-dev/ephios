@@ -21,9 +21,6 @@ PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
 # REPO_DIR defaults to the directory containing the src folder
 REPO_DIR = os.path.dirname(os.path.dirname(PACKAGE_DIR))
 
-# oldstuff
-
-
 env = environ.Env()
 # for syntax see https://django-environ.readthedocs.io/en/latest/
 # read env file from ENV_PATH or fall back to a .env file in the project root

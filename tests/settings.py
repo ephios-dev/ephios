@@ -1,5 +1,4 @@
 import os
-
 from ephios.settings import *  # noqa
 
 LANGUAGE_CODE = "en"
