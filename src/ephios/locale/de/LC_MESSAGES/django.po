@@ -1913,7 +1913,7 @@ msgstr "Teilnehmende können individuelle Start- und Endzeiten angeben"
 
 #: ephios/core/signup/flow/participant_validation.py:48
 msgid "The event is not active."
-msgstr "Die Veranstaltung {title} ist nicht aktiviert."
+msgstr "Die Veranstaltung ist nicht aktiviert."
 
 #: ephios/core/signup/flow/participant_validation.py:58
 msgid "You cannot decline by yourself."
