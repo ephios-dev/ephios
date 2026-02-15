@@ -51,7 +51,7 @@ def test_list_and_calendar_dont_display_event_without_view_permission(django_app
 def test_event_filter_participation_state(django_app, volunteer, event, conflicting_event):
     # event_list also exists in calendar_view
     response = django_app.get(
-        f'{reverse("core:event_list")}?mode=calendar&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=calendar&date={event.get_start_time():%Y-%m-%d}",
         user=volunteer,
     )
 
@@ -77,7 +77,7 @@ def test_event_filter_participation_state(django_app, volunteer, event, conflict
 
 def test_event_filter_query_string(django_app, volunteer, event, conflicting_event):
     response = django_app.get(
-        f'{reverse("core:event_list")}?mode=calendar&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=calendar&date={event.get_start_time():%Y-%m-%d}",
         user=volunteer,
     )
     filter_form = response.forms["filter-form"]
@@ -91,7 +91,7 @@ def test_event_filter_event_type(
     django_app, volunteer, event, conflicting_event, training_event_type
 ):
     response = django_app.get(
-        f'{reverse("core:event_list")}?mode=calendar&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=calendar&date={event.get_start_time():%Y-%m-%d}",
         user=volunteer,
     )
     filter_form = response.forms["filter-form"]
@@ -104,7 +104,7 @@ def test_event_filter_event_type(
 def test_event_filter_pending_disposition(django_app, planner, volunteer, event):
     # first look for pending dispo events and find none
     filter_form = django_app.get(
-        f'{reverse("core:event_list")}?mode=calendar&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=calendar&date={event.get_start_time():%Y-%m-%d}",
         user=planner,
     ).forms["filter-form"]
     filter_form["state"] = "pending"
@@ -119,7 +119,7 @@ def test_event_filter_pending_disposition(django_app, planner, volunteer, event)
 
     # now find the pending event
     filter_form = django_app.get(
-        f'{reverse("core:event_list")}?date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?date={event.get_start_time():%Y-%m-%d}",
         user=planner,
     ).forms["filter-form"]
     filter_form["state"] = "pending"
@@ -138,7 +138,7 @@ def test_event_filter_time(django_app, planner, event):
 
 def test_signup_from_day_calendar(django_app, volunteer, event):
     response = django_app.get(
-        f'{reverse("core:event_list")}?mode=day&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=day&date={event.get_start_time():%Y-%m-%d}",
         user=volunteer,
     )
     response.forms[1].submit(name="signup_choice", value="sign_up").follow()
@@ -147,7 +147,7 @@ def test_signup_from_day_calendar(django_app, volunteer, event):
 
 def test_day_mode_filter(django_app, volunteer, event, conflicting_event):
     response = django_app.get(
-        f'{reverse("core:event_list")}?mode=day&date={event.get_start_time():%Y-%m-%d}',
+        f"{reverse('core:event_list')}?mode=day&date={event.get_start_time():%Y-%m-%d}",
         user=volunteer,
     )
     filter_form = response.forms["filter-form"]

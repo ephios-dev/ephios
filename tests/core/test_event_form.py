@@ -56,9 +56,10 @@ def test_create_form_error(django_app, planner, superuser, service_event_type, g
     ).form
     event_form["title"] = "Seeed Concert"
     event_form["location"] = "BOS ARENA"
-    event_form["visible_for"].force_value(
-        [volunteers.id, 999]
-    )  # invalid ID! (perhaps the group was deleted meanwhile)
+    event_form["visible_for"].force_value([
+        volunteers.id,
+        999,
+    ])  # invalid ID! (perhaps the group was deleted meanwhile)
     response = event_form.submit()
     assert "999 is not one of the available choices." in response.text
 

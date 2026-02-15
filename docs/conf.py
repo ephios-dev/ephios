@@ -9,7 +9,9 @@ import datetime
 import os
 from pathlib import Path
 
+import django
 import environ
+from django.core import management
 
 # -- Path setup --------------------------------------------------------------
 
@@ -23,7 +25,7 @@ import environ
 
 
 project = "ephios"
-copyright = f"{datetime.datetime.now().strftime("%Y")}, ephios-dev"
+copyright = f"{datetime.datetime.now().strftime('%Y')}, ephios-dev"
 author = "ephios-dev"
 
 
@@ -75,11 +77,9 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "ephios.settings"
 os.environ["DEBUG"] = "False"
 environ.Env.read_env(env_file=str(Path(__file__).parent.parent.absolute() / ".env.example"))
 
-import django
 
 django.setup()
 
-from django.core import management
 
 management.call_command(
     "spectacular", ["--color", "--file", "api/ephios-open-api-schema.yml", "--api-version", "api"]

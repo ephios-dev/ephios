@@ -24,17 +24,17 @@ To set up a development version on your local machine, you need to execute the f
    * ``gettext`` (to compile translations, might also be named ``msgfmt``)
 
 #. Check out the `repository <https://github.com/ephios-dev/ephios>`_ and cd to it
-#. Set up a virtualenv for the project activate it
-#. Install poetry (if not already installed): `Installation guide <https://python-poetry.org/docs/#installation>`_
-#. Install dependencies with ``poetry install``
+#. Install uv (if not already installed): `Installation guide <https://docs.astral.sh/uv/getting-started/installation/>`_
+#. Install dependencies with ``uv sync --dev`` (this might create a virtual environment for you)
 #. Create env file with ``cp .env.example .env``
-#. Migrate the database with ``python manage.py migrate``
-#. Prepare files for the installation with ``python manage.py build``
-#. Load data for testing with ``python manage.py devdata``
-#. Start the development server with ``python manage.py runserver``
+#. Migrate the database with ``uv run manage.py migrate``
+#. Prepare files for the installation with ``uv run manage.py build``
+#. Load data for testing with ``uv run manage.py devdata``
+#. Start the development server with ``uv run manage.py runserver``
 #. Open your web browser, visit ``http://localhost:8000`` and log in with the default credentials (user ``admin@localhost`` and password ``admin``)
 
 If those steps did not work for you, please contact us or open an issue in the GitHub repository.
+Feel free to adjust how your shell and uv handle virtual environments to your liking.
 
 .. warning::
     The default development server is not suitable for production use. It is not secure and not performant.
@@ -45,21 +45,21 @@ Tests
 
 We are using `pytest <https://docs.pytest.org/en/stable/>`_ along with `django-webtest <https://github.com/django-webtest/django-webtest>`_.
 Please write tests for new features or fixed bugs. You can use your IDE integration to run the tests or execute the
-whole test suite with ``pytest``.
+whole test suite with ``uv run pytest``.
 
 Code style
 ----------
 
 We are enforcing a good code style for every pull request. To ensure that you only commit appropriate code, we recommend
-installing a pre-commit hook with ``pre-commit install``. You can have a look at ``.pre-commit-config.yaml`` to check
+installing a pre-commit hook with ``prek install``. You can have a look at ``.pre-commit-config.yaml`` to check
 how this works. In short it executes the following steps before every commit:
 
-* run ``autoflake`` with a couple of flags to remove unused imports,
-* run ``isort .`` to sort imports,
-* run ``black .`` to format the code.
+* runs ``ruff`` to check for linting and formatting issues and fix them if possible,
+* formats HTML templates with ``djhtml``,
+* does some whitespace checks
 
-If you want to do that manually, run ``pre-commit run --all-files``.
-Next to that, we also run ``pylint ephios`` to check for semantic issues in the code.
+If you want to do that manually, run ``prek run --all-files``.
+Next to that, we also run ``uv run pylint src/ephios`` to check for semantic issues in the code.
 
 Translations
 ------------

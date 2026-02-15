@@ -46,33 +46,31 @@ def teamed_shift(event, tz, qualifications):
 
 @pytest.mark.ignore_template_errors  # shift_form uses unbound object to detect shift creation
 def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
-    POST_DATA = OrderedDict(
-        {
-            "choose_preferred_team": "on",
-            "date": "2023-06-30",
-            "end_time": "01:00:00",
-            "meeting_time": "15:30:00",
-            "minimum_age": "",
-            "teams": "",
-            "teams-0-min_count": "2",
-            "teams-0-qualifications": str(qualifications.rs.id),
-            "teams-0-title": "KTW 10-85-1",
-            "teams-0-uuid": "",
-            "teams-1-min_count": "2",
-            "teams-1-qualifications": str(qualifications.na.id),
-            "teams-1-title": "ITS",
-            "teams-1-uuid": "",
-            "teams-INITIAL_FORMS": "2",
-            "teams-MAX_NUM_FORMS": "1000",
-            "teams-MIN_NUM_FORMS": "1",
-            "teams-TOTAL_FORMS": "2",
-            "signup_flow_slug": RequestConfirmSignupFlow.slug,
-            "structure_slug": NamedTeamsShiftStructure.slug,
-            "signup_until_0": "",
-            "signup_until_1": "",
-            "start_time": "16:00:00",
-        }
-    )
+    POST_DATA = OrderedDict({
+        "choose_preferred_team": "on",
+        "date": "2023-06-30",
+        "end_time": "01:00:00",
+        "meeting_time": "15:30:00",
+        "minimum_age": "",
+        "teams": "",
+        "teams-0-min_count": "2",
+        "teams-0-qualifications": str(qualifications.rs.id),
+        "teams-0-title": "KTW 10-85-1",
+        "teams-0-uuid": "",
+        "teams-1-min_count": "2",
+        "teams-1-qualifications": str(qualifications.na.id),
+        "teams-1-title": "ITS",
+        "teams-1-uuid": "",
+        "teams-INITIAL_FORMS": "2",
+        "teams-MAX_NUM_FORMS": "1000",
+        "teams-MIN_NUM_FORMS": "1",
+        "teams-TOTAL_FORMS": "2",
+        "signup_flow_slug": RequestConfirmSignupFlow.slug,
+        "structure_slug": NamedTeamsShiftStructure.slug,
+        "signup_until_0": "",
+        "signup_until_1": "",
+        "start_time": "16:00:00",
+    })
 
     csrf_exempt_django_app.get(
         reverse("core:event_createshift", kwargs=dict(pk=event.pk)),
@@ -92,7 +90,8 @@ def test_configuration(csrf_exempt_django_app, planner, event, qualifications):
 def test_signup_flow(django_app, qualified_volunteer, planner, event, teamed_shift):
     # request a participation as volunteer on *second* shift
     response = (
-        django_app.get(
+        django_app
+        .get(
             event.get_absolute_url(),
             user=qualified_volunteer,
         )

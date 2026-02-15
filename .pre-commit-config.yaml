@@ -1,24 +1,15 @@
 default_language_version:
   python: python3
 repos:
-  - repo: https://github.com/myint/autoflake
-    rev: v2.3.1
+  - repo: 'https://github.com/pre-commit/pre-commit-hooks'
+    rev: v6.0.0
     hooks:
-      - id: autoflake
-        args:
-          - --in-place
-          - --recursive
-          - --remove-all-unused-imports
-          - --ignore-init-module-imports
-          - --expand-star-imports
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+      - id: check-added-large-files
+  - repo: 'https://github.com/astral-sh/ruff-pre-commit'
+    rev: v0.15.0
     hooks:
-      - id: isort
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.1.0
-    hooks:
-      - id: black
+      - id: ruff-check
+      - id: ruff-format
   - repo: https://github.com/rtts/djhtml
     rev: 3.0.6
     hooks:

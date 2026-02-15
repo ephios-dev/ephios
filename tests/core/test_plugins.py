@@ -14,15 +14,15 @@ def test_plugin_discovery():
     )
     # This assertion might fail if ephios-testplugin ends up in your python path but isn't properly installed
     # in your virtual env, hence it's not found through the entry point mechanism ephios uses to find plugins.
-    assert any(
-        "ephios_testplugin" in plugin_path for plugin_path in settings.PLUGINS
-    ), "ephios-testplugin is installed, but wasn't found by the entry point discovery"
+    assert any("ephios_testplugin" in plugin_path for plugin_path in settings.PLUGINS), (
+        "ephios-testplugin is installed, but wasn't found by the entry point discovery"
+    )
 
     # Now we also need to check that the correct app config is found
     # Only apps with EphiosPluginMeta will be listed here
-    assert (
-        "ephios_testplugin" in [plugin.module for plugin in get_all_plugins()][4:]
-    ), "ephios-testplugin is not configured as a plugin"
+    assert "ephios_testplugin" in [plugin.module for plugin in get_all_plugins()][4:], (
+        "ephios-testplugin is not configured as a plugin"
+    )
 
 
 @pytest.fixture

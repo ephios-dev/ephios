@@ -13,11 +13,11 @@ jobs:
       id-token: write
     steps:
     - uses: actions/checkout@v6
-    - name: Install poetry
-      run: |
-        pipx install "poetry<2.0"
-        pipx inject poetry "poetry-dynamic-versioning[plugin]"
+    - name: Setup python and uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Build wheel
-      run: poetry build
+      run: uv build
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1

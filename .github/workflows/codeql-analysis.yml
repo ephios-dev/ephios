@@ -32,7 +32,7 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
       with:
-        languages: ${{ matrix.language }}
+        languages: ${{ matrix.language }}  # TODO unknown reference?
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4

@@ -1,101 +1,117 @@
-[tool.poetry]
+[project]
 name = "ephios"
-version = "0.0.0" # automatically set by poetry-dynamic-versioning
+dynamic = ["version"]
 description = "ephios is a tool to manage shifts for medical services."
-authors = ["Julian Baumann <julian@ephios.de>", "Felix Rindt <felix@ephios.de>"]
-license = "MIT"
+authors = [
+    { name = "Julian Baumann", email = "julian@ephios.de" },
+    { name = "Felix Rindt", email = "felix@ephios.de" },
+]
+requires-python = ">=3.11,<4"
 readme = "README.md"
-homepage = "https://ephios.de"
-repository = "https://github.com/ephios-dev/ephios"
-documentation = "https://docs.ephios.de/en/stable/"
+license = "MIT"
 
-[tool.poetry.urls]
-"Changelog" = "https://docs.ephios.de/en/latest/changelog.html"
-"Coverage" = "https://coveralls.io/github/ephios-dev/ephios"
+###############################
+# Dependencies
+###############################
+
+dependencies = [
+    "Django[argon2]>=5.2,<5.3",
+    "django-environ>=0.11.2,<0.13",
+    "django-guardian>=3.2.0,<4",
+    "django-ical>=1.8.3,<2",
+    "django-polymorphic>=4.1,<5.0",
+    "django-select2>=8.0,<9.0",
+    "reportlab>=3.6.11,<5.0.0",
+    "django-formset-js-improved>=0.5.0,<0.6",
+    "django-csp>=4.0,<5",
+    "bleach>=6.0.0,<7.0.0",
+    "Markdown>=3.3.7,<4",
+    "django-compressor>=4.5,<5",
+    "django-statici18n>=2.3.1,<3",
+    "django-dynamic-preferences>=1.15.0,<2",
+    "django-crispy-forms>=2.0,<3",
+    "django-webpush>=0.3.5,<0.4",
+    "django-libsass>=0.9,<0.10",
+    "crispy-bootstrap5>=0.7,<2025.7",
+    "djangorestframework>=3.13.1,<4",
+    "django-coverage-plugin>=2.0.3,<4.0.0",
+    "django-filter>=24,<26",
+    "djangorestframework-guardian>=0.3,<0.5",
+    "uritemplate>=4.1.1,<5",
+    "django-oauth-toolkit>=3.0.1,<3.3.0",
+    "urllib3>=2.5.0,<3",
+    "pyyaml>=6.0.1,<7",
+    "lxml>=4.9.3,<7.0.0",
+    "beautifulsoup4>=4.13.3,<5",
+    "css-inline>=0.10.3,<0.20.0",
+    "requests>=2.31.0,<3",
+    "requests-oauthlib>=2.0,<3",
+    "pyjwt>=2.8.0,<3",
+    "scipy==1.17.0",
+    "drf-spectacular[sidecar]>=0.27.2,<0.30.0",
+    "python-dateutil>=2.9.0.post0,<3",
+    "cryptography>=46.0.3,<47",
+    "py-vapid>=1.9.4,<2",
+]
+
+[project.optional-dependencies]
+pgsql = ["psycopg2>=2.9.3,<3"]
+mysql = ["mysqlclient>=2.1.1,<3"]
+redis = ["redis[hiredis]>=5,<8"]
+
+[dependency-groups]
+dev = [
+    "django-debug-toolbar>=3.6,<7.0",
+    "pytest-django>=4.5.2,<5",
+    "django-webtest>=1.9.9,<2",
+    "django-extensions>=3.2.1,<5.0.0",
+    "coverage>=6.4,<8.0",
+    "coveralls>=3.3.1,<5.0.0",
+    "django-coverage-plugin>=2.0.1,<4.0.0",
+    "pylint>=3.0.0,<5.0.0",
+    "sphinx>=8.2,<9.0.0",
+    "sphinx-rtd-theme>=3,<4",
+    "sphinx-intl>=2.0.1,<4.0.0",
+    "sphinx-github-changelog>=1.2.0,<2",
+    "djhtml>=3.0.6,<4",
+    "prek>=0.3.1",
+    "ruff>=0.15.0",
+]
+
+[project.urls]
+Homepage = "https://ephios.de"
+Repository = "https://github.com/ephios-dev/ephios"
+Documentation = "https://docs.ephios.de/en/stable/"
+Changelog = "https://docs.ephios.de/en/latest/changelog.html"
+Coverage = "https://coveralls.io/github/ephios-dev/ephios"
 "Report bugs" = "https://github.com/ephios-dev/ephios/issues"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-Django = {version = "~5.2", extras = ["argon2"]}
-django-environ = ">=0.11.2,<0.13"
-django-guardian = "^3.2.0"
-django-ical = "^1.8.3"
-django-polymorphic = ">=4.1,<5.0"
-django-select2 = ">=8.0,<9.0"
-reportlab = ">=3.6.11,<5.0.0"
-django-formset-js-improved = "^0.5.0"
-django-csp = "^4.0"
-bleach = ">=6.0.0,<7.0.0"
-Markdown = "^3.3.7"
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-psycopg2 = {version = "^2.9.3", optional = true}
-mysqlclient = {version = "^2.1.1", optional = true}
-redis = {extras = ["hiredis"], version = ">=5,<8", optional = true}
-django-compressor = "^4.5"
-django-statici18n = "^2.3.1"
-django-dynamic-preferences = "^1.15.0"
-django-crispy-forms = "^2.0"
-django-webpush = "^0.3.5"
-django-libsass = "^0.9"
-crispy-bootstrap5 = ">=0.7,<2025.7"
-djangorestframework = "^3.13.1"
-django-coverage-plugin = ">=2.0.3,<4.0.0"
-django-filter = ">=24,<26"
-djangorestframework-guardian = ">=0.3,<0.5"
-uritemplate = "^4.1.1"
-django-oauth-toolkit = ">=3.0.1,<3.3.0"  # pinned because minor versions sometimes require migrations in our models
-urllib3 = "^2.5.0"
-pyyaml = "^6.0.1"
-lxml = ">=4.9.3,<7.0.0"
-beautifulsoup4 = "^4.13.3"
-css-inline = ">=0.10.3,<0.20.0"
-requests = "^2.31.0"
-requests-oauthlib = "^2.0"
-pyjwt = "^2.8.0"
-scipy = "^1.15.0"
-black = ">=24.10,<27.0"
-drf-spectacular = {extras = ["sidecar"], version = ">=0.27.2,<0.30.0"}
-python-dateutil = "^2.9.0.post0"
-cryptography = "^46.0.3"
-# py-vapid is required by pywebpush (a dependency of django-webpush), but we need to
-# explicitly require at least 1.9.4 to work with cryptography >= 46
-py-vapid = "^1.9.4"
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
-[tool.poetry.extras]
-pgsql = ["psycopg2"]
-mysql = ["mysqlclient"]
-redis = ["redis"]
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"  # used if no VCS info is available, e.g. dependabot builds
 
-[tool.poetry.group.dev.dependencies]
-black = ">=22.8,<27.0"
-pre-commit = ">=2.20,<5.0"
-django-debug-toolbar = ">=3.6,<7.0"
-pytest-django = "^4.5.2"
-django-webtest = "^1.9.9"
-django-extensions = ">=3.2.1,<5.0.0"
-coverage = ">=6.4,<8.0"
-coveralls = ">=3.3.1,<5.0.0"
-django-coverage-plugin = ">=2.0.1,<4.0.0"
-isort = ">=5.10.1,<8.0.0"
-pylint = ">=3.0.0,<5.0.0"
-autoflake = ">=1.6,<3.0"
-Sphinx = ">=8.1.3,<9.0.0"
-sphinx-rtd-theme = ">=3,<4"
-sphinx-intl = ">=2.0.1,<4.0.0"
-sphinx-github-changelog = "^1.2.0"
-djhtml = "^3.0.6"
+[tool.uv]
+# as per https://github.com/ninoseki/uv-dynamic-versioning/blob/main/docs/tips.md#build-caching-and-editable-installs
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true }}]
 
-[tool.black]
+###############################
+# Tool configurations
+###############################
+
+[tool.ruff]
 line-length = 100
-# https://github.com/psf/black/blob/master/docs/compatible_configs.md
 
-[tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
-line_length = 100
+[tool.ruff.format]
+preview = true
+
+[tool.ruff.lint]
+preview = true
 
 [tool.pylint.messages_control]
 # C0330 and C0301 are disabled for use of black
@@ -104,7 +120,7 @@ duplicate-code, attribute-defined-outside-init, missing-module-docstring, missin
 no-member, invalid-name, import-outside-toplevel, unused-argument, too-many-ancestors, missing-function-docstring,
 too-few-public-methods, too-many-arguments, cyclic-import, inconsistent-return-statements,
 useless-object-inheritance, logging-fstring-interpolation, consider-using-f-string, too-many-positional-arguments,
-unsupported-membership-test
+unsupported-membership-test, unused-import
 """
 
 [tool.pylint.format]
@@ -113,6 +129,10 @@ max-line-length = "100"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
 addopts = "--fail-on-template-vars"
+pythonpath = [
+    "src", # to find ephios
+    ".", # to find tests and esp. tests.settings
+]
 filterwarnings = [
     # displaying naive datetime warnings as errors
     # as seen in https://docs.djangoproject.com/en/4.1/topics/i18n/timezones/#code
@@ -120,23 +140,12 @@ filterwarnings = [
     'error:DateTimeField .* received a naive datetime',
 ]
 
-[build-system]
-requires = ["poetry-core>=1.0.0,<2.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
-
-
 [tool.coverage.run]
 plugins = [
     'django_coverage_plugin',
 ]
-include = ['ephios/*.py', 'ephios/*.html']
+include = ['src/ephios/*.py', 'src/ephios/*.html']
 branch = true
 
 [tool.coverage.django_coverage_plugin]
 template_extensions = 'html, txt, tex, email'
-
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-style = "semver"
-bump = true
