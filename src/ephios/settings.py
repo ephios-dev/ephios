@@ -218,7 +218,10 @@ PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = "de"
-LANGUAGES = [("de", gettext_lazy("German")), ("en", gettext_lazy("English"))]
+LANGUAGES = [
+    ("de", gettext_lazy("German")),
+    ("en", gettext_lazy("English")),
+]
 
 TIME_ZONE = "Europe/Berlin"
 
