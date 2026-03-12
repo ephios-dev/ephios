@@ -46,9 +46,7 @@ def test_signup_flow(django_app, qualified_volunteer, planner, event, mixed_shif
     django_app.get(
         event.get_absolute_url(),
         user=qualified_volunteer,
-    ).forms[
-        1
-    ].submit(name="signup_choice", value="sign_up").follow()
+    ).forms[1].submit(name="signup_choice", value="sign_up").follow()
     assert (
         LocalParticipation.objects.get(user=qualified_volunteer, shift=mixed_shift).state
         == AbstractParticipation.States.REQUESTED

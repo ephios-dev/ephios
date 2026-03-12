@@ -58,18 +58,16 @@ def test_federation_add_included_qualifications(django_app, federation, qualific
     host, guest = federation
     view = FederationOAuthView()
     view.guest = guest
-    view._create_user(
-        {
-            "email": "test@localhost",
-            "display_name": "Test",
-            "date_of_birth": "2000-01-01",
-            "qualifications": [
-                {
-                    "uuid": "123aaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                    "includes": [qualifications.rs.uuid],
-                }
-            ],
-        }
-    )
+    view._create_user({
+        "email": "test@localhost",
+        "display_name": "Test",
+        "date_of_birth": "2000-01-01",
+        "qualifications": [
+            {
+                "uuid": "123aaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                "includes": [qualifications.rs.uuid],
+            }
+        ],
+    })
     user = FederatedUser.objects.get(email="test@localhost")
     assert set(user.qualifications.all()) == {qualifications.rs}

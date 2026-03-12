@@ -28,9 +28,9 @@ def test_no_signup_form_if_only_optional_questions(
 
     assert response.status_code == 200
     assert f"You have successfully requested a participation in {shift}." in response
-    assert volunteer.as_participant() in shift.get_participants(
-        {AbstractParticipation.States.REQUESTED}
-    )
+    assert volunteer.as_participant() in shift.get_participants({
+        AbstractParticipation.States.REQUESTED
+    })
 
 
 def test_signup_form_if_required_question(django_app, shift_with_required_text_question, volunteer):
@@ -57,9 +57,9 @@ def test_can_decline_with_required_question(
 
     assert response.status_code == 200
     assert f"You have successfully declined {shift}." in response
-    assert volunteer.as_participant() in shift.get_participants(
-        {AbstractParticipation.States.USER_DECLINED}
-    )
+    assert volunteer.as_participant() in shift.get_participants({
+        AbstractParticipation.States.USER_DECLINED
+    })
 
 
 def test_autofill_saved_answers(
@@ -75,9 +75,9 @@ def test_autofill_saved_answers(
 
     assert response.status_code == 200
     assert f"You have successfully requested a participation in {shift}" in response
-    assert volunteer.as_participant() in shift.get_participants(
-        {AbstractParticipation.States.REQUESTED}
-    )
+    assert volunteer.as_participant() in shift.get_participants({
+        AbstractParticipation.States.REQUESTED
+    })
     assert answer.question == question
     assert answer.answer == saved_required_text_answer.answer
 

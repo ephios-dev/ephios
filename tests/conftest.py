@@ -120,9 +120,7 @@ def qualified_volunteer(qualifications, tz):
         password="dummy",
     )
     QualificationGrant.objects.create(
-        user=volunteer,
-        qualification=qualifications.nfs,
-        expires=datetime(2064, 4, 1, tzinfo=tz),
+        user=volunteer, qualification=qualifications.nfs, expires=datetime(2064, 4, 1, tzinfo=tz)
     )
     QualificationGrant.objects.create(
         user=volunteer, qualification=qualifications.c, expires=datetime(2090, 4, 1, tzinfo=tz)
@@ -205,8 +203,7 @@ def event(groups, service_event_type, planner, tz):
         signup_flow_configuration=dict(user_can_decline_confirmed=True),
         structure_slug=UniformShiftStructure.slug,
         structure_configuration=dict(
-            minimum_number_of_participants=0,
-            maximum_number_of_participants=1,
+            minimum_number_of_participants=0, maximum_number_of_participants=1
         ),
     )
     return event
@@ -326,8 +323,7 @@ def qualifications():
     """
     q = Namespace()
     medical_category = QualificationCategory.objects.create(
-        title="Medical",
-        uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb"),
+        title="Medical", uuid=uuid.UUID("50380292-b9c9-4711-b70d-8e03e2784cfb")
     )
 
     q.rs = Qualification.objects.create(
@@ -351,8 +347,7 @@ def qualifications():
     )
 
     driverslicense_category = QualificationCategory.objects.create(
-        title="License",
-        uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b"),
+        title="License", uuid=uuid.UUID("a5669cc2-7444-4046-8c33-d8ee0bbf881b")
     )
     q.b = Qualification.objects.create(
         category=driverslicense_category,
