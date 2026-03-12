@@ -12,7 +12,7 @@ return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	// The require scope
 /******/ 	var __webpack_require__ = {};
-/******/
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -25,12 +25,12 @@ return /******/ (() => { // webpackBootstrap
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -41,7 +41,7 @@ return /******/ (() => { // webpackBootstrap
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // ESM COMPAT FLAG
@@ -2346,9 +2346,9 @@ function optionsToString(options) {
                   On the other hand, rule.origOptions is an array of Weekdays.
                   We need to handle both cases here.
                   It might be worth change RRule to keep the Weekdays.
-
+        
                   Also, BYWEEKDAY (used by RRule) vs. BYDAY (RFC)
-
+        
                   */
                 key = 'BYDAY';
                 outValue = toArray(value)
