@@ -106,7 +106,7 @@ def copy_structure_configuration_to_signup_flow_configuration(apps, schema_edito
 
 def enable_new_plugins(apps, schema_editor):
     preferences = global_preferences_registry.manager()
-    enabled_plugins = preferences["general__enabled_plugins"]
+    enabled_plugins = [v.removesuffix(".apps") for v in preferences["general__enabled_plugins"]]
     if "ephios.plugins.basesignup" in enabled_plugins:
         enabled_plugins.remove("ephios.plugins.basesignup")
     preferences["general__enabled_plugins"] = list(
