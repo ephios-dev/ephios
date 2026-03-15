@@ -17,7 +17,7 @@ jobs:
           python-version: 3.14
       - name: build
         run: uv build
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ephios-dev-wheel
           path: dist/ephios-*.whl
