@@ -9,6 +9,15 @@ updates:
       patches:
         update-types:
           - "patch"
+  - package-ecosystem: pip
+    directory: "docs/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    groups:
+      patches:
+        update-types:
+          - "patch"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
