@@ -41,7 +41,7 @@ jobs:
         run: echo "::set-output name=path::~/$(ls wheel/ephios-*.whl)"
 
       - name: rsync wheel
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           timeout_seconds: 10
           max_attempts: 3
