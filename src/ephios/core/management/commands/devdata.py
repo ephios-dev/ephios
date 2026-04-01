@@ -1,9 +1,9 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.utils.timezone import make_aware
 from django.utils.translation import gettext
 from guardian.shortcuts import assign_perm
 
@@ -14,7 +14,7 @@ def create_objects():
     admin_user = UserProfile(
         email="admin@localhost",
         display_name="Admin Localhost",
-        date_of_birth=datetime(year=1970, month=1, day=1),
+        date_of_birth=datetime(year=1970, month=1, day=1, tzinfo=ZoneInfo("Europe/Berlin")),
     )
     admin_user.is_staff = True
     admin_user.is_superuser = True
@@ -53,7 +53,7 @@ def create_objects():
     user = UserProfile(
         email="user@localhost",
         display_name="User Localhost",
-        date_of_birth=datetime(year=1970, month=1, day=1),
+        date_of_birth=datetime(year=1970, month=1, day=1, tzinfo=ZoneInfo("Europe/Berlin")),
     )
     user.password = make_password("user")
     user.save()
@@ -71,12 +71,12 @@ def create_objects():
 
     Shift.objects.create(
         event=event,
-        meeting_time=make_aware(datetime(2043, 6, 30, 15, 30)),
-        start_time=make_aware(datetime(2043, 6, 30, 16, 0)),
-        end_time=make_aware(datetime(2043, 7, 1, 1, 0)),
+        meeting_time=datetime(2043, 6, 30, 15, 30, tzinfo=ZoneInfo("Europe/Berlin")),
+        start_time=datetime(2043, 6, 30, 16, 0, tzinfo=ZoneInfo("Europe/Berlin")),
+        end_time=datetime(2043, 7, 1, 1, 0, tzinfo=ZoneInfo("Europe/Berlin")),
         signup_flow_slug="instant_confirmation",
         signup_flow_configuration={
-            "signup_until": make_aware(datetime(2043, 6, 29, 8, 0)),
+            "signup_until": datetime(2043, 6, 29, 8, 0, tzinfo=ZoneInfo("Europe/Berlin")),
         },
         structure_slug="uniform",
         structure_configuration={

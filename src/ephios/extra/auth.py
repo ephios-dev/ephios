@@ -2,7 +2,7 @@ import logging
 import pprint
 import uuid
 from datetime import date
-from typing import Any, Dict
+from typing import Any
 from urllib.parse import urljoin
 
 import jwt
@@ -40,7 +40,7 @@ def access_exempt(view_class):
 
 
 class EphiosOIDCAB(ModelBackend):
-    def decode_jwt_token(self, token: str) -> Dict[str, Any]:
+    def decode_jwt_token(self, token: str) -> dict[str, Any]:
         jwks_client = jwt.PyJWKClient(self.provider.jwks_uri)
         header = jwt.get_unverified_header(token)
         key = jwks_client.get_signing_key(header["kid"]).key

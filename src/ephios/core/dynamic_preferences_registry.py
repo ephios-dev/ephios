@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from django.utils.safestring import mark_safe
-from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from dynamic_preferences.preferences import Section
@@ -98,7 +98,7 @@ class EnabledPlugins(MultipleChoicePreference):
 
 @global_preferences_registry.register
 class LastRunPeriodicCall(DateTimePreference):
-    NONE_VALUE = make_aware(datetime(1970, 1, 1))
+    NONE_VALUE = datetime(1970, 1, 1, tzinfo=ZoneInfo("UTC"))
     name = "last_run_periodic_call"
     verbose_name = _("Last run_periodic call")
     section = internal_section

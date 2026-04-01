@@ -1,6 +1,5 @@
 import itertools
 import urllib
-from typing import Dict
 from urllib.error import URLError
 
 from django.db import transaction
@@ -61,7 +60,7 @@ class QualificationChangeManager:
         self.inclusion_supporting_deserialized_qualifications = set()
         self.qualifications_to_delete_fixing_inclusion = set()
 
-        self.existing_qualifications_by_uuid: Dict[str, Qualification] = {
+        self.existing_qualifications_by_uuid: dict[str, Qualification] = {
             str(obj.uuid): obj for obj in Qualification.objects.all()
         }
 

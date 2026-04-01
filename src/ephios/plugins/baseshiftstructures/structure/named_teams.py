@@ -23,7 +23,7 @@ from ephios.plugins.baseshiftstructures.structure.group_common import (
 
 
 def teams_participant_qualifies_for(teams, participant: AbstractParticipant):
-    available_qualification_ids = set(q.id for q in participant.collect_all_qualifications())
+    available_qualification_ids = {q.id for q in participant.collect_all_qualifications()}
     return [
         team
         for team in teams

@@ -226,19 +226,18 @@ class BuildingBlockSerializer(DeletedFlagModelSerializer):
         )
 
     def validate(self, attrs):
-        if attrs.get("block_type") == BuildingBlockType.COMPOSITE.value:
-            if attrs.get("positions"):
-                raise serializers.ValidationError(
-                    "Composite blocks cannot have positions", code="invalid"
-                )
-        if attrs.get("block_type") == BuildingBlockType.ATOMIC.value:
-            if attrs.get("sub_compositions"):
-                raise serializers.ValidationError(
-                    "Position blocks cannot have sub compositions", code="invalid"
-                )
-        if attrs.get("deleted") is False:
-            if attrs.get("name") == "":
-                raise serializers.ValidationError("Name cannot be blank.", code="invalid")
+        if attrs.get("block_type") == BuildingBlockType.COMPOSITE.value and attrs.get("positions"):
+            raise serializers.ValidationError(
+                "Composite blocks cannot have positions", code="invalid"
+            )
+        if attrs.get("block_type") == BuildingBlockType.ATOMIC.value and attrs.get(
+            "sub_compositions"
+        ):
+            raise serializers.ValidationError(
+                "Position blocks cannot have sub compositions", code="invalid"
+            )
+        if attrs.get("name") == "" and attrs.get("deleted") is False:
+            raise serializers.ValidationError("Name cannot be blank.", code="invalid")
         return attrs
 
     class Meta:

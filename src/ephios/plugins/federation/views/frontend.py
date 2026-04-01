@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, TemplateView
 from dynamic_preferences.registries import global_preferences_registry
@@ -46,7 +47,7 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
                 r = requests.get(
                     urljoin(host.url, reverse("federation:shared_event_list_view")),
                     headers={"Authorization": f"Bearer {host.access_token}"},
-                    params={"end_time_after": (datetime.now() - timedelta(days=14)).isoformat()},
+                    params={"end_time_after": (timezone.now() - timedelta(days=14)).isoformat()},
                     timeout=5,
                 )
                 r.raise_for_status()
@@ -72,7 +73,7 @@ class ExternalEventListView(LoginRequiredMixin, TemplateView):
 @access_exempt
 class CheckFederatedAccessTokenMixin:
     def dispatch(self, request, *args, **kwargs):
-        if "federation_access_token" not in request.session.keys():
+        if "federation_access_token" not in request.session:
             return FederationOAuthView.as_view()(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 

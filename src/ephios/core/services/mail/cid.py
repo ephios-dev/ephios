@@ -46,11 +46,11 @@ def replace_images_with_cid_paths(body_html):
         for image in email.find_all("img"):
             original_image_src = image["src"]
             try:
-                cid_id = "image_%s" % cid_images.index(original_image_src)
+                cid_id = f"image_{cid_images.index(original_image_src)!s}"
             except ValueError:
                 cid_images.append(original_image_src)
-                cid_id = "image_%s" % (len(cid_images) - 1)
-            image["src"] = "cid:%s" % cid_id
+                cid_id = f"image_{(len(cid_images) - 1)!s}"
+            image["src"] = f"cid:{cid_id}"
         return str(email), cid_images
     return body_html, []
 
@@ -59,13 +59,13 @@ def attach_cid_images(msg, cid_images, verify_ssl=True):
     if cid_images and len(cid_images) > 0:
         msg.mixed_subtype = "mixed"
         for key, image in enumerate(cid_images):
-            cid = "image_%s" % key
+            cid = f"image_{key}"
             try:
                 mime_image = convert_image_to_cid(image, cid, verify_ssl)
                 if mime_image:
                     msg.attach(mime_image)
             except:  # noqa
-                logger.exception("ERROR attaching CID image %s[%s]" % (cid, image))
+                logger.exception(f"ERROR attaching CID image {cid!s}[{image!s}]")
 
 
 def encoder_linelength(msg):
@@ -91,7 +91,7 @@ def convert_image_to_cid(image_src, cid_id, verify_ssl=True):
             mime_image = MIMEImage(image_content, _subtype=image_type, _encoder=encoder_linelength)
             mime_image.add_header("Content-Transfer-Encoding", "base64")
         elif image_src.startswith("data:"):
-            logger.exception("ERROR creating MIME element %s[%s]" % (cid_id, image_src))
+            logger.exception(f"ERROR creating MIME element {cid_id!s}[{image_src}]")
             return None
         else:
             # replaced normalize_image_url with these two lines
@@ -101,8 +101,8 @@ def convert_image_to_cid(image_src, cid_id, verify_ssl=True):
             guess_subtype = os.path.splitext(path)[1][1:]
             response = requests.get(image_src, verify=verify_ssl)
             mime_image = MIMEImage(response.content, _subtype=guess_subtype)
-        mime_image.add_header("Content-ID", "<%s>" % cid_id)
+        mime_image.add_header("Content-ID", f"<{cid_id!s}>")
         return mime_image
     except:  # noqa
-        logger.exception("ERROR creating mime_image %s[%s]" % (cid_id, image_src))
+        logger.exception(f"ERROR creating mime_image {cid_id!s}[{image_src}]")
         return None

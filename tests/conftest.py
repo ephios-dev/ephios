@@ -6,6 +6,7 @@ from datetime import date, datetime
 import pytest
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.utils import timezone
 from django.utils.timezone import get_default_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
@@ -415,7 +416,7 @@ def workinghours_consequence(volunteer):
 
 @pytest.fixture
 def workinghours(volunteer):
-    today = datetime.today()
+    today = timezone.now().date()
     return [
         WorkingHours.objects.create(
             user=volunteer, hours=21, reason="Lager aufräumen", date=date(today.year - 1, 1, 1)

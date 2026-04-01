@@ -1,6 +1,6 @@
 import itertools
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable
 
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
@@ -162,9 +162,7 @@ class ModelFieldLogRecorder(BaseLogRecorder):
         self.old_value = data["old_value"]
         self.new_value = data["new_value"]
 
-        if self.field is None:
-            pass
-        elif self.field.one_to_one or self.field.many_to_one:
+        if self.field is None or self.field.one_to_one or self.field.many_to_one:
             pass
         elif getattr(self.field, "choices", None):
             self.old_value = self._choice_to_display(self.old_value)

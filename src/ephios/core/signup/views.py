@@ -163,7 +163,7 @@ class SignupView(FormView):
                 success_message = self.shift.signup_flow.decline_success_message
             case SignupForm.SignupChoices.CUSTOMIZE if validator.can_customize_signup():
                 # pylint: disable-next=unnecessary-lambda-assignment
-                flow_action = lambda **kwargs: None  # noop  # noqa
+                flow_action = lambda **kwargs: None  # noop
                 error_message = _("There was an error saving your participation.")
                 success_message = _("Your participation was saved.")
             case _:

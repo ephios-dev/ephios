@@ -2,7 +2,6 @@ import datetime
 from collections import Counter
 from datetime import date
 from itertools import chain
-from typing import Optional
 
 from django import forms
 from django.contrib import messages
@@ -12,6 +11,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import DurationField, ExpressionWrapper, F, Sum
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
@@ -44,7 +44,7 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     template_name = "core/workinghours_list.html"
     permission_required = "core.view_userprofile"
 
-    def _get_working_hours_stats(self, start: date, end: date, eventtype: Optional[EventType]):
+    def _get_working_hours_stats(self, start: date, end: date, eventtype: EventType | None):
         # pylint: disable=assignment-from-no-return
         participations = LocalParticipation.objects.filter(
             state=LocalParticipation.States.CONFIRMED,
@@ -95,8 +95,8 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
             or {
                 # intitial data for initial page laod
                 # (does not use `initial` cause that only works with unbound forms)
-                "start": date.today().replace(month=1, day=1),
-                "end": date.today().replace(month=12, day=31),
+                "start": timezone.now().date().replace(month=1, day=1),
+                "end": timezone.now().date().replace(month=12, day=31),
             }
         )
         filter_form.is_valid()

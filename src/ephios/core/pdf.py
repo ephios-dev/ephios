@@ -18,9 +18,9 @@ from ephios.extra.mixins import CustomPermissionRequiredMixin
 
 
 class BasePDFExporter:
-    def __init__(self, title, style=getSampleStyleSheet(), pagesize=A4):
+    def __init__(self, title, style=None, pagesize=A4):
         self.title = title
-        self.style = style
+        self.style = style or getSampleStyleSheet()
         self.pagesize = pagesize
         self.margin = 15 * mm
 

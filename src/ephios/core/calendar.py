@@ -3,7 +3,9 @@ from datetime import date, datetime
 from itertools import groupby
 
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -22,7 +24,7 @@ class ShiftCalendar(HTMLCalendar):
         return super().formatmonth(theyear, themonth)
 
     def formatmonthname(self, theyear, themonth, withyear=True):
-        dt = datetime(theyear, themonth, 1)
+        dt = datetime(theyear, themonth, 1, tzinfo=get_current_timezone())
         return f'<tr><th colspan="7" class="month">{date_format(dt, format="b Y")}</th></tr>'
 
     def formatweekday(self, day):
@@ -32,7 +34,7 @@ class ShiftCalendar(HTMLCalendar):
         if day != 0:
             cssclass = self.cssclasses[weekday]
             this_date = date(self.year, self.month, day)
-            today = date.today() == this_date
+            today = timezone.now().date() == this_date
             if day in self.shifts:
                 cssclass += " filled"
             content = render_to_string(
