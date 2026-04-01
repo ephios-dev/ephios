@@ -5,10 +5,8 @@ uberspace_instances:
       ansible_user: staghios
       ansible_host: despina.uberspace.de
       domain: staging.ephios.de
-      smtp_mailbox: noreply
-      smtp_host: despina.uberspace.de
-      smtp_user: noreply@staging.ephios.de
-      smtp_from: noreply@staging.ephios.de
+      smtp_host: smtp.tem.scaleway.com
+      smtp_from: noreply@ephios.de
       admin_email: Ephios Admins <admin@ephios.de>
       plugins:
         - git+https://github.com/ephios-dev/ephios-testplugin

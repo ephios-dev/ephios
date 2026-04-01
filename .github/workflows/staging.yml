@@ -71,4 +71,6 @@ jobs:
           options: |
             --inventory ephios/.github/ci/staging-inventory.yml
             --extra-vars package_name="${{steps.getwheel.outputs.path}}"
+            --extra-vars smtp_user=${{secrets.SMTP_USER}}
+            --extra-vars smtp_password=${{secrets.SMTP_PASSWORD}}
             --verbose
