@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 from django import template
 from django.db.models import Count, Q
@@ -71,7 +71,7 @@ def grants_to_essential_abbreviations(grants: Iterable[QualificationGrant]):
 def qualifications_to_essential_abbreviations(qualifications):
     essentials = list(essential_set_of_qualifications(qualifications))
     essentials.sort(key=lambda q: (q.category_id, q.abbreviation))
-    return list(qualification.abbreviation for qualification in essentials)
+    return [qualification.abbreviation for qualification in essentials]
 
 
 @register.filter(name="intersects")

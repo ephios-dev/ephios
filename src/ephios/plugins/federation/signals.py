@@ -35,7 +35,7 @@ def add_nav_link(sender, request, **kwargs):
     dispatch_uid="ephios.plugins.federation.signals.federated_participant_from_request",
 )
 def federated_participant_from_request(sender, request, **kwargs):
-    if "federated_user" in request.session.keys():
+    if "federated_user" in request.session:
         try:
             return FederatedUser.objects.get(pk=request.session["federated_user"]).as_participant()
         except FederatedUser.DoesNotExist:

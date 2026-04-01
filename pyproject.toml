@@ -112,6 +112,11 @@ preview = true
 
 [tool.ruff.lint]
 preview = true
+ignore = [
+    "RUF012", # mutable default value for class attribute: common in django migrations
+    "C408", # unneccassary call to dict(): we like to use dict() for readability in some cases
+    "RUF059",  # unpacked variable is never used/prefix in underscore: we decided a full name is fine for unpacking
+]
 
 [tool.pylint.messages_control]
 # C0330 and C0301 are disabled for use of black

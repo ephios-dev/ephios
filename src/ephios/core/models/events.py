@@ -40,9 +40,9 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
+    from ephios.core.signup.flow import AbstractSignupFlow
     from ephios.core.signup.participants import AbstractParticipant
     from ephios.core.signup.structure import AbstractShiftStructure
-    from ephios.core.signup.flow import AbstractSignupFlow
 
 logger = logging.getLogger(__name__)
 
@@ -185,12 +185,11 @@ class ParticipationQuerySet(PolymorphicQuerySet):
             )
             return qs.distinct()
 
-        user = getattr(participant, "user")
-        viewable_events = get_objects_for_user(user, "core.view_event")
-        viewable_userprofiles = get_objects_for_user(user, "core.view_userprofile")
-        editable_events = get_objects_for_user(user, "core.change_event")
+        viewable_events = get_objects_for_user(participant.user, "core.view_event")
+        viewable_userprofiles = get_objects_for_user(participant.user, "core.view_userprofile")
+        editable_events = get_objects_for_user(participant.user, "core.change_event")
         participating_events = Event.objects.filter(
-            shifts__participations__in=user.participations.filter(
+            shifts__participations__in=participant.user.participations.filter(
                 state=AbstractParticipation.States.CONFIRMED
             )
         )
@@ -206,7 +205,7 @@ class ParticipationQuerySet(PolymorphicQuerySet):
                 shift__event__in=participating_events,
             )
             | Q(shift__event__in=editable_events)
-            | Q(localparticipation__user=user)
+            | Q(localparticipation__user=participant.user)
             | Q(localparticipation__user__in=viewable_userprofiles)
         )
         return qs.distinct()

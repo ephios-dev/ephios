@@ -1,5 +1,5 @@
 import logging
-from typing import Collection, List
+from collections.abc import Collection
 from urllib.parse import urlparse
 
 from django.contrib.auth.tokens import default_token_generator
@@ -170,7 +170,7 @@ class NewProfileNotification(AbstractNotificationHandler):
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = default_token_generator.make_token(user)
         return Notification.objects.create(
-            slug=cls.slug, user=user, data={**{"uidb64": uid, "token": token}, **kwargs}
+            slug=cls.slug, user=user, data={"uidb64": uid, "token": token, **kwargs}
         )
 
     @classmethod
@@ -291,7 +291,7 @@ class ParticipationCustomizationNotification(ParticipationMixin, AbstractNotific
 
     # pylint: disable=arguments-differ
     @classmethod
-    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+    def send(cls, participation: AbstractParticipation, claims: list[str] | None = None):
         super().send(participation, claims=claims)
 
     @classmethod
@@ -471,7 +471,7 @@ class ResponsibleConfirmedParticipationCustomizedNotification(
 
     # pylint: disable=arguments-differ
     @classmethod
-    def send(cls, participation: AbstractParticipation, claims: List[str] = None):
+    def send(cls, participation: AbstractParticipation, claims: list[str] | None = None):
         super().send(participation, claims=claims or [])
 
     @classmethod

@@ -1,6 +1,5 @@
 import itertools
 from collections import Counter, defaultdict
-from typing import Optional
 
 
 class DirectedGraph:
@@ -8,7 +7,7 @@ class DirectedGraph:
     This class implements a directed graph using adjacency collections.
     """
 
-    def __init__(self, edges: Optional[dict] = None):
+    def __init__(self, edges: dict | None = None):
         self.adjancent_nodes: dict = {}
         if edges is not None:
             for node, children in edges.items():
@@ -41,7 +40,7 @@ class DirectedGraph:
         return self.adjancent_nodes[node]
 
     def parents(self, node):
-        return set(parent for parent, children in self.adjancent_nodes.items() if node in children)
+        return {parent for parent, children in self.adjancent_nodes.items() if node in children}
 
     def remove_edge(self, node, child):
         """Remove an edge from the graph, throwing KeyError if it does not exist."""

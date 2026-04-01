@@ -1,10 +1,11 @@
 import dataclasses
+from collections.abc import Collection
 from datetime import date
-from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -22,8 +23,8 @@ from ephios.core.signals import participant_from_request
 class AbstractParticipant:
     display_name: str
     qualifications: Collection = dataclasses.field(hash=False, compare=False)
-    date_of_birth: Optional[date]
-    email: Optional[str]  # if set to None, no notifications are sent
+    date_of_birth: date | None
+    email: str | None  # if set to None, no notifications are sent
 
     @property
     def identifier(self):
@@ -34,10 +35,10 @@ class AbstractParticipant:
         """
         raise NotImplementedError
 
-    def get_age(self, today: date = None):
+    def get_age(self, today: date | None = None):
         if self.date_of_birth is None:
             return None
-        today, born = today or date.today(), self.date_of_birth
+        today, born = today or timezone.now().date(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     @property

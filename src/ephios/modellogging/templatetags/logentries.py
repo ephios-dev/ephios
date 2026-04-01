@@ -14,7 +14,7 @@ register = template.Library()
 def linkify_absolute_url(instance):
     if hasattr(instance, "get_absolute_url"):
         return mark_safe(
-            f'<a class="log-absolute-url" href="{instance.get_absolute_url()}">{str(instance)}</a>'
+            f'<a class="log-absolute-url" href="{instance.get_absolute_url()}">{instance!s}</a>'
         )
     return instance
 

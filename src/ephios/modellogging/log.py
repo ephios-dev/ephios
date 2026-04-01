@@ -1,6 +1,5 @@
 import contextvars
 import itertools
-from typing import Dict
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -110,7 +109,7 @@ class ModelFieldsLogConfig(BaseLogConfig):
 log_request = contextvars.ContextVar("Current request")
 log_request_id = contextvars.ContextVar("Current request id")
 
-LOGGED_MODELS: Dict[models.Model, BaseLogConfig] = {}
+LOGGED_MODELS: dict[models.Model, BaseLogConfig] = {}
 
 
 def register_model_for_logging(model_class, config):
