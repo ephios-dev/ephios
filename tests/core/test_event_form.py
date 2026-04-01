@@ -1,7 +1,8 @@
-from datetime import date, time
+from datetime import time
 
 from django.contrib.auth.models import Group
 from django.urls import reverse
+from django.utils import timezone
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 
 from ephios.core.models import AbstractParticipation, LocalParticipation
@@ -21,7 +22,7 @@ def test_create_event(django_app, planner, superuser, service_event_type, groups
     event_form["responsible_groups"] = [planners.id]
     # event_form["responsible_users"] is prefilled with planner
     shift_form = event_form.submit().follow().form
-    shift_form["date"] = date.today()
+    shift_form["date"] = timezone.now().date()
     shift_form["meeting_time"] = time(9, 0)
     shift_form["start_time"] = time(10, 0)
     shift_form["end_time"] = time(16, 0)
@@ -141,7 +142,7 @@ def test_unsaved_event_warning(django_app, planner, groups, service_event_type):
     )
     assert "You have an unsaved event" in response
     response = response.click("View")
-    assert "This event has not been saved"
+    assert "This event has not been saved" in response
     assert not response.context["event"].active
 
 

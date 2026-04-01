@@ -44,7 +44,7 @@ def test_event_permission_changes_get_logged(django_app, event, superuser, quali
     event_form["responsible_users"].force_value([qualified_volunteer.id])
     pre_count = LogEntry.objects.count()
     response = event_form.submit().follow().click("View edit history")
-    assert f"Responsibles added: {str(qualified_volunteer)}" in response
+    assert f"Responsibles added: {qualified_volunteer!s}" in response
     new_count = LogEntry.objects.count() - pre_count
     assert any(  # there is any new entry with a record for the added user
         any(
@@ -70,7 +70,7 @@ def test_group_logging(django_app, superuser, groups, qualified_volunteer):
     )
     assert f"Users added: {qualified_volunteer}" in response
     assert any(
-        f"Users removed: {str(user_a)}, {str(user_b)}" in response
+        f"Users removed: {user_a!s}, {user_b!s}" in response
         for user_a, user_b in itertools.permutations(users_before)
     )
     assert "Can add events: yes → no" in response

@@ -139,7 +139,7 @@ class MassNotificationForm(forms.Form):
                 return sorted_names.index(name)
             return len(sorted_names) + sorted_names.index(name)
 
-        choices = list(sorted(choices.items(), key=sort_key))
+        choices = sorted(choices.items(), key=sort_key)
 
         if self.event:
             optgroup_choices = {

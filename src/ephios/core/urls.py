@@ -75,7 +75,7 @@ from ephios.core.views.shift import (
     SignupFlowConfigurationFormView,
 )
 from ephios.core.views.signup import LocalUserShiftActionView
-from ephios.core.views.workinghour import (
+from ephios.core.views.workinghours import (
     OwnWorkingHourView,
     UserProfileWorkingHourView,
     WorkingHourCreateView,

@@ -1,6 +1,6 @@
 import logging
-from django.utils.translation import gettext_lazy as _
 
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signals import register_shift_structures
 

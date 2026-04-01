@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 from django.urls import reverse
-from django.utils.timezone import make_aware
+from django.utils.timezone import get_current_timezone
 from dynamic_preferences.registries import global_preferences_registry
 from guardian.shortcuts import assign_perm
 
@@ -45,7 +45,7 @@ def test_autoqualification_settings_flow(django_app, event, manager, qualificati
         reverse("core:event_edit", kwargs=dict(pk=event.pk)), user=manager
     )
     with pytest.raises(EventAutoQualificationConfiguration.DoesNotExist):
-        event.auto_qualification_config
+        event.auto_qualification_config  # noqa: B018  # causes django query
     assert "Automatic qualification" in event_update_view
 
     event_update_view.form["autoqualification-qualification"] = qualifications.na.id
@@ -82,7 +82,9 @@ def test_overwrite_qualification_expiration_date(
     )
 
     QualificationGrant.objects.create(
-        user=volunteer, qualification=qualifications.na, expires=make_aware(datetime(2097, 6, 1))
+        user=volunteer,
+        qualification=qualifications.na,
+        expires=datetime(2097, 6, 1, tzinfo=get_current_timezone()),
     )
     for shift in multi_shift_event.shifts.all():
         shift.start_time = shift.start_time.replace(year=2020)

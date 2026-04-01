@@ -74,5 +74,5 @@ class LogEntry(models.Model):
 
     def __str__(self):
         if self.content_object:
-            return f"{self.action_type} {type(self.content_object)._meta.verbose_name} {str(self.content_object)}"
+            return f"{self.action_type} {type(self.content_object)._meta.verbose_name} {self.content_object!s}"
         return f"{self.action_type} {self.content_type.model} {self.content_object_or_str}"

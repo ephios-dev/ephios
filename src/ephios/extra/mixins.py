@@ -1,5 +1,6 @@
 import functools
-from typing import Collection, TYPE_CHECKING
+from collections.abc import Collection
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin as DjangoPermissionRequiredMixin

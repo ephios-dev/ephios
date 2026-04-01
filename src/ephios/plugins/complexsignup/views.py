@@ -58,9 +58,9 @@ class BuildingBlockEditorView(CustomPermissionRequiredMixin, FormView):
         try:
             with transaction.atomic():
                 form.save()
-        except Exception as e:
+        except Exception:
             messages.error(self.request, _("Failed to save building blocks."))
-            raise e
+            raise
         messages.success(self.request, _("Saved blocks."))
         return super().form_valid(form)
 

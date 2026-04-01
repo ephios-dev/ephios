@@ -7,7 +7,7 @@ import pytest
 from django import forms
 from django.urls import reverse
 from django.utils.formats import date_format
-from django.utils.timezone import make_aware
+from django.utils.timezone import get_current_timezone
 from guardian.shortcuts import assign_perm, remove_perm
 
 from ephios.core.forms.users import HR_PERMISSIONS, MANAGEMENT_PERMISSIONS
@@ -103,18 +103,6 @@ class TestUserProfileView:
                 "",
                 ["marianne@localhost"],
             ),
-            (
-                None,
-                None,
-                "",
-                [
-                    "rica@localhost",
-                    "marie@localhost",
-                    "luisa@localhost",
-                    "heinrich@localhost",
-                    "marianne@localhost",
-                ],
-            ),
             (None, "Rettungssanitäter", "", ["marianne@localhost"]),
             (None, "Notarzt", "", []),
         ],
@@ -182,9 +170,9 @@ class TestUserProfileView:
         assert set(userprofile.groups.all()) == {volunteers}
         assert set(userprofile.qualifications) == {qualifications.rs, qualifications.na}
         assert userprofile.qualifications.get(id=qualifications.rs.id).expires is None
-        assert userprofile.qualifications.get(id=qualifications.na.id).expires == make_aware(
-            datetime.max.replace(2030, 1, 1)
-        )
+        assert userprofile.qualifications.get(
+            id=qualifications.na.id
+        ).expires == datetime.max.replace(2030, 1, 1, tzinfo=get_current_timezone())
 
     def test_hr_user_can_create_user(self, django_app, groups, manager, qualifications):
         managers, planners, volunteers = groups
