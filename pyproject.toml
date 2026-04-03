@@ -52,6 +52,7 @@ dependencies = [
     "python-dateutil>=2.9.0.post0,<3",
     "cryptography>=46.0.3,<47",
     "py-vapid>=1.9.4,<2",
+    "pywebpush>=2.2.0", # required because django-webpush depends on this in an old and broken version
 ]
 
 [project.optional-dependencies]
