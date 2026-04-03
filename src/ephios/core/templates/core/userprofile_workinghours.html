@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ephios_crispy %}
 {% load utils %}
 {% load user_extras %}
 {% load static %}
@@ -12,14 +13,25 @@
     <h1 class="page-header">
         {% translate "Working hours of" %} {{ userprofile }}
     </h1>
-    {% if can_grant %}
-        <a class="btn btn-primary"
-           href="{% url "core:workinghours_add" userprofile.pk %}">{% translate "Add working hours" %}</a>
-    {% elif own_profile %}
-        <a class="btn btn-primary"
-           href="{% url "core:workinghours_request" %}">{% translate "Request working hours" %}</a>
+    {% if filter_form %}
+        <form class="row row-cols-sm-auto g-3">
+            {% crispy_field filter_form.start wrapper_class="col-12 col-lg" show_labels=False %}
+            <div class="col pt-1"> <p>{% translate "to" %}</p> </div>
+            {% crispy_field filter_form.end wrapper_class="col-12 col-lg" show_labels=False %}
+            {% crispy_field filter_form.type wrapper_class="col-12 col-lg" show_labels=False %}
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">{% translate "Filter" %}</button>
+            </div>
+        </form>
     {% endif %}
-    <table id="workinghours_table" class="table table-striped display">
+    {% if can_grant %}
+        <a class="btn btn-sm btn-secondary"
+           href="{% url "core:workinghours_add" userprofile.pk %}"><span class="fa fa-plus"></span> {% translate "Add working hours" %}</a>
+    {% elif own_profile %}
+        <a class="btn btn-sm btn-secondary"
+           href="{% url "core:workinghours_request" %}"><span class="fa fa-plus"></span> {% translate "Request working hours" %}</a>
+    {% endif %}
+    <table id="workinghours_table" class="table table-striped display mt-2">
         <thead>
             <tr>
                 <th>{% translate "Date" %}</th>
@@ -29,31 +41,29 @@
             </tr>
         </thead>
         <tbody>
-            {% with userprofile|workhour_items as workhour_items %}
+            <tr>
+                <td><b>{% translate "Total" %}</b></td>
+                <td></td>
+                <td class="tabular-numbers">{{ workhour_items.0|timedelta_in_hours }}<span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
+                <td></td>
+            </tr>
+            {% for item in workhour_items.1 %}
                 <tr>
-                    <td><b>{% translate "Total" %}</b></td>
-                    <td></td>
-                    <td class="tabular-numbers">{{ workhour_items.0|timedelta_in_hours }}<span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
-                    <td></td>
-                </tr>
-                {% for item in workhour_items.1 %}
-                    <tr>
-                        <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
-                        <td class="break-word">{{ item.reason }}</td>
-                        <td class="text-nowrap tabular-numbers">{{ item.duration|timedelta_in_hours }} <span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
-                        <td class="whitespace-nowrap">
-                            {% if can_grant %}
-                                {% if item.type == "event" %}
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View event" %}</span></a>
-                                {% else %}
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_edit" item.origin_id %}"><span class="fa fa-edit"></span> <span class="d-none d-md-inline">{% translate "Edit" %}</span></a>
-                                    <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_delete" item.origin_id %}"><span class="fa fa-trash"></span> <span class="d-none d-md-inline">{% translate "Delete" %}</span></a>
-                                {% endif %}
+                    <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td class="break-word">{{ item.reason }}</td>
+                    <td class="text-nowrap tabular-numbers">{{ item.duration|timedelta_in_hours }} <span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
+                    <td class="whitespace-nowrap">
+                        {% if can_grant %}
+                            {% if item.type == "event" %}
+                                <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:event_detail" item.origin_id "none" %}"><span class="fa fa-eye"></span> <span class="d-none d-md-inline">{% translate "View event" %}</span></a>
+                            {% else %}
+                                <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_edit" item.origin_id %}"><span class="fa fa-edit"></span> <span class="d-none d-md-inline">{% translate "Edit" %}</span></a>
+                                <a class="btn btn-secondary btn-sm text-nowrap" href="{% url "core:workinghours_delete" item.origin_id %}"><span class="fa fa-trash"></span> <span class="d-none d-md-inline">{% translate "Delete" %}</span></a>
                             {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% endwith %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

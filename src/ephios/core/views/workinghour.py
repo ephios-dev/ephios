@@ -128,6 +128,7 @@ class OwnWorkingHourView(LoginRequiredMixin, DetailView):
             self.request.user, "decide_workinghours_for_group", klass=Group
         ).values_list("id", flat=True)
         kwargs["can_grant"] = self.request.user.groups.filter(id__in=grant_ids).exists()
+        kwargs["workhour_items"] = self.request.user.get_workhour_items()
         return super().get_context_data(**kwargs)
 
 
@@ -172,6 +173,14 @@ class UserProfileWorkingHourView(CanGrantMixin, CustomPermissionRequiredMixin, D
 
     def get_context_data(self, **kwargs):
         kwargs["can_grant"] = self.can_grant
+        filter_form = WorkingHourFilterForm(self.request.GET)
+        filter_form.is_valid()
+        kwargs["filter_form"] = filter_form
+        kwargs["workhour_items"] = self.get_object().get_workhour_items(
+            start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
+            end=filter_form.cleaned_data.get("end") or date.max,
+            eventtype=filter_form.cleaned_data.get("type"),
+        )
         return super().get_context_data(**kwargs)
 
 
