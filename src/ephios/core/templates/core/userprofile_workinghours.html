@@ -27,6 +27,8 @@
     {% if can_grant %}
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_add" userprofile.pk %}"><span class="fa fa-plus"></span> {% translate "Add working hours" %}</a>
+        <a class="btn btn-sm btn-secondary"
+           href="{% url "core:workinghours_detail_export" userprofile.pk %}"><span class="fa fa-download"></span> {% translate "Download list" %}</a>
     {% elif own_profile %}
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_request" %}"><span class="fa fa-plus"></span> {% translate "Request working hours" %}</a>
