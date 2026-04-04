@@ -1,3 +1,5 @@
+import codecs
+import csv
 import datetime
 from collections import Counter
 from datetime import date
@@ -10,10 +12,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import DurationField, ExpressionWrapper, F, Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
 from django_select2.forms import Select2Widget
 from guardian.shortcuts import get_objects_for_user
@@ -21,6 +25,7 @@ from guardian.shortcuts import get_objects_for_user
 from ephios.core.forms.users import WorkingHourRequestForm
 from ephios.core.models import EventType, LocalParticipation, UserProfile, WorkingHours
 from ephios.extra.mixins import CustomCheckPermissionMixin, CustomPermissionRequiredMixin
+from ephios.extra.templatetags.utils import timedelta_in_hours
 from ephios.extra.widgets import CustomDateInput
 
 
@@ -40,70 +45,77 @@ class WorkingHourFilterForm(forms.Form):
     )
 
 
+def _get_filterform_with_defaults(request):
+    return WorkingHourFilterForm(
+        request.GET
+        or {
+            # intitial data for initial page laod
+            # (does not use `initial` cause that only works with unbound forms)
+            "start": date.today().replace(month=1, day=1),
+            "end": date.today().replace(month=12, day=31),
+        }
+    )
+
+
+def _get_working_hours_stats(start: date, end: date, eventtype: Optional[EventType]):
+    start = start or date.min
+    end = end or date.max
+    # pylint: disable=assignment-from-no-return
+    participations = LocalParticipation.objects.filter(
+        state=LocalParticipation.States.CONFIRMED,
+        start_time__date__gte=start,
+        end_time__date__lte=end,
+    )
+    workinghours = {}
+    if eventtype is not None:
+        participations = participations.filter(shift__event__type=eventtype)
+    else:
+        workinghours = (
+            WorkingHours.objects
+            .filter(date__gte=start, date__lte=end)
+            .annotate(hour_sum=Sum("hours"))
+            .values_list("user__pk", "user__display_name", "hour_sum")
+        )
+    participations = (
+        participations
+        .annotate(
+            duration=ExpressionWrapper(
+                (F("end_time") - F("start_time")),
+                output_field=DurationField(),
+            ),
+        )
+        .annotate(hour_sum=Sum("duration"))
+        .values_list("user__pk", "user__display_name", "hour_sum")
+    )
+
+    result = {}
+    c = Counter()
+    for user_pk, display_name, hours in chain(participations, workinghours):
+        current_sum = (
+            hours.total_seconds() / (60 * 60)
+            if isinstance(hours, datetime.timedelta)
+            else float(hours)
+        )
+        c[user_pk] += current_sum
+        result[user_pk] = {
+            "pk": user_pk,
+            "display_name": display_name,
+            "hours": c[user_pk],
+        }
+    return sorted(result.values(), key=lambda x: x["hours"], reverse=True)
+
+
 class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
     template_name = "core/workinghours_list.html"
     permission_required = "core.view_userprofile"
 
-    def _get_working_hours_stats(self, start: date, end: date, eventtype: Optional[EventType]):
-        # pylint: disable=assignment-from-no-return
-        participations = LocalParticipation.objects.filter(
-            state=LocalParticipation.States.CONFIRMED,
-            start_time__date__gte=start,
-            end_time__date__lte=end,
-        )
-        workinghours = {}
-        if eventtype is not None:
-            participations = participations.filter(shift__event__type=eventtype)
-        else:
-            workinghours = (
-                WorkingHours.objects
-                .filter(date__gte=start, date__lte=end)
-                .annotate(hour_sum=Sum("hours"))
-                .values_list("user__pk", "user__display_name", "hour_sum")
-            )
-        participations = (
-            participations
-            .annotate(
-                duration=ExpressionWrapper(
-                    (F("end_time") - F("start_time")),
-                    output_field=DurationField(),
-                ),
-            )
-            .annotate(hour_sum=Sum("duration"))
-            .values_list("user__pk", "user__display_name", "hour_sum")
-        )
-
-        result = {}
-        c = Counter()
-        for user_pk, display_name, hours in chain(participations, workinghours):
-            current_sum = (
-                hours.total_seconds() / (60 * 60)
-                if isinstance(hours, datetime.timedelta)
-                else float(hours)
-            )
-            c[user_pk] += current_sum
-            result[user_pk] = {
-                "pk": user_pk,
-                "display_name": display_name,
-                "hours": c[user_pk],
-            }
-        return sorted(result.values(), key=lambda x: x["hours"], reverse=True)
-
     def get_context_data(self, **kwargs):
-        filter_form = WorkingHourFilterForm(
-            self.request.GET
-            or {
-                # intitial data for initial page laod
-                # (does not use `initial` cause that only works with unbound forms)
-                "start": date.today().replace(month=1, day=1),
-                "end": date.today().replace(month=12, day=31),
-            }
-        )
+        filter_form = _get_filterform_with_defaults(self.request)
         filter_form.is_valid()
         kwargs["filter_form"] = filter_form
-        kwargs["users"] = self._get_working_hours_stats(
-            start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
-            end=filter_form.cleaned_data.get("end") or date.max,
+        kwargs["users"] = _get_working_hours_stats(
+            start=filter_form.cleaned_data.get("start"),
+            end=filter_form.cleaned_data.get("end"),
             eventtype=filter_form.cleaned_data.get("type"),
         )
         kwargs["can_grant_for"] = set(
@@ -128,6 +140,7 @@ class OwnWorkingHourView(LoginRequiredMixin, DetailView):
             self.request.user, "decide_workinghours_for_group", klass=Group
         ).values_list("id", flat=True)
         kwargs["can_grant"] = self.request.user.groups.filter(id__in=grant_ids).exists()
+        kwargs["workhour_items"] = self.request.user.get_workhour_items()
         return super().get_context_data(**kwargs)
 
 
@@ -172,6 +185,14 @@ class UserProfileWorkingHourView(CanGrantMixin, CustomPermissionRequiredMixin, D
 
     def get_context_data(self, **kwargs):
         kwargs["can_grant"] = self.can_grant
+        filter_form = WorkingHourFilterForm(self.request.GET)
+        filter_form.is_valid()
+        kwargs["filter_form"] = filter_form
+        kwargs["workhour_items"] = self.get_object().get_workhour_items(
+            start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
+            end=filter_form.cleaned_data.get("end") or date.max,
+            eventtype=filter_form.cleaned_data.get("type"),
+        )
         return super().get_context_data(**kwargs)
 
 
@@ -222,3 +243,64 @@ class WorkingHourDeleteView(PermissionDeniedIfCantGrantMixin, SuccessMessageMixi
 
     def get_success_url(self):
         return reverse("core:workinghours_detail", kwargs={"pk": self.object.user.pk})
+
+
+class WorkingHourExportView(CustomPermissionRequiredMixin, View):
+    permission_required = "core.view_userprofile"
+
+    def get(self, request, *args, **kwargs):
+        filter_form = _get_filterform_with_defaults(request)
+        filter_form.is_valid()
+        workinghours = _get_working_hours_stats(
+            start=filter_form.cleaned_data.get("start"),
+            end=filter_form.cleaned_data.get("end"),
+            eventtype=filter_form.cleaned_data.get("type"),
+        )
+        rows = []
+        for user in workinghours:
+            rows.append([user["display_name"], user["hours"]])
+
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="workinghours.csv"'},
+        )
+        response.write(codecs.BOM_UTF8)  # needed for excel to recognise utf-8 encoding
+        writer = csv.writer(response)
+        writer.writerow(["Name", "Arbeitsstunden"])
+        writer.writerows(rows)
+        return response
+
+
+class UserProfileWorkingHourExportView(CustomPermissionRequiredMixin, DetailView):
+    model = UserProfile
+    permission_required = "core.view_userprofile"
+
+    def get(self, request, *args, **kwargs):
+        filter_form = WorkingHourFilterForm(request.GET)
+        filter_form.is_valid()
+        workinghours = self.get_object().get_workhour_items(
+            start=filter_form.cleaned_data.get("start") or date.min,  # start/end are not required
+            end=filter_form.cleaned_data.get("end") or date.max,
+            eventtype=filter_form.cleaned_data.get("type"),
+        )[1]
+
+        rows = []
+        for entry in workinghours:
+            rows.append([
+                entry["date"],
+                entry["reason"],
+                timedelta_in_hours(entry["duration"]),
+                entry["type"],
+            ])
+
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={
+                "Content-Disposition": f'attachment; filename="{self.get_object().display_name}.csv"'
+            },
+        )
+        response.write(codecs.BOM_UTF8)  # needed for excel to recognise utf-8 encoding
+        writer = csv.writer(response)
+        writer.writerow([_("Date"), _("Reason"), _("Hours"), _("Type")])
+        writer.writerows(rows)
+        return response

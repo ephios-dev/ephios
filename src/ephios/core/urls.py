@@ -83,6 +83,8 @@ from ephios.core.views.workinghour import (
     WorkingHourOverview,
     WorkingHourRequestView,
     WorkingHourUpdateView,
+    WorkingHourExportView,
+    UserProfileWorkingHourExportView,
 )
 
 app_name = "core"
@@ -269,6 +271,7 @@ urlpatterns = [
         name="workinghours_request",
     ),
     path("workinghours/", WorkingHourOverview.as_view(), name="workinghours_list"),
+    path("workinghours/export", WorkingHourExportView.as_view(), name="workinghours_export"),
     path("workinghours/<int:pk>/edit/", WorkingHourUpdateView.as_view(), name="workinghours_edit"),
     path(
         "workinghours/<int:pk>/delete/", WorkingHourDeleteView.as_view(), name="workinghours_delete"
@@ -277,6 +280,11 @@ urlpatterns = [
         "workinghours/user/<int:pk>/",
         UserProfileWorkingHourView.as_view(),
         name="workinghours_detail",
+    ),
+    path(
+        "workinghours/user/<int:pk>/export",
+        UserProfileWorkingHourExportView.as_view(),
+        name="workinghours_detail_export",
     ),
     path(
         "workinghours/user/<int:pk>/add/",
