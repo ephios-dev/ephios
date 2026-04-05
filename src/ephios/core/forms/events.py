@@ -206,25 +206,29 @@ class ShiftForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         signup_flows = list(enabled_signup_flows())
         # make sure that if a shift uses a disabled but installed flow, it is also available in the list
-        if self.instance and (flow_slug := self.instance.signup_flow_slug):
-            if flow_slug not in map(operator.attrgetter("slug"), signup_flows):
-                try:
-                    signup_flows.append(signup_flow_from_slug(flow_slug, self.instance))
-                except ValueError:  # not installed
-                    pass
+        if (
+            self.instance
+            and (flow_slug := self.instance.signup_flow_slug)
+            and flow_slug not in map(operator.attrgetter("slug"), signup_flows)
+        ):
+            try:
+                signup_flows.append(signup_flow_from_slug(flow_slug, self.instance))
+            except ValueError:  # not installed
+                pass
         self.fields["signup_flow_slug"].widget = forms.Select(
             choices=((flow.slug, flow.verbose_name) for flow in signup_flows)
         )
         # same for structure
         shift_structures = list(enabled_shift_structures())
-        if self.instance and (structure_slug := self.instance.structure_slug):
-            if structure_slug not in map(operator.attrgetter("slug"), shift_structures):
-                try:
-                    shift_structures.append(
-                        shift_structure_from_slug(structure_slug, self.instance)
-                    )
-                except ValueError:  # not installed
-                    pass
+        if (
+            self.instance
+            and (structure_slug := self.instance.structure_slug)
+            and structure_slug not in map(operator.attrgetter("slug"), shift_structures)
+        ):
+            try:
+                shift_structures.append(shift_structure_from_slug(structure_slug, self.instance))
+            except ValueError:  # not installed
+                pass
         self.fields["structure_slug"].widget = forms.Select(
             choices=((structure.slug, structure.verbose_name) for structure in shift_structures)
         )
@@ -253,9 +257,10 @@ class ShiftForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if {"meeting_time", "start_time"} <= set(cleaned_data.keys()):
-            if not cleaned_data["meeting_time"] <= cleaned_data["start_time"]:
-                self.add_error("meeting_time", _("Meeting time must not be after start time!"))
+        if {"meeting_time", "start_time"} <= set(cleaned_data.keys()) and not cleaned_data[
+            "meeting_time"
+        ] <= cleaned_data["start_time"]:
+            self.add_error("meeting_time", _("Meeting time must not be after start time!"))
         return cleaned_data
 
 

@@ -59,7 +59,7 @@ def test_guest_settings_flow(django_app, event, planner):
     assert "Guests" not in event_update_view
 
     with pytest.raises(EventGuestShare.DoesNotExist):
-        event.guest_share
+        event.guest_share  # noqa: B018  # causes django query
 
     preferences["general__enabled_plugins"] = [
         "ephios.plugins.baseshiftstructures",

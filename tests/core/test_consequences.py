@@ -5,6 +5,7 @@ from django.db.models import IntegerField, OuterRef, Subquery
 from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Cast
 from django.urls import reverse
+from django.utils import timezone
 
 from ephios.core.consequences import (
     QualificationConsequenceHandler,
@@ -80,13 +81,13 @@ class TestQualificationConsequence:
 class TestWorkingHourConsequence:
     def test_request_workinghour(self, django_app, volunteer):
         form = django_app.get(reverse("core:workinghours_request"), user=volunteer).form
-        form["date"] = datetime.datetime.now().date()
+        form["date"] = timezone.now().date()
         form["hours"] = 42
         form["reason"] = "testing"
         form.submit()
         Consequence.objects.get(
             user=volunteer,
-            data__date=datetime.datetime.now().date(),
+            data__date=timezone.now().date(),
             data__hours=42,
             data__reason="testing",
         )

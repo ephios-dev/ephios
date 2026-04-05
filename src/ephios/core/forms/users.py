@@ -81,10 +81,10 @@ def get_group_permission_log_fields(group):
     # This lives here because it is closely related to the fields on GroupForm below
     if not group.pk:
         return {}
-    perms = set(
+    perms = {
         f"{g[0]}.{g[1]}"
         for g in group.permissions.values_list("content_type__app_label", "codename")
-    )
+    }
 
     return {
         _("Can add events"): PLANNING_TEST_PERMISSION in perms,
@@ -275,7 +275,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
             if self.locked_groups:
                 self.fields["groups"].help_text = _(
                     "The user is also member of <b>{groups}</b>, but you are not allowed to manage memberships for those groups."
-                ).format(groups=", ".join((group.name for group in self.locked_groups)))
+                ).format(groups=", ".join(group.name for group in self.locked_groups))
         if not request.user.is_staff:
             self.fields["is_staff"].disabled = True
             self.fields["is_staff"].help_text += " " + _(

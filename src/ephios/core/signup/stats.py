@@ -1,5 +1,4 @@
 import dataclasses
-from typing import Optional
 
 from django.utils.functional import classproperty
 
@@ -42,9 +41,9 @@ class SignupStats:
     requested_count: int
     confirmed_count: int
     missing: int
-    free: Optional[int]  # None means infinite free
-    min_count: Optional[int]  # None means no min specified
-    max_count: Optional[int]  # None means infinite max
+    free: int | None  # None means infinite free
+    min_count: int | None  # None means no min specified
+    max_count: int | None  # None means infinite max
 
     @classproperty
     def ZERO(cls):  # pylint: disable=no-self-argument

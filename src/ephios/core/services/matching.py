@@ -1,6 +1,6 @@
 import dataclasses
 import itertools
-from typing import Collection, Optional
+from collections.abc import Collection
 
 from django.utils.functional import cached_property
 from scipy.sparse import csr_matrix
@@ -20,7 +20,7 @@ class Position:
     required_qualifications: Collection[Qualification]
     designated_for: Collection[AbstractParticipant]  # designated by disposition
     preferred_by: Collection[AbstractParticipant]  # preferred by participant (less important)
-    label: Optional[str] = None
+    label: str | None = None
     aux_score: float = 0.0  # additional score control in range [0,1]
     designation_only: bool = (
         False  # if this Position was created purely out of overdesignation, mark it here
@@ -68,8 +68,8 @@ class Matching:
         self.participants = participants
         self.positions = positions
         self.unpaired_participants = set(participants)
-        self.unpaired_positions = list(
-            sorted(positions, key=lambda position: (-position.skill_level, position.id))
+        self.unpaired_positions = sorted(
+            positions, key=lambda position: (-position.skill_level, position.id)
         )
         for participant, position in pairings:
             self.unpaired_participants.remove(participant)
@@ -179,7 +179,7 @@ def score_pairing(
 def match_participants_to_positions(
     participants: Collection[AbstractParticipant],
     positions: Collection[Position],
-    confirmed_participants: Collection[AbstractParticipant] = None,
+    confirmed_participants: Collection[AbstractParticipant] | None = None,
 ) -> Matching:
     participants = list(participants)
     positions = list(positions)
@@ -202,8 +202,8 @@ def match_participants_to_positions(
         ]
         for participant, is_confirmed, has_designation in zip(
             participants,
-            map(lambda p: p in confirmed_participants, participants),
-            map(lambda p: p in designated_participants, participants),
+            (p in confirmed_participants for p in participants),
+            (p in designated_participants for p in participants),
         )
     ])
     matching = min_weight_full_bipartite_matching(costs)

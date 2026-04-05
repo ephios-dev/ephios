@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+from zoneinfo import ZoneInfo
 
 import recurrence
 from django.urls import reverse
@@ -30,15 +31,15 @@ class TestEventCopy:
         event_count = Event.objects.all().count()
         form = response.form
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(),
+            dtstart=timezone.now(),
             rrules=[
-                recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
+                recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=timezone.now().weekday())
             ],
         )
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
-            datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
+            timezone.now() - timedelta(days=1), timezone.now() + timedelta(days=365)
         )
         assert Event.objects.all().count() == event_count + 3
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 3
@@ -52,16 +53,16 @@ class TestEventCopy:
         response = django_app.get(reverse("core:event_copy", kwargs={"pk": event.id}), user=planner)
         event_count = Event.objects.all().count()
         form = response.form
-        target_date = datetime.now().replace(hour=14) + timedelta(days=14)
+        target_date = timezone.now().replace(hour=14) + timedelta(days=14)
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(),
+            dtstart=timezone.now(),
             rdates=[target_date],
             include_dtstart=False,
         )
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
-            datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
+            timezone.now() - timedelta(days=1), timezone.now() + timedelta(days=365)
         )
         new_event = Event.objects.get(title=event.title, shifts__start_time__date=target_date)
         assert Event.objects.all().count() == event_count + 1
@@ -81,15 +82,15 @@ class TestEventCopy:
         event_count = Event.objects.all().count()
         form = response.form
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(),
+            dtstart=timezone.now(),
             rrules=[
-                recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=datetime.now().weekday())
+                recurrence.Rule(freq=recurrence.WEEKLY, count=3, byday=timezone.now().weekday())
             ],
         )
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
-            datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
+            timezone.now() - timedelta(days=1), timezone.now() + timedelta(days=365)
         )
         assert Event.objects.all().count() == event_count + 3
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 3
@@ -119,14 +120,14 @@ class TestEventCopy:
         )
         event_count = Event.objects.all().count()
         form = response.form
-        target_date = datetime.now().replace(hour=14) + timedelta(days=14)
+        target_date = timezone.now().replace(hour=14) + timedelta(days=14)
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(), rdates=[target_date], include_dtstart=False
+            dtstart=timezone.now(), rdates=[target_date], include_dtstart=False
         )
         form["recurrence"] = str(recurr)
         form.submit()
         occurrences = recurr.between(
-            datetime.now() - timedelta(days=1), datetime.now() + timedelta(days=365)
+            timezone.now() - timedelta(days=1), timezone.now() + timedelta(days=365)
         )
         assert Event.objects.all().count() == event_count + 1
         assert Shift.objects.filter(start_time__date__in=occurrences).count() == 1
@@ -179,9 +180,9 @@ class TestEventCopy:
         )
         shift_count = event.shifts.count()
         form = response.form
-        target_date = datetime(2024, 12, 12, 12, 12)
+        target_date = datetime(2024, 12, 12, 12, 12, tzinfo=ZoneInfo("Europe/Berlin"))
         recurr = recurrence.Recurrence(
-            dtstart=datetime.now(),
+            dtstart=timezone.now(),
             rdates=[target_date],
             include_dtstart=False,
         )

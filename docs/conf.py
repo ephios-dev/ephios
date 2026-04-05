@@ -8,6 +8,7 @@ import datetime
 # -- Project information -----------------------------------------------------
 import os
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import django
 import environ
@@ -25,7 +26,7 @@ from django.core import management
 
 
 project = "ephios"
-copyright = f"{datetime.datetime.now().strftime('%Y')}, ephios-dev"
+copyright = f"{datetime.datetime.now(tz=ZoneInfo('Europe/Berlin')).strftime('%Y')}, ephios-dev"
 author = "ephios-dev"
 
 

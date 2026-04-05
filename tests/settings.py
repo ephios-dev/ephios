@@ -1,5 +1,6 @@
 import os
-from ephios.settings import *  # noqa
+
+from ephios.settings import *
 
 LANGUAGE_CODE = "en"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
