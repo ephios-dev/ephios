@@ -2279,7 +2279,7 @@ wheels = [
 
 [[package]]
 name = "pywebpush"
-version = "2.2.0"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -2287,11 +2287,10 @@ dependencies = [
     { name = "http-ece" },
     { name = "py-vapid" },
     { name = "requests" },
-    { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/45/7d/327de9752338521ee85d67a8e70b99ae45f21cb251643b726a2281ffc907/pywebpush-2.2.0.tar.gz", hash = "sha256:d4c0ee4981e7ac08cf14729fec8b6c3aeec58d54e6da388635c5706fcc2db3f6", size = 28317, upload-time = "2026-01-05T19:13:08.421Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/87/d9/e497a24bc9f659bfc0e570382a41e6b2d6726fbcfa4d85aaa23fe9c81ba2/pywebpush-2.3.0.tar.gz", hash = "sha256:d1e27db8de9e6757c1875f67292554bd54c41874c36f4b5c4ebb5442dce204f2", size = 28489, upload-time = "2026-02-09T23:30:18.574Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/63/b1/ca100d0563d14280732d405d9eb0adea2ba80fa8ad86c06cded5fc0a0cb1/pywebpush-2.2.0-py3-none-any.whl", hash = "sha256:f5a03eeeec422f62519d5a94f590937f143b2e9d05ee0da843d0dddd3c335835", size = 22822, upload-time = "2026-01-05T19:13:05.438Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/d8/ac21241cf8007cb93255eabf318da4f425ec0f75d28c366992253aa8c1b2/pywebpush-2.3.0-py3-none-any.whl", hash = "sha256:3d97469fb14d4323c362319d438183737249a4115b50e146ce233e7f01e3cf98", size = 22851, upload-time = "2026-02-09T23:30:16.093Z" },
 ]
 
 [[package]]
