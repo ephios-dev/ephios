@@ -16,7 +16,10 @@ from ephios.plugins.federation.models import FederatedEventShare, FederatedGuest
 
 class EventAllowFederationForm(BasePluginFormMixin, forms.Form):
     shared_with = forms.ModelMultipleChoiceField(
-        queryset=FederatedGuest.objects.all(), required=False, widget=CheckboxSelectMultiple
+        label=_("Shared with"),
+        queryset=FederatedGuest.objects.all(),
+        required=False,
+        widget=CheckboxSelectMultiple,
     )
 
     def __init__(self, *args, **kwargs):
