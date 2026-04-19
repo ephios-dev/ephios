@@ -77,14 +77,14 @@ from ephios.core.views.shift import (
 from ephios.core.views.signup import LocalUserShiftActionView
 from ephios.core.views.workinghours import (
     OwnWorkingHourView,
+    UserProfileWorkingHourExportView,
     UserProfileWorkingHourView,
     WorkingHourCreateView,
     WorkingHourDeleteView,
+    WorkingHourExportView,
     WorkingHourOverview,
     WorkingHourRequestView,
     WorkingHourUpdateView,
-    WorkingHourExportView,
-    UserProfileWorkingHourExportView,
 )
 
 app_name = "core"
