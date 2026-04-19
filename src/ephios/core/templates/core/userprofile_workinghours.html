@@ -24,15 +24,17 @@
             </div>
         </form>
     {% endif %}
+
     {% if can_grant %}
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_add" userprofile.pk %}"><span class="fa fa-plus"></span> {% translate "Add working hours" %}</a>
-        <a class="btn btn-sm btn-secondary"
-           href="{% url "core:workinghours_detail_export" userprofile.pk %}"><span class="fa fa-download"></span> {% translate "Download list" %}</a>
     {% elif userprofile == request.user %}
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_request" %}"><span class="fa fa-plus"></span> {% translate "Request working hours" %}</a>
     {% endif %}
+    <a class="btn btn-sm btn-secondary"
+           href="{% url "core:workinghours_detail_export" userprofile.pk %}"><span class="fa fa-download"></span> {% translate "Export list" %}</a>
+
     <table id="workinghours_table" class="table table-striped display mt-2">
         <thead>
             <tr>
