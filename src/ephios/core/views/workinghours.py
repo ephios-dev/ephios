@@ -4,7 +4,6 @@ import datetime
 from collections import Counter
 from datetime import date
 from itertools import chain
-from typing import Optional
 
 from django import forms
 from django.contrib import messages
@@ -12,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import CharField, DurationField, ExpressionWrapper, F, Sum, Value
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -281,10 +280,12 @@ class WorkingHourExportView(CustomPermissionRequiredMixin, View):
         return response
 
 
-class UserProfileWorkingHourExportView(CustomPermissionRequiredMixin, LoginRequiredMixin, DetailView):
+class UserProfileWorkingHourExportView(
+    CustomPermissionRequiredMixin, LoginRequiredMixin, DetailView
+):
     model = UserProfile
 
-    def get_required_permissions(self, request: Optional[HttpRequest] = None) -> list[str]:
+    def get_required_permissions(self, request: HttpRequest | None = None) -> list[str]:
         return [] if self.request.user == self.get_object() else ["core.view_userprofile"]
 
     def get(self, request, *args, **kwargs):
