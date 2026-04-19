@@ -32,7 +32,7 @@ dependencies = [
     "django-crispy-forms>=2.0,<3",
     "django-webpush>=0.3.5,<0.4",
     "django-libsass>=0.9,<0.10",
-    "crispy-bootstrap5>=0.7,<2025.7",
+    "crispy-bootstrap5>=0.7,<2026.4",
     "djangorestframework>=3.13.1,<4",
     "django-coverage-plugin>=2.0.3,<4.0.0",
     "django-filter>=24,<26",
@@ -52,6 +52,7 @@ dependencies = [
     "python-dateutil>=2.9.0.post0,<3",
     "cryptography>=46.0.3,<47",
     "py-vapid>=1.9.4,<2",
+    "pywebpush>=2.2.0", # required because django-webpush depends on this in an old and broken version
 ]
 
 [project.optional-dependencies]
@@ -112,6 +113,11 @@ preview = true
 
 [tool.ruff.lint]
 preview = true
+ignore = [
+    "RUF012", # mutable default value for class attribute: common in django migrations
+    "C408", # unneccassary call to dict(): we like to use dict() for readability in some cases
+    "RUF059",  # unpacked variable is never used/prefix in underscore: we decided a full name is fine for unpacking
+]
 
 [tool.pylint.messages_control]
 # C0330 and C0301 are disabled for use of black

@@ -2,8 +2,8 @@ import logging
 import smtplib
 import traceback
 import uuid
+from collections.abc import Iterable
 from email.utils import formataddr
-from typing import Iterable
 
 from django.conf import settings
 from django.core.cache import cache
@@ -55,7 +55,7 @@ def send_all_notifications():
             backend.send_multiple(unprocessed_notifications)
         except Exception as e:  # pylint: disable=broad-except
             if settings.DEBUG:
-                raise e
+                raise
             try:
                 mail_admins(
                     "Notification sending failed",

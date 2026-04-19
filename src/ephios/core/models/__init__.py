@@ -18,16 +18,16 @@ from .users import (
 
 __all__ = [
     "AbstractParticipation",
+    "Consequence",
     "Event",
     "EventType",
     "EventTypePreference",
     "LocalParticipation",
-    "Shift",
-    "Consequence",
     "Notification",
-    "QualificationCategory",
     "Qualification",
+    "QualificationCategory",
     "QualificationGrant",
+    "Shift",
     "UserProfile",
     "WorkingHours",
 ]

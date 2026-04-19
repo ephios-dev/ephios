@@ -334,17 +334,24 @@ class EventListView(LoginRequiredMixin, ListView):
         return {
             "calendar": mark_safe(calendar.formatmonth(date.year, date.month)),
             "date": date,
-            "previous_date": datetime.min.replace(year=prevyear, month=prevmonth),
-            "next_date": datetime.min.replace(year=nextyear, month=nextmonth),
+            "previous_date": datetime.min.replace(
+                year=prevyear, month=prevmonth, tzinfo=get_current_timezone()
+            ),
+            "next_date": datetime.min.replace(
+                year=nextyear, month=nextmonth, tzinfo=get_current_timezone()
+            ),
         }
 
     def _get_day_context(self):
         ctx = {}
         default_date = timezone.now()
         if self.request.session.has_key("day_calendar_last_date"):
-            default_date = datetime.strptime(
-                self.request.session.get("day_calendar_last_date"), "%Y-%m-%d"
-            ).date()
+            default_date = (
+                datetime
+                .strptime(self.request.session.get("day_calendar_last_date"), "%Y-%m-%d")
+                .replace(tzinfo=get_current_timezone())
+                .date()
+            )
         this_date = self.filter_form.get_date(default=default_date)
         self.request.session["day_calendar_last_date"] = this_date.strftime("%Y-%m-%d")
         ctx["previous_date"] = this_date - timedelta(days=1)
@@ -623,7 +630,9 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             self.object, only_with_perms_in=["view_event"]
         ).intersection(can_publish_for_groups)
         for date in form.cleaned_data["recurrence"].xafter(
-            datetime.now() - timedelta(days=365 * 100), 1000, inc=True
+            datetime.now() - timedelta(days=365 * 100),  # noqa: DTZ005 # recurrence must use naive time
+            1000,
+            inc=True,
         ):
             event = self.get_object()
             start_date = event.get_start_time().astimezone(tz).date()

@@ -1,4 +1,3 @@
-import functools
 import logging
 from argparse import Namespace
 from collections import OrderedDict
@@ -57,9 +56,10 @@ class BaseSignupFlow(AbstractSignupFlow):
     def signup_action_validator_class(self):
         return BaseSignupActionValidator
 
-    @functools.lru_cache(1)
     def get_validator(self, participant):
-        return self.signup_action_validator_class(self.shift, participant)
+        if not hasattr(self, "_validator"):
+            self._validator = self.signup_action_validator_class(self.shift, participant)
+        return self._validator
 
     def perform_signup(
         self, participant: AbstractParticipant, participation=None, acting_user=None, **kwargs

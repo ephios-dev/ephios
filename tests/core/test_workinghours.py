@@ -3,6 +3,7 @@ import re
 
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
+from django.utils import timezone
 
 from ephios.core.models import LocalParticipation, WorkingHours
 
@@ -41,7 +42,7 @@ class TestWorkingHours:
         self, django_app, manager, superuser, groups, workinghours, volunteer
     ):
         WorkingHours.objects.create(
-            date=datetime.date.today(), user=superuser, hours=1, reason="test"
+            date=timezone.now().date(), user=superuser, hours=1, reason="test"
         )
         response = django_app.get(reverse("core:workinghours_list"), user=volunteer, status=403)
         response = django_app.get(reverse("core:workinghours_list"), user=manager)

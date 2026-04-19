@@ -4,7 +4,6 @@ import datetime
 from collections import Counter
 from datetime import date
 from itertools import chain
-from typing import Optional
 
 from django import forms
 from django.contrib import messages
@@ -16,6 +15,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DeleteView, DetailView, FormView, TemplateView, UpdateView
@@ -51,13 +51,19 @@ def _get_filterform_with_defaults(request):
         or {
             # intitial data for initial page laod
             # (does not use `initial` cause that only works with unbound forms)
-            "start": date.today().replace(month=1, day=1),
-            "end": date.today().replace(month=12, day=31),
+            "start": datetime.datetime
+            .now(tz=get_current_timezone())
+            .replace(month=1, day=1)
+            .date(),
+            "end": datetime.datetime
+            .now(tz=get_current_timezone())
+            .replace(month=12, day=31)
+            .date(),
         }
     )
 
 
-def _get_working_hours_stats(start: date, end: date, eventtype: Optional[EventType]):
+def _get_working_hours_stats(start: date, end: date, eventtype: EventType | None):
     start = start or date.min
     end = end or date.max
     # pylint: disable=assignment-from-no-return

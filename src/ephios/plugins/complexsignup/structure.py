@@ -4,7 +4,6 @@ import uuid
 from collections import defaultdict
 from functools import cached_property, partial
 from operator import attrgetter
-from typing import Optional
 
 from django import forms
 from django.utils.translation import gettext
@@ -33,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 def atomic_block_participant_qualifies_for(structure, participant: AbstractParticipant):
-    available_qualification_ids = set(q.id for q in participant.collect_all_qualifications())
+    available_qualification_ids = {q.id for q in participant.collect_all_qualifications()}
     return [
         block
         for block in iter_atomic_blocks(structure)
@@ -178,21 +177,19 @@ class ComplexShiftStructure(
         Returns a list of all participations in the shift that are sorted by confirmed-then-requested.
         Other states are dropped.
         """
-        return list(
-            sorted(
-                filter(
-                    lambda p: (
-                        p.state
-                        in {
-                            AbstractParticipation.States.REQUESTED,
-                            AbstractParticipation.States.CONFIRMED,
-                        }
-                    ),
-                    self.shift.participations.all(),
+        return sorted(
+            filter(
+                lambda p: (
+                    p.state
+                    in {
+                        AbstractParticipation.States.REQUESTED,
+                        AbstractParticipation.States.CONFIRMED,
+                    }
                 ),
-                key=attrgetter("state"),
-                reverse=True,
-            )
+                self.shift.participations.all(),
+            ),
+            key=attrgetter("state"),
+            reverse=True,
         )
 
     def _structure_match(self):
@@ -348,7 +345,7 @@ class ComplexShiftStructure(
         ]
         if unqualified_blocks:
             help_text = _("You don't qualify for {blocks}.").format(
-                blocks=", ".join(set(b["display_with_path"] for b in unqualified_blocks))
+                blocks=", ".join({b["display_with_path"] for b in unqualified_blocks})
             )
 
         return {
@@ -453,7 +450,7 @@ def _search_block(
     block_usage_counter,
     matching: Matching,
     parents: list,
-    composed_label: Optional[str] = None,
+    composed_label: str | None = None,
 ):  # pylint: disable=too-many-locals
     """
     Recursively build a tree structure from the given block.

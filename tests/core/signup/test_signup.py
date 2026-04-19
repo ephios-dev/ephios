@@ -1,9 +1,9 @@
 import functools
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import pytest
-from django.utils import timezone
-from django.utils.timezone import make_aware
+from django.utils.timezone import get_current_timezone
 
 from ephios.core.models import (
     AbstractParticipation,
@@ -57,8 +57,8 @@ def test_signup_stats_full_count():
 
 def test_participant_unfit_is_not_the_same_as_signup_errors(event, qualified_volunteer):
     shift: Shift = event.shifts.first()
-    shift.signup_flow_configuration["signup_until"] = timezone.make_aware(
-        datetime.min.replace(year=2020)
+    shift.signup_flow_configuration["signup_until"] = datetime.min.replace(
+        year=2020, tzinfo=get_current_timezone()
     )
     shift.save()
     assert not list(
@@ -110,54 +110,107 @@ def test_partially_conflicting_shift_results_in_invalid_signup_form(
     )
 
 
+a_future_day = functools.partial(
+    datetime, year=2099, month=1, day=1, tzinfo=ZoneInfo("Europe/Berlin")
+)
+
+
 @pytest.mark.parametrize(
     "a_times,b_times,conflict_expected,total",
     [
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 8)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=6),
+                a_future_day(hour=8),
+            ),
             False,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 10)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=6),
+                a_future_day(hour=10),
+            ),
             True,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 6), datetime(2099, 1, 1, 12)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=6),
+                a_future_day(hour=12),
+            ),
             True,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 10), datetime(2099, 1, 1, 18)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=10),
+                a_future_day(hour=18),
+            ),
             True,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 11, 59), datetime(2099, 1, 1, 12)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=11),
+                a_future_day(hour=12),
+            ),
             True,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 12), datetime(2099, 1, 1, 18)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=12),
+                a_future_day(hour=18),
+            ),
             False,
             False,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 11), datetime(2099, 1, 1, 14)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=11),
+                a_future_day(hour=14),
+            ),
             False,
             True,
         ),
         (
-            (datetime(2099, 1, 1, 8), datetime(2099, 1, 1, 12)),
-            (datetime(2099, 1, 1, 10), datetime(2099, 1, 1, 11)),
+            (
+                a_future_day(hour=8),
+                a_future_day(hour=12),
+            ),
+            (
+                a_future_day(hour=10),
+                a_future_day(hour=11),
+            ),
             True,
             True,
         ),
@@ -169,17 +222,16 @@ def test_get_conflicting_shifts(tz, a_times, b_times, conflict_expected, total, 
         structure_slug=UniformShiftStructure.slug,
         event=event,
     )
-    aware = functools.partial(make_aware, timezone=tz)
     a = Shift.objects.create(
-        start_time=aware(a_times[0]),
-        end_time=aware(a_times[1]),
-        meeting_time=aware(a_times[0]) - timedelta(minutes=15),
+        start_time=a_times[0],
+        end_time=a_times[1],
+        meeting_time=a_times[0] - timedelta(minutes=15),
         **common,
     )
     b = Shift.objects.create(
-        start_time=aware(b_times[0]),
-        end_time=aware(b_times[1]),
-        meeting_time=aware(b_times[0]) - timedelta(minutes=15),
+        start_time=b_times[0],
+        end_time=b_times[1],
+        meeting_time=b_times[0] - timedelta(minutes=15),
         **common,
     )
     a_participation = LocalParticipation.objects.create(

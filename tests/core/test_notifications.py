@@ -26,7 +26,7 @@ def test_notification_form_render(django_app, volunteer):
         lambda notification_type: notification_type.unsubscribe_allowed,
         enabled_notification_types(),
     )
-    assert all(notification_type.slug in form.fields.keys() for notification_type in types)
+    assert all(notification_type.slug in form.fields for notification_type in types)
 
 
 def test_notification_form_submit(django_app, volunteer):

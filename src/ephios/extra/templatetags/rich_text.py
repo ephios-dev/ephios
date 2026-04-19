@@ -74,9 +74,7 @@ def safelink_callback(attrs, new=False):
     Links to a different domain should open with target=_blank
     """
     url = attrs.get((None, "href"), None)
-    if url is None:
-        return attrs
-    if url.startswith("mailto:") or url.startswith("tel:"):
+    if url is None or url.startswith(("mailto:", "tel:")):
         return attrs
     if not url_has_allowed_host_and_scheme(
         url,

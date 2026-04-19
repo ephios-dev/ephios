@@ -42,7 +42,7 @@ def make_absolute(location):
     return urljoin(dynamic_settings.SITE_URL, location)
 
 
-@lru_cache()
+@lru_cache
 def _static_file_exists(path):
     return bool(finders.find(path))
 

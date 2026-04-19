@@ -54,7 +54,7 @@ class OIDCInitiateView(RedirectView):
 
 @access_exempt
 class OIDCCallbackView(RedirectView):
-    def failure_url(self, message=_("Authentication failed.")):
+    def failure_url(self, message=_("Authentication failed.")):  # noqa: B008
         if message:
             messages.error(self.request, message)
         return settings.LOGIN_URL

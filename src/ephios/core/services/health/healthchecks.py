@@ -32,6 +32,12 @@ class HealthCheckStatus:
     UNKNOWN = "unknown"
 
 
+class HealthCheckException(Exception):
+    """
+    Something is not right with the platform health.
+    """
+
+
 class AbstractHealthCheck:
     @property
     def slug(self):
@@ -80,7 +86,7 @@ class DBHealthCheck(AbstractHealthCheck):
         try:
             connection.cursor()
             Permission.objects.exists()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return HealthCheckStatus.ERROR, str(e)
 
         if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
@@ -103,8 +109,8 @@ class CacheHealthCheck(AbstractHealthCheck):
         try:
             cache.cache.set("_healthcheck", "1")
             if not cache.cache.get("_healthcheck") == "1":
-                raise Exception("Cache not available")
-        except Exception as e:
+                raise HealthCheckException("Cache not available")
+        except Exception as e:  # noqa: BLE001
             return HealthCheckStatus.ERROR, str(e)
 
         if (

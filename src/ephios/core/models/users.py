@@ -2,9 +2,7 @@ import datetime
 import functools
 import secrets
 import uuid
-from datetime import date
 from itertools import chain
-from typing import Optional
 
 import guardian.mixins
 from django.conf import settings
@@ -157,10 +155,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         return str(self.get_full_name())
 
     @property
-    def age(self) -> Optional[int]:
+    def age(self) -> int | None:
         if self.date_of_birth is None:
             return None
-        today, born = date.today(), self.date_of_birth
+        today, born = timezone.now().date(), self.date_of_birth
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     @property
@@ -198,7 +196,10 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         )
 
     def get_workhour_items(
-        self, start: date = date.min, end: date = date.max, eventtype: EventType | None = None
+        self,
+        start: datetime.date = datetime.date.min,
+        end: datetime.date = datetime.date.max,
+        eventtype: EventType | None = None,
     ):
         from ephios.core.models import AbstractParticipation
 
@@ -236,8 +237,8 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             hour_sum += datetime.timedelta(
                 hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
             )
-        return hour_sum, list(
-            sorted(chain(participations, workinghours), key=lambda k: k["date"], reverse=True)
+        return hour_sum, sorted(
+            chain(participations, workinghours), key=lambda k: k["date"], reverse=True
         )
 
 

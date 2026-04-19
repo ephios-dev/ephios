@@ -107,14 +107,14 @@ class FederationOAuthView(View):
                 exc_info=True,
             )
             raise PermissionDenied
-        if "error" in request.GET.keys():
+        if "error" in request.GET:
             return redirect(
                 urljoin(
                     urljoin(self.guest.url, reverse("federation:external_event_list")),
                     "?error=oauth_error",
                 )
             )
-        elif "code" in request.GET.keys():
+        if "code" in request.GET:
             try:
                 self._oauth_callback()
                 return redirect(
@@ -141,8 +141,7 @@ class FederationOAuthView(View):
                         "?error=oauth_error",
                     )
                 )
-        else:
-            return redirect(self._get_authorization_url())
+        return redirect(self._get_authorization_url())
 
     def _get_authorization_url(self):
         oauth_client = WebApplicationClient(client_id=self.guest.client_id)
