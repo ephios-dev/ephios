@@ -198,35 +198,40 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         )
 
     def get_workhour_items(
-        self, start: date = date.min, end: date = date.max, eventtype: Optional[EventType] = None
+        self, start: date = date.min, end: date = date.max, eventtype: EventType | None = None
     ):
         from ephios.core.models import AbstractParticipation
 
-        participations = self.participations.filter(
-            state=AbstractParticipation.States.CONFIRMED
-        ).filter(
-            start_time__date__gte=start,
-            end_time__date__lte=end,
+        participations = (
+            self.participations
+            .filter(state=AbstractParticipation.States.CONFIRMED)
+            .filter(
+                start_time__date__gte=start,
+                end_time__date__lte=end,
+            )
+            .annotate(
+                duration=ExpressionWrapper(
+                    (F("end_time") - F("start_time")),
+                    output_field=models.DurationField(),
+                ),
+                date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
+                reason=F("shift__event__title"),
+                type=F("shift__event__type__title"),
+                origin_id=F("shift__event__pk"),
+            )
         )
         if eventtype is not None:
             participations = participations.filter(shift__event__type=eventtype)
-        participations = participations.annotate(
-            duration=ExpressionWrapper(
-                (F("end_time") - F("start_time")),
-                output_field=models.DurationField(),
-            ),
-            date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
-            reason=F("shift__event__title"),
-            type=Value("event"),
-            origin_id=F("shift__event__pk"),
-        ).values("duration", "date", "reason", "type", "origin_id")
+        participations = participations.values("duration", "date", "reason", "type", "origin_id")
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
         )
         workinghours = []
         if eventtype is None:
             workinghours = self.workinghours_set.annotate(
-                duration=F("hours"), type=Value("request"), origin_id=F("pk")
+                duration=F("hours"),
+                type=Value(_("Request"), output_field=CharField()),
+                origin_id=F("pk"),
             ).values("duration", "date", "reason", "type", "origin_id")
             hour_sum += datetime.timedelta(
                 hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)

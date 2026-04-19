@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import DurationField, ExpressionWrapper, F, Sum
+from django.db.models import DurationField, ExpressionWrapper, F, Sum, Value, CharField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -73,8 +73,8 @@ def _get_working_hours_stats(start: date, end: date, eventtype: Optional[EventTy
         workinghours = (
             WorkingHours.objects
             .filter(date__gte=start, date__lte=end)
-            .annotate(hour_sum=Sum("hours"))
-            .values_list("user__pk", "user__display_name", "hour_sum")
+            .annotate(hour_sum=Sum("hours"), type=Value(_("Request"), output_field=CharField()))
+            .values_list("user__pk", "user__display_name", "hour_sum", "type")
         )
     participations = (
         participations
@@ -84,23 +84,26 @@ def _get_working_hours_stats(start: date, end: date, eventtype: Optional[EventTy
                 output_field=DurationField(),
             ),
         )
-        .annotate(hour_sum=Sum("duration"))
-        .values_list("user__pk", "user__display_name", "hour_sum")
+        .annotate(hour_sum=Sum("duration"), type=F("shift__event__type__title"))
+        .values_list("user__pk", "user__display_name", "hour_sum", "type")
     )
 
     result = {}
     c = Counter()
-    for user_pk, display_name, hours in chain(participations, workinghours):
+    for user_pk, display_name, hours, type in chain(participations, workinghours):
         current_sum = (
             hours.total_seconds() / (60 * 60)
             if isinstance(hours, datetime.timedelta)
             else float(hours)
         )
         c[user_pk] += current_sum
+        type_counter = result[user_pk]["by_type"] if user_pk in result else Counter()
+        type_counter[type] += current_sum
         result[user_pk] = {
             "pk": user_pk,
             "display_name": display_name,
             "hours": c[user_pk],
+            "by_type": type_counter,
         }
     return sorted(result.values(), key=lambda x: x["hours"], reverse=True)
 
@@ -125,22 +128,6 @@ class WorkingHourOverview(CustomPermissionRequiredMixin, TemplateView):
             profile.pk: set(profile.groups.all())
             for profile in UserProfile.all_objects.all().prefetch_related("groups")
         }
-        return super().get_context_data(**kwargs)
-
-
-class OwnWorkingHourView(LoginRequiredMixin, DetailView):
-    template_name = "core/userprofile_workinghours.html"
-
-    def get_object(self, queryset=None):
-        return self.request.user
-
-    def get_context_data(self, **kwargs):
-        kwargs["own_profile"] = True
-        grant_ids = get_objects_for_user(
-            self.request.user, "decide_workinghours_for_group", klass=Group
-        ).values_list("id", flat=True)
-        kwargs["can_grant"] = self.request.user.groups.filter(id__in=grant_ids).exists()
-        kwargs["workhour_items"] = self.request.user.get_workhour_items()
         return super().get_context_data(**kwargs)
 
 
@@ -194,6 +181,16 @@ class UserProfileWorkingHourView(CanGrantMixin, CustomPermissionRequiredMixin, D
             eventtype=filter_form.cleaned_data.get("type"),
         )
         return super().get_context_data(**kwargs)
+
+
+class OwnWorkingHourView(LoginRequiredMixin, UserProfileWorkingHourView):
+    permission_required = []
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def _get_target_user(self):
+        return self.request.user
 
 
 class PermissionDeniedIfCantGrantMixin(CanGrantMixin, CustomCheckPermissionMixin):
@@ -256,9 +253,15 @@ class WorkingHourExportView(CustomPermissionRequiredMixin, View):
             end=filter_form.cleaned_data.get("end"),
             eventtype=filter_form.cleaned_data.get("type"),
         )
+        eventtypes = list(EventType.objects.all().values_list("title", flat=True)) + [_("Request")]
         rows = []
         for user in workinghours:
-            rows.append([user["display_name"], user["hours"]])
+            row = (
+                [user["display_name"]]
+                + [user["by_type"][eventtype] for eventtype in eventtypes]
+                + [user["hours"]]
+            )
+            rows.append(row)
 
         response = HttpResponse(
             content_type="text/csv",
@@ -266,7 +269,7 @@ class WorkingHourExportView(CustomPermissionRequiredMixin, View):
         )
         response.write(codecs.BOM_UTF8)  # needed for excel to recognise utf-8 encoding
         writer = csv.writer(response)
-        writer.writerow(["Name", "Arbeitsstunden"])
+        writer.writerow([_("Name")] + eventtypes + [_("Total")])
         writer.writerows(rows)
         return response
 

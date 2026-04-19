@@ -29,7 +29,7 @@
            href="{% url "core:workinghours_add" userprofile.pk %}"><span class="fa fa-plus"></span> {% translate "Add working hours" %}</a>
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_detail_export" userprofile.pk %}"><span class="fa fa-download"></span> {% translate "Download list" %}</a>
-    {% elif own_profile %}
+    {% elif userprofile == request.user %}
         <a class="btn btn-sm btn-secondary"
            href="{% url "core:workinghours_request" %}"><span class="fa fa-plus"></span> {% translate "Request working hours" %}</a>
     {% endif %}
@@ -37,6 +37,7 @@
         <thead>
             <tr>
                 <th>{% translate "Date" %}</th>
+                <th>{% translate "Type" %}</th>
                 <th>{% translate "Reason" %}</th>
                 <th>{% translate "Hours" %}</th>
                 <th>{% translate "Action" %}</th>
@@ -46,12 +47,14 @@
             <tr>
                 <td><b>{% translate "Total" %}</b></td>
                 <td></td>
+                <td></td>
                 <td class="tabular-numbers">{{ workhour_items.0|timedelta_in_hours }}<span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
                 <td></td>
             </tr>
             {% for item in workhour_items.1 %}
                 <tr>
                     <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td>{{ item.type }}</td>
                     <td class="break-word">{{ item.reason }}</td>
                     <td class="text-nowrap tabular-numbers">{{ item.duration|timedelta_in_hours }} <span class="d-none d-md-inline"> {% translate "hours" %}</span></td>
                     <td class="whitespace-nowrap">
