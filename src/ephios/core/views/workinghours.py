@@ -96,7 +96,7 @@ def _get_working_hours_stats(start: date, end: date, eventtype: EventType | None
 
     result = {}
     c = Counter()
-    for user_pk, display_name, hours, type in chain(participations, workinghours):
+    for user_pk, display_name, hours, eventtype in chain(participations, workinghours):
         current_sum = (
             hours.total_seconds() / (60 * 60)
             if isinstance(hours, datetime.timedelta)
@@ -104,7 +104,7 @@ def _get_working_hours_stats(start: date, end: date, eventtype: EventType | None
         )
         c[user_pk] += current_sum
         type_counter = result[user_pk]["by_type"] if user_pk in result else Counter()
-        type_counter[type] += current_sum
+        type_counter[eventtype] += current_sum
         result[user_pk] = {
             "pk": user_pk,
             "display_name": display_name,
