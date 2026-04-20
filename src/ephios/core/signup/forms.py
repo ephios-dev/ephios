@@ -182,14 +182,19 @@ class SignupForm(BaseParticipationForm):
             FormActions(*self._get_buttons()),
         )
 
+        validator = self.instance and self.shift.signup_flow.get_validator(
+            self.instance.participant
+        )
+        can_customize_times = (
+            validator
+            and (not self.instance.is_in_positive_state() or validator.can_decline())
+            and not validator.get_signup_errors()
+        )
         if (
             not getattr(
                 self.shift.signup_flow.configuration, "user_can_customize_signup_times", False
             )
-        ) or (
-            self.instance
-            and self.shift.signup_flow.get_validator(self.instance.participant).get_signup_errors()
-        ):
+        ) or not can_customize_times:
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 
