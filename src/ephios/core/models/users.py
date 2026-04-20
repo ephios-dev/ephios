@@ -115,7 +115,7 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         choices=settings.LANGUAGES,
     )
     disabled_notifications = JSONField(
-        default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder, null=True, blank=True
+        default=list, encoder=CustomJSONEncoder, decoder=CustomJSONDecoder, blank=True
     )
 
     USERNAME_FIELD = "email"
