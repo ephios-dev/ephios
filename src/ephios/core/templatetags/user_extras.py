@@ -24,11 +24,6 @@ def editable_consequences_tag(user, states=None):
 register.filter(name="pending_consequences", filter_func=pending_consequences)
 
 
-@register.filter(name="workhour_items")
-def workhour_items(user):
-    return user.get_workhour_items()
-
-
 @register.filter(name="conflicting_participations")
 def participation_conflicts(participation):
     return get_conflicting_participations(
