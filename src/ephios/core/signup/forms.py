@@ -186,7 +186,10 @@ class SignupForm(BaseParticipationForm):
             not getattr(
                 self.shift.signup_flow.configuration, "user_can_customize_signup_times", False
             )
-        ) or (self.instance and self.instance.state == AbstractParticipation.States.CONFIRMED):
+        ) or (
+            self.instance
+            and self.shift.signup_flow.get_validator(self.instance.participant).get_signup_errors()
+        ):
             self.fields["individual_start_time"].disabled = True
             self.fields["individual_end_time"].disabled = True
 
