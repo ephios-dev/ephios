@@ -28,6 +28,8 @@ from ephios.extra.mixins import CustomCheckPermissionMixin, CustomPermissionRequ
 from ephios.extra.templatetags.utils import timedelta_in_hours
 from ephios.extra.widgets import CustomDateInput
 
+MANUAL_WORKINGHOUR_TYPE = _("Manual entry")
+
 
 class WorkingHourFilterForm(forms.Form):
     start = forms.DateField(required=False, label=_("From"), widget=CustomDateInput)
@@ -79,7 +81,9 @@ def _get_working_hours_stats(start: date, end: date, eventtype: EventType | None
         workinghours = (
             WorkingHours.objects
             .filter(date__gte=start, date__lte=end)
-            .annotate(hour_sum=Sum("hours"), type=Value(_("Request"), output_field=CharField()))
+            .annotate(
+                hour_sum=Sum("hours"), type=Value(MANUAL_WORKINGHOUR_TYPE, output_field=CharField())
+            )
             .values_list("user__pk", "user__display_name", "hour_sum", "type")
         )
     participations = (
@@ -259,7 +263,9 @@ class WorkingHourExportView(CustomPermissionRequiredMixin, View):
             end=filter_form.cleaned_data.get("end"),
             eventtype=filter_form.cleaned_data.get("type"),
         )
-        eventtypes = list(EventType.objects.all().values_list("title", flat=True)) + [_("Request")]
+        eventtypes = list(EventType.objects.all().values_list("title", flat=True)) + [
+            MANUAL_WORKINGHOUR_TYPE
+        ]
         rows = []
         for user in workinghours:
             row = (

@@ -229,9 +229,11 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
         )
         workinghours = []
         if eventtype is None:
+            from ephios.core.views.workinghours import MANUAL_WORKINGHOUR_TYPE
+
             workinghours = self.workinghours_set.annotate(
                 duration=F("hours"),
-                type=Value(_("Request"), output_field=CharField()),
+                type=Value(MANUAL_WORKINGHOUR_TYPE, output_field=CharField()),
                 origin_id=F("pk"),
             ).values("duration", "date", "reason", "type", "origin_id")
             hour_sum += datetime.timedelta(
