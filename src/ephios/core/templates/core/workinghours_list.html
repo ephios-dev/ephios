@@ -22,6 +22,8 @@
             <button type="submit" class="btn btn-primary">{% translate "Filter" %}</button>
         </div>
     </form>
+    <a class="btn btn-sm btn-secondary"
+       href="{% url "core:workinghours_export" %}{% if request.GET.start %}?start={{ request.GET.start|default:"" }}&end={{ request.GET.end|default:"" }}&type={{ request.GET.type|default:"" }}{% endif %}"><span class="fa fa-download"></span> {% translate "Export list" %}</a>
     <table id="userprofile_table" class="table table-striped display">
         <thead>
             <tr>

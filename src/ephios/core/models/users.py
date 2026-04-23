@@ -30,6 +30,7 @@ from django.db.models.functions import Lower, TruncDate
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from ephios.core.models import EventType
 from ephios.extra.fields import EndOfDayDateTimeField
 from ephios.extra.json import CustomJSONDecoder, CustomJSONEncoder
 from ephios.extra.widgets import CustomDateInput
@@ -194,12 +195,21 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
             .select_related("category")
         )
 
-    def get_workhour_items(self):
+    def get_workhour_items(
+        self,
+        start: datetime.date = datetime.date.min,
+        end: datetime.date = datetime.date.max,
+        eventtype: EventType | None = None,
+    ):
         from ephios.core.models import AbstractParticipation
 
         participations = (
             self.participations
             .filter(state=AbstractParticipation.States.CONFIRMED)
+            .filter(
+                start_time__date__gte=start,
+                end_time__date__lte=end,
+            )
             .annotate(
                 duration=ExpressionWrapper(
                     (F("end_time") - F("start_time")),
@@ -207,19 +217,28 @@ class UserProfile(guardian.mixins.GuardianUserMixin, PermissionsMixin, AbstractB
                 ),
                 date=ExpressionWrapper(TruncDate(F("start_time")), output_field=DateField()),
                 reason=F("shift__event__title"),
-                type=Value("event"),
+                type=F("shift__event__type__title"),
                 origin_id=F("shift__event__pk"),
             )
-            .values("duration", "date", "reason", "type", "origin_id")
         )
-        workinghours = self.workinghours_set.annotate(
-            duration=F("hours"), type=Value("request"), origin_id=F("pk")
-        ).values("duration", "date", "reason", "type", "origin_id")
+        if eventtype is not None:
+            participations = participations.filter(shift__event__type=eventtype)
+        participations = participations.values("duration", "date", "reason", "type", "origin_id")
         hour_sum = (
             participations.aggregate(Sum("duration"))["duration__sum"] or datetime.timedelta()
-        ) + datetime.timedelta(
-            hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
         )
+        workinghours = []
+        if eventtype is None:
+            from ephios.core.views.workinghours import MANUAL_WORKINGHOUR_TYPE
+
+            workinghours = self.workinghours_set.annotate(
+                duration=F("hours"),
+                type=Value(MANUAL_WORKINGHOUR_TYPE, output_field=CharField()),
+                origin_id=F("pk"),
+            ).values("duration", "date", "reason", "type", "origin_id")
+            hour_sum += datetime.timedelta(
+                hours=float(workinghours.aggregate(Sum("duration"))["duration__sum"] or 0)
+            )
         return hour_sum, sorted(
             chain(participations, workinghours), key=lambda k: k["date"], reverse=True
         )
