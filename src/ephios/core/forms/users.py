@@ -347,8 +347,7 @@ class UserProfileForm(PermissionFormMixin, ModelForm):
                 Q(id__in=self.cleaned_data["groups"]) | Q(id__in=(g.id for g in self.locked_groups))
             )
         )
-        # if the user is re-activated after the email has been deemed invalid, reset the flag
-        if userprofile.is_active and userprofile.email_invalid:
+        if "email" in self.changed_data:
             userprofile.email_invalid = False
         userprofile.save()
         return userprofile

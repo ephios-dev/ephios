@@ -102,7 +102,7 @@ class AbstractNotificationBackend:
     def user_prefers_sending(cls, notification):
         if not notification.user:
             return True
-        if not notification.user.is_active or notification.user.email_invalid:
+        if not notification.user.is_active:
             return False
         if (
             acting_user := notification.data.get("acting_user", None)
