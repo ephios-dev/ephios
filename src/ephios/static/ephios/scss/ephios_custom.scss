@@ -358,13 +358,23 @@ $shift-box-target: lighten($primary, 20%);
 
 // collapsable card
 .card-header[data-bs-toggle="collapse"] a {
-    text-decoration: none;
-  }
+  text-decoration: none;
+}
+
 .card-header[data-bs-toggle="collapse"] {
   transition: border-bottom-width 0.2s linear;
 }
+
 .card-header[data-bs-toggle="collapse"].collapsed {
-    border-bottom-width: 0;
-    background-color: transparent;
+  border-bottom-width: 0;
+  background-color: transparent;
 }
 
+// Tabs
+
+.tab-content {
+  border: 1px solid #ddd;
+  border-top-width: 0;
+  border-radius: 0 5px 5px 5px;
+  padding: 1rem;
+}

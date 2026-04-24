@@ -59,7 +59,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ["title", "type", "description", "location"]
+        fields = ["title", "type", "description", "location", "planner_note"]
         widgets = {"description": MarkdownTextarea}
 
     def __init__(self, **kwargs):

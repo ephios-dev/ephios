@@ -13,81 +13,127 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-        {% if object %}
-            <h1>{% translate "Edit shift" %}</h1>
-        {% else %}
-            <h1>{% translate "Create new shift for event" %}</h1>
-        {% endif %}
-    </div>
     <div class="row">
-        <div class="col-md-9">
+        <div class="col">
+            <div class="page-header">
+                {% if object %}
+                    <h1>{% translate "Edit shift" %}</h1>
+                {% else %}
+                    <h1>{% translate "Create new shift for event" %}</h1>
+                {% endif %}
+            </div>
             <form method="post" class="form">
                 {% csrf_token %}
-                <div class="row">
-                    {% crispy_field form.date wrapper_class="col-12 col-lg-6" %}
-                    {% crispy_field form.meeting_time wrapper_class="col-12 col-lg-6" %}
-                    {% crispy_field form.start_time wrapper_class="col-12 col-lg-6" %}
-                    {% crispy_field form.end_time wrapper_class="col-12 col-lg-6" %}
+
+                <nav>
+                    <ul class="nav nav-tabs" id="event-form-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab"
+                                    data-bs-target="#general-tab-pane"
+                                    type="button" role="tab" aria-controls="general-tab-pane" aria-selected="true">
+                                {% translate "General" %}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="signup-tab" data-bs-toggle="tab"
+                                    data-bs-target="#signup-tab-pane"
+                                    type="button" role="tab" aria-controls="signup-tab-pane" aria-selected="false">
+                                {% translate "Signup" %}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="structure-tab" data-bs-toggle="tab"
+                                    data-bs-target="#structure-tab-pane"
+                                    type="button" role="tab" aria-controls="structure-tab-pane" aria-selected="false">
+                                {% translate "Personnel" %}
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="tab-content" id="event-form-panes">
+                    <div class="tab-pane active" id="general-tab-pane" role="tabpanel" aria-labelledby="general-tab"
+                         tabindex="0">
+                        <div class="row">
+                            {% crispy_field form.date wrapper_class="col-12 col-lg-6" %}
+                            {% crispy_field form.meeting_time wrapper_class="col-12 col-lg-6" %}
+                            {% crispy_field form.start_time wrapper_class="col-12 col-lg-6" %}
+                            {% crispy_field form.end_time wrapper_class="col-12 col-lg-6" %}
+                        </div>
+                        {% crispy_field form.label %}
+                        <div class="plugin-forms">
+                            {% for plugin_form in plugin_forms %}
+                                {{ plugin_form }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="signup-tab-pane" role="tabpanel"
+                         aria-labelledby="signup-tab"
+                         tabindex="0">
+                        <label for="{{ form.signup_flow_slug.id_for_label }}" class="form-label">
+                            {% translate "Choose a mode of signup" %}
+                        </label>
+                        {% crispy_field form.signup_flow_slug show_labels=False %}
+                        <div data-ajax-replace-select="id_signup_flow_slug"
+                             {% url "core:signup_flow_configuration_form" event.id "SELECT_VALUE" as flow_url %}
+                             data-ajax-replace-url="{{ flow_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                            {% include 'core/fragments/shift_signup_config_form.html' with form=flow_configuration_form %}
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="structure-tab-pane" role="tabpanel"
+                         aria-labelledby="structure-tab"
+                         tabindex="0">
+                        <label for="{{ form.structure_slug.id_for_label }}" class="form-label">
+                            {% translate "Choose a model for specifying personnel requirements" %}
+                        </label>
+
+                        {% crispy_field form.structure_slug show_labels=False %}
+                        <div data-ajax-replace-select="id_structure_slug"
+                             {% url "core:shift_structure_configuration_form" event.id "SELECT_VALUE" as structure_url %}
+                             data-ajax-replace-url="
+                                                    {{ structure_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
+                            {% include 'core/fragments/shift_signup_config_form.html' with form=structure_configuration_form %}
+                        </div>
+                    </div>
                 </div>
-                {% crispy_field form.label %}
-                <hr class="border border-secondary border-dark opacity-75">
-                <h2>
-                    {% translate "Signup mode" %}
-                </h2>
-                {% crispy_field form.signup_flow_slug show_labels=False %}
-                <div data-ajax-replace-select="id_signup_flow_slug"
-                     {% url "core:signup_flow_configuration_form" event.id "SELECT_VALUE" as flow_url %}
-                     data-ajax-replace-url="{{ flow_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
-                    {% include 'core/fragments/shift_signup_config_form.html' with form=flow_configuration_form %}
-                </div>
-                <hr class="border border-secondary border-dark opacity-75">
-                <h2>
-                    {% translate "Structure" %}
-                </h2>
-                {% crispy_field form.structure_slug show_labels=False %}
-                <div data-ajax-replace-select="id_structure_slug"
-                     {% url "core:shift_structure_configuration_form" event.id "SELECT_VALUE" as structure_url %}
-                     data-ajax-replace-url="{{ structure_url }}{% if object %}?shift_id={{ object.id }}{% endif %}">
-                    {% include 'core/fragments/shift_signup_config_form.html' with form=structure_configuration_form %}
-                </div>
-                <hr class="border border-secondary border-dark opacity-75">
-                <div class="plugin-forms">
-                    {% for plugin_form in plugin_forms %}
-                        {{ plugin_form }}
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    {% if object or event.active %}
-                        <a role="button" class="btn btn-secondary"
-                           href="{{ event.get_absolute_url }}">
-                            <span class="fas fa-arrow-left"></span> {% translate "Back to event" %}
-                        </a>
-                        {% if object and object.event.shifts.count > 1 %}
-                            <a role="button" class="btn btn-danger"
-                               href="{% url "core:shift_delete" object.pk %}"><span
-                                class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
+
+                <div class="row form-group">
+                    <div class="col-auto mt-3">
+                        {% if object or event.active %}
+                            <a role="button" class="btn btn-secondary"
+                               href="{{ event.get_absolute_url }}">
+                                <span class="fas fa-arrow-left"></span> {% translate "Back to event" %}
+                            </a>
+
+                            {% if object and object.event.shifts.count > 1 %}
+                                <a role="button" class="btn btn-danger"
+                                   href="{% url "core:shift_delete" object.pk %}"><span
+                                    class="fas fa-trash-alt"></span> {% translate "Delete" %}</a>
+                            {% endif %}
                         {% endif %}
-                        <button type="submit" class="btn btn-primary float-end ms-1">
-                            <span class="fas fa-save"></span> {% translate "Save" %}
+                    </div>
+                    <div class="col mt-3 text-end">
+                        <button type="submit" name="copyShift" class="btn btn-secondary mb-1">
+                            <span class="fas fa-copy"></span> {% translate "Copy shift" %}
                         </button>
-                    {% else %}
-                        <a role="button" class="btn btn-danger"
-                           href="{% url "core:event_delete" event.pk %}">{% translate "Discard event" %}</a>
-                        <button type="submit" class="btn btn-primary float-end ms-1">
-                            <span class="fas fa-save"></span> {% translate "Save event" %}
+                        <button type="submit" name="addAnother" class="btn btn-secondary mb-1">
+                            <span class="fas fa-plus"></span> {% translate "Add another shift" %}
                         </button>
-                    {% endif %}
-                    <button type="submit" name="addAnother" class="btn btn-secondary float-end">
-                        <span class="fas fa-plus"></span> {% translate "Add another shift" %}
-                    </button>
-                    <button type="submit" name="copyShift" class="btn btn-secondary float-end me-1">
-                        <span class="fas fa-copy"></span> {% translate "Copy shift" %}
-                    </button>
+                        {% if object or event.active %}
+                            <button type="submit" class="btn btn-primary mb-1">
+                                <span class="fas fa-save"></span> {% translate "Save" %}
+                            </button>
+                        {% else %}
+                            <a role="button" class="btn btn-danger"
+                               href="{% url "core:event_delete" event.pk %}">{% translate "Discard event" %}</a>
+                            <button type="submit" class="btn btn-primary mb-1">
+                                <span class="fas fa-save"></span> {% translate "Save event" %}
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             </form>
         </div>
-        <div class="col-md-3">
+        <div class="d-none d-lg-block col-3">
             <div class="card mb-2">
                 <div class="card-body">
                     <h5 class="card-title">
