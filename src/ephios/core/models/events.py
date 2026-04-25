@@ -91,6 +91,12 @@ class Event(Model):
     description = TextField(_("description"), blank=True, null=True)
     location = CharField(_("location"), max_length=254)
     type = ForeignKey(EventType, on_delete=models.CASCADE, verbose_name=_("event type"))
+    planner_note = models.TextField(
+        _("planner note"),
+        blank=True,
+        null=True,
+        help_text=_("Note only visible to responsibles of this event."),
+    )
     active = BooleanField(default=False, verbose_name=_("active"))
     group_object_permission_set = GenericRelation(
         GroupObjectPermission, object_id_field="object_pk"

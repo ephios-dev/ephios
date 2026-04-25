@@ -110,7 +110,11 @@
                             {% shift_plugin_actions shift request as plugin_actions %}
                             {% for plugin_action in plugin_actions %}
                                 <a href="{{ plugin_action.url }}"
-                                   class="btn btn-outline-info">{{ plugin_action.label }}</a>
+                                   class="btn btn-outline-info">
+                                    <span class="text-body">
+                                        {{ plugin_action.label }}
+                                    </span>
+                                </a>
                             {% endfor %}
                         {% endif %}
 
