@@ -378,3 +378,13 @@ $shift-box-target: lighten($primary, 20%);
   border-radius: 0 5px 5px 5px;
   padding: 1rem;
 }
+
+// use a lighter color for btn-info variants
+
+.btn-info {
+  @include button-variant(#CDECFE, #CDECFE);
+}
+
+.btn-outline-info {
+  @include button-outline-variant(#CDECFE);
+}

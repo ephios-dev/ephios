@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-auto mt-3">
+                    <div class="col-12 col-lg-auto mt-3">
                         {% if object or event.active %}
                             <a role="button" class="btn btn-secondary"
                                href="{{ event.get_absolute_url }}">
@@ -111,7 +111,7 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    <div class="col mt-3 text-end">
+                    <div class="col-12 col-lg mt-3 text-end">
                         <button type="submit" name="copyShift" class="btn btn-secondary mb-1">
                             <span class="fas fa-copy"></span> {% translate "Copy shift" %}
                         </button>
