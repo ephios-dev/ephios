@@ -68,61 +68,63 @@
 
     <div class="card-footer no-print">
         {% with can_sign_up=request|can_sign_up:shift can_decline=request|can_decline:shift can_customize_signup=request|can_customize_signup:shift %}
-            <div class="row gy-1">
-                {% if can_sign_up or can_decline or can_customize_signup %}
-                    <div class="col-auto order-1">
-                        <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
-                              action="{{ request|reverse_signup_action:shift }}">
-                            {% csrf_token %}
-                            {# Sentinel value to bypass signup form #}
-                            <input type="hidden" name="quick_action" value="1">
-                            {% if can_sign_up and can_customize_signup %}
-                                <div class="btn-group">
-                                    <button type="submit" name="signup_choice" value="sign_up"
-                                            class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
-                                    <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
-                                        <i class="fas fa-cog"></i>
-                                        <span class="visually-hidden">{% translate "Customize" %}</span>
-                                    </a>
-                                </div>
-                            {% elif can_sign_up and not can_customize_signup %}
+            <form method="POST" class="form" id="signup-form-{{ shift.pk }}"
+                  action="{{ request|reverse_signup_action:shift }}">
+                <div class="row g-1 mb-1">
+                    {% csrf_token %}
+                    {# Sentinel value to bypass signup form #}
+                    <input type="hidden" name="quick_action" value="1">
+                    <div class="col-6 order-1">
+                        {% if can_sign_up and can_customize_signup %}
+                            <div class="btn-group w-100">
                                 <button type="submit" name="signup_choice" value="sign_up"
-                                        class="btn btn-success">{{ shift.signup_flow.registration_button_text }}</button>
-                            {% elif not can_sign_up and can_customize_signup %}
-                                <a class="btn btn-secondary"
-                                   href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
-                            {% endif %}
-                            {% if can_decline %}
-                                <span class="d-inline-block" tabindex="1">
-                                    <button type="submit" name="signup_choice" value="decline"
-                                            class="btn btn-secondary">
-                                        {% translate "Decline" %}
-                                    </button>
-                                </span>
-                            {% endif %}
-                        </form>
+                                        class="btn btn-success w-100">{{ shift.signup_flow.registration_button_text }}</button>
+                                <a class="btn btn-success" href="{{ request|reverse_signup_action:shift }}">
+                                    <i class="fas fa-cog"></i>
+                                    <span class="visually-hidden">{% translate "Customize" %}</span>
+                                </a>
+                            </div>
+                        {% elif can_sign_up and not can_customize_signup %}
+                            <button type="submit" name="signup_choice" value="sign_up"
+                                    class="btn btn-success w-100">{{ shift.signup_flow.registration_button_text }}</button>
+                        {% elif not can_sign_up and can_customize_signup %}
+                            <a class="btn btn-secondary w-100"
+                               href="{{ request|reverse_signup_action:shift }}">{% translate "Customize" %}</a>
+                        {% else %}
+                            <button type="submit" name="signup_choice" value="sign_up"
+                                    class="btn btn-outline-secondary w-100 disabled">{{ shift.signup_flow.registration_button_text }}</button>
+                        {% endif %}
                     </div>
-                {% endif %}
+                    <div class="col-6 order-2">
+                        <button type="submit" name="signup_choice" value="decline"
+                                class="btn w-100 {% if can_decline %}btn-secondary{% else %}btn-outline-secondary disabled{% endif %}">
+                            {% translate "Decline" %}
+                        </button>
+                    </div>
 
-                <div class="col-auto ms-auto order-3">
-                    <span class="float-end">
-                        {% if can_change_event %}
-                            {% shift_plugin_actions shift request as plugin_actions %}
-                            {% for plugin_action in plugin_actions %}
+                    {% if can_change_event %}
+                        {% shift_plugin_actions shift request as plugin_actions %}
+                        {% for plugin_action in plugin_actions %}
+                            <div class="col-6 {% if forloop.first %}order-3{% else %}order-5{% endif %}">
                                 <a href="{{ plugin_action.url }}"
-                                   class="btn btn-outline-info">
+                                   class="btn btn-outline-info w-100">
                                     <span class="text-body">
                                         {{ plugin_action.label }}
                                     </span>
                                 </a>
-                            {% endfor %}
-                        {% endif %}
-
-                        {% if disposition_url %}
+                            </div>
+                        {% empty %}
+                            <div class="col-6 order-3">
+                                {# placeholder #}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if disposition_url %}
+                        <div class="col-6 order-4">
                             <a href="{{ disposition_url }}"
-                               class="btn btn-info">{% translate "Disposition" %}</a>
-                        {% endif %}
-                    </span>
+                               class="btn btn-info w-100">{% translate "Disposition" %}</a>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="d-flex align-items-center col-12 order-4{% if not can_sign_up and not can_decline and not can_customize_signup or not disposition_url %} col-md order-md-2{% endif %}">
@@ -143,7 +145,7 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
+            </form>
         {% endwith %}
     </div>
 </div>

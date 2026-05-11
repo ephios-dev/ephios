@@ -297,7 +297,7 @@ $shift-box-target: lighten($primary, 20%);
 .shift_box:target {
   border-color: $shift-box-target;
   box-shadow: 0 0 10px $shift-box-target;
-  scroll-margin: 72px;  // when jumping to the shift box, scroll so that it is not hidden behind the navbar
+  scroll-margin-top: 72px;  // when jumping to the shift box, scroll so that it is not hidden behind the navbar
 }
 
 // day calendar view
