@@ -54,6 +54,8 @@ class LogEntry(models.Model):
         for recorder in self.data.values():
             if not isinstance(recorder, dict) or "slug" not in recorder:
                 continue
+            if recorder["slug"] not in recorder_types:
+                continue
             yield recorder_types[recorder["slug"]].deserialize(
                 recorder["data"], self.content_type.model_class(), self.action_type
             )

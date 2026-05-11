@@ -2,6 +2,8 @@ from django.db import migrations, models
 
 import ephios.modellogging.json
 
+# pylint: disable=protected-access
+
 
 def convert_contenttype_id_to_natural_key(apps, schema_editor):
     LogEntry = apps.get_model("modellogging", "LogEntry")
