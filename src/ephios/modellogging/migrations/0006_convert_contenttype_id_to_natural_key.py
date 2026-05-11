@@ -1,4 +1,6 @@
-from django.db import migrations
+from django.db import migrations, models
+
+import ephios.modellogging.json
 
 
 def convert_contenttype_id_to_natural_key(apps, schema_editor):
@@ -46,5 +48,10 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             convert_contenttype_id_to_natural_key,
             migrations.RunPython.noop,
+        ),
+        migrations.AlterField(
+            model_name="logentry",
+            name="data",
+            field=models.JSONField(decoder=ephios.modellogging.json.LogJSONDecoder, default=dict),
         ),
     ]

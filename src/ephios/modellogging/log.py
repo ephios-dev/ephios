@@ -1,5 +1,6 @@
 import contextvars
 import itertools
+import json
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,6 +9,7 @@ from django.db.models import Model
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
+from ephios.modellogging.json import LogJSONEncoder
 from ephios.modellogging.models import LogEntry
 from ephios.modellogging.recorders import (
     InstanceActionType,
@@ -179,6 +181,10 @@ def update_log(instance, action_type: InstanceActionType):
     log_data = _get_log_data(instance, logentry.action_type if logentry else action_type)
     if not log_data:
         return
+
+    # Pre-serialize to resolve model instances, querysets, and str() calls
+    # outside of psycopg3's connection lock (which would deadlock on DB queries).
+    log_data = json.loads(json.dumps(log_data, cls=LogJSONEncoder))
 
     config = LOGGED_MODELS[type(instance)]
     if logentry:

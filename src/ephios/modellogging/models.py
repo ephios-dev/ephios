@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from ephios.modellogging.json import LogJSONDecoder, LogJSONEncoder
+from ephios.modellogging.json import LogJSONDecoder
 from ephios.modellogging.recorders import (
     InstanceActionType,
     capitalize_first,
@@ -41,7 +41,7 @@ class LogEntry(models.Model):
         max_length=255, choices=[(value, value) for value in InstanceActionType]
     )
     request_id = models.CharField(max_length=36, null=True, blank=True)
-    data = models.JSONField(default=dict, encoder=LogJSONEncoder, decoder=LogJSONDecoder)
+    data = models.JSONField(default=dict, decoder=LogJSONDecoder)
 
     class Meta:
         ordering = ("-datetime", "-id")
