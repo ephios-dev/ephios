@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 17:04+0200\n"
-"PO-Revision-Date: 2026-04-24 17:07+0200\n"
+"POT-Creation-Date: 2026-05-17 19:16+0200\n"
+"PO-Revision-Date: 2026-05-17 19:16+0200\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -51,11 +51,11 @@ msgstr "Token ist zu alt, um angezeigt werden zu können."
 msgid "Token was revoked."
 msgstr "Token wurde entfernt."
 
-#: src/ephios/api/filters.py:44 src/ephios/core/models/events.py:382
+#: src/ephios/api/filters.py:44 src/ephios/core/models/events.py:387
 msgid "start time"
 msgstr "Beginn"
 
-#: src/ephios/api/filters.py:45 src/ephios/core/models/events.py:383
+#: src/ephios/api/filters.py:45 src/ephios/core/models/events.py:388
 msgid "end time"
 msgstr "Ende"
 
@@ -95,12 +95,12 @@ msgstr "Teilnahme-Typ"
 msgid "Duration in seconds"
 msgstr "Dauer in Sekunden"
 
-#: src/ephios/api/serializers.py:167 src/ephios/core/forms/events.py:181
+#: src/ephios/api/serializers.py:167 src/ephios/core/forms/events.py:184
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:24
 msgid "Start time"
 msgstr "Beginn"
 
-#: src/ephios/api/serializers.py:168 src/ephios/core/forms/events.py:182
+#: src/ephios/api/serializers.py:168 src/ephios/core/forms/events.py:185
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:25
 msgid "End time"
 msgstr "Ende"
@@ -119,7 +119,7 @@ msgstr "API Token hinzufügen"
 #: src/ephios/core/signup/forms.py:152
 #: src/ephios/core/templates/core/disposition/disposition.html:125
 #: src/ephios/core/templates/core/event_detail.html:26
-#: src/ephios/core/templates/core/event_form.html:96
+#: src/ephios/core/templates/core/event_form.html:98
 #: src/ephios/core/templates/core/eventtype_form.html:20
 #: src/ephios/core/templates/core/identityprovider_form.html:16
 #: src/ephios/core/templates/core/settings/settings_instance.html:10
@@ -140,7 +140,7 @@ msgstr "Speichern"
 #: src/ephios/api/templates/oauth2_provider/authorize.html:33
 #: src/ephios/core/signup/forms.py:163
 #: src/ephios/core/templates/core/disposition/disposition.html:124
-#: src/ephios/core/templates/core/event_form.html:99
+#: src/ephios/core/templates/core/event_form.html:101
 #: src/ephios/core/templates/core/eventtype_form.html:21
 #: src/ephios/core/templates/core/mass_notification_write.html:135
 #: src/ephios/core/templates/core/userprofile_form.html:152
@@ -361,7 +361,7 @@ msgstr "Benutzer"
 #: src/ephios/core/templates/core/event_bulk_delete.html:23
 #: src/ephios/core/templates/core/event_confirm_delete.html:16
 #: src/ephios/core/templates/core/event_copy.html:29
-#: src/ephios/core/templates/core/event_form.html:95
+#: src/ephios/core/templates/core/event_form.html:97
 #: src/ephios/core/templates/core/eventtype_confirm_delete.html:8
 #: src/ephios/core/templates/core/group_confirm_delete.html:18
 #: src/ephios/core/templates/core/identityprovider_confirm_delete.html:13
@@ -470,7 +470,7 @@ msgid "Manage federation"
 msgstr "Föderation verwalten"
 
 #: src/ephios/api/templates/oauth2_provider/application_list.html:46
-#: src/ephios/core/templates/core/event_form.html:20
+#: src/ephios/core/templates/core/event_form.html:22
 #: src/ephios/core/templates/core/home.html:67
 #: src/ephios/core/templates/core/home.html:111
 #: src/ephios/core/templates/core/workinghours_list.html:44
@@ -615,7 +615,7 @@ msgstr ""
 msgid "This account is inactive."
 msgstr "Dieser Account ist deaktiviert."
 
-#: src/ephios/core/forms/events.py:38 src/ephios/core/forms/events.py:129
+#: src/ephios/core/forms/events.py:38 src/ephios/core/forms/events.py:132
 msgid "Visible for"
 msgstr "Sichtbar für"
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "Responsible groups"
 msgstr "Verantwortliche Gruppen"
 
-#: src/ephios/core/forms/events.py:111
+#: src/ephios/core/forms/events.py:114
 #, python-brace-format
 msgid ""
 "Also, this event is visible to <b>{groups}</b>, but you don't have "
@@ -650,7 +650,7 @@ msgstr ""
 "Außerdem ist die Veranstaltung für <b>{groups}</b> sichtbar, aber Sie haben "
 "keine Berechtigung, die Sichtbarkeit für diese Gruppen zu ändern."
 
-#: src/ephios/core/forms/events.py:120
+#: src/ephios/core/forms/events.py:123
 #, python-brace-format
 msgid ""
 "This event is always editable by <b>{groups}</b>, because they manage ephios."
@@ -658,11 +658,11 @@ msgstr ""
 "Die Veranstaltung kann auch von <b>{groups}</b> bearbeitet werden, da diese "
 "ephios verwalten."
 
-#: src/ephios/core/forms/events.py:130
+#: src/ephios/core/forms/events.py:133
 msgid "Responsibles"
 msgstr "Verantwortliche"
 
-#: src/ephios/core/forms/events.py:179 src/ephios/core/models/users.py:516
+#: src/ephios/core/forms/events.py:182 src/ephios/core/models/users.py:516
 #: src/ephios/core/pdf.py:135 src/ephios/core/pdf.py:181
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:22
 #: src/ephios/core/templates/core/userprofile_workinghours.html:41
@@ -671,17 +671,17 @@ msgstr "Verantwortliche"
 msgid "Date"
 msgstr "Datum"
 
-#: src/ephios/core/forms/events.py:180 src/ephios/core/pdf.py:142
+#: src/ephios/core/forms/events.py:183 src/ephios/core/pdf.py:142
 #: src/ephios/core/pdf.py:192
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:23
 msgid "Meeting time"
 msgstr "Treffpunkt"
 
-#: src/ephios/core/forms/events.py:263
+#: src/ephios/core/forms/events.py:266
 msgid "Meeting time must not be after start time!"
 msgstr "Treffpunkt darf nicht nach dem Beginn liegen!"
 
-#: src/ephios/core/forms/events.py:294
+#: src/ephios/core/forms/events.py:297
 msgid "You need to enter a valid color"
 msgstr "Sie müssen eine gültige Farbe eingeben"
 
@@ -937,167 +937,168 @@ msgstr "Beschreibung"
 msgid "location"
 msgstr "Ort"
 
-#: src/ephios/core/models/events.py:94
-msgid "planner note"
+#: src/ephios/core/models/events.py:95
+#: src/ephios/core/templates/core/event_form.html:59
+msgid "Planner note"
 msgstr "Bearbeitungsnotiz"
 
-#: src/ephios/core/models/events.py:94
+#: src/ephios/core/models/events.py:98
 msgid "Note only visible to responsibles of this event."
 msgstr "Sichtbar nur für Verantwortliche."
 
-#: src/ephios/core/models/events.py:95
+#: src/ephios/core/models/events.py:100
 msgid "active"
 msgstr "aktiv"
 
-#: src/ephios/core/models/events.py:104 src/ephios/core/models/events.py:379
+#: src/ephios/core/models/events.py:109 src/ephios/core/models/events.py:384
 msgid "event"
 msgstr "Veranstaltung"
 
-#: src/ephios/core/models/events.py:105
+#: src/ephios/core/models/events.py:110
 msgid "events"
 msgstr "Veranstaltungen"
 
-#: src/ephios/core/models/events.py:254
+#: src/ephios/core/models/events.py:259
 #: src/ephios/core/views/notifications.py:147
 msgid "requested"
 msgstr "angefragt"
 
-#: src/ephios/core/models/events.py:255 src/ephios/core/views/event.py:84
+#: src/ephios/core/models/events.py:260 src/ephios/core/views/event.py:84
 #: src/ephios/core/views/notifications.py:146
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: src/ephios/core/models/events.py:256
+#: src/ephios/core/models/events.py:261
 msgid "declined by user"
 msgstr "abgesagt durch helfende Person"
 
-#: src/ephios/core/models/events.py:257
+#: src/ephios/core/models/events.py:262
 msgid "rejected by responsible"
 msgstr "abgelehnt durch verantwortliche Person"
 
-#: src/ephios/core/models/events.py:258
+#: src/ephios/core/models/events.py:263
 msgid "getting dispatched"
 msgstr "in Zuteilung"
 
-#: src/ephios/core/models/events.py:271 src/ephios/core/models/events.py:403
+#: src/ephios/core/models/events.py:276 src/ephios/core/models/events.py:408
 msgid "shift"
 msgstr "Schicht"
 
-#: src/ephios/core/models/events.py:274
+#: src/ephios/core/models/events.py:279
 msgid "state"
 msgstr "Status"
 
-#: src/ephios/core/models/events.py:277
+#: src/ephios/core/models/events.py:282
 msgid "Data on where this participation lives in the shift structure"
 msgstr "Daten zur Positionierung der Teilnahme in der Schicht-Struktur"
 
-#: src/ephios/core/models/events.py:283
+#: src/ephios/core/models/events.py:288
 msgid "individual start time"
 msgstr "Individueller Beginn"
 
-#: src/ephios/core/models/events.py:284
+#: src/ephios/core/models/events.py:289
 msgid "individual end time"
 msgstr "Individuelles Ende"
 
-#: src/ephios/core/models/events.py:290
+#: src/ephios/core/models/events.py:295
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: src/ephios/core/models/events.py:339
+#: src/ephios/core/models/events.py:344
 msgid "responsibles only"
 msgstr "nur für Verantwortliche"
 
-#: src/ephios/core/models/events.py:340
+#: src/ephios/core/models/events.py:345
 msgid "responsibles and corresponding participant"
 msgstr "Veranwortliche und den betreffende Teilnehmende"
 
-#: src/ephios/core/models/events.py:341
+#: src/ephios/core/models/events.py:346
 #: src/ephios/plugins/complexsignup/models.py:68
 msgid "everyone"
 msgstr "jeden"
 
-#: src/ephios/core/models/events.py:347
+#: src/ephios/core/models/events.py:352
 msgid "Participation"
 msgstr "Teilnahme"
 
-#: src/ephios/core/models/events.py:354
+#: src/ephios/core/models/events.py:359
 msgid "Responsible user"
 msgstr "Verantwortlicher Nutzer"
 
-#: src/ephios/core/models/events.py:356
+#: src/ephios/core/models/events.py:361
 msgid "created at"
 msgstr "Erstellt am"
 
-#: src/ephios/core/models/events.py:358
+#: src/ephios/core/models/events.py:363
 msgid "visible for"
 msgstr "Sichtbar für"
 
-#: src/ephios/core/models/events.py:360 src/ephios/core/models/events.py:372
+#: src/ephios/core/models/events.py:365 src/ephios/core/models/events.py:377
 #: src/ephios/core/signup/forms.py:28
 msgid "Comment"
 msgstr "Kommentar"
 
-#: src/ephios/core/models/events.py:367
+#: src/ephios/core/models/events.py:372
 #, python-brace-format
 msgid "\"{text}\" by {author} on {participation}"
 msgstr "\"{text}\" von {author} zu {participation}"
 
-#: src/ephios/core/models/events.py:373
+#: src/ephios/core/models/events.py:378
 msgid "Comments"
 msgstr "Kommentare"
 
-#: src/ephios/core/models/events.py:381
+#: src/ephios/core/models/events.py:386
 msgid "meeting time"
 msgstr "Treffpunkt"
 
-#: src/ephios/core/models/events.py:385
+#: src/ephios/core/models/events.py:390
 msgctxt "shift label"
 msgid "label"
 msgstr "Label"
 
-#: src/ephios/core/models/events.py:388
+#: src/ephios/core/models/events.py:393
 msgid "Optional label to help differentiate multiple shifts in an event."
 msgstr ""
 "Optionales Label zur Unterscheidung mehrerer Schichten einer Veranstaltung."
 
-#: src/ephios/core/models/events.py:390
+#: src/ephios/core/models/events.py:395
 msgid "signup flow"
 msgstr "Anmeldeverfahren"
 
-#: src/ephios/core/models/events.py:395
+#: src/ephios/core/models/events.py:400
 msgid "structure"
 msgstr "Struktur"
 
-#: src/ephios/core/models/events.py:404
+#: src/ephios/core/models/events.py:409
 msgid "shifts"
 msgstr "Schichten"
 
-#: src/ephios/core/models/events.py:521
+#: src/ephios/core/models/events.py:526
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:26
 msgid "Signup flow"
 msgstr "Anmeldeverfahren"
 
-#: src/ephios/core/models/events.py:522
+#: src/ephios/core/models/events.py:527
 msgid "Structure"
 msgstr "Struktur"
 
-#: src/ephios/core/models/events.py:535
+#: src/ephios/core/models/events.py:540
 msgid "Participant"
 msgstr "Teilnehmende Person"
 
-#: src/ephios/core/models/events.py:557
+#: src/ephios/core/models/events.py:562
 msgid "participation"
 msgstr "Teilnahme"
 
-#: src/ephios/core/models/events.py:558
+#: src/ephios/core/models/events.py:563
 msgid "participations"
 msgstr "Teilnahmen"
 
-#: src/ephios/core/models/events.py:583
+#: src/ephios/core/models/events.py:588
 msgid "placeholder participation"
 msgstr "Platzhalter-Teilnahme"
 
-#: src/ephios/core/models/events.py:584
+#: src/ephios/core/models/events.py:589
 msgid "placeholder participations"
 msgstr "Platzhalter-Teilnahmen"
 
@@ -1499,7 +1500,7 @@ msgid "Qualifications"
 msgstr "Qualifikationen"
 
 #: src/ephios/core/pdf.py:133 src/ephios/core/pdf.py:180
-#: src/ephios/core/templates/core/event_form.html:114
+#: src/ephios/core/templates/core/event_form.html:116
 #: src/ephios/core/templates/core/mails/new_event.html:29
 #: src/ephios/core/templates/core/shift_form.html:150
 msgid "Location"
@@ -1714,7 +1715,7 @@ msgstr ""
 
 #: src/ephios/core/services/notifications/types.py:363
 #: src/ephios/core/templates/core/disposition/disposition.html:8
-#: src/ephios/core/templates/core/fragments/shift_box_big.html:119
+#: src/ephios/core/templates/core/fragments/shift_box_big.html:125
 #: src/ephios/core/templates/core/home.html:115
 msgid "Disposition"
 msgstr "Disposition"
@@ -1986,13 +1987,13 @@ msgstr "{label} wurde von {initial} zu {current} geändert."
 
 #: src/ephios/core/signup/forms.py:133
 #: src/ephios/core/templates/core/disposition/fragment_participation.html:54
-#: src/ephios/core/templates/core/fragments/shift_box_big.html:85
-#: src/ephios/core/templates/core/fragments/shift_box_big.html:93
+#: src/ephios/core/templates/core/fragments/shift_box_big.html:84
+#: src/ephios/core/templates/core/fragments/shift_box_big.html:92
 msgid "Customize"
 msgstr "Anpassen"
 
 #: src/ephios/core/signup/forms.py:134 src/ephios/core/signup/forms.py:169
-#: src/ephios/core/templates/core/fragments/shift_box_big.html:99
+#: src/ephios/core/templates/core/fragments/shift_box_big.html:101
 msgid "Decline"
 msgstr "Absagen"
 
@@ -2090,8 +2091,8 @@ msgstr ""
 "Schicht hinzu, um sie zu speichern."
 
 #: src/ephios/core/templates/core/event_detail.html:50
-#: src/ephios/core/templates/core/event_form.html:10
-#: src/ephios/core/templates/core/event_form.html:28
+#: src/ephios/core/templates/core/event_form.html:12
+#: src/ephios/core/templates/core/event_form.html:30
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
@@ -2137,37 +2138,40 @@ msgstr "Sichtbar für"
 msgid "No shifts"
 msgstr "Keine Schichten"
 
-#: src/ephios/core/templates/core/event_form.html:12
+#: src/ephios/core/templates/core/event_form.html:14
 msgid "Create new event"
 msgstr "Neue Veranstaltung anlegen"
 
-#: src/ephios/core/templates/core/event_form.html:19
+#: src/ephios/core/templates/core/event_form.html:21
 msgid "You have an unsaved event"
 msgstr "Sie haben eine nicht gespeicherte Veranstaltung"
 
-#: src/ephios/core/templates/core/event_form.html:31
+#: src/ephios/core/templates/core/event_form.html:33
 #, python-format
 msgid "Create new %(title)s"
 msgstr "%(title)s hinzufügen"
 
-#: src/ephios/core/templates/core/event_form.html:45
-#: src/ephios/core/templates/core/shift_form.html:34
-msgid "General"
-msgstr "Allgemein"
+#: src/ephios/core/templates/core/event_form.html:50
+msgid "Texts"
+msgstr "Texte"
 
-#: src/ephios/core/templates/core/event_form.html:52
+#: src/ephios/core/templates/core/event_form.html:73
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: src/ephios/core/templates/core/event_form.html:59
-msgid "Functions"
-msgstr "Funktionen"
+#: src/ephios/core/templates/core/event_form.html:77
+msgid "Visible for "
+msgstr "Sichtbar für"
 
-#: src/ephios/core/templates/core/event_form.html:100
+#: src/ephios/core/templates/core/event_form.html:80
+msgid "Responsible"
+msgstr "Verantwortliche"
+
+#: src/ephios/core/templates/core/event_form.html:102
 msgid "Next"
 msgstr "Weiter"
 
-#: src/ephios/core/templates/core/event_form.html:113
+#: src/ephios/core/templates/core/event_form.html:115
 #: src/ephios/core/templates/core/shift_form.html:149
 #: src/ephios/core/views/workinghours.py:38
 #: src/ephios/core/views/workinghours.py:43
@@ -2291,7 +2295,7 @@ msgstr "voll"
 msgid "unit optional"
 msgstr "Einheit optional"
 
-#: src/ephios/core/templates/core/fragments/shift_box_big.html:129
+#: src/ephios/core/templates/core/fragments/shift_box_big.html:135
 msgid "Signup ends"
 msgstr "Anmeldung endet"
 
@@ -2773,6 +2777,10 @@ msgstr "Schicht bearbeiten"
 #: src/ephios/core/templates/core/shift_form.html:22
 msgid "Create new shift for event"
 msgstr "Schicht hinzufügen"
+
+#: src/ephios/core/templates/core/shift_form.html:34
+msgid "General"
+msgstr "Allgemein"
 
 #: src/ephios/core/templates/core/shift_form.html:41
 #: src/ephios/core/templates/core/signup.html:7
@@ -4939,7 +4947,15 @@ msgstr "Dieses Plugin fragt Antworten von Nutzern bei der Anmeldung ab."
 msgid "Choice name"
 msgstr "Name der Auswahlmöglichkeit"
 
-#: src/ephios/plugins/questionnaires/forms.py:88
+#: src/ephios/plugins/questionnaires/forms.py:57
+#: src/ephios/plugins/questionnaires/models.py:57
+#: src/ephios/plugins/questionnaires/signals.py:34
+#: src/ephios/plugins/questionnaires/templates/questionnaires/question_list.html:8
+#: src/ephios/plugins/questionnaires/templates/questionnaires/question_list.html:18
+msgid "Questions"
+msgstr "Fragen"
+
+#: src/ephios/plugins/questionnaires/forms.py:89
 #: src/ephios/plugins/questionnaires/models.py:220
 msgid "Questionnaire"
 msgstr "Fragebogen"
@@ -5008,13 +5024,6 @@ msgstr ""
 "Ist diese Option aktiviert, werden Anmeldeformulare mit vorher gespeicherten "
 "Antworten der Nutzer ausgefüllt. Nutzen Sie diese Funktion für Fragen, die "
 "unabhängig von der Veranstaltung beantwortet werden."
-
-#: src/ephios/plugins/questionnaires/models.py:57
-#: src/ephios/plugins/questionnaires/signals.py:34
-#: src/ephios/plugins/questionnaires/templates/questionnaires/question_list.html:8
-#: src/ephios/plugins/questionnaires/templates/questionnaires/question_list.html:18
-msgid "Questions"
-msgstr "Fragen"
 
 #: src/ephios/plugins/questionnaires/models.py:110
 msgid "Answer can be saved to your profile."
@@ -5562,6 +5571,9 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: src/ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#~ msgid "Functions"
+#~ msgstr "Funktionen"
 
 #~ msgid "Signup mode"
 #~ msgstr "Anmeldeverfahren"
