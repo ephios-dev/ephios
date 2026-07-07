@@ -48,7 +48,7 @@ dependencies = [
     "requests-oauthlib>=2.0,<3",
     "pyjwt>=2.8.0,<3",
     "scipy==1.17.1",
-    "drf-spectacular[sidecar]>=0.27.2,<0.30.0",
+    "drf-spectacular[sidecar]>=0.27.2,<0.31.0",
     "python-dateutil>=2.9.0.post0,<3",
     "cryptography>=46.0.3,<50",
     "py-vapid>=1.9.4,<2",
