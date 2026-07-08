@@ -36,9 +36,9 @@
     {% if userprofile.email_invalid %}
         <div class="alert alert-warning" role="alert">
             {% blocktranslate trimmed %}
-                The user is inactive because their email address is invalid. This can be caused by a typo or a problem
-                with the user's mail server. Please check the email address and correct it before activating the user
-                again.
+                The email address of the user is invalid. This can be caused by a typo or a problem
+                with the user's mail server. Please check the email address and correct it or ask the user to
+                solve the problem with their provider.
             {% endblocktranslate %}
         </div>
     {% endif %}

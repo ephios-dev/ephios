@@ -16,6 +16,14 @@
     <script type="text/javascript" src="{% static "ephios/js/consequences.js" %}"></script>
 {% endblock %}
 
+{% block messages %}
+    {% if request.user.email_invalid %}
+        <div class="alert alert-warning" role="alert">
+            {% translate "We failed to send notifications to your email address. Please check your email address and contact an administrator." %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <h1 class="page-header">
         {% blocktranslate trimmed with organization_name=global_preferences.general__organization_name %}
