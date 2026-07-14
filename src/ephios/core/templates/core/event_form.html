@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load rich_text %}
+{% load utils %}
 {% load logentries %}
 {% load bootstrap %}
 {% load crispy_forms_filters %}
@@ -21,53 +23,106 @@
             {% render_alert unsaved_message|add:" ("|add:event.title|add:"). <a class='btn btn-light' href='"|add:event.get_absolute_url|add:"'>"|add:view_message|add:"</a>"|safe %}
         {% endfor %}
     {% endif %}
-    <div class="page-header">
+    <div class="row">
+        <div class="col">
+            <div class="page-header">
+                {% if event.id %}
+                    <h1>{% translate "Edit event" %}</h1>
+                {% else %}
+                    <h1>
+                        {% blocktranslate trimmed with title=eventtype.title %}
+                            Create new {{ title }}
+                        {% endblocktranslate %}
+                    </h1>
+                {% endif %}
+            </div>
+            <form method="post" class="form">
+                {% csrf_token %}
+                {{ form.title|as_crispy_field }}
+                {% if form.type %}
+                    {{ form.type|as_crispy_field }}
+                {% endif %}
+                {{ form.location|as_crispy_field }}
+
+                <div class="card card-collapsed-with-hint mb-3">
+                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#fields-texts">
+                        <a href="#">
+                            <i class="fas fa-pen me-1"></i>
+                            {% translate "Texts" %}
+                        </a>
+                    </div>
+                    <div class="card-body hint-to-hide text-muted row">
+                        <div class="col-12{% if form.planner_note.initial %} col-lg-8{% endif %}">
+                            {{ form.description.initial|rich_text|truncatechars_html:100 }}
+                        </div>
+                        {% if form.planner_note.initial %}
+                            <div class="col-12 col-lg-4">
+                                <strong>{% translate "Planner note" %}</strong><br/>
+                                {{ form.planner_note.initial|truncatechars:50 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div id="fields-texts" class="collapse card-body">
+                        {{ form.description|as_crispy_field }}
+                        {{ form.planner_note|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="card card-collapsed-with-hint mb-3">
+                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#fields-perms">
+                        <a class="hide-link" href="#">
+                            <i class="fas fa-pen me-1"></i>
+                            {% translate "Permissions" %}
+                        </a>
+                    </div>
+                    <div class="card-body hint-to-hide text-muted">
+                        {% translate "Visible for " %}
+                        {{ form.visible_for.initial|join:", " }}
+                        <br/>
+                        {% translate 'Responsible' %}:
+                        {{ form.responsible_groups.initial|chain:form.responsible_users.initial|join:", " }}
+                    </div>
+                    <div id="fields-perms" class="collapse card-body">
+                        {{ form.visible_for|as_crispy_field }}
+                        {{ form.responsible_groups|as_crispy_field }}
+                        {{ form.responsible_users|as_crispy_field }}
+                    </div>
+                </div>
+
+                {% for plugin_form in plugin_forms %}
+                    {{ plugin_form }}
+                {% endfor %}
+
+                <div class="form-group mt-3">
+                    {% if event.id %}
+                        <a role="button" class="btn btn-secondary"
+                           href="{{ event.get_absolute_url }}">{% translate "Back" %}</a>
+                        <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
+                    {% else %}
+                        <a role="button" class="btn btn-secondary"
+                           href="{% url "core:event_list" %}">{% translate "Cancel" %}</a>
+                        <button type="submit" class="btn btn-primary float-end">{% translate "Next" %}</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
         {% if event.id %}
-            <h1>{% translate "Edit event" %}</h1>
-        {% else %}
-            <h1>
-                {% blocktranslate trimmed with title=eventtype.title %}
-                    Create new {{ title }}
-                {% endblocktranslate %}
-            </h1>
+            <div class="d-none d-lg-block col-3">
+                <div class="card mb-2 border-info">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ event.title }}
+                        </h5>
+                        <p class="card-text">
+                            {% translate "Event type" %}: {{ event.type }}<br>
+                            {% translate "Location" %}: {{ event.location }}
+                        </p>
+                    </div>
+                </div>
+                {% for shift in event.shifts.all %}
+                    {% include "core/fragments/shift_box_small.html" with shift=shift editing_shift=None can_change=True %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
-    <form method="post" class="form">
-        {% csrf_token %}
-        {{ form.title|as_crispy_field }}
-        {% if form.type %}
-            {{ form.type|as_crispy_field }}
-        {% endif %}
-        {{ form.description|as_crispy_field }}
-        {{ form.location|as_crispy_field }}
-
-        <div class="card mb-3">
-            <div class="card-header collapsed" data-bs-toggle="collapse" data-bs-target="#advancedSettings">
-                <a href="#">{% translate "Permissions" %}</a>
-            </div>
-            <div id="advancedSettings" class="collapse">
-                <div class="card-body">
-                    {{ form.visible_for|as_crispy_field }}
-                    {{ form.responsible_groups|as_crispy_field }}
-                    {{ form.responsible_users|as_crispy_field }}
-                </div>
-            </div>
-        </div>
-
-        {% for plugin_form in plugin_forms %}
-            {{ plugin_form }}
-        {% endfor %}
-
-        <div class="form-group">
-            {% if event.id %}
-                <a role="button" class="btn btn-secondary"
-                   href="{{ event.get_absolute_url }}">{% translate "Back" %}</a>
-                <button type="submit" class="btn btn-primary float-end">{% translate "Save" %}</button>
-            {% else %}
-                <a role="button" class="btn btn-secondary"
-                   href="{% url "core:event_list" %}">{% translate "Cancel" %}</a>
-                <button type="submit" class="btn btn-primary float-end">{% translate "Next" %}</button>
-            {% endif %}
-        </div>
-    </form>
 {% endblock %}
