@@ -86,7 +86,7 @@ jobs:
     - name: Test apps
       env:
         DATABASE_URL: ${{ matrix.database_url }}
-      run: uv run coverage run -m pytest tests/
+      run: uv run coverage run -m pytest tests/ -n 8
     - name: Coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

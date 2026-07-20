@@ -29,6 +29,7 @@ class LogJSONEncoder(DjangoJSONEncoder):
 
     def default(self, o):
         if isinstance(o, QuerySet) or _is_queryset_like(o):
+            model = getattr(o, "model", None) or type(next(iter(o)))
             pks, strs = [], []
             for instance in o:
                 pks.append(instance.pk)
@@ -37,9 +38,8 @@ class LogJSONEncoder(DjangoJSONEncoder):
                 "__model__": "__queryset__",
                 "pks": pks,
                 "strs": strs,
-                "contenttype_id": ContentType.objects.get_for_model(
-                    getattr(o, "model", None) or type(next(iter(o)))
-                ).id,
+                "app_label": model._meta.app_label,
+                "model": model._meta.model_name,
             }
         if o == set():
             return []
@@ -48,7 +48,8 @@ class LogJSONEncoder(DjangoJSONEncoder):
                 "__model__": "__instance__",
                 "pk": o.pk,
                 "str": str(o),
-                "contenttype_id": ContentType.objects.get_for_model(o).id,
+                "app_label": o._meta.app_label,
+                "model": o._meta.model_name,
             }
         return super().default(o)
 
@@ -63,16 +64,16 @@ class LogJSONDecoder(json.JSONDecoder):
 
     def custom_hook(self, d):
         if d.get("__model__") == "__queryset__":
-            Model = ContentType.objects.get_for_id(d["contenttype_id"]).model_class()
+            Model = ContentType.objects.get_by_natural_key(d["app_label"], d["model"]).model_class()
             if Model is None:
                 return d["strs"]
             objects = {obj.pk: obj for obj in Model._base_manager.filter(pk__in=d["pks"])}
             return [objects.get(pk, s) for pk, s in zip(d["pks"], d["strs"])]
         if d.get("__model__") == "__instance__":
             try:
-                return ContentType.objects.get_for_id(d["contenttype_id"]).get_object_for_this_type(
-                    pk=d["pk"]
-                )
+                return ContentType.objects.get_by_natural_key(
+                    d["app_label"], d["model"]
+                ).get_object_for_this_type(pk=d["pk"])
             except (ObjectDoesNotExist, AttributeError):
                 return d["str"]
         for k, v in d.items():

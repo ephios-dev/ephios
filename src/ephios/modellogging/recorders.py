@@ -251,8 +251,8 @@ class M2MLogRecorder(BaseLogRecorder):
         data = {
             "field_name": self.field_name,
             "verbose_name": self.verbose_name,
-            "added": related_model._base_manager.filter(pk__in=self.added_pks),
-            "removed": related_model._base_manager.filter(pk__in=self.removed_pks),
+            "added": list(related_model._base_manager.filter(pk__in=self.added_pks)),
+            "removed": list(related_model._base_manager.filter(pk__in=self.removed_pks)),
         }
 
         if (current := getattr(self, "current", None)) is not None:
