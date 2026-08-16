@@ -4,6 +4,7 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
+import ephios.modellogging.json
 import ephios.modellogging.models
 
 
@@ -51,9 +52,7 @@ class Migration(migrations.Migration):
                 ("request_id", models.CharField(blank=True, max_length=36, null=True)),
                 (
                     "data",
-                    models.JSONField(
-                        default=dict, encoder=ephios.modellogging.models.LogJSONEncoder
-                    ),
+                    models.JSONField(default=dict, encoder=ephios.modellogging.json.LogJSONEncoder),
                 ),
                 (
                     "attached_to_object_type",
