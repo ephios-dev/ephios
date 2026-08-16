@@ -2,8 +2,8 @@
 uberspace_instances:
   hosts:
     ephios_staging:
-      ansible_user: staghios
-      ansible_host: despina.uberspace.de
+      ansible_user: estaging
+      ansible_host: umbriel.uberspace.de
       domain: staging.ephios.de
       smtp_host: smtp.tem.scaleway.com
       smtp_from: noreply@ephios.de
