@@ -48,7 +48,7 @@ jobs:
           command: |
             echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > .staging-key
             chmod 0600 .staging-key
-            rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel staghios@despina.uberspace.de:~
+            rsync -e "ssh -o StrictHostKeyChecking=no -i .staging-key" -a --delete wheel estaging@umbriel.uberspace.de:~
             rm .staging-key
 
       - name: Checkout ephios repo
