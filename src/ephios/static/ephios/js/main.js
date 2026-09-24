@@ -15,7 +15,12 @@ function handleForms(elem) {
             }
         });
     });
-
+    elem.find(".card-collapsed-with-hint").each((idx, el) => {
+        el = $(el);
+        el.find(".collapse").on("show.bs.collapse", () => {
+            el.find(".hint-to-hide").hide();
+        });
+    });
     elem.find(".django-select2").djangoSelect2({
         theme: "bootstrap-5"
     });

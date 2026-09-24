@@ -1,4 +1,5 @@
 import datetime
+import itertools
 
 from django import template
 from django.template.defaultfilters import floatformat
@@ -42,3 +43,9 @@ def timedelta_in_hours(delta):
     return floatformat(
         (delta / datetime.timedelta(hours=1) if isinstance(delta, datetime.timedelta) else delta), 2
     )
+
+
+@register.filter(name="chain")
+def chain(obj, other):
+    """Chain iterables"""
+    return itertools.chain(obj, other)

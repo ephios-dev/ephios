@@ -182,7 +182,9 @@ class SignupView(FormView):
             messages.error(self.request, error_message.format(error=error))
             raise  # must reraise for transaction rollback
         messages.success(self.request, success_message.format(shift=self.shift))
-        return redirect(self.participant.reverse_event_detail(self.shift.event))
+        return redirect(
+            self.participant.reverse_event_detail(self.shift.event) + f"#shift-{self.shift.pk}"
+        )
 
     def _send_signup_save_signal(self, participation, signup_data):
         signup_save.send(
