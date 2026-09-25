@@ -91,6 +91,11 @@ function handleForms(elem) {
     });
 }
 
+function blurForUnload() {
+    $('.blur-on-unload').addClass("unloading");
+    $('#unloading-spinner').removeClass("d-none");
+}
+
 $(document).ready(function () {
     // Configure all prerendered Forms
     handleForms($(document));
@@ -116,15 +121,9 @@ $(document).ready(function () {
     // https://stackoverflow.com/a/41749865
     if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
         $(window).on('beforeunload', function () {
-            $('.blur-on-unload').addClass("unloading");
-            $('#unloading-spinner').removeClass("d-none");
+            blurForUnload();
         });
     }
-    // when hitting "back" button in browser, the page is not reloaded so we need to remove the blur manually
-    window.addEventListener('pageshow', function (event) {
-        $('.blur-on-unload').removeClass("unloading");
-        $('#unloading-spinner').addClass("d-none");
-    });
 
     if ($("body").data("pwa-network") === "offline") {
         // disable all forms and post buttons
@@ -181,21 +180,21 @@ $(document).ready(function () {
     // We need to store the prompt to be able to show the install button later on.
     // We show the prompt to the user if they did not decline in the last month and are logged in
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      if (!getCookie("pwaPrompt") && document.body.dataset.userIsAuthenticated === "True") {
-          pwaAndroidBsOffcanvas.show();
-      }
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        if (!getCookie("pwaPrompt") && document.body.dataset.userIsAuthenticated === "True") {
+            pwaAndroidBsOffcanvas.show();
+        }
     });
 
     // When the user clicks on the install button in our PWA install prompt, we can used the saved prompt
     // from the browser event to actually trigger the installation
     const buttonInstall = document.getElementById("pwaInstall");
     buttonInstall.addEventListener('click', async () => {
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
-      pwaAndroidBsOffcanvas.hide();
-      deferredInstallPrompt = null;
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        pwaAndroidBsOffcanvas.hide();
+        deferredInstallPrompt = null;
     });
 
     // iOS does not support programmatic installation, so we show an offcanvas with instructions instead
@@ -204,16 +203,23 @@ $(document).ready(function () {
     }
 
     setTimeout(() => {
-        // Only show this prompt inside of the PWA (with display-mode: standalone) for logged in user that did not decline in the last month
+        // Only show this prompt inside the PWA (with display-mode: standalone) for logged in user that did not decline in the last month
         // isPushEnabled is set by webpush.js from django-webpush
         if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) && typeof isPushEnabled !== undefined && !isPushEnabled && !getCookie("notificationPrompt")) {
             document.getElementById("webpush-subscribe-button")
-              .addEventListener("click", _ => notificationBsOffcanvas.hide())
+                .addEventListener("click", _ => notificationBsOffcanvas.hide())
             notificationBsOffcanvas.show();
         }
     }, 2000); // isPushEnabled is only set to true after a request to the backend, so it takes some time
+});
 
-})
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        // Force a reload if the page is shown from the bfcache.
+        blurForUnload();
+        location.reload();
+    }
+});
 
 function rememberDismissed(key) {
     const date = new Date();
