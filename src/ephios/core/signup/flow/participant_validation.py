@@ -197,10 +197,7 @@ class BaseSignupActionValidator:
             self.participation is not None and self.participation.is_in_positive_state()
         )
 
-        if positive_state:
-            # If in a positive state, check that you can decline and then sign up again.
-            return self.can_decline() and not self.get_signup_errors()
-        return not self.get_signup_errors()
+        return positive_state or not self.get_signup_errors()
 
 
 class BasicSignupActionValidator(BaseSignupActionValidator):
