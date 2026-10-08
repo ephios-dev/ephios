@@ -23,9 +23,8 @@ def create_qualification_consequence(sender, participation, **kwargs):
     if mode == EventAutoQualificationConfiguration.Modes.ANY_SHIFT:
         requirements_met = True
     elif mode == EventAutoQualificationConfiguration.Modes.LAST_SHIFT:
-        requirements_met = (
-            participation.shift
-            == sorted(event.shifts.all(), key=operator.attrgetter("end_time"))[-1]
+        requirements_met = participation.shift == max(
+            event.shifts.all(), key=operator.attrgetter("end_time")
         )
     elif mode == EventAutoQualificationConfiguration.Modes.EVERY_SHIFT:
         # count participant hashes in finished participations (and this one)

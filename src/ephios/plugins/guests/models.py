@@ -25,6 +25,9 @@ class EventGuestShare(models.Model):
     token = models.CharField(max_length=254, default=secrets.token_urlsafe, unique=True)
     active = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(_("Guest share for {event}").format(event=self.event))
+
     def new_token(self):
         self.token = secrets.token_urlsafe()
 
@@ -57,6 +60,15 @@ class GuestUser(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        # there might be two people using the same email *sigh*
+        unique_together = [["event", "email"]]
+        verbose_name = _("guest user")
+        verbose_name_plural = _("guest users")
+
+    def __str__(self):
+        return f"{self.display_name} @ {self.event}"
+
     def as_participant(self) -> "GuestParticipant":
         return GuestParticipant(
             display_name=self.display_name,
@@ -65,15 +77,6 @@ class GuestUser(models.Model):
             email=self.email,
             guest_user=self,
         )
-
-    def __str__(self):
-        return f"{self.display_name} @ {self.event}"
-
-    class Meta:
-        # there might be two people using the same email *sigh*
-        unique_together = [["event", "email"]]
-        verbose_name = _("guest user")
-        verbose_name_plural = _("guest users")
 
 
 class GuestParticipation(AbstractParticipation):

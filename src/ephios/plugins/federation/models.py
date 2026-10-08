@@ -29,12 +29,12 @@ class FederatedGuest(models.Model):
     client_id = models.CharField(max_length=255)
     client_secret = models.CharField(max_length=255)
 
-    def __str__(self):
-        return str(self.name)
-
     class Meta:
         verbose_name = _("federated guest")
         verbose_name_plural = _("federated guests")
+
+    def __str__(self):
+        return str(self.name)
 
 
 register_model_for_logging(
@@ -59,12 +59,12 @@ class FederatedHost(models.Model):
     # on this instance to acceess user data like qualifications
     oauth_application = models.OneToOneField(Application, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.name)
-
     class Meta:
         verbose_name = _("federated host")
         verbose_name_plural = _("federated hosts")
+
+    def __str__(self):
+        return str(self.name)
 
 
 register_model_for_logging(
@@ -83,6 +83,10 @@ class InviteCode(models.Model):
     url = models.URLField(verbose_name=_("URL"))
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = _("invite code")
+        verbose_name_plural = _("invite codes")
+
     def __str__(self):
         return _("Federation invite code for {url}").format(url=self.url)
 
@@ -98,10 +102,6 @@ class InviteCode(models.Model):
                 "host_url": dynamic_settings.SITE_URL,
             }).encode()
         ).decode()
-
-    class Meta:
-        verbose_name = _("invite code")
-        verbose_name_plural = _("invite codes")
 
 
 register_model_for_logging(
@@ -120,12 +120,12 @@ class FederatedEventShare(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     shared_with = models.ManyToManyField(FederatedGuest)
 
-    def __str__(self):
-        return _("Federated event share for {event}").format(event=self.event)
-
     class Meta:
         verbose_name = _("federated event share")
         verbose_name_plural = _("federated event shares")
+
+    def __str__(self):
+        return _("Federated event share for {event}").format(event=self.event)
 
 
 register_model_for_logging(
@@ -147,6 +147,10 @@ class FederatedUser(models.Model):
     federated_instance = models.ForeignKey(FederatedGuest, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = _("federated user")
+        verbose_name_plural = _("federated users")
+
     def __str__(self):
         return _("Federated user {display_name}").format(display_name=self.display_name)
 
@@ -158,10 +162,6 @@ class FederatedUser(models.Model):
             email=self.email,
             federated_user=self,
         )
-
-    class Meta:
-        verbose_name = _("federated user")
-        verbose_name_plural = _("federated users")
 
 
 @dataclasses.dataclass(frozen=True)
