@@ -33,6 +33,7 @@ class DocumentListView(CustomPermissionRequiredMixin, ListView):
 class DocumentCreateView(CustomPermissionRequiredMixin, SuccessMessageMixin, CreateView):
     model = Document
     permission_required = "files.add_document"
+    accept_object_perms = False
     form_class = DocumentForm
     success_url = reverse_lazy("files:document_list")
     success_message = _("File saved successfully.")
