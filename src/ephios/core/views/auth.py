@@ -30,6 +30,7 @@ from ephios.core.forms.users import IdentityProviderForm, OIDCDiscoveryForm
 from ephios.core.models.users import IdentityProvider
 from ephios.extra.auth import access_exempt
 from ephios.extra.mixins import StaffRequiredMixin
+from ephios.extra.ssrf import url_points_to_public_ip
 
 
 @access_exempt
@@ -167,8 +168,14 @@ class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, Create
         initial = super().get_initial()
         if not self.request.POST and "url" in self.request.GET:
             try:
+                discovery_base_url = self.request.GET["url"]
+                if not (
+                    url_points_to_public_ip(discovery_base_url)
+                    or settings.ALLOW_CONNECTION_TO_PRIVATE_NETWORKS
+                ):
+                    raise RequestException("Unsafe discovery URL")
                 oidc_configuration = requests.get(
-                    urljoin(self.request.GET["url"], ".well-known/openid-configuration"), timeout=10
+                    urljoin(discovery_base_url, ".well-known/openid-configuration"), timeout=10
                 ).json()
                 config_keys = [
                     "authorization_endpoint",
