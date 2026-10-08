@@ -32,6 +32,7 @@ class AbstractSignupFlow(ABC):
         raise NotImplementedError()
 
     @property
+    @abstractmethod
     def verbose_name(self):
         """
         The human-readable name of this signup flow.
@@ -39,6 +40,7 @@ class AbstractSignupFlow(ABC):
         raise NotImplementedError()
 
     @property
+    @abstractmethod
     def description(self):
         """
         A human-readable description of this signup flow.
@@ -63,6 +65,7 @@ class AbstractSignupFlow(ABC):
             self.shift
         )
 
+    @abstractmethod
     def perform_signup(
         self, participant: AbstractParticipant, participation=None, acting_user=None, **kwargs
     ) -> AbstractParticipation:
@@ -73,16 +76,19 @@ class AbstractSignupFlow(ABC):
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def perform_decline(self, participant, participation=None, **kwargs):
         """
         Perform the decline for the given participant.
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def get_signup_info(self):
         """Return key/value pairs about the configuration to show in exports etc."""
         raise NotImplementedError()
 
+    @abstractmethod
     def get_configuration_form(self, *args, **kwargs):
         """Return a form to configure this signup flow."""
         raise NotImplementedError()
