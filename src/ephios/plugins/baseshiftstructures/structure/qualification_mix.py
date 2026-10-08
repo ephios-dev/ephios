@@ -116,16 +116,16 @@ class QualificationMixShiftStructure(BaseGroupBasedShiftStructure):
             count = requirement["max_count"]
             if count is None:
                 count = max(requirement["min_count"], number_of_participations)
-            for i in range(count):
-                positions.add(
-                    Position(
-                        f"{requirement_id}-{next(position_ids)}",
-                        required_qualifications=qualifications,
-                        preferred_by=set(),
-                        designated_for=set(),
-                        required=i < requirement["min_count"],
-                    )
+            positions.update(
+                Position(
+                    f"{requirement_id}-{next(position_ids)}",
+                    required_qualifications=qualifications,
+                    preferred_by=set(),
+                    designated_for=set(),
+                    required=i < requirement["min_count"],
                 )
+                for i in range(count)
+            )
         return positions
 
     def _could_sign_up_for_requirement(self, qualifications):

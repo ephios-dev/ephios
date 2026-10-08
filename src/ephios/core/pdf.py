@@ -149,10 +149,12 @@ class SingleShiftEventExporter(EventExport):
         )
         table = Table(data, colWidths=[6 * cm, self.content_width - 6 * cm])
         table.setStyle([("VALIGN", (0, 0), (-1, -1), "TOP")])
-        story.append(table)
-        story.append(Spacer(height=0.5 * cm, width=15 * cm))
-        story.append(Paragraph(_("Participants"), self.style["Heading2"]))
-        story.append(self.get_shift_structure_data_table(shift))
+        story.extend((
+            table,
+            Spacer(height=0.5 * cm, width=15 * cm),
+            Paragraph(_("Participants"), self.style["Heading2"]),
+            self.get_shift_structure_data_table(shift),
+        ))
         return story
 
 
@@ -186,17 +188,21 @@ class MultipleShiftEventExporter(EventExport):
         story.append(table)
 
         for shift in self.event.shifts.all():
-            story.append(Spacer(height=1 * cm, width=19 * cm))
-            story.append(Paragraph(shift.get_datetime_display(), self.style["Heading2"]))
+            story.extend((
+                Spacer(height=1 * cm, width=19 * cm),
+                Paragraph(shift.get_datetime_display(), self.style["Heading2"]),
+            ))
             data = [
                 [_("Meeting time"), formats.time_format(shift.meeting_time.astimezone(tz))],
             ] + [
                 [Paragraph(key), Paragraph(value)]
                 for key, value in shift.structure.get_signup_info().items()
             ]
-            story.append(Table(data, colWidths=[6 * cm, self.content_width - 6 * cm]))
-            story.append(Paragraph(_("Participants"), self.style["Heading3"]))
-            story.append(self.get_shift_structure_data_table(shift))
+            story.extend((
+                Table(data, colWidths=[6 * cm, self.content_width - 6 * cm]),
+                Paragraph(_("Participants"), self.style["Heading3"]),
+                self.get_shift_structure_data_table(shift),
+            ))
         return story
 
 

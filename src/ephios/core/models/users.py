@@ -317,16 +317,16 @@ class Qualification(Model):
 
     objects = QualificationManager()
 
+    class Meta:
+        verbose_name = _("qualification")
+        verbose_name_plural = _("qualifications")
+        db_table = "qualification"
+
     def __eq__(self, other):
         return self.uuid == other.uuid if other else False
 
     def __hash__(self):
         return hash(self.uuid)
-
-    class Meta:
-        verbose_name = _("qualification")
-        verbose_name_plural = _("qualifications")
-        db_table = "qualification"
 
     def __str__(self):
         return str(self.title)
@@ -384,21 +384,21 @@ class QualificationGrant(Model):
 
     objects = CustomQualificationGrantQuerySet.as_manager()
 
-    def is_expired(self):
-        return self.expires and self.expires < timezone.now()
-
-    def is_valid(self):
-        return not self.is_expired()
-
-    def __str__(self):
-        template = _("{qualification} for {user}")
-        return template.format(qualification=str(self.qualification), user=str(self.user))
-
     class Meta:
         unique_together = [["qualification", "user"]]  # issue #218
         db_table = "qualificationgrant"
         verbose_name = _("Qualification grant")
         verbose_name_plural = _("Qualification grants")
+
+    def __str__(self):
+        template = _("{qualification} for {user}")
+        return template.format(qualification=str(self.qualification), user=str(self.user))
+
+    def is_expired(self):
+        return self.expires and self.expires < timezone.now()
+
+    def is_valid(self):
+        return not self.is_expired()
 
 
 register_model_for_logging(
@@ -436,6 +436,9 @@ class Consequence(Model):
         db_table = "consequence"
         verbose_name = _("Consequence")
         verbose_name_plural = _("Consequences")
+
+    def __str__(self):
+        return self.render()
 
     @property
     def handler(self):
@@ -489,9 +492,6 @@ class Consequence(Model):
 
     def render(self):
         return self.handler.render(self)
-
-    def __str__(self):
-        return self.render()
 
     def attach_log_to_object(self):
         if self.user_id:
@@ -553,6 +553,12 @@ class Notification(Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
+
+    def __repr__(self):
+        return f"Notification(user={self.user!r}, slug={self.notification_type.slug}, data={self.data!r})"
+
     @functools.cached_property
     def notification_type(self):
         from ephios.core.services.notifications.types import notification_type_from_slug
@@ -572,12 +578,6 @@ class Notification(Model):
     @property
     def is_obsolete(self):
         return self.notification_type.is_obsolete(self)
-
-    def __str__(self):
-        return _("{subject} for {user}").format(subject=self.subject, user=self.user or _("Guest"))
-
-    def __repr__(self):
-        return f"Notification(user={self.user!r}, slug={self.notification_type.slug}, data={self.data!r})"
 
     def as_html(self):
         """The notification rendered as HTML."""
@@ -687,9 +687,9 @@ class IdentityProvider(Model):
         blank=True,
     )
 
-    def __str__(self):
-        return _("Identity provider {label}").format(label=self.label)
-
     class Meta:
         verbose_name = _("Identity provider")
         verbose_name_plural = _("Identity providers")
+
+    def __str__(self):
+        return _("Identity provider {label}").format(label=self.label)

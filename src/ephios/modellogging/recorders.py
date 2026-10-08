@@ -1,6 +1,6 @@
 import itertools
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
@@ -17,7 +17,7 @@ def capitalize_first(string):
     return string[0].upper() + string[1:]
 
 
-class InstanceActionType(str, Enum):
+class InstanceActionType(StrEnum):
     CREATE = "create"
     CHANGE = "change"
     DELETE = "delete"

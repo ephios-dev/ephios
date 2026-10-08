@@ -630,7 +630,7 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
             self.object, only_with_perms_in=["view_event"]
         ).intersection(can_publish_for_groups)
         for date in form.cleaned_data["recurrence"].xafter(
-            datetime.now() - timedelta(days=365 * 100),  # noqa: DTZ005 # recurrence must use naive time
+            datetime.now() - timedelta(days=365 * 100),  # recurrence must use naive time
             1000,
             inc=True,
         ):

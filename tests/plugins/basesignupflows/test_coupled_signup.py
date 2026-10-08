@@ -50,7 +50,7 @@ def test_new_shift_copies_participation(django_app, volunteer, event, create_cou
 @pytest.mark.parametrize(
     "state,copy",
     [
-        (state, state not in [AbstractParticipation.States.GETTING_DISPATCHED])
+        (state, state != AbstractParticipation.States.GETTING_DISPATCHED)
         for state in AbstractParticipation.States
     ],
 )
