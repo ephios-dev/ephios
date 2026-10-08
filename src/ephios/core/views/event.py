@@ -626,9 +626,9 @@ class EventCopyView(CustomPermissionRequiredMixin, SingleObjectMixin, FormView):
         can_publish_for_groups = get_objects_for_user(
             self.request.user, "publish_event_for_group", klass=Group
         )
-        visible_for = get_groups_with_perms(
-            self.object, only_with_perms_in=["view_event"]
-        ).intersection(can_publish_for_groups)
+        visible_for = get_groups_with_perms(self.object, only_with_perms_in=["view_event"]).filter(
+            pk__in=can_publish_for_groups.values_list("pk", flat=True)
+        )
         for date in form.cleaned_data["recurrence"].xafter(
             datetime.now() - timedelta(days=365 * 100),  # recurrence must use naive time
             1000,
