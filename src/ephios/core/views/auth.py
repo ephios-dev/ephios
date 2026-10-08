@@ -169,7 +169,10 @@ class IdentityProviderCreateView(StaffRequiredMixin, SuccessMessageMixin, Create
         if not self.request.POST and "url" in self.request.GET:
             try:
                 discovery_base_url = self.request.GET["url"]
-                if not url_points_to_public_ip(discovery_base_url):
+                if not (
+                    url_points_to_public_ip(discovery_base_url)
+                    or settings.ALLOW_CONNECTION_TO_PRIVATE_NETWORKS
+                ):
                     raise RequestException("Unsafe discovery URL")
                 oidc_configuration = requests.get(
                     urljoin(discovery_base_url, ".well-known/openid-configuration"), timeout=10
