@@ -96,8 +96,8 @@ class Event(Model):
         GroupObjectPermission, object_id_field="object_pk"
     )  # GenericRelation allows us to query Groups that have object permissions for this model in a prefetch
 
-    all_objects = Manager()
     objects = ActiveManager()
+    all_objects = Manager()  # noqa: DJ012  # reordering would trigger a migration
 
     class Meta:
         verbose_name = _("event")
