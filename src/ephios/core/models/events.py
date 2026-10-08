@@ -96,8 +96,8 @@ class Event(Model):
         GroupObjectPermission, object_id_field="object_pk"
     )  # GenericRelation allows us to query Groups that have object permissions for this model in a prefetch
 
-    objects = ActiveManager()
     all_objects = Manager()
+    objects = ActiveManager()
 
     class Meta:
         verbose_name = _("event")
@@ -106,6 +106,16 @@ class Event(Model):
         db_table = "event"
         base_manager_name = "all_objects"
         default_manager_name = "objects"
+
+    def __str__(self):
+        return str(self.title)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+
+        return reverse(
+            "core:event_detail", kwargs={"pk": self.id, "slug": self.get_canonical_slug()}
+        )
 
     def get_start_time(self):
         # use shifts.all() in case the shifts have been prefetched
@@ -136,18 +146,8 @@ class Event(Model):
         """Return a SignupStats object aggregated over all shifts of this event, or a default"""
         return SignupStats.reduce([shift.get_signup_stats() for shift in self.shifts.all()])
 
-    def __str__(self):
-        return str(self.title)
-
     def get_canonical_slug(self):
         return slugify(self.title) or str(self.id)
-
-    def get_absolute_url(self):
-        from django.urls import reverse
-
-        return reverse(
-            "core:event_detail", kwargs={"pk": self.id, "slug": self.get_canonical_slug()}
-        )
 
     def activate(self):
         if not self.active:
@@ -358,19 +358,19 @@ class ParticipationComment(Model):
     )
     text = models.CharField(_("Comment"), max_length=255)
 
-    @property
-    def author(self):
-        return self.authored_by_responsible or self.participation.participant
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+        ordering = ("created_at",)
 
     def __str__(self):
         return _('"{text}" by {author} on {participation}').format(
             text=self.text, author=self.author, participation=self.participation
         )
 
-    class Meta:
-        verbose_name = _("Comment")
-        verbose_name_plural = _("Comments")
-        ordering = ("created_at",)
+    @property
+    def author(self):
+        return self.authored_by_responsible or self.participation.participant
 
 
 class Shift(DatetimeDisplayMixin, Model):
@@ -403,6 +403,18 @@ class Shift(DatetimeDisplayMixin, Model):
         verbose_name_plural = _("shifts")
         ordering = ("meeting_time", "start_time", "id")
         db_table = "shift"
+
+    def __str__(self):
+        if self.label:
+            return f"{self.label} ({self.event.title}, {self.get_datetime_display()})"
+        return f"{self.event.title} ({self.get_datetime_display()})"
+
+    def save(self, *args, **kwargs):
+        self._clear_cached_signup_objects()
+        return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return f"{self.event.get_absolute_url()}#shift-{self.pk}"
 
     @cached_property
     def signup_flow(self) -> "AbstractSignupFlow":
@@ -450,10 +462,6 @@ class Shift(DatetimeDisplayMixin, Model):
         except AttributeError:
             pass
 
-    def save(self, *args, **kwargs):
-        self._clear_cached_signup_objects()
-        return super().save(*args, **kwargs)
-
     def refresh_from_db(self, using=None, fields=None, from_queryset=None):
         self._clear_cached_signup_objects()
         return super().refresh_from_db(using=using, fields=fields, from_queryset=from_queryset)
@@ -461,14 +469,6 @@ class Shift(DatetimeDisplayMixin, Model):
     def get_participants(self, with_state_in=frozenset({AbstractParticipation.States.CONFIRMED})):
         for participation in self.participations.filter(state__in=with_state_in):
             yield participation.participant
-
-    def get_absolute_url(self):
-        return f"{self.event.get_absolute_url()}#shift-{self.pk}"
-
-    def __str__(self):
-        if self.label:
-            return f"{self.label} ({self.event.title}, {self.get_datetime_display()})"
-        return f"{self.event.title} ({self.get_datetime_display()})"
 
     def get_signup_stats(self) -> "SignupStats":
         return self.structure.get_signup_stats()

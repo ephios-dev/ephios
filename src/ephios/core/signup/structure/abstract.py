@@ -1,5 +1,5 @@
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any
 
 from ephios.core.models.events import AbstractParticipation
@@ -24,6 +24,7 @@ class AbstractShiftStructure(ABC):
         self.event = getattr(shift, "event", event)
 
     @property
+    @abstractmethod
     def slug(self):
         """
         A unique identifier for this structure.
@@ -52,7 +53,7 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
-    def get_signup_form_fields(
+    def get_signup_form_fields(  # noqa: B027  # optional hook, intentionally a no-op by default
         self,
         participant: AbstractParticipant,
         participation: AbstractParticipation,
@@ -60,7 +61,7 @@ class AbstractShiftStructure(ABC):
     ):
         pass
 
-    def save_signup(
+    def save_signup(  # noqa: B027  # optional hook, intentionally a no-op by default
         self,
         participant: AbstractParticipant,
         participation: AbstractParticipation,

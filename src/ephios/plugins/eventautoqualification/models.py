@@ -34,11 +34,11 @@ class EventAutoQualificationConfiguration(models.Model):
         default=True, verbose_name=_("Qualification must be confirmed afterwards")
     )
 
-    def __str__(self):
-        return str(self.qualification or self.event)
-
     class Meta:
         verbose_name = _("event auto qualification configuration")
+
+    def __str__(self):
+        return str(self.qualification or self.event)
 
 
 register_model_for_logging(

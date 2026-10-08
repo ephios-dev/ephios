@@ -19,12 +19,12 @@ class Document(models.Model):
     uploader = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name=_("Uploader"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Last modified"))
 
-    def __str__(self):
-        return str(self.title)
-
     class Meta:
         verbose_name = _("Document")
         verbose_name_plural = _("Documents")
+
+    def __str__(self):
+        return str(self.title)
 
 
 @receiver(models.signals.post_delete, sender=Document)

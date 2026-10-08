@@ -38,15 +38,15 @@ class BuildingBlock(models.Model):
         default=False,
     )
 
+    class Meta:
+        verbose_name = _("building block")
+        verbose_name_plural = _("building blocks")
+
     def __str__(self):
         return str(self.name)
 
     def is_composite(self):
         return self.block_type == BuildingBlockType.COMPOSITE.value
-
-    class Meta:
-        verbose_name = _("building block")
-        verbose_name_plural = _("building blocks")
 
 
 register_model_for_logging(
@@ -75,6 +75,10 @@ class BlockQualificationRequirement(models.Model):
         Qualification, verbose_name=_("required qualifications")
     )
 
+    class Meta:
+        verbose_name = _("qualification requirement")
+        verbose_name_plural = _("qualification requirements")
+
     def __str__(self):
         if self.everyone:
             return _("everyone on {block} needs {qualifications}").format(
@@ -85,10 +89,6 @@ class BlockQualificationRequirement(models.Model):
             block=self.block,
             qualifications=f" {_('and')} ".join(map(str, self.qualifications.all())),
         )
-
-    class Meta:
-        verbose_name = _("qualification requirement")
-        verbose_name_plural = _("qualification requirements")
 
 
 register_model_for_logging(
@@ -117,14 +117,14 @@ class Position(models.Model):
         blank=True,
     )
 
+    class Meta:
+        verbose_name = _("position")
+        verbose_name_plural = _("positions")
+
     def __str__(self):
         return _("{label_or_pk} on {block_name}").format(
             label_or_pk=self.label or self.pk, block_name=self.block.name
         )
-
-    class Meta:
-        verbose_name = _("position")
-        verbose_name_plural = _("positions")
 
 
 register_model_for_logging(
@@ -159,15 +159,15 @@ class BlockComposition(models.Model):
         default=False,
     )
 
+    class Meta:
+        verbose_name = _("block composition")
+        verbose_name_plural = _("block compositions")
+
     def __str__(self):
         return _("{label} on {composite_blocK}").format(
             label=self.label or f"{self.sub_block.name} #{self.id}",
             composite_blocK=self.composite_block,
         )
-
-    class Meta:
-        verbose_name = _("block composition")
-        verbose_name_plural = _("block compositions")
 
 
 register_model_for_logging(

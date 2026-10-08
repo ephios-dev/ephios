@@ -1,5 +1,5 @@
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from django.utils.translation import gettext_lazy as _
 
@@ -24,6 +24,7 @@ class AbstractSignupFlow(ABC):
         self.event = getattr(shift, "event", event)
 
     @property
+    @abstractmethod
     def slug(self):
         """
         A unique identifier for this signup flow.

@@ -206,7 +206,7 @@ class Question(models.Model):
 
         For this slug, this method would return `123`.
         """
-        return int(slug.split("_", maxsplit=1)[1].split("-")[0])
+        return int(slug.split("_", maxsplit=1)[1].split("-", maxsplit=1)[0])
 
 
 @log(
