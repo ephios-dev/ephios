@@ -17,9 +17,9 @@ class Page(models.Model):
     show_in_footer = models.BooleanField(_("Show in footer"), default=False)
     publicly_visible = models.BooleanField(_("Publicly visible"), default=False)
 
-    def __str__(self):
-        return str(self.title)
-
     class Meta:
         verbose_name = "Page"
         verbose_name_plural = "Pages"
+
+    def __str__(self):
+        return str(self.title)

@@ -1,5 +1,5 @@
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any
 
 from ephios.core.models.events import AbstractParticipation
@@ -24,6 +24,7 @@ class AbstractShiftStructure(ABC):
         self.event = getattr(shift, "event", event)
 
     @property
+    @abstractmethod
     def slug(self):
         """
         A unique identifier for this structure.
@@ -31,6 +32,7 @@ class AbstractShiftStructure(ABC):
         raise NotImplementedError()
 
     @property
+    @abstractmethod
     def verbose_name(self):
         """
         The human-readable name of this structure.
@@ -38,6 +40,7 @@ class AbstractShiftStructure(ABC):
         raise NotImplementedError()
 
     @property
+    @abstractmethod
     def description(self):
         """
         A human-readable description of this structure.
@@ -45,6 +48,7 @@ class AbstractShiftStructure(ABC):
         raise NotImplementedError()
 
     @property
+    @abstractmethod
     def disposition_participation_form_class(self):
         """
         This form will be used for participations in disposition.
@@ -52,7 +56,7 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
-    def get_signup_form_fields(
+    def get_signup_form_fields(  # noqa: B027  # optional hook, intentionally a no-op by default
         self,
         participant: AbstractParticipant,
         participation: AbstractParticipation,
@@ -60,7 +64,7 @@ class AbstractShiftStructure(ABC):
     ):
         pass
 
-    def save_signup(
+    def save_signup(  # noqa: B027  # optional hook, intentionally a no-op by default
         self,
         participant: AbstractParticipant,
         participation: AbstractParticipation,
@@ -69,6 +73,7 @@ class AbstractShiftStructure(ABC):
     ):
         pass
 
+    @abstractmethod
     def get_configuration_form(self, *args, **kwargs):
         """
         This form will be used to configure this structure.
@@ -76,12 +81,14 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def get_checkers(self):
         """
         Return a list of checkers that should be run when validating signup actions.
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def render(self, context):
         """
         Render the state/participations of the shift.
@@ -91,10 +98,12 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def get_signup_info(self):
         """Return key/value pairs about the configuration to show in exports etc."""
         raise NotImplementedError()
 
+    @abstractmethod
     def get_list_export_data(self):
         """
         Returns a list of list of dictionaries corresponding to participations or positions in this shift.
@@ -114,12 +123,14 @@ class AbstractShiftStructure(ABC):
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def get_participant_count_bounds(self):
         """
         Return a tuple of min, max for how many participants are allowed for the shift.
         Use None for any value if it is not specifiable."""
         raise NotImplementedError()
 
+    @abstractmethod
     def get_signup_stats(self) -> "SignupStats":
         """
         Return an instance of SignupStats for the shift.
