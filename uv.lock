@@ -970,14 +970,14 @@ wheels = [
 
 [[package]]
 name = "django-webtest"
-version = "1.9.14"
+version = "1.9.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "webtest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/4c/2c6f4dc32c785b4ed760878f972e0934dba3a4d4cedbfdf4fbce24225808/django_webtest-1.9.14.tar.gz", hash = "sha256:edbdc62f74b84e53ad3b49821e839669c812fafabb54ede713b45209bf732aeb", size = 29289, upload-time = "2025-10-06T21:08:10.761Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/21/60/1a245bbc85fd6858bf0a3b8a7a4a05233bc2ff4afd48dcb8a395a5ed11ed/django_webtest-1.9.15.tar.gz", hash = "sha256:154bd234df491c466cacec9b79b8af6774223828501a452d30f825343d0f486b", size = 29152, upload-time = "2026-10-10T14:43:56.45Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/02/b623ee3b64879ac36d1c82f779997a9d7a98265b9254e45edd3e33ccd57b/django_webtest-1.9.14-py3-none-any.whl", hash = "sha256:1385ec303b766765413e7caa87f2be14c54826c0178050b00dc8746816d9fa1b", size = 16795, upload-time = "2025-10-06T21:08:09.155Z" },
+    { url = "https://files.pythonhosted.org/packages/24/91/ef9223a3195f8ffe8d8ffd46dc205beba469026ab87c136d057998b3ae1f/django_webtest-1.9.15-py3-none-any.whl", hash = "sha256:28bfc40def80db9d72ff75aa3ee9b77044f5d0f23d063707671cd67139f86f31", size = 16817, upload-time = "2026-10-10T14:43:54.844Z" },
 ]
 
 [[package]]
