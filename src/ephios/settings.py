@@ -215,12 +215,13 @@ LOGIN_URL = "/accounts/login/"
 PASSWORD_RESET_TIMEOUT = 28 * 24 * 60 * 60  # seconds
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
+# https://docs.djangoproject.com/en/dev/topics/i18n/
 
-LANGUAGE_CODE = "de"
+LANGUAGE_CODE = "en"
 LANGUAGES = [
-    ("de", gettext_lazy("German")),
     ("en", gettext_lazy("English")),
+    ("de", gettext_lazy("German")),
+    ("nb", gettext_lazy("Norwegian Bokmål")),
 ]
 
 TIME_ZONE = "Europe/Berlin"
