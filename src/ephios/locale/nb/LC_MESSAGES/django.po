@@ -1,0 +1,5445 @@
+# Norwegian Bokmål translations for ephios.
+msgid ""
+msgstr ""
+"Project-Id-Version: ephios - Norsk bokmål\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 11:55+0100\n"
+"PO-Revision-Date: 2026-10-25 10:43+0000\n"
+"Last-Translator: Laksevåg Røde Kors\n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\api\access\views.py:85 .\api\models.py:47 .\core\pdf.py:59
+#: .\core\pdf.py:148 .\core\pdf.py:184 .\plugins\questionnaires\models.py:30
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: .\api\access\views.py:86
+msgid "What is this token for?"
+msgstr "Hva skal denne API-nøkkelen brukes til?"
+
+#: .\api\access\views.py:90 .\api\templates\api\access_token_list.html:35
+#: .\api\templates\api\access_token_list.html:103
+msgid "Scope"
+msgstr "Tilganger"
+
+#: .\api\access\views.py:96
+msgid "For security reasons, only select the scopes that are actually needed."
+msgstr ""
+"Av sikkerhetshensyn bør du bare velge de tilgangene som faktisk trengs."
+
+#: .\api\access\views.py:99 .\core\models\users.py:378
+msgid "expiration date"
+msgstr "utløpsdato"
+
+#: .\api\access\views.py:136
+msgid "Token is too old to be revealed."
+msgstr "API-nøkkelen er for gammel til å kunne vises."
+
+#: .\api\access\views.py:146
+msgid "Token was revoked."
+msgstr "Tilgangen ble tilbakekalt."
+
+#: .\api\filters.py:44 .\core\models\events.py:381
+msgid "start time"
+msgstr "starttid"
+
+#: .\api\filters.py:45 .\core\models\events.py:382
+msgid "end time"
+msgstr "sluttid"
+
+#: .\api\filters.py:50
+msgid ""
+"start time greater than equals (deprecated, use start_time_after instead)"
+msgstr ""
+"starttid større enn eller lik (foreldet, bruk start_time_after i stedet)"
+
+#: .\api\filters.py:55
+msgid "start time less than equals (deprecated, use start_time_before instead)"
+msgstr ""
+"starttid mindre enn eller lik (foreldet, bruk start_time_before i stedet)"
+
+#: .\api\filters.py:61 .\core\models\events.py:81 .\core\models\events.py:93
+#: .\core\views\event.py:57
+msgid "event type"
+msgstr "arrangementstype"
+
+#: .\api\models.py:70
+msgid "Access Token"
+msgstr "Tilgangstoken"
+
+#: .\api\models.py:71
+msgid "Personal Token"
+msgstr "Personlig API-nøkkel"
+
+#: .\api\serializers.py:89
+msgid "Frontend URL"
+msgstr "URL til brukergrensesnittet"
+
+#: .\api\serializers.py:136
+msgid "Participation type"
+msgstr "Deltakelsestype"
+
+#: .\api\serializers.py:166
+msgid "Duration in seconds"
+msgstr "Varighet i sekunder"
+
+#: .\api\serializers.py:167 .\core\forms\events.py:181
+#: .\core\templates\core\fragments\shift_box_small.html:24
+msgid "Start time"
+msgstr "Starttid"
+
+#: .\api\serializers.py:168 .\core\forms\events.py:182
+#: .\core\templates\core\fragments\shift_box_small.html:25
+msgid "End time"
+msgstr "Sluttid"
+
+#: .\api\templates\api\access_token_form.html:8
+msgid "Edit API Token"
+msgstr "Rediger API-nøkkel"
+
+#: .\api\templates\api\access_token_form.html:10
+msgid "Add API Token"
+msgstr "Legg til API-nøkkel"
+
+#: .\api\templates\api\access_token_form.html:16
+#: .\api\templates\oauth2_provider\application_form.html:27
+#: .\core\forms\users.py:200 .\core\forms\users.py:442
+#: .\core\signup\forms.py:152
+#: .\core\templates\core\disposition\disposition.html:125
+#: .\core\templates\core\event_detail.html:26
+#: .\core\templates\core\event_form.html:65
+#: .\core\templates\core\eventtype_form.html:20
+#: .\core\templates\core\identityprovider_form.html:16
+#: .\core\templates\core\settings\settings_instance.html:10
+#: .\core\templates\core\settings\settings_notifications.html:37
+#: .\core\templates\core\settings\settings_personal_data.html:59
+#: .\core\templates\core\shift_form.html:72
+#: .\core\templates\core\userprofile_form.html:150
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:285
+#: .\plugins\qualification_management\forms.py:119
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:92
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_form.html:29
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:90
+msgid "Save"
+msgstr "Lagre"
+
+#: .\api\templates\api\access_token_form.html:18
+#: .\api\templates\oauth2_provider\application_confirm_delete.html:23
+#: .\api\templates\oauth2_provider\authorize.html:33 .\core\signup\forms.py:163
+#: .\core\templates\core\disposition\disposition.html:124
+#: .\core\templates\core\event_form.html:68
+#: .\core\templates\core\eventtype_form.html:21
+#: .\core\templates\core\mass_notification_write.html:135
+#: .\core\templates\core\userprofile_form.html:152
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:91
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_form.html:28
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: .\api\templates\api\access_token_list.html:7 .\core\views\settings.py:48
+msgid "Integrations"
+msgstr "Integrasjoner"
+
+#: .\api\templates\api\access_token_list.html:9
+#, python-format
+msgid ""
+"Other applications can integrate with %(platform)s by asking you for access "
+"to your data. You can also create personal API tokens to access %(platform)s "
+"from other applications. If you are unsure about the origins of a token or "
+"the security of the third party application please revoke access."
+msgstr ""
+"Andre applikasjoner kan integreres med %(platform)s ved å be om tilgang til "
+"dataene dine. Du kan også opprette personlige API-nøkler for å få tilgang "
+"til %(platform)s fra andre applikasjoner. Hvis du er usikker på hvordan en "
+"tilgang ble opprettet eller hvor sikker tredjepartsapplikasjonen er, bør du "
+"tilbakekalle tilgangen."
+
+#: .\api\templates\api\access_token_list.html:17
+msgid "Third party applications"
+msgstr "Tredjepartsapplikasjoner"
+
+#: .\api\templates\api\access_token_list.html:30
+msgid "ephios instance"
+msgstr "ephios-instans"
+
+#: .\api\templates\api\access_token_list.html:44
+#: .\api\templates\api\access_token_list.html:112
+msgid "Revoked"
+msgstr "Tilbakekalt"
+
+#: .\api\templates\api\access_token_list.html:50
+#: .\api\templates\api\access_token_list.html:120
+msgid "Revoke"
+msgstr "Tilbakekall"
+
+#: .\api\templates\api\access_token_list.html:58
+msgid "No applications have been authorized."
+msgstr "Ingen applikasjoner har fått tilgang."
+
+#: .\api\templates\api\access_token_list.html:63
+msgid "Personal API tokens"
+msgstr "Personlige API-nøkler"
+
+#: .\api\templates\api\access_token_list.html:67
+msgid "Create new API token"
+msgstr "Opprett ny API-nøkkel"
+
+#: .\api\templates\api\access_token_list.html:81
+#, python-format
+msgid "created on %(created)s"
+msgstr "opprettet %(created)s"
+
+#: .\api\templates\api\access_token_list.html:86
+#, python-format
+msgid "revoked on %(revoked)s"
+msgstr "tilbakekalt %(revoked)s"
+
+#: .\api\templates\api\access_token_list.html:90
+#, python-format
+msgid "expired on %(expires)s"
+msgstr "utløpt %(expires)s"
+
+#: .\api\templates\api\access_token_list.html:94
+#, python-format
+msgid "expires on %(expires)s"
+msgstr "utløper %(expires)s"
+
+#: .\api\templates\api\access_token_list.html:98
+msgid "does not expire"
+msgstr "utløper ikke"
+
+#: .\api\templates\api\access_token_list.html:114
+msgid "Expired"
+msgstr "Utløpt"
+
+#: .\api\templates\api\access_token_list.html:128
+msgid "There are no tokens."
+msgstr "Det finnes ingen API-nøkler."
+
+#: .\api\templates\api\access_token_reveal.html:9
+msgid "API Token"
+msgstr "API-nøkkel"
+
+#: .\api\templates\api\access_token_reveal.html:13
+msgid ""
+"We created your API token. Please copy it and store it in a safe place. You "
+"will not be able to see it again."
+msgstr ""
+"Vi har opprettet API-nøkkelen din. Kopier den og oppbevar den på et trygt "
+"sted. Du vil ikke kunne se den igjen."
+
+#: .\api\templates\api\access_token_reveal.html:26
+#: .\api\templates\oauth2_provider\application_detail.html:15
+#: .\api\templates\oauth2_provider\application_detail.html:34
+#: .\core\templates\core\event_copy.html:31
+#: .\core\templates\core\fragments\shift_header.html:62
+#: .\core\templates\core\settings\settings_calendar.html:21
+#: .\core\templates\core\shift_copy.html:34
+#: .\plugins\federation\templates\federation\invitecode_reveal.html:27
+#: .\plugins\federation\templates\federation\invitecode_reveal.html:38
+msgid "Copy"
+msgstr "Kopier"
+
+#: .\api\templates\api\access_token_reveal.html:31
+#: .\plugins\federation\templates\federation\invitecode_reveal.html:43
+msgid "Done"
+msgstr "Ferdig"
+
+#: .\api\templates\oauth2_provider\application_confirm_delete.html:8
+#, python-format
+msgid "Are you sure to delete the application %(app_name)s?"
+msgstr "Er du sikker på at du vil slette applikasjonen %(app_name)s?"
+
+#: .\api\templates\oauth2_provider\application_confirm_delete.html:12
+msgid "Are you sure to delete the application?"
+msgstr "Er du sikker på at du vil slette applikasjonen?"
+
+#: .\api\templates\oauth2_provider\application_confirm_delete.html:24
+#: .\api\templates\oauth2_provider\application_detail.html:77
+#: .\api\templates\oauth2_provider\application_list.html:56
+#: .\core\templates\core\event_bulk_delete.html:24
+#: .\core\templates\core\event_confirm_delete.html:17
+#: .\core\templates\core\eventtype_confirm_delete.html:9
+#: .\core\templates\core\eventtype_list.html:24
+#: .\core\templates\core\fragments\shift_box_small.html:17
+#: .\core\templates\core\fragments\shift_header.html:65
+#: .\core\templates\core\group_confirm_delete.html:19
+#: .\core\templates\core\group_list.html:67
+#: .\core\templates\core\identityprovider_confirm_delete.html:14
+#: .\core\templates\core\identityprovider_list.html:30
+#: .\core\templates\core\shift_confirm_delete.html:17
+#: .\core\templates\core\shift_form.html:69
+#: .\core\templates\core\userprofile_confirm_delete.html:21
+#: .\core\templates\core\userprofile_form.html:89
+#: .\core\templates\core\userprofile_form.html:120
+#: .\core\templates\core\userprofile_list.html:120
+#: .\core\templates\core\userprofile_workinghours.html:68
+#: .\core\templates\core\workinghours_confirm_delete.html:17
+#: .\plugins\files\templates\files\document_confirm_delete.html:19
+#: .\plugins\files\templates\files\document_list.html:43
+#: .\plugins\pages\templates\pages\page_confirm_delete.html:19
+#: .\plugins\pages\templates\pages\page_list.html:27
+#: .\plugins\qualification_management\forms.py:168
+#: .\plugins\qualification_management\templates\core\qualification_confirm_delete.html:21
+#: .\plugins\qualification_management\templates\core\qualification_list.html:60
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:35
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:70
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_delete.html:19
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:117
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:124
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_confirm_delete.html:18
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:41
+#: .\plugins\simpleresource\forms.py:49
+#: .\plugins\simpleresource\templates\simpleresource\resource_confirm_delete.html:19
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:33
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:40
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:76
+msgid "Delete"
+msgstr "Slett"
+
+#: .\api\templates\oauth2_provider\application_detail.html:9
+msgid "Client id"
+msgstr "Klient-ID"
+
+#: .\api\templates\oauth2_provider\application_detail.html:21
+#: .\api\templates\oauth2_provider\application_detail.html:28
+#: .\core\forms\users.py:538
+msgid "Client secret"
+msgstr "Klienthemmelighet"
+
+#: .\api\templates\oauth2_provider\application_detail.html:24
+msgid ""
+"The client secret can not be shown again. Please edit the application and "
+"set a new secret if necessary."
+msgstr ""
+"Klienthemmeligheten kan ikke vises igjen. Rediger applikasjonen og angi en "
+"ny klienthemmelighet ved behov."
+
+#: .\api\templates\oauth2_provider\application_detail.html:39
+msgid "Client type"
+msgstr "Klienttype"
+
+#: .\api\templates\oauth2_provider\application_detail.html:44
+msgid "Authorization Grant Type"
+msgstr "Type autorisasjonsflyt"
+
+#: .\api\templates\oauth2_provider\application_detail.html:50
+msgid "Redirect URIs"
+msgstr "Omdirigerings-URI-er"
+
+#: .\api\templates\oauth2_provider\application_detail.html:55
+#: .\api\templates\oauth2_provider\application_list.html:22
+msgid "Created"
+msgstr "Opprettet"
+
+#: .\api\templates\oauth2_provider\application_detail.html:61
+msgid "Updated"
+msgstr "Oppdatert"
+
+#: .\api\templates\oauth2_provider\application_detail.html:67
+#: .\api\templates\oauth2_provider\application_list.html:21
+#: .\core\models\users.py:513
+msgid "User"
+msgstr "Bruker"
+
+#: .\api\templates\oauth2_provider\application_detail.html:73
+#: .\api\templates\oauth2_provider\application_form.html:25
+#: .\core\templates\core\event_bulk_delete.html:23
+#: .\core\templates\core\event_confirm_delete.html:16
+#: .\core\templates\core\event_copy.html:29
+#: .\core\templates\core\event_form.html:64
+#: .\core\templates\core\eventtype_confirm_delete.html:8
+#: .\core\templates\core\group_confirm_delete.html:18
+#: .\core\templates\core\identityprovider_confirm_delete.html:13
+#: .\core\templates\core\shift_confirm_delete.html:16
+#: .\core\templates\core\shift_copy.html:32
+#: .\core\templates\core\userprofile_confirm_delete.html:20
+#: .\core\templates\core\userprofile_confirm_password_reset.html:19
+#: .\core\templates\core\userprofile_confirm_password_token_revokation.html:21
+#: .\core\templates\core\workinghours_confirm_delete.html:16
+#: .\plugins\federation\templates\federation\federatedguest_confirm_delete.html:13
+#: .\plugins\federation\templates\federation\federatedhost_confirm_delete.html:13
+#: .\plugins\files\templates\files\document_confirm_delete.html:18
+#: .\plugins\pages\templates\pages\page_confirm_delete.html:18
+#: .\plugins\qualification_management\templates\core\qualification_confirm_delete.html:20
+#: .\plugins\qualification_management\templates\core\qualification_form.html:26
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:84
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:37
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_delete.html:18
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_confirm_delete.html:17
+#: .\plugins\simpleresource\templates\simpleresource\resource_confirm_delete.html:18
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:89
+#: .\templates\offline.html:13
+msgid "Back"
+msgstr "Tilbake"
+
+#: .\api\templates\oauth2_provider\application_detail.html:75
+#: .\api\templates\oauth2_provider\application_list.html:51
+#: .\core\templates\core\eventtype_list.html:21
+#: .\core\templates\core\fragments\shift_box_small.html:14
+#: .\core\templates\core\fragments\shift_header.html:59
+#: .\core\templates\core\group_list.html:63
+#: .\core\templates\core\identityprovider_list.html:27
+#: .\core\templates\core\shift_form.html:98
+#: .\core\templates\core\userprofile_list.html:115
+#: .\core\templates\core\userprofile_workinghours.html:67
+#: .\plugins\files\templates\files\document_list.html:40
+#: .\plugins\pages\templates\pages\page_list.html:24
+#: .\plugins\qualification_management\templates\core\qualification_list.html:56
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:108
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:37
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:31
+msgid "Edit"
+msgstr "Rediger"
+
+#: .\api\templates\oauth2_provider\application_form.html:11
+msgid "Edit application"
+msgstr "Rediger applikasjon"
+
+#: .\api\templates\oauth2_provider\application_list.html:6
+#: .\core\views\settings.py:66
+msgid "App integrations"
+msgstr "Appintegrasjoner"
+
+#: .\api\templates\oauth2_provider\application_list.html:8
+#, python-format
+msgid ""
+"On this page you can configure other apps and programs to work with "
+"%(platform)s as an authentication provider using the OAuth2-standard. Other "
+"ways to integrate with %(platform)s include the plugin system and the API. "
+"More detailed information can be found in the documentation."
+msgstr ""
+"På denne siden kan du konfigurere andre apper og programmer til å bruke "
+"%(platform)s som identitetsleverandør via OAuth2-standarden. Andre måter å "
+"integrere med %(platform)s på er systemet for programtillegg og API-et. Du "
+"finner mer detaljert informasjon i dokumentasjonen."
+
+#: .\api\templates\oauth2_provider\application_list.html:14
+msgid "OAuth2 applications"
+msgstr "OAuth2-applikasjoner"
+
+#: .\api\templates\oauth2_provider\application_list.html:15
+msgid "New Application"
+msgstr "Ny applikasjon"
+
+#: .\api\templates\oauth2_provider\application_list.html:20 .\core\pdf.py:57
+#: .\core\templates\core\settings\settings_personal_data.html:19
+#: .\core\templates\core\workinghours_list.html:30
+#: .\core\views\workinghours.py:284 .\plugins\complexsignup\models.py:18
+#: .\plugins\federation\templates\federation\federation_settings.html:15
+#: .\plugins\federation\templates\federation\federation_settings.html:56
+#: .\plugins\questionnaires\models.py:24 .\plugins\simpleresource\models.py:9
+msgid "Name"
+msgstr "Navn"
+
+#: .\api\templates\oauth2_provider\application_list.html:23
+#: .\core\templates\core\eventtype_list.html:11
+#: .\core\templates\core\identityprovider_list.html:17
+#: .\core\templates\core\userprofile_workinghours.html:45
+#: .\core\templates\core\workinghours_list.html:32
+#: .\plugins\federation\templates\federation\federation_settings.html:17
+#: .\plugins\federation\templates\federation\federation_settings.html:37
+#: .\plugins\federation\templates\federation\federation_settings.html:58
+#: .\plugins\files\templates\files\document_list.html:25
+#: .\plugins\pages\templates\pages\page_list.html:11
+#: .\plugins\qualification_management\templates\core\qualification_list.html:32
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:21
+msgid "Action"
+msgstr "Handling"
+
+#: .\api\templates\oauth2_provider\application_list.html:40
+msgid "Manage federation"
+msgstr "Administrer føderering"
+
+#: .\api\templates\oauth2_provider\application_list.html:46
+#: .\core\templates\core\event_form.html:20 .\core\templates\core\home.html:67
+#: .\core\templates\core\home.html:111
+#: .\core\templates\core\workinghours_list.html:44
+#: .\plugins\pages\templates\pages\page_list.html:21
+msgid "View"
+msgstr "Vis"
+
+#: .\api\templates\oauth2_provider\application_list.html:66
+msgid "No applications defined"
+msgstr "Ingen applikasjoner er registrert"
+
+#: .\api\templates\oauth2_provider\application_registration_form.html:5
+msgid "Register a new application"
+msgstr "Registrer en ny applikasjon"
+
+#: .\api\templates\oauth2_provider\authorize.html:8
+#, python-format
+msgid "Authorize %(app_name)s?"
+msgstr "Gi %(app_name)s tilgang?"
+
+#: .\api\templates\oauth2_provider\authorize.html:21
+msgid "The application requires the following permissions:"
+msgstr "Applikasjonen krever følgende tillatelser:"
+
+#: .\api\templates\oauth2_provider\authorize.html:34
+msgid "Authorize"
+msgstr "Gi tilgang"
+
+#: .\core\consequences.py:36
+#, python-brace-format
+msgid "Consequence Handler '{slug}' was not found."
+msgstr "Behandleren '{slug}' for oppfølgingstiltak ble ikke funnet."
+
+#: .\core\consequences.py:113
+#, python-brace-format
+msgid "{user} obtains {hours} working hours for {reason} on {date}"
+msgstr "{user} får godskrevet {hours} arbeidstimer for {reason} den {date}"
+
+#: .\core\consequences.py:180
+msgid "deleted event"
+msgstr "slettet arrangement"
+
+#: .\core\consequences.py:197
+#, python-brace-format
+msgid "{user} acquires '{qualification}' after participating in {event}."
+msgstr ""
+"{user} får kvalifikasjonen '{qualification}' etter å ha deltatt på {event}."
+
+#: .\core\consequences.py:201
+#, python-brace-format
+msgid "{user} acquires '{qualification}'."
+msgstr "{user} får kvalifikasjonen '{qualification}'."
+
+#: .\core\consequences.py:207
+#, python-brace-format
+msgid "(valid until {expires_str})"
+msgstr "(gyldig til {expires_str})"
+
+#: .\core\dynamic_preferences_registry.py:46
+msgid "Organization display name"
+msgstr "Organisasjonens visningsnavn"
+
+#: .\core\dynamic_preferences_registry.py:55
+msgid "Hide local login"
+msgstr "Skjul lokal innlogging"
+
+#: .\core\dynamic_preferences_registry.py:57
+msgid ""
+"Hide the login form on the login page and the controls to manage user "
+"accounts locally. This only takes effect if you configured at least one "
+"identity provider."
+msgstr ""
+"Skjul innloggingsskjemaet på innloggingssiden og funksjonene for lokal "
+"administrasjon av brukerkontoer. Dette gjelder bare hvis du har konfigurert "
+"minst en identitetsleverandør."
+
+#: .\core\dynamic_preferences_registry.py:68
+msgid "Directly redirect to Identity Provider"
+msgstr "Omdiriger direkte til identitetsleverandøren"
+
+#: .\core\dynamic_preferences_registry.py:70
+msgid ""
+"If the login form is hidden and there is a single identity provider, users "
+"trying to loginwill be directly redirected to that identity provider. The "
+"provider must have a valid logout endpoint."
+msgstr ""
+"Hvis innloggingsskjemaet er skjult og det bare finnes en "
+"identitetsleverandør, blir brukere som prøver å logge inn, omdirigert "
+"direkte til denne identitetsleverandøren. Leverandøren må ha et gyldig "
+"endepunkt for utlogging."
+
+#: .\core\dynamic_preferences_registry.py:81
+msgid "Enabled plugins"
+msgstr "Aktiverte programtillegg"
+
+#: .\core\dynamic_preferences_registry.py:103
+msgid "Last run_periodic call"
+msgstr "Siste kall til run_periodic"
+
+#: .\core\dynamic_preferences_registry.py:134
+msgid "Notification preferences"
+msgstr "Varslingsinnstillinger"
+
+#: .\core\dynamic_preferences_registry.py:148
+msgid "Events of this type should by default be visible for"
+msgstr "Arrangementer av denne typen skal som standard være synlige for"
+
+#: .\core\dynamic_preferences_registry.py:157
+msgid "Users that are responsible for this event type by default"
+msgstr "Brukere som er ansvarlige for denne arrangementstypen som standard"
+
+#: .\core\dynamic_preferences_registry.py:166
+msgid "Groups that are responsible for this event type by default"
+msgstr "Grupper som er ansvarlige for denne arrangementstypen som standard"
+
+#: .\core\dynamic_preferences_registry.py:175
+msgid "General required qualifications for this event type"
+msgstr "Generelle kvalifikasjonskrav for denne arrangementstypen"
+
+#: .\core\dynamic_preferences_registry.py:177
+msgid ""
+"These qualifications are required for all events of this event type. Users "
+"without these qualification will not be able to sign up, so make sure to use "
+"this field appropriately."
+msgstr ""
+"Disse kvalifikasjonene kreves for alle arrangementer av denne typen. Brukere "
+"uten disse kvalifikasjonene kan ikke melde seg på. Bruk derfor dette feltet "
+"med omtanke."
+
+#: .\core\forms\auth.py:10
+msgid ""
+"The information you entered was wrong. Note that the fields are case-"
+"sensitive."
+msgstr ""
+"Opplysningene du skrev inn, var feil. Merk at feltene skiller mellom store "
+"og små bokstaver."
+
+#: .\core\forms\auth.py:12
+msgid "This account is inactive."
+msgstr "Denne kontoen er inaktiv."
+
+#: .\core\forms\events.py:38 .\core\forms\events.py:129
+msgid "Visible for"
+msgstr "Synlig for"
+
+#: .\core\forms\events.py:40
+msgid ""
+"Select groups which the event shall be visible for. Regardless, the event "
+"will be visible for responsible groups and users that already signed up."
+msgstr ""
+"Velg gruppene arrangementet skal være synlig for. Arrangementet vil uansett "
+"være synlig for ansvarlige grupper og brukere som allerede har meldt seg på."
+
+#: .\core\forms\events.py:49
+msgid "Responsible persons"
+msgstr "Ansvarlige personer"
+
+#: .\core\forms\events.py:50
+msgid "Individuals can also be made responsible for an event."
+msgstr "Du kan også gi enkeltpersoner ansvar for et arrangement."
+
+#: .\core\forms\events.py:56
+msgid "Responsible groups"
+msgstr "Ansvarlige grupper"
+
+#: .\core\forms\events.py:111
+#, python-brace-format
+msgid ""
+"Also, this event is visible to <b>{groups}</b>, but you don't have "
+"permission to change visibility for those groups."
+msgstr ""
+"Dette arrangementet er også synlig for <b>{groups}</b>, men du har ikke "
+"tillatelse til å endre synligheten for disse gruppene."
+
+#: .\core\forms\events.py:120
+#, python-brace-format
+msgid ""
+"This event is always editable by <b>{groups}</b>, because they manage ephios."
+msgstr ""
+"Dette arrangementet kan alltid redigeres av <b>{groups}</b> fordi de "
+"administrerer ephios."
+
+#: .\core\forms\events.py:130
+msgid "Responsibles"
+msgstr "Ansvarlige"
+
+#: .\core\forms\events.py:179 .\core\models\users.py:516 .\core\pdf.py:135
+#: .\core\pdf.py:183 .\core\templates\core\fragments\shift_box_small.html:22
+#: .\core\templates\core\userprofile_workinghours.html:41
+#: .\core\views\event.py:65 .\core\views\event.py:74 .\core\views\log.py:35
+#: .\core\views\workinghours.py:323
+msgid "Date"
+msgstr "Dato"
+
+#: .\core\forms\events.py:180 .\core\pdf.py:142 .\core\pdf.py:196
+#: .\core\templates\core\fragments\shift_box_small.html:23
+msgid "Meeting time"
+msgstr "Oppmøtetid"
+
+#: .\core\forms\events.py:263
+msgid "Meeting time must not be after start time!"
+msgstr "Oppmøtetiden kan ikke være etter starttiden!"
+
+#: .\core\forms\events.py:294
+msgid "You need to enter a valid color"
+msgstr "Du må angi en gyldig farge"
+
+#: .\core\forms\users.py:90 .\core\forms\users.py:105
+msgid "Can add events"
+msgstr "Kan legge til arrangementer"
+
+#: .\core\forms\users.py:91 .\core\forms\users.py:127
+msgid "Can edit users"
+msgstr "Kan redigere brukere"
+
+#: .\core\forms\users.py:92
+msgid "Can change permissions"
+msgstr "Kan endre tillatelser"
+
+#: .\core\forms\users.py:94 .\core\forms\users.py:110
+msgid "Can publish events for groups"
+msgstr "Kan publisere arrangementer for grupper"
+
+#: .\core\forms\users.py:97 .\core\forms\users.py:117
+msgid "Can decide working hours for groups"
+msgstr "Kan godkjenne arbeidstimer for grupper"
+
+#: .\core\forms\users.py:113
+msgid "Choose groups that this group can make events visible for."
+msgstr "Velg hvilke grupper denne gruppen kan gjøre arrangementer synlige for."
+
+#: .\core\forms\users.py:121
+msgid ""
+"Choose groups that the group you are currently editing can decide whether to "
+"grant working hours for."
+msgstr ""
+"Velg hvilke grupper dette skal gjelde for. Gruppen du redigerer, kan "
+"bestemme om arbeidstimer skal godskrives for disse gruppene."
+
+#: .\core\forms\users.py:129
+msgid ""
+"If checked, users in this group can view, add, edit and delete users. They "
+"can also manage group memberships for their own groups."
+msgstr ""
+"Hvis dette er valgt, kan brukere i denne gruppen se, legge til, redigere og "
+"slette brukere. De kan også administrere medlemskap i sine egne grupper."
+
+#: .\core\forms\users.py:137
+msgid ""
+"If checked, users in this group can edit all users, change groups, their "
+"permissions and memberships as well as define eventtypes and qualifications."
+msgstr ""
+"Hvis dette er valgt, kan brukere i denne gruppen redigere alle brukere, "
+"endre grupper, gruppetillatelser og gruppemedlemskap samt definere "
+"arrangementstyper og kvalifikasjoner."
+
+#: .\core\forms\users.py:145 .\core\models\users.py:259 .\core\signals.py:302
+#: .\core\templates\core\userprofile_list.html:9
+#: .\core\templates\core\userprofile_list.html:15
+msgid "Users"
+msgstr "Brukere"
+
+#: .\core\forms\users.py:175
+#, python-brace-format
+msgid "Can change permissions and manage {platform}"
+msgstr "Kan endre tillatelser og administrere {platform}"
+
+#: .\core\forms\users.py:182 .\core\signals.py:299 .\core\signals.py:306
+#: .\core\signals.py:319 .\core\signals.py:332 .\core\views\settings.py:26
+#: .\plugins\complexsignup\signals.py:34 .\plugins\files\signals.py:25
+#: .\plugins\questionnaires\signals.py:38
+#: .\plugins\simpleresource\signals.py:44
+msgid "Management"
+msgstr "Administrasjon"
+
+#: .\core\forms\users.py:187
+msgid "Planning"
+msgstr "Planlegging"
+
+#: .\core\forms\users.py:196
+msgid "Other"
+msgstr "Annet"
+
+#: .\core\forms\users.py:215
+msgid ""
+"At least one group with management permissions must exist. Please promote "
+"another group before demoting this one."
+msgstr ""
+"Det må finnes minst en gruppe med administrasjonstillatelser. Gi en annen "
+"gruppe disse tillatelsene før du fjerner dem fra denne gruppen."
+
+#: .\core\forms\users.py:249 .\core\signals.py:315
+#: .\core\templates\core\group_list.html:6
+#: .\core\templates\core\group_list.html:11
+#: .\core\templates\core\settings\settings_personal_data.html:30
+msgid "Groups"
+msgstr "Grupper"
+
+#: .\core\forms\users.py:256 .\core\models\users.py:106
+msgid "Administrator"
+msgstr "Administrator"
+
+#: .\core\forms\users.py:258
+msgid ""
+"If checked, this user can change technical settings as well as edit all user "
+"profiles, groups, qualifications, events and event types."
+msgstr ""
+"Hvis dette er valgt, kan denne brukeren endre tekniske innstillinger samt "
+"redigere alle brukerprofiler, grupper, kvalifikasjoner, arrangementer og "
+"arrangementstyper."
+
+#: .\core\forms\users.py:277
+#, python-brace-format
+msgid ""
+"The user is also member of <b>{groups}</b>, but you are not allowed to "
+"manage memberships for those groups."
+msgstr ""
+"Brukeren er også medlem av <b>{groups}</b>, men du har ikke tillatelse til å "
+"administrere medlemskap i disse gruppene."
+
+#: .\core\forms\users.py:282
+msgid "Only other technical administrators can change this."
+msgstr "Bare andre tekniske administratorer kan endre dette."
+
+#: .\core\forms\users.py:299
+msgid "You are not allowed to change the email address of this user."
+msgstr "Du har ikke tillatelse til å endre e-postadressen til denne brukeren."
+
+#: .\core\forms\users.py:328
+msgid "Inactive users cannot log in and do not get any notifications."
+msgstr "Inaktive brukere kan ikke logge inn og mottar ingen varsler."
+
+#: .\core\forms\users.py:330
+msgid "Active user"
+msgstr "Aktiv bruker"
+
+#: .\core\forms\users.py:338
+msgid ""
+"At least one user must be technical administrator. Please promote another "
+"user before demoting this one."
+msgstr ""
+"Minst en bruker må være teknisk administrator. Gi en annen bruker denne "
+"rollen før du fjerner den fra denne brukeren."
+
+#: .\core\forms\users.py:366
+msgid ""
+"At least one user must be technical administrator. Please promote another "
+"user before deleting this one."
+msgstr ""
+"Minst en bruker må være teknisk administrator. Gi en annen bruker denne "
+"rollen før du sletter denne brukeren."
+
+#: .\core\forms\users.py:388
+msgid ""
+"At least one group with management permissions must exist. Please promote "
+"another group before deleting this one."
+msgstr ""
+"Det må finnes minst en gruppe med administrasjonstillatelser. Gi en annen "
+"gruppe disse tillatelsene før du sletter denne gruppen."
+
+#: .\core\forms\users.py:497
+msgid "OIDC Provider URL"
+msgstr "URL til OIDC-leverandør"
+
+#: .\core\forms\users.py:497
+msgid "The base URL of the OIDC provider."
+msgstr "Basis-URL-en til OIDC-leverandøren."
+
+#: .\core\forms\users.py:539
+msgid "Leave empty to keep the current secret."
+msgstr "La feltet stå tomt for å beholde den gjeldende klienthemmeligheten."
+
+#: .\core\management\commands\devdata.py:26
+msgid "Volunteers"
+msgstr "Frivillige"
+
+#: .\core\management\commands\devdata.py:30
+msgid "Planners"
+msgstr "Planleggere"
+
+#: .\core\management\commands\devdata.py:34
+msgid "Managers"
+msgstr "Ledere"
+
+#: .\core\management\commands\devdata.py:50
+msgid "Service"
+msgstr "Tjeneste"
+
+#: .\core\management\commands\devdata.py:51
+msgid "Training"
+msgstr "Opplæring"
+
+#: .\core\models\events.py:58
+msgid "to logged in users"
+msgstr "for innloggede brukere"
+
+#: .\core\models\events.py:59
+msgid "to confirmed participants"
+msgstr "for bekreftede deltakere"
+
+#: .\core\models\events.py:60
+msgid "only to responsible users"
+msgstr "bare for ansvarlige brukere"
+
+#: .\core\models\events.py:61
+msgid "to everyone including guests and federated users"
+msgstr "for alle, inkludert gjester og fødererte brukere"
+
+#: .\core\models\events.py:63 .\core\models\events.py:90
+#: .\core\models\users.py:273 .\core\models\users.py:300
+msgid "title"
+msgstr "tittel"
+
+#: .\core\models\events.py:64
+msgid "color"
+msgstr "farge"
+
+#: .\core\models\events.py:66
+msgid "show participant data"
+msgstr "vis deltakeropplysninger"
+
+#: .\core\models\events.py:68
+msgid ""
+"If you restrict who can see participant data, others will only be able to "
+"see that there is a participation, but not from whom."
+msgstr ""
+"Hvis du begrenser hvem som kan se deltakeropplysninger, vil andre bare kunne "
+"se at noen deltar, men ikke hvem."
+
+#: .\core\models\events.py:74
+msgid "default description"
+msgstr "standardbeskrivelse"
+
+#: .\core\models\events.py:77
+msgid "New events of this type will start out with this description."
+msgstr ""
+"Nye arrangementer av denne typen får denne beskrivelsen som utgangspunkt."
+
+#: .\core\models\events.py:82
+msgid "event types"
+msgstr "arrangementstyper"
+
+#: .\core\models\events.py:91
+msgid "description"
+msgstr "beskrivelse"
+
+#: .\core\models\events.py:92
+msgid "location"
+msgstr "sted"
+
+#: .\core\models\events.py:94
+msgid "active"
+msgstr "aktiv"
+
+#: .\core\models\events.py:103 .\core\models\events.py:378
+msgid "event"
+msgstr "arrangement"
+
+#: .\core\models\events.py:104
+msgid "events"
+msgstr "arrangementer"
+
+#: .\core\models\events.py:253 .\core\views\notifications.py:147
+msgid "requested"
+msgstr "forespurt"
+
+#: .\core\models\events.py:254 .\core\views\event.py:84
+#: .\core\views\notifications.py:146
+msgid "confirmed"
+msgstr "bekreftet"
+
+#: .\core\models\events.py:255
+msgid "declined by user"
+msgstr "avslått av bruker"
+
+#: .\core\models\events.py:256
+msgid "rejected by responsible"
+msgstr "avvist av ansvarlig"
+
+#: .\core\models\events.py:257
+msgid "getting dispatched"
+msgstr "under tildeling"
+
+#: .\core\models\events.py:270 .\core\models\events.py:402
+msgid "shift"
+msgstr "vakt"
+
+#: .\core\models\events.py:273
+msgid "state"
+msgstr "status"
+
+#: .\core\models\events.py:276
+msgid "Data on where this participation lives in the shift structure"
+msgstr "Opplysninger om denne deltakelsens plass i vaktstrukturen"
+
+#: .\core\models\events.py:282
+msgid "individual start time"
+msgstr "individuell starttid"
+
+#: .\core\models\events.py:283
+msgid "individual end time"
+msgstr "individuell sluttid"
+
+#: .\core\models\events.py:289
+msgid "finished"
+msgstr "fullført"
+
+#: .\core\models\events.py:338
+msgid "responsibles only"
+msgstr "bare ansvarlige"
+
+#: .\core\models\events.py:339
+msgid "responsibles and corresponding participant"
+msgstr "ansvarlige og den aktuelle deltakeren"
+
+#: .\core\models\events.py:340 .\plugins\complexsignup\models.py:68
+msgid "everyone"
+msgstr "alle"
+
+#: .\core\models\events.py:346
+msgid "Participation"
+msgstr "Deltakelse"
+
+#: .\core\models\events.py:353
+msgid "Responsible user"
+msgstr "Ansvarlig bruker"
+
+#: .\core\models\events.py:355
+msgid "created at"
+msgstr "opprettet"
+
+#: .\core\models\events.py:357
+msgid "visible for"
+msgstr "synlig for"
+
+#: .\core\models\events.py:359 .\core\models\events.py:362
+#: .\core\signup\forms.py:28
+msgid "Comment"
+msgstr "Kommentar"
+
+#: .\core\models\events.py:363
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: .\core\models\events.py:367
+#, python-brace-format
+msgid "\"{text}\" by {author} on {participation}"
+msgstr "\"{text}\" av {author} om {participation}"
+
+#: .\core\models\events.py:380
+msgid "meeting time"
+msgstr "oppmøtetid"
+
+#: .\core\models\events.py:384
+msgctxt "shift label"
+msgid "label"
+msgstr "vaktnavn"
+
+#: .\core\models\events.py:387
+msgid "Optional label to help differentiate multiple shifts in an event."
+msgstr ""
+"Valgfritt navn som gjør det lettere å skille mellom flere vakter i et "
+"arrangement."
+
+#: .\core\models\events.py:389
+msgid "signup flow"
+msgstr "påmeldingsflyt"
+
+#: .\core\models\events.py:394
+msgid "structure"
+msgstr "struktur"
+
+#: .\core\models\events.py:403
+msgid "shifts"
+msgstr "vakter"
+
+#: .\core\models\events.py:520
+#: .\core\templates\core\fragments\shift_box_small.html:26
+msgid "Signup flow"
+msgstr "Påmeldingsflyt"
+
+#: .\core\models\events.py:521 .\core\templates\core\shift_form.html:46
+msgid "Structure"
+msgstr "Struktur"
+
+#: .\core\models\events.py:534
+msgid "Participant"
+msgstr "Deltaker"
+
+#: .\core\models\events.py:556
+msgid "participation"
+msgstr "deltakelse"
+
+#: .\core\models\events.py:557
+msgid "participations"
+msgstr "deltakelser"
+
+#: .\core\models\events.py:582
+msgid "placeholder participation"
+msgstr "plassholderdeltakelse"
+
+#: .\core\models\events.py:583
+msgid "placeholder participations"
+msgstr "plassholderdeltakelser"
+
+#: .\core\models\users.py:100 .\plugins\federation\models.py:142
+#: .\plugins\guests\models.py:52
+msgid "email address"
+msgstr "e-postadresse"
+
+#: .\core\models\users.py:101
+msgid "Email address invalid"
+msgstr "Ugyldig e-postadresse"
+
+#: .\core\models\users.py:102
+msgid "Active"
+msgstr "Aktiv"
+
+#: .\core\models\users.py:103
+msgid "Visible"
+msgstr "Synlig"
+
+#: .\core\models\users.py:108 .\plugins\federation\models.py:143
+#: .\plugins\guests\models.py:53
+msgid "name"
+msgstr "navn"
+
+#: .\core\models\users.py:109 .\plugins\federation\models.py:144
+#: .\plugins\guests\models.py:54
+msgid "date of birth"
+msgstr "fødselsdato"
+
+#: .\core\models\users.py:110 .\plugins\federation\models.py:145
+#: .\plugins\guests\models.py:55
+msgid "phone number"
+msgstr "telefonnummer"
+
+#: .\core\models\users.py:111
+msgid "calendar token"
+msgstr "tilgangsnøkkel for kalenderen"
+
+#: .\core\models\users.py:113
+msgid "preferred language"
+msgstr "foretrukket språk"
+
+#: .\core\models\users.py:132 .\core\models\users.py:376
+msgid "user profile"
+msgstr "brukerprofil"
+
+#: .\core\models\users.py:133
+msgid "user profiles"
+msgstr "brukerprofiler"
+
+#: .\core\models\users.py:142
+msgid "User profile with this email address already exists."
+msgstr "Det finnes allerede en brukerprofil med denne e-postadressen."
+
+#: .\core\models\users.py:276
+msgid "Show qualifications of this category everywhere a user is presented"
+msgstr "Vis kvalifikasjoner i denne kategorien overalt der en bruker vises"
+
+#: .\core\models\users.py:282
+msgid "qualification category"
+msgstr "kvalifikasjonskategori"
+
+#: .\core\models\users.py:283
+msgid "qualification categories"
+msgstr "kvalifikasjonskategorier"
+
+#: .\core\models\users.py:301
+#: .\plugins\qualification_management\templates\core\qualification_list.html:29
+msgid "Abbreviation"
+msgstr "Forkortelse"
+
+#: .\core\models\users.py:306
+msgid "category"
+msgstr "kategori"
+
+#: .\core\models\users.py:311
+msgid "Included"
+msgstr "Inkluderte kvalifikasjoner"
+
+#: .\core\models\users.py:312
+msgid "other qualifications that this qualification includes"
+msgstr "andre kvalifikasjoner som denne kvalifikasjonen omfatter"
+
+#: .\core\models\users.py:316
+msgid "imported"
+msgstr "importert"
+
+#: .\core\models\users.py:321 .\core\models\users.py:369
+msgid "qualification"
+msgstr "kvalifikasjon"
+
+#: .\core\models\users.py:322
+msgid "qualifications"
+msgstr "kvalifikasjoner"
+
+#: .\core\models\users.py:380 .\core\templates\core\userprofile_form.html:72
+msgid "externally managed"
+msgstr "administrert eksternt"
+
+#: .\core\models\users.py:382 .\core\templates\core\userprofile_form.html:71
+msgid "The qualification was granted by an external system."
+msgstr "Kvalifikasjonen ble tildelt av et eksternt system."
+
+#: .\core\models\users.py:390
+msgid "Qualification grant"
+msgstr "Kvalifikasjonstildeling"
+
+#: .\core\models\users.py:391
+msgid "Qualification grants"
+msgstr "Kvalifikasjonstildelinger"
+
+#: .\core\models\users.py:394
+#, python-brace-format
+msgid "{qualification} for {user}"
+msgstr "{qualification} for {user}"
+
+#: .\core\models\users.py:417 .\core\models\users.py:533
+msgid "affected user"
+msgstr "berørt bruker"
+
+#: .\core\models\users.py:423
+msgid "needs confirmation"
+msgstr "krever bekreftelse"
+
+#: .\core\models\users.py:424
+msgid "executed"
+msgstr "utført"
+
+#: .\core\models\users.py:425
+msgid "failed"
+msgstr "mislyktes"
+
+#: .\core\models\users.py:426
+msgid "denied"
+msgstr "avslått"
+
+#: .\core\models\users.py:432 .\core\views\event.py:79
+msgid "State"
+msgstr "Status"
+
+#: .\core\models\users.py:437
+msgid "Consequence"
+msgstr "Oppfølgingstiltak"
+
+#: .\core\models\users.py:438
+msgid "Consequences"
+msgstr "Oppfølgingstiltak"
+
+#: .\core\models\users.py:457
+msgid "Consequence was executed already."
+msgstr "Oppfølgingstiltaket er allerede gjennomført."
+
+#: .\core\models\users.py:471
+#: .\core\templates\core\userprofile_workinghours.html:43
+#: .\core\views\workinghours.py:323
+msgid "Reason"
+msgstr "Årsak"
+
+#: .\core\models\users.py:485
+msgid "Consequence was executed or denied already."
+msgstr "Oppfølgingstiltaket er allerede gjennomført eller avslått."
+
+#: .\core\models\users.py:514
+msgid "Hours of work"
+msgstr "Arbeidstimer"
+
+#: .\core\models\users.py:515
+msgid "Occasion"
+msgstr "Årsak"
+
+#: .\core\models\users.py:520 .\core\models\users.py:521 .\core\signals.py:295
+#: .\core\templates\core\userprofile_list.html:111
+#: .\core\templates\core\workinghours_list.html:9
+#: .\core\templates\core\workinghours_list.html:14 .\templates\base.html:144
+msgid "Working hours"
+msgstr "Arbeidstimer"
+
+#: .\core\models\users.py:536
+msgid "read"
+msgstr "lest"
+
+#: .\core\models\users.py:539
+msgid "processing completed"
+msgstr "behandling fullført"
+
+#: .\core\models\users.py:541
+msgid ""
+"All enabled notification backends have processed this notification when flag "
+"is set"
+msgstr ""
+"Når flagget er satt, har alle aktiverte varslingstjenester behandlet dette "
+"varselet"
+
+#: .\core\models\users.py:549
+msgid ""
+"List of slugs of notification backends that have processed this notification"
+msgstr ""
+"Liste over slug-verdiene til varslingstjenestene som har behandlet dette "
+"varselet"
+
+#: .\core\models\users.py:557
+#, python-brace-format
+msgid "{subject} for {user}"
+msgstr "{subject} til {user}"
+
+#: .\core\models\users.py:557 .\plugins\guests\models.py:136
+msgid "Guest"
+msgstr "Gjest"
+
+#: .\core\models\users.py:598
+msgid "internal name"
+msgstr "internt navn"
+
+#: .\core\models\users.py:599
+msgid "Internal name for this provider."
+msgstr "Internt navn for denne leverandøren."
+
+#: .\core\models\users.py:604
+msgid "label"
+msgstr "visningsnavn"
+
+#: .\core\models\users.py:605
+msgid "The label displayed to users attempting to log in with this provider."
+msgstr ""
+"Navnet som vises til brukere som prøver å logge inn med denne leverandøren."
+
+#: .\core\models\users.py:609
+msgid "client id"
+msgstr "klient-ID"
+
+#: .\core\models\users.py:610
+msgid "Your client id provided by the OIDC provider."
+msgstr "Din klient-ID fra OIDC-leverandøren."
+
+#: .\core\models\users.py:614
+msgid "client secret"
+msgstr "klienthemmelighet"
+
+#: .\core\models\users.py:615
+msgid "Your client secret provided by the OIDC provider."
+msgstr "Din klienthemmelighet fra OIDC-leverandøren."
+
+#: .\core\models\users.py:620
+msgid "scopes"
+msgstr "tilgangsomfang"
+
+#: .\core\models\users.py:622
+msgid ""
+"The OIDC scopes to request from the provider. Separate multiple scopes with "
+"spaces. Use the default value if you are unsure."
+msgstr ""
+"OIDC-tilgangsomfangene som skal forespørres fra leverandøren. Skill flere "
+"tilgangsomfang med mellomrom. Bruk standardverdien hvis du er usikker."
+
+#: .\core\models\users.py:626
+msgid "authorization endpoint"
+msgstr "autorisasjonsendepunkt"
+
+#: .\core\models\users.py:626
+msgid "The OIDC authorization endpoint."
+msgstr "OIDC-autorisasjonsendepunktet."
+
+#: .\core\models\users.py:629
+msgid "token endpoint"
+msgstr "tokenendepunkt"
+
+#: .\core\models\users.py:629
+msgid "The OIDC token endpoint."
+msgstr "OIDC-tokenendepunktet."
+
+#: .\core\models\users.py:632
+msgid "user endpoint"
+msgstr "endepunkt for brukeropplysninger"
+
+#: .\core\models\users.py:632
+msgid "The OIDC user endpoint."
+msgstr "OIDC-endepunktet for brukeropplysninger."
+
+#: .\core\models\users.py:637
+msgid "end session endpoint"
+msgstr "endepunkt for utlogging"
+
+#: .\core\models\users.py:638
+msgid "The OIDC end session endpoint, if supported by your provider."
+msgstr "OIDC-endepunktet for utlogging, hvis leverandøren din støtter det."
+
+#: .\core\models\users.py:643
+msgid "JWKS endpoint"
+msgstr "JWKS-endepunkt"
+
+#: .\core\models\users.py:645
+msgid ""
+"The OIDC JWKS endpoint. A less secure signing method will be used if this is "
+"not provided."
+msgstr ""
+"OIDC-JWKS-endepunktet. En mindre sikker signeringsmetode brukes hvis dette "
+"ikke er angitt."
+
+#: .\core\models\users.py:651
+msgid "default groups"
+msgstr "standardgrupper"
+
+#: .\core\models\users.py:652
+msgid "The groups that users logging in with this provider will be added to."
+msgstr ""
+"Brukere som logger inn med denne leverandøren, legges til i disse gruppene."
+
+#: .\core\models\users.py:657
+msgid "group claim"
+msgstr "gruppeattributt"
+
+#: .\core\models\users.py:659
+msgid ""
+"The name of the claim that contains the user's groups. Leave empty if your "
+"provider does not support this. You can use dot notation to access nested "
+"claims."
+msgstr ""
+"Navnet på attributtet som inneholder brukerens grupper. La feltet stå tomt "
+"hvis leverandøren din ikke støtter dette. Du kan bruke punktnotasjon for å "
+"få tilgang til nestede attributter."
+
+#: .\core\models\users.py:665
+msgid "create missing groups"
+msgstr "opprett manglende grupper"
+
+#: .\core\models\users.py:667
+msgid ""
+"If enabled, groups from the claim defined above that do not exist yet will "
+"be created automatically."
+msgstr ""
+"Hvis dette er aktivert, opprettes grupper fra attributtet angitt ovenfor "
+"automatisk hvis de ikke finnes fra før."
+
+#: .\core\models\users.py:673
+msgid "qualification claim"
+msgstr "kvalifikasjonsattributt"
+
+#: .\core\models\users.py:675
+msgid ""
+"The name of the claim that contains the user's qualifications. Leave empty "
+"if your provider does not support this. You can use dot notation to access "
+"nested claims. Granted qualifications not found in the claim will be removed "
+"from the user on login."
+msgstr ""
+"Navnet på attributtet som inneholder brukerens kvalifikasjoner. La feltet "
+"stå tomt hvis leverandøren din ikke støtter dette. Du kan bruke "
+"punktnotasjon for å få tilgang til nestede attributter. Tildelte "
+"kvalifikasjoner som ikke finnes i attributtet, fjernes fra brukeren ved "
+"innlogging."
+
+#: .\core\models\users.py:681
+msgid "qualification codename to uuid"
+msgstr "kobling fra kvalifikasjonens kodenavn til UUID"
+
+#: .\core\models\users.py:683
+msgid ""
+"A json encoded dictionary containing mappings of qualification names as they "
+"appear in thequalification claim to the qualification uuid. If a key is not "
+"found, use the key directly."
+msgstr ""
+"En JSON-kodet ordbok som kobler kvalifikasjonsnavnene i "
+"kvalifikasjonsattributtet til kvalifikasjonenes UUID-er. Hvis en nøkkel ikke "
+"finnes i ordboken, brukes nøkkelen direkte."
+
+#: .\core\models\users.py:691
+msgid "Identity provider"
+msgstr "Identitetsleverandør"
+
+#: .\core\models\users.py:692
+#: .\core\templates\core\identityprovider_list.html:5
+#: .\core\views\settings.py:71
+msgid "Identity providers"
+msgstr "Identitetsleverandører"
+
+#: .\core\models\users.py:695
+#, python-brace-format
+msgid "Identity provider {label}"
+msgstr "Identitetsleverandør {label}"
+
+#: .\core\pdf.py:58
+#: .\core\templates\core\settings\settings_personal_data.html:40
+#: .\core\templates\core\userprofile_form.html:53
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\qualification_mix\configuration_form.html:13
+#: .\plugins\guests\models.py:58
+#: .\plugins\qualification_management\signals.py:17
+msgid "Qualifications"
+msgstr "Kvalifikasjoner"
+
+#: .\core\pdf.py:133 .\core\pdf.py:182
+#: .\core\templates\core\mails\new_event.html:29
+#: .\core\templates\core\shift_form.html:104
+msgid "Location"
+msgstr "Sted"
+
+#: .\core\pdf.py:139
+msgid "Time"
+msgstr "Tid"
+
+#: .\core\pdf.py:155 .\core\pdf.py:203
+msgid "Participants"
+msgstr "Deltakere"
+
+#: .\core\services\health\healthchecks.py:79
+msgid "Database"
+msgstr "Database"
+
+#: .\core\services\health\healthchecks.py:80
+msgid "The database is the central storage for all data."
+msgstr "Alle data lagres sentralt i databasen."
+
+#: .\core\services\health\healthchecks.py:94
+msgid "Using SQLite, which should not be used in production."
+msgstr "Bruker SQLite, som ikke bør brukes i produksjon."
+
+#: .\core\services\health\healthchecks.py:97
+msgid "Database connection established."
+msgstr "Tilkobling til databasen er opprettet."
+
+#: .\core\services\health\healthchecks.py:102
+msgid "Cache"
+msgstr "Hurtigbuffer"
+
+#: .\core\services\health\healthchecks.py:103
+msgid "The cache is used to store temporary data."
+msgstr "Hurtigbufferen brukes til å lagre midlertidige data."
+
+#: .\core\services\health\healthchecks.py:121
+msgid "Using LocMemCache, which should not be used in production."
+msgstr "Bruker LocMemCache, som ikke bør brukes i produksjon."
+
+#: .\core\services\health\healthchecks.py:124
+msgid "Cache connection established."
+msgstr "Tilkobling til hurtigbufferen er opprettet."
+
+#: .\core\services\health\healthchecks.py:129
+msgid "Cronjob"
+msgstr "Cron-jobb"
+
+#: .\core\services\health\healthchecks.py:131
+msgid ""
+"A cron job must regularly call ephios to do recurring tasks like sending "
+"notifications."
+msgstr ""
+"En cron-jobb må kjøre ephios regelmessig for å utføre gjentakende oppgaver, "
+"som å sende varsler."
+
+#: .\core\services\health\healthchecks.py:142
+#, python-brace-format
+msgid "Last run {last_call}."
+msgstr "Sist kjørt {last_call}."
+
+#: .\core\services\health\healthchecks.py:148
+#, python-brace-format
+msgid "Cronjob stuck, last run {last_call}."
+msgstr "Cron-jobben har stoppet opp. Sist kjørt {last_call}."
+
+#: .\core\services\health\healthchecks.py:155
+msgid "Cronjob stuck, no last run."
+msgstr "Cron-jobben har stoppet opp. Ingen tidligere kjøring er registrert."
+
+#: .\core\services\health\healthchecks.py:161
+msgid "Disk space"
+msgstr "Diskplass"
+
+#: .\core\services\health\healthchecks.py:162
+msgid "Disk space needs to be available to store data."
+msgstr "Det må være ledig diskplass for å lagre data."
+
+#: .\core\services\health\healthchecks.py:177
+msgid ""
+"Less than 100 MB of disk space available. Please free up some disk space."
+msgstr "Mindre enn 100 MB ledig diskplass. Frigjør diskplass."
+
+#: .\core\services\health\healthchecks.py:184
+msgid "Less than 1 GB of disk space available. Please free up some disk space."
+msgstr "Mindre enn 1 GB ledig diskplass. Frigjør diskplass."
+
+#: .\core\services\health\healthchecks.py:190
+#, python-brace-format
+msgid "{disk_space} of disk space available."
+msgstr "{disk_space} ledig diskplass."
+
+#: .\core\services\notifications\backends.py:139
+msgid "via email"
+msgstr "via e-post"
+
+#: .\core\services\notifications\backends.py:164
+msgid "via push notification"
+msgstr "via pushvarsel"
+
+#: .\core\services\notifications\types.py:123
+#, python-brace-format
+msgid "Unknown content for notification #{}"
+msgstr "Ukjent innhold for varsel #{}"
+
+#: .\core\services\notifications\types.py:133
+msgid "Your profile has been edited"
+msgstr "Profilen din er redigert"
+
+#: .\core\services\notifications\types.py:141
+#, python-brace-format
+msgid "{platform} account updated"
+msgstr "Kontoen på {platform} er oppdatert"
+
+#: .\core\services\notifications\types.py:147
+#, python-brace-format
+msgid ""
+"You're receiving this email because your {platform} account at {org_name} "
+"has been updated."
+msgstr ""
+"Du mottar denne e-posten fordi kontoen din på {platform} hos {org_name} er "
+"oppdatert."
+
+#: .\core\services\notifications\types.py:155
+msgid "View profile"
+msgstr "Vis profil"
+
+#: .\core\services\notifications\types.py:164
+msgid "A new profile has been created"
+msgstr "En ny profil er opprettet"
+
+#: .\core\services\notifications\types.py:178
+#, python-brace-format
+msgid "Welcome to {}!"
+msgstr "Velkommen til {}!"
+
+#: .\core\services\notifications\types.py:184
+#, python-brace-format
+msgid ""
+"You're receiving this email because a new {platform} account has been "
+"created for you at {org_name}.\n"
+"Please go to the following page and choose a password: {url} \n"
+"Your username is your email address: {email}"
+msgstr ""
+"Du mottar denne e-posten fordi det er opprettet en ny konto på {platform} "
+"for deg hos {org_name}.\n"
+"Gå til følgende side og velg et passord: {url} \n"
+"Brukernavnet ditt er e-postadressen din: {email}"
+
+#: .\core\services\notifications\types.py:196
+#: .\core\templates\core\mails\new_account_email.html:11
+#: .\templates\registration\password_reset_confirm.html:7
+#: .\templates\registration\password_reset_confirm.html:19
+msgid "Set password"
+msgstr "Angi passord"
+
+#: .\core\services\notifications\types.py:225
+#: .\core\services\notifications\types.py:360
+#: .\core\services\notifications\types.py:568
+#: .\core\templates\core\mails\new_event.html:36
+#: .\core\templates\core\userprofile_workinghours.html:65
+#: .\plugins\guests\notifications.py:37
+msgid "View event"
+msgstr "Vis arrangement"
+
+#: .\core\services\notifications\types.py:253
+msgid "The state of your participation has changed"
+msgstr "Statusen for deltakelsen din er endret"
+
+#: .\core\services\notifications\types.py:260
+#, python-brace-format
+msgid "Participation {state} for {event}"
+msgstr "Deltakelse på {event}: {state}"
+
+#: .\core\services\notifications\types.py:276
+#, python-brace-format
+msgid "You requested a participation for {shift}."
+msgstr "Du har bedt om å delta på {shift}."
+
+#: .\core\services\notifications\types.py:278
+#, python-brace-format
+msgid "Your participation for {shift} is now confirmed."
+msgstr "Deltakelsen din på {shift} er nå bekreftet."
+
+#: .\core\services\notifications\types.py:281
+#, python-brace-format
+msgid "Your participation for {shift} has been rejected by a responsible user."
+msgstr "Deltakelsen din på {shift} er avvist av en ansvarlig bruker."
+
+#: .\core\services\notifications\types.py:284
+msgid "Your time is"
+msgstr "Vakttiden din er"
+
+#: .\core\services\notifications\types.py:290
+msgid "A confirmed participation of yours has been tweaked by a responsible"
+msgstr "En ansvarlig har justert en av dine bekreftede deltakelser"
+
+#: .\core\services\notifications\types.py:302
+#, python-brace-format
+msgid "Participation tweaked for {shift}"
+msgstr "Deltakelsen på {shift} er justert"
+
+#: .\core\services\notifications\types.py:310
+#, python-brace-format
+msgid "Your participation for {shift} has been tweaked by a responsible user."
+msgstr "Deltakelsen din på {shift} er justert av en ansvarlig bruker."
+
+#: .\core\services\notifications\types.py:363
+#: .\core\templates\core\disposition\disposition.html:8
+#: .\core\templates\core\fragments\shift_box_big.html:119
+#: .\core\templates\core\home.html:115
+msgid "Disposition"
+msgstr "Bemanning"
+
+#: .\core\services\notifications\types.py:372
+#, python-brace-format
+msgid "{participant} signed up for {shift}"
+msgstr "{participant} meldte seg på {shift}"
+
+#: .\core\services\notifications\types.py:374
+#, python-brace-format
+msgid "{participant} has requested to participate in {shift}"
+msgstr "{participant} har bedt om å delta på {shift}"
+
+#: .\core\services\notifications\types.py:377
+#, python-brace-format
+msgid "{participant} declined to participate in {shift}"
+msgstr "{participant} takket nei til å delta på {shift}"
+
+#: .\core\services\notifications\types.py:380
+#, python-brace-format
+msgid "{participant} was rejected for {shift}"
+msgstr "{participant} fikk avslag på deltakelse på {shift}"
+
+#: .\core\services\notifications\types.py:383
+#, python-brace-format
+msgid "{participant} is being dispatched for {shift}"
+msgstr "{participant} settes opp på {shift}"
+
+#: .\core\services\notifications\types.py:396
+msgid "A participation for your event awaits disposition"
+msgstr ""
+"En forespørsel om deltakelse på arrangementet ditt venter på behandling"
+
+#: .\core\services\notifications\types.py:410
+#, python-brace-format
+msgid "{participant} requested participating in {shift}."
+msgstr "{participant} ba om å delta på {shift}."
+
+#: .\core\services\notifications\types.py:420
+msgid "A participation for your event has changed state"
+msgstr "En deltakelse på arrangementet ditt har endret status"
+
+#: .\core\services\notifications\types.py:434
+#, python-brace-format
+msgid "The participation of {participant} for {shift} is now {state}."
+msgstr "Deltakelsen til {participant} på {shift} har nå status {state}."
+
+#: .\core\services\notifications\types.py:447
+msgid "A participant declined after having been confirmed for your event"
+msgstr ""
+"En deltaker meldte avbud etter at deltakelsen på arrangementet ditt var "
+"bekreftet"
+
+#: .\core\services\notifications\types.py:454
+#, python-brace-format
+msgid "{participant} declined their participation in {shift}."
+msgstr "{participant} takket nei til å delta på {shift}."
+
+#: .\core\services\notifications\types.py:463
+msgid "A confirmed participant altered their participation"
+msgstr "En bekreftet deltaker endret deltakelsen sin"
+
+#: .\core\services\notifications\types.py:470
+#, python-brace-format
+msgid "Participation altered for {event}"
+msgstr "Deltakelsen på {event} er endret"
+
+#: .\core\services\notifications\types.py:482
+#, python-brace-format
+msgid "{participant} altered their participation in {shift}."
+msgstr "{participant} endret deltakelsen sin på {shift}."
+
+#: .\core\services\notifications\types.py:501
+msgid "You received a message from another user"
+msgstr "Du har mottatt en melding fra en annen bruker"
+
+#: .\core\services\notifications\types.py:525
+#: .\core\services\notifications\types.py:564
+msgid "View message"
+msgstr "Vis melding"
+
+#: .\core\services\notifications\types.py:533
+msgid "A responsible shares information on an event"
+msgstr "En arrangementsansvarlig deler informasjon om et arrangement"
+
+#: .\core\services\notifications\types.py:580
+#: .\core\services\notifications\types.py:590
+msgid "Your request has been approved"
+msgstr "Forespørselen din er godkjent"
+
+#: .\core\services\notifications\types.py:595
+#, python-brace-format
+msgid "\"{consequence}\" has been approved."
+msgstr "\"{consequence}\" er godkjent."
+
+#: .\core\services\notifications\types.py:600
+#: .\core\services\notifications\types.py:610
+msgid "Your request has been denied"
+msgstr "Forespørselen din er avslått"
+
+#: .\core\services\notifications\types.py:615
+#, python-brace-format
+msgid "\"{consequence}\" has been denied."
+msgstr "\"{consequence}\" er avslått."
+
+#: .\core\services\password_reset.py:24
+#, python-brace-format
+msgid ""
+"The password for your {platform} account at {org_name} has been changed. If "
+"you didn't request this change, contact an administrator immediately."
+msgstr ""
+"Passordet til kontoen din på {platform} hos {org_name} er endret. Hvis du "
+"ikke ba om denne endringen, må du kontakte en administrator umiddelbart."
+
+#: .\core\services\password_reset.py:30
+#, python-brace-format
+msgid "Your {platform} password has been changed"
+msgstr "Passordet ditt på {platform} er endret"
+
+#: .\core\services\password_reset.py:38
+msgid "Your password has been changed"
+msgstr "Passordet ditt er endret"
+
+#: .\core\signals.py:328 .\core\templates\core\settings\settings_base.html:6
+#: .\core\templates\core\settings\settings_base.html:11
+#: .\templates\base.html:148
+msgid "Settings"
+msgstr "Innstillinger"
+
+#: .\core\signup\disposition.py:38
+msgid "Hide comment for participant"
+msgstr "Skjul kommentaren for deltakeren"
+
+#: .\core\signup\disposition.py:131
+msgid "search"
+msgstr "søk"
+
+#: .\core\signup\fallback.py:37
+msgid "Signup configuration is invalid!"
+msgstr "Påmeldingsoppsettet er ugyldig!"
+
+#: .\core\signup\fallback.py:51
+msgid "Fallback for missing signup flows"
+msgstr "Reserveløsning for manglende påmeldingsflyter"
+
+#: .\core\signup\fallback.py:52
+msgid ""
+"This flow is used when the original signup flow is not installed anymore."
+msgstr ""
+"Denne flyten brukes når den opprinnelige påmeldingsflyten ikke lenger er "
+"installert."
+
+#: .\core\signup\fallback.py:64
+msgid "Fallback for missing shift structures"
+msgstr "Reserveløsning for manglende vaktstrukturer"
+
+#: .\core\signup\fallback.py:66
+msgid ""
+"This structure is used when the original shift structure is not installed "
+"anymore."
+msgstr ""
+"Denne strukturen brukes når den opprinnelige vaktstrukturen ikke lenger er "
+"installert."
+
+#: .\core\signup\flow\__init__.py:24
+#, python-brace-format
+msgid "Signup Flow '{slug}' was not found."
+msgstr "Fant ikke påmeldingsflyten '{slug}'."
+
+#: .\core\signup\flow\abstract.py:50 .\core\signup\forms.py:132
+#: .\plugins\basesignupflows\flow\participant.py:37
+msgid "Sign up"
+msgstr "Meld deg på"
+
+#: .\core\signup\flow\abstract.py:51
+#, python-brace-format
+msgid "You have successfully signed up for {shift}."
+msgstr "Du er nå påmeldt {shift}."
+
+#: .\core\signup\flow\abstract.py:52
+#, python-brace-format
+msgid "Signing up failed: {error}"
+msgstr "Påmeldingen mislyktes: {error}"
+
+#: .\core\signup\flow\abstract.py:53
+#, python-brace-format
+msgid "You have successfully declined {shift}."
+msgstr "Du har takket nei til {shift}."
+
+#: .\core\signup\flow\abstract.py:54
+#, python-brace-format
+msgid "Declining failed: {error}"
+msgstr "Kunne ikke takke nei: {error}"
+
+#: .\core\signup\flow\base.py:32
+msgid "Signup until"
+msgstr "Påmeldingsfrist"
+
+#: .\core\signup\flow\base.py:35
+msgid "Confirmed users can decline by themselves"
+msgstr "Brukere med bekreftet deltakelse kan selv melde avbud"
+
+#: .\core\signup\flow\base.py:37
+msgid "only if the signup timeframe has not ended"
+msgstr "bare så lenge påmeldingsfristen ikke har gått ut"
+
+#: .\core\signup\flow\base.py:40
+msgid "Users can provide individual start and end times"
+msgstr "Brukere kan oppgi egne start- og sluttider"
+
+#: .\core\signup\flow\participant_validation.py:48
+msgid "The event is not active."
+msgstr "Arrangementet er ikke aktivt."
+
+#: .\core\signup\flow\participant_validation.py:58
+msgid "You cannot decline by yourself."
+msgstr "Du kan ikke melde avbud selv."
+
+#: .\core\signup\flow\participant_validation.py:60
+msgid "You have been rejected."
+msgstr "Du har fått avslag."
+
+#: .\core\signup\flow\participant_validation.py:62
+msgid "You have already declined participating."
+msgstr "Du har allerede takket nei til å delta."
+
+#: .\core\signup\flow\participant_validation.py:70
+msgid "The signup period is over."
+msgstr "Påmeldingsfristen har gått ut."
+
+#: .\core\signup\flow\participant_validation.py:79
+#, python-brace-format
+msgid ""
+"You lack the necessary qualification to participate in {eventtype} type "
+"events."
+msgstr ""
+"Du mangler kvalifikasjonen som kreves for å delta på arrangementer av typen "
+"{eventtype}."
+
+#: .\core\signup\flow\participant_validation.py:128 .\core\signup\forms.py:215
+#, python-brace-format
+msgid "You are already confirmed for other shifts at this time: {shifts}."
+msgstr ""
+"Deltakelsen din er allerede bekreftet på andre vakter i dette tidsrommet: "
+"{shifts}."
+
+#: .\core\signup\forms.py:21
+msgid "Individual start time"
+msgstr "Egen starttid"
+
+#: .\core\signup\forms.py:24
+msgid "Individual end time"
+msgstr "Egen sluttid"
+
+#: .\core\signup\forms.py:30
+msgid "Make comment visible for other participants"
+msgstr "Gjør kommentaren synlig for andre deltakere"
+
+#: .\core\signup\forms.py:57
+msgid "End time must not be before start time."
+msgstr "Sluttiden kan ikke være før starttiden."
+
+#: .\core\signup\forms.py:114
+#, python-brace-format
+msgid "{label} was changed from {initial} to {current}."
+msgstr "{label} ble endret fra {initial} til {current}."
+
+#: .\core\signup\forms.py:133
+#: .\core\templates\core\disposition\fragment_participation.html:54
+#: .\core\templates\core\fragments\shift_box_big.html:85
+#: .\core\templates\core\fragments\shift_box_big.html:93
+msgid "Customize"
+msgstr "Tilpass"
+
+#: .\core\signup\forms.py:134 .\core\signup\forms.py:169
+#: .\core\templates\core\fragments\shift_box_big.html:99
+msgid "Decline"
+msgstr "Takk nei"
+
+#: .\core\signup\forms.py:137
+msgid "Signup choice"
+msgstr "Påmeldingsvalg"
+
+#: .\core\signup\participants.py:142
+msgid "Placeholder"
+msgstr "Plassholder"
+
+#: .\core\signup\structure\__init__.py:24
+#, python-brace-format
+msgid "Shift structure '{slug}' was not found."
+msgstr "Vaktstrukturen '{slug}' ble ikke funnet."
+
+#: .\core\signup\views.py:99
+#, python-brace-format
+msgid ""
+"Please check that your individual start and end times do not overlap with "
+"these other confirmed participations: {shifts}"
+msgstr ""
+"Kontroller at tidsrommet mellom start- og sluttiden du har oppgitt, ikke "
+"overlapper med disse andre bekreftede deltakelsene: {shifts}"
+
+#: .\core\signup\views.py:114
+msgid "We need some additional information to sign you up for this shift."
+msgstr "Vi trenger noen flere opplysninger for å melde deg på denne vakten."
+
+#: .\core\signup\views.py:167
+msgid "There was an error saving your participation."
+msgstr "Det oppstod en feil ved lagring av deltakelsen din."
+
+#: .\core\signup\views.py:168
+msgid "Your participation was saved."
+msgstr "Deltakelsen din ble lagret."
+
+#: .\core\signup\views.py:170 .\core\signup\views.py:171
+msgid "This action is not allowed."
+msgstr "Denne handlingen er ikke tillatt."
+
+#: .\core\templates\core\disposition\disposition.html:42
+msgid "Add others"
+msgstr "Legg til andre"
+
+#: .\core\templates\core\disposition\fragment_participation.html:21
+#, python-format
+msgid "%(participant)s already participates in %(conflicts)s at the same time."
+msgstr "%(participant)s deltar allerede på %(conflicts)s på samme tidspunkt."
+
+#: .\core\templates\core\disposition\fragment_participation.html:28
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\participation_card_inline.html:34
+msgid "Minor"
+msgstr "Mindreårig"
+
+#: .\core\templates\core\event_bulk_delete.html:5
+#: .\core\templates\core\event_bulk_delete.html:10
+msgid "Delete events"
+msgstr "Slett arrangementer"
+
+#: .\core\templates\core\event_bulk_delete.html:12
+msgid "Are you sure that you want to delete the following events?"
+msgstr "Er du sikker på at du vil slette følgende arrangementer?"
+
+#: .\core\templates\core\event_confirm_delete.html:6
+#: .\core\templates\core\event_confirm_delete.html:11
+#: .\core\templates\core\event_detail.html:61
+msgid "Delete event"
+msgstr "Slett arrangement"
+
+#: .\core\templates\core\event_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the event \"%(object)s\"?"
+msgstr "Er du sikker på at du vil slette arrangementet \"%(object)s\"?"
+
+#: .\core\templates\core\event_copy.html:7
+#: .\core\templates\core\event_copy.html:21
+#: .\core\templates\core\event_detail.html:70
+msgid "Copy event"
+msgstr "Kopier arrangement"
+
+#: .\core\templates\core\event_detail.html:25
+msgid ""
+"This event has not been saved! If you are done editing the event, you can "
+"save it."
+msgstr ""
+"Dette arrangementet er ikke lagret! Hvis du er ferdig med å redigere "
+"arrangementet, kan du lagre det."
+
+#: .\core\templates\core\event_detail.html:32
+msgid "This event has not been saved! Please add a shift to save this event."
+msgstr ""
+"Dette arrangementet er ikke lagret! Legg til en vakt for å lagre "
+"arrangementet."
+
+#: .\core\templates\core\event_detail.html:50
+#: .\core\templates\core\event_form.html:10
+#: .\core\templates\core\event_form.html:26
+msgid "Edit event"
+msgstr "Rediger arrangement"
+
+#: .\core\templates\core\event_detail.html:55
+#: .\core\templates\core\shift_form.html:82
+msgid "Add another shift"
+msgstr "Legg til en vakt til"
+
+#: .\core\templates\core\event_detail.html:76
+msgid "Download PDF"
+msgstr "Last ned PDF"
+
+#: .\core\templates\core\event_detail.html:81
+msgid "Send notifications"
+msgstr "Send varsler"
+
+#: .\core\templates\core\event_detail.html:88
+msgid "View edit history"
+msgstr "Vis endringshistorikk"
+
+#: .\core\templates\core\event_detail.html:114
+#: .\core\templates\core\fragments\event_list_list_mode.html:121
+#: .\core\templates\core\mails\new_event.html:19
+#: .\core\templates\core\mass_notification_write.html:57
+#: .\core\templates\core\userprofile_workinghours.html:19
+#: .\core\templates\core\workinghours_list.html:18
+#: .\plugins\federation\templates\federation\external_event_list.html:66
+#: .\plugins\guests\templates\guests\guestuser_form.html:14
+msgid "to"
+msgstr "til"
+
+#: .\core\templates\core\event_detail.html:128
+#: .\core\templates\core\fragments\event_list_list_mode.html:80
+msgid "Event has not been made visible to any groups."
+msgstr "Arrangementet er ikke gjort synlig for noen grupper."
+
+#: .\core\templates\core\event_detail.html:131
+#: .\core\templates\core\fragments\event_list_list_mode.html:78
+msgid "Viewable by"
+msgstr "Synlig for"
+
+#: .\core\templates\core\event_detail.html:147
+msgid "No shifts"
+msgstr "Ingen vakter"
+
+#: .\core\templates\core\event_form.html:12
+msgid "Create new event"
+msgstr "Opprett nytt arrangement"
+
+#: .\core\templates\core\event_form.html:19
+msgid "You have an unsaved event"
+msgstr "Du har et arrangement som ikke er lagret"
+
+#: .\core\templates\core\event_form.html:29
+#, python-format
+msgid "Create new %(title)s"
+msgstr "Opprett %(title)s"
+
+#: .\core\templates\core\event_form.html:46
+msgid "Permissions"
+msgstr "Tillatelser"
+
+#: .\core\templates\core\event_form.html:69
+msgid "Next"
+msgstr "Neste"
+
+#: .\core\templates\core\event_list.html:11
+#: .\core\templates\core\event_list.html:22 .\core\views\pwa.py:67
+#: .\templates\base.html:104
+msgid "Events"
+msgstr "Arrangementer"
+
+#: .\core\templates\core\event_list.html:26
+#: .\core\templates\core\logentry_list.html:53
+#: .\core\templates\core\userprofile_workinghours.html:23
+#: .\core\templates\core\workinghours_list.html:22
+msgid "Filter"
+msgstr "Filtrer"
+
+#: .\core\templates\core\event_list.html:73
+#: .\core\templates\core\userprofile_list.html:29
+msgid "Apply"
+msgstr "Bruk"
+
+#: .\core\templates\core\event_list.html:77
+#: .\core\templates\core\userprofile_list.html:31
+msgid "Reset"
+msgstr "Tilbakestill"
+
+#: .\core\templates\core\event_notification.html:7
+#: .\core\templates\core\event_notification.html:16
+msgid "Event notifications"
+msgstr "Arrangementsvarsler"
+
+#: .\core\templates\core\eventtype_confirm_delete.html:7
+#, python-format
+msgid "Are you sure you want to delete the eventtype \"%(eventtype)s\"?"
+msgstr "Er du sikker på at du vil slette arrangementstypen \"%(eventtype)s\"?"
+
+#: .\core\templates\core\eventtype_form.html:7
+msgid "Edit event type"
+msgstr "Rediger arrangementstype"
+
+#: .\core\templates\core\eventtype_form.html:9
+#: .\core\templates\core\eventtype_list.html:6
+msgid "Add event type"
+msgstr "Legg til arrangementstype"
+
+#: .\core\templates\core\eventtype_list.html:10
+#: .\plugins\baseshiftstructures\structure\named_teams.py:94
+#: .\plugins\files\models.py:12
+#: .\plugins\files\templates\files\document_list.html:22
+#: .\plugins\pages\models.py:9
+#: .\plugins\pages\templates\pages\page_list.html:10
+#: .\plugins\qualification_management\templates\core\qualification_list.html:28
+#: .\plugins\simpleresource\models.py:30
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:19
+msgid "Title"
+msgstr "Tittel"
+
+#: .\core\templates\core\fragments\approve_consequences.html:8
+msgid "Confirm results"
+msgstr "Bekreft resultater"
+
+#: .\core\templates\core\fragments\calendar_day.html:23
+#: .\core\templates\core\fragments\event_list_day_mode.html:104
+msgid "more"
+msgstr "flere"
+
+#: .\core\templates\core\fragments\event_list_add_event_button.html:7
+msgid "Add event"
+msgstr "Legg til arrangement"
+
+#: .\core\templates\core\fragments\event_list_add_event_button.html:12
+#, python-format
+msgid "Add %(title)s"
+msgstr "Legg til %(title)s"
+
+#: .\core\templates\core\fragments\event_list_day_mode.html:52
+#: .\core\templates\core\fragments\event_list_list_mode.html:135
+#: .\plugins\federation\templates\federation\external_event_list.html:78
+msgid "No results"
+msgstr "Ingen resultater"
+
+#: .\core\templates\core\fragments\event_list_list_mode.html:13
+msgid "Delete selected"
+msgstr "Slett valgte"
+
+#: .\core\templates\core\fragments\event_list_list_mode.html:83
+#, python-format
+msgid "%(waiting)s participation is awaiting disposition."
+msgid_plural "%(waiting)s participations are awaiting disposition."
+msgstr[0] "%(waiting)s deltakelse venter på behandling."
+msgstr[1] "%(waiting)s deltakelser venter på behandling."
+
+#: .\core\templates\core\fragments\event_list_list_mode.html:89
+#, python-format
+msgid "%(confirmed)s confirmed participation."
+msgid_plural "%(confirmed)s confirmed participations."
+msgstr[0] "%(confirmed)s bekreftet deltakelse."
+msgstr[1] "%(confirmed)s bekreftede deltakelser."
+
+#: .\core\templates\core\fragments\pending_consequences.html:8
+msgid "Your requests"
+msgstr "Dine forespørsler"
+
+#: .\core\templates\core\fragments\shift_box_big.html:18
+msgid "participants needed"
+msgstr "deltakere trengs"
+
+#: .\core\templates\core\fragments\shift_box_big.html:21
+msgid "enough participants"
+msgstr "nok deltakere"
+
+#: .\core\templates\core\fragments\shift_box_big.html:24
+#: .\core\templates\core\fragments\signup_stats_indicator.html:21
+msgid "full"
+msgstr "full"
+
+#: .\core\templates\core\fragments\shift_box_big.html:27
+msgid "unit optional"
+msgstr "enheten er valgfri"
+
+#: .\core\templates\core\fragments\shift_box_big.html:129
+msgid "Signup ends"
+msgstr "Påmeldingsfrist"
+
+#: .\core\templates\core\fragments\shift_box_small.html:9
+#: .\core\templates\core\shift_form.html:114
+#: .\plugins\simpleresource\models.py:51
+msgid "Shift"
+msgstr "Vakt"
+
+#: .\core\templates\core\fragments\shift_header.html:18
+#: .\core\templates\core\fragments\shift_header.html:30
+#: .\core\templates\core\fragments\shift_header.html:37
+msgid "originally"
+msgstr "opprinnelig"
+
+#: .\core\templates\core\fragments\shift_header.html:44
+msgid "Meetup"
+msgstr "Oppmøte"
+
+#: .\core\templates\core\fragments\shift_signup_config_form.html:7
+msgid "Documentation"
+msgstr "Dokumentasjon"
+
+#: .\core\templates\core\fragments\shift_structure_render_error.html:4
+msgid "We're sorry! There is a problem displaying the state of the shift."
+msgstr "Beklager! Det er et problem med å vise vaktens status."
+
+#: .\core\templates\core\fragments\signup_stats_indicator.html:5
+#, python-format
+msgctxt "signup stats"
+msgid "%(count)s missing"
+msgid_plural "%(count)s missing"
+msgstr[0] "%(count)s mangler"
+msgstr[1] "%(count)s mangler"
+
+#: .\core\templates\core\fragments\signup_stats_indicator.html:14
+#, python-format
+msgctxt "signup stats"
+msgid "%(count)s open"
+msgid_plural "%(count)s open"
+msgstr[0] "%(count)s ledig"
+msgstr[1] "%(count)s ledige"
+
+#: .\core\templates\core\fragments\signup_stats_indicator.html:23
+msgid "open"
+msgstr "åpen"
+
+#: .\core\templates\core\group_confirm_delete.html:7
+#: .\core\templates\core\group_confirm_delete.html:12
+msgid "Delete group"
+msgstr "Slett gruppe"
+
+#: .\core\templates\core\group_confirm_delete.html:17
+#, python-format
+msgid "Are you sure you want to delete the group \"%(group)s\"?"
+msgstr "Er du sikker på at du vil slette gruppen \"%(group)s\"?"
+
+#: .\core\templates\core\group_form.html:8
+#: .\core\templates\core\group_form.html:17
+msgid "Edit group"
+msgstr "Rediger gruppe"
+
+#: .\core\templates\core\group_form.html:10
+#: .\core\templates\core\group_form.html:19
+msgid "Create new group"
+msgstr "Opprett ny gruppe"
+
+#: .\core\templates\core\group_form.html:24
+#: .\core\templates\core\userprofile_form.html:28
+#, python-format
+msgid ""
+"This %(platform)s instance uses an identity provider that manages group "
+"memberships. Any changes to the group memberships here will be overwritten "
+"by the identity provider when a user logs in the next time using the "
+"identity provider."
+msgstr ""
+"Denne installasjonen av %(platform)s bruker en identitetsleverandør som "
+"administrerer gruppemedlemskap. Alle endringer i gruppemedlemskap her vil "
+"bli overskrevet av identitetsleverandøren neste gang en bruker logger inn "
+"via identitetsleverandøren."
+
+#: .\core\templates\core\group_list.html:15
+msgid "Add group"
+msgstr "Legg til gruppe"
+
+#: .\core\templates\core\group_list.html:31
+#, python-format
+msgctxt "group user list"
+msgid "and %(more_count)s more"
+msgstr "og %(more_count)s til"
+
+#: .\core\templates\core\group_list.html:50
+msgid "add events"
+msgstr "legg til arrangementer"
+
+#: .\core\templates\core\group_list.html:53
+msgid "edit users"
+msgstr "rediger brukere"
+
+#: .\core\templates\core\group_list.html:56
+msgid "change permissions"
+msgstr "endre tillatelser"
+
+#: .\core\templates\core\home.html:12 .\templates\base.html:100
+msgid "Home"
+msgstr "Hjem"
+
+#: .\core\templates\core\home.html:22
+#: .\core\templates\core\settings\settings_personal_data.html:9
+msgid ""
+"We failed to send notifications to your email address. Please check your "
+"email address and contact an administrator."
+msgstr ""
+"Vi kunne ikke sende varsler til e-postadressen din. Kontroller e-"
+"postadressen din og kontakt en administrator."
+
+#: .\core\templates\core\home.html:29
+#, python-format
+msgid "Welcome to %(organization_name)s!"
+msgstr "Velkommen til %(organization_name)s!"
+
+#: .\core\templates\core\home.html:43
+msgid "Your upcoming events"
+msgstr "Dine kommende arrangementer"
+
+#: .\core\templates\core\home.html:73
+msgctxt "empty list of upcoming shifts"
+msgid "None yet"
+msgstr "Ingen ennå"
+
+#: .\core\templates\core\home.html:75
+msgid "View events"
+msgstr "Vis arrangementer"
+
+#: .\core\templates\core\home.html:87
+msgid "Events with requested participations"
+msgstr "Arrangementer med forespørsler om deltakelse"
+
+#: .\core\templates\core\home.html:133
+#: .\core\templates\core\logentry_list.html:15
+msgid "Edit history"
+msgstr "Endringshistorikk"
+
+#: .\core\templates\core\home.html:136
+msgid "View everything"
+msgstr "Vis alt"
+
+#: .\core\templates\core\identityprovider_confirm_delete.html:5
+msgid "Delete identity provider"
+msgstr "Slett identitetsleverandør"
+
+#: .\core\templates\core\identityprovider_confirm_delete.html:8
+#, python-format
+msgid ""
+"Are you sure you want to delete the identity provider \"%(label)s\"? Users "
+"will no longer be able to log in with this identity provider. Please make "
+"sure that they have an alternative means of logging in."
+msgstr ""
+"Er du sikker på at du vil slette identitetsleverandøren \"%(label)s\"? "
+"Brukere vil ikke lenger kunne logge inn via denne identitetsleverandøren. "
+"Sørg for at de har en annen måte å logge inn på."
+
+#: .\core\templates\core\identityprovider_discovery.html:6
+#: .\core\templates\core\identityprovider_form.html:10
+#: .\core\templates\core\identityprovider_list.html:12
+msgid "Add identity provider"
+msgstr "Legg til identitetsleverandør"
+
+#: .\core\templates\core\identityprovider_discovery.html:8
+msgid ""
+"We can try to auto-discover certain values for your identity provider. To "
+"start the discovery, please enter the base URL for the OpenID Connect "
+"protocol at your provider below."
+msgstr ""
+"Vi kan prøve å finne enkelte verdier for identitetsleverandøren din "
+"automatisk. Oppgi basis-URL-en for OpenID Connect-protokollen hos "
+"leverandøren din nedenfor for å starte det automatiske søket."
+
+#: .\core\templates\core\identityprovider_discovery.html:15
+msgid "Start auto-discovery"
+msgstr "Start automatisk søk"
+
+#: .\core\templates\core\identityprovider_discovery.html:16
+msgid "Continue without auto-discovery"
+msgstr "Fortsett uten automatisk søk"
+
+#: .\core\templates\core\identityprovider_form.html:8
+msgid "Edit identity provider"
+msgstr "Rediger identitetsleverandør"
+
+#: .\core\templates\core\identityprovider_list.html:7
+msgid ""
+"ephios can use other services (identity providers) to authenticate users via "
+"OpenID Connect (OIDC), e.g. a Nextcloud instance. You can set up multiple "
+"identity providers and users can choose which one to use when logging in."
+msgstr ""
+"ephios kan bruke andre tjenester (identitetsleverandører) til å autentisere "
+"brukere via OpenID Connect (OIDC), for eksempel en Nextcloud-installasjon. "
+"Du kan konfigurere flere identitetsleverandører, og brukerne kan velge "
+"hvilken de vil bruke når de logger inn."
+
+#: .\core\templates\core\identityprovider_list.html:16
+#: .\plugins\complexsignup\models.py:106 .\plugins\complexsignup\models.py:153
+#: .\plugins\complexsignup\structure.py:110
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:45
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:112
+msgid "Label"
+msgstr "Navn"
+
+#: .\core\templates\core\logentry_list.html:10
+msgid "Log"
+msgstr "Logg"
+
+#: .\core\templates\core\logentry_list.html:24 .\core\views\log.py:22
+msgid "Concerns"
+msgstr "Gjelder"
+
+#: .\core\templates\core\logentry_list.html:54
+msgid "Clear"
+msgstr "Tøm"
+
+#: .\core\templates\core\login.html:7 .\core\templates\core\login.html:58
+#: .\templates\registration\password_reset_complete.html:11
+msgid "Login"
+msgstr "Logg inn"
+
+#: .\core\templates\core\login.html:42
+msgid "or"
+msgstr "eller"
+
+#: .\core\templates\core\login.html:60
+msgid "Forgot your password?"
+msgstr "Glemt passordet ditt?"
+
+#: .\core\templates\core\mails\base.html:152 .\templates\500.html:54
+#: .\templates\base.html:187
+#, python-format
+msgid "powered by %(brand)s"
+msgstr "drevet av %(brand)s"
+
+#: .\core\templates\core\mails\new_account_email.html:7
+msgid ""
+"You're receiving this email because a new account has been created for you."
+msgstr "Du mottar denne e-posten fordi det er opprettet en ny konto for deg."
+
+#: .\core\templates\core\mails\new_account_email.html:8
+msgid "Please go to the following page and choose a new password:"
+msgstr "Gå til følgende side og velg et nytt passord:"
+
+#: .\core\templates\core\mails\new_account_email.html:13
+msgid "Your username is your email address:"
+msgstr "Brukernavnet ditt er e-postadressen din:"
+
+#: .\core\templates\core\mails\notification.html:54
+#: .\core\templates\core\mails\notification.txt:12
+#, python-format
+msgid "You are receiving this email as a member of %(organization_name)s."
+msgstr "Du mottar denne e-posten som medlem av %(organization_name)s."
+
+#: .\core\templates\core\mails\notification.html:62
+msgid "Notification settings"
+msgstr "Varslingsinnstillinger"
+
+#: .\core\templates\core\mails\notification.txt:17
+msgid "Click here to view and change your notification settings"
+msgstr "Klikk her for å se og endre varslingsinnstillingene dine"
+
+#: .\core\templates\core\mass_notification_write.html:14
+msgid "Mass notification"
+msgstr "Massevarsling"
+
+#: .\core\templates\core\mass_notification_write.html:31
+msgid "Mass Notification"
+msgstr "Massevarsling"
+
+#: .\core\templates\core\mass_notification_write.html:75
+#: .\core\views\notifications.py:64
+msgid "Recipients"
+msgstr "Mottakere"
+
+#: .\core\templates\core\mass_notification_write.html:87
+#, python-format
+msgid "Include %(counter)s confirmed participant"
+msgid_plural "Include %(counter)s confirmed participants"
+msgstr[0] "Inkluder %(counter)s bekreftet deltaker"
+msgstr[1] "Inkluder %(counter)s bekreftede deltakere"
+
+#: .\core\templates\core\mass_notification_write.html:100
+#, python-format
+msgid "Include %(counter)s participant with a requested participation"
+msgid_plural "Include %(counter)s participants with requested participation"
+msgstr[0] "Inkluder %(counter)s deltaker med forespørsel om deltakelse"
+msgstr[1] "Inkluder %(counter)s deltakere med forespørsel om deltakelse"
+
+#: .\core\templates\core\mass_notification_write.html:113
+#, python-format
+msgid "Include %(counter)s user that did not respond to the event yet"
+msgid_plural "Include %(counter)s users that did not respond to the event yet"
+msgstr[0] ""
+"Inkluder %(counter)s bruker som ennå ikke har svart på arrangementet"
+msgstr[1] ""
+"Inkluder %(counter)s brukere som ennå ikke har svart på arrangementet"
+
+#: .\core\templates\core\mass_notification_write.html:125
+msgid "Recipient list"
+msgstr "Mottakerliste"
+
+#: .\core\templates\core\mass_notification_write.html:134
+msgid "Send"
+msgstr "Send"
+
+#: .\core\templates\core\notification_detail.html:11
+msgid "View other notifications"
+msgstr "Vis andre varsler"
+
+#: .\core\templates\core\notification_list.html:6
+#: .\core\templates\core\notification_list.html:11
+#: .\core\templates\core\settings\settings_notifications.html:7
+#: .\core\views\settings.py:38 .\templates\base.html:146
+msgid "Notifications"
+msgstr "Varsler"
+
+#: .\core\templates\core\notification_list.html:14
+msgid "Mark all as read"
+msgstr "Merk alle som lest"
+
+#: .\core\templates\core\pagination.html:19
+#, python-format
+msgid "Page %(page)s of %(of)s (%(count)s elements)"
+msgstr "Side %(page)s av %(of)s (antall elementer: %(count)s)"
+
+#: .\core\templates\core\pagination.html:37
+#, python-format
+msgid "%(count)s element"
+msgid_plural "%(count)s elements"
+msgstr[0] "%(count)s element"
+msgstr[1] "%(count)s elementer"
+
+#: .\core\templates\core\settings\password_change_form.html:6
+#: .\core\views\settings.py:55
+msgid "Change password"
+msgstr "Endre passord"
+
+#: .\core\templates\core\settings\password_change_form.html:10
+msgid "Submit"
+msgstr "Send inn"
+
+#: .\core\templates\core\settings\settings_calendar.html:8
+#: .\core\views\settings.py:43
+msgid "Calendar"
+msgstr "Kalender"
+
+#: .\core\templates\core\settings\settings_calendar.html:10
+msgid ""
+"You can use the URL below to integrate a feed of your participations into "
+"your calendar apps (\"subscribe by URL\"). Read more in the <a "
+"href=\"https://docs.ephios.de/en/stable/user/integrations/calendar.html\" "
+"target=\"_blank\">user guide</a>."
+msgstr ""
+"Du kan bruke URL-en nedenfor til å vise deltakelsene dine som et "
+"kalenderabonnement i kalenderappene dine (\"abonner via URL\"). Les mer i <a "
+"href=\"https://docs.ephios.de/en/stable/user/integrations/calendar.html\" "
+"target=\"_blank\">brukerveiledningen</a>."
+
+#: .\core\templates\core\settings\settings_calendar.html:27
+msgid "Reset calendar URL"
+msgstr "Tilbakestill kalender-URL"
+
+#: .\core\templates\core\settings\settings_instance.html:16
+msgid "System health"
+msgstr "Systemstatus"
+
+#: .\core\templates\core\settings\settings_instance.html:27
+msgid "Error"
+msgstr "Feil"
+
+#: .\core\templates\core\settings\settings_instance.html:30
+msgid "Warning"
+msgstr "Advarsel"
+
+#: .\core\templates\core\settings\settings_instance.html:33
+msgid "OK"
+msgstr "OK"
+
+#: .\core\templates\core\settings\settings_instance.html:36
+msgid "Unknown"
+msgstr "Ukjent"
+
+#: .\core\templates\core\settings\settings_instance.html:45
+msgid "Learn more"
+msgstr "Les mer"
+
+#: .\core\templates\core\settings\settings_notifications.html:10
+msgid "Activate push notifications on each device you want to receive them."
+msgstr "Aktiver pushvarsler på hver enhet du vil motta dem på."
+
+#: .\core\templates\core\settings\settings_notifications.html:16
+#: .\templates\base.html:277
+msgid "Subscribe to Push Messaging"
+msgstr "Slå på pushvarsler"
+
+#: .\core\templates\core\settings\settings_notifications.html:20
+msgid "Notification occasions"
+msgstr "Hendelser som utløser varsler"
+
+#: .\core\templates\core\settings\settings_notifications.html:22
+msgid ""
+"You can configure whether you want to receive notifications for the "
+"following occasions:"
+msgstr "Du kan velge om du vil motta varsler ved følgende hendelser:"
+
+#: .\core\templates\core\settings\settings_personal_data.html:17
+#: .\core\views\settings.py:33
+msgid "Personal data"
+msgstr "Personopplysninger"
+
+#: .\core\templates\core\settings\settings_personal_data.html:21
+msgid "E-Mail address"
+msgstr "E-postadresse"
+
+#: .\core\templates\core\settings\settings_personal_data.html:23
+msgid "Date of birth"
+msgstr "Fødselsdato"
+
+#: .\core\templates\core\settings\settings_personal_data.html:25
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: .\core\templates\core\settings\settings_personal_data.html:35
+msgid "You are not a member of any group."
+msgstr "Du er ikke medlem av noen gruppe."
+
+#: .\core\templates\core\settings\settings_personal_data.html:46
+#: .\extra\templates\extra\widgets\recurrence_picker.html:154
+msgid "until"
+msgstr "frem til"
+
+#: .\core\templates\core\settings\settings_personal_data.html:50
+msgid "You have not been assigned any qualificiations."
+msgstr "Du har ikke fått tildelt noen kvalifikasjoner."
+
+#: .\core\templates\core\settings\settings_personal_data.html:55
+msgid "Language"
+msgstr "Språk"
+
+#: .\core\templates\core\shift_confirm_delete.html:6
+#: .\core\templates\core\shift_confirm_delete.html:11
+msgid "Delete shift"
+msgstr "Slett vakt"
+
+#: .\core\templates\core\shift_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the shift \"%(shift)s\"?"
+msgstr "Er du sikker på at du vil slette vakten \"%(shift)s\"?"
+
+#: .\core\templates\core\shift_copy.html:7
+#: .\core\templates\core\shift_copy.html:24
+#: .\core\templates\core\shift_form.html:85
+msgid "Copy shift"
+msgstr "Kopier vakt"
+
+#: .\core\templates\core\shift_form.html:9
+#: .\core\templates\core\shift_form.html:18
+msgid "Edit shift"
+msgstr "Rediger vakt"
+
+#: .\core\templates\core\shift_form.html:11
+#: .\core\templates\core\shift_form.html:20
+msgid "Create new shift for event"
+msgstr "Opprett ny vakt for arrangementet"
+
+#: .\core\templates\core\shift_form.html:36
+msgid "Signup mode"
+msgstr "Påmeldingsmåte"
+
+#: .\core\templates\core\shift_form.html:64
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:54
+msgid "Back to event"
+msgstr "Tilbake til arrangementet"
+
+#: .\core\templates\core\shift_form.html:76
+msgid "Discard event"
+msgstr "Forkast arrangement"
+
+#: .\core\templates\core\shift_form.html:78
+msgid "Save event"
+msgstr "Lagre arrangement"
+
+#: .\core\templates\core\shift_form.html:103 .\core\views\workinghours.py:38
+#: .\core\views\workinghours.py:43
+msgid "Event type"
+msgstr "Arrangementstype"
+
+#: .\core\templates\core\shift_form.html:115
+msgid "You are currently adding this shift"
+msgstr "Du holder på å legge til denne vakten"
+
+#: .\core\templates\core\signup.html:7
+msgid "Signup"
+msgstr "Påmelding"
+
+#: .\core\templates\core\userprofile_confirm_delete.html:7
+#: .\core\templates\core\userprofile_confirm_delete.html:12
+msgid "Delete user"
+msgstr "Slett bruker"
+
+#: .\core\templates\core\userprofile_confirm_delete.html:17
+#, python-format
+msgid "Are you sure you want to delete the user %(name)s (%(userprofile)s)?"
+msgstr "Er du sikker på at du vil slette brukeren %(name)s (%(userprofile)s)?"
+
+#: .\core\templates\core\userprofile_confirm_password_reset.html:5
+#: .\core\templates\core\userprofile_confirm_password_reset.html:10
+#: .\templates\registration\password_reset_form.html:6
+#: .\templates\registration\password_reset_form.html:10
+#: .\templates\registration\password_reset_form.html:14
+msgid "Reset password"
+msgstr "Tilbakestill passord"
+
+#: .\core\templates\core\userprofile_confirm_password_reset.html:12
+#, python-format
+msgid ""
+"Are you sure that you want to send a password reset email to \"%(name)s\"?"
+msgstr ""
+"Er du sikker på at du vil sende en e-post for tilbakestilling av passord til "
+"\"%(name)s\"?"
+
+#: .\core\templates\core\userprofile_confirm_password_reset.html:20
+#: .\core\templates\core\userprofile_form.html:141
+msgid "Send password reset email"
+msgstr "Send e-post for tilbakestilling av passord"
+
+#: .\core\templates\core\userprofile_confirm_password_token_revokation.html:5
+#: .\core\templates\core\userprofile_confirm_password_token_revokation.html:10
+#: .\core\templates\core\userprofile_confirm_password_token_revokation.html:22
+msgid "Revoke password and API tokens"
+msgstr "Tilbakekall passord og API-nøkler"
+
+#: .\core\templates\core\userprofile_confirm_password_token_revokation.html:12
+#, python-format
+msgid ""
+"Are you sure that you want to revoke the password of the user \"%(name)s\"? "
+"They won't be able to log in until they reset their password. This will also "
+"revoke all the users API tokens and reset the calendar-URL."
+msgstr ""
+"Er du sikker på at du vil tilbakekalle passordet til brukeren \"%(name)s\"? "
+"Brukeren vil ikke kunne logge inn før passordet er tilbakestilt. Dette vil "
+"også tilbakekalle alle brukerens API-nøkler og tilbakestille kalender-URL-en."
+
+#: .\core\templates\core\userprofile_form.html:12
+#: .\core\templates\core\userprofile_form.html:21
+msgid "Edit user"
+msgstr "Rediger bruker"
+
+#: .\core\templates\core\userprofile_form.html:14
+#: .\core\templates\core\userprofile_form.html:23
+msgid "Add new user"
+msgstr "Legg til ny bruker"
+
+#: .\core\templates\core\userprofile_form.html:38
+msgid ""
+"The email address of the user is invalid. This can be caused by a typo or a "
+"problem with the user's mail server. Please check the email address and "
+"correct it or ask the user to solve the problem with their provider."
+msgstr ""
+"Brukerens e-postadresse er ugyldig. Dette kan skyldes en skrivefeil eller et "
+"problem med brukerens e-postserver. Kontroller e-postadressen og rett den, "
+"eller be brukeren løse problemet med leverandøren sin."
+
+#: .\core\templates\core\userprofile_form.html:99
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\qualification_mix\configuration_form.html:43
+msgid "Add qualification"
+msgstr "Legg til kvalifikasjon"
+
+#: .\core\templates\core\userprofile_form.html:132
+msgid "Password"
+msgstr "Passord"
+
+#: .\core\templates\core\userprofile_form.html:134
+msgid ""
+"If the user forgot their password, you can send them a password reset email. "
+"If there are doubts about the secrecy of the password, you should revoke it "
+"as well."
+msgstr ""
+"Hvis brukeren har glemt passordet sitt, kan du sende en e-post for "
+"tilbakestilling av passordet. Hvis det er tvil om passordet fortsatt er "
+"hemmelig, bør du også tilbakekalle det."
+
+#: .\core\templates\core\userprofile_form.html:144
+msgid "Revoke password and API Tokens"
+msgstr "Tilbakekall passord og API-nøkler"
+
+#: .\core\templates\core\userprofile_list.html:37
+msgid "Add user"
+msgstr "Legg til bruker"
+
+#: .\core\templates\core\userprofile_list.html:43
+#, python-format
+msgid "Send message to this %(counter)s account"
+msgid_plural "Send message to these %(counter)s accounts"
+msgstr[0] "Send melding til %(counter)s konto"
+msgstr[1] "Send melding til %(counter)s kontoer"
+
+#: .\core\templates\core\userprofile_list.html:69
+msgid "minor"
+msgstr "mindreårig"
+
+#: .\core\templates\core\userprofile_list.html:76
+#, python-format
+msgid "Last login: %(timeframe)s ago"
+msgstr "Siste innlogging: for %(timeframe)s siden"
+
+#: .\core\templates\core\userprofile_list.html:78
+msgid "Last login: never"
+msgstr "Siste innlogging: aldri"
+
+#: .\core\templates\core\userprofile_list.html:80
+msgid "not seen recently"
+msgstr "har ikke vært innlogget i det siste"
+
+#: .\core\templates\core\userprofile_list.html:85
+msgid "inactive"
+msgstr "inaktiv"
+
+#: .\core\templates\core\userprofile_list.html:87
+msgid "admin"
+msgstr "administrator"
+
+#: .\core\templates\core\userprofile_list.html:98
+msgid "no groups"
+msgstr "ingen grupper"
+
+#: .\core\templates\core\userprofile_workinghours.html:9
+#: .\core\templates\core\userprofile_workinghours.html:14
+msgid "Working hours of"
+msgstr "Arbeidstimer for"
+
+#: .\core\templates\core\userprofile_workinghours.html:30
+msgid "Add working hours"
+msgstr "Legg til arbeidstimer"
+
+#: .\core\templates\core\userprofile_workinghours.html:33
+#: .\core\templates\core\workinghours_form.html:13
+#: .\core\templates\core\workinghours_form.html:26
+msgid "Request working hours"
+msgstr "Be om godkjenning av arbeidstimer"
+
+#: .\core\templates\core\userprofile_workinghours.html:36
+#: .\core\templates\core\workinghours_list.html:26
+msgid "Export list"
+msgstr "Eksporter liste"
+
+#: .\core\templates\core\userprofile_workinghours.html:42
+#: .\core\views\workinghours.py:323 .\plugins\complexsignup\models.py:23
+#: .\plugins\questionnaires\models.py:36
+msgid "Type"
+msgstr "Type"
+
+#: .\core\templates\core\userprofile_workinghours.html:44
+#: .\core\templates\core\workinghours_list.html:31
+#: .\core\views\workinghours.py:323
+msgid "Hours"
+msgstr "Timer"
+
+#: .\core\templates\core\userprofile_workinghours.html:50
+#: .\core\views\workinghours.py:284
+#: .\plugins\files\templates\files\document_list.html:49
+msgid "Total"
+msgstr "Totalt"
+
+#: .\core\templates\core\userprofile_workinghours.html:53
+#: .\core\templates\core\userprofile_workinghours.html:61
+msgid "hours"
+msgstr "timer"
+
+#: .\core\templates\core\widgets\previous_comments.html:8
+msgid "visible for everyone"
+msgstr "synlig for alle"
+
+#: .\core\templates\core\widgets\previous_comments.html:10
+msgid "visible for responsibles and the participant"
+msgstr "synlig for ansvarlige og deltakeren"
+
+#: .\core\templates\core\widgets\previous_comments.html:12
+msgid "visible for responsibles only"
+msgstr "kun synlig for ansvarlige"
+
+#: .\core\templates\core\workinghours_confirm_delete.html:6
+#: .\core\templates\core\workinghours_confirm_delete.html:11
+msgid "Delete working hours"
+msgstr "Slett arbeidstimer"
+
+#: .\core\templates\core\workinghours_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the working hours \"%(workinghours)s\"?"
+msgstr "Er du sikker på at du vil slette arbeidstimene \"%(workinghours)s\"?"
+
+#: .\core\templates\core\workinghours_form.html:8
+#: .\core\templates\core\workinghours_form.html:21
+msgid "Edit working hours of"
+msgstr "Rediger arbeidstimer for"
+
+#: .\core\templates\core\workinghours_form.html:10
+#: .\core\templates\core\workinghours_form.html:23
+msgid "Add working hours for"
+msgstr "Legg til arbeidstimer for"
+
+#: .\core\templates\core\workinghours_list.html:50
+msgid "Add"
+msgstr "Legg til"
+
+#: .\core\templates\core\workinghours_list.html:57
+msgid "No entries"
+msgstr "Ingen oppføringer"
+
+#: .\core\views\accounts.py:41 .\core\views\accounts.py:42
+#: .\core\views\event.py:52 .\core\views\event.py:53
+msgid "Search for…"
+msgstr "Søk etter…"
+
+#: .\core\views\accounts.py:46
+msgid "Group"
+msgstr "Gruppe"
+
+#: .\core\views\accounts.py:51
+msgid "Group membership"
+msgstr "Gruppemedlemskap"
+
+#: .\core\views\accounts.py:57 .\core\views\accounts.py:63
+#: .\plugins\eventautoqualification\models.py:15
+msgid "Qualification"
+msgstr "Kvalifikasjon"
+
+#: .\core\views\accounts.py:155
+#, python-brace-format
+msgid "User {name} ({email}) added successfully."
+msgstr "Brukeren {name} ({email}) er lagt til."
+
+#: .\core\views\accounts.py:205
+#, python-brace-format
+msgid "User {name} ({email}) updated successfully."
+msgstr "Brukeren {name} ({email}) er oppdatert."
+
+#: .\core\views\accounts.py:234
+#, python-brace-format
+msgid "The user {name} ({email}) was deleted."
+msgstr "Brukeren {name} ({email}) ble slettet."
+
+#: .\core\views\accounts.py:259
+#, python-brace-format
+msgid "The user's password has been reset. An email was sent to {email}."
+msgstr "Brukerens passord er tilbakestilt. En e-post ble sendt til {email}."
+
+#: .\core\views\accounts.py:266
+#, python-brace-format
+msgid "No valid email address ({email}). The password has not been reset."
+msgstr "Ugyldig e-postadresse ({email}). Passordet er ikke tilbakestilt."
+
+#: .\core\views\accounts.py:290
+msgid "The user's password and API tokens have been revoked."
+msgstr "Brukerens passord og API-nøkler er tilbakekalt."
+
+#: .\core\views\accounts.py:336
+#, python-brace-format
+msgid "Group \"{group}\" created successfully."
+msgstr "Gruppen \"{group}\" er opprettet."
+
+#: .\core\views\accounts.py:355
+#, python-brace-format
+msgid "Group \"{group}\" updated successfully."
+msgstr "Gruppen \"{group}\" er oppdatert."
+
+#: .\core\views\accounts.py:372
+#, python-brace-format
+msgid "The group \"{group}\" was deleted."
+msgstr "Gruppen \"{group}\" ble slettet."
+
+#: .\core\views\auth.py:58
+msgid "Authentication failed."
+msgstr "Autentisering mislyktes."
+
+#: .\core\views\auth.py:77
+msgid "The user account is deactivated."
+msgstr "Brukerkontoen er deaktivert."
+
+#: .\core\views\auth.py:112 .\templates\registration\logged_out.html:9
+msgid "Logged out successfully."
+msgstr "Du er logget ut."
+
+#: .\core\views\auth.py:165 .\core\views\auth.py:220
+msgid "Identity provider saved."
+msgstr "Identitetsleverandøren er lagret."
+
+#: .\core\views\auth.py:191
+msgid ""
+"Successfully fetched OIDC configuration. Please fill in the remaining fields."
+msgstr "OIDC-konfigurasjonen er hentet. Fyll ut de resterende feltene."
+
+#: .\core\views\auth.py:198
+msgid ""
+"Could not fetch OIDC configuration from the given URL. Please configure the "
+"client manually below."
+msgstr ""
+"Kunne ikke hente OIDC-konfigurasjonen fra den oppgitte URL-en. Konfigurer "
+"klienten manuelt nedenfor."
+
+#: .\core\views\bulk.py:21 .\core\views\bulk.py:30
+msgid "No events were selected for deletion."
+msgstr "Ingen arrangementer ble valgt for sletting."
+
+#: .\core\views\bulk.py:34
+msgid "The selected events have been deleted."
+msgstr "De valgte arrangementene er slettet."
+
+#: .\core\views\event.py:68
+msgctxt "event date filter"
+msgid "until"
+msgstr "til"
+
+#: .\core\views\event.py:69
+msgctxt "event date filter"
+msgid "from"
+msgstr "fra"
+
+#: .\core\views\event.py:82
+msgid "all"
+msgstr "alle"
+
+#: .\core\views\event.py:83
+msgid "no response"
+msgstr "ikke svart"
+
+#: .\core\views\event.py:85
+msgid "requested or confirmed"
+msgstr "påmelding sendt eller bekreftet"
+
+#: .\core\views\event.py:86
+msgid "disposition to do"
+msgstr "bemanning gjenstår"
+
+#: .\core\views\event.py:592 .\core\views\shift.py:120
+#, python-brace-format
+msgid "The event {title} has been saved."
+msgstr "Arrangementet {title} er lagret."
+
+#: .\core\views\event.py:692
+msgid "Event copied successfully."
+msgstr "Arrangementet er kopiert."
+
+#: .\core\views\eventtype.py:41
+#, python-brace-format
+msgid "The event type {type} has been saved."
+msgstr "Arrangementstypen {type} er lagret."
+
+#: .\core\views\eventtype.py:62
+#, python-brace-format
+msgid "Eventtype {type} succesfully deleted."
+msgstr "Arrangementstypen {type} er slettet."
+
+#: .\core\views\eventtype.py:74
+msgid ""
+"Event type was created. More settings for this event type can be managed "
+"below."
+msgstr ""
+"Arrangementstypen er opprettet. Du kan endre flere innstillinger for denne "
+"arrangementstypen nedenfor."
+
+#: .\core\views\log.py:25
+#, python-format
+msgid "%(value)s does not have any associated entries."
+msgstr "%(value)s har ingen tilknyttede oppføringer."
+
+#: .\core\views\log.py:33
+msgid "Acting User"
+msgstr "Bruker som utførte handlingen"
+
+#: .\core\views\log.py:38
+msgid "Contents"
+msgstr "Innhold"
+
+#: .\core\views\notifications.py:57
+msgid "Subject"
+msgstr "Emne"
+
+#: .\core\views\notifications.py:60
+msgid "Message"
+msgstr "Melding"
+
+#: .\core\views\notifications.py:67
+msgid "Add recipients"
+msgstr "Legg til mottakere"
+
+#: .\core\views\notifications.py:81
+#, python-brace-format
+msgid ""
+"Hello,\n"
+"\n"
+"regarding {event_title} starting at {event_start} we want to communicate...\n"
+"\n"
+"Kind regards\n"
+msgstr ""
+"Hei\n"
+"\n"
+"Vi ønsker å informere om følgende i forbindelse med {event_title}, som "
+"starter {event_start}: ...\n"
+"\n"
+"Med vennlig hilsen\n"
+
+#: .\core\views\notifications.py:89
+msgid "You can only select users that have permission to view the event."
+msgstr "Du kan bare velge brukere som har tilgang til å se arrangementet."
+
+#: .\core\views\notifications.py:148
+msgid "without response"
+msgstr "uten svar"
+
+#: .\core\views\notifications.py:149
+msgid "others"
+msgstr "andre"
+
+#: .\core\views\notifications.py:194
+#, python-brace-format
+msgid "Information on {event_title}"
+msgstr "Informasjon om {event_title}"
+
+#: .\core\views\notifications.py:211
+#, python-brace-format
+msgid "Sent notification to {count} participant."
+msgid_plural "Sent notification to {count} participants."
+msgstr[0] "Varsel er sendt til {count} deltaker."
+msgstr[1] "Varsel er sendt til {count} deltakere."
+
+#: .\core\views\notifications.py:224
+#, python-brace-format
+msgid "Sent notification to {count} user."
+msgid_plural "Sent notification to {count} users."
+msgstr[0] "Varsel er sendt til {count} bruker."
+msgstr[1] "Varsel er sendt til {count} brukere."
+
+#: .\core\views\pwa.py:68
+msgid "Show the event list"
+msgstr "Vis arrangementslisten"
+
+#: .\core\views\settings.py:25
+msgid "Personal"
+msgstr "Personlig"
+
+#: .\core\views\settings.py:61
+msgctxt "Settings section name"
+msgid "General"
+msgstr "Generelt"
+
+#: .\core\views\settings.py:77
+msgid "Event types"
+msgstr "Arrangementstyper"
+
+#: .\core\views\settings.py:91
+msgid "Settings saved successfully."
+msgstr "Innstillingene er lagret."
+
+#: .\core\views\settings.py:129
+msgid "Calendar-URL was reset."
+msgstr "Kalenderadressen er tilbakestilt."
+
+#: .\core\views\settings.py:150
+msgid "Settings succesfully saved."
+msgstr "Innstillingene er lagret."
+
+#: .\core\views\settings.py:166
+msgid "Password changed successfully."
+msgstr "Passordet er endret."
+
+#: .\core\views\shift.py:67
+msgid "You must enable plugins providing signup flows to continue."
+msgstr ""
+"Du må aktivere programtillegg som tilbyr påmeldingsflyter for å fortsette."
+
+#: .\core\views\shift.py:72
+msgid "You must enable plugins providing shift structures to continue."
+msgstr ""
+"Du må aktivere programtillegg som tilbyr vaktstrukturer for å fortsette."
+
+#: .\core\views\shift.py:254
+#, python-brace-format
+msgid "The shift {shift} has been saved."
+msgstr "Vakten {shift} er lagret."
+
+#: .\core\views\shift.py:277
+msgid "You cannot delete the last shift!"
+msgstr "Du kan ikke slette den siste vakten!"
+
+#: .\core\views\shift.py:282
+msgid "The shift has been deleted."
+msgstr "Vakten er slettet."
+
+#: .\core\views\shift.py:330
+msgid "Shift copied successfully."
+msgstr "Vakten er kopiert."
+
+#: .\core\views\workinghours.py:31
+msgid "Manual entry"
+msgstr "Manuell registrering"
+
+#: .\core\views\workinghours.py:35
+msgid "From"
+msgstr "Fra"
+
+#: .\core\views\workinghours.py:36
+msgid "To"
+msgstr "Til"
+
+#: .\core\views\workinghours.py:155
+msgid "Your request has been submitted."
+msgstr "Forespørselen din er sendt inn."
+
+#: .\core\views\workinghours.py:222
+msgid "Working hours have been added."
+msgstr "Arbeidstimene er lagt til."
+
+#: .\core\views\workinghours.py:246
+msgid "Working hours have been deleted."
+msgstr "Arbeidstimene er slettet."
+
+#: .\extra\bootstrap.py:13
+msgid "close"
+msgstr "lukk"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:9
+msgid "starting at"
+msgstr "med start"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:20
+msgid "Hourly"
+msgstr "Hver time"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:23
+msgid "Daily"
+msgstr "Daglig"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:26
+msgid "Weekly"
+msgstr "Ukentlig"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:29
+msgid "Monthly"
+msgstr "Månedlig"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:32
+msgid "Yearly"
+msgstr "Årlig"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:37
+#: .\extra\templates\extra\widgets\recurrence_picker.html:181
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:62
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:78
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:182
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:239
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:262
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:344
+msgid "Remove"
+msgstr "Fjern"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:43
+msgid "Repeat every"
+msgstr "Gjenta med intervall på"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:46
+msgid "on"
+msgstr "på"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:80
+#: .\extra\templates\extra\widgets\recurrence_picker.html:124
+msgid "First"
+msgstr "Første"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:81
+#: .\extra\templates\extra\widgets\recurrence_picker.html:125
+msgid "Second"
+msgstr "Andre"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:82
+#: .\extra\templates\extra\widgets\recurrence_picker.html:126
+msgid "Third"
+msgstr "Tredje"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:83
+#: .\extra\templates\extra\widgets\recurrence_picker.html:127
+msgid "Fourth"
+msgstr "Fjerde"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:84
+#: .\extra\templates\extra\widgets\recurrence_picker.html:128
+msgid "Last"
+msgstr "Siste"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:138
+msgctxt "month"
+msgid "in"
+msgstr "i"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:166
+msgid "for"
+msgstr "i alt"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:170
+msgid "occurrences"
+msgstr "forekomster"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:188
+msgid "Add rule"
+msgstr "Legg til regel"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:191
+msgid "Add date"
+msgstr "Legg til dato"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:199
+msgid "Selected dates"
+msgstr "Valgte datoer"
+
+#: .\extra\templates\extra\widgets\recurrence_picker.html:206
+msgid ""
+"No dates selected yet. Add dates and rules using the controls on the left."
+msgstr ""
+"Ingen datoer er valgt ennå. Legg til datoer og regler med knappene og "
+"feltene til venstre."
+
+#: .\extra\utils.py:29
+msgid "None"
+msgstr "Ingen"
+
+#: .\extra\widgets.py:70
+#, python-brace-format
+msgid "Invalid recurrence rule: {error}"
+msgstr "Ugyldig gjentakelsesregel: {error}"
+
+#: .\modellogging\models.py:48
+msgid "Log entry"
+msgstr "Loggoppføring"
+
+#: .\modellogging\models.py:49
+msgid "Log entries"
+msgstr "Loggoppføringer"
+
+#: .\modellogging\recorders.py:278 .\modellogging\recorders.py:387
+msgid "added"
+msgstr "lagt til"
+
+#: .\modellogging\recorders.py:278 .\modellogging\recorders.py:387
+msgid "removed"
+msgstr "fjernet"
+
+#: .\modellogging\templates\modellogging\logentry.html:6
+#, python-format
+msgid "%(class)s %(maybe_object)s was changed."
+msgstr "%(class)s %(maybe_object)s ble endret."
+
+#: .\modellogging\templates\modellogging\logentry.html:10
+#, python-format
+msgid "%(class)s %(maybe_object)s was created."
+msgstr "%(class)s %(maybe_object)s ble opprettet."
+
+#: .\modellogging\templates\modellogging\logentry.html:14
+#, python-format
+msgid "%(class)s %(maybe_object)s was deleted."
+msgstr "%(class)s %(maybe_object)s ble slettet."
+
+#: .\modellogging\templates\modellogging\logentry_grouped_list.html:17
+msgid "This change was performed by a an admin user."
+msgstr "Denne endringen ble utført av en administrator."
+
+#: .\modellogging\templates\modellogging\statement.html:3
+msgid "<em>None</em>"
+msgstr "<em>Ingen</em>"
+
+#: .\plugins\baseshiftstructures\apps.py:10
+msgid "Base Shift Structures"
+msgstr "Grunnleggende vaktstrukturer"
+
+#: .\plugins\baseshiftstructures\apps.py:12
+msgid "This plugins adds the standard shift structures."
+msgstr "Dette programtillegget legger til standardstrukturer for vakter."
+
+#: .\plugins\baseshiftstructures\structure\common.py:19
+msgid "Minimum age"
+msgstr "Minstealder"
+
+#: .\plugins\baseshiftstructures\structure\common.py:31
+#, python-brace-format
+msgid "You are too young. The minimum age is {age}."
+msgstr "Du er for ung. Minstealderen er {age} år."
+
+#: .\plugins\baseshiftstructures\structure\common.py:57
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:87
+#: .\plugins\complexsignup\structure.py:302
+msgid "The maximum number of participants is reached."
+msgstr "Maksimalt antall deltakere er nådd."
+
+#: .\plugins\baseshiftstructures\structure\common.py:71
+msgid "Minimum number of participants"
+msgstr "Minste antall deltakere"
+
+#: .\plugins\baseshiftstructures\structure\common.py:74
+msgid "Maximum number of participants"
+msgstr "Maksimalt antall deltakere"
+
+#: .\plugins\baseshiftstructures\structure\common.py:104
+#: .\plugins\baseshiftstructures\structure\named_teams.py:200
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:88
+#: .\plugins\complexsignup\structure.py:301
+msgid "You are not qualified."
+msgstr "Du er ikke kvalifisert."
+
+#: .\plugins\baseshiftstructures\structure\common.py:112
+msgid "Required Qualifications"
+msgstr "Påkrevde kvalifikasjoner"
+
+#: .\plugins\baseshiftstructures\structure\common.py:119
+#, python-brace-format
+msgid ""
+"Participants also need to have the qualifications <b>{qualifications}</b> to "
+"participate in {eventtype}"
+msgstr ""
+"Deltakerne må også ha kvalifikasjonene <b>{qualifications}</b> for å delta i "
+"{eventtype}"
+
+#: .\plugins\baseshiftstructures\structure\group_common.py:40
+#, python-brace-format
+msgid "{field_label} aren't configured correctly."
+msgstr "{field_label} er ikke riktig konfigurert."
+
+#: .\plugins\baseshiftstructures\structure\group_common.py:75
+msgid "Required Qualification"
+msgstr "Påkrevd kvalifikasjon"
+
+#: .\plugins\baseshiftstructures\structure\group_common.py:80
+msgid "min amount"
+msgstr "minste antall"
+
+#: .\plugins\baseshiftstructures\structure\group_common.py:81
+msgid "max amount"
+msgstr "maksimalt antall"
+
+#: .\plugins\baseshiftstructures\structure\group_common.py:89
+msgid "Max count must not be smaller than min count."
+msgstr "Maksimalt antall kan ikke være mindre enn minste antall."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:40
+msgid "Section"
+msgstr "Lag"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:58
+#: .\plugins\complexsignup\structure.py:70
+msgid "qualified"
+msgstr "kvalifisert"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:65
+#: .\plugins\complexsignup\structure.py:77
+msgid "unqualified"
+msgstr "ikke kvalifisert"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:85
+msgid "You must select a team when confirming a participation."
+msgstr "Du må velge et lag når du bekrefter en deltakelse."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:109
+msgid "Participants must provide a preferred team"
+msgstr "Deltakerne må oppgi et foretrukket lag"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:111
+msgid ""
+"Participants will be asked during signup. This only makes sense if you "
+"configure multiple teams."
+msgstr ""
+"Deltakerne blir spurt under påmeldingen. Dette er bare relevant hvis du "
+"konfigurerer flere lag."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:118
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\named_teams\configuration_form.html:13
+msgid "Teams"
+msgstr "Lag"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:134
+msgid "Named teams"
+msgstr "Navngitte lag"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:135
+msgid "Define named teams of participants with different requirements."
+msgstr "Definer navngitte lag med ulike krav til deltakerne."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:212
+msgid "All teams you qualify for are full."
+msgstr "Alle lagene du er kvalifisert for, er fulle."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:254
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\qualification_mix\fragment_state.html:41
+#: .\plugins\complexsignup\templates\complexsignup\shift_state.html:9
+msgid "unassigned"
+msgstr "ikke tildelt"
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:374
+#, python-brace-format
+msgid "You don't qualify for {teams}."
+msgstr "Du er ikke kvalifisert for {teams}."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:379
+#, python-brace-format
+msgid "{teams} is full."
+msgid_plural "{teams} are full."
+msgstr[0] "{teams} er fullt."
+msgstr[1] "{teams} er fulle."
+
+#: .\plugins\baseshiftstructures\structure\named_teams.py:384
+msgid "Preferred Team"
+msgstr "Foretrukket lag"
+
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:31
+msgid "Qualification Requirements"
+msgstr "Kvalifikasjonskrav"
+
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:48
+msgid "unknown"
+msgstr "ukjent"
+
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:55
+msgid "Qualification mix"
+msgstr "Kvalifikasjonssammensetning"
+
+#: .\plugins\baseshiftstructures\structure\qualification_mix.py:56
+msgid "Require varying counts of different qualifications."
+msgstr "Angi hvor mange deltakere som må ha hver kvalifikasjon."
+
+#: .\plugins\baseshiftstructures\structure\uniform.py:10
+msgid "Uniform"
+msgstr "Like krav"
+
+#: .\plugins\baseshiftstructures\structure\uniform.py:11
+msgid "Everyone in the shift has the same requirements."
+msgstr "De samme kravene gjelder for alle på vakten."
+
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\named_teams\configuration_form.html:46
+msgid "Add team"
+msgstr "Legg til lag"
+
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\named_teams\fragment_participation.html:9
+#: .\plugins\complexsignup\templates\complexsignup\fragment_participation.html:9
+msgid "prefers"
+msgstr "foretrekker"
+
+#: .\plugins\baseshiftstructures\templates\baseshiftstructures\participation_card_inline.html:70
+msgctxt "blurred participant name"
+msgid "Redacted Name"
+msgstr "Skjult navn"
+
+#: .\plugins\basesignupflows\apps.py:10
+msgid "Base Signup Flows"
+msgstr "Grunnleggende påmeldingsflyter"
+
+#: .\plugins\basesignupflows\apps.py:12
+msgid "This plugins adds the standard signup flows."
+msgstr "Dette programtillegget legger til standardflyter for påmelding."
+
+#: .\plugins\basesignupflows\flow\coupled.py:28
+#, python-brace-format
+msgid "Participation is coupled to {}."
+msgstr "Deltakelsen er koblet til {}."
+
+#: .\plugins\basesignupflows\flow\coupled.py:36
+msgid ""
+"Participation is coupled to another shift, but the leading shift is missing."
+msgstr ""
+"Deltakelsen er koblet til en annen vakt, men vakten den følger, mangler."
+
+#: .\plugins\basesignupflows\flow\coupled.py:42
+msgid "shift to mirror participation from"
+msgstr "vakt som deltakelsen skal speiles fra"
+
+#: .\plugins\basesignupflows\flow\coupled.py:60
+msgctxt "coupled signup leader shift"
+msgid "missing"
+msgstr "mangler"
+
+#: .\plugins\basesignupflows\flow\coupled.py:65
+msgid "coupled to another shift"
+msgstr "koblet til en annen vakt"
+
+#: .\plugins\basesignupflows\flow\coupled.py:66
+msgid "This method mirrors signup from another shift."
+msgstr "Denne metoden speiler påmeldingen fra en annen vakt."
+
+#: .\plugins\basesignupflows\flow\manual.py:12
+msgid "Signup for this shift is disabled."
+msgstr "Påmelding til denne vakten er deaktivert."
+
+#: .\plugins\basesignupflows\flow\manual.py:18
+msgid "Explanation"
+msgstr "Forklaring"
+
+#: .\plugins\basesignupflows\flow\manual.py:20
+msgid ""
+"If you want to explain why self-service signup is disabled, you can do so "
+"here."
+msgstr "Her kan du forklare hvorfor deltakerne ikke kan melde seg på selv."
+
+#: .\plugins\basesignupflows\flow\manual.py:33
+msgid "Manual disposition"
+msgstr "Manuell bemanning"
+
+#: .\plugins\basesignupflows\flow\manual.py:34
+msgid "Participants are manually added to the shift by the responsibles."
+msgstr "De ansvarlige legger deltakerne til på vakten manuelt."
+
+#: .\plugins\basesignupflows\flow\participant.py:17
+msgid "Request and confirm"
+msgstr "Forespørsel og bekreftelse"
+
+#: .\plugins\basesignupflows\flow\participant.py:19
+msgid ""
+"Participants can request a participation. Responsibles can confirm or reject "
+"requests."
+msgstr ""
+"Deltakere kan be om å delta. De ansvarlige kan bekrefte eller avslå "
+"forespørsler."
+
+#: .\plugins\basesignupflows\flow\participant.py:21
+msgid "Request"
+msgstr "Forespørsel"
+
+#: .\plugins\basesignupflows\flow\participant.py:22
+#, python-brace-format
+msgid "You have successfully requested a participation in {shift}."
+msgstr "Du har bedt om å delta på {shift}."
+
+#: .\plugins\basesignupflows\flow\participant.py:23
+#, python-brace-format
+msgid "Requesting a participation failed: {error}"
+msgstr "Kunne ikke sende forespørselen om deltakelse: {error}"
+
+#: .\plugins\basesignupflows\flow\participant.py:35
+msgid "Instant confirmation"
+msgstr "Umiddelbar bekreftelse"
+
+#: .\plugins\basesignupflows\flow\participant.py:36
+msgid "Participants can directly sign up for the shift."
+msgstr "Deltakere kan melde seg direkte på vakten."
+
+#: .\plugins\complexsignup\apps.py:10
+msgid "Preconfigured Structures (experimental)"
+msgstr "Forhåndskonfigurerte strukturer (eksperimentell funksjon)"
+
+#: .\plugins\complexsignup\apps.py:13
+msgid ""
+"This plugins adds a shift structure for which you configure reusable "
+"structures to create complex shift setups."
+msgstr ""
+"Dette programtillegget legger til en vaktstruktur der du kan konfigurere "
+"gjenbrukbare strukturer for å lage komplekse vaktoppsett."
+
+#: .\plugins\complexsignup\models.py:11
+msgid "atomic"
+msgstr "ikke sammensatt"
+
+#: .\plugins\complexsignup\models.py:12
+msgid "composite"
+msgstr "sammensatt"
+
+#: .\plugins\complexsignup\models.py:31
+msgid "sub blocks"
+msgstr "underblokker"
+
+#: .\plugins\complexsignup\models.py:36
+msgid "allow more"
+msgstr "tillat flere"
+
+#: .\plugins\complexsignup\models.py:37
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:199
+msgid "Allow more participants that qualify for any of the positions."
+msgstr "Tillat flere deltakere som er kvalifisert for minst en av plassene."
+
+#: .\plugins\complexsignup\models.py:42
+msgid "building block"
+msgstr "byggeblokk"
+
+#: .\plugins\complexsignup\models.py:43
+msgid "building blocks"
+msgstr "byggeblokker"
+
+#: .\plugins\complexsignup\models.py:65
+msgid "block"
+msgstr "blokk"
+
+#: .\plugins\complexsignup\models.py:72
+msgid "at least"
+msgstr "minst"
+
+#: .\plugins\complexsignup\models.py:75 .\plugins\complexsignup\models.py:116
+msgid "required qualifications"
+msgstr "påkrevde kvalifikasjoner"
+
+#: .\plugins\complexsignup\models.py:79
+msgid "qualification requirement"
+msgstr "kvalifikasjonskrav"
+
+#: .\plugins\complexsignup\models.py:80
+msgid "qualification requirements"
+msgstr "kvalifikasjonskrav"
+
+#: .\plugins\complexsignup\models.py:84
+#, python-brace-format
+msgid "everyone on {block} needs {qualifications}"
+msgstr "alle i {block} må ha {qualifications}"
+
+#: .\plugins\complexsignup\models.py:87
+#, python-brace-format
+msgid "at least {at_least} on {block} need {qualifications}"
+msgstr "minst {at_least} i {block} må ha {qualifications}"
+
+#: .\plugins\complexsignup\models.py:90
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:81
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:242
+msgid "and"
+msgstr "og"
+
+#: .\plugins\complexsignup\models.py:111 .\plugins\complexsignup\models.py:158
+#: .\plugins\complexsignup\structure.py:111
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:54
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:173
+msgid "optional"
+msgstr "valgfri"
+
+#: .\plugins\complexsignup\models.py:121
+msgid "position"
+msgstr "plass"
+
+#: .\plugins\complexsignup\models.py:122
+msgid "positions"
+msgstr "plasser"
+
+#: .\plugins\complexsignup\models.py:125
+#, python-brace-format
+msgid "{label_or_pk} on {block_name}"
+msgstr "{label_or_pk} i {block_name}"
+
+#: .\plugins\complexsignup\models.py:144
+msgid "composite block"
+msgstr "sammensatt blokk"
+
+#: .\plugins\complexsignup\models.py:150
+msgid "sub block"
+msgstr "underblokk"
+
+#: .\plugins\complexsignup\models.py:163
+msgid "block composition"
+msgstr "blokksammensetning"
+
+#: .\plugins\complexsignup\models.py:164
+msgid "block compositions"
+msgstr "blokksammensetninger"
+
+#: .\plugins\complexsignup\models.py:167
+#, python-brace-format
+msgid "{label} on {composite_blocK}"
+msgstr "{label} i {composite_blocK}"
+
+#: .\plugins\complexsignup\signals.py:30
+msgid "Signup blocks"
+msgstr "Påmeldingsblokker"
+
+#: .\plugins\complexsignup\signals.py:51
+msgid "Manage Signup Blocks"
+msgstr "Administrer påmeldingsblokker"
+
+#: .\plugins\complexsignup\signals.py:53
+msgid ""
+"Allows this group to manage signup blocks that can be used in reusable "
+"structures and complex shift setups."
+msgstr ""
+"Lar denne gruppen administrere påmeldingsblokker som kan brukes i "
+"gjenbrukbare strukturer og komplekse vaktoppsett."
+
+#: .\plugins\complexsignup\structure.py:51
+#: .\plugins\complexsignup\structure.py:102
+msgid "Unit"
+msgstr "Enhet"
+
+#: .\plugins\complexsignup\structure.py:66
+msgid "auto"
+msgstr "automatisk"
+
+#: .\plugins\complexsignup\structure.py:127
+msgid "Participants must provide a preferred unit"
+msgstr "Deltakere må oppgi en foretrukket enhet"
+
+#: .\plugins\complexsignup\structure.py:128
+msgid "Participants will be asked during signup."
+msgstr "Deltakerne blir spurt ved påmelding."
+
+#: .\plugins\complexsignup\structure.py:134
+#: .\plugins\complexsignup\templates\complexsignup\configuration_form.html:14
+msgid "Units"
+msgstr "Enheter"
+
+#: .\plugins\complexsignup\structure.py:152
+msgid "Deleted unit"
+msgstr "Slettet enhet"
+
+#: .\plugins\complexsignup\structure.py:160
+msgid "Preconfigured Structure (experimental)"
+msgstr "Forhåndskonfigurert struktur (eksperimentell funksjon)"
+
+#: .\plugins\complexsignup\structure.py:161
+msgid "Use preconfigured elements to build a custom structure."
+msgstr ""
+"Bruk forhåndskonfigurerte elementer til å bygge en egendefinert struktur."
+
+#: .\plugins\complexsignup\structure.py:347
+#, python-brace-format
+msgid "You don't qualify for {blocks}."
+msgstr "Du er ikke kvalifisert for {blocks}."
+
+#: .\plugins\complexsignup\structure.py:353
+msgid "Preferred Unit"
+msgstr "Foretrukket enhet"
+
+#: .\plugins\complexsignup\templates\complexsignup\configuration_form.html:44
+msgid "Add unit"
+msgstr "Legg til enhet"
+
+#: .\plugins\complexsignup\templates\complexsignup\configuration_form.html:82
+msgid "Edit units"
+msgstr "Rediger enheter"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:8
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:279
+msgid "Signup Blocks Editor"
+msgstr "Redigering av påmeldingsblokker"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:25
+msgid "Block Name"
+msgstr "Blokknavn"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:33
+msgid "Please provide a name."
+msgstr "Oppgi et navn."
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:69
+msgid "qualified as"
+msgstr "kvalifisert som"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:86
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:247
+msgid "select qualification"
+msgstr "velg kvalifikasjon"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:100
+msgid "Add position"
+msgstr "Legg til plass"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:122
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:147
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:160
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:325
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:363
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:375
+msgid "unnamed"
+msgstr "uten navn"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:189
+msgid "Add subunits using the buttons in the list"
+msgstr "Legg til underenheter med knappene i listen"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:211
+msgctxt "block qualification requirement"
+msgid "everyone"
+msgstr "alle"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:222
+msgid "number"
+msgstr "antall"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:225
+msgctxt "block qualification requirements plural"
+msgid "must be qualified as"
+msgstr "må være kvalifisert som"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:228
+msgctxt "block qualification requirements singular"
+msgid "must be qualified as"
+msgstr "må være kvalifisert som"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:271
+msgid "Add condition"
+msgstr "Legg til betingelse"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:291
+msgid "Add basic unit"
+msgstr "Legg til grunnenhet"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:296
+msgid "Add composite unit"
+msgstr "Legg til sammensatt enhet"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:300
+msgid "Search"
+msgstr "Søk"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:312
+msgid "Add as sub-block"
+msgstr "Legg til som underblokk"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:332
+msgid "Invalid"
+msgstr "Ugyldig"
+
+#: .\plugins\complexsignup\templates\complexsignup\vue_editor.html:340
+msgid "Clone"
+msgstr "Kopier"
+
+#: .\plugins\complexsignup\views.py:62
+msgid "Failed to save building blocks."
+msgstr "Kunne ikke lagre byggeblokkene."
+
+#: .\plugins\complexsignup\views.py:64
+msgid "Saved blocks."
+msgstr "Blokkene er lagret."
+
+#: .\plugins\complexsignup\views.py:68
+msgid "There were errors in the form."
+msgstr "Det er feil i skjemaet."
+
+#: .\plugins\eventautoqualification\apps.py:10
+#: .\plugins\eventautoqualification\forms.py:53
+msgid "Automatic qualification"
+msgstr "Automatisk tildeling av kvalifikasjoner"
+
+#: .\plugins\eventautoqualification\apps.py:13
+msgid ""
+"This plugin lets you configure events in a way that participants "
+"automatically aquire a qualification after participating."
+msgstr ""
+"Dette programtillegget lar deg sette opp arrangementer slik at deltakerne "
+"automatisk får en kvalifikasjon etter å ha deltatt."
+
+#: .\plugins\eventautoqualification\models.py:17
+msgid "Expiration date"
+msgstr "Utløpsdato"
+
+#: .\plugins\eventautoqualification\models.py:20
+msgid "any shift"
+msgstr "minst en vakt"
+
+#: .\plugins\eventautoqualification\models.py:21
+msgid "every shift"
+msgstr "alle vakter"
+
+#: .\plugins\eventautoqualification\models.py:22
+msgid "last shift"
+msgstr "siste vakt"
+
+#: .\plugins\eventautoqualification\models.py:27
+msgid "Required attendance"
+msgstr "Krav til oppmøte"
+
+#: .\plugins\eventautoqualification\models.py:31
+msgid "Only extend or reactivate existing qualification"
+msgstr "Bare forleng eller reaktiver en eksisterende kvalifikasjon"
+
+#: .\plugins\eventautoqualification\models.py:34
+msgid "Qualification must be confirmed afterwards"
+msgstr "Kvalifikasjonen må bekreftes i etterkant"
+
+#: .\plugins\eventautoqualification\models.py:38
+msgid "event auto qualification configuration"
+msgstr "oppsett for automatisk tildeling av kvalifikasjoner ved arrangementer"
+
+#: .\plugins\eventautoqualification\templates\eventautoqualification\auto_qualification_setup_form.html:7
+msgid ""
+"You don't have permission to grant qualifications, so you can't edit these "
+"settings."
+msgstr ""
+"Du har ikke tillatelse til å tildele kvalifikasjoner, så du kan ikke "
+"redigere disse innstillingene."
+
+#: .\plugins\federation\apps.py:10 .\plugins\federation\signals.py:61
+msgid "Federation"
+msgstr "Føderering"
+
+#: .\plugins\federation\apps.py:13
+msgid ""
+"This plugins provides the possibility to share events with other ephios "
+"instances."
+msgstr ""
+"Dette programtillegget gjør det mulig å dele arrangementer med andre ephios-"
+"instanser."
+
+#: .\plugins\federation\forms.py:43
+msgid "Share event with other ephios instances"
+msgstr "Del arrangement med andre ephios-instanser"
+
+#: .\plugins\federation\forms.py:54
+msgid "https://other-instance.ephios.de/"
+msgstr "https://other-instance.ephios.de/"
+
+#: .\plugins\federation\forms.py:64
+#: .\plugins\federation\templates\federation\invitecode_reveal.html:10
+msgid "Invite code"
+msgstr "Invitasjonskode"
+
+#: .\plugins\federation\forms.py:70
+msgid "This invite code is not issued for this instance."
+msgstr "Denne invitasjonskoden er ikke utstedt for denne instansen."
+
+#: .\plugins\federation\forms.py:72
+msgid "Invalid code"
+msgstr "Ugyldig kode"
+
+#: .\plugins\federation\models.py:23 .\plugins\federation\models.py:54
+#: .\plugins\federation\models.py:83
+#: .\plugins\federation\templates\federation\federation_settings.html:16
+#: .\plugins\federation\templates\federation\federation_settings.html:36
+#: .\plugins\federation\templates\federation\federation_settings.html:57
+msgid "URL"
+msgstr "URL"
+
+#: .\plugins\federation\models.py:33
+msgid "federated guest"
+msgstr "føderert gjest"
+
+#: .\plugins\federation\models.py:34
+msgid "federated guests"
+msgstr "fødererte gjester"
+
+#: .\plugins\federation\models.py:63
+msgid "federated host"
+msgstr "føderert vert"
+
+#: .\plugins\federation\models.py:64
+msgid "federated hosts"
+msgstr "fødererte verter"
+
+#: .\plugins\federation\models.py:87
+msgid "invite code"
+msgstr "invitasjonskode"
+
+#: .\plugins\federation\models.py:88
+msgid "invite codes"
+msgstr "invitasjonskoder"
+
+#: .\plugins\federation\models.py:91
+#, python-brace-format
+msgid "Federation invite code for {url}"
+msgstr "Invitasjonskode for føderering med {url}"
+
+#: .\plugins\federation\models.py:124
+msgid "federated event share"
+msgstr "føderert arrangementsdeling"
+
+#: .\plugins\federation\models.py:125
+msgid "federated event shares"
+msgstr "fødererte arrangementsdelinger"
+
+#: .\plugins\federation\models.py:128
+#, python-brace-format
+msgid "Federated event share for {event}"
+msgstr "Føderert arrangementsdeling for {event}"
+
+#: .\plugins\federation\models.py:151
+msgid "federated user"
+msgstr "føderert bruker"
+
+#: .\plugins\federation\models.py:152
+msgid "federated users"
+msgstr "fødererte brukere"
+
+#: .\plugins\federation\models.py:155
+#, python-brace-format
+msgid "Federated user {display_name}"
+msgstr "Føderert bruker {display_name}"
+
+#: .\plugins\federation\models.py:203
+msgid "Federated user"
+msgstr "Føderert bruker"
+
+#: .\plugins\federation\models.py:209 .\plugins\federation\models.py:215
+msgid "federated participant"
+msgstr "føderert deltaker"
+
+#: .\plugins\federation\models.py:210
+msgid "federated participants"
+msgstr "fødererte deltakere"
+
+#: .\plugins\federation\models.py:226
+msgid "federated participation"
+msgstr "føderert deltakelse"
+
+#: .\plugins\federation\models.py:227
+msgid "federated participations"
+msgstr "fødererte deltakelser"
+
+#: .\plugins\federation\signals.py:22
+#: .\plugins\federation\templates\federation\external_event_list.html:6
+#: .\plugins\federation\templates\federation\external_event_list.html:24
+msgid "External events"
+msgstr "Eksterne arrangementer"
+
+#: .\plugins\federation\templates\federation\event_detail.html:7
+#, python-format
+msgid "You are currently viewing an event at %(organization_name)s."
+msgstr "Du ser nå på et arrangement hos %(organization_name)s."
+
+#: .\plugins\federation\templates\federation\event_detail.html:8
+#, python-format
+msgid "Back to %(name)s"
+msgstr "Tilbake til %(name)s"
+
+#: .\plugins\federation\templates\federation\external_event_list.html:13
+msgid ""
+"An error occurred during the authentication at the other ephios instance. "
+"Please try again."
+msgstr ""
+"Det oppstod en feil ved innlogging på den andre ephios-instansen. Prøv igjen."
+
+#: .\plugins\federation\templates\federation\external_event_list.html:15
+msgid ""
+"The desired event could not be accessed at the other ephios instance. Please "
+"try again."
+msgstr ""
+"Kunne ikke åpne det ønskede arrangementet på den andre ephios-instansen. "
+"Prøv igjen."
+
+#: .\plugins\federation\templates\federation\external_event_list.html:17
+msgid "An unknown error has occured."
+msgstr "Det har oppstått en ukjent feil."
+
+#: .\plugins\federation\templates\federation\federatedguest_confirm_delete.html:6
+msgid "Stop sharing events"
+msgstr "Slutt å dele arrangementer"
+
+#: .\plugins\federation\templates\federation\federatedguest_confirm_delete.html:9
+#, python-format
+msgid ""
+"Are you sure you want to remove the connection to \"%(name)s\" and stop "
+"sharing all events with them? This will also delete all participations that "
+"originated from there."
+msgstr ""
+"Er du sikker på at du vil fjerne forbindelsen til \"%(name)s\" og slutte å "
+"dele alle arrangementer med dem? Dette vil også slette alle deltakelser som "
+"kom derfra."
+
+#: .\plugins\federation\templates\federation\federatedguest_confirm_delete.html:14
+#: .\plugins\federation\templates\federation\federation_settings.html:25
+msgid "Stop sharing"
+msgstr "Slutt å dele"
+
+#: .\plugins\federation\templates\federation\federatedhost_confirm_delete.html:6
+msgid "Stop receiving events"
+msgstr "Slutt å motta arrangementer"
+
+#: .\plugins\federation\templates\federation\federatedhost_confirm_delete.html:9
+#, python-format
+msgid ""
+"Are you sure you want to remove the connection to \"%(name)s\" and stop "
+"receiving events from them?"
+msgstr ""
+"Er du sikker på at du vil fjerne forbindelsen til \"%(name)s\" og slutte å "
+"motta arrangementer fra dem?"
+
+#: .\plugins\federation\templates\federation\federatedhost_confirm_delete.html:14
+#: .\plugins\federation\templates\federation\federation_settings.html:66
+msgid "Stop receiving"
+msgstr "Slutt å motta"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:6
+#: .\plugins\federation\templates\federation\invitecode_form.html:8
+#: .\plugins\federation\templates\federation\redeem_invite_code.html:8
+msgid "This feature is experimental!"
+msgstr "Denne funksjonen er eksperimentell!"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:8
+msgid "ephios instances that you share events with"
+msgstr "ephios-instanser som du deler arrangementer med"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:10
+#: .\plugins\federation\templates\federation\invitecode_form.html:6
+msgid "Share events with another instance"
+msgstr "Del arrangementer med en annen instans"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:32
+msgid "Pending invites"
+msgstr "Ventende invitasjoner"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:44
+msgid "Show invite code"
+msgstr "Vis invitasjonskode"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:51
+msgid "ephios instances that share events with you"
+msgstr "ephios-instanser som deler arrangementer med deg"
+
+#: .\plugins\federation\templates\federation\federation_settings.html:52
+#: .\plugins\federation\templates\federation\redeem_invite_code.html:6
+msgid "Enter invite code"
+msgstr "Skriv inn invitasjonskode"
+
+#: .\plugins\federation\templates\federation\invitecode_form.html:11
+msgid ""
+"You can share events with another ephios instance. When sharing is enabled "
+"for an event, it will show up for users on the other instance as well. Their "
+"users can then sign up for your event. To set up sharing, enter the URL of "
+"the instance that you want to share events with below."
+msgstr ""
+"Du kan dele arrangementer med en annen ephios-instans. Når deling er "
+"aktivert for et arrangement, vil det også vises for brukere på den andre "
+"instansen. Brukerne deres kan da melde seg på arrangementet ditt. For å "
+"sette opp deling skriver du inn URL-en til instansen du vil dele "
+"arrangementer med, i feltet nedenfor."
+
+#: .\plugins\federation\templates\federation\invitecode_form.html:19
+msgid "Invite"
+msgstr "Inviter"
+
+#: .\plugins\federation\templates\federation\invitecode_reveal.html:14
+#, python-format
+msgid ""
+"We created an invite code that allows the ephios instance at %(url)s to "
+"accept your invitation to share events with them. Please copy the URL or the "
+"code below and send it to the administrator of the other instance. They can "
+"then visit the URL or enter the code in their ephios instance to accept your "
+"invitation. It will expire in 48 hours."
+msgstr ""
+"Vi har opprettet en invitasjonskode som lar ephios-instansen på %(url)s "
+"godta invitasjonen din til å dele arrangementer med dem. Kopier URL-en eller "
+"koden nedenfor og send den til administratoren for den andre instansen. "
+"Administratoren kan deretter åpne URL-en eller skrive inn koden i sin ephios-"
+"instans for å godta invitasjonen din. Invitasjonskoden utløper om 48 timer."
+
+#: .\plugins\federation\templates\federation\redeem_invite_code.html:11
+msgid ""
+"You can accept shared events from other ephios instances. You need an invite "
+"code from the instance that wants to share events with you. If you obtained "
+"such a code, enter it here. By accepting the invitation, their events will "
+"appear in the \"External events\" section for everyone in your organisation. "
+"Your user will be able to view those events and sign up for them. To enable "
+"this, the other instance will also be able to access data from your users, "
+"such as their names, email addresses and qualifications."
+msgstr ""
+"Du kan motta delte arrangementer fra andre ephios-instanser. Du trenger en "
+"invitasjonskode fra instansen som vil dele arrangementer med deg. Hvis du "
+"har fått en slik kode, skriver du den inn her. Når du godtar invitasjonen, "
+"vil arrangementene deres vises under \"Eksterne arrangementer\" for alle i "
+"organisasjonen din. Brukerne dine vil kunne se disse arrangementene og melde "
+"seg på dem. For å gjøre dette mulig vil den andre instansen også få tilgang "
+"til opplysninger om brukerne dine, som navn, e-postadresser og "
+"kvalifikasjoner."
+
+#: .\plugins\federation\templates\federation\redeem_invite_code.html:20
+msgid "Accept invitation"
+msgstr "Godta invitasjon"
+
+#: .\plugins\federation\views\frontend.py:175
+msgid "Invite code has expired."
+msgstr "Invitasjonskoden har utløpt."
+
+#: .\plugins\federation\views\frontend.py:231
+msgid "Invalid code data. Please try again with a new invite code."
+msgstr "Ugyldige kodedata. Prøv igjen med en ny invitasjonskode."
+
+#: .\plugins\federation\views\frontend.py:236
+msgid "Could not connect to host instance. Please try again later."
+msgstr "Kunne ikke koble til vertsinstansen. Prøv igjen senere."
+
+#: .\plugins\federation\views\frontend.py:242
+msgid ""
+"Invite code redeemded successfully. You are now receiving events from this "
+"instance."
+msgstr ""
+"Invitasjonskoden ble løst inn. Du mottar nå arrangementer fra denne "
+"instansen."
+
+#: .\plugins\federation\views\frontend.py:256
+msgid "You are no longer sharing events with this instance."
+msgstr "Du deler ikke lenger arrangementer med denne instansen."
+
+#: .\plugins\federation\views\frontend.py:272
+msgid "You are no longer receiving events from this instance."
+msgstr "Du mottar ikke lenger arrangementer fra denne instansen."
+
+#: .\plugins\federation\views\frontend.py:284
+msgid "Failed to remove this instance. Please try again later."
+msgstr "Kunne ikke fjerne denne instansen. Prøv igjen senere."
+
+#: .\plugins\files\apps.py:10 .\plugins\files\signals.py:22
+#: .\plugins\files\templates\files\document_list.html:10
+msgid "Files"
+msgstr "Filer"
+
+#: .\plugins\files\apps.py:12
+msgid "This plugins allows you to upload files and link to them in events."
+msgstr ""
+"Dette programtillegget lar deg laste opp filer og lenke til dem i "
+"arrangementer."
+
+#: .\plugins\files\forms.py:27
+#, python-format
+msgid "The file is too large. There are only %(quota)s available."
+msgstr "Filen er for stor. Det er bare %(quota)s lagringsplass tilgjengelig."
+
+#: .\plugins\files\forms.py:61
+msgid "Attach files"
+msgstr "Legg ved filer"
+
+#: .\plugins\files\models.py:14
+msgid "File"
+msgstr "Fil"
+
+#: .\plugins\files\models.py:17
+msgid "Attached to"
+msgstr "Knyttet til"
+
+#: .\plugins\files\models.py:19
+msgid "Uploader"
+msgstr "Lastet opp av"
+
+#: .\plugins\files\models.py:20
+msgid "Last modified"
+msgstr "Sist endret"
+
+#: .\plugins\files\models.py:23
+msgid "Document"
+msgstr "Dokument"
+
+#: .\plugins\files\models.py:24
+#: .\plugins\files\templates\files\document_list.html:5
+msgid "Documents"
+msgstr "Dokumenter"
+
+#: .\plugins\files\signals.py:61
+msgid "Manage files"
+msgstr "Administrer filer"
+
+#: .\plugins\files\signals.py:63
+msgid ""
+"Enables this group to upload and manage files. Files can be attached to "
+"events by all planners."
+msgstr ""
+"Gir denne gruppen mulighet til å laste opp og administrere filer. Alle "
+"planleggere kan knytte filer til arrangementer."
+
+#: .\plugins\files\templates\files\document_confirm_delete.html:6
+#: .\plugins\files\templates\files\document_confirm_delete.html:11
+msgid "Delete file"
+msgstr "Slett fil"
+
+#: .\plugins\files\templates\files\document_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the file \"%(title)s\"?"
+msgstr "Er du sikker på at du vil slette filen \"%(title)s\"?"
+
+#: .\plugins\files\templates\files\document_form.html:8
+msgid "Edit file"
+msgstr "Rediger fil"
+
+#: .\plugins\files\templates\files\document_form.html:10
+msgid "Upload new file"
+msgstr "Last opp ny fil"
+
+#: .\plugins\files\templates\files\document_list.html:13
+msgid "Add file"
+msgstr "Legg til fil"
+
+#: .\plugins\files\templates\files\document_list.html:15
+#, python-format
+msgid "%(free)s available"
+msgstr "%(free)s tilgjengelig"
+
+#: .\plugins\files\templates\files\document_list.html:23
+msgid "Uploaded by"
+msgstr "Lastet opp av"
+
+#: .\plugins\files\templates\files\document_list.html:24
+msgid "Uploaded at"
+msgstr "Lastet opp"
+
+#: .\plugins\files\templates\files\document_list.html:37
+msgid "Download"
+msgstr "Last ned"
+
+#: .\plugins\files\templates\files\document_list.html:49
+msgid "files"
+msgstr "filer"
+
+#: .\plugins\files\templates\files\document_list.html:49
+msgid "with"
+msgstr "på til sammen"
+
+#: .\plugins\files\views.py:39 .\plugins\files\views.py:52
+msgid "File saved successfully."
+msgstr "Filen ble lagret."
+
+#: .\plugins\files\views.py:64
+msgid "File deleted successfully."
+msgstr "Filen ble slettet."
+
+#: .\plugins\guests\apps.py:10
+msgid "Guest Participations"
+msgstr "Gjestedeltakelser"
+
+#: .\plugins\guests\apps.py:13
+msgid ""
+"This plugins allows you to accept signups for individual events from people "
+"without an account, using a public signup form."
+msgstr ""
+"Dette programtillegget lar deg ta imot påmeldinger til enkeltarrangementer "
+"fra personer uten konto via et offentlig påmeldingsskjema."
+
+#: .\plugins\guests\forms.py:11
+msgid "Allow guests"
+msgstr "Tillat gjester"
+
+#: .\plugins\guests\forms.py:13
+msgid "Generate a new link when saving"
+msgstr "Opprett en ny lenke ved lagring"
+
+#: .\plugins\guests\forms.py:37
+#, python-brace-format
+msgid "Guests can sign up for this event <a href={href}>here</a>. "
+msgstr "Gjester kan melde seg på dette arrangementet <a href={href}>her</a>. "
+
+#: .\plugins\guests\forms.py:46
+msgid "Guests"
+msgstr "Gjester"
+
+#: .\plugins\guests\models.py:29
+#, python-brace-format
+msgid "Guest share for {event}"
+msgstr "Deling med gjester for {event}"
+
+#: .\plugins\guests\models.py:66
+msgid "guest user"
+msgstr "gjestebruker"
+
+#: .\plugins\guests\models.py:67
+msgid "guest users"
+msgstr "gjestebrukere"
+
+#: .\plugins\guests\models.py:84
+msgid "guest participant"
+msgstr "gjestedeltaker"
+
+#: .\plugins\guests\models.py:95
+msgid "guest participation"
+msgstr "gjestedeltakelse"
+
+#: .\plugins\guests\models.py:96
+msgid "guest participations"
+msgstr "gjestedeltakelser"
+
+#: .\plugins\guests\notifications.py:13
+msgid "A guest user has signed up"
+msgstr "En gjestebruker har meldt seg på"
+
+#: .\plugins\guests\notifications.py:22
+#, python-brace-format
+msgid "You have signed up for {event}"
+msgstr "Du har meldt deg på {event}"
+
+#: .\plugins\guests\notifications.py:27
+#, python-brace-format
+msgid ""
+"You have signed up for {event} at {platform}. You can use the link below to "
+"make changes to your participation."
+msgstr ""
+"Du har meldt deg på {event} på {platform}. Du kan bruke lenken nedenfor til "
+"å endre deltakelsen din."
+
+#: .\plugins\guests\templates\guests\guestuser_form.html:7
+#: .\plugins\guests\templates\guests\guestuser_form.html:16
+msgid "Register as guest"
+msgstr "Registrer deg som gjest"
+
+#: .\plugins\guests\templates\guests\guestuser_form.html:24
+msgid "Continue"
+msgstr "Fortsett"
+
+#: .\plugins\guests\views.py:55
+msgid "Log out to register as guest."
+msgstr "Logg ut for å registrere deg som gjest."
+
+#: .\plugins\guests\views.py:80
+msgid ""
+"You already registered as a guest for this event. We sent you an email with "
+"a link that you can use to change your participation."
+msgstr ""
+"Du har allerede registrert deg som gjest på dette arrangementet. Vi har "
+"sendt deg en e-post med en lenke du kan bruke til å endre deltakelsen din."
+
+#: .\plugins\guests\views.py:98
+msgid "Save the URL of this page to access this site later."
+msgstr ""
+"Ta vare på nettadressen til denne siden for å få tilgang til den senere."
+
+#: .\plugins\guests\views.py:107
+msgid "Log out to view the guest version of this page."
+msgstr "Logg ut for å se gjesteversjonen av denne siden."
+
+#: .\plugins\pages\apps.py:10
+msgid "Pages Plugin"
+msgstr "Programtillegg for sider"
+
+#: .\plugins\pages\apps.py:13
+msgid ""
+"This plugins lets you write pages with arbitrary content and link them in "
+"the site footer. Useful for legal notices."
+msgstr ""
+"Dette programtillegget lar deg skrive sider med valgfritt innhold og lenke "
+"til dem i bunnteksten på nettstedet. Nyttig for juridisk informasjon."
+
+#: .\plugins\pages\models.py:10
+msgid "Content"
+msgstr "Innhold"
+
+#: .\plugins\pages\models.py:12
+msgid "URL slug"
+msgstr "Del av nettadressen"
+
+#: .\plugins\pages\models.py:13
+msgid "The slug is used to generate the page's URL."
+msgstr "Denne delen brukes til å lage sidens nettadresse."
+
+#: .\plugins\pages\models.py:17
+msgid "Show in footer"
+msgstr "Vis i bunnteksten"
+
+#: .\plugins\pages\models.py:18
+msgid "Publicly visible"
+msgstr "Synlig for alle"
+
+#: .\plugins\pages\signals.py:27
+msgid "Pages"
+msgstr "Sider"
+
+#: .\plugins\pages\signals.py:47
+msgid "Manage pages"
+msgstr "Administrer sider"
+
+#: .\plugins\pages\signals.py:48
+msgid "Allows to create, edit and delete pages."
+msgstr "Gir tillatelse til å opprette, redigere og slette sider."
+
+#: .\plugins\pages\templates\pages\page_confirm_delete.html:6
+#: .\plugins\pages\templates\pages\page_confirm_delete.html:11
+msgid "Delete page"
+msgstr "Slett side"
+
+#: .\plugins\pages\templates\pages\page_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the page \"%(title)s\"?"
+msgstr "Er du sikker på at du vil slette siden \"%(title)s\"?"
+
+#: .\plugins\pages\templates\pages\page_form.html:8
+msgid "Edit page"
+msgstr "Rediger side"
+
+#: .\plugins\pages\templates\pages\page_form.html:10
+msgid "Create new page"
+msgstr "Opprett ny side"
+
+#: .\plugins\pages\templates\pages\page_list.html:6
+msgid "Add page"
+msgstr "Legg til side"
+
+#: .\plugins\pages\views.py:38 .\plugins\pages\views.py:48
+msgid "Page saved successfully."
+msgstr "Siden ble lagret."
+
+#: .\plugins\pages\views.py:57
+msgid "Page deleted successfully."
+msgstr "Siden ble slettet."
+
+#: .\plugins\qualification_management\apps.py:10
+msgid "Qualification Management"
+msgstr "Administrasjon av kvalifikasjoner"
+
+#: .\plugins\qualification_management\apps.py:12
+msgid "This plugins lets you add and edit qualifications."
+msgstr "Dette programtillegget lar deg legge til og redigere kvalifikasjoner."
+
+#: .\plugins\qualification_management\dynamic_preferences_registry.py:15
+msgid "List of qualification repositories"
+msgstr "Liste over kilder til kvalifikasjonsdefinisjoner"
+
+#: .\plugins\qualification_management\dynamic_preferences_registry.py:16
+msgid "To use multiple repositories, put URLs in separate lines."
+msgstr "For å bruke flere kilder skriver du nettadressene på hver sin linje."
+
+#: .\plugins\qualification_management\dynamic_preferences_registry.py:26
+#, python-brace-format
+msgid "'{url}' does not look like a repo url."
+msgstr "'{url}' ser ikke ut som en nettadresse til en kvalifikasjonskilde."
+
+#: .\plugins\qualification_management\forms.py:32
+msgid ""
+"Used to identify qualifications accross the ephios ecosystem. Only change if "
+"you know what you are doing."
+msgstr ""
+"Brukes til å identifisere kvalifikasjoner på tvers av ephios-økosystemet. "
+"Endre bare hvis du vet hva du gjør."
+
+#: .\plugins\qualification_management\forms.py:39
+msgid "Maintain transitive inclusion"
+msgstr "Behold indirekte inkluderte kvalifikasjoner"
+
+#: .\plugins\qualification_management\forms.py:44
+msgid "Migrate users to other qualification"
+msgstr "Overfør brukere til en annen kvalifikasjon"
+
+#: .\plugins\qualification_management\forms.py:58
+#, python-brace-format
+msgid ""
+"If checked, superior qualifications ({superior}) will include inferior "
+"({inferior}) qualifications."
+msgstr ""
+"Hvis dette er valgt, vil overordnede kvalifikasjoner ({superior}) inkludere "
+"underordnede kvalifikasjoner ({inferior})."
+
+#: .\plugins\qualification_management\forms.py:60
+#: .\plugins\qualification_management\forms.py:61
+msgid "none"
+msgstr "ingen"
+
+#: .\plugins\qualification_management\forms.py:68
+msgid ""
+"Select qualifications to apply to users with the qualification about to be "
+"deleted. Expiration dates will be kept."
+msgstr ""
+"Velg kvalifikasjoner som skal tildeles brukere med kvalifikasjonen som skal "
+"slettes. Utløpsdatoene beholdes."
+
+#: .\plugins\qualification_management\forms.py:74
+#, python-brace-format
+msgid "There is {count} user with this qualification."
+msgid_plural "There are {count} users with this qualification."
+msgstr[0] "Det er {count} bruker med denne kvalifikasjonen."
+msgstr[1] "Det er {count} brukere med denne kvalifikasjonen."
+
+#: .\plugins\qualification_management\forms.py:185
+msgid "current qualifications"
+msgstr "nåværende kvalifikasjoner"
+
+#: .\plugins\qualification_management\forms.py:187
+msgid "Only users with all these qualifications will be selected."
+msgstr "Bare brukere med alle disse kvalifikasjonene blir valgt."
+
+#: .\plugins\qualification_management\forms.py:191
+msgid "qualification to assign"
+msgstr "kvalifikasjon som skal tildeles"
+
+#: .\plugins\qualification_management\forms.py:196
+msgid "expires"
+msgstr "utløper"
+
+#: .\plugins\qualification_management\forms.py:200
+msgid ""
+"If empty, the new qualification will not expire. This will only be applied "
+"if a user does not already have the target qualification."
+msgstr ""
+"Hvis feltet er tomt, vil den nye kvalifikasjonen ikke utløpe. Dette gjelder "
+"bare hvis brukeren ikke allerede har kvalifikasjonen som skal tildeles."
+
+#: .\plugins\qualification_management\forms.py:209
+msgid "User selection"
+msgstr "Brukerutvalg"
+
+#: .\plugins\qualification_management\forms.py:211
+msgid "New qualification"
+msgstr "Ny kvalifikasjon"
+
+#: .\plugins\qualification_management\forms.py:216
+msgid "Execute"
+msgstr "Utfør"
+
+#: .\plugins\qualification_management\templates\core\import.html:8
+msgid "Qualification import"
+msgstr "Import av kvalifikasjoner"
+
+#: .\plugins\qualification_management\templates\core\qualification_confirm_delete.html:7
+#: .\plugins\qualification_management\templates\core\qualification_confirm_delete.html:12
+msgid "Delete qualification"
+msgstr "Slett kvalifikasjon"
+
+#: .\plugins\qualification_management\templates\core\qualification_confirm_delete.html:16
+#, python-format
+msgid "Are you sure you want to delete the qualification \"%(title)s\"?"
+msgstr "Er du sikker på at du vil slette kvalifikasjonen \"%(title)s\"?"
+
+#: .\plugins\qualification_management\templates\core\qualification_form.html:8
+msgid "Edit qualification"
+msgstr "Rediger kvalifikasjon"
+
+#: .\plugins\qualification_management\templates\core\qualification_form.html:10
+msgid "Create new qualification"
+msgstr "Opprett ny kvalifikasjon"
+
+#: .\plugins\qualification_management\templates\core\qualification_form.html:16
+msgid ""
+"This qualification was imported. We advise to not change the UUID and "
+"meaning of this qualification."
+msgstr ""
+"Denne kvalifikasjonen ble importert. Vi anbefaler at du ikke endrer "
+"kvalifikasjonens UUID eller betydning."
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:8
+msgid "Import"
+msgstr "Importer"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:12
+msgid "Create custom qualification"
+msgstr "Opprett egendefinert kvalifikasjon"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:16
+msgid "Manage categories"
+msgstr "Administrer kategorier"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:20
+msgid "Reassign qualifications"
+msgstr "Tildel kvalifikasjon til flere brukere"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:23
+msgid "All qualifications"
+msgstr "Alle kvalifikasjoner"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:30
+#: .\plugins\simpleresource\models.py:32
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:20
+msgid "Category"
+msgstr "Kategori"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:31
+msgid "Includes"
+msgstr "Inkluderer"
+
+#: .\plugins\qualification_management\templates\core\qualification_list.html:41
+msgid "custom"
+msgstr "egendefinert"
+
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:9
+msgid "Edit qualification categories"
+msgstr "Rediger kvalifikasjonskategorier"
+
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:38
+msgid "cannot be deleted, has qualifications"
+msgstr "kan ikke slettes, inneholder kvalifikasjoner"
+
+#: .\plugins\qualification_management\templates\core\qualificationcategories_form.html:51
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:56
+msgid "Add category"
+msgstr "Legg til kategori"
+
+#: .\plugins\qualification_management\views.py:46
+msgid ""
+"There was an error fetching one of the qualification repos. Check the URLs, "
+"try again or contact support."
+msgstr ""
+"Det oppstod en feil ved henting fra en av kvalifikasjonskildene. Kontroller "
+"nettadressene, prøv igjen eller kontakt brukerstøtte."
+
+#: .\plugins\qualification_management\views.py:70
+#: .\plugins\qualification_management\views.py:80
+msgid "Qualification was saved."
+msgstr "Kvalifikasjonen ble lagret."
+
+#: .\plugins\qualification_management\views.py:91
+msgid "Qualification was deleted."
+msgstr "Kvalifikasjonen ble slettet."
+
+#: .\plugins\qualification_management\views.py:109
+msgid "Qualification categories saved."
+msgstr "Kvalifikasjonskategoriene ble lagret."
+
+#: .\plugins\qualification_management\views.py:124
+#, python-brace-format
+msgid "One user had '{qualification}' assigned."
+msgid_plural "{count} users had '{qualification}' assigned."
+msgstr[0] "En bruker fikk tildelt '{qualification}'."
+msgstr[1] "{count} brukere fikk tildelt '{qualification}'."
+
+#: .\plugins\questionnaires\apps.py:10 .\plugins\questionnaires\models.py:221
+msgid "Questionnaires"
+msgstr "Spørreskjemaer"
+
+#: .\plugins\questionnaires\apps.py:12
+msgid "This plugin collects answers from users during sign-up."
+msgstr "Dette programtillegget samler inn svar fra brukere ved påmelding."
+
+#: .\plugins\questionnaires\forms.py:12
+msgid "Choice name"
+msgstr "Navn på svaralternativ"
+
+#: .\plugins\questionnaires\forms.py:88 .\plugins\questionnaires\models.py:220
+msgid "Questionnaire"
+msgstr "Spørreskjema"
+
+#: .\plugins\questionnaires\models.py:18
+msgid "Text input"
+msgstr "Tekstfelt"
+
+#: .\plugins\questionnaires\models.py:19
+msgid "Single choice"
+msgstr "Ett svar"
+
+#: .\plugins\questionnaires\models.py:20
+msgid "Multiple choice"
+msgstr "Flere svar"
+
+#: .\plugins\questionnaires\models.py:26
+msgid ""
+"The name of the question is used to identify the question, for example when "
+"picking questions for a shift"
+msgstr ""
+"Navnet på spørsmålet brukes til å identifisere det, for eksempel når du "
+"velger spørsmål til en vakt"
+
+#: .\plugins\questionnaires\models.py:29 .\plugins\questionnaires\models.py:56
+msgid "Question"
+msgstr "Spørsmål"
+
+#: .\plugins\questionnaires\models.py:32
+msgid "Required"
+msgstr "Obligatorisk"
+
+#: .\plugins\questionnaires\models.py:33
+msgid "Whether users must submit an answer to this question"
+msgstr "Om brukere må svare på dette spørsmålet"
+
+#: .\plugins\questionnaires\models.py:38
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:33
+msgid "Choices"
+msgstr "Svaralternativer"
+
+#: .\plugins\questionnaires\models.py:41
+msgid "Archived"
+msgstr "Arkivert"
+
+#: .\plugins\questionnaires\models.py:43
+msgid ""
+"Archive a question to hide it in the question selection for new shifts "
+"without affecting shifts where this question is already in use."
+msgstr ""
+"Arkiver et spørsmål for å skjule det når du velger spørsmål til nye vakter, "
+"uten å påvirke vakter der spørsmålet allerede er i bruk."
+
+#: .\plugins\questionnaires\models.py:47
+msgid "Use saved answers"
+msgstr "Bruk lagrede svar"
+
+#: .\plugins\questionnaires\models.py:49
+msgid ""
+"If checked, forms will be prefilled with a users saved answer to this "
+"question, if available. Enable this if answers are independent of the event "
+"the question is used for."
+msgstr ""
+"Hvis dette er valgt, fylles skjemaer ut på forhånd med brukerens lagrede "
+"svar på dette spørsmålet, hvis et slikt svar finnes. Aktiver dette hvis "
+"svarene er uavhengige av arrangementet spørsmålet brukes til."
+
+#: .\plugins\questionnaires\models.py:57 .\plugins\questionnaires\signals.py:34
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:8
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:18
+msgid "Questions"
+msgstr "Spørsmål"
+
+#: .\plugins\questionnaires\models.py:110
+msgid "Answer can be saved to your profile."
+msgstr "Svaret kan lagres i profilen din."
+
+#: .\plugins\questionnaires\models.py:194
+#: .\plugins\questionnaires\models.py:239
+#: .\plugins\questionnaires\models.py:242
+#: .\plugins\questionnaires\models.py:257
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:33
+msgid "Answer"
+msgstr "Svar"
+
+#: .\plugins\questionnaires\models.py:243
+msgid "Answers"
+msgstr "Svar"
+
+#: .\plugins\questionnaires\models.py:260
+msgid "Saved answer"
+msgstr "Lagret svar"
+
+#: .\plugins\questionnaires\models.py:261
+#: .\plugins\questionnaires\signals.py:50
+msgid "Saved answers"
+msgstr "Lagrede svar"
+
+#: .\plugins\questionnaires\signals.py:69
+msgid "Manage Questions"
+msgstr "Administrer spørsmål"
+
+#: .\plugins\questionnaires\signals.py:70
+msgid "Enables this group to add questions that can be asked during signup."
+msgstr ""
+"Gir denne gruppen mulighet til å legge til spørsmål som kan stilles ved "
+"påmelding."
+
+#: .\plugins\questionnaires\signals.py:124
+msgid "Save answers to my user profile for future sign-ups"
+msgstr "Lagre svar i brukerprofilen min for fremtidige påmeldinger"
+
+#: .\plugins\questionnaires\signals.py:205
+msgid "View answers"
+msgstr "Vis svar"
+
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:6
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:10
+#, python-format
+msgid "Answers for %(shift)s"
+msgstr "Svar for %(shift)s"
+
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:12
+msgid ""
+"This page only shows answers of confirmed participants. You can see the "
+"answers of other participants in the disposition view."
+msgstr ""
+"Denne siden viser bare svar fra bekreftede deltakere. Du kan se svarene fra "
+"andre deltakere i bemanningsvisningen."
+
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:19
+msgid "required,optional"
+msgstr "obligatorisk,valgfritt"
+
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:34
+msgid "Count"
+msgstr "Antall"
+
+#: .\plugins\questionnaires\templates\questionnaires\aggregate_answers.html:49
+msgid "No answers so far"
+msgstr "Ingen svar ennå"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:8
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:19
+msgid "archive"
+msgstr "arkiver"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:10
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:21
+msgid "unarchive"
+msgstr "gjenopprett"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:12
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:25
+#, python-format
+msgid "%(action)s question"
+msgstr "%(action)s spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_archive.html:34
+#, python-format
+msgid "Are you sure you want to %(action)s the question %(question)s?"
+msgstr "Vil du utføre handlingen «%(action)s» på spørsmålet %(question)s?"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_delete.html:6
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_delete.html:11
+msgid "Delete question"
+msgstr "Slett spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the question %(question)s?"
+msgstr "Er du sikker på at du vil slette spørsmålet %(question)s?"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:10
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:19
+msgid "Edit question"
+msgstr "Rediger spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:12
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:21
+msgid "Create new question"
+msgstr "Opprett nytt spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:35
+msgid "For single- and multiple choice questions"
+msgstr "For spørsmål der ett eller flere svar kan velges"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:38
+#, python-format
+msgid ""
+"You should refrain from editing or removing choices if this question is "
+"already in use. Consider creating a new question and <a "
+"href=\"%(archive_url)s\">archiving this question</a> instead. New choices "
+"can always be added safely."
+msgstr ""
+"Du bør unngå å redigere eller fjerne svaralternativer hvis spørsmålet "
+"allerede er i bruk. Vurder heller å opprette et nytt spørsmål og <a "
+"href=\"%(archive_url)s\">arkivere dette spørsmålet</a>. Det er alltid trygt "
+"å legge til nye svaralternativer."
+
+#: .\plugins\questionnaires\templates\questionnaires\question_form.html:65
+msgid "Add choice"
+msgstr "Legg til svaralternativ"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:6
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:16
+msgid "Archived Questions"
+msgstr "Arkiverte spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:28
+msgid "Back to active questions"
+msgstr "Tilbake til aktive spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:35
+msgid "Add question"
+msgstr "Legg til spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:40
+msgid "Show archived questions"
+msgstr "Vis arkiverte spørsmål"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:74
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:89
+msgid "Answer required"
+msgstr "Svar er påkrevd"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:79
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:94
+msgid "Uses saved answers"
+msgstr "Bruker lagrede svar"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:103
+msgid "Unarchive"
+msgstr "Gjenopprett"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:112
+msgid "Archive"
+msgstr "Arkiver"
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:120
+msgid ""
+"This question cannot be deleted as it is used by at least one shift or "
+"answer. You can still archive it."
+msgstr ""
+"Dette spørsmålet kan ikke slettes fordi det er knyttet til minst en vakt "
+"eller ett svar. Du kan fortsatt arkivere det."
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:133
+msgid "There are no archived questions."
+msgstr "Det finnes ingen arkiverte spørsmål."
+
+#: .\plugins\questionnaires\templates\questionnaires\question_list.html:135
+msgid "There are no active questions. Use the button above to create one!"
+msgstr ""
+"Det finnes ingen aktive spørsmål. Bruk knappen ovenfor for å opprette et "
+"nytt spørsmål!"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_confirm_delete.html:5
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_confirm_delete.html:10
+msgid "Delete saved questionnaire answer"
+msgstr "Slett lagret spørreskjemasvar"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_confirm_delete.html:14
+#, python-format
+msgid ""
+"Are you sure you want to delete your saved answer \"%(answer_text)s\" for "
+"question %(question)s?"
+msgstr ""
+"Er du sikker på at du vil slette det lagrede svaret ditt \"%(answer_text)s\" "
+"på spørsmålet %(question)s?"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_form.html:7
+msgid "Edit saved questionnaire answer"
+msgstr "Rediger lagret spørreskjemasvar"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_form.html:21
+msgid ""
+"Editing your answer below only affects future sign-ups. You answers to "
+"existing sign-ups will remain unchanged."
+msgstr ""
+"Endringer i svaret ditt nedenfor påvirker bare fremtidige påmeldinger. "
+"Svarene du allerede har gitt ved påmelding, forblir uendret."
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:5
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:10
+msgid "Saved questionnaire answers"
+msgstr "Lagrede spørreskjemasvar"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:26
+msgid "not used anymore"
+msgstr "ikke lenger i bruk"
+
+#: .\plugins\questionnaires\templates\questionnaires\savedanswer_list.html:47
+msgid ""
+"You haven't answered a question during sign-up yet or decided to not save "
+"your answer for future sign-ups. Once you save your first answer, you can "
+"view and edit it here."
+msgstr ""
+"Du har ennå ikke svart på et spørsmål ved påmelding, eller du har valgt å "
+"ikke lagre svaret for fremtidige påmeldinger. Når du har lagret ditt første "
+"svar, kan du se og redigere det her."
+
+#: .\plugins\questionnaires\views.py:40
+msgid "Question created successfully."
+msgstr "Spørsmålet ble opprettet."
+
+#: .\plugins\questionnaires\views.py:48
+msgid "Question updated successfully."
+msgstr "Spørsmålet ble oppdatert."
+
+#: .\plugins\questionnaires\views.py:78
+msgid "Question archived successfully."
+msgstr "Spørsmålet ble arkivert."
+
+#: .\plugins\questionnaires\views.py:80
+msgid "Question unarchived successfully."
+msgstr "Spørsmålet ble gjenopprettet."
+
+#: .\plugins\questionnaires\views.py:88
+msgid "Question deleted successfully."
+msgstr "Spørsmålet ble slettet."
+
+#: .\plugins\questionnaires\views.py:109
+msgid "Saved answer updated successfully."
+msgstr "Det lagrede svaret ble oppdatert."
+
+#: .\plugins\questionnaires\views.py:120
+msgid "Saved answer deleted successfully."
+msgstr "Det lagrede svaret ble slettet."
+
+#: .\plugins\simpleresource\apps.py:10
+msgid "Simple Resource Management Plugin"
+msgstr "Programtillegg for enkel ressursstyring"
+
+#: .\plugins\simpleresource\apps.py:12
+msgid "This plugins provides a simple resource management system."
+msgstr "Dette programtillegget gir et enkelt system for ressursstyring."
+
+#: .\plugins\simpleresource\forms.py:36 .\plugins\simpleresource\models.py:55
+msgid "Resource allocation"
+msgstr "Ressurstildeling"
+
+#: .\plugins\simpleresource\models.py:11
+msgid "Icon"
+msgstr "Ikon"
+
+#: .\plugins\simpleresource\models.py:15
+msgid "Resource category"
+msgstr "Ressurskategori"
+
+#: .\plugins\simpleresource\models.py:16
+msgid "Resource categories"
+msgstr "Ressurskategorier"
+
+#: .\plugins\simpleresource\models.py:36
+msgid "Resource"
+msgstr "Ressurs"
+
+#: .\plugins\simpleresource\models.py:37 .\plugins\simpleresource\models.py:52
+#: .\plugins\simpleresource\signals.py:40
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:5
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:9
+msgid "Resources"
+msgstr "Ressurser"
+
+#: .\plugins\simpleresource\models.py:56
+msgid "Resource allocations"
+msgstr "Ressurstildelinger"
+
+#: .\plugins\simpleresource\signals.py:66
+msgid "Manage Resources"
+msgstr "Administrer ressurser"
+
+#: .\plugins\simpleresource\signals.py:68
+msgid ""
+"Enables this group to add resources. Resources can be attached to shifts by "
+"all planners."
+msgstr ""
+"Gir denne gruppen mulighet til å legge til ressurser. Alle planleggere kan "
+"knytte ressurser til vakter."
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_confirm_delete.html:6
+#: .\plugins\simpleresource\templates\simpleresource\resource_confirm_delete.html:11
+msgid "Delete resource"
+msgstr "Slett ressurs"
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_confirm_delete.html:15
+#, python-format
+msgid "Are you sure you want to delete the resource %(resource)s?"
+msgstr "Er du sikker på at du vil slette ressursen %(resource)s?"
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_form.html:7
+#: .\plugins\simpleresource\templates\simpleresource\resource_form.html:16
+msgid "Edit resource"
+msgstr "Rediger ressurs"
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_form.html:9
+#: .\plugins\simpleresource\templates\simpleresource\resource_form.html:18
+msgid "Create new resource"
+msgstr "Opprett ny ressurs"
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:12
+msgid "Add resource"
+msgstr "Legg til ressurs"
+
+#: .\plugins\simpleresource\templates\simpleresource\resource_list.html:14
+msgid "Edit categories"
+msgstr "Rediger kategorier"
+
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:8
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:13
+msgid "Edit resource categories"
+msgstr "Rediger ressurskategorier"
+
+#: .\plugins\simpleresource\templates\simpleresource\resourcecategories_form.html:43
+msgid "cannot delete, has resources"
+msgstr "kan ikke slettes, inneholder ressurser"
+
+#: .\plugins\simpleresource\views.py:47
+msgid "Resource categories updated successfully."
+msgstr "Ressurskategoriene ble oppdatert."
+
+#: .\settings.py:222
+msgid "German"
+msgstr "Tysk"
+
+#: .\settings.py:223
+msgid "English"
+msgstr "Engelsk"
+
+#: .\settings.py:427
+msgid "Read public data like available events and shifts"
+msgstr "Lese offentlige data som tilgjengelige arrangementer og vakter"
+
+#: .\settings.py:428
+msgid "Write public data like available events and shifts"
+msgstr "Skrive offentlige data som tilgjengelige arrangementer og vakter"
+
+#: .\settings.py:429
+msgid "Read own personal data and participations"
+msgstr "Lese egne personopplysninger og deltakelser"
+
+#: .\settings.py:430
+msgid "Write own personal data and participations"
+msgstr "Skrive egne personopplysninger og deltakelser"
+
+#: .\settings.py:432
+msgid "Read confidential data like all users profile and participations"
+msgstr "Lese konfidensielle data som alle brukeres profiler og deltakelser"
+
+#: .\settings.py:435
+msgid "Write confidential data like all users profile and participations"
+msgstr "Skrive konfidensielle data som alle brukeres profiler og deltakelser"
+
+#: .\templates\400.html:5 .\templates\400.html:9
+msgid "Bad request"
+msgstr "Ugyldig forespørsel"
+
+#: .\templates\400.html:10
+msgid ""
+"Your request contained invalid data, please try again. Please contact an "
+"administrator if the error recurs."
+msgstr ""
+"Forespørselen din inneholdt ugyldige data. Prøv igjen. Kontakt en "
+"administrator hvis feilen oppstår igjen."
+
+#: .\templates\403.html:5 .\templates\403.html:9
+msgid "Permission denied"
+msgstr "Tilgang nektet"
+
+#: .\templates\403.html:10
+msgid "You don't have the permission to view this page."
+msgstr "Du har ikke tilgang til å se denne siden."
+
+#: .\templates\404.html:5 .\templates\404.html:9
+msgid "Page not found"
+msgstr "Fant ikke siden"
+
+#: .\templates\404.html:10
+msgid "The page you requested could not be found."
+msgstr "Fant ikke siden du ba om."
+
+#: .\templates\500.html:11 .\templates\500.html:36
+msgid "An error occurred"
+msgstr "Det oppstod en feil"
+
+#: .\templates\500.html:39
+msgid ""
+"The server encountered an internal error and was unable to retrieve your "
+"request. Please try again later. The administrators have been notified."
+msgstr ""
+"Det oppstod en intern feil på serveren, og forespørselen din kunne ikke "
+"behandles. Prøv igjen senere. Administratorene er varslet."
+
+#: .\templates\500.html:46
+msgid "Return home"
+msgstr "Tilbake til forsiden"
+
+#: .\templates\base.html:150
+msgid "Logout"
+msgstr "Logg ut"
+
+#: .\templates\base.html:198 .\templates\base.html:212
+#, python-format
+msgid "Install %(platform_name)s app"
+msgstr "Installer appen %(platform_name)s"
+
+#: .\templates\base.html:204 .\templates\base.html:218
+#, python-format
+msgid ""
+"You can install %(platform_name)s on your device and use it like any other "
+"app!"
+msgstr ""
+"Du kan installere %(platform_name)s på enheten din og bruke tjenesten som en "
+"vanlig app!"
+
+#: .\templates\base.html:206
+msgid "Simply click the button below to continue."
+msgstr "Klikk på knappen nedenfor for å fortsette."
+
+#: .\templates\base.html:207
+#, python-format
+msgid "Install %(platform_name)s"
+msgstr "Installer %(platform_name)s"
+
+#: .\templates\base.html:220
+msgid "Simply follow the steps below."
+msgstr "Følg trinnene nedenfor."
+
+#: .\templates\base.html:231
+msgid "Open in your main browser"
+msgstr "Åpne i nettleseren du vanligvis bruker"
+
+#: .\templates\base.html:243
+msgid "Press More if no Share icon"
+msgstr "Trykk på Mer hvis du ikke ser Del-ikonet"
+
+#: .\templates\base.html:253
+msgid "Press Share in Navigation bar"
+msgstr "Trykk på Del i navigasjonslinjen"
+
+#: .\templates\base.html:263
+msgid "Scroll down to &quot;Add to Home Screen&quot;"
+msgstr "Rull ned til &quot;Legg til på Hjem-skjerm&quot;"
+
+#: .\templates\base.html:270
+msgid "Activate notifications"
+msgstr "Slå på varsler"
+
+#: .\templates\base.html:274
+#, python-format
+msgid ""
+"%(platform_name)s can send you push notifications so that you stay up to "
+"date. Do you want to activate them?\""
+msgstr ""
+"%(platform_name)s kan sende deg pushvarsler slik at du holder deg oppdatert. "
+"Vil du slå dem på?"
+
+#: .\templates\offline.html:10
+msgid "No connection"
+msgstr "Ingen tilkobling"
+
+#: .\templates\offline.html:11
+msgid ""
+"This page is not available offline. Please check your internet connection "
+"and try again."
+msgstr ""
+"Denne siden er ikke tilgjengelig når du er frakoblet. Kontroller "
+"internettilkoblingen og prøv igjen."
+
+#: .\templates\registration\logged_out.html:5
+msgid "Logged out"
+msgstr "Logget ut"
+
+#: .\templates\registration\logged_out.html:10
+#: .\templates\registration\password_reset_done.html:11
+msgid "Back to login"
+msgstr "Tilbake til innlogging"
+
+#: .\templates\registration\password_reset_complete.html:5
+#: .\templates\registration\password_reset_complete.html:9
+msgid "Password set successfully"
+msgstr "Passordet er lagret"
+
+#: .\templates\registration\password_reset_complete.html:10
+msgid "Your password has been set. You may go ahead and log in now."
+msgstr "Passordet ditt er lagret. Du kan nå logge inn."
+
+#: .\templates\registration\password_reset_confirm.html:9
+msgid "Invalid link"
+msgstr "Ugyldig lenke"
+
+#: .\templates\registration\password_reset_confirm.html:15
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Skriv inn det nye passordet ditt to ganger, slik at vi kan kontrollere at du "
+"har skrevet det riktig."
+
+#: .\templates\registration\password_reset_confirm.html:22
+msgid ""
+"The password reset link was invalid, possibly because it had already been "
+"used. Please request a new password reset."
+msgstr ""
+"Lenken for å tilbakestille passordet er ugyldig. Den kan allerede være "
+"brukt. Be om en ny lenke for å tilbakestille passordet."
+
+#: .\templates\registration\password_reset_done.html:5
+#: .\templates\registration\password_reset_done.html:9
+msgid "Password reset successfully"
+msgstr "Forespørsel om nytt passord er mottatt"
+
+#: .\templates\registration\password_reset_done.html:10
+msgid "Please check your mailbox for further instructions."
+msgstr "Sjekk innboksen din for videre instruksjoner."
+
+#: src/ephios/core/templates/core/userprofile_form.html:38
+msgid ""
+"The user is inactive because their email address is invalid. This can be "
+"caused by a typo or a problem with the user's mail server. Please check the "
+"email address and correct it before activating the user again."
+msgstr ""
+"Brukeren er inaktiv fordi e-postadressen er ugyldig. Dette kan skyldes en "
+"skrivefeil eller et problem med brukerens e-postserver. Kontroller e-"
+"postadressen og rett den før du aktiverer brukeren igjen."

@@ -1,0 +1,352 @@
+# Norwegian Bokmål translations for ephios.
+msgid ""
+msgstr ""
+"Project-Id-Version: ephios - Norsk bokmål\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 11:55+0100\n"
+"PO-Revision-Date: 2026-10-25 10:43+0000\n"
+"Last-Translator: Laksevåg Røde Kors\n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\plugins\complexsignup\static\complexsignup\editor.js:245
+msgid "{min}+"
+msgstr "{min}+"
+
+#: .\plugins\complexsignup\static\complexsignup\editor.js:250
+msgid "{min} to {max}"
+msgstr "{min} til {max}"
+
+#: .\static\ephios\js\disposition.js:13
+msgid "Create \"{userName}\" as placeholder"
+msgstr "Opprett \"{userName}\" som plassholder"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Monday"
+msgstr "Mandag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Tuesday"
+msgstr "Tirsdag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Wednesday"
+msgstr "Onsdag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Thursday"
+msgstr "Torsdag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Friday"
+msgstr "Fredag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Saturday"
+msgstr "Lørdag"
+
+#: .\static\ephios\js\event_copy.js:21
+msgid "Sunday"
+msgstr "Søndag"
+
+#: .\static\ephios\js\event_copy.js:22 .\static\rrule\rrule.js:1078
+#: .\static\rrule\rrule.js:1089
+msgid "years"
+msgstr "år"
+
+#: .\static\ephios\js\event_copy.js:22 .\static\rrule\rrule.js:1046
+#: .\static\rrule\rrule.js:1060
+msgid "months"
+msgstr "måneder"
+
+#: .\static\ephios\js\event_copy.js:22 .\static\rrule\rrule.js:1009
+#: .\static\rrule\rrule.js:1105
+msgid "weeks"
+msgstr "uker"
+
+#: .\static\ephios\js\event_copy.js:22 .\static\rrule\rrule.js:990
+#: .\static\rrule\rrule.js:1022
+msgid "days"
+msgstr "dager"
+
+#: .\static\ephios\js\event_copy.js:22 .\static\rrule\rrule.js:970
+msgid "hours"
+msgstr "timer"
+
+#: .\static\ephios\js\event_copy.js:25
+msgid "Jan"
+msgstr "jan."
+
+#: .\static\ephios\js\event_copy.js:25
+msgid "January"
+msgstr "januar"
+
+#: .\static\ephios\js\event_copy.js:26
+msgid "Feb"
+msgstr "feb."
+
+#: .\static\ephios\js\event_copy.js:26
+msgid "February"
+msgstr "februar"
+
+#: .\static\ephios\js\event_copy.js:27
+msgid "Mar"
+msgstr "mars"
+
+#: .\static\ephios\js\event_copy.js:27
+msgid "March"
+msgstr "mars"
+
+#: .\static\ephios\js\event_copy.js:28
+msgid "Apr"
+msgstr "april"
+
+#: .\static\ephios\js\event_copy.js:28
+msgid "April"
+msgstr "april"
+
+#: .\static\ephios\js\event_copy.js:29
+msgid "May"
+msgstr "mai"
+
+#: .\static\ephios\js\event_copy.js:30
+msgid "Jun"
+msgstr "juni"
+
+#: .\static\ephios\js\event_copy.js:30
+msgid "June"
+msgstr "juni"
+
+#: .\static\ephios\js\event_copy.js:31
+msgid "Jul"
+msgstr "juli"
+
+#: .\static\ephios\js\event_copy.js:31
+msgid "July"
+msgstr "juli"
+
+#: .\static\ephios\js\event_copy.js:32
+msgid "Aug"
+msgstr "aug."
+
+#: .\static\ephios\js\event_copy.js:32
+msgid "August"
+msgstr "august"
+
+#: .\static\ephios\js\event_copy.js:33
+msgid "Sep"
+msgstr "sep."
+
+#: .\static\ephios\js\event_copy.js:33
+msgid "September"
+msgstr "september"
+
+#: .\static\ephios\js\event_copy.js:34
+msgid "Oct"
+msgstr "okt."
+
+#: .\static\ephios\js\event_copy.js:34
+msgid "October"
+msgstr "oktober"
+
+#: .\static\ephios\js\event_copy.js:35
+msgid "Nov"
+msgstr "nov."
+
+#: .\static\ephios\js\event_copy.js:35
+msgid "November"
+msgstr "november"
+
+#: .\static\ephios\js\event_copy.js:36
+msgid "Dec"
+msgstr "des."
+
+#: .\static\ephios\js\event_copy.js:36
+msgid "December"
+msgstr "desember"
+
+#: .\static\ephios\js\main.js:138
+msgid "You are currently offline and seeing the content as it was on {time}."
+msgstr "Du er frakoblet og ser innholdet slik det var {time}."
+
+#: .\static\ephios\js\main.js:139
+msgid "experimental"
+msgstr "eksperimentell funksjon"
+
+#: .\static\rrule\rrule.js:946
+msgid "RRule error: Unable to fully convert this rrule to text"
+msgstr ""
+"RRule-feil: Kan ikke konvertere denne rrule-regelen fullstendig til tekst"
+
+#: .\static\rrule\rrule.js:948
+msgid "every"
+msgstr "hver"
+
+#: .\static\rrule\rrule.js:953
+msgid "until"
+msgstr "til"
+
+#: .\static\rrule\rrule.js:958
+msgid "for"
+msgstr "totalt"
+
+#: .\static\rrule\rrule.js:960
+msgid "times"
+msgstr "ganger"
+
+#: .\static\rrule\rrule.js:960
+msgid "time"
+msgstr "gang"
+
+#: .\static\rrule\rrule.js:963
+msgid "(~ approximate)"
+msgstr "(~ omtrentlig)"
+
+#: .\static\rrule\rrule.js:970
+msgid "hour"
+msgstr "time"
+
+#: .\static\rrule\rrule.js:977
+msgid "minutes"
+msgstr "minutter"
+
+#: .\static\rrule\rrule.js:978
+msgid "minute"
+msgstr "minutt"
+
+#: .\static\rrule\rrule.js:986 .\static\rrule\rrule.js:1014
+#: .\static\rrule\rrule.js:1018 .\static\rrule\rrule.js:1067
+msgid "weekdays"
+msgstr "hverdager"
+
+#: .\static\rrule\rrule.js:987 .\static\rrule\rrule.js:1015
+msgid "weekday"
+msgstr "hverdag"
+
+#: .\static\rrule\rrule.js:990 .\static\rrule\rrule.js:1022
+#: .\static\rrule\rrule.js:1100
+msgid "day"
+msgstr "dag"
+
+#: .\static\rrule\rrule.js:993 .\static\rrule\rrule.js:1028
+#: .\static\rrule\rrule.js:1048 .\static\rrule\rrule.js:1103
+msgid "in"
+msgstr "i"
+
+#: .\static\rrule\rrule.js:1009 .\static\rrule\rrule.js:1026
+#: .\static\rrule\rrule.js:1106
+msgid "week"
+msgstr "uke"
+
+#: .\static\rrule\rrule.js:1018 .\static\rrule\rrule.js:1067
+#: .\static\rrule\rrule.js:1113 .\static\rrule\rrule.js:1126
+msgid "on"
+msgstr "på"
+
+#: .\static\rrule\rrule.js:1061
+msgid "month"
+msgstr "måned"
+
+#: .\static\rrule\rrule.js:1089
+msgid "year"
+msgstr "år"
+
+#: .\static\rrule\rrule.js:1098 .\static\rrule\rrule.js:1119
+#: .\static\rrule\rrule.js:1131
+msgid "on the"
+msgstr "den"
+
+#: .\static\rrule\rrule.js:1099 .\static\rrule\rrule.js:1107
+#: .\static\rrule\rrule.js:1119 .\static\rrule\rrule.js:1130
+#: .\static\rrule\rrule.js:1131 .\static\rrule\rrule.js:1136
+#: .\static\rrule\rrule.js:1139 .\static\rrule\rrule.min.js:1
+msgid "and"
+msgstr "og"
+
+#: .\static\rrule\rrule.js:1114 .\static\rrule\rrule.js:1116
+msgid "or"
+msgstr "eller"
+
+#: .\static\rrule\rrule.js:1115
+msgid "the"
+msgstr "den"
+
+#: .\static\rrule\rrule.js:1136
+msgid "at"
+msgstr "klokken"
+
+#: .\static\rrule\rrule.js:1146 .\static\rrule\rrule.js:1165
+msgid "last"
+msgstr "siste"
+
+#: .\static\rrule\rrule.js:1152
+msgid "st"
+msgstr "."
+
+#: .\static\rrule\rrule.js:1156
+msgid "nd"
+msgstr "."
+
+#: .\static\rrule\rrule.js:1160
+msgid "rd"
+msgstr "."
+
+#: .\static\rrule\rrule.js:1163
+msgid "th"
+msgstr "."
+
+#: ephios/js/event_copy.js:10
+msgid "Currently selected dates"
+msgstr "Valgte datoer"
+
+#: ephios/js/event_copy.js:18
+msgid "No dates selected"
+msgstr "Ingen datoer valgt"
+
+#: webpush/webpush.js:31
+msgid "Service workers are not supported in your browser."
+msgstr "Nettleseren din støtter ikke service workers."
+
+#: webpush/webpush.js:40
+msgid "Showing notifications are not supported in your browser."
+msgstr "Nettleseren din støtter ikke visning av varsler."
+
+#: webpush/webpush.js:49 webpush/webpush.js:173
+msgid "Subscribe to Push Messaging"
+msgstr "Slå på pushvarsler"
+
+#: webpush/webpush.js:51
+msgid "Push notifications are blocked by your browser."
+msgstr "Pushvarsler er blokkert av nettleseren din."
+
+#: webpush/webpush.js:60
+msgid "Push notifications are not available in your browser."
+msgstr "Pushvarsler er ikke tilgjengelige i nettleseren din."
+
+#: webpush/webpush.js:73 webpush/webpush.js:120 webpush/webpush.js:181
+msgid "Unsubscribe from Push Messaging"
+msgstr "Slå av pushvarsler"
+
+#: webpush/webpush.js:76 webpush/webpush.js:123
+msgid "Successfully subscribed to push notifications."
+msgstr "Pushvarsler er slått på."
+
+#: webpush/webpush.js:129
+msgid "Error while subscribing to push notifications."
+msgstr "Det oppstod en feil da pushvarsler skulle slås på."
+
+#: webpush/webpush.js:161
+msgid "Subscription is not available."
+msgstr "Fant ikke noe abonnement på pushvarsler."
+
+#: webpush/webpush.js:174
+msgid "Successfully unsubscribed from push notifications."
+msgstr "Pushvarsler er slått av."
+
+#: webpush/webpush.js:182
+msgid "Error while unsubscribing from push notifications."
+msgstr "Det oppstod en feil da pushvarsler skulle slås av."
