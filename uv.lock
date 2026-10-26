@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11, <4"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -841,15 +841,15 @@ wheels = [
 
 [[package]]
 name = "django-guardian"
-version = "3.5.0"
+version = "3.5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/63/36/0d3eb841f9d6404fc74fdbc3b4d74b9217a0fcede406ab26cc9840506bf5/django_guardian-3.5.0.tar.gz", hash = "sha256:d80b8ab86c28f92adef816996f4341fbea6790aa1f09006c5afc1ef0ea394871", size = 115602, upload-time = "2026-09-12T18:03:27.082Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/ed/d31c3befa315d8cf52efea39078ab4871b866f03dddfa01f2ab630a8182d/django_guardian-3.5.2.tar.gz", hash = "sha256:ca14b7c9cc37bc852f3749f8a998a76cfd0ebbd66ac85726ef331289a712d389", size = 124548, upload-time = "2026-10-20T10:51:23.355Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/c7/57463fa92db5d472d5be9209b255c901f7e64e4631ebf16818cb04ad0ac4/django_guardian-3.5.0-py3-none-any.whl", hash = "sha256:926eb17caf4991d467fd75d412a3040857bc4e111fc70bfe42e1c021826727e4", size = 151912, upload-time = "2026-09-12T18:03:25.045Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/5c/be6e4a9391fb0a87770ad210df9fa1e3ac523ef2e70cb906376c28200aad/django_guardian-3.5.2-py3-none-any.whl", hash = "sha256:545ea01d528830d936c129a125dc2f1aba581da4c3f3daa5d4d1e31654e276a8", size = 159192, upload-time = "2026-10-20T10:51:21.771Z" },
 ]
 
 [[package]]
@@ -970,14 +970,14 @@ wheels = [
 
 [[package]]
 name = "django-webtest"
-version = "1.9.14"
+version = "1.9.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "webtest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/4c/2c6f4dc32c785b4ed760878f972e0934dba3a4d4cedbfdf4fbce24225808/django_webtest-1.9.14.tar.gz", hash = "sha256:edbdc62f74b84e53ad3b49821e839669c812fafabb54ede713b45209bf732aeb", size = 29289, upload-time = "2025-10-06T21:08:10.761Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/21/60/1a245bbc85fd6858bf0a3b8a7a4a05233bc2ff4afd48dcb8a395a5ed11ed/django_webtest-1.9.15.tar.gz", hash = "sha256:154bd234df491c466cacec9b79b8af6774223828501a452d30f825343d0f486b", size = 29152, upload-time = "2026-10-10T14:43:56.45Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/02/b623ee3b64879ac36d1c82f779997a9d7a98265b9254e45edd3e33ccd57b/django_webtest-1.9.14-py3-none-any.whl", hash = "sha256:1385ec303b766765413e7caa87f2be14c54826c0178050b00dc8746816d9fa1b", size = 16795, upload-time = "2025-10-06T21:08:09.155Z" },
+    { url = "https://files.pythonhosted.org/packages/24/91/ef9223a3195f8ffe8d8ffd46dc205beba469026ab87c136d057998b3ae1f/django_webtest-1.9.15-py3-none-any.whl", hash = "sha256:28bfc40def80db9d72ff75aa3ee9b77044f5d0f23d063707671cd67139f86f31", size = 16817, upload-time = "2026-10-10T14:43:54.844Z" },
 ]
 
 [[package]]
@@ -2354,14 +2354,13 @@ wheels = [
 
 [[package]]
 name = "py-vapid"
-version = "1.9.4"
+version = "1.9.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/ed/c648c8018fab319951764f4babe68ddcbbff7f2bbcd7ff7e531eac1788c8/py_vapid-1.9.4.tar.gz", hash = "sha256:a004023560cbc54e34fc06380a0580f04ffcc788e84fb6d19e9339eeb6551a28", size = 74750, upload-time = "2026-01-05T22:13:25.201Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/15/f9d0171e1ad863ca49e826d5afb6b50566f20dc9b4f76965096d3555ce9e/py_vapid-1.9.4-py2.py3-none-any.whl", hash = "sha256:f165a5bf90dcf966b226114f01f178f137579a09784c7f0628fa2f0a299741b6", size = 23912, upload-time = "2026-01-05T20:42:05.455Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/46/8843d8e00eb4fcece8e12c109ecf5b17a3d4cc9355dab23c2585cb51ed3c/py_vapid-1.9.6-py2.py3-none-any.whl", hash = "sha256:06d775951016f63f0d0d6dd8babd333fc2f831f0769fd5db2e1ec8cfbbccc70f", size = 19428, upload-time = "2026-10-14T19:13:04.404Z" },
 ]
 
 [[package]]
