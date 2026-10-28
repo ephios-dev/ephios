@@ -84,6 +84,14 @@ Data storage and Logging
 `LOGGING_BACKUP_DAYS`:
     Number of days to keep log files. Defaults to 14.
 
+Localization
+------------
+
+`DEFAULT_LANGUAGE`:
+    Language code for the default language. Defaults to `en`.
+
+`TIME_ZONE`:
+    Time zone for the ephios instance. Defaults to `Europe/Berlin`.
 
 Database and Caching
 --------------------
