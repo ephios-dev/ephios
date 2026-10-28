@@ -29,6 +29,7 @@ We do offer [paid hosting and support](https://ephios.de), feel free to reach ou
 * progressive web app, calendar export, email and push notifications
 * guests and federation, document upload, content pages, ...
 * REST-API, plugin system, OAuth2 for external apps
+* Localized and translated UI, see [Weblate](https://hosted.weblate.org/projects/ephios/) for a list of available languages.
 
 <img src="https://raw.githubusercontent.com/ephios-dev/ephios/refs/heads/main/docs/_static/img/screenshot_event_detail.png" alt="event detail page of some test event with description and multiple shifts">
 
