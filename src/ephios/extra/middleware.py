@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import HttpResponse
 
 from ephios.core.services.notifications.types import NOTIFICATION_READ_PARAM_NAME
 
@@ -40,4 +41,16 @@ class EphiosNotificationMiddleware:
             else:
                 notification.read = True
                 notification.save(update_fields=["read"])
+        return response
+
+
+class CacheControlMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response: HttpResponse = self.get_response(request)
+        # To prevent storing sensitive data in the cache as well as
+        # to prevent outdated data being shown to users
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         return response

@@ -132,6 +132,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "ephios.extra.middleware.EphiosLocaleMiddleware",
+    "ephios.extra.middleware.CacheControlMiddleware",
     "ephios.extra.middleware.EphiosNotificationMiddleware",
     "ephios.core.services.files.EphiosMediaFileMiddleware",
     "django.middleware.common.CommonMiddleware",
