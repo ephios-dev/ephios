@@ -35,7 +35,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_users_with
 from ephios.core.calendar import ShiftCalendar
 from ephios.core.forms.events import EventCopyForm, EventForm
 from ephios.core.models import AbstractParticipation, Event, EventType, Shift
-from ephios.core.signals import event_forms
+from ephios.core.signals import event_forms, event_list_filter_initial
 from ephios.core.views.signup import request_to_participant
 from ephios.extra.csp import csp_allow_unsafe_eval
 from ephios.extra.mixins import (
@@ -68,7 +68,6 @@ class EventFilterForm(forms.Form):
             ("until", pgettext_lazy("event date filter", "until")),
             ("from", pgettext_lazy("event date filter", "from")),
         ],
-        initial="from",
     )
     date = forms.DateField(
         label=_("Date"),
@@ -89,20 +88,32 @@ class EventFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
-
+        # always works with GET data, so Form.inital wont work
+        old_data = kwargs.pop("data")
         # as a heuristic, save this to determine if the filter form was submitted through html
         self.was_submitted = False
+        self.was_submitted = "direction" in old_data
 
-        if (old_data := kwargs.get("data")) is not None:
-            self.was_submitted = "direction" in old_data
+        # initial doesn't work with GET data, so instead we we replace missing data with defaults
+        data = MultiValueDict(old_data)
+        for k, v in self._get_initial().items():
+            if isinstance(v, list):
+                # beware: only lists are detected as multi-valued values
+                data.setlistdefault(k, v)
+            else:
+                data.setdefault(k, v)
+        kwargs["data"] = data
 
-            kwargs["data"] = MultiValueDict(
-                old_data,
-            )
-            kwargs["data"]["date"] = old_data.get("date") or None
-            kwargs["data"]["direction"] = old_data.get("direction") or "from"
         super().__init__(*args, **kwargs)
-        self.fields["date"].initial = timezone.now().date()
+
+    def _get_initial(self):
+        initial = {
+            "date": timezone.now().date(),
+            "direction": "from",
+        }
+        for __, result in event_list_filter_initial.send(None, request=self.request):
+            initial.update(result)
+        return initial
 
     def filter_events(self, qs: QuerySet[Event]):
         fdata = self.cleaned_data
@@ -273,7 +284,7 @@ class EventListView(LoginRequiredMixin, ListView):
 
     @cached_property
     def filter_form(self):
-        return EventFilterForm(data=self.request.GET or None, request=self.request)
+        return EventFilterForm(data=self.request.GET, request=self.request)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
