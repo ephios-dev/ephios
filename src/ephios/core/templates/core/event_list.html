@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load signal_extras %}
 {% load utils %}
 {% load ephios_crispy %}
 {% load crispy_forms_filters %}
@@ -78,6 +79,9 @@
                 </div>
             </div>
         </form>
+
+        {% collect_insert_html_signal "event_list_header" %}
+
         {% if mode == "calendar" or mode == "day" %}
             {% if perms.core.add_event %}
                 {% include "core/fragments/event_list_add_event_button.html" %}
