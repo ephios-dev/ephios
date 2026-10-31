@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% if resource %}
+        {% translate "Edit Event List Quick Filter" %}
+    {% else %}
+        {% translate "Create new Event List Quick Filter" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if resource %}
+            <h2>{% translate "Edit Event List Quick Filter" %}</h2>
+        {% else %}
+            <h2>{% translate "Create new Event List Quick Filter" %}</h2>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Save">
+    </form>
+{% endblock %}

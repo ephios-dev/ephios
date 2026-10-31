@@ -10,7 +10,6 @@ class PluginApp(PluginConfig):
         name = _("Event List Quick Filters")
         author = "Ephios Team"
         description = _("Configure filter presets for the event list and set per-group-defaults.")
-        visible = False  # no UI to configure Filters yet
 
     def ready(self):
         from . import signals  # noqa

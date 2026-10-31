@@ -11,7 +11,7 @@
         <h1>{% translate "Settings" %} {% block settings_title %}{% endblock %}</h1>
     </div>
     <div class="row">
-        <div class="col-12 col-lg-3 col-xxl-2">
+        <div class="pb-3 col-12 col-lg-3 col-xxl-2">
             {% available_settings_sections request as settings_sections %}
             <ul class="nav nav-pills flex-column">
                 {% for name, items in settings_sections.items %}
