@@ -1,11 +1,15 @@
 from django.dispatch import receiver
 from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from ephios.core.signals import (
     HTML_EVENT_LIST_HEADER,
     event_list_filter_initial,
     insert_html,
+    settings_sections,
 )
+from ephios.core.views.settings import SETTINGS_MANAGEMENT_SECTION_KEY
 from ephios.plugins.eventlistquickfilters.models import EventListQuickFilter
 
 
@@ -59,4 +63,23 @@ def event_list_html(sender, request, **kwargs):
             "filters": visible_filters,
         },
         request=request,
+    )
+
+
+@receiver(
+    settings_sections,
+    dispatch_uid="ephios.plugins.eventlistquickfilters.signals.eventlistquickfilters_settings_section",
+)
+def settings_section(sender, request, **kwargs):
+    return (
+        [
+            {
+                "label": _("Event List Quick Filters"),
+                "url": reverse("eventlistquickfilters:eventlistquickfilter_list"),
+                "active": request.resolver_match.url_name.startswith("eventlistquickfilter"),
+                "group": SETTINGS_MANAGEMENT_SECTION_KEY,
+            },
+        ]
+        if request.user.has_perm("core.add_eventtype")
+        else []
     )

@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from ephios.modellogging.log import dont_log
 
+
+@dont_log
 class EventListQuickFilter(models.Model):
     label = models.CharField(max_length=255)
     position = models.PositiveIntegerField(
