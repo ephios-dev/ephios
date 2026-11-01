@@ -41,8 +41,8 @@ $custom-theme-colors: (
 // Looks
 //$link-decoration: none;
 
-// TOOD this needs to be adapted for dark-theme
 $body-bg: $gray-200;
+$body-bg-dark: $gray-900;
 $input-bg: $gray-100;
 $dropdown-bg: $gray-100;
 $card-bg: $gray-100;
@@ -50,6 +50,7 @@ $card-cap-bg: $gray-100;
 $list-group-bg: $gray-100;
 
 $body-secondary-color: $gray-550;
+$body-secondary-color-dark: $gray-550;
 
 $enable-negative-margins: true;
 // Shadow (navbar)

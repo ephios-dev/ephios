@@ -368,3 +368,24 @@ $shift-box-target: lighten($primary, 20%);
     background-color: transparent;
 }
 
+[data-bs-theme="dark"] {
+  .form-control,
+  .form-control:focus,
+  .form-select,
+  .form-check-input {
+    background-color: $gray-800;
+  }
+
+  .dropdown-menu {
+    --bs-dropdown-bg: #{$gray-800};
+  }
+
+  .card {
+    --bs-card-bg: #{$gray-800};
+    --bs-card-cap-bg: #{$gray-800};
+  }
+
+  .list-group {
+    --bs-list-group-bg: #{$gray-800};
+  }
+}
