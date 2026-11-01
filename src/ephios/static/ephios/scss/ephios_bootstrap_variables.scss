@@ -25,6 +25,7 @@ $yellow: #DBB006;
 $green: #00C24A;
 
 $primary: #014065;
+$primary-dark: lighten($primary, 20%);
 
 $success: shade-color($green, 40%);
 $danger: shade-color($red, 40%);
@@ -40,6 +41,7 @@ $custom-theme-colors: (
 
 // Looks
 //$link-decoration: none;
+
 
 $body-bg: $gray-200;
 $body-bg-dark: $gray-900;
