@@ -9,7 +9,7 @@ from django.urls import resolve
 from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
 if TYPE_CHECKING:
-    from ephios.core.forms import BasePluginFormMixin
+    from ephios.core.forms.events import BasePluginFormMixin
 
 
 class CustomPermissionRequiredMixin(GuardianPermissionRequiredMixin):
@@ -104,7 +104,8 @@ class CanonicalSlugDetailMixin:
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         match = resolve(request.path_info)
         url_parts = match.namespaces
-        url_parts.append(match.url_name)
+        if match.url_name is not None:
+            url_parts.append(match.url_name)
         current_urlpattern = ":".join(url_parts)
 
         # Figure out what the slug is supposed to be.

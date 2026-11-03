@@ -88,7 +88,7 @@ class AbstractParticipant:
 
 @dataclasses.dataclass(frozen=True)
 class LocalUserParticipant(AbstractParticipant):
-    user: get_user_model()
+    user: get_user_model()  # ty: ignore[invalid-type-form]
 
     @property
     def identifier(self):

@@ -8,7 +8,9 @@ from urllib.parse import urljoin
 import jwt
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.decorators import login_not_required
+from django.contrib.auth.decorators import (
+    login_not_required,  # ty: ignore[unresolved-import]
+)
 from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
 from django.db.transaction import atomic

@@ -1,11 +1,10 @@
 from functools import wraps
-from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Model, Q
 from django.forms import BooleanField
 from guardian.ctypes import get_content_type
 from guardian.shortcuts import assign_perm, remove_perm
@@ -28,7 +27,7 @@ def staff_required(view_func):
     return _wrapped_view
 
 
-def _make_permission_names_qualified(permission_names, obj: Optional):
+def _make_permission_names_qualified(permission_names, obj: Model | None):
     """
     Return a list of permission names in the form "app_label.codename" for the given permissions codenames.
     If obj is given, the app_label is inferred from the object's meta.
