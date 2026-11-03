@@ -77,6 +77,8 @@ dev = [
     "djhtml>=3.0.6,<4",
     "prek>=0.3.1",
     "ruff>=0.15.0",
+    "ty>=0.0.96",
+    "django-types>=0.24.0",
 ]
 
 [project.urls]
@@ -155,3 +157,28 @@ branch = true
 
 [tool.coverage.django_coverage_plugin]
 template_extensions = 'html, txt, tex, email'
+
+[tool.ty]
+[tool.ty.rules]
+unresolved-attribute = "ignore"
+not-iterable = "ignore"
+call-non-callable = "ignore"
+unsupported-operator = "ignore"
+invalid-method-override = "ignore"
+invalid-property-type-override = "ignore"
+invalid-attribute-override = "ignore"
+
+invalid-argument-type = "warn"
+invalid-assignment = "warn"
+no-matching-overload = "warn"
+unknown-argument = "warn"
+missing-argument = "warn"
+invalid-parameter-default = "warn"
+
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+invalid-assignment = "ignore"
