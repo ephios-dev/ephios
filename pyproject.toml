@@ -159,6 +159,9 @@ branch = true
 template_extensions = 'html, txt, tex, email'
 
 [tool.ty]
+[tool.ty.terminal]
+error-on-warning = false
+
 [tool.ty.rules]
 unresolved-attribute = "ignore"
 not-iterable = "ignore"
