@@ -401,7 +401,7 @@ class DerivedFieldsLogRecorder(BaseLogRecorder):
 
     slug = "derived-fields"
 
-    def __init__(self, derive: Callable):
+    def __init__(self, derive: Callable | None):
         self.derive = derive
 
     def attached(self, instance):

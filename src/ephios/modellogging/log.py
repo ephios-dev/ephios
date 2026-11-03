@@ -109,7 +109,7 @@ class ModelFieldsLogConfig(BaseLogConfig):
 log_request = contextvars.ContextVar("Current request")
 log_request_id = contextvars.ContextVar("Current request id")
 
-LOGGED_MODELS: dict[models.Model, BaseLogConfig] = {}
+LOGGED_MODELS: dict[type[models.Model], BaseLogConfig] = {}
 
 
 def register_model_for_logging(model_class, config):

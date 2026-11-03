@@ -116,7 +116,7 @@ class StartingBlockForm(forms.Form):
 
 
 StartingBlocksFormset = forms.formset_factory(
-    StartingBlockForm, can_delete=True, min_num=1, validate_min=1, extra=0
+    StartingBlockForm, can_delete=True, min_num=1, validate_min=True, extra=0
 )
 
 

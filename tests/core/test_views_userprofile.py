@@ -215,7 +215,7 @@ class TestUserProfileView:
         response = response.form.submit()
         assert response.status_code == 302
         with pytest.raises(UserProfile.DoesNotExist):
-            UserProfile.objects.get(email=userprofile.email).exists()
+            UserProfile.objects.get(email=userprofile.email)
 
     def test_userprofile_password_reset(self, django_app, groups, volunteer, manager):
         userprofile = volunteer

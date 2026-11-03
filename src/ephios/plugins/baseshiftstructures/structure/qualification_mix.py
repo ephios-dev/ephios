@@ -21,7 +21,7 @@ from ephios.plugins.baseshiftstructures.structure.group_common import (
 from ephios.plugins.baseshiftstructures.structure.named_teams import BaseGroupBasedShiftStructure
 
 QualificationRequirementFormset = forms.formset_factory(
-    QualificationRequirementForm, can_delete=True, min_num=1, validate_min=1, extra=0
+    QualificationRequirementForm, can_delete=True, min_num=1, validate_min=True, extra=0
 )
 
 

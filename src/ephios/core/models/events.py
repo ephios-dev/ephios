@@ -40,9 +40,9 @@ from ephios.modellogging.recorders import DerivedFieldsLogRecorder
 
 if TYPE_CHECKING:
     from ephios.core.models import UserProfile
-    from ephios.core.signup.flow import AbstractSignupFlow
+    from ephios.core.signup.flow.abstract import AbstractSignupFlow
     from ephios.core.signup.participants import AbstractParticipant
-    from ephios.core.signup.structure import AbstractShiftStructure
+    from ephios.core.signup.structure.abstract import AbstractShiftStructure
 
 logger = logging.getLogger(__name__)
 

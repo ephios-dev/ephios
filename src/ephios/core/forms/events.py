@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
-from django.forms import ColorInput
+from django.forms import ColorInput  # ty: ignore[unresolved-import]
 from django.forms.utils import from_current_timezone
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _

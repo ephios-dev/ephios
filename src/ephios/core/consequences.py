@@ -138,7 +138,7 @@ class QualificationConsequenceHandler(BaseConsequenceHandler):
         user: UserProfile,
         qualification: Qualification,
         expires: datetime | None = None,
-        shift: Shift = None,
+        shift: Shift | None = None,
     ):
         return Consequence.objects.create(
             slug=cls.slug,

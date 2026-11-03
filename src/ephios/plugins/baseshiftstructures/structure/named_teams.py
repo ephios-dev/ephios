@@ -99,7 +99,7 @@ class NamedTeamForm(QualificationRequirementForm):
 
 
 NamedTeamsFormset = forms.formset_factory(
-    NamedTeamForm, can_delete=True, min_num=1, validate_min=1, extra=0
+    NamedTeamForm, can_delete=True, min_num=1, validate_min=True, extra=0
 )
 
 
