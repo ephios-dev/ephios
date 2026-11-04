@@ -1,0 +1,16 @@
+{% load i18n %}
+<div id="quick-filters" class="mt-3 pb-3">
+    <div class="btn-group btn-group-sm" role="group" aria-label="{% translate "Filter presets" %}">
+        {% for filter in filters %}
+            {% if not filter.used_as_default %}
+                {% querystring types=filter.get_types_ids as query %}
+            {% else %}
+                {% querystring types=None as query %}
+            {% endif %}
+            <a href="{{ query }}"
+               class="btn btn-sm {% if filter.is_active %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ filter.label }}
+            </a>
+        {% endfor %}
+    </div>
+</div>

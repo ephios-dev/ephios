@@ -27,6 +27,7 @@ of these constants:
 - ``HTML_HOMEPAGE_INFO``: Add HTML to the homepage content area.
 - ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
 - ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with a ``participation`` kwarg.
+- ``HTML_EVENT_LIST_HEADER``: Add HTML to the header of the event list page below the filter form.
 """
 
 HTML_HEAD = sys.intern("head")
@@ -36,7 +37,14 @@ HTML_SHIFT_INFO = sys.intern("shift_info")
 HTML_HOMEPAGE_INFO = sys.intern("homepage_info")
 HTML_PERSONAL_DATA_PAGE = sys.intern("personal_data_page")
 HTML_DISPOSITION_PARTICIPATION = sys.intern("disposition_participation")
+HTML_EVENT_LIST_HEADER = sys.intern("event_list_header")
 
+event_list_filter_initial = PluginSignal()
+"""
+This signal is sent out to get initial values for the event list filter form. Receivers should
+return a dict of initial values with matching keys for the filter form.
+Receivers will receive a ``request`` keyword argument.
+"""
 
 register_consequence_handlers = PluginSignal()
 """

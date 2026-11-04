@@ -84,4 +84,13 @@ class PluginSignal(Signal):
 
 
 class PluginConfig(AppConfig):
-    """Superclass for Plugin App Configs. Might use this in the future to implement new features."""
+    """
+    Superclass for Plugin App Configs. Might use this in the future to implement new features.
+
+    Plugins should have an EphiosPluginMeta class attribute with the following attributes:
+    - name: Human readable name of the plugin
+    - author: Author of the plugin
+    - description: Short description of the plugin
+    - force_enabled: Optional boolean, if True the plugin will be enabled even if not in the enabled_plugins preference.
+    - visible: Optional boolean, if False the plugin will not be shown in the preferences UI.
+    """
