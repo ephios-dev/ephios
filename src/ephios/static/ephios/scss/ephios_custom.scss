@@ -258,11 +258,11 @@ a.badge {
   border-radius: 0;
   color: $dark;
   background: repeating-linear-gradient(to left,
-          transparent 0%,
-          transparent 65%,
-          $secondary 75%,
-          transparent 80%,
-          transparent 100%
+  transparent 0%,
+  transparent 65%,
+  $secondary 75%,
+  transparent 80%,
+  transparent 100%
   );
   background-size: 300%;
   animation: btn-insert-subblock-animation 4s linear infinite;
@@ -358,13 +358,50 @@ $shift-box-target: lighten($primary, 20%);
 
 // collapsable card
 .card-header[data-bs-toggle="collapse"] a {
-    text-decoration: none;
-  }
+  text-decoration: none;
+}
+
 .card-header[data-bs-toggle="collapse"] {
   transition: border-bottom-width 0.2s linear;
 }
+
 .card-header[data-bs-toggle="collapse"].collapsed {
-    border-bottom-width: 0;
-    background-color: transparent;
+  border-bottom-width: 0;
+  background-color: transparent;
 }
 
+body {
+  // smooth dark mode transition
+  transition: background-color 400ms ease;
+}
+
+[data-bs-theme="dark"] {
+  .form-control,
+  .form-control:focus,
+  .form-select,
+  .form-check-input {
+    background-color: $gray-800;
+  }
+
+  .dropdown-menu {
+    --bs-dropdown-bg: #{$gray-800};
+  }
+
+  .card {
+    --bs-card-bg: #{$gray-800};
+    --bs-card-cap-bg: #{$gray-800};
+  }
+
+  .list-group {
+    --bs-list-group-bg: #{$gray-800};
+  }
+
+  .btn-outline-primary {
+    --bs-btn-border-color: #{ $primary-dark };
+    --bs-btn-color: #{ $primary-dark };
+  }
+
+  #nav-brand-logo {
+    filter: invert(1) grayscale(1) brightness(2);
+  }
+}
