@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% if resource %}
+    {% if object %}
         {% translate "Edit Event List Quick Filter" %}
     {% else %}
         {% translate "Create new Event List Quick Filter" %}
@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="page-header">
-        {% if resource %}
+        {% if object %}
             <h2>{% translate "Edit Event List Quick Filter" %}</h2>
         {% else %}
             <h2>{% translate "Create new Event List Quick Filter" %}</h2>

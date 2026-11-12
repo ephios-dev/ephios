@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from ephios.extra.mixins import CustomPermissionRequiredMixin
+from ephios.plugins.eventlistquickfilters.forms import EventListQuickFilterForm
 from ephios.plugins.eventlistquickfilters.models import EventListQuickFilter
 
 
@@ -18,14 +19,14 @@ class EventListQuickFilterCreateView(CustomPermissionRequiredMixin, CreateView):
     permission_required = "core.add_eventtype"
     accept_object_perms = False
     model = EventListQuickFilter
-    fields = ["label", "filter_types", "visible_for_groups", "default_for_groups", "position"]
+    form_class = EventListQuickFilterForm
     success_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
 
 
 class EventListQuickFilterUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "core.change_eventtype"
     model = EventListQuickFilter
-    fields = ["label", "filter_types", "visible_for_groups", "default_for_groups", "position"]
+    form_class = EventListQuickFilterForm
     success_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
 
 

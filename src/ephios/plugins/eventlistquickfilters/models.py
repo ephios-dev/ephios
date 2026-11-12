@@ -18,17 +18,19 @@ class EventListQuickFilter(models.Model):
         "auth.Group",
         blank=True,
         related_name="visible_quick_filters",
-        verbose_name=_("Visible for Groups"),
+        verbose_name=_("Visible to groups"),
+        help_text=_("These groups can see this filter button."),
     )
     default_for_groups = models.ManyToManyField(
         "auth.Group",
         blank=True,
         related_name="default_quick_filters",
-        verbose_name=_("Default for Groups"),
+        verbose_name=_("Default for groups"),
+        help_text=_("This filter is selected by default for these groups."),
     )
     show_all_types_on_deactivation = models.BooleanField(
         default=True,
-        verbose_name=_("Show all types on deactivation"),
+        verbose_name=_("Show all event types when turned off"),
         help_text=_(
             "If this is checked, deactivating this filter will show all event types. "
             "If this is unchecked, deactivating this filter will show the default filter for the user."
@@ -38,10 +40,10 @@ class EventListQuickFilter(models.Model):
         "core.EventType",
         related_name="quick_filters",
         blank=True,
-        verbose_name=_("Filter Event Types"),
+        verbose_name=_("Event types"),
         help_text=_(
-            "An empty selection is ambigous, as it could mean 'show all' or 'use default filter', "
-            "so make sure a filter with an empty selection is used as a default."
+            "Choose the event types shown when this filter is active. Leave this empty "
+            "to include all event types."
         ),
     )
 

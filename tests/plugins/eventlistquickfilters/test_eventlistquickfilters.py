@@ -33,3 +33,23 @@ def test_eventlistquickfilter_usage_flow(
     assert conflicting_event not in response.context["event_list"], (
         "conflicting event should be filtered out by the default filter"
     )
+
+
+def test_empty_type_selection_must_be_default_for_visible_groups(django_app, superuser, groups):
+    _, _, volunteers = groups
+    response = django_app.get(
+        reverse("eventlistquickfilters:eventlistquickfilter_list"), user=superuser
+    )
+    response = response.click(".*dd.*ilter.*")
+    response.form["label"] = "All event types"
+    response.form["filter_types"] = []
+    response.form["visible_for_groups"] = [volunteers.id]
+    response.form["default_for_groups"] = []
+    response = response.form.submit()
+
+    assert "filter_types" in response.context["form"].errors
+    assert "select every event type instead" in response.text
+
+    response.form["default_for_groups"] = [volunteers.id]
+    response = response.form.submit()
+    assert response.status_code == 302
