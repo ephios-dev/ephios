@@ -54,6 +54,7 @@ class QuestionArchiveForm(forms.ModelForm):
 
 class QuestionnaireForm(BasePluginFormMixin, forms.ModelForm):
     questions = forms.ModelMultipleChoiceField(
+        label=_("Questions"),
         queryset=Question.objects.filter(archived=False),
         widget=Select2MultipleWidget,
         required=False,
