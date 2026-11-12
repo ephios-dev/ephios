@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
@@ -30,6 +30,8 @@ class PageView(DetailView):
 
 class PageCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Page
+    template_name = "core/settings/settings_base_form.html"
+    settings_list_url = reverse_lazy("pages:settings_page_list")
     permission_required = "pages.add_page"
     accept_object_perms = False
     fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
@@ -41,6 +43,8 @@ class PageCreateView(CustomPermissionRequiredMixin, CreateView):
 
 class PageUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Page
+    template_name = "core/settings/settings_base_form.html"
+    settings_list_url = reverse_lazy("pages:settings_page_list")
     permission_required = "pages.change_page"
     fields = ["title", "slug", "content", "show_in_footer", "publicly_visible"]
 
@@ -51,6 +55,8 @@ class PageUpdateView(CustomPermissionRequiredMixin, UpdateView):
 
 class PageDeleteView(CustomPermissionRequiredMixin, DeleteView):
     model = Page
+    template_name = "core/settings/settings_base_confirm_delete.html"
+    settings_list_url = reverse_lazy("pages:settings_page_list")
     permission_required = "pages.delete_page"
 
     def get_success_url(self):

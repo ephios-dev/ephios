@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load signal_extras %}
 {% load utils %}
 {% load ephios_crispy %}
 {% load crispy_forms_filters %}
@@ -13,39 +14,63 @@
 
 {% block content %}
     <style nonce="{{ request.csp_nonce }}">
+        #event-list-filter-toggle[aria-expanded="true"] {
+        {# Hacky CSS to have the Filter Toggle be non-outlined when activated. #}
+        {# A native checkbox input would be better but is not documented to work with bootstrap collapsables. #}
+            --bs-btn-color: #fff;
+            --bs-btn-bg: var(--bs-primary);
+            --bs-btn-border-color: var(--bs-primary);
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: var(--bs-primary);
+            --bs-btn-hover-border-color: var(--bs-primary);
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: var(--bs-primary);
+            --bs-btn-active-border-color: var(--bs-primary);
+        }
+
         {% cache 900 eventtype_colors_css %}
             {% eventtype_colors %}
         {% endcache %}
     </style>
 
     <div class="page-header">
-        <h1>{% translate "Events" %}
-            <small class="float-end">
-                <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="filter-collapse">
-                    {% translate "Filter" %}
-                </button>
-                <div class="btn-group">
-                    <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       {% if filter_form.was_submitted %}
-                           href="{% querystring mode="list" %}"
-                       {% else %}
-                                {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
-                           href="{% querystring mode="list" date=None %}"
-                       {% endif %}
-                    ><span class="fa fa-list"></span></a>
+        <div class="row align-items-center g-2 mb-2">
+            <div class="col">
+                <h1 class="mb-0">{% translate "Events" %}</h1>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="row g-2 justify-content-md-end">
+                    {% collect_insert_html_signal "event_list_toggles" %}
+                    <div class="col-auto">
+                        <button id="event-list-filter-toggle"
+                                class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="filter-collapse">
+                            {% translate "Filter" %}
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="btn-group">
+                            <a class="btn btn-sm {% if mode == "list" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
+                               {% if filter_form.was_submitted %}
+                                   href="{% querystring mode="list" %}"
+                               {% else %}
+                                        {# If going back to the list from an unfiltered calendar with non-now date, reset the date #}
+                                   href="{% querystring mode="list" date=None %}"
+                               {% endif %}
+                            ><span class="fa fa-list"></span></a>
 
-                    <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       href="{% querystring mode="calendar" %}"
-                    ><span class="fa fa-calendar-alt"></span></a>
+                            <a class="btn btn-sm {% if mode == "calendar" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
+                               href="{% querystring mode="calendar" %}"
+                            ><span class="fa fa-calendar-alt"></span></a>
 
-                    <a class="btn btn-sm {% if mode == "day" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
-                       href="{% querystring mode="day" %}"
-                    ><span class="fa fa-calendar-day"></span></a>
+                            <a class="btn btn-sm {% if mode == "day" %}btn-secondary disabled{% else %}btn-outline-secondary{% endif %}"
+                               href="{% querystring mode="day" %}"
+                            ><span class="fa fa-calendar-day"></span></a>
+                        </div>
+                    </div>
                 </div>
-            </small>
-        </h1>
-        <div class="clearfix">{# clear the float-end above #}</div>
+            </div>
+        </div>
         <form method="GET" id="filter-form">
             {# show the filter if data has been submitted and it's not forced to hide, or if it has errors #}
             <div id="filter-collapse"
@@ -78,6 +103,9 @@
                 </div>
             </div>
         </form>
+
+        {% collect_insert_html_signal "event_list_header" %}
+
         {% if mode == "calendar" or mode == "day" %}
             {% if perms.core.add_event %}
                 {% include "core/fragments/event_list_add_event_button.html" %}

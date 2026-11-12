@@ -1,16 +1,7 @@
-{% extends "core/settings/settings_base.html" %}
-{% load crispy_forms_filters %}
+{% extends "core/settings/settings_base_form.html" %}
 {% load i18n %}
 
-{% block settings_content %}
-    <div class="page-header">
-        {% if qualification %}
-            <h2>{% translate "Edit qualification" %}</h2>
-        {% else %}
-            <h2>{% translate "Create new qualification" %}</h2>
-        {% endif %}
-    </div>
-
+{% block form_extra %}
     {% if qualification.is_imported %}
         <div class="alert alert-warning" role="alert">
             {% blocktranslate trimmed %}
@@ -18,12 +9,4 @@
             {% endblocktranslate %}
         </div>
     {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <a role="button" class="btn btn-secondary"
-           href="{% url "qualification_management:settings_qualification_list" %}">{% translate "Back" %}</a>
-        <input type="submit" class="btn btn-primary" value="Save">
-    </form>
 {% endblock %}
