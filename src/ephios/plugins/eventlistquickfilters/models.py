@@ -26,6 +26,14 @@ class EventListQuickFilter(models.Model):
         related_name="default_quick_filters",
         verbose_name=_("Default for Groups"),
     )
+    show_all_types_on_deactivation = models.BooleanField(
+        default=True,
+        verbose_name=_("Show all types on deactivation"),
+        help_text=_(
+            "If this is checked, deactivating this filter will show all event types. "
+            "If this is unchecked, deactivating this filter will show the default filter for the user."
+        ),
+    )
     filter_types = models.ManyToManyField(
         "core.EventType",
         related_name="quick_filters",
@@ -47,17 +55,3 @@ class EventListQuickFilter(models.Model):
 
     def get_types_ids(self):
         return list(self.filter_types.values_list("id", flat=True))
-
-    def mark_is_active(self, request, used_as_default=False):
-        """
-        Set a flag on this object based on the GET parameters of the given request.
-        This can be used in templates to highlight an active filter.
-        """
-        GET_types = set(request.GET.getlist("types"))
-        filter_types = set(map(str, self.get_types_ids()))
-        # if no types are given, a potential default filter is active
-        self.used_as_default = used_as_default  # can be used in templates to use empty GET.types
-        if not GET_types and used_as_default:
-            self.is_active = True
-            return
-        self.is_active = GET_types == filter_types

@@ -2,15 +2,17 @@
 <div id="quick-filters" class="mt-3 pb-3">
     <div class="btn-group btn-group-sm" role="group" aria-label="{% translate "Filter presets" %}">
         {% for filter in filters %}
-            {% if not filter.used_as_default %}
-                {% querystring types=filter.get_types_ids as query %}
+            {% if filter.is_active %}
+                <a href="{% querystring types=filter.deactivate_types %}"
+                   class="btn btn-sm btn-primary">
+                    {{ filter.label }}
+                </a>
             {% else %}
-                {% querystring types=None as query %}
+                <a href="{% querystring types=filter.activate_types %}"
+                   class="btn btn-sm btn-outline-primary">
+                    {{ filter.label }}
+                </a>
             {% endif %}
-            <a href="{{ query }}"
-               class="btn btn-sm {% if filter.is_active %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                {{ filter.label }}
-            </a>
         {% endfor %}
     </div>
 </div>

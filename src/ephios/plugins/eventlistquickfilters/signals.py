@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from ephios.core.models import EventType
 from ephios.core.signals import (
     HTML_EVENT_LIST_HEADER,
     event_list_filter_initial,
@@ -40,27 +41,48 @@ def filter_form_initial(sender, request, **kwargs):
     }
 
 
+def get_filter_template_data(request):
+    visible_filters = _get_visible_filters(request)
+    if not visible_filters:
+        return []
+
+    filter_data = []
+
+    default_filter = visible_filters.filter(
+        default_for_groups__in=request.user.groups.all()
+    ).first()
+    all_ids = EventType.objects.all().values_list("id", flat=True)
+    GET_types = set(request.GET.getlist("types"))
+
+    for filter in visible_filters:
+        filter_types = set(map(str, filter.get_types_ids()))
+        # if no types are given, a potential default filter is active
+        used_as_default = filter.id == default_filter.id if default_filter else False
+        if not GET_types and used_as_default:
+            is_active = True
+        else:
+            is_active = GET_types == filter_types
+        filter_data.append({
+            "label": filter.label,
+            "is_active": is_active,
+            "used_as_default": used_as_default,
+            "activate_types": filter.get_types_ids() if not used_as_default else None,
+            "deactivate_types": all_ids if filter.show_all_types_on_deactivation else None,
+        })
+    return filter_data
+
+
 @receiver(
     insert_html,
     sender=HTML_EVENT_LIST_HEADER,
     dispatch_uid="ephios.plugins.eventlistquickfilters.signals.event_list_html",
 )
 def event_list_html(sender, request, **kwargs):
-    visible_filters = _get_visible_filters(request)
-    if not visible_filters:
-        return ""
-
-    default_filter = visible_filters.filter(
-        default_for_groups__in=request.user.groups.all()
-    ).first()
-
-    for filter in visible_filters:
-        filter.mark_is_active(request, used_as_default=filter == default_filter)
 
     return render_to_string(
         "eventlistquickfilters/filter_buttons.html",
         {
-            "filters": visible_filters,
+            "filters": get_filter_template_data(request),
         },
         request=request,
     )
