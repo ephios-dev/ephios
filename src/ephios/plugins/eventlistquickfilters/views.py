@@ -20,6 +20,8 @@ class EventListQuickFilterCreateView(CustomPermissionRequiredMixin, CreateView):
     accept_object_perms = False
     model = EventListQuickFilter
     form_class = EventListQuickFilterForm
+    template_name = "core/settings/settings_base_form.html"
+    settings_list_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
     success_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
 
 
@@ -27,10 +29,14 @@ class EventListQuickFilterUpdateView(CustomPermissionRequiredMixin, UpdateView):
     permission_required = "core.change_eventtype"
     model = EventListQuickFilter
     form_class = EventListQuickFilterForm
+    template_name = "core/settings/settings_base_form.html"
+    settings_list_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
     success_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
 
 
 class EventListQuickFilterDeleteView(CustomPermissionRequiredMixin, DeleteView):
     permission_required = "core.delete_eventtype"
     model = EventListQuickFilter
+    template_name = "core/settings/settings_base_confirm_delete.html"
+    settings_list_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")
     success_url = reverse_lazy("eventlistquickfilters:eventlistquickfilter_list")

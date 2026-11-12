@@ -1,5 +1,7 @@
 from django.urls import reverse
 
+from ephios.plugins.eventlistquickfilters.models import EventListQuickFilter
+
 
 def test_eventlistquickfilter_usage_flow(
     django_app,
@@ -16,6 +18,8 @@ def test_eventlistquickfilter_usage_flow(
         reverse("eventlistquickfilters:eventlistquickfilter_list"), user=superuser
     )
     response = response.click(".*dd.*ilter.*")  # pattern for "add Event List Quick Filter"
+    assert response.html.find("a", href=reverse("eventlistquickfilters:eventlistquickfilter_list"))
+    assert "Create new Event List Quick Filter" in response.text
     response.form["label"] = "Only Services"
     response.form["filter_types"] = [service_event_type.id]
     response.form["visible_for_groups"] = [volunteers.id]
@@ -53,3 +57,12 @@ def test_empty_type_selection_must_be_default_for_visible_groups(django_app, sup
     response.form["default_for_groups"] = [volunteers.id]
     response = response.form.submit()
     assert response.status_code == 302
+
+    quick_filter = EventListQuickFilter.objects.get(label="All event types")
+    response = django_app.get(
+        reverse("eventlistquickfilters:eventlistquickfilter_delete", args=[quick_filter.pk]),
+        user=superuser,
+    )
+    assert "Delete Event List Quick Filter" in response.text
+    assert "All event types" in response.text
+    assert response.html.find("a", href=reverse("eventlistquickfilters:eventlistquickfilter_list"))
