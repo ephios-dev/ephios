@@ -7,7 +7,7 @@ from ephios.modellogging.log import dont_log
 @dont_log
 class EventListQuickFilter(models.Model):
     label = models.CharField(max_length=255)
-    position = models.PositiveIntegerField(
+    position = models.IntegerField(
         default=0,
         verbose_name=_("Position"),
         help_text=_(
@@ -26,7 +26,10 @@ class EventListQuickFilter(models.Model):
         blank=True,
         related_name="default_quick_filters",
         verbose_name=_("Default for groups"),
-        help_text=_("This filter is selected by default for these groups."),
+        help_text=_(
+            "This filter is selected by default for users in these groups. "
+            "If users are in multiple groups, the filter with the lowest position will be selected."
+        ),
     )
     show_all_types_on_deactivation = models.BooleanField(
         default=True,

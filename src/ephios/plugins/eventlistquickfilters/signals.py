@@ -20,7 +20,7 @@ def _get_visible_filters(request):
         .filter(visible_for_groups__in=request.user.groups.all())
         .prefetch_related("filter_types")
         .distinct()
-        .order_by("position")
+        .order_by("position", "id")
     )
 
 
