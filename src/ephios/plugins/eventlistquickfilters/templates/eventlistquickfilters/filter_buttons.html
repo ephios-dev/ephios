@@ -1,18 +1,20 @@
 {% load i18n %}
-<div id="quick-filters" class="mt-3 pb-3">
-    <div class="btn-group btn-group-sm" role="group" aria-label="{% translate "Filter presets" %}">
-        {% for filter in filters %}
-            {% if filter.is_active %}
-                <a href="{% querystring types=filter.deactivate_types %}"
-                   class="btn btn-sm btn-primary">
-                    {{ filter.label }}
-                </a>
-            {% else %}
-                <a href="{% querystring types=filter.activate_types %}"
-                   class="btn btn-sm btn-outline-primary">
-                    {{ filter.label }}
-                </a>
-            {% endif %}
-        {% endfor %}
+{% if filters %}
+    <div id="quick-filters" class="col-auto">
+        <div class="btn-group btn-group-sm" role="group" aria-label="{% translate "Filter presets" %}">
+            {% for filter in filters %}
+                {% if filter.is_active %}
+                    <a href="{% querystring types=filter.deactivate_types %}"
+                       class="btn btn-sm btn-outline-primary active">
+                        {{ filter.label }}
+                    </a>
+                {% else %}
+                    <a href="{% querystring types=filter.activate_types %}"
+                       class="btn btn-sm btn-outline-primary">
+                        {{ filter.label }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
-</div>
+{% endif %}

@@ -28,6 +28,7 @@ of these constants:
 - ``HTML_PERSONAL_DATA_PAGE``: Add HTML to the settings "personal data" page of the logged-in user.
 - ``HTML_DISPOSITION_PARTICIPATION``: Add HTML to the expandable details view of a participation form in the disposition view. Comes with a ``participation`` kwarg.
 - ``HTML_EVENT_LIST_HEADER``: Add HTML to the header of the event list page below the filter form.
+- ``HTML_EVENT_LIST_TOGGLES``: Add a group of controls to the event list header controls row.
 """
 
 HTML_HEAD = sys.intern("head")
@@ -38,6 +39,7 @@ HTML_HOMEPAGE_INFO = sys.intern("homepage_info")
 HTML_PERSONAL_DATA_PAGE = sys.intern("personal_data_page")
 HTML_DISPOSITION_PARTICIPATION = sys.intern("disposition_participation")
 HTML_EVENT_LIST_HEADER = sys.intern("event_list_header")
+HTML_EVENT_LIST_TOGGLES = sys.intern("event_list_toggles")
 
 event_list_filter_initial = PluginSignal()
 """

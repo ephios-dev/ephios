@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ephios.core.models import EventType
 from ephios.core.signals import (
-    HTML_EVENT_LIST_HEADER,
+    HTML_EVENT_LIST_TOGGLES,
     event_list_filter_initial,
     insert_html,
     settings_sections,
@@ -74,7 +74,7 @@ def get_filter_template_data(request):
 
 @receiver(
     insert_html,
-    sender=HTML_EVENT_LIST_HEADER,
+    sender=HTML_EVENT_LIST_TOGGLES,
     dispatch_uid="ephios.plugins.eventlistquickfilters.signals.event_list_html",
 )
 def event_list_html(sender, request, **kwargs):
