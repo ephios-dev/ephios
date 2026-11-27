@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 22:09+0200\n"
-"PO-Revision-Date: 2026-01-11 20:19+0100\n"
+"POT-Creation-Date: 2026-11-27 23:07+0100\n"
+"PO-Revision-Date: 2026-11-27 23:07+0100\n"
 "Last-Translator: Felix Rindt <felix@ephios.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/ephios/ephios/de/"
 ">\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.10\n"
 
 #: src/ephios/api/access/views.py:85 src/ephios/api/models.py:47
 #: src/ephios/core/pdf.py:59 src/ephios/core/pdf.py:148
-#: src/ephios/core/pdf.py:182 src/ephios/plugins/questionnaires/models.py:30
+#: src/ephios/core/pdf.py:184 src/ephios/plugins/questionnaires/models.py:30
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -39,7 +39,7 @@ msgstr "Geltungsbereich"
 msgid "For security reasons, only select the scopes that are actually needed."
 msgstr "Aus Sicherheitsgründen nur den benötigten Geltungsbereich auswählen."
 
-#: src/ephios/api/access/views.py:99 src/ephios/core/models/users.py:377
+#: src/ephios/api/access/views.py:99 src/ephios/core/models/users.py:378
 msgid "expiration date"
 msgstr "Ablaufdatum"
 
@@ -115,16 +115,17 @@ msgstr "API Token hinzufügen"
 
 #: src/ephios/api/templates/api/access_token_form.html:16
 #: src/ephios/api/templates/oauth2_provider/application_form.html:27
-#: src/ephios/core/forms/users.py:200 src/ephios/core/forms/users.py:443
-#: src/ephios/core/signup/forms.py:152
+#: src/ephios/core/forms/users.py:200 src/ephios/core/forms/users.py:442
+#: src/ephios/core/signup/forms.py:153
 #: src/ephios/core/templates/core/disposition/disposition.html:125
 #: src/ephios/core/templates/core/event_detail.html:26
 #: src/ephios/core/templates/core/event_form.html:65
 #: src/ephios/core/templates/core/eventtype_form.html:20
 #: src/ephios/core/templates/core/identityprovider_form.html:16
+#: src/ephios/core/templates/core/settings/settings_base_form.html:31
 #: src/ephios/core/templates/core/settings/settings_instance.html:10
 #: src/ephios/core/templates/core/settings/settings_notifications.html:37
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:51
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:59
 #: src/ephios/core/templates/core/shift_form.html:72
 #: src/ephios/core/templates/core/userprofile_form.html:150
 #: src/ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:285
@@ -138,7 +139,7 @@ msgstr "Speichern"
 #: src/ephios/api/templates/api/access_token_form.html:18
 #: src/ephios/api/templates/oauth2_provider/application_confirm_delete.html:23
 #: src/ephios/api/templates/oauth2_provider/authorize.html:33
-#: src/ephios/core/signup/forms.py:163
+#: src/ephios/core/signup/forms.py:164
 #: src/ephios/core/templates/core/disposition/disposition.html:124
 #: src/ephios/core/templates/core/event_form.html:68
 #: src/ephios/core/templates/core/eventtype_form.html:21
@@ -281,6 +282,7 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: src/ephios/core/templates/core/group_list.html:67
 #: src/ephios/core/templates/core/identityprovider_confirm_delete.html:14
 #: src/ephios/core/templates/core/identityprovider_list.html:30
+#: src/ephios/core/templates/core/settings/settings_base_confirm_delete.html:20
 #: src/ephios/core/templates/core/shift_confirm_delete.html:17
 #: src/ephios/core/templates/core/shift_form.html:69
 #: src/ephios/core/templates/core/userprofile_confirm_delete.html:21
@@ -289,9 +291,9 @@ msgstr "Möchten Sie die Anwendung wirklich löschen?"
 #: src/ephios/core/templates/core/userprofile_list.html:120
 #: src/ephios/core/templates/core/userprofile_workinghours.html:68
 #: src/ephios/core/templates/core/workinghours_confirm_delete.html:17
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:49
 #: src/ephios/plugins/files/templates/files/document_confirm_delete.html:19
 #: src/ephios/plugins/files/templates/files/document_list.html:43
-#: src/ephios/plugins/pages/templates/pages/page_confirm_delete.html:19
 #: src/ephios/plugins/pages/templates/pages/page_list.html:27
 #: src/ephios/plugins/qualification_management/forms.py:168
 #: src/ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:21
@@ -317,7 +319,7 @@ msgstr "Client-ID"
 
 #: src/ephios/api/templates/oauth2_provider/application_detail.html:21
 #: src/ephios/api/templates/oauth2_provider/application_detail.html:28
-#: src/ephios/core/forms/users.py:539
+#: src/ephios/core/forms/users.py:538
 msgid "Client secret"
 msgstr "Client-Secret"
 
@@ -352,7 +354,7 @@ msgstr "Geändert am"
 
 #: src/ephios/api/templates/oauth2_provider/application_detail.html:67
 #: src/ephios/api/templates/oauth2_provider/application_list.html:21
-#: src/ephios/core/models/users.py:512
+#: src/ephios/core/models/users.py:513
 msgid "User"
 msgstr "Benutzer"
 
@@ -365,6 +367,8 @@ msgstr "Benutzer"
 #: src/ephios/core/templates/core/eventtype_confirm_delete.html:8
 #: src/ephios/core/templates/core/group_confirm_delete.html:18
 #: src/ephios/core/templates/core/identityprovider_confirm_delete.html:13
+#: src/ephios/core/templates/core/settings/settings_base_confirm_delete.html:19
+#: src/ephios/core/templates/core/settings/settings_base_form.html:30
 #: src/ephios/core/templates/core/shift_confirm_delete.html:16
 #: src/ephios/core/templates/core/shift_copy.html:32
 #: src/ephios/core/templates/core/userprofile_confirm_delete.html:20
@@ -374,9 +378,7 @@ msgstr "Benutzer"
 #: src/ephios/plugins/federation/templates/federation/federatedguest_confirm_delete.html:13
 #: src/ephios/plugins/federation/templates/federation/federatedhost_confirm_delete.html:13
 #: src/ephios/plugins/files/templates/files/document_confirm_delete.html:18
-#: src/ephios/plugins/pages/templates/pages/page_confirm_delete.html:18
 #: src/ephios/plugins/qualification_management/templates/core/qualification_confirm_delete.html:20
-#: src/ephios/plugins/qualification_management/templates/core/qualification_form.html:26
 #: src/ephios/plugins/qualification_management/templates/core/qualificationcategories_form.html:84
 #: src/ephios/plugins/questionnaires/templates/questionnaires/question_confirm_archive.html:37
 #: src/ephios/plugins/questionnaires/templates/questionnaires/question_confirm_delete.html:18
@@ -397,6 +399,7 @@ msgstr "Zurück"
 #: src/ephios/core/templates/core/shift_form.html:98
 #: src/ephios/core/templates/core/userprofile_list.html:115
 #: src/ephios/core/templates/core/userprofile_workinghours.html:67
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:45
 #: src/ephios/plugins/files/templates/files/document_list.html:40
 #: src/ephios/plugins/pages/templates/pages/page_list.html:24
 #: src/ephios/plugins/qualification_management/templates/core/qualification_list.html:56
@@ -439,9 +442,9 @@ msgstr "Neue Anwendung"
 
 #: src/ephios/api/templates/oauth2_provider/application_list.html:20
 #: src/ephios/core/pdf.py:57
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:11
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:19
 #: src/ephios/core/templates/core/workinghours_list.html:30
-#: src/ephios/core/views/workinghours.py:281
+#: src/ephios/core/views/workinghours.py:284
 #: src/ephios/plugins/complexsignup/models.py:18
 #: src/ephios/plugins/federation/templates/federation/federation_settings.html:15
 #: src/ephios/plugins/federation/templates/federation/federation_settings.html:56
@@ -471,8 +474,8 @@ msgstr "Föderation verwalten"
 
 #: src/ephios/api/templates/oauth2_provider/application_list.html:46
 #: src/ephios/core/templates/core/event_form.html:20
-#: src/ephios/core/templates/core/home.html:59
-#: src/ephios/core/templates/core/home.html:103
+#: src/ephios/core/templates/core/home.html:67
+#: src/ephios/core/templates/core/home.html:111
 #: src/ephios/core/templates/core/workinghours_list.html:44
 #: src/ephios/plugins/pages/templates/pages/page_list.html:21
 msgid "View"
@@ -662,17 +665,17 @@ msgstr ""
 msgid "Responsibles"
 msgstr "Verantwortliche"
 
-#: src/ephios/core/forms/events.py:179 src/ephios/core/models/users.py:515
-#: src/ephios/core/pdf.py:135 src/ephios/core/pdf.py:181
+#: src/ephios/core/forms/events.py:179 src/ephios/core/models/users.py:516
+#: src/ephios/core/pdf.py:135 src/ephios/core/pdf.py:183
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:22
 #: src/ephios/core/templates/core/userprofile_workinghours.html:41
-#: src/ephios/core/views/event.py:65 src/ephios/core/views/event.py:74
-#: src/ephios/core/views/log.py:35 src/ephios/core/views/workinghours.py:320
+#: src/ephios/core/views/event.py:65 src/ephios/core/views/event.py:73
+#: src/ephios/core/views/log.py:35 src/ephios/core/views/workinghours.py:323
 msgid "Date"
 msgstr "Datum"
 
 #: src/ephios/core/forms/events.py:180 src/ephios/core/pdf.py:142
-#: src/ephios/core/pdf.py:192
+#: src/ephios/core/pdf.py:196
 #: src/ephios/core/templates/core/fragments/shift_box_small.html:23
 msgid "Meeting time"
 msgstr "Treffpunkt"
@@ -737,8 +740,8 @@ msgstr ""
 "Benutzeraccounts bearbeiten, Gruppen, deren Rechte und Mitglieder ändern "
 "sowie Veranstaltungstypen und Qualifikationen definieren."
 
-#: src/ephios/core/forms/users.py:145 src/ephios/core/models/users.py:258
-#: src/ephios/core/signals.py:302
+#: src/ephios/core/forms/users.py:145 src/ephios/core/models/users.py:259
+#: src/ephios/core/signals.py:312
 #: src/ephios/core/templates/core/userprofile_list.html:9
 #: src/ephios/core/templates/core/userprofile_list.html:15
 msgid "Users"
@@ -749,9 +752,9 @@ msgstr "Benutzer"
 msgid "Can change permissions and manage {platform}"
 msgstr "Kann Rechte ändern und {platform} verwalten"
 
-#: src/ephios/core/forms/users.py:182 src/ephios/core/signals.py:299
-#: src/ephios/core/signals.py:306 src/ephios/core/signals.py:319
-#: src/ephios/core/signals.py:332 src/ephios/core/views/settings.py:26
+#: src/ephios/core/forms/users.py:182 src/ephios/core/signals.py:309
+#: src/ephios/core/signals.py:316 src/ephios/core/signals.py:329
+#: src/ephios/core/signals.py:342 src/ephios/core/views/settings.py:26
 #: src/ephios/plugins/complexsignup/signals.py:34
 #: src/ephios/plugins/files/signals.py:25
 #: src/ephios/plugins/questionnaires/signals.py:38
@@ -775,10 +778,11 @@ msgstr ""
 "Mindestens eine Gruppe muss Managementrechte haben. Setzen Sie diesen Status "
 "zunächst bei einer anderen Gruppe, bevor Sie ihn hier entfernen."
 
-#: src/ephios/core/forms/users.py:249 src/ephios/core/signals.py:315
+#: src/ephios/core/forms/users.py:249 src/ephios/core/signals.py:325
 #: src/ephios/core/templates/core/group_list.html:6
 #: src/ephios/core/templates/core/group_list.html:11
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:22
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:30
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:23
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -831,7 +835,7 @@ msgstr ""
 "Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie ihn hier entfernen."
 
-#: src/ephios/core/forms/users.py:367
+#: src/ephios/core/forms/users.py:366
 msgid ""
 "At least one user must be technical administrator. Please promote another "
 "user before deleting this one."
@@ -839,7 +843,7 @@ msgstr ""
 "Mindestens ein Nutzer muss technischer Administrator sein. Setzen Sie diesen "
 "Status zunächst bei einem anderen Nutzer, bevor Sie diesen löschen."
 
-#: src/ephios/core/forms/users.py:389
+#: src/ephios/core/forms/users.py:388
 msgid ""
 "At least one group with management permissions must exist. Please promote "
 "another group before deleting this one."
@@ -847,15 +851,15 @@ msgstr ""
 "Mindestens eine Gruppe mit Managementrechten muss existieren. Setzen Sie "
 "diesen Status zunächst bei einer anderen Gruppe, bevor Sie diese löschen."
 
-#: src/ephios/core/forms/users.py:498
+#: src/ephios/core/forms/users.py:497
 msgid "OIDC Provider URL"
 msgstr "URL des OIDC Providers"
 
-#: src/ephios/core/forms/users.py:498
+#: src/ephios/core/forms/users.py:497
 msgid "The base URL of the OIDC provider."
 msgstr "Die Basis-URL des OIDC-Providers."
 
-#: src/ephios/core/forms/users.py:540
+#: src/ephios/core/forms/users.py:539
 msgid "Leave empty to keep the current secret."
 msgstr "Freilassen um das aktuelle Secret unverändert zu lassen."
 
@@ -896,7 +900,7 @@ msgid "to everyone including guests and federated users"
 msgstr "Nutzer dieser Organisation sowie Gäste und föderierte Nutzer"
 
 #: src/ephios/core/models/events.py:63 src/ephios/core/models/events.py:90
-#: src/ephios/core/models/users.py:272 src/ephios/core/models/users.py:299
+#: src/ephios/core/models/users.py:273 src/ephios/core/models/users.py:300
 msgid "title"
 msgstr "Titel"
 
@@ -954,7 +958,7 @@ msgstr "Veranstaltungen"
 msgid "requested"
 msgstr "angefragt"
 
-#: src/ephios/core/models/events.py:254 src/ephios/core/views/event.py:84
+#: src/ephios/core/models/events.py:254 src/ephios/core/views/event.py:83
 #: src/ephios/core/views/notifications.py:146
 msgid "confirmed"
 msgstr "bestätigt"
@@ -1024,19 +1028,19 @@ msgstr "Erstellt am"
 msgid "visible for"
 msgstr "Sichtbar für"
 
-#: src/ephios/core/models/events.py:359 src/ephios/core/models/events.py:371
+#: src/ephios/core/models/events.py:359 src/ephios/core/models/events.py:362
 #: src/ephios/core/signup/forms.py:28
 msgid "Comment"
 msgstr "Kommentar"
 
-#: src/ephios/core/models/events.py:366
+#: src/ephios/core/models/events.py:363
+msgid "Comments"
+msgstr "Kommentare"
+
+#: src/ephios/core/models/events.py:367
 #, python-brace-format
 msgid "\"{text}\" by {author} on {participation}"
 msgstr "\"{text}\" von {author} zu {participation}"
-
-#: src/ephios/core/models/events.py:372
-msgid "Comments"
-msgstr "Kommentare"
 
 #: src/ephios/core/models/events.py:380
 msgid "meeting time"
@@ -1096,7 +1100,7 @@ msgstr "Platzhalter-Teilnahmen"
 
 #: src/ephios/core/models/users.py:100
 #: src/ephios/plugins/federation/models.py:142
-#: src/ephios/plugins/guests/models.py:49
+#: src/ephios/plugins/guests/models.py:52
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
@@ -1114,19 +1118,19 @@ msgstr "Sichtbar"
 
 #: src/ephios/core/models/users.py:108
 #: src/ephios/plugins/federation/models.py:143
-#: src/ephios/plugins/guests/models.py:50
+#: src/ephios/plugins/guests/models.py:53
 msgid "name"
 msgstr "Name"
 
 #: src/ephios/core/models/users.py:109
 #: src/ephios/plugins/federation/models.py:144
-#: src/ephios/plugins/guests/models.py:51
+#: src/ephios/plugins/guests/models.py:54
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
 #: src/ephios/core/models/users.py:110
 #: src/ephios/plugins/federation/models.py:145
-#: src/ephios/plugins/guests/models.py:52
+#: src/ephios/plugins/guests/models.py:55
 msgid "phone number"
 msgstr "Telefonnummer"
 
@@ -1138,7 +1142,7 @@ msgstr "Kalender-Token"
 msgid "preferred language"
 msgstr "bevorzugte Sprache"
 
-#: src/ephios/core/models/users.py:132 src/ephios/core/models/users.py:375
+#: src/ephios/core/models/users.py:132 src/ephios/core/models/users.py:376
 msgid "user profile"
 msgstr "Benutzerprofil"
 
@@ -1150,127 +1154,127 @@ msgstr "Benutzerprofile"
 msgid "User profile with this email address already exists."
 msgstr "Ein Nutzer-Account mit dieser E-Mail existiert bereits."
 
-#: src/ephios/core/models/users.py:275
+#: src/ephios/core/models/users.py:276
 msgid "Show qualifications of this category everywhere a user is presented"
 msgstr ""
 "Zeige Qualifikationen dieser Kategorie überall wo ein Nutzer angezeigt wird"
 
-#: src/ephios/core/models/users.py:281
+#: src/ephios/core/models/users.py:282
 msgid "qualification category"
 msgstr "Qualifikationskategorie"
 
-#: src/ephios/core/models/users.py:282
+#: src/ephios/core/models/users.py:283
 msgid "qualification categories"
 msgstr "Qualifikationskategorien"
 
-#: src/ephios/core/models/users.py:300
+#: src/ephios/core/models/users.py:301
 #: src/ephios/plugins/qualification_management/templates/core/qualification_list.html:29
 msgid "Abbreviation"
 msgstr "Abkürzung"
 
-#: src/ephios/core/models/users.py:305
+#: src/ephios/core/models/users.py:306
 msgid "category"
 msgstr "Kategorie"
 
-#: src/ephios/core/models/users.py:310
+#: src/ephios/core/models/users.py:311
 msgid "Included"
 msgstr "Enthaltene"
 
-#: src/ephios/core/models/users.py:311
+#: src/ephios/core/models/users.py:312
 msgid "other qualifications that this qualification includes"
 msgstr "andere Qualifikationen, die in dieser enthalten sind"
 
-#: src/ephios/core/models/users.py:315
+#: src/ephios/core/models/users.py:316
 msgid "imported"
 msgstr "importiert"
 
-#: src/ephios/core/models/users.py:326 src/ephios/core/models/users.py:368
+#: src/ephios/core/models/users.py:321 src/ephios/core/models/users.py:369
 msgid "qualification"
 msgstr "Qualifikation"
 
-#: src/ephios/core/models/users.py:327
+#: src/ephios/core/models/users.py:322
 msgid "qualifications"
 msgstr "Qualifikationen"
 
-#: src/ephios/core/models/users.py:379
+#: src/ephios/core/models/users.py:380
 #: src/ephios/core/templates/core/userprofile_form.html:72
 msgid "externally managed"
 msgstr "extern verwaltet"
 
-#: src/ephios/core/models/users.py:381
+#: src/ephios/core/models/users.py:382
 #: src/ephios/core/templates/core/userprofile_form.html:71
 msgid "The qualification was granted by an external system."
 msgstr "Die Qualifikation wurde durch ein externes System erteilt."
 
-#: src/ephios/core/models/users.py:393
+#: src/ephios/core/models/users.py:390
+msgid "Qualification grant"
+msgstr "Qualifikationserteilung"
+
+#: src/ephios/core/models/users.py:391
+msgid "Qualification grants"
+msgstr "Qualifikationserteilungen"
+
+#: src/ephios/core/models/users.py:394
 #, python-brace-format
 msgid "{qualification} for {user}"
 msgstr "{qualification} für {user}"
 
-#: src/ephios/core/models/users.py:399
-msgid "Qualification grant"
-msgstr "Qualifikationserteilung"
-
-#: src/ephios/core/models/users.py:400
-msgid "Qualification grants"
-msgstr "Qualifikationserteilungen"
-
-#: src/ephios/core/models/users.py:416 src/ephios/core/models/users.py:532
+#: src/ephios/core/models/users.py:417 src/ephios/core/models/users.py:533
 msgid "affected user"
 msgstr "betroffener Benutzer"
 
-#: src/ephios/core/models/users.py:422
+#: src/ephios/core/models/users.py:423
 msgid "needs confirmation"
 msgstr "benötigt Bestätigung"
 
-#: src/ephios/core/models/users.py:423
+#: src/ephios/core/models/users.py:424
 msgid "executed"
 msgstr "ausgeführt"
 
-#: src/ephios/core/models/users.py:424
+#: src/ephios/core/models/users.py:425
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: src/ephios/core/models/users.py:425
+#: src/ephios/core/models/users.py:426
 msgid "denied"
 msgstr "abgelehnt"
 
-#: src/ephios/core/models/users.py:431 src/ephios/core/views/event.py:79
+#: src/ephios/core/models/users.py:432 src/ephios/core/views/event.py:78
 msgid "State"
 msgstr "Status"
 
-#: src/ephios/core/models/users.py:436
+#: src/ephios/core/models/users.py:437
 msgid "Consequence"
 msgstr "Konsequenz"
 
-#: src/ephios/core/models/users.py:437
+#: src/ephios/core/models/users.py:438
 msgid "Consequences"
 msgstr "Konsequenzen"
 
-#: src/ephios/core/models/users.py:453
+#: src/ephios/core/models/users.py:457
 msgid "Consequence was executed already."
 msgstr "Konsequenz wurde bereits ausgeführt."
 
-#: src/ephios/core/models/users.py:467
+#: src/ephios/core/models/users.py:471
 #: src/ephios/core/templates/core/userprofile_workinghours.html:43
-#: src/ephios/core/views/workinghours.py:320
+#: src/ephios/core/views/workinghours.py:323
 msgid "Reason"
 msgstr "Anlass"
 
-#: src/ephios/core/models/users.py:481
+#: src/ephios/core/models/users.py:485
 msgid "Consequence was executed or denied already."
 msgstr "Konsequenz wurde bereits ausgeführt oder abgelehnt."
 
-#: src/ephios/core/models/users.py:513
+#: src/ephios/core/models/users.py:514
 msgid "Hours of work"
 msgstr "Arbeitsstunden"
 
-#: src/ephios/core/models/users.py:514
+#: src/ephios/core/models/users.py:515
 msgid "Occasion"
 msgstr "Anlass"
 
-#: src/ephios/core/models/users.py:519 src/ephios/core/models/users.py:520
-#: src/ephios/core/signals.py:295
+#: src/ephios/core/models/users.py:520 src/ephios/core/models/users.py:521
+#: src/ephios/core/signals.py:305
 #: src/ephios/core/templates/core/userprofile_list.html:111
 #: src/ephios/core/templates/core/workinghours_list.html:9
 #: src/ephios/core/templates/core/workinghours_list.html:14
@@ -1278,76 +1282,76 @@ msgstr "Anlass"
 msgid "Working hours"
 msgstr "Arbeitsstunden"
 
-#: src/ephios/core/models/users.py:535
+#: src/ephios/core/models/users.py:536
 msgid "read"
 msgstr "gelesen"
 
-#: src/ephios/core/models/users.py:538
+#: src/ephios/core/models/users.py:539
 msgid "processing completed"
 msgstr "Verarbeitung abgeschlossen"
 
-#: src/ephios/core/models/users.py:540
+#: src/ephios/core/models/users.py:541
 msgid ""
 "All enabled notification backends have processed this notification when flag "
 "is set"
 msgstr ""
 "Alle Notification-Backends haben diese Benachrichtung verarbeitet falls aktiv"
 
-#: src/ephios/core/models/users.py:548
+#: src/ephios/core/models/users.py:549
 msgid ""
 "List of slugs of notification backends that have processed this notification"
 msgstr ""
 "Liste von Slugs aller Notification-Backends die diese Benachrichtigung "
 "verarbeitet haben"
 
-#: src/ephios/core/models/users.py:576
+#: src/ephios/core/models/users.py:557
 #, python-brace-format
 msgid "{subject} for {user}"
 msgstr "{subject} für {user}"
 
-#: src/ephios/core/models/users.py:576 src/ephios/plugins/guests/models.py:133
+#: src/ephios/core/models/users.py:557 src/ephios/plugins/guests/models.py:136
 msgid "Guest"
 msgstr "Gast"
 
-#: src/ephios/core/models/users.py:597
+#: src/ephios/core/models/users.py:598
 msgid "internal name"
 msgstr "Interner Name"
 
-#: src/ephios/core/models/users.py:598
+#: src/ephios/core/models/users.py:599
 msgid "Internal name for this provider."
 msgstr "Interner Name für diesen Provider."
 
-#: src/ephios/core/models/users.py:603
+#: src/ephios/core/models/users.py:604
 msgid "label"
 msgstr "Titel"
 
-#: src/ephios/core/models/users.py:604
+#: src/ephios/core/models/users.py:605
 msgid "The label displayed to users attempting to log in with this provider."
 msgstr ""
 "Der Titel, der Benutzen angezeigt wird, die sich mit diesem Provider "
 "einloggen möchten."
 
-#: src/ephios/core/models/users.py:608
+#: src/ephios/core/models/users.py:609
 msgid "client id"
 msgstr "Client-ID"
 
-#: src/ephios/core/models/users.py:609
+#: src/ephios/core/models/users.py:610
 msgid "Your client id provided by the OIDC provider."
 msgstr "Ihre Client-ID (vom OIDC-Provider zur Verfügung gestellt)."
 
-#: src/ephios/core/models/users.py:613
+#: src/ephios/core/models/users.py:614
 msgid "client secret"
 msgstr "Client-Secret"
 
-#: src/ephios/core/models/users.py:614
+#: src/ephios/core/models/users.py:615
 msgid "Your client secret provided by the OIDC provider."
 msgstr "Ihr Client-Secret (vom OIDC-Provider zur Verfügung gestellt)."
 
-#: src/ephios/core/models/users.py:619
+#: src/ephios/core/models/users.py:620
 msgid "scopes"
 msgstr "Geltungsbereich"
 
-#: src/ephios/core/models/users.py:621
+#: src/ephios/core/models/users.py:622
 msgid ""
 "The OIDC scopes to request from the provider. Separate multiple scopes with "
 "spaces. Use the default value if you are unsure."
@@ -1356,45 +1360,45 @@ msgstr ""
 "Mehrere Werte mit Leerzeichen trennen. Nutzen Sie den Standardwert, wenn Sie "
 "unsicher sind."
 
-#: src/ephios/core/models/users.py:625
+#: src/ephios/core/models/users.py:626
 msgid "authorization endpoint"
 msgstr "authorization endpoint"
 
-#: src/ephios/core/models/users.py:625
+#: src/ephios/core/models/users.py:626
 msgid "The OIDC authorization endpoint."
 msgstr "Der Endpunkt zur Authentifizierung."
 
-#: src/ephios/core/models/users.py:628
+#: src/ephios/core/models/users.py:629
 msgid "token endpoint"
 msgstr "token endpoint"
 
-#: src/ephios/core/models/users.py:628
+#: src/ephios/core/models/users.py:629
 msgid "The OIDC token endpoint."
 msgstr "Der Token-Endpoint."
 
-#: src/ephios/core/models/users.py:631
+#: src/ephios/core/models/users.py:632
 msgid "user endpoint"
 msgstr "Benutzer-Endpoint"
 
-#: src/ephios/core/models/users.py:631
+#: src/ephios/core/models/users.py:632
 msgid "The OIDC user endpoint."
 msgstr "Der Endpunkt für Benutzerprofile."
 
-#: src/ephios/core/models/users.py:636
+#: src/ephios/core/models/users.py:637
 msgid "end session endpoint"
 msgstr "end session endpoint"
 
-#: src/ephios/core/models/users.py:637
+#: src/ephios/core/models/users.py:638
 msgid "The OIDC end session endpoint, if supported by your provider."
 msgstr ""
 "Der Session-Beendigungs-Endpunkt (sofern von Ihrem OIDC-Provider "
 "unterstützt)."
 
-#: src/ephios/core/models/users.py:642
+#: src/ephios/core/models/users.py:643
 msgid "JWKS endpoint"
 msgstr "JWKS endpoint"
 
-#: src/ephios/core/models/users.py:644
+#: src/ephios/core/models/users.py:645
 msgid ""
 "The OIDC JWKS endpoint. A less secure signing method will be used if this is "
 "not provided."
@@ -1402,21 +1406,21 @@ msgstr ""
 "Der Zertifikatsendpunkt. Ein weniger sicheres Signierverfahren wird "
 "verwendet, wenn kein Wert angegeben wird."
 
-#: src/ephios/core/models/users.py:650
+#: src/ephios/core/models/users.py:651
 msgid "default groups"
 msgstr "Standard-Gruppen"
 
-#: src/ephios/core/models/users.py:651
+#: src/ephios/core/models/users.py:652
 msgid "The groups that users logging in with this provider will be added to."
 msgstr ""
 "Die Gruppen, zu denen Benutzer hinzugefügt werden, die sich mit diesem "
 "Provider einloggen."
 
-#: src/ephios/core/models/users.py:656
+#: src/ephios/core/models/users.py:657
 msgid "group claim"
 msgstr "OIDC-Claim für Gruppen"
 
-#: src/ephios/core/models/users.py:658
+#: src/ephios/core/models/users.py:659
 msgid ""
 "The name of the claim that contains the user's groups. Leave empty if your "
 "provider does not support this. You can use dot notation to access nested "
@@ -1426,11 +1430,11 @@ msgstr ""
 "Feld frei, wenn Ihr Provider dies nicht unterstützt. Sie können per Punkt-"
 "Notation auf verschachtelte Claims zugreifen."
 
-#: src/ephios/core/models/users.py:664
+#: src/ephios/core/models/users.py:665
 msgid "create missing groups"
 msgstr "Fehlende Gruppen erstellen"
 
-#: src/ephios/core/models/users.py:666
+#: src/ephios/core/models/users.py:667
 msgid ""
 "If enabled, groups from the claim defined above that do not exist yet will "
 "be created automatically."
@@ -1438,11 +1442,11 @@ msgstr ""
 "Legt fest, ob bisher noch nicht existierende Gruppen aus dem Gruppen-Claim "
 "automatisch erstellt werden sollen."
 
-#: src/ephios/core/models/users.py:672
+#: src/ephios/core/models/users.py:673
 msgid "qualification claim"
 msgstr "Qualifikations-Claim"
 
-#: src/ephios/core/models/users.py:674
+#: src/ephios/core/models/users.py:675
 msgid ""
 "The name of the claim that contains the user's qualifications. Leave empty "
 "if your provider does not support this. You can use dot notation to access "
@@ -1453,11 +1457,11 @@ msgstr ""
 "Sie dieses Feld frei, wenn Ihr Provider dies nicht unterstützt. Sie können "
 "per Punkt-Notation auf verschachtelte Claims zugreifen."
 
-#: src/ephios/core/models/users.py:680
+#: src/ephios/core/models/users.py:681
 msgid "qualification codename to uuid"
 msgstr "Qualifikations-Codename zu UUID"
 
-#: src/ephios/core/models/users.py:682
+#: src/ephios/core/models/users.py:683
 msgid ""
 "A json encoded dictionary containing mappings of qualification names as they "
 "appear in thequalification claim to the qualification uuid. If a key is not "
@@ -1467,31 +1471,31 @@ msgstr ""
 "Claim auftauchen, zu Qualifikations-UUIDs übersetzt. Wenn ein Key nicht "
 "gefunden wird, wird versucht den Key selbst als UUID zu nutzen."
 
-#: src/ephios/core/models/users.py:690
-#, python-brace-format
-msgid "Identity provider {label}"
-msgstr "Identitätsprovider {label}"
-
-#: src/ephios/core/models/users.py:693
+#: src/ephios/core/models/users.py:691
 msgid "Identity provider"
 msgstr "Identitätsprovider"
 
-#: src/ephios/core/models/users.py:694
+#: src/ephios/core/models/users.py:692
 #: src/ephios/core/templates/core/identityprovider_list.html:5
 #: src/ephios/core/views/settings.py:71
 msgid "Identity providers"
 msgstr "Identitätsprovider"
 
+#: src/ephios/core/models/users.py:695
+#, python-brace-format
+msgid "Identity provider {label}"
+msgstr "Identitätsprovider {label}"
+
 #: src/ephios/core/pdf.py:58
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:32
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:40
 #: src/ephios/core/templates/core/userprofile_form.html:53
 #: src/ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/configuration_form.html:13
-#: src/ephios/plugins/guests/models.py:55
+#: src/ephios/plugins/guests/models.py:58
 #: src/ephios/plugins/qualification_management/signals.py:17
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
-#: src/ephios/core/pdf.py:133 src/ephios/core/pdf.py:180
+#: src/ephios/core/pdf.py:133 src/ephios/core/pdf.py:182
 #: src/ephios/core/templates/core/mails/new_event.html:29
 #: src/ephios/core/templates/core/shift_form.html:104
 msgid "Location"
@@ -1501,7 +1505,7 @@ msgstr "Ort"
 msgid "Time"
 msgstr "Zeit"
 
-#: src/ephios/core/pdf.py:154 src/ephios/core/pdf.py:198
+#: src/ephios/core/pdf.py:155 src/ephios/core/pdf.py:203
 msgid "Participants"
 msgstr "Teilnehmende"
 
@@ -1707,7 +1711,7 @@ msgstr ""
 #: src/ephios/core/services/notifications/types.py:363
 #: src/ephios/core/templates/core/disposition/disposition.html:8
 #: src/ephios/core/templates/core/fragments/shift_box_big.html:119
-#: src/ephios/core/templates/core/home.html:107
+#: src/ephios/core/templates/core/home.html:115
 msgid "Disposition"
 msgstr "Disposition"
 
@@ -1831,7 +1835,7 @@ msgstr "Ihr {platform}-Passwort wurde geändert"
 msgid "Your password has been changed"
 msgstr "Ihr Passwort wurde geändert"
 
-#: src/ephios/core/signals.py:328
+#: src/ephios/core/signals.py:338
 #: src/ephios/core/templates/core/settings/settings_base.html:6
 #: src/ephios/core/templates/core/settings/settings_base.html:11
 #: src/ephios/templates/base.html:148
@@ -1878,28 +1882,28 @@ msgstr ""
 msgid "Signup Flow '{slug}' was not found."
 msgstr "Anmeldeverfahren '{slug}' wurde nicht gefunden."
 
-#: src/ephios/core/signup/flow/abstract.py:47
-#: src/ephios/core/signup/forms.py:132
+#: src/ephios/core/signup/flow/abstract.py:50
+#: src/ephios/core/signup/forms.py:133
 #: src/ephios/plugins/basesignupflows/flow/participant.py:37
 msgid "Sign up"
 msgstr "Teilnehmen"
 
-#: src/ephios/core/signup/flow/abstract.py:48
+#: src/ephios/core/signup/flow/abstract.py:51
 #, python-brace-format
 msgid "You have successfully signed up for {shift}."
 msgstr "Sie haben sich erfolgreich für {shift} angemeldet."
 
-#: src/ephios/core/signup/flow/abstract.py:49
+#: src/ephios/core/signup/flow/abstract.py:52
 #, python-brace-format
 msgid "Signing up failed: {error}"
 msgstr "Anmeldung fehlgeschlagen: {error}"
 
-#: src/ephios/core/signup/flow/abstract.py:50
+#: src/ephios/core/signup/flow/abstract.py:53
 #, python-brace-format
 msgid "You have successfully declined {shift}."
 msgstr "Sie haben erfolgreich für {shift} abgesagt."
 
-#: src/ephios/core/signup/flow/abstract.py:51
+#: src/ephios/core/signup/flow/abstract.py:54
 #, python-brace-format
 msgid "Declining failed: {error}"
 msgstr "Absagen fehlgeschlagen: {error}"
@@ -1950,7 +1954,7 @@ msgstr ""
 "{eventtype} teilzunehmen."
 
 #: src/ephios/core/signup/flow/participant_validation.py:128
-#: src/ephios/core/signup/forms.py:215
+#: src/ephios/core/signup/forms.py:216
 #, python-brace-format
 msgid "You are already confirmed for other shifts at this time: {shifts}."
 msgstr "Sie sind zu dieser Zeit bereits eingeteilt für {shifts}."
@@ -1971,24 +1975,28 @@ msgstr "Kommentar für andere Teilenehmende sichtbar machen"
 msgid "End time must not be before start time."
 msgstr "Ende darf nicht vor dem Beginn sein."
 
-#: src/ephios/core/signup/forms.py:114
+#: src/ephios/core/signup/forms.py:102
+msgid "Previous comments"
+msgstr "Vorherige Kommentare"
+
+#: src/ephios/core/signup/forms.py:115
 #, python-brace-format
 msgid "{label} was changed from {initial} to {current}."
 msgstr "{label} wurde von {initial} zu {current} geändert."
 
-#: src/ephios/core/signup/forms.py:133
+#: src/ephios/core/signup/forms.py:134
 #: src/ephios/core/templates/core/disposition/fragment_participation.html:54
 #: src/ephios/core/templates/core/fragments/shift_box_big.html:85
 #: src/ephios/core/templates/core/fragments/shift_box_big.html:93
 msgid "Customize"
 msgstr "Anpassen"
 
-#: src/ephios/core/signup/forms.py:134 src/ephios/core/signup/forms.py:169
+#: src/ephios/core/signup/forms.py:135 src/ephios/core/signup/forms.py:170
 #: src/ephios/core/templates/core/fragments/shift_box_big.html:99
 msgid "Decline"
 msgstr "Absagen"
 
-#: src/ephios/core/signup/forms.py:137
+#: src/ephios/core/signup/forms.py:138
 msgid "Signup choice"
 msgstr "Anmeldeaktion"
 
@@ -2150,25 +2158,25 @@ msgstr "Berechtigungen"
 msgid "Next"
 msgstr "Weiter"
 
-#: src/ephios/core/templates/core/event_list.html:11
-#: src/ephios/core/templates/core/event_list.html:22
+#: src/ephios/core/templates/core/event_list.html:12
+#: src/ephios/core/templates/core/event_list.html:39
 #: src/ephios/core/views/pwa.py:67 src/ephios/templates/base.html:104
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: src/ephios/core/templates/core/event_list.html:26
+#: src/ephios/core/templates/core/event_list.html:49
 #: src/ephios/core/templates/core/logentry_list.html:53
 #: src/ephios/core/templates/core/userprofile_workinghours.html:23
 #: src/ephios/core/templates/core/workinghours_list.html:22
 msgid "Filter"
 msgstr "Filter"
 
-#: src/ephios/core/templates/core/event_list.html:73
+#: src/ephios/core/templates/core/event_list.html:99
 #: src/ephios/core/templates/core/userprofile_list.html:29
 msgid "Apply"
 msgstr "Anwenden"
 
-#: src/ephios/core/templates/core/event_list.html:77
+#: src/ephios/core/templates/core/event_list.html:103
 #: src/ephios/core/templates/core/userprofile_list.html:31
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -2376,34 +2384,43 @@ msgstr "Berechtigungen ändern"
 msgid "Home"
 msgstr "Startseite"
 
-#: src/ephios/core/templates/core/home.html:21
+#: src/ephios/core/templates/core/home.html:22
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:9
+msgid ""
+"We failed to send notifications to your email address. Please check your "
+"email address and contact an administrator."
+msgstr ""
+"Wir konnten keine Benachrichtigung an Ihre E-Mail-Adresse zustellen. Bitte "
+"überprüfen Sie Ihre E-Mail und kontaktieren Sie einen Administrator."
+
+#: src/ephios/core/templates/core/home.html:29
 #, python-format
 msgid "Welcome to %(organization_name)s!"
 msgstr "Willkommen bei %(organization_name)s!"
 
-#: src/ephios/core/templates/core/home.html:35
+#: src/ephios/core/templates/core/home.html:43
 msgid "Your upcoming events"
 msgstr "Anstehende Schichten"
 
-#: src/ephios/core/templates/core/home.html:65
+#: src/ephios/core/templates/core/home.html:73
 msgctxt "empty list of upcoming shifts"
 msgid "None yet"
 msgstr "Noch keine"
 
-#: src/ephios/core/templates/core/home.html:67
+#: src/ephios/core/templates/core/home.html:75
 msgid "View events"
 msgstr "Veranstaltungen ansehen"
 
-#: src/ephios/core/templates/core/home.html:79
+#: src/ephios/core/templates/core/home.html:87
 msgid "Events with requested participations"
 msgstr "Veranstaltungen mit angefragten Teilnahmen"
 
-#: src/ephios/core/templates/core/home.html:125
+#: src/ephios/core/templates/core/home.html:133
 #: src/ephios/core/templates/core/logentry_list.html:15
 msgid "Edit history"
 msgstr "Änderungsverlauf"
 
-#: src/ephios/core/templates/core/home.html:128
+#: src/ephios/core/templates/core/home.html:136
 msgid "View everything"
 msgstr "Alles ansehen"
 
@@ -2468,6 +2485,7 @@ msgstr ""
 #: src/ephios/plugins/complexsignup/structure.py:110
 #: src/ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:45
 #: src/ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:112
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:22
 msgid "Label"
 msgstr "Titel"
 
@@ -2613,6 +2631,29 @@ msgstr "Passwort ändern"
 msgid "Submit"
 msgstr "Absenden"
 
+#: src/ephios/core/templates/core/settings/settings_base_confirm_delete.html:7
+#: src/ephios/core/templates/core/settings/settings_base_confirm_delete.html:13
+#, python-format
+msgid "Delete %(name)s"
+msgstr "%(name)s löschen"
+
+#: src/ephios/core/templates/core/settings/settings_base_confirm_delete.html:18
+#, python-format
+msgid "Are you sure you want to delete %(object)s?"
+msgstr "Möchten Sie \"%(object)s\" wirklich löschen?"
+
+#: src/ephios/core/templates/core/settings/settings_base_form.html:9
+#: src/ephios/core/templates/core/settings/settings_base_form.html:19
+#, python-format
+msgid "Edit %(name)s"
+msgstr "%(name)s bearbeiten"
+
+#: src/ephios/core/templates/core/settings/settings_base_form.html:11
+#: src/ephios/core/templates/core/settings/settings_base_form.html:21
+#, python-format
+msgid "Create new %(name)s"
+msgstr "%(name)s hinzufügen"
+
 #: src/ephios/core/templates/core/settings/settings_calendar.html:8
 #: src/ephios/core/views/settings.py:43
 msgid "Calendar"
@@ -2681,37 +2722,37 @@ msgstr ""
 "Sie können einstellen, zu welchen Anlässen Sie Benachrichtigungen erhalten "
 "möchten:"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:9
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:17
 #: src/ephios/core/views/settings.py:33
 msgid "Personal data"
 msgstr "Persönliche Daten"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:13
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:21
 msgid "E-Mail address"
 msgstr "E-Mail-Adresse"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:15
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:23
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:17
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:25
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:27
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:35
 msgid "You are not a member of any group."
 msgstr "Sie sind in keiner Gruppe Mitglied."
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:38
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:46
 #: src/ephios/extra/templates/extra/widgets/recurrence_picker.html:154
 msgid "until"
 msgstr "bis"
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:42
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:50
 msgid "You have not been assigned any qualificiations."
 msgstr "Ihnen wurden keine Qualifikationen zugewiesen."
 
-#: src/ephios/core/templates/core/settings/settings_personal_data.html:47
+#: src/ephios/core/templates/core/settings/settings_personal_data.html:55
 msgid "Language"
 msgstr "Sprache"
 
@@ -2759,8 +2800,8 @@ msgid "Save event"
 msgstr "Veranstaltung speichern"
 
 #: src/ephios/core/templates/core/shift_form.html:103
-#: src/ephios/core/views/workinghours.py:39
-#: src/ephios/core/views/workinghours.py:44
+#: src/ephios/core/views/workinghours.py:38
+#: src/ephios/core/views/workinghours.py:43
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
@@ -2833,14 +2874,14 @@ msgstr "Neuen Benutzer anlegen"
 
 #: src/ephios/core/templates/core/userprofile_form.html:38
 msgid ""
-"The user is inactive because their email address is invalid. This can be "
-"caused by a typo or a problem with the user's mail server. Please check the "
-"email address and correct it before activating the user again."
+"The email address of the user is invalid. This can be caused by a typo or a "
+"problem with the user's mail server. Please check the email address and "
+"correct it or ask the user to solve the problem with their provider."
 msgstr ""
-"Der Benutzer ist inaktiv, weil die E-Mail-Adresse ungültig ist. Dies kann "
-"durch einen Tippfehler oder ein Problem mit dem Mailserver des Benutzers "
-"verursacht werden. Bitte überprüfen Sie die E-Mail-Adresse und korrigieren "
-"Sie sie, bevor Sie den Benutzer wieder aktivieren."
+"Die E-Mail-Adresse dieses Nutzers ist ungültig. Dies kann durch einen "
+"Tippfehler oder ein Problem mit dem Mailserver des Benutzers verursacht "
+"werden. Bitte überprüfen Sie die E-Mail-Adresse und korrigieren Sie sie, "
+"oder bitten Sie den Nutzer das Problem mit seinem E-Mail-Anbieter zu lösen."
 
 #: src/ephios/core/templates/core/userprofile_form.html:99
 #: src/ephios/plugins/baseshiftstructures/templates/baseshiftstructures/qualification_mix/configuration_form.html:43
@@ -2926,7 +2967,7 @@ msgid "Export list"
 msgstr "Liste exportieren"
 
 #: src/ephios/core/templates/core/userprofile_workinghours.html:42
-#: src/ephios/core/views/workinghours.py:320
+#: src/ephios/core/views/workinghours.py:323
 #: src/ephios/plugins/complexsignup/models.py:23
 #: src/ephios/plugins/questionnaires/models.py:36
 msgid "Type"
@@ -2934,12 +2975,12 @@ msgstr "Typ"
 
 #: src/ephios/core/templates/core/userprofile_workinghours.html:44
 #: src/ephios/core/templates/core/workinghours_list.html:31
-#: src/ephios/core/views/workinghours.py:320
+#: src/ephios/core/views/workinghours.py:323
 msgid "Hours"
 msgstr "Stunden"
 
 #: src/ephios/core/templates/core/userprofile_workinghours.html:50
-#: src/ephios/core/views/workinghours.py:281
+#: src/ephios/core/views/workinghours.py:284
 #: src/ephios/plugins/files/templates/files/document_list.html:49
 msgid "Total"
 msgstr "Summe"
@@ -3055,31 +3096,31 @@ msgstr "Gruppe \"{group}\" erfolgreich aktualisiert."
 msgid "The group \"{group}\" was deleted."
 msgstr "Gruppe \"{group}\" wurde gelöscht."
 
-#: src/ephios/core/views/auth.py:57
+#: src/ephios/core/views/auth.py:58
 msgid "Authentication failed."
 msgstr "Anmeldung fehlgeschlagen."
 
-#: src/ephios/core/views/auth.py:76
+#: src/ephios/core/views/auth.py:77
 msgid "The user account is deactivated."
 msgstr "Der Benutzeraccount ist deaktiviert."
 
-#: src/ephios/core/views/auth.py:111
+#: src/ephios/core/views/auth.py:112
 #: src/ephios/templates/registration/logged_out.html:9
 msgid "Logged out successfully."
 msgstr "Erfolgreich abgemeldet."
 
-#: src/ephios/core/views/auth.py:164 src/ephios/core/views/auth.py:213
+#: src/ephios/core/views/auth.py:165 src/ephios/core/views/auth.py:220
 msgid "Identity provider saved."
 msgstr "Identitätsprovider gespeichert."
 
-#: src/ephios/core/views/auth.py:184
+#: src/ephios/core/views/auth.py:191
 msgid ""
 "Successfully fetched OIDC configuration. Please fill in the remaining fields."
 msgstr ""
 "OIDC-Konfiguration erfolgreich geladen. Bitte füllen Sie die restlichen "
 "Felder aus."
 
-#: src/ephios/core/views/auth.py:191
+#: src/ephios/core/views/auth.py:198
 msgid ""
 "Could not fetch OIDC configuration from the given URL. Please configure the "
 "client manually below."
@@ -3105,28 +3146,28 @@ msgctxt "event date filter"
 msgid "from"
 msgstr "ab dem"
 
-#: src/ephios/core/views/event.py:82
+#: src/ephios/core/views/event.py:81
 msgid "all"
 msgstr "alle"
 
-#: src/ephios/core/views/event.py:83
+#: src/ephios/core/views/event.py:82
 msgid "no response"
 msgstr "ohne Rückmeldung"
 
-#: src/ephios/core/views/event.py:85
+#: src/ephios/core/views/event.py:84
 msgid "requested or confirmed"
 msgstr "angefragt oder bestätigt"
 
-#: src/ephios/core/views/event.py:86
+#: src/ephios/core/views/event.py:85
 msgid "disposition to do"
 msgstr "Disposition offen"
 
-#: src/ephios/core/views/event.py:592 src/ephios/core/views/shift.py:120
+#: src/ephios/core/views/event.py:603 src/ephios/core/views/shift.py:120
 #, python-brace-format
 msgid "The event {title} has been saved."
 msgstr "Die Veranstaltung {title} wurde gespeichert."
 
-#: src/ephios/core/views/event.py:692
+#: src/ephios/core/views/event.py:703
 msgid "Event copied successfully."
 msgstr "Veranstaltung erfolgreich kopiert."
 
@@ -3234,6 +3275,7 @@ msgid "General"
 msgstr "Allgemein"
 
 #: src/ephios/core/views/settings.py:77
+#: src/ephios/plugins/eventlistquickfilters/models.py:46
 msgid "Event types"
 msgstr "Veranstaltungstypen"
 
@@ -3278,31 +3320,31 @@ msgstr "Sie können die letzte Schicht nicht löschen!"
 msgid "The shift has been deleted."
 msgstr "Die Schicht wurde gelöscht."
 
-#: src/ephios/core/views/shift.py:328
+#: src/ephios/core/views/shift.py:330
 msgid "Shift copied successfully."
 msgstr "Schicht erfolgreich kopiert."
 
-#: src/ephios/core/views/workinghours.py:32
+#: src/ephios/core/views/workinghours.py:31
 msgid "Manual entry"
 msgstr "Manueller Eintrag"
 
-#: src/ephios/core/views/workinghours.py:36
+#: src/ephios/core/views/workinghours.py:35
 msgid "From"
 msgstr "Von"
 
-#: src/ephios/core/views/workinghours.py:37
+#: src/ephios/core/views/workinghours.py:36
 msgid "To"
 msgstr "Bis"
 
-#: src/ephios/core/views/workinghours.py:154
+#: src/ephios/core/views/workinghours.py:155
 msgid "Your request has been submitted."
 msgstr "Ihre Anfrage wurde abgeschickt."
 
-#: src/ephios/core/views/workinghours.py:221
+#: src/ephios/core/views/workinghours.py:222
 msgid "Working hours have been added."
 msgstr "Arbeitsstunden wurden hinzugefügt."
 
-#: src/ephios/core/views/workinghours.py:245
+#: src/ephios/core/views/workinghours.py:246
 msgid "Working hours have been deleted."
 msgstr "Arbeitsstunden wurden gelöscht."
 
@@ -3771,11 +3813,11 @@ msgstr ""
 "Zusätzliche Teilnehmende erlauben, die für eine der Positionen qualifiziert "
 "sind."
 
-#: src/ephios/plugins/complexsignup/models.py:48
+#: src/ephios/plugins/complexsignup/models.py:42
 msgid "building block"
 msgstr "Block"
 
-#: src/ephios/plugins/complexsignup/models.py:49
+#: src/ephios/plugins/complexsignup/models.py:43
 msgid "building blocks"
 msgstr "Blöcke"
 
@@ -3792,29 +3834,29 @@ msgstr "mindestens"
 msgid "required qualifications"
 msgstr "Erforderliche Qualifikationen"
 
+#: src/ephios/plugins/complexsignup/models.py:79
+msgid "qualification requirement"
+msgstr "Erforderliche Qualifikation"
+
 #: src/ephios/plugins/complexsignup/models.py:80
+msgid "qualification requirements"
+msgstr "Erforderliche Qualifikationen"
+
+#: src/ephios/plugins/complexsignup/models.py:84
 #, python-brace-format
 msgid "everyone on {block} needs {qualifications}"
 msgstr "jeder in {block} benötigt {qualifications}"
 
-#: src/ephios/plugins/complexsignup/models.py:83
+#: src/ephios/plugins/complexsignup/models.py:87
 #, python-brace-format
 msgid "at least {at_least} on {block} need {qualifications}"
 msgstr "mindestens {at_least} in {block} benötigen {qualifications}"
 
-#: src/ephios/plugins/complexsignup/models.py:86
+#: src/ephios/plugins/complexsignup/models.py:90
 #: src/ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:81
 #: src/ephios/plugins/complexsignup/templates/complexsignup/vue_editor.html:242
 msgid "and"
 msgstr "und"
-
-#: src/ephios/plugins/complexsignup/models.py:90
-msgid "qualification requirement"
-msgstr "Erforderliche Qualifikation"
-
-#: src/ephios/plugins/complexsignup/models.py:91
-msgid "qualification requirements"
-msgstr "Erforderliche Qualifikationen"
 
 #: src/ephios/plugins/complexsignup/models.py:111
 #: src/ephios/plugins/complexsignup/models.py:158
@@ -3825,17 +3867,17 @@ msgid "optional"
 msgstr "optional"
 
 #: src/ephios/plugins/complexsignup/models.py:121
-#, python-brace-format
-msgid "{label_or_pk} on {block_name}"
-msgstr "{label_or_pk} in {block_name}"
-
-#: src/ephios/plugins/complexsignup/models.py:126
 msgid "position"
 msgstr "Position"
 
-#: src/ephios/plugins/complexsignup/models.py:127
+#: src/ephios/plugins/complexsignup/models.py:122
 msgid "positions"
 msgstr "Positionen"
+
+#: src/ephios/plugins/complexsignup/models.py:125
+#, python-brace-format
+msgid "{label_or_pk} on {block_name}"
+msgstr "{label_or_pk} in {block_name}"
 
 #: src/ephios/plugins/complexsignup/models.py:144
 msgid "composite block"
@@ -3846,17 +3888,17 @@ msgid "sub block"
 msgstr "Unterblock"
 
 #: src/ephios/plugins/complexsignup/models.py:163
-#, python-brace-format
-msgid "{label} on {composite_blocK}"
-msgstr "{label} in {composite_blocK}"
-
-#: src/ephios/plugins/complexsignup/models.py:169
 msgid "block composition"
 msgstr "Blockzusammensetzung"
 
-#: src/ephios/plugins/complexsignup/models.py:170
+#: src/ephios/plugins/complexsignup/models.py:164
 msgid "block compositions"
 msgstr "Blockzusammensetzungen"
+
+#: src/ephios/plugins/complexsignup/models.py:167
+#, python-brace-format
+msgid "{label} on {composite_blocK}"
+msgstr "{label} in {composite_blocK}"
 
 #: src/ephios/plugins/complexsignup/signals.py:30
 msgid "Signup blocks"
@@ -4066,7 +4108,7 @@ msgstr "Nur bereits vorhandene Qualifikationen reaktivieren oder verlängern"
 msgid "Qualification must be confirmed afterwards"
 msgstr "Qualifikation muss im Nachhinein bestätigt werden"
 
-#: src/ephios/plugins/eventautoqualification/models.py:41
+#: src/ephios/plugins/eventautoqualification/models.py:38
 msgid "event auto qualification configuration"
 msgstr "Veranstaltungs-Autoqualifikations-Konfiguration"
 
@@ -4077,6 +4119,119 @@ msgid ""
 msgstr ""
 "Sie haben nicht die Berechtigung, Qualifikationen zu erteilen, sodass Sie "
 "diese Einstellungen nicht bearbeiten können."
+
+#: src/ephios/plugins/eventlistquickfilters/apps.py:10
+#: src/ephios/plugins/eventlistquickfilters/models.py:55
+#: src/ephios/plugins/eventlistquickfilters/signals.py:102
+msgid "Event List Quick Filters"
+msgstr "Veranstaltungslisten-Schnellfilter"
+
+#: src/ephios/plugins/eventlistquickfilters/apps.py:12
+msgid "Configure filter presets for the event list and set per-group-defaults."
+msgstr ""
+"Konfigurieren Sie Veranstaltungslisten-Schnellfilter und setzen Sie "
+"Standardansichten je Gruppe"
+
+#: src/ephios/plugins/eventlistquickfilters/forms.py:38
+msgid ""
+"An empty event type selection means all event types, but it must be the "
+"default for every group that can see this filter. Otherwise, it is ambiguous "
+"with a potential other default filter, which is also identified by an empty "
+"selection. To show all event types without making this filter the default, "
+"select every event type instead."
+msgstr ""
+"Eine leere Auswahl steht für alle Veranstaltungstypen, aber muss technisch "
+"auch der Standard für alle Gruppen sein, die diesen Filter sehen können. "
+"Sonst kann der Filter nicht eindeutig identifiziert werden. Um alle "
+"Veranstaltungstypen anzuzeigen, ohne dass der Filter als Standard festgelegt "
+"wird, wählen Sie stattdessen alle Veranstaltungstypen aus."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:12
+msgid "Position"
+msgstr "Position"
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:14
+msgid ""
+"The position of this filter in the list of filters. Lower numbers will be "
+"shown first."
+msgstr "Die Position des Filters in der Liste. Kleine Zahlen kommen zuerst."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:21
+msgid "Visible to groups"
+msgstr "Sichtbar für Gruppen"
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:22
+msgid "These groups can see this filter button."
+msgstr "Diese Gruppen können den Filter sehen."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:28
+msgid "Default for groups"
+msgstr "Standard für Gruppen"
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:30
+msgid ""
+"This filter is selected by default for users in these groups. If users are "
+"in multiple groups, the filter with the lowest position will be selected."
+msgstr ""
+"Der Filter wird standardmäßig für Nutzer dieser Gruppen verwendet. Ist ein "
+"Nutzer in mehreren Gruppen mit Standardfilter, wird der mit der kleinsten "
+"Position genutzt."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:36
+msgid "Show all event types when turned off"
+msgstr ""
+"Wenn der Filter ausgeschaltet wird werden alle alle Veranstaltungstypen "
+"angezeigt"
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:38
+msgid ""
+"If this is checked, deactivating this filter will show all event types. If "
+"this is unchecked, deactivating this filter will show the default filter for "
+"the user."
+msgstr ""
+"Wenn diese Option gewählt ist, werden nach dem Deaktivieren des Filters "
+"Veranstaltungen aller Typen angezeigt. Wenn die Option nicht gewählt ist, "
+"wird nach dem Deaktivieren des Filters der Standardfilter gewählt."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:48
+msgid ""
+"Choose the event types shown when this filter is active. Leave this empty to "
+"include all event types."
+msgstr ""
+"Wählen Sie die Veranstaltungstypen, deren Veranstaltung mit Aktivierung des "
+"Filters gezeigt werden. Eine leere Auswahl bedeutet, dass alle angezeigt "
+"werden."
+
+#: src/ephios/plugins/eventlistquickfilters/models.py:54
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:7
+msgid "Event List Quick Filter"
+msgstr "Veranstaltungslisten-Schnellfilter"
+
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:18
+msgid "Add Event List Quick Filter"
+msgstr "Veranstaltungslisten-Schnellfilter hinzufügen"
+
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:24
+msgid "Event Types"
+msgstr "Veranstaltungstypen"
+
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/eventlistquickfilter_list.html:25
+msgid "Actions"
+msgstr "Aktionen"
+
+#: src/ephios/plugins/eventlistquickfilters/templates/eventlistquickfilters/filter_buttons.html:7
+msgctxt "no default filter button label"
+msgid "Quick filters"
+msgstr "Schnellfilter"
+
+#: src/ephios/plugins/eventlistquickfilters/views.py:42
+#: src/ephios/plugins/eventlistquickfilters/views.py:55
+msgid "Event list quick filter saved successfully."
+msgstr "Veranstaltungs-Schnellfilter gespeichert."
+
+#: src/ephios/plugins/eventlistquickfilters/views.py:66
+msgid "Event list quick filter deleted successfully."
+msgstr "Veranstaltungs-Schnellfilter gelöscht."
 
 #: src/ephios/plugins/federation/apps.py:10
 #: src/ephios/plugins/federation/signals.py:61
@@ -4121,60 +4276,60 @@ msgstr "Code ungültig"
 msgid "URL"
 msgstr "URL"
 
-#: src/ephios/plugins/federation/models.py:36
+#: src/ephios/plugins/federation/models.py:33
 msgid "federated guest"
 msgstr "Föderierter Gast"
 
-#: src/ephios/plugins/federation/models.py:37
+#: src/ephios/plugins/federation/models.py:34
 msgid "federated guests"
 msgstr "Föderierte Gäste"
 
-#: src/ephios/plugins/federation/models.py:66
+#: src/ephios/plugins/federation/models.py:63
 msgid "federated host"
 msgstr "Föderierter Host"
 
-#: src/ephios/plugins/federation/models.py:67
+#: src/ephios/plugins/federation/models.py:64
 msgid "federated hosts"
 msgstr "Föderierte Hosts"
 
 #: src/ephios/plugins/federation/models.py:87
+msgid "invite code"
+msgstr "Einladungscode"
+
+#: src/ephios/plugins/federation/models.py:88
+msgid "invite codes"
+msgstr "Einladungscodes"
+
+#: src/ephios/plugins/federation/models.py:91
 #, python-brace-format
 msgid "Federation invite code for {url}"
 msgstr "Föderations-Einladungs-Code für {url}"
 
-#: src/ephios/plugins/federation/models.py:103
-msgid "invite code"
-msgstr "Einladungscode"
-
-#: src/ephios/plugins/federation/models.py:104
-msgid "invite codes"
-msgstr "Einladungscodes"
-
 #: src/ephios/plugins/federation/models.py:124
+msgid "federated event share"
+msgstr "Veranstaltungsfreigabe für föderierte Instanzen"
+
+#: src/ephios/plugins/federation/models.py:125
+msgid "federated event shares"
+msgstr "Veranstaltungsfreigaben für föderierte Instanzen"
+
+#: src/ephios/plugins/federation/models.py:128
 #, python-brace-format
 msgid "Federated event share for {event}"
 msgstr "Föderation von {event}"
 
-#: src/ephios/plugins/federation/models.py:127
-msgid "federated event share"
-msgstr "Veranstaltungsfreigabe für föderierte Instanzen"
-
-#: src/ephios/plugins/federation/models.py:128
-msgid "federated event shares"
-msgstr "Veranstaltungsfreigaben für föderierte Instanzen"
-
 #: src/ephios/plugins/federation/models.py:151
-#, python-brace-format
-msgid "Federated user {display_name}"
-msgstr "Föderierter Nutzer {display_name}"
-
-#: src/ephios/plugins/federation/models.py:163
 msgid "federated user"
 msgstr "Föderierter Benutzer"
 
-#: src/ephios/plugins/federation/models.py:164
+#: src/ephios/plugins/federation/models.py:152
 msgid "federated users"
 msgstr "Föderierte Benutzer"
+
+#: src/ephios/plugins/federation/models.py:155
+#, python-brace-format
+msgid "Federated user {display_name}"
+msgstr "Föderierter Nutzer {display_name}"
 
 #: src/ephios/plugins/federation/models.py:203
 msgid "Federated user"
@@ -4428,11 +4583,11 @@ msgstr "Hochgeladen von"
 msgid "Last modified"
 msgstr "Zuletzt geändert"
 
-#: src/ephios/plugins/files/models.py:26
+#: src/ephios/plugins/files/models.py:23
 msgid "Document"
 msgstr "Datei"
 
-#: src/ephios/plugins/files/models.py:27
+#: src/ephios/plugins/files/models.py:24
 #: src/ephios/plugins/files/templates/files/document_list.html:5
 msgid "Documents"
 msgstr "Dateien"
@@ -4496,11 +4651,11 @@ msgstr "Dateien"
 msgid "with"
 msgstr "mit"
 
-#: src/ephios/plugins/files/views.py:38 src/ephios/plugins/files/views.py:51
+#: src/ephios/plugins/files/views.py:39 src/ephios/plugins/files/views.py:52
 msgid "File saved successfully."
 msgstr "Datei gespeichert."
 
-#: src/ephios/plugins/files/views.py:63
+#: src/ephios/plugins/files/views.py:64
 msgid "File deleted successfully."
 msgstr "Datei erfolgreich gelöscht."
 
@@ -4535,23 +4690,28 @@ msgstr ""
 msgid "Guests"
 msgstr "Gäste"
 
-#: src/ephios/plugins/guests/models.py:75
+#: src/ephios/plugins/guests/models.py:29
+#, python-brace-format
+msgid "Guest share for {event}"
+msgstr "Gast-Teilen von {event}"
+
+#: src/ephios/plugins/guests/models.py:66
 msgid "guest user"
 msgstr "Gastnutzer"
 
-#: src/ephios/plugins/guests/models.py:76
+#: src/ephios/plugins/guests/models.py:67
 msgid "guest users"
 msgstr "Gastnutzer"
 
-#: src/ephios/plugins/guests/models.py:81
+#: src/ephios/plugins/guests/models.py:84
 msgid "guest participant"
 msgstr "Gastteilnehmender"
 
-#: src/ephios/plugins/guests/models.py:92
+#: src/ephios/plugins/guests/models.py:95
 msgid "guest participation"
 msgstr "Gastteilnehmahme"
 
-#: src/ephios/plugins/guests/models.py:93
+#: src/ephios/plugins/guests/models.py:96
 msgid "guest participations"
 msgstr "Gastteilnehmahmen"
 
@@ -4647,33 +4807,15 @@ msgstr "Seiten verwalten"
 msgid "Allows to create, edit and delete pages."
 msgstr "Darf Seiten erstellen, bearbeiten und löschen."
 
-#: src/ephios/plugins/pages/templates/pages/page_confirm_delete.html:6
-#: src/ephios/plugins/pages/templates/pages/page_confirm_delete.html:11
-msgid "Delete page"
-msgstr "Seite löschen"
-
-#: src/ephios/plugins/pages/templates/pages/page_confirm_delete.html:15
-#, python-format
-msgid "Are you sure you want to delete the page \"%(title)s\"?"
-msgstr "Möchten Sie die Seite \"%(title)s\" wirklich löschen?"
-
-#: src/ephios/plugins/pages/templates/pages/page_form.html:8
-msgid "Edit page"
-msgstr "Seite bearbeiten"
-
-#: src/ephios/plugins/pages/templates/pages/page_form.html:10
-msgid "Create new page"
-msgstr "Neue Seite anlegen"
-
 #: src/ephios/plugins/pages/templates/pages/page_list.html:6
 msgid "Add page"
 msgstr "Seite hinzufügen"
 
-#: src/ephios/plugins/pages/views.py:38 src/ephios/plugins/pages/views.py:48
+#: src/ephios/plugins/pages/views.py:40 src/ephios/plugins/pages/views.py:52
 msgid "Page saved successfully."
 msgstr "Seite gespeichert."
 
-#: src/ephios/plugins/pages/views.py:57
+#: src/ephios/plugins/pages/views.py:63
 msgid "Page deleted successfully."
 msgstr "Seite erfolgreich gelöscht."
 
@@ -4795,15 +4937,7 @@ msgid "Are you sure you want to delete the qualification \"%(title)s\"?"
 msgstr ""
 "Sind sie sicher, dass Sie die Qualifikation \"%(title)s\" löschen möchten?"
 
-#: src/ephios/plugins/qualification_management/templates/core/qualification_form.html:8
-msgid "Edit qualification"
-msgstr "Qualifikation bearbeiten"
-
-#: src/ephios/plugins/qualification_management/templates/core/qualification_form.html:10
-msgid "Create new qualification"
-msgstr "Qualifikation hinzufügen"
-
-#: src/ephios/plugins/qualification_management/templates/core/qualification_form.html:16
+#: src/ephios/plugins/qualification_management/templates/core/qualification_form.html:7
 msgid ""
 "This qualification was imported. We advise to not change the UUID and "
 "meaning of this qualification."
@@ -4866,20 +5000,20 @@ msgstr ""
 "Beim Holen der Qualifikations-Repositories trat ein Fehler auf. Prüfen Sie "
 "die URLs, versuchen Sie es erneut oder wenden Sie sich an den support."
 
-#: src/ephios/plugins/qualification_management/views.py:70
-#: src/ephios/plugins/qualification_management/views.py:80
+#: src/ephios/plugins/qualification_management/views.py:71
+#: src/ephios/plugins/qualification_management/views.py:82
 msgid "Qualification was saved."
 msgstr "Qualifikation wurde gespeichert."
 
-#: src/ephios/plugins/qualification_management/views.py:91
+#: src/ephios/plugins/qualification_management/views.py:93
 msgid "Qualification was deleted."
 msgstr "Qualifikation wurde gelöscht."
 
-#: src/ephios/plugins/qualification_management/views.py:109
+#: src/ephios/plugins/qualification_management/views.py:111
 msgid "Qualification categories saved."
 msgstr "Qualifikationskategorien wurden gespeichert."
 
-#: src/ephios/plugins/qualification_management/views.py:124
+#: src/ephios/plugins/qualification_management/views.py:126
 #, python-brace-format
 msgid "One user had '{qualification}' assigned."
 msgid_plural "{count} users had '{qualification}' assigned."
@@ -5242,7 +5376,7 @@ msgid "This plugins provides a simple resource management system."
 msgstr "Dieses Plugin bietet ein einfaches Ressourcenverwaltungssystem."
 
 #: src/ephios/plugins/simpleresource/forms.py:36
-#: src/ephios/plugins/simpleresource/models.py:58
+#: src/ephios/plugins/simpleresource/models.py:55
 msgid "Resource allocation"
 msgstr "Ressourcenzuweisung"
 
@@ -5250,19 +5384,19 @@ msgstr "Ressourcenzuweisung"
 msgid "Icon"
 msgstr "Icon"
 
-#: src/ephios/plugins/simpleresource/models.py:19
+#: src/ephios/plugins/simpleresource/models.py:15
 msgid "Resource category"
 msgstr "Ressourcenkategorie"
 
-#: src/ephios/plugins/simpleresource/models.py:20
+#: src/ephios/plugins/simpleresource/models.py:16
 msgid "Resource categories"
 msgstr "Ressourcenkategorien"
 
-#: src/ephios/plugins/simpleresource/models.py:40
+#: src/ephios/plugins/simpleresource/models.py:36
 msgid "Resource"
 msgstr "Ressource"
 
-#: src/ephios/plugins/simpleresource/models.py:41
+#: src/ephios/plugins/simpleresource/models.py:37
 #: src/ephios/plugins/simpleresource/models.py:52
 #: src/ephios/plugins/simpleresource/signals.py:40
 #: src/ephios/plugins/simpleresource/templates/simpleresource/resource_list.html:5
@@ -5270,7 +5404,7 @@ msgstr "Ressource"
 msgid "Resources"
 msgstr "Ressourcen"
 
-#: src/ephios/plugins/simpleresource/models.py:59
+#: src/ephios/plugins/simpleresource/models.py:56
 msgid "Resource allocations"
 msgstr "Ressourcenzuweisungen"
 
@@ -5327,35 +5461,39 @@ msgstr "kann nicht löschen, hat Ressourcen"
 msgid "Resource categories updated successfully."
 msgstr "Ressourcenkategorien wurden erfolgreich aktualisiert."
 
-#: src/ephios/settings.py:222
-msgid "German"
-msgstr "Deutsch"
-
 #: src/ephios/settings.py:223
 msgid "English"
 msgstr "Englisch"
 
-#: src/ephios/settings.py:427
+#: src/ephios/settings.py:224
+msgid "German"
+msgstr "Deutsch"
+
+#: src/ephios/settings.py:225
+msgid "Norwegian Bokmål"
+msgstr "Norwegisch (Bokmål)"
+
+#: src/ephios/settings.py:429
 msgid "Read public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) lesen"
 
-#: src/ephios/settings.py:428
+#: src/ephios/settings.py:430
 msgid "Write public data like available events and shifts"
 msgstr "Öffentliche Daten (bspw. Veranstaltungen und Schichten) schreiben"
 
-#: src/ephios/settings.py:429
+#: src/ephios/settings.py:431
 msgid "Read own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen lesen"
 
-#: src/ephios/settings.py:430
+#: src/ephios/settings.py:432
 msgid "Write own personal data and participations"
 msgstr "Eigene Daten und Teilnahmen schreiben"
 
-#: src/ephios/settings.py:432
+#: src/ephios/settings.py:434
 msgid "Read confidential data like all users profile and participations"
 msgstr "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) lesen"
 
-#: src/ephios/settings.py:435
+#: src/ephios/settings.py:437
 msgid "Write confidential data like all users profile and participations"
 msgstr ""
 "Vertrauliche Daten (bpsw. fremde Nutzerprofile und Teilnahmen) schreiben"
@@ -5522,6 +5660,22 @@ msgstr "Passwort erfolgreich zurückgesetzt"
 #: src/ephios/templates/registration/password_reset_done.html:10
 msgid "Please check your mailbox for further instructions."
 msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
+
+#, python-format
+#~ msgid "Are you sure you want to delete the page \"%(title)s\"?"
+#~ msgstr "Möchten Sie die Seite \"%(title)s\" wirklich löschen?"
+
+#~ msgid "Edit page"
+#~ msgstr "Seite bearbeiten"
+
+#~ msgid "Create new page"
+#~ msgstr "Neue Seite anlegen"
+
+#~ msgid "Edit qualification"
+#~ msgstr "Qualifikation bearbeiten"
+
+#~ msgid "Create new qualification"
+#~ msgstr "Qualifikation hinzufügen"
 
 #~ msgid "Mass mailing"
 #~ msgstr "Massenbenachrichtigung"
@@ -5829,9 +5983,6 @@ msgstr "Bitte prüfen Sie Ihren E-Mail-Posteingang für weitere Anweisungen."
 
 #~ msgid "Past events"
 #~ msgstr "Vergangene Veranstaltungen"
-
-#~ msgid "Previous month"
-#~ msgstr "Vorheriger Monat"
 
 #~ msgid "Your data"
 #~ msgstr "Persönliche Daten"

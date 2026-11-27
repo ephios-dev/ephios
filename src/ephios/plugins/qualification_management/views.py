@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 from django.views import View
@@ -57,6 +57,7 @@ class QualificationImportView(CustomPermissionRequiredMixin, FormView):
 class QualificationCreateView(CustomPermissionRequiredMixin, CreateView):
     model = Qualification
     form_class = QualificationForm
+    settings_list_url = reverse_lazy("qualification_management:settings_qualification_list")
     permission_required = "core.add_qualification"
     accept_object_perms = False
 
@@ -74,6 +75,7 @@ class QualificationCreateView(CustomPermissionRequiredMixin, CreateView):
 class QualificationUpdateView(CustomPermissionRequiredMixin, UpdateView):
     model = Qualification
     form_class = QualificationForm
+    settings_list_url = reverse_lazy("qualification_management:settings_qualification_list")
     permission_required = "core.change_qualification"
 
     def get_success_url(self):

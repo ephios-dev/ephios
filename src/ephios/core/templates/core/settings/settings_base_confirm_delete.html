@@ -1,0 +1,22 @@
+{% extends "core/settings/settings_base.html" %}
+{% load i18n %}
+{% load settings_extras %}
+
+{% block title %}
+    {% model_verbose_name view.model as model_name %}
+    {% blocktranslate with name=model_name|capfirst %}Delete {{ name }}{% endblocktranslate %}
+{% endblock %}
+
+{% block settings_content %}
+    {% model_verbose_name view.model as model_name %}
+    <div class="page-header">
+        <h2>{% blocktranslate with name=model_name|capfirst %}Delete {{ name }}{% endblocktranslate %}</h2>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <p>{% blocktranslate %}Are you sure you want to delete {{ object }}?{% endblocktranslate %}</p>
+        <a role="button" class="btn btn-secondary" href="{{ view.settings_list_url }}">{% translate "Back" %}</a>
+        <button type="submit" class="btn btn-danger">{% translate "Delete" %}</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% load i18n %}
+{% if filters %}
+    <div id="quick-filters" class="col-auto dropdown">
+        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            <span class="{% if active_filter %}fas{% else %}far{% endif %} fa-bookmark me-1" aria-hidden="true"></span>
+            {% if active_filter %}{{ active_filter.label }}{% else %}{% translate "Quick filters" context "no default filter button label" %}{% endif %}
+        </button>
+        <ul class="dropdown-menu">
+            {% for filter in filters %}
+                {% if filter.is_active %}
+                    <li><a href="{% querystring types=filter.deactivate_types %}" class="dropdown-item active"
+                           aria-current="true"><span class="fas fa-check fa-fw me-2" aria-hidden="true"></span>{{ filter.label }}</a></li>
+                {% else %}
+                    <li><a href="{% querystring types=filter.activate_types %}"
+                           class="dropdown-item"><span class="fas fa-check fa-fw me-2 invisible"
+                                                aria-hidden="true"></span>{{ filter.label }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

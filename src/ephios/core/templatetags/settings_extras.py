@@ -23,6 +23,11 @@ def available_settings_sections(request):
 
 
 @register.simple_tag
+def model_verbose_name(model):
+    return model._meta.verbose_name  # pylint: disable=protected-access
+
+
+@register.simple_tag
 def identity_providers():
     return IdentityProvider.objects.all()
 

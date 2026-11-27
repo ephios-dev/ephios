@@ -99,6 +99,7 @@ class BaseParticipationForm(forms.ModelForm):
                         )
                     )
                 ),
+                label=_("Previous comments"),
                 required=False,
             )
 
