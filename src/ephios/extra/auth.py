@@ -9,7 +9,7 @@ import jwt
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.decorators import (
-    login_not_required,  # ty: ignore[unresolved-import]
+    login_not_required,  # ty: ignore[missing-module-member]
 )
 from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation

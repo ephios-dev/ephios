@@ -1,4 +1,4 @@
-from calendar import _nextmonth, _prevmonth  # ty: ignore[unresolved-import]
+from calendar import _nextmonth, _prevmonth  # ty: ignore[missing-module-member]
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 

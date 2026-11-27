@@ -91,7 +91,7 @@ class DispositionBaseModelFormset(forms.BaseModelFormSet):
     def add_prefix(self, index):
         return f"{self.prefix}-{self._start_index + index}"
 
-    def save_existing(self, form, obj, commit=True):
+    def save_existing(self, form, obj, commit=True):  # ty: ignore[lost-keyword-for-regular-parameter]
         """Existing participation state overwrites the getting dispatched state."""
         if form.instance.state == AbstractParticipation.States.GETTING_DISPATCHED:
             form.instance.state = AbstractParticipation.objects.get(id=form.instance.id).state
