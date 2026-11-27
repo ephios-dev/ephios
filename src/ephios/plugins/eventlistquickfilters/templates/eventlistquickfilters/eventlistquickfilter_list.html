@@ -20,7 +20,8 @@
         <thead>
             <tr>
                 <th>{% translate "Label" %}</th>
-                <th>{% translate "Groups" %}</th>
+                <th>{% translate "Visible to groups" %}</th>
+                <th>{% translate "Default for groups" %}</th>
                 <th>{% translate "Event Types" %}</th>
                 <th>{% translate "Actions" %}</th>
             </tr>
@@ -29,9 +30,8 @@
             {% for filter in eventlistquickfilter_list %}
                 <tr>
                     <td>{{ filter.label }}</td>
-                    <td>
-                        {{ filter.visible_for_groups.all|join:", " }}
-                    </td>
+                    <td>{{ filter.visible_for_groups.all|join:", " }}</td>
+                    <td>{{ filter.default_for_groups.all|join:", " }}</td>
                     <td>
                         {% for event_type in filter.filter_types.all %}
                             <span class="badge badge-eventtype eventtype-{{ event_type.pk }}-color">{{ event_type }}</span>

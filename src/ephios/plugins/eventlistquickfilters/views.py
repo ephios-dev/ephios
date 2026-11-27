@@ -15,7 +15,12 @@ class EventListQuickFilterListView(CustomPermissionRequiredMixin, ListView):
     ordering = ("position", "label")
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("filter_types").order_by("position", "id")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related("filter_types", "visible_for_groups", "default_for_groups")
+            .order_by("position", "id")
+        )
 
 
 class EventListQuickFilterCreateView(CustomPermissionRequiredMixin, CreateView):

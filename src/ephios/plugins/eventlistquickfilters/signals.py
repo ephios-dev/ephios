@@ -44,32 +44,37 @@ def filter_form_initial(sender, request, **kwargs):
 def get_filter_template_data(request):
     visible_filters = _get_visible_filters(request)
     if not visible_filters:
-        return []
+        return {"filters": [], "active_filter": None}
 
-    filter_data = []
+    filters = []
 
     default_filter = visible_filters.filter(
         default_for_groups__in=request.user.groups.all()
     ).first()
     all_ids = EventType.objects.all().values_list("id", flat=True)
     GET_types = set(request.GET.getlist("types"))
-
-    for filter in visible_filters:
-        filter_types = set(map(str, filter.get_types_ids()))
+    active_filter = None
+    for f in visible_filters:
+        filter_types = set(map(str, f.get_types_ids()))
         # if no types are given, a potential default filter is active
-        used_as_default = filter.id == default_filter.id if default_filter else False
+        used_as_default = f.id == default_filter.id if default_filter else False
         if not GET_types and used_as_default:
             is_active = True
         else:
             is_active = GET_types == filter_types
-        filter_data.append({
-            "label": filter.label,
+        if is_active:
+            active_filter = active_filter or f
+        filters.append({
+            "label": f.label,
             "is_active": is_active,
             "used_as_default": used_as_default,
-            "activate_types": filter.get_types_ids() if not used_as_default else None,
-            "deactivate_types": all_ids if filter.show_all_types_on_deactivation else None,
+            "activate_types": f.get_types_ids() if not used_as_default else None,
+            "deactivate_types": all_ids if f.show_all_types_on_deactivation else None,
         })
-    return filter_data
+    return {
+        "filters": filters,
+        "active_filter": active_filter,
+    }
 
 
 @receiver(
@@ -81,9 +86,7 @@ def event_list_html(sender, request, **kwargs):
 
     return render_to_string(
         "eventlistquickfilters/filter_buttons.html",
-        {
-            "filters": get_filter_template_data(request),
-        },
+        context=get_filter_template_data(request),
         request=request,
     )
 

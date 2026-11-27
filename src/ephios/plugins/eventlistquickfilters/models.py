@@ -56,7 +56,7 @@ class EventListQuickFilter(models.Model):
         ordering = ["position"]
 
     def __str__(self):
-        return self.label
+        return str(self.label)
 
     def get_types_ids(self):
         return list(self.filter_types.values_list("id", flat=True))
