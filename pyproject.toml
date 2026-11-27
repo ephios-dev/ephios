@@ -163,13 +163,14 @@ template_extensions = 'html, txt, tex, email'
 error-on-warning = false
 
 [tool.ty.rules]
-unresolved-attribute = "ignore"
+missing-attribute = "ignore"
+missing-union-attribute = "ignore"
 not-iterable = "ignore"
-call-non-callable = "ignore"
+not-callable = "ignore"
 unsupported-operator = "ignore"
-invalid-method-override = "ignore"
-invalid-property-type-override = "ignore"
-invalid-attribute-override = "ignore"
+incompatible-method-override = "ignore"
+incompatible-property-override = "ignore"
+incompatible-attribute-override = "ignore"
 
 invalid-argument-type = "warn"
 invalid-assignment = "warn"
